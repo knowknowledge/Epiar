@@ -1,0 +1,102 @@
+Tuesday October 14, 2008
+	Chris Thielen:
+		* Added new INSTALL file from Leon Vayman
+		* Fixed a bug/typo in configure.in, thanks Leon Vayman for the report/fix
+
+Sunday October 12, 2008
+	Chris Thielen:
+		* Fixed an issue with the way we ensure powers of two: added tw,th (texture scaling coords) to Image
+		  to account for this issue (when we expand the texture canvas, we need to set the scaling coords so
+		  it looks as though we didn't do this)
+		* Fixed a bug with Coordinate where it would enforce boundaries that hadn't been set
+		* Continued UI work, getting mouse focus features down so clicking buttons work, then continue on
+		  with additional widgets
+	Matthew Zweig:
+		* Changed scaling and coloring in the Hud Radar.  Ships are Red, Planets are Blue, else grey.
+
+Monday Oct 7, 2008:
+	Chris Thielen:
+		* Began work on epiard. Need to research lock-free queues, brush up on multi-threaded programming and get basic multi-player flying around working nicely
+
+Sunday May 11, 2008:
+	Chris Thielen:
+		* Enhanced Input class to allow event lists to support sub-input systems. UI now works alongside game simulation without pausing
+		* Worked on UI - Implemented widget children. Started work on buttons, fixing window transparency issues
+
+Friday April 25, 2008:
+	Chris Thielen:
+		* Implemented dragging of all widgets, the --ui-demo now lets you drag the window around
+
+Tuesday April 22, 2008:
+	Chris Thielen:
+		* Implemented Image::ExpandCanvas(), which is called automatically for OpenGL surfaces that do not have
+		  dimensional values that are powers of twos (required on a lot of OpenGL cards).
+		* Implemented Image::DrawAbsoluteTiled, using a lot in GUI skinning. There's some oddities still when it tiles something
+		  with a 1 pixel dimension
+		* Updated UI::Window to the new GUI theme
+
+Monday April 21, 2008:
+	Chris Thielen:
+		* Added Utilities/xml.h, Utilities/xml.cpp
+		* Added Utilities/file.h, Utilities/file.cpp
+		* Added Tests/ directory for later use
+		* Removed Options class. Now we use an extern XMLFile optionsfile, with an access macro OPTION(T, "path"), e.g. OPTION(int, "options/video/fullscreen")
+
+Wednesday January 9, 2008:
+	Chris Thielen:
+		* Added command line parsing, w/ --version, --help
+		* Added --gui-demo to test the GUI as it progress
+		* GUI work
+
+Saturday January 5, 2008:
+	Chris Thielen:
+		* Reformatted code and renamed parts of the tree to be more logical (Video -> Graphics, System -> Utilities, ..)
+		* Added Utilities/archive.cpp/.h for reading tar.gz archives (50% done)
+		* Fixed some bugs with the radar. It's still a little screwy.
+
+Sat, June 23, 2007
+	Chris:
+		* Added Enumerate() methods to SpriteList
+		* More removal of Hungarian notation
+		* Started moving build system to GNU autotools
+
+Mon, May 28, 2007
+	Chris:
+		* Started work on HUD's radar
+
+Sun, May 20, 2007
+	Chris:
+		* Fixed compilation errors due to source code rearrangement
+		* Updated LUA to 5.1.2
+		* Added AI/ directory and AI class
+
+Fri, May 4, 2007
+	Chris:
+		* Changed more classes to static
+
+Tue, April 17, 2007
+	Chris:
+		* Continued removing Hungarian notation
+
+Wed, March 28, 2007
+	Chris:
+		* Started moving away from Hungarian notation (cVideo -> Video)
+		* Started converting to some static classes
+
+Sat, September 30, 2006
+	Chris:
+		* Added cAnimation and engine flare eye candy
+
+Fri, September 29, 2006
+	Chris:
+		* Switched to a different HUD
+
+Wed, September 6, 2006
+	Chris:
+		* Compile fixes and Makefile generated for Linux platform
+		* Merged in OpenGL Afont code (credit to Jared)
+
+Tue, July 25, 2006
+	Chris:
+		* sprite.h: Fixed compile warnings about virtual destructors
+		* image.cpp: Fixed incorrect dimension resizing

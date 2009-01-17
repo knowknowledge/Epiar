@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<options>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<logging>0</logging>
+
+	<network>
+		<port>7386</port>
+		<max-clients>500</max-clients>
+	</network>
+</options>

@@ -1,0 +1,1923 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<debugSession time="Tue Oct 14 20:24:01 2008" />
+<log>
+	<function>bool Font::SetFont(char*)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Font 'Vera-8.af' loaded.</message>
+</log>
+<log>
+	<function>bool Font::SetFont(char*)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Font 'Vera-10.af' loaded.</message>
+</log>
+<log>
+	<function>int SDL_main(int, char**)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Epiar 0.7.0 starting up.</message>
+</log>
+<log>
+	<function>static bool Video::Initialize()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>SDL video initialized using Quartz driver.</message>
+</log>
+<log>
+	<function>static bool Video::SetWindow(int, int, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Not using hardware surfaces.</message>
+</log>
+<log>
+	<function>static bool Video::SetWindow(int, int, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Not using hardware accelerated blitting.</message>
+</log>
+<log>
+	<function>static bool Video::SetWindow(int, int, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Video mode 1280x1024x32 supported.</message>
+</log>
+<log>
+	<function>static bool Video::SetWindow(int, int, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Video mode initialized at 1280x1024x32</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>'sim-debug.xml' file found and valid, parsing...</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Planets filename is planets-default.xml.</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Models filename is models-default.xml.</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Engines filename is engines-default.xml.</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>playerDefaultModel is Terran FV-5 Frigate.</message>
+</log>
+<log>
+	<function>bool Simulation::Parse()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>'sim-debug.xml' parsing done. File is version 0.7.0.</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = cPlanet]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>'planets-default.xml' file found and valid, parsing...</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image planet1.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image planet2.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image planet6.png</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = cPlanet]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Parsing of file 'planets-default.xml' done, found 3 objects. File is version 0.7.0.</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = Engine]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>'engines-default.xml' file found and valid, parsing...</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = Engine]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Parsing of file 'engines-default.xml' done, found 1 objects. File is version 0.7.0.</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = Model]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>'models-default.xml' file found and valid, parsing...</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image terran-frigate.png</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = Model]</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Parsing of file 'models-default.xml' done, found 1 objects. File is version 0.7.0.</message>
+</log>
+<log>
+	<function>std::list<T*, std::allocator<T*> > Parser<T>::Parse(std::string, std::string, std::string) [with T = Alliance]</function>
+	<type>Error</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Could not load '' for parsing.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading animation 'thrust.ani' ...</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Image::Load(FILE*, int)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image from file pointer.</message>
+</log>
+<log>
+	<function>bool Animation::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Animation loading done.</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_hullstr.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_hullstr_leftbar.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_hullstr_rightbar.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_hullstr_bar.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_shieldintegrity.png</message>
+</log>
+<log>
+	<function>bool Image::Load(std::string)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Loading image hud_radarnav.png</message>
+</log>
+<log>
+	<function>int SDL_main(int, char**)</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Epiar shutting down.</message>
+</log>
+<log>
+	<function>Font::~Font()</function>
+	<type>Message</type>
+	<time>Tue Oct 14 20:24:01 2008</time>
+	<message>Font 'Vera-8.af' freed.</message>
+</log>
+</debugSession>

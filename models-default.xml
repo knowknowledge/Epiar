@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<models>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<model>
+		<name>Terran FV-5 Frigate</name>
+		<image>terran-frigate.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.0</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>175</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+</models>

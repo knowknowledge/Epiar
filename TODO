@@ -1,0 +1,54 @@
+TODO List for Epiar 1.0
+=======================
+
+Immediate Future
+----------------
+* Finished Archive work moving data into data.tgz, allowing for real filesystem to override .tgz files given a setting in a XML file (Chris Thielen)
+* Implemet XPath-esque support for Options, perhaps redesigning that class a little for XPath's newer, broader scope (Chris Thielen)
+* Implement the UI (eUI, "ew-wee")
+* Implement a general Lua interface (Chris Walton)
+
+Before the next release (version 0.7.0)
+---------------------------------------
+* Engine/game split
+* Basic network game support including master epiar.net server
+* Sound
+* Landing dialog
+* AI
+* Editor (features up to match Epiar 0.7.0)
+* A medium-sized universe w/ good traffic, items to buy, enough to play for a while at least
+* Updates dialog that polls epiar.net to see if there's a new version to download
+* Some basic scenarios up in the epiar.net community gallery to download (in-game community.epiar.net browsing)
+
+The Rest (for version 1.0)
+--------------------------
+
+
+TODO list from January 2009 (to be merged into above general TODO list)
+=======================================================================
+
+General Lamprey TODO list
+-------------------------
+* Implement the GUI (topher)
+* Implement the general Lua subsystem (topher)
+* Implement A.I. using Lua scripts (topher?)
+* Implement upgrades (engines, shields, weapons, maps, fake IDs, batteries, bombs, sentry bots, etc.) using Lua
+* Implement the Nav map (waiting on GUI)
+* Implement the Status screen (waiting on GUI)
+* Implement hailing (waiting on GUI)
+* Implement the main menu (with options to play custom missions, download them from epiar.net)
+* Implement a check to alert the player if a new version of Epiar is available
+* Reipel universe editor (topher) (waiting on GUI)
+* Implement eye candies - shield flares (take from 0.6.0 plz)
+* Implement the HUD (graphics done, just needs programming) - messages, shield status, radar, weapons display, etc.
+* Implement the landing dialog - welcome screen, outfit, missions, bar, etc. (graphics done, waiting on GUI)
+* Economy system based on actions of the A.I. (waiting on A.I.) - if more traders go to one planet, that affects prices, and the A.I. responds to this and buys accordingly
+* Alliance A.I. (waiting on basic A.I.)
+* Implement missions (waiting on Lua, and possibly A.I.)
+* Weapons subsytem
+
+Eye-candy
+---------
+* Camera lagging
+* Shield flares
+* Motion-blur

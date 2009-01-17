@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<planets>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<planet>
+		<name>Antikythera</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>345</x>
+		<y>215</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>planet1.png</image>
+		<militia>20</militia>
+		<sphereOfInfluence>3000</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Alexandria</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>-40</x>
+		<y>-135</y>
+		<landable>1</landable>
+		<traffic>6</traffic>
+		<image>planet2.png</image>
+		<militia>5</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Bersia</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>4640</x>
+		<y>-735</y>
+		<landable>1</landable>
+		<traffic>6</traffic>
+		<image>planet6.png</image>
+		<militia>7</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+</planets>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<options>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<logging>0</logging>
+	<video>
+		<w>1280</w>
+		<h>1024</h>
+		<bpp>32</bpp>
+		<fullscreen>0</fullscreen>
+	</video>
+	<simulation>
+		<starfield-density>325</starfield-density>
+	</simulation>
+	<momentum-caps>
+		<top>5.0</top>
+		<right>5.0</right>
+		<bottom>5.0</bottom>
+		<left>5.0</left>
+	</momentum-caps>
+	<development>
+		<override-tgz>1</override-tgz>
+	</development>
+</options>

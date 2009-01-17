@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<weapons>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<weapon>
+		<name>Photonic Laser SW-1</name>
+		<msrp>1000</msrp>
+		<category>energy</category>
+		<energy-per-shot>10</energy-per-shot>
+	</weapon>
+	<weapon>
+		<name>Neutrinic Pulse Cannon</name>
+		<msrp>100000</msrp>
+		<category>energy</category>
+		<energy-per-shot>4500</energy-per-shot>
+	</weapon>
+</weapons>

@@ -1,0 +1,11 @@
+Epiar
+Epiar-Log-*
+*.gdb_history
+autom4te.cache
+.deps
+stamp-h1
+config.status
+TODO.rtf
+*.deps
+Makefile.in
+

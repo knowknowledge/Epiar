@@ -1,0 +1,79 @@
+Basic Installation
+==================
+
+Compiling
+=========
+
+In order to compile the game you need the next dependancies (some of
+them will be used in the future but not in the present):
+sdl, sdl_image, sdl_net, sdl_mixer, openal, mesa, libgl, libxml2, zlib
+On some linux distributions those dependancies needed to compile and
+dependancies needed to run a game are separated to two packages make sure
+you install them both (for example sdl and sdl-dev etc..)
+
+The simplest way to compile this package is:
+
+  1. 'cd' to the directory containing the package's source code and type
+     'sh autogen.sh' to generate a configure file for the package.
+
+  2. Type './configure' this will check and see if the dependancies are
+     installed on the system, if it fails saying that something was not 
+     found make sure you installed the dependancies we listed above.
+
+  3. Type 'make' to compile the package.
+
+  !Right now there is no auto install method please check the next section!
+
+Installing
+==========
+
+In the time of writing this document there is not installation method
+Epiar creates a bin file in the same foder that all the game and compilation
+data resides (the cvs folder you checked into), In the feaute data folder
+would be separted and also 'make install' will work, util then if you want
+to package this app or want to have a cleat directory with only the files
+needed for Epiar to work do the next things:
+
+  1.  Decide where you want the data dir of epiar to be and make sure you have 
+      permissions to write to this new dir (by applying sudo to the next 
+      operations if needed)
+      
+  2.  Create this folder with 'mkdir -p /the/epiar/dir'
+  
+  3.  copy all files with the extensions *.xml *.png *.af *.dat *.ani
+      from the folder you built epiar in to thenew dir. 
+      you can do this with 'cp -t /the/epiar/dir *.xml *.png *.af *.dat *.ani'.
+      
+  3.  Copy the Epiar executable to the same dir 'cp Epiar /the/epiar/dir'
+  
+  4.  You can remove the dir you compiled in with 'rm -r /compiling/dir' 
+  
+  5.  For conviniance you can create a simple shell script to put in "/usr/bin"
+      Follow the instructions in the next section if you want to do so.
+  
+The Script
+==========
+
+To have epiar executed whenever you write 'epiar' in the terminal, you create the
+next script and move it to "/usr/bin"
+
+The script file name should be "epiar" or any other name that you wish to type in
+the terminal to run epiar.
+
+Inside this text file put the lines beetwen -start- and -end-:
+-start-
+#!/bin/sh
+
+cd /the/epiar/dir/
+./Epiar
+-end-
+
+Note that "/the/epiar/dir/" should be changed to the directory with epiar data in it.
+
+Next make sure the script is executable by running 'chmod a+x epiar", change epiar to
+the name of your script if needed.
+
+Finally copy this script to "/usr/bin" (you will probably need to use sudo with the 
+next command) 'mv epiar /usr/bin' or with sudo 'sudo mv epiar /usr/bin'
+
+Enjoy!
