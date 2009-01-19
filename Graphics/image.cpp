@@ -473,22 +473,22 @@ void Image::DrawAbsolute( int x, int y ) {
 		h = this->h;
 	}
 	
-	x += (int)((double)w / 2.);
-	y -= (int)((double)h / 2.);
+	x += (int)((double)vw / 2.);
+	y -= (int)((double)vh / 2.);
 	
 	Debug::Print("DrawAbsolute is passing to Draw the coordinates %d, %d", x, y);
 	
 	Draw( x, y );
 }
 
-// calls draw absolute to fill the rectangle (x, y, w, h) NOTE: TOFIX if the tile is not 1x1, this will "spill" over a little
+// calls draw absolute to fill the rectangle (x, y, w, h)
 void Image::DrawAbsoluteTiled( int x, int y, int w, int h ) {
-	// set the clipping region to avoid tiles spilling out
+	// set the clipping region to avoid tiles "spilling" out
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(x, y - h, w, h);
-	
-	for( int j = 0; j < h; j += (this->h) ) {
-		for( int i = 0; i < w; i += (this->w) ) {
+
+	for( int j = 0; j < h; j += (this->vh) ) {
+		for( int i = 0; i < w; i += (this->vw) ) {
 			DrawAbsolute( x + i, y - j );
 		}
 	}

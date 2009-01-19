@@ -59,9 +59,7 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[8]->DrawAbsoluteTiled( x + bitmaps[3]->GetWidth(), y - bitmaps[1]->GetHeight(), w - bitmaps[3]->GetWidth() - bitmaps[4]->GetWidth(), h - bitmaps[1]->GetHeight() - bitmaps[6]->GetHeight() );
 	
 	// Draw the top section
-	Debug::Set();
 	bitmaps[0]->DrawAbsolute( x, y );
-	Debug::Unset();
 	bitmaps[1]->DrawAbsoluteTiled( x + bitmaps[0]->GetWidth(), y, w - bitmaps[0]->GetWidth() - bitmaps[2]->GetWidth(), bitmaps[1]->GetHeight() );
 	bitmaps[2]->DrawAbsolute( x + w - bitmaps[2]->GetWidth(), y );
 	

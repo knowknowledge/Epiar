@@ -1,6 +1,7 @@
 Sunday, January 18, 2009
 	Chris Thielen:
 		* Fixed a bug in Image where images that weren't powers of two were being incorrectly scaled
+		* Fixed a bug in Image::DrawAbsolute where texture sizes were used instead of the correct virtual sizes
 
 Tuesday October 14, 2008
 	Chris Thielen:
