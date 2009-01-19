@@ -1,3 +1,7 @@
+Sunday, January 18, 2009
+	Chris Thielen:
+		* Fixed a bug in Image where images that weren't powers of two were being incorrectly scaled
+
 Tuesday October 14, 2008
 	Chris Thielen:
 		* Added new INSTALL file from Leon Vayman

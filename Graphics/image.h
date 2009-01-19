@@ -48,10 +48,11 @@ class Image {
 		GLuint image;
 		GLuint mask;
 		bool masking;
-		int w, h; // w/h of surface. may be bigger than original file if file's dimensions were not a power of 2, >= 2
-		int vw, vh; // virtual w/h. this only differs if the image was expanded (w,h must be true w/h for ogl, but game often needs the supposed width and height, before expansion, which is the virtual width/height)
-		int sw, sh; // scale width/height, if any
+		int w, h; // w/h of surface. may be bigger than original file if file's dimensions were not a power of 2, >= 2 - this is the true width/height of the opengl texture
+		int vw, vh; // virtual w/h. this only differs if the image was expanded (w,h must be true w/h for ogl, but game often needs the supposed width and height, before expansion, which is the virtual width/height) - this is the image's size according to the game, which varies form the opengl size in case we had to expand the image's size (not scale, merely add blank space) to get opengl powers of 2
+		int sw, sh; // scale width/height, if any - differs from both w,h and vw,vh above, this is in case we purposely wanted to scale an image
 		float tw, th; // texture scaling (u/v), used by ExpandCanvas
+		string filename; // filename the image was loaded from
 };
 
 #endif // __h_image__

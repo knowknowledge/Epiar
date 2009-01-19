@@ -35,7 +35,7 @@ Font::Font( char *filename ) {
 Font::~Font() {
 	afont_free( font );
 
-	Log::Message( "Font '%s' freed.", filename );
+	//Log::Message( "Font '%s' freed.", filename );
 
 	free( filename );
 }
@@ -52,7 +52,7 @@ bool Font::SetFont( char *filename ) {
 
 	this->filename = strdup( filename );
 
-	Log::Message( "Font '%s' loaded.", filename );
+	//Log::Message( "Font '%s' loaded.", filename );
 
 	return( true );
 }

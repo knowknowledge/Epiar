@@ -26,6 +26,7 @@ Image::Image( string filename ) {
 	masking = false;
 	sw = sh = 0;
 	tw = th = 1.;
+	this->filename = filename;
 	Load( filename );
 }
 
@@ -35,6 +36,7 @@ Image::Image( char *filename , char *maskname) {
 	masking = true;
 	sw = sh = 0;
 	tw = th = 1.;
+	this->filename = filename;
 	
 	Log::Warning( "Image with masks is broken." );
 }
@@ -76,7 +78,7 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 bool Image::Load( FILE *fp, int size ) {
 	SDL_RWops *rw;
 
-	Log::Message( "Loading image from file pointer." );
+	//Log::Message( "Loading image from file pointer." );
 
 	if( !fp ) {
 		Log::Warning( "Image loading failed. Invalid FILE pointer" );
@@ -113,7 +115,7 @@ void Image::SetScaling( int nw, int nh ) {
 bool Image::Load( string filename ) {
 	SDL_Surface *texture = NULL;
 
-	Log::Message( "Loading image %s", filename.c_str() );
+	//Log::Message( "Loading image %s", filename.c_str() );
 
 	if( ( texture = IMG_Load( filename.c_str() ) ) == NULL ) {
 		Log::Warning( "Failed to load %s", filename.c_str() );
@@ -138,6 +140,8 @@ bool Image::_Load( SDL_Surface *texture ) {
 		float q;
 		int nw = 0, nh = 0; // possible new width/height for power of 2 adjustment
 
+		Debug::Set();
+
 		vw = texture->w;
 		vh = texture->h;
 		
@@ -151,7 +155,7 @@ bool Image::_Load( SDL_Surface *texture ) {
 			int c = 1;
 			while( c < texture->w ) c *= 2;
 			nw = c;
-			Log::Message( "Width of image (%d) is not a power of two. Expansion yields new width (%d)", texture->w, nw );
+			Debug::Print( "%s: Width of image (%d) is not a power of two. Expansion yields new width (%d)", filename.c_str(), texture->w, nw );
 		}
 		// check height
 		q = texture->h;
@@ -162,12 +166,12 @@ bool Image::_Load( SDL_Surface *texture ) {
 			int c = 1;
 			while( c < texture->h ) c *= 2;
 			nh = c;
-			Log::Message( "Height of image (%d) is not a power of two. Expansion yields new height (%d)", texture->h, nh );
+			Debug::Print( "%s: Height of image (%d) is not a power of two. Expansion yields new height (%d)", filename.c_str(), texture->h, nh );
 		}
 
-		if( texture->w == 1 ) nw = 2; // many cards won't accept 1 as a valid power of two (math is just different for them)
+		if( texture->w == 1 ) nw = 2; // many cards won't accept 1 as a valid power of two
 		if( texture->h == 1 ) nh = 2;
-		
+
 		if( nw || nh ) {
 			// The image dimensions are not a power of 2. We need to expand the canvas. This is an OpenGL restriction.
 			if( nw == 0 ) nw = texture->w;
@@ -178,6 +182,7 @@ bool Image::_Load( SDL_Surface *texture ) {
 			
 			// Expand the canvas
 			SDL_Surface *newSurface = NULL;
+			Debug::Print("%s will have an expanded canvas\n", filename.c_str());
 			newSurface = ExpandCanvas( texture, nw, nh );
 			texture = newSurface;
 		}
@@ -190,7 +195,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 			Log::Warning( "Loading an image after another is loaded already. Deleting old ... " );
 		}
 
-		// In case we did image expansion...
 		w = texture->w;
 		h = texture->h;
 
@@ -223,7 +227,9 @@ bool Image::_Load( SDL_Surface *texture ) {
 		glTexImage2D( GL_TEXTURE_2D, 0, internal_format, w, h, 0, img_format, img_type, texture->pixels );
 
 		masking = false;
-		
+
+		Debug::Unset();		
+
 		return( true );
 	}
 
@@ -369,23 +375,26 @@ void Image::Draw( int x, int y, float ang ) {
 		// we need to scale. we do this by simply lying about the image's size to opengl
 		w = sw;
 		h = sh;
+		Debug::Print("%s: Setting artifical scale, originally %d,%d, now %d,%d\n", filename.c_str(), ow, oh, sw, sh);
+	} else {
+		Debug::Print("%s: Not setting artifical scale.\n", filename.c_str());
 	}
 	
 	// avoid trig when you can
 	if( ang != 0 ) {
 		a = -(float)trig->DegToRad( ang );
-		trig->RotatePoint( (float)(x - (w/2)), (float)(y + (h/2)), (float)x, (float)y, (float *)&ulx, (float *)&uly, a );
-		trig->RotatePoint( (float)(x + (w/2)), (float)(y + (h/2)), (float)x, (float)y, (float *)&urx, (float *)&ury, a );
-		trig->RotatePoint( (float)(x - (w/2)), (float)(y - (h/2)), (float)x, (float)y, (float *)&llx, (float *)&lly, a );
-		trig->RotatePoint( (float)(x + (w/2)), (float)(y - (h/2)), (float)x, (float)y, (float *)&lrx, (float *)&lry, a );
+		trig->RotatePoint( (float)(x - ((w * tw)/2)), (float)(y + ((h * th)/2)), (float)x, (float)y, (float *)&ulx, (float *)&uly, a );
+		trig->RotatePoint( (float)(x + ((w * tw)/2)), (float)(y + ((h * th)/2)), (float)x, (float)y, (float *)&urx, (float *)&ury, a );
+		trig->RotatePoint( (float)(x - ((w * tw)/2)), (float)(y - ((h * th)/2)), (float)x, (float)y, (float *)&llx, (float *)&lly, a );
+		trig->RotatePoint( (float)(x + ((w * tw)/2)), (float)(y - ((h * th)/2)), (float)x, (float)y, (float *)&lrx, (float *)&lry, a );
 	} else {
-		ulx = x - (w / 2);
-		urx = x + (w / 2);
+		ulx = x - ((w * tw) / 2);
+		urx = x + ((w * tw) / 2);
 		llx = ulx;
 		lrx = urx;
-		uly = y - (h / 2);
+		uly = y - ((h * th) / 2);
 		ury = uly;
-		lly = y + (h / 2);
+		lly = y + ((h * th) / 2);
 		lry = lly;
 	}
 
@@ -418,6 +427,8 @@ void Image::Draw( int x, int y, float ang ) {
 
 	glBegin( GL_POLYGON );
 
+	Debug::Print("text coordinates: 0, 0, %f, %f\n", tw, th);
+	Debug::Print("vert coordinates: %f, %f, %f, %f\n", ulx, uly, lrx, lry);
 	glTexCoord2f( 0., th );
 	glVertex2f( ulx, uly );
 	glTexCoord2f( tw, th );
@@ -452,7 +463,7 @@ void Image::LoadAndDraw(int x, int y, float ang, char *filename) {
 // Normally, the coordinates are the center of the image - DrawAbsolute forces (x,y) to be the upper-left of the image
 void Image::DrawAbsolute( int x, int y ) {
 	int w, h;
-	
+
 	// if we use scaling, we account for it by using a fake w/h and simply pass that onto OpenGL
 	if(( sw > 0 ) && ( sh > 0 )) {
 		w = sw;

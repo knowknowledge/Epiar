@@ -87,7 +87,7 @@ void Log::realLog( int type, const char *func, char *message, ... ) {
 
 	fprintf( fp, logBuffer );
 #ifdef DEBUG
-	printf( "%s\n", logBuffer );
+	//printf( "%s\n", logBuffer );
 #endif
 
 	fprintf( fp, "</message>\n</log>\n" );

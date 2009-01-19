@@ -36,7 +36,7 @@ bool Animation::Load( string filename ) {
 		return( false );
 	}
 
-	Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
+	//Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
 
 	fread( 	&byte, sizeof( byte ), 1, fp );
 	//cout << "\tVersion: " << (int)byte << endl;
@@ -83,7 +83,7 @@ bool Animation::Load( string filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	Log::Message( "Animation loading done." );
+	//Log::Message( "Animation loading done." );
 
 	return( true );
 }

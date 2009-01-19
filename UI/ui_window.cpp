@@ -10,6 +10,7 @@
 #include "Graphics/video.h"
 #include "includes.h"
 #include "UI/ui.h"
+#include "Utilities/debug.h"
 
 Window::Window( int x, int y, int w, int h, string caption ) {
 	SetX( x );
@@ -19,6 +20,10 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	this->h = h;
 	
 	this->caption = caption;
+
+	Debug::Set();
+	Debug::Print("new window (%d,%d,%d,%d,%s)\n", x, y, w, h, caption.c_str());
+	Debug::Unset();
 	
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = new Image( "ui_wnd_up_left.png" );
@@ -54,7 +59,9 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[8]->DrawAbsoluteTiled( x + bitmaps[3]->GetWidth(), y - bitmaps[1]->GetHeight(), w - bitmaps[3]->GetWidth() - bitmaps[4]->GetWidth(), h - bitmaps[1]->GetHeight() - bitmaps[6]->GetHeight() );
 	
 	// Draw the top section
+	Debug::Set();
 	bitmaps[0]->DrawAbsolute( x, y );
+	Debug::Unset();
 	bitmaps[1]->DrawAbsoluteTiled( x + bitmaps[0]->GetWidth(), y, w - bitmaps[0]->GetWidth() - bitmaps[2]->GetWidth(), bitmaps[1]->GetHeight() );
 	bitmaps[2]->DrawAbsolute( x + w - bitmaps[2]->GetWidth(), y );
 	
