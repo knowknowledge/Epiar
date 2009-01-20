@@ -44,8 +44,8 @@ void Button::Draw( int relx, int rely ) {
 	// draw the button (loaded image is simply scaled)
 	bitmap->DrawAbsolute( x, y );
 	// draw the label
-	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered( x + (w / 2), y - (h / 2), (char *)label.c_str() );
+	Vera8->SetColor( 1., 1., 1. );
+	Vera8->RenderCentered( x + (w / 2), y - (h / 2), (char *)label.c_str() );
 }
 
 void Button::Focus( int x, int y ) {

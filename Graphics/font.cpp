@@ -35,6 +35,9 @@ Font::~Font() {
 	glDeleteTextures(128, textures);
 	delete [] textures;
 
+	delete [] widths;
+	delete [] heights;
+
 	//Log::Message( "Font '%s' freed.", filename );
 
 	free( filename );
@@ -47,6 +50,8 @@ bool Font::SetFont( char *filename, float h ) {
 
 	//Allocate some memory to store the texture ids.
 	textures = new GLuint[128];
+	widths = new char[256];
+	heights = new char[256];
 
 	this->h=h;
 
@@ -98,8 +103,6 @@ bool Font::SetFont( char *filename, float h ) {
 void Font::Render( int x, int y, char *text ) {
 	glColor3f( r, g, b );
 
-	//glRasterPos2i( x, y );
-
 	// set up screen coords
 	glPushAttrib(GL_TRANSFORM_BIT);
 	GLint	viewport[4];
@@ -110,24 +113,9 @@ void Font::Render( int x, int y, char *text ) {
 	gluOrtho2D(viewport[0],viewport[2],viewport[1],viewport[3]);
 	glPopAttrib();
 
-	//afont_gl_render_text( font, text );
-
 	GLuint font = list_base;
 	float h = this->h /.63f;						//We make the height about 1.5* that of
 	
-	//char		text[256];								// Holds Our String
-	//va_list		ap;										// Pointer To List Of Arguments
-
-	//if (fmt == NULL)									// If There's No Text
-	//	*text=0;											// Do Nothing
-
-	//else {
-	//va_start(ap, fmt);									// Parses The String For Variables
-	 //   vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
-	//va_end(ap);											// Results Are Stored In Text
-	//}
-
-
 	//Here is some code to split the text that we have been
 	//given into a set of lines.
 	//This could be made much neater by using
@@ -210,13 +198,31 @@ void Font::Render( int x, int y, char *text ) {
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
 void Font::RenderCentered( int x, int y, char *text ) {
-	//int w, h, base;
+	int w, h;
 
 	// determine size of text
-	//afont_size_text( font, text, &w, &h, &base );
+	SizeText( text, &w, &h );
 
-	//Render( x - (w / 2), y + (h / 2) - base, text );
-	Render(x, y, text);
+	Render( x - (w / 2), y - (h / 2), text );
+}
+
+void Font::SizeText( char *text, int *w, int *h ) {
+	int width, height;
+
+	if(!text) return;
+
+	assert(w);
+	assert(h);
+
+	width = height = 0;
+
+	for(int i = 0; i < (signed)strlen(text); i++) {
+		width += widths[text[i]];
+		if(heights[text[i]] > height) height = heights[text[i]];
+	}
+
+	*w = width;
+	*h = height;
 }
 
 void Font::SetColor( float r, float g, float b ) {
@@ -271,6 +277,8 @@ void Font::make_dlist(FT_Face face, char ch, GLuint list_base, GLuint *tex_base)
 	glTranslatef(0, bitmap_glyph->top-bitmap.rows, 0);
 
 	float x = (float)bitmap.width / (float)width, y = (float)bitmap.rows / (float)height;
+	widths[ch] = bitmap.width;
+	heights[ch] = bitmap.rows;
 
 	glBegin(GL_QUADS);
 	glTexCoord2d(0,0); glVertex2f(0,bitmap.rows);

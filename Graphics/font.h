@@ -27,6 +27,7 @@ class Font {
 	void Render( int x, int y, char *text );
 	void RenderCentered( int x, int y, char *text );
 	void SetColor( float r, float g, float b );
+	void SizeText( char *text, int *w, int *h );
 
  private:
 	// generate display list corresponding to the given character
@@ -38,6 +39,8 @@ class Font {
 	float h; // height of font
 	GLuint *textures; // holds texture IDs
 	GLuint list_base; // holds the first display list id
+	char *widths; // widths of the characters stored in textures
+	char *heights; // heights of the characters stored in textures
 };
 
 #endif // H_FONT
