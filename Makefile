@@ -107,12 +107,12 @@ AUTOMAKE = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run automake-1.1
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
+CFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -I/usr/X11/include/freetype2 -I/usr/X11/include -DDARWIN -Wall -DDEBUG
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
+CXXFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -I/usr/X11/include/freetype2 -I/usr/X11/include -DDARWIN -Wall -DDEBUG
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -127,7 +127,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS =  -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -lz
+LIBS =  -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -L/usr/X11/lib -lfreetype -lz -Wl,-framework,CoreServices -Wl,-framework,ApplicationServices -lz
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run makeinfo
 MKDIR_P = ./install-sh -c -d

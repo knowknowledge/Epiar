@@ -185,5 +185,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 void ui_demo( void ) {
 	Window *wnd = new Window( 200, 700, 500, 400, "UI Demo" );
 	UI::Add( wnd );
-	wnd->AddChild( new Button( 50, 50, 100, 25, "Hello" ) );
+	wnd->AddChild( new Button( 50, 10, 100, 25, "Hello" ) );
+	
 }

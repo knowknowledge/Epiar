@@ -1,3 +1,8 @@
+Monday, January 19, 2009
+	Chris Thielen:
+		* Added the Bitstream Vera fonts package (v1.10) and included it's license under LICENSE.fonts
+		* Removed afont from Font class and started using freetype2 directly using NeHe Tutorial #43 code (believed to be free)
+
 Sunday, January 18, 2009
 	Chris Thielen:
 		* Fixed a bug in Image where images that weren't powers of two were being incorrectly scaled

@@ -61,6 +61,10 @@ case "$target" in
 	LIBS="$LIBS -framework SDL_mixer"
 esac
 
+dnl Check for Freetype2
+CFLAGS="$CFLAGS `freetype-config --cflags`"
+LIBS="$LIBS `freetype-config --libs`"
+
 dnl Set MS Windows specific options - For afont and ntohl (Win32 provides this through Winsock)
 case "$target" in
 	*-*-cygwin* | *-*-mingw32*)

@@ -10,6 +10,8 @@
 #include <assert.h>
 #include <queue>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Enhancements to STL
 #include "Utilities/string_convert.h"

@@ -140,8 +140,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 		float q;
 		int nw = 0, nh = 0; // possible new width/height for power of 2 adjustment
 
-		Debug::Set();
-
 		vw = texture->w;
 		vh = texture->h;
 		
@@ -155,7 +153,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 			int c = 1;
 			while( c < texture->w ) c *= 2;
 			nw = c;
-			Debug::Print( "%s: Width of image (%d) is not a power of two. Expansion yields new width (%d)", filename.c_str(), texture->w, nw );
 		}
 		// check height
 		q = texture->h;
@@ -166,7 +163,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 			int c = 1;
 			while( c < texture->h ) c *= 2;
 			nh = c;
-			Debug::Print( "%s: Height of image (%d) is not a power of two. Expansion yields new height (%d)", filename.c_str(), texture->h, nh );
 		}
 
 		if( texture->w == 1 ) nw = 2; // many cards won't accept 1 as a valid power of two
@@ -182,7 +178,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 			
 			// Expand the canvas
 			SDL_Surface *newSurface = NULL;
-			Debug::Print("%s will have an expanded canvas\n", filename.c_str());
 			newSurface = ExpandCanvas( texture, nw, nh );
 			texture = newSurface;
 		}
@@ -227,8 +222,6 @@ bool Image::_Load( SDL_Surface *texture ) {
 		glTexImage2D( GL_TEXTURE_2D, 0, internal_format, w, h, 0, img_format, img_type, texture->pixels );
 
 		masking = false;
-
-		Debug::Unset();		
 
 		return( true );
 	}
@@ -427,8 +420,6 @@ void Image::Draw( int x, int y, float ang ) {
 
 	glBegin( GL_POLYGON );
 
-	Debug::Print("text coordinates: 0, 0, %f, %f\n", tw, th);
-	Debug::Print("vert coordinates: %f, %f, %f, %f\n", ulx, uly, lrx, lry);
 	glTexCoord2f( 0., th );
 	glVertex2f( ulx, uly );
 	glTexCoord2f( tw, th );
@@ -532,8 +523,6 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	// re-calculate the texture coordinates given to opengl during drawing (u/v coordinates)
 	tw = (float)original->w / (float)w;
 	th = (float)original->h / (float)h;
-	
-	cout << "expanded canvas, tw/th is " << tw << ", " << th << endl;
 	
 	// update the callee's pointer to the new image and free the old one
 	SDL_FreeSurface( original );

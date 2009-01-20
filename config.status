@@ -515,7 +515,7 @@ s,@DEFS@,|#_!!_#|-DHAVE_CONFIG_H,g
 s,@ECHO_C@,|#_!!_#|\\c,g
 s,@ECHO_N@,|#_!!_#|,g
 s,@ECHO_T@,|#_!!_#|,g
-s,@LIBS@,|#_!!_#| -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -lz,g
+s,@LIBS@,|#_!!_#| -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -L/usr/X11/lib -lfreetype -lz -Wl\,-framework\,CoreServices -Wl\,-framework\,ApplicationServices -lz,g
 s,@build_alias@,|#_!!_#|,g
 s,@host_alias@,|#_!!_#|,g
 s,@target_alias@,|#_!!_#|,g
@@ -554,7 +554,7 @@ s,@AMTAR@,|#_!!_#|${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run tar,g
 s,@am__tar@,|#_!!_#|${AMTAR} chof - "$$tardir",g
 s,@am__untar@,|#_!!_#|${AMTAR} xf -,g
 s,@CC@,|#_!!_#|gcc,g
-s,@CFLAGS@,|#_!!_#|-g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG,g
+s,@CFLAGS@,|#_!!_#|-g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -I/usr/X11/include/freetype2 -I/usr/X11/include -DDARWIN -Wall -DDEBUG,g
 s,@LDFLAGS@,|#_!!_#|,g
 s,@CPPFLAGS@,|#_!!_#|,g
 s,@ac_ct_CC@,|#_!!_#|gcc,g
@@ -571,7 +571,7 @@ s,@am__fastdepCC_TRUE@,|#_!!_#|,g
 s,@am__fastdepCC_FALSE@,|#_!!_#|#,g
 s,@CPP@,|#_!!_#|gcc -E,g
 s,@CXX@,|#_!!_#|g++,g
-s,@CXXFLAGS@,|#_!!_#|-g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG,g
+s,@CXXFLAGS@,|#_!!_#|-g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -I/usr/X11/include/freetype2 -I/usr/X11/include -DDARWIN -Wall -DDEBUG,g
 s,@ac_ct_CXX@,|#_!!_#|g++,g
 s,@CXXDEPMODE@,|#_!!_#|depmode=gcc3,g
 s,@am__fastdepCXX_TRUE@,|#_!!_#|,g
