@@ -223,6 +223,8 @@ void Font::SizeText( char *text, int *w, int *h ) {
 
 	*w = width;
 	*h = height;
+
+	cout << "w/h is " << width << ", " << height << endl;
 }
 
 void Font::SetColor( float r, float g, float b ) {

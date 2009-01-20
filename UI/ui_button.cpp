@@ -46,6 +46,7 @@ void Button::Draw( int relx, int rely ) {
 	// draw the label
 	Vera8->SetColor( 1., 1., 1. );
 	Vera8->RenderCentered( x + (w / 2), y - (h / 2), (char *)label.c_str() );
+	cout << "button (" << x << ", " << y << ") told to be drawn at half w/h which is " << w << ", " << h << endl;
 }
 
 void Button::Focus( int x, int y ) {
