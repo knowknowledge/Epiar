@@ -24,12 +24,12 @@ class Image {
 		bool o_Load( char *filename , char *maskname );
 		bool Load( FILE *fp, int size );
 		bool Load( unsigned char *buf, int bufSize );
-		
+
+		// TODONOW: update image.cpp for this and the rest of the codebase
 		void Draw( int x, int y );
-		void DrawAbsolute( int x, int y );
-		void DrawAbsoluteTiled( int x, int y, int w, int h );
-		// takes ang in radians
-		void Draw( int x, int y, float ang );
+		void DrawCentered( int x, int y, float ang = 0. );
+		void DrawTiled( int x, int y, int w, int h );
+
 		void LoadAndDraw(int x, int y, float ang, char *filename);
 
 		int GetWidth( void );
@@ -37,8 +37,8 @@ class Image {
 		int GetHalfWidth( void ) { return w / 2; };
 		int GetHalfHeight( void ) { return h / 2; };
 
-		bool GetMasking(){return masking;}
-		void SetMasking(bool m){masking = m;}
+		bool GetMasking() {return masking;}
+		void SetMasking(bool m) {masking = m;}
 		
 		void SetScaling( int nw, int nh );
 

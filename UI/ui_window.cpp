@@ -52,6 +52,8 @@ Window::~Window() {
 void Window::Draw( int relx, int rely ) {
 	int x, y;
 	
+	cout << "window specific drawing" << endl;
+	
 	x = GetX() + relx;
 	y = GetY() + rely;
 	

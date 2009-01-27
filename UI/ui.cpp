@@ -69,6 +69,7 @@ void UI::Draw( void ) {
 	
 	// Draw all widgets
 	for( i = children.begin(); i != children.end(); ++i ) {
+		cout << "UI master drawing a child" << endl;
 		(*i)->Draw();
 	}
 }
@@ -185,7 +186,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 void ui_demo( void ) {
 	Window *wnd = new Window( 200, 700, 500, 400, "UI Demo" );
 	UI::Add( wnd );
-	wnd->AddChild( new Button( 150, 350, 200, 25, "OK" ) );
+	wnd->AddChild( new Button( 0, 0, 200, 25, "OK" ) );
 	
 }
 
