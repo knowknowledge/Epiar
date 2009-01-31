@@ -25,10 +25,11 @@ class Image {
 		bool Load( FILE *fp, int size );
 		bool Load( unsigned char *buf, int bufSize );
 
-		// TODONOW: update image.cpp for this and the rest of the codebase
+		void DrawAbsolute( int x, int y );
+		void DrawAbsoluteTiled( int x, int y, int w, int h );
+
+		void Draw( int x, int y, float ang );
 		void Draw( int x, int y );
-		void DrawCentered( int x, int y, float ang = 0. );
-		void DrawTiled( int x, int y, int w, int h );
 
 		void LoadAndDraw(int x, int y, float ang, char *filename);
 

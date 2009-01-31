@@ -2,10 +2,92 @@
 
 /* See the file LICENSE for copyright and license information */
 
-#include "afont_gl.h"
 #include "includes.h"
 
-void afont_gl_make_bitmaps( afont *a )
+#include "afont_gl.h"
+
+static void afont_gl_make_bitmaps( afont *a );
+  /* Convert the bitmaps loaded by afont_load into a format that can be used
+   * by the gl rendering functions.  (Specifically, pads lines to 32-bit
+   * boundaries and reverses the order of the lines to a bottom-to-top order
+   * in memory.) 
+   * This doesn't play nicely with SDL font rendering; should you want to
+   * use both, you need to load two copies of the font. */
+static void afont_gl_render_char( afont *a, char c );
+  /* Render a single character at the current raster position.  The raster
+   * position will be updated to the appropriate pen position for another
+   * character. 
+   * Used in order to build the display lists. */
+
+afontgl *afont_gl_load( char *path )
+{
+  afont *a;
+  afontgl *ag;
+
+  a = afont_load(path);
+  ag = afont_gl_convert(a);
+  afont_free(a);
+
+  return ag;
+}
+
+afontgl *afont_gl_load_fp( FILE *fp )
+{
+  afont *a;
+  afontgl *ag;
+
+  a = afont_load_fp(fp);
+  ag = afont_gl_convert(a);
+  afont_free(a);
+
+  return ag;
+}
+
+afontgl *afont_gl_convert( afont *a )
+{
+  afontgl *ag;
+  int i;
+
+  ag = (afontgl *)malloc(sizeof(afontgl));
+
+  ag->nchars = a->nchars;
+  ag->base = a->base;
+  ag->baselist = glGenLists(a->nchars);
+  afont_gl_make_bitmaps(a);
+  ag->type = a->type;
+
+  /* Save the old values of GL_UNPACK_ALIGNMENT and GL_UNPACK_LSB_FIRST */
+  glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
+
+  if(ag->type == AFONT_GL_1BIT) {
+    glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  } else if(ag->type == AFONT_GL_8BIT) {
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  }
+
+  /* Generate the call lists */
+  for(i = 0; i < a->nchars; i++) {
+    glNewList(ag->baselist + i, GL_COMPILE);
+      afont_gl_render_char(a, i + a->base);
+    glEndList();
+  }
+
+  /* Restore the saved values */
+  glPopClientAttrib();
+
+  return ag;
+}
+
+void afont_gl_free( afontgl *ag )
+{
+  glDeleteLists(ag->baselist, ag->nchars);
+  free(ag);
+
+  return;
+}
+
+static void afont_gl_make_bitmaps( afont *a )
 {
   if(a->type == AFONT_1BIT) {
     int i, j;
@@ -70,7 +152,7 @@ void afont_gl_make_bitmaps( afont *a )
   return;
 }
 
-void afont_gl_render_char( afont *a, char c )
+static void afont_gl_render_char( afont *a, char c )
 {
   int ch;
 
@@ -92,7 +174,7 @@ void afont_gl_render_char( afont *a, char c )
       /* Draw the pixels */
       glDrawPixels(
               a->glyph_info[ch].bmpx, a->glyph_info[ch].bmpy,
-	      GL_LUMINANCE, GL_UNSIGNED_BYTE,
+              GL_ALPHA, GL_UNSIGNED_BYTE,
               a->glyph_info[ch].bmp);
 
       /* Advance the pen for another character */
@@ -111,62 +193,48 @@ void afont_gl_render_char( afont *a, char c )
               (const GLubyte *)a->glyph_info[ch].bmp);
       break;
 
-  case AFONT_1BIT:
-  case AFONT_8BIT:
-	  break;
+    default:
+      break;
   }
 
   return;
 }
 
-void afont_gl_render_text( afont *a, char *text )
+void afont_gl_render_text( afontgl *ag, char *text )
 {
   int i;
   float color[4];
   float biaszero;
-  float scale[4];
-  float bias[4];
+  char *buf;
 
-  if(a->type == AFONT_GL_1BIT) {
-    glPixelStorei(GL_UNPACK_LSB_FIRST, GL_FALSE);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  } else if(a->type == AFONT_GL_8BIT) {
-    /* This _can't_ be the best way to do this... */
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  /* Set the scale and bias values appropriately */
+  if(ag->type == AFONT_GL_8BIT) {
     glGetFloatv(GL_CURRENT_COLOR, color);
-    glGetFloatv(GL_RED_SCALE, &scale[0]);
-    glGetFloatv(GL_GREEN_SCALE, &scale[1]);
-    glGetFloatv(GL_BLUE_SCALE, &scale[2]);
-    glGetFloatv(GL_ALPHA_SCALE, &scale[3]);
-    glGetFloatv(GL_RED_BIAS, &bias[0]);
-    glGetFloatv(GL_GREEN_BIAS, &bias[1]);
-    glGetFloatv(GL_BLUE_BIAS, &bias[2]);
-    glGetFloatv(GL_ALPHA_BIAS, &bias[3]);
+    glPushAttrib(GL_PIXEL_MODE_BIT);
+
     biaszero = 0.0;
 
-    glPixelTransferf(GL_RED_SCALE, color[0]);
-    glPixelTransferf(GL_GREEN_SCALE, color[1]);
-    glPixelTransferf(GL_BLUE_SCALE, color[2]);
+    glPixelTransferf(GL_RED_SCALE, biaszero);
+    glPixelTransferf(GL_GREEN_SCALE, biaszero);
+    glPixelTransferf(GL_BLUE_SCALE, biaszero);
     glPixelTransferf(GL_ALPHA_SCALE, color[3]);
-    glPixelTransferf(GL_RED_BIAS, biaszero);
-    glPixelTransferf(GL_GREEN_BIAS, biaszero);
-    glPixelTransferf(GL_BLUE_BIAS, biaszero);
+    glPixelTransferf(GL_RED_BIAS, color[0]);
+    glPixelTransferf(GL_GREEN_BIAS, color[1]);
+    glPixelTransferf(GL_BLUE_BIAS, color[2]);
     glPixelTransferf(GL_ALPHA_BIAS, biaszero);
   }
 
-  for(i = 0; text[i]; i++)
-    afont_gl_render_char(a, text[i]);
-
-  if(a->type == AFONT_GL_8BIT) {
-    glPixelTransferf(GL_RED_SCALE, scale[0]);
-    glPixelTransferf(GL_GREEN_SCALE, scale[1]);
-    glPixelTransferf(GL_BLUE_SCALE, scale[2]);
-    glPixelTransferf(GL_ALPHA_SCALE, scale[3]);
-    glPixelTransferf(GL_RED_BIAS, bias[0]);
-    glPixelTransferf(GL_GREEN_BIAS, bias[1]);
-    glPixelTransferf(GL_BLUE_BIAS, bias[2]);
-    glPixelTransferf(GL_ALPHA_BIAS, bias[3]);
+  buf = strdup(text);
+  for(i = 0; text[i]; i++) {
+    buf[i] -= ag->base;
   }
+  glListBase(ag->baselist);
+  glCallLists(strlen(text), GL_UNSIGNED_BYTE, buf);
+  free(buf);
+
+  /* Reset the scale and bias values */
+  if(ag->type == AFONT_GL_8BIT)
+    glPopAttrib();
   
   return;
 }

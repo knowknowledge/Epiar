@@ -1,3 +1,7 @@
+Friday, January 30, 2009
+	Chris Thielen:
+		* Reverted back font changes as Jared has sent me afont-0.7 which should have OpenGL fixes we need (afont is faster than NeHe's freetype/OpenGL code as fonts are pre-rendered and saved)
+
 Monday, January 19, 2009
 	Chris Thielen:
 		* Added the Bitstream Vera fonts package (v1.10) and included it's license under LICENSE.fonts

@@ -13,8 +13,25 @@
 #include <netinet/in.h>
 #else
 #define ntohl(n) afont_ntohl(n)
-static int afont_ntohl( int n );
+
+static int afont_ntohl( int n )
+{
+  int buf = 1;
+  if(*(char *)(&buf) == 0x01) {
+    /* Little-endian */
+    ((char *)(&buf))[0] = ((char *)(&n))[3];
+    ((char *)(&buf))[1] = ((char *)(&n))[2];
+    ((char *)(&buf))[2] = ((char *)(&n))[1];
+    ((char *)(&buf))[3] = ((char *)(&n))[0];
+    return buf;
+  } else {
+    /* Big-endian */
+    return n;
+  }
+}
+
 #endif
+
 
 afont *afont_load( char *path )
 {
@@ -40,11 +57,11 @@ afont *afont_load_fp( FILE *fp )
   char *gip;
 
   fread(tmps, AFONT_HEADER_SIZE, 1, fp);
-  if(strncmp((const char *)tmps, (const char *)AFONT_HEADER, AFONT_HEADER_SIZE))
+  if(strncmp((const char *)tmps, AFONT_HEADER, AFONT_HEADER_SIZE))
     return NULL;
 
   a = (afont *)malloc(sizeof(afont));
-
+  
   fread(&tmpi, 4, 1, fp);
   tmpi = (int)ntohl(tmpi);
   switch(tmpi) {
@@ -58,14 +75,14 @@ afont *afont_load_fp( FILE *fp )
       free(a);
       return NULL;
   }
-
+      
   fread(&tmpi, 4, 1, fp);
   a->nchars = (int)ntohl(tmpi);
 
   fread(&tmpi, 4, 1, fp);
   a->base = (int)ntohl(tmpi);
 
-  a->glyph_info = (struct _afont_glyph *)malloc(sizeof(struct _afont_glyph) * a->nchars);
+  a->glyph_info = (_afont_glyph *)malloc(sizeof(struct _afont_glyph) * a->nchars);
 
   a->bbox_x = 0;
   a->bbox_y = 0;
@@ -74,7 +91,7 @@ afont *afont_load_fp( FILE *fp )
   for(i = 0; i < a->nchars; i++) {
     fread(&tmpi, 4, 1, fp);
     a->glyph_info[i].bmpx = (int)ntohl(tmpi);
-
+    
     if(a->glyph_info[i].bmpx > a->bbox_x)
       a->bbox_x = a->glyph_info[i].bmpx;
 
@@ -94,7 +111,7 @@ afont *afont_load_fp( FILE *fp )
     a->glyph_info[i].advance = (int)ntohl(tmpi);
 
     if(a->type == AFONT_1BIT)
-      total_size += ((a->glyph_info[i].bmpx + 7) / 8) *
+      total_size += ((a->glyph_info[i].bmpx + 7) / 8) * 
               a->glyph_info[i].bmpy;
     else if(a->type == AFONT_8BIT)
       total_size += a->glyph_info[i].bmpx * a->glyph_info[i].bmpy;
@@ -128,7 +145,7 @@ void afont_size_text( afont *a, char *text, int *w, int *h, int *base )
 {
   int maxx, maxy, miny;
   int pen_x;
-
+  
   int i;
   int ch;
 
@@ -149,8 +166,8 @@ void afont_size_text( afont *a, char *text, int *w, int *h, int *base )
 
     if(a->glyph_info[ch].bitmap_top > maxy || i == 0)
       maxy = a->glyph_info[ch].bitmap_top;
-
-    if(a->glyph_info[ch].bitmap_top - a->glyph_info[ch].bmpy < miny ||
+    
+    if(a->glyph_info[ch].bitmap_top - a->glyph_info[ch].bmpy < miny || 
             i == 0)
       miny = a->glyph_info[ch].bitmap_top - a->glyph_info[ch].bmpy;
 
@@ -201,7 +218,7 @@ char *afont_build_bitmap( afont *a, afont_bitmap_type type,
 
     char *bmpp, *bmpp0;
     unsigned char mask, mask0;
-
+    
     x = i % 12;
     y = i / 12;
 
@@ -225,7 +242,7 @@ char *afont_build_bitmap( afont *a, afont_bitmap_type type,
       mask = mask0;
 
       for(gx = 0; gx < a->glyph_info[i].bmpx; gx++, glyphp++) {
-
+      
         switch(type) {
           case AFONT_BITMAP_1:
             if(*(unsigned char *)glyphp > AFONT_SOLID_CUTOFF)
@@ -236,27 +253,27 @@ char *afont_build_bitmap( afont *a, afont_bitmap_type type,
               mask = 1;
               bmpp++;
             }
-
+            
             break;
           case AFONT_BITMAP_8:
             *bmpp = *glyphp;
-
+            
             bmpp++;
-
+            
             break;
           case AFONT_BITMAP_24:
             bmpp[0] = *glyphp;
             bmpp[1] = *glyphp;
             bmpp[2] = *glyphp;
-
+            
             bmpp += 3;
-
+            
             break;
         }
 
       }
     }
-
+    
   }
 
   if(x) *x = bmpx;
@@ -271,7 +288,7 @@ void afont_dump_char( afont *a, char c )
   int i;
 
   char *buf;
-
+  
   ch = c - a->base;
   if(ch < 0 || ch >= a->nchars) return;
 
@@ -287,8 +304,8 @@ void afont_dump_char( afont *a, char c )
       for(y = 0; y < a->glyph_info[ch].bmpy; y++) {
         unsigned char *bp;
         unsigned char mask;
-        for(i = 0, bp = (unsigned char *)a->glyph_info[ch].bmp +
-                y * ((a->glyph_info[ch].bmpx + 7) / 8), mask = 1;
+        for(i = 0, bp = (unsigned char *)(a->glyph_info[ch].bmp + 
+                y * ((a->glyph_info[ch].bmpx + 7) / 8)), mask = 1; 
                 i < a->glyph_info[ch].bmpx; i++) {
           if(*bp & mask) buf[i] = '*'; else buf[i] = ' ';
           mask <<= 1;
@@ -326,21 +343,3 @@ void afont_dump_char( afont *a, char c )
 
   return;
 }
-
-#ifdef SYS_IS_BRAINDEAD
-static int afont_ntohl( int n )
-{
-  int buf = 1;
-  if(*(char *)(&buf) == 0x01) {
-    /* Little-endian */
-    ((char *)(&buf))[0] = ((char *)(&n))[3];
-    ((char *)(&buf))[1] = ((char *)(&n))[2];
-    ((char *)(&buf))[2] = ((char *)(&n))[1];
-    ((char *)(&buf))[3] = ((char *)(&n))[0];
-    return buf;
-  } else {
-    /* Big-endian */
-    return n;
-  }
-}
-#endif // SYS_IS_BRAINDEAD

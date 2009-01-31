@@ -36,6 +36,10 @@ int main( int argc, char **argv ) {
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "options.xml" );
 
+	// load the main font used through the tree
+	Vera8 = new Font( "Vera-8.af" );
+	Vera10 = new Font( "Vera-10.af" );
+
 	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );
 
 #ifdef COMP_MSVC
@@ -48,9 +52,6 @@ int main( int argc, char **argv ) {
 	if( parseArgs( argc, argv ) == 0 ) {
 		Video::Initialize();
 		Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
-		// load the main font used through the tree
-		Vera8 = new Font( "Vera.ttf", 8 );
-		Vera10 = new Font( "Vera.ttf", 10 );
 	
 		Simulation debug( "sim-debug.xml" );
 		debug.Run();

@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 
+#define AFONT_VERSION "0.7"
+
 #define AFONT_HEADER "AFNT0004"
 #define AFONT_HEADER_SIZE 8
 

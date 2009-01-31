@@ -6112,9 +6112,6 @@ case "$target" in
 	LIBS="$LIBS -framework SDL_mixer"
 esac
 
-CFLAGS="$CFLAGS `freetype-config --cflags`"
-LIBS="$LIBS `freetype-config --libs`"
-
 case "$target" in
 	*-*-cygwin* | *-*-mingw32*)
 		CFLAGS="$CFLAGS -DSYS_IS_BRAINDEAD"
