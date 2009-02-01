@@ -8,7 +8,7 @@
 
 #include "Debug/graphics.h"
 #include "includes.h"
-#include "Graphics/image2.h"
+#include "Graphics/image.h"
 #include "Graphics/video.h"
 
 void graphics_demo(void) {
@@ -29,11 +29,14 @@ void graphics_demo(void) {
 	Video::DrawCircle(750, 550, 50, 1., 1., 1., 1.);
 
 	// load an image and draw it in the center of the screen
-	Image2 planet2("planet2.png");
+	Image planet2("planet2.png");
 	planet2.DrawCentered(400, 300, 0.);
 
-	Image2 frigate("terran-frigate.png");
+	Image frigate("terran-frigate.png");
 	frigate.DrawCentered(400, 300, 45.);
+
+	Image hud("hud_radarnav.png");
+	hud.Draw(50, 5);
 
 	Video::Update();
 

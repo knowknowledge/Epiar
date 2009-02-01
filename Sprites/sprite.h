@@ -45,7 +45,7 @@ class Sprite {
 		}
 		void SetImage( Image *image ) {
 			this->image = image;
-            this->radarSize = ( image->GetWidth() + image->GetHeight() ) /(2);
+			this->radarSize = ( image->GetWidth() + image->GetHeight() ) /(2);
 		}
 		void SetRadarColor( Color col ){
 			this->radarColor = col;

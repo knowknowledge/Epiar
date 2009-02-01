@@ -64,7 +64,7 @@ am_Epiar_OBJECTS = main.$(OBJEXT) ai.$(OBJEXT) input.$(OBJEXT) \
 	font.$(OBJEXT) image.$(OBJEXT) video.$(OBJEXT) \
 	archive.$(OBJEXT) lua.$(OBJEXT) xml.$(OBJEXT) file.$(OBJEXT) \
 	ui_button.$(OBJEXT) ui_label.$(OBJEXT) debug.$(OBJEXT) \
-	image2.$(OBJEXT) graphics.$(OBJEXT)
+	graphics.$(OBJEXT)
 Epiar_OBJECTS = $(am_Epiar_OBJECTS)
 Epiar_DEPENDENCIES = Lua/src/liblua.a
 DEFAULT_INCLUDES = -I.
@@ -218,7 +218,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 UI/ui_widget.cpp UI/ui_window.cpp UI/ui.cpp Graphics/afont/afont_base.cpp \
                 Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
                 Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
-                Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp Graphics/image2.cpp \
+                Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp \
                 Debug/graphics.cpp
 
 Epiar_LDADD = Lua/src/liblua.a
@@ -328,7 +328,6 @@ include ./$(DEPDIR)/graphics.Po
 include ./$(DEPDIR)/hashtbl.Po
 include ./$(DEPDIR)/hud.Po
 include ./$(DEPDIR)/image.Po
-include ./$(DEPDIR)/image2.Po
 include ./$(DEPDIR)/input.Po
 include ./$(DEPDIR)/log.Po
 include ./$(DEPDIR)/lua.Po
@@ -883,20 +882,6 @@ debug.obj: Utilities/debug.cpp
 #	source='Utilities/debug.cpp' object='debug.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o debug.obj `if test -f 'Utilities/debug.cpp'; then $(CYGPATH_W) 'Utilities/debug.cpp'; else $(CYGPATH_W) '$(srcdir)/Utilities/debug.cpp'; fi`
-
-image2.o: Graphics/image2.cpp
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT image2.o -MD -MP -MF $(DEPDIR)/image2.Tpo -c -o image2.o `test -f 'Graphics/image2.cpp' || echo '$(srcdir)/'`Graphics/image2.cpp
-	mv -f $(DEPDIR)/image2.Tpo $(DEPDIR)/image2.Po
-#	source='Graphics/image2.cpp' object='image2.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o image2.o `test -f 'Graphics/image2.cpp' || echo '$(srcdir)/'`Graphics/image2.cpp
-
-image2.obj: Graphics/image2.cpp
-	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT image2.obj -MD -MP -MF $(DEPDIR)/image2.Tpo -c -o image2.obj `if test -f 'Graphics/image2.cpp'; then $(CYGPATH_W) 'Graphics/image2.cpp'; else $(CYGPATH_W) '$(srcdir)/Graphics/image2.cpp'; fi`
-	mv -f $(DEPDIR)/image2.Tpo $(DEPDIR)/image2.Po
-#	source='Graphics/image2.cpp' object='image2.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o image2.obj `if test -f 'Graphics/image2.cpp'; then $(CYGPATH_W) 'Graphics/image2.cpp'; else $(CYGPATH_W) '$(srcdir)/Graphics/image2.cpp'; fi`
 
 graphics.o: Debug/graphics.cpp
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT graphics.o -MD -MP -MF $(DEPDIR)/graphics.Tpo -c -o graphics.o `test -f 'Debug/graphics.cpp' || echo '$(srcdir)/'`Debug/graphics.cpp

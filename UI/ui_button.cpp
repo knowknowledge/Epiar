@@ -25,9 +25,9 @@ Button::Button( int x, int y, int w, int h, string label ) {
 	
 	// Load the bitmaps needed for drawing
 	bitmap = new Image( "ui_button.png" );
-	bitmap->SetScaling( w, h );
+	//bitmap->Resize( w, h );
 	bitmap_pressed = new Image( "ui_button_pressed.png" );
-	bitmap_pressed->SetScaling( w, h );
+	//bitmap_pressed->Resize( w, h );
 }
 
 Button::~Button() {
@@ -42,7 +42,7 @@ void Button::Draw( int relx, int rely ) {
 	y = rely - GetY();
 
 	// draw the button (loaded image is simply scaled)
-	bitmap->DrawAbsolute( x + (w / h), y + (h / 2) );
+	bitmap->Draw( x + (w / h), y + (h / 2) );
 
 	// draw the label
 	Vera8->SetColor( 1., 1., 1. );

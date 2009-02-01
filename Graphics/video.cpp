@@ -130,10 +130,9 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	glViewport( 0, 0, w, h );
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	gluOrtho2D( 0, w, 0, h );
+	glOrtho( 0, w, h, 0, -1, 1);
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
-	glTranslatef( 0.375, 0.375, 0.0 );
 
 	Video::w = w;
 	Video::h = h;

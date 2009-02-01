@@ -8,6 +8,9 @@ Saturday, January 31, 2009
 		* Fixed a bug in DrawCircle where circle would be incomplete
 		(needed to go a little more than once around for the verticies
 		to fit together in OGL logic or something)
+		* Fixed the image and coordinate issues but reverted back to
+		  video buffer style coordinates and now all the math and
+		  angles need to be re-examined...
 
 Friday, January 30, 2009
 	Chris Thielen:

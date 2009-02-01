@@ -1,5 +1,5 @@
 /*
- * Filename      : image2.h
+ * Filename      : image.h
  * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 31, 2009
  * Purpose       : Image loading and display
@@ -15,20 +15,23 @@
  *                 dimensions, or virtual width/height, stored in w, h.
  */
 
-#ifndef __H_IMAGE2__
-#define __H_IMAGE2__
+#ifndef __H_IMAGE__
+#define __H_IMAGE__
 
 #include "includes.h"
 
-class Image2 {
+class Image {
 	public:
+		Image();
 		// Create instance by loading image from file
-		Image2( string filename );
+		Image( string filename );
 
 		// Load image from file
 		bool Load( string filename );
 		// Load image from buffer
 		bool Load( unsigned char *buf, int bufSize );
+		// Load image from FILE *
+		bool Load( FILE *fp, int size );
 
 		// Get information about image dimensions (always the virtual/effective size)
 		int GetWidth( void ) { return w; };
@@ -40,6 +43,8 @@ class Image2 {
 		void Draw( int x, int y, float angle = 0. );
 		// Draw the image centered on (x,y) (angle in degrees)
 		void DrawCentered( int x, int y, float angle = 0. );
+		// Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
+		void DrawTiled( int x, int y, int w, int h );
 
 	private:
 		// Converts an SDL surface to an OpenGL texture
@@ -59,5 +64,5 @@ class Image2 {
 		GLuint image; // OpenGL pointer to texture
 };
 
-#endif // __H_IMAGE2__
+#endif // __H_IMAGE__
 

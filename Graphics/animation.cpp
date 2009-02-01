@@ -113,7 +113,7 @@ bool Animation::Draw( int x, int y, float ang ) {
 		frame = &frames[0];
 	}
 
-	frame->Draw( x, y, ang );
+	frame->DrawCentered( x, y, ang );
 
 	return( finished );
 }

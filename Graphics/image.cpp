@@ -1,19 +1,25 @@
 /*
- * Filename      : image2.cpp
+ * Filename      : image.cpp
  * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 31, 2009
  * Purpose       : Image loading and display
- * Notes         : See this note section in image2.h for an important clarification about the handling
+ * Notes         : See this note section in image.h for an important clarification about the handling
  *                 of non-power of two image sizes and the difference between virtual/effective dimensions
  *                 and real dimensions.
  */
 
-#include "Graphics/image2.h"
+#include "Graphics/image.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
 
+Image::Image() {
+	// Initialize variables
+	w = h = rw = rh = image = 0;
+	scale_w = scale_h = 1.;
+}
+
 // Create instance by loading image from file
-Image2::Image2( string filename ) {
+Image::Image( string filename ) {
 	// Initialize variables
 	w = h = rw = rh = image = 0;
 	scale_w = scale_h = 1.;
@@ -22,7 +28,7 @@ Image2::Image2( string filename ) {
 }
 
 // Load image from file
-bool Image2::Load( string filename ) {
+bool Image::Load( string filename ) {
 	SDL_Surface *s = NULL;
 
 	if( ( s = IMG_Load( filename.c_str() ) ) == NULL ) {
@@ -44,7 +50,7 @@ bool Image2::Load( string filename ) {
 }
 
 // Load image from buffer
-bool Image2::Load( unsigned char *buf, int bufSize ) {
+bool Image::Load( unsigned char *buf, int bufSize ) {
 	SDL_RWops *rw;
 	SDL_Surface *s = NULL;
 
@@ -74,8 +80,43 @@ bool Image2::Load( unsigned char *buf, int bufSize ) {
 	return( true );
 }
 
+// Load image from FILE *. fp must be valid (open)
+bool Image::Load( FILE *fp, int size ) {
+	SDL_RWops *rw = NULL;
+	SDL_Surface *s = NULL;
+
+	if( !fp ) {
+		Log::Warning( "Image loading failed. Invalid FILE pointer" );
+		return( false );
+	}
+
+	rw = SDL_RWFromFP( fp, size );
+	if( !rw ) {
+		Log::Warning( "Image loading failed. Could not create RWops" );
+		return( false );
+	}
+
+	s = IMG_Load_RW( rw, 0 );
+	SDL_FreeRW( rw );
+	if( !s ) {
+		Log::Warning( "Image loading failed. Could not load image from RWops" );
+		return( false );
+	}
+
+	w = s->w;
+	h = s->h;
+
+	if( ConvertToTexture( s ) == false ) {
+		Log::Warning( "Failed to load image from buffer" );
+		SDL_FreeSurface( s );
+		return( false );
+	}
+
+	return( true );
+}
+
 // Draw the image (angle is in degrees)
-void Image2::Draw( int x, int y, float angle ) {
+void Image::Draw( int x, int y, float angle ) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
@@ -98,7 +139,7 @@ void Image2::Draw( int x, int y, float angle ) {
 	// avoid trig when you can
 	if( angle != 0. ) {
 		Trig *trig = Trig::Instance();
-		float a = -(float)trig->DegToRad( angle );
+		float a = (float)trig->DegToRad( angle );
 		// ax/ay are the coordinate to rotate "about", hence "about points", "about x", "about y"
 		float ax = (float)x + (w / 2.);
 		float ay = (float)y + (h / 2.);
@@ -126,16 +167,14 @@ void Image2::Draw( int x, int y, float angle ) {
 	glBindTexture( GL_TEXTURE_2D, image );
 
 	glPushMatrix();
-	glBegin( GL_POLYGON );
-	glTexCoord2f( 0., scale_h );
-	glVertex2f( ulx, uly );
-	glTexCoord2f( scale_w, scale_h );
-	glVertex2f( urx, ury );
-	glTexCoord2f( scale_w, 0. );
-	glVertex2f( lrx, lry );
-	glTexCoord2f( 0., 0. );
-	glVertex2f( llx, lly );
+
+	glBegin( GL_QUADS );
+	glTexCoord2f( 0., 0. ); glVertex2f( llx, lly );
+	glTexCoord2f( scale_w, 0. ); glVertex2f( lrx, lry );
+	glTexCoord2f( scale_w, scale_h ); glVertex2f( urx, ury );
+	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly );
 	glEnd();
+
 	glPopMatrix();
 
 	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
@@ -146,12 +185,12 @@ void Image2::Draw( int x, int y, float angle ) {
 }
 
 // Draw the image centered on (x,y)
-void Image2::DrawCentered( int x, int y, float angle ) {
+void Image::DrawCentered( int x, int y, float angle ) {
 	Draw( x - (w / 2), y - (h / 2), angle );
 }
 
 // Returns the next highest power of two if num is not a power of two
-int Image2::PowerOfTwo(int num) {
+int Image::PowerOfTwo(int num) {
 	float q = (float)num;
 
 	if(q != 1.)
@@ -169,7 +208,7 @@ int Image2::PowerOfTwo(int num) {
 }
 
 // Converts an SDL surface to an OpenGL texture
-bool Image2::ConvertToTexture( SDL_Surface *s ) {
+bool Image::ConvertToTexture( SDL_Surface *s ) {
 	assert(s);
 
 	// delete an old loaded image if one eixsts
@@ -202,14 +241,26 @@ bool Image2::ConvertToTexture( SDL_Surface *s ) {
 	GLenum internal_format;
  	GLenum img_format, img_type;
 	switch (s->format->BitsPerPixel) {
-		case 32: img_format = GL_RGBA; img_type = GL_UNSIGNED_BYTE;
-			internal_format = GL_RGBA8; break;
-		case 24: img_format = GL_RGB; img_type = GL_UNSIGNED_BYTE;
-			internal_format = GL_RGB8; break;
-		case 16: img_format = GL_RGBA; img_type = GL_UNSIGNED_SHORT;
-			internal_format = GL_RGB5_A1; break;
-		default: img_format = GL_LUMINANCE; img_type = GL_UNSIGNED_BYTE;
-			internal_format=GL_LUMINANCE8; break;
+		case 32:
+			img_format = GL_RGBA;
+			img_type = GL_UNSIGNED_BYTE;
+			internal_format = GL_RGBA8;
+			break;
+		case 24:
+			img_format = GL_RGB;
+			img_type = GL_UNSIGNED_BYTE;
+			internal_format = GL_RGB8;
+			break;
+		case 16:
+			img_format = GL_RGBA;
+			img_type = GL_UNSIGNED_SHORT;
+			internal_format = GL_RGB5_A1;
+			break;
+		default:
+			img_format = GL_LUMINANCE;
+			img_type = GL_UNSIGNED_BYTE;
+			internal_format=GL_LUMINANCE8;
+			break;
 	}
 
 	// generate the texture
@@ -218,18 +269,33 @@ bool Image2::ConvertToTexture( SDL_Surface *s ) {
 	// use the bitmap data stored in the SDL_Surface
 	glBindTexture( GL_TEXTURE_2D, (unsigned int)image );
 
-	// these settings depend entirely on how you intend to use the texture!
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-
-	// turn on linear filtering
 	// upload the texture data, letting OpenGL do any required conversion.
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, w, h, 0, img_format, img_type, s->pixels );
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, rw, rh, 0, img_format, img_type, s->pixels );
+
+	// linear filtering
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
 	return( true );
 }
 
-SDL_Surface *Image2::ExpandCanvas( SDL_Surface *s, int w, int h ) {
+// Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
+void Image::DrawTiled( int x, int y, int w, int h ) {
+	// set the clipping region to avoid tiles "spilling" out
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(x, y + h, w, h);
+
+	for( int j = 0; j < h; j += this->h) {
+		for( int i = 0; i < w; i += this->w) {
+			Draw( x + i, y + j );
+		}
+	}
+	
+	// restore previous clipping region
+	glDisable(GL_SCISSOR_TEST);
+}
+
+SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	SDL_Surface *expanded = NULL;
 	SDL_Surface *original = s;
 	

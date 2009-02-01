@@ -17,12 +17,12 @@
 #define ALERT_DELAY 3500
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
-/* Location on screen of hull integrity bar (x,y) coord is top-left */
+/* Location on screen of hull integrity bar (x,y) coord is lower-left */
 #define HULL_INTEGRITY_X     5
-#define HULL_INTEGRITY_Y     5
+#define HULL_INTEGRITY_Y     578
 /* Center of radar in px coords. Derrived from hud_radarnav.png */
 #define RADAR_MIDDLE_X      61
-#define RADAR_MIDDLE_Y      61
+#define RADAR_MIDDLE_Y      561
 /* Width/height of radar. Derrived from hud_radarnav.png */
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
@@ -75,14 +75,14 @@ void Hud::Draw( SpriteList &sprites ) {
 
 void Hud::DrawHullIntegrity() {
 	short int pen_x = HULL_INTEGRITY_X;
-	short int pen_y = Video::GetHeight() - HULL_INTEGRITY_Y;
+	short int pen_y = HULL_INTEGRITY_Y;
 	
 	/* Draw the backing */
-	im_hullstr->DrawAbsolute( pen_x, pen_y );
+	im_hullstr->Draw( pen_x, pen_y );
 	/* Draw the left side of the bar */
 	pen_x += 40;
-	pen_y -= 5;
-	im_hullstr_leftbar->DrawAbsolute( pen_x, pen_y );
+	pen_y += 5;
+	im_hullstr_leftbar->Draw( pen_x, pen_y );
 	
 	/* Calculate how long the bar shouuld be based on player's hull health */
 	Player *player = Player::Instance();
@@ -91,22 +91,22 @@ void Hud::DrawHullIntegrity() {
 	
 	pen_x += 3;
 	for( int i = 0; i < bar_len; i++ ) {
-		im_hullstr_bar->DrawAbsolute( pen_x + i, pen_y );
+		im_hullstr_bar->Draw( pen_x + i, pen_y );
 	}
 	
 	/* Draw the right side of the bar (43 is where the left bar ends,
 	 * plus bar_len, the length of the middle part of the bar, which decreases
 	 * with the player's health */
 	pen_x += bar_len;
-	im_hullstr_rightbar->DrawAbsolute( pen_x, pen_y );
+	im_hullstr_rightbar->Draw( pen_x, pen_y );
 }
 
 void Hud::DrawShieldIntegrity() {
-	im_shieldstat->DrawAbsolute( 35, Video::GetHeight() - 30 );
+	im_shieldstat->Draw( 35, Video::GetHeight() - 105 );
 }
 
 void Hud::DrawRadarNav( SpriteList &sprites ) {
-	im_radarnav->DrawAbsolute( Video::GetWidth() - 129, Video::GetHeight() - 5 );
+	im_radarnav->Draw( Video::GetWidth() - 129, RADAR_MIDDLE_Y - im_radarnav->GetHalfHeight() );
 	
 	Radar::Draw( sprites );
 }
@@ -136,7 +136,7 @@ void Radar::SetVisibility( int visibility ) {
 void Radar::Draw( SpriteList &sprites ) {
 	list<Sprite *>::iterator i;
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
-	short int radar_mid_y = Video::GetHeight() - 5 - RADAR_MIDDLE_Y;
+	short int radar_mid_y = RADAR_MIDDLE_Y - 5;
 	int radarSize;
 
 	for( i = sprites.Enumerate(); i != (list<Sprite *>::iterator)NULL; i = sprites.Enumerate( i ) ) {

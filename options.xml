@@ -7,7 +7,7 @@
 	<video>
 		<w>800</w>
 		<h>600</h>
-		<bpp>32</bpp>
+		<bpp>16</bpp>
 		<fullscreen>0</fullscreen>
 	</video>
 	<simulation>

@@ -61,6 +61,8 @@ void Ship::Rotate( int direction ) {
 	while( angle > 360. ) angle -= 360.;
 	
 	SetAngle( angle );
+
+	cout << "ship rotated, angle is " << angle << endl;
 }
 
 void Ship::Accelerate( void ) {
@@ -104,7 +106,7 @@ void Ship::Draw( void ) {
 		float direction = GetAngle();
 		float tx, ty;
 		
-		trig->RotatePoint( (float)(position.GetScreenX() - model->GetThrustOffset()), (float)position.GetScreenY(), (float)position.GetScreenX(), (float)position.GetScreenY(), &tx, &ty, trig->DegToRad( -direction ) );
+		trig->RotatePoint( (float)(position.GetScreenX() - model->GetThrustOffset()), (float)position.GetScreenY(), (float)position.GetScreenX(), (float)position.GetScreenY(), &tx, &ty, trig->DegToRad( direction ) );
 		flareAnimation->Draw( (int)tx, (int)ty, direction );
 		
 		status.isAccelerating = false;

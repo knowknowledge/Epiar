@@ -49,7 +49,7 @@ void Sprite::Draw( void ) {
 	wy = worldPosition.GetScreenY();
 	
 	if( image ) {
-		image->Draw( wx, wy, angle );
+		image->DrawCentered( wx, wy, angle );
 	} else {
 		Log::Warning( "Attempt to draw a sprite before an image was assigned." );
 	}
