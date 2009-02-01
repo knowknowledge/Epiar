@@ -23,8 +23,6 @@ File::File( string filename ) {
 }
 
 bool File::Open( string filename ) {
-	cout << "opening file " << filename << endl;
-	
 	if( DEBUG ) {
 		// We will check to see if the file exists in the filesystem.
 		// If it does not, we will check for it in the .tgz file

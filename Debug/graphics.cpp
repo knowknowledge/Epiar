@@ -30,7 +30,10 @@ void graphics_demo(void) {
 
 	// load an image and draw it in the center of the screen
 	Image2 planet2("planet2.png");
-	planet2.Draw(400, 300, 0.);
+	planet2.DrawCentered(400, 300, 0.);
+
+	Image2 frigate("terran-frigate.png");
+	frigate.DrawCentered(400, 300, 45.);
 
 	Video::Update();
 

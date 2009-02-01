@@ -103,7 +103,7 @@ void Image2::Draw( int x, int y, float angle ) {
 		float ax = (float)x + (w / 2.);
 		float ay = (float)y + (h / 2.);
 
-		trig->RotatePoint( (float)x, (float)y, ax, ay, (float *)&ulx, (float *)&uly, a );
+		trig->RotatePoint( (float)x, (float)y + h, ax, ay, (float *)&ulx, (float *)&uly, a );
 		trig->RotatePoint( (float)x + w, (float)y + h, ax, ay, (float *)&urx, (float *)&ury, a );
 		trig->RotatePoint( (float)x, (float)y, ax, ay, (float *)&llx, (float *)&lly, a );
 		trig->RotatePoint( (float)x + w, (float)y, ax, ay, (float *)&lrx, (float *)&lry, a );
