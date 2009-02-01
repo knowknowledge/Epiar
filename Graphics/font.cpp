@@ -68,7 +68,7 @@ void Font::RenderCentered( int x, int y, char *text ) {
 	int w, h, base;
 
 	// determine size of text
-	afont_gl_size_text( font, text, &w, &h, &base );
+	afont_size_text( font->orig, text, &w, &h, &base );
 
 	Render( x - (w / 2), y + (h / 2) - base, text );
 }

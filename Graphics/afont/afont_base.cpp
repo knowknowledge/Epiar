@@ -187,7 +187,7 @@ char *afont_build_bitmap( afont *a, afont_bitmap_type type,
   char *buf;
   int bmpx, bmpy, bmpsize;
   int i;
-  int pitch;
+  int pitch = 0;
 
   /* Determine bitmap size */
   bmpx = a->bbox_x * 12;
@@ -216,8 +216,8 @@ char *afont_build_bitmap( afont *a, afont_bitmap_type type,
     char *glyphp;
     int gx, gy;
 
-    char *bmpp, *bmpp0;
-    unsigned char mask, mask0;
+    char *bmpp, *bmpp0 = 0;
+    unsigned char mask = 0, mask0 = 0;
     
     x = i % 12;
     y = i / 12;

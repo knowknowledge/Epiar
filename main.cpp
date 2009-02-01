@@ -8,6 +8,7 @@
  */
 
 #include "common.h"
+#include "Debug/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
@@ -101,6 +102,15 @@ int parseArgs( int argc, char **argv ) {
 			Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 		
 			ui_demo(); // temporary function
+
+			Video::Shutdown();
+			return( -1 );
+		} else if( parm == "graphics-demo" ) {
+			// this switch is temporary while the graphics subsystem is developed/debugged
+			Video::Initialize();
+			Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+		
+			graphics_demo(); // temporary function
 
 			Video::Shutdown();
 			return( -1 );

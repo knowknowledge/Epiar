@@ -38,21 +38,15 @@ Button::~Button() {
 void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
-	cout << "button specific draw, relx = " << relx << ", rely = " << rely << endl;
-	
 	x = GetX() + relx;
 	y = rely - GetY();
 
 	// draw the button (loaded image is simply scaled)
-	cout << "start button draw call" << endl;
-	Debug::Set();
 	bitmap->DrawAbsolute( x + (w / h), y + (h / 2) );
-	Debug::Unset();
-	cout << "end button draw call" << endl;
+
 	// draw the label
 	Vera8->SetColor( 1., 1., 1. );
 	Vera8->RenderCentered( x + (w / 2), y - (h / 2), (char *)label.c_str() );
-	cout << "button (" << x << ", " << y << ")" << endl;
 }
 
 void Button::Focus( int x, int y ) {

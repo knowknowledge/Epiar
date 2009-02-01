@@ -2,7 +2,10 @@
 
 /* See the file LICENSE for copyright and license information */
 
-#include "includes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <GL/gl.h>
 
 #include "afont_gl.h"
 
@@ -26,7 +29,7 @@ afontgl *afont_gl_load( char *path )
 
   a = afont_load(path);
   ag = afont_gl_convert(a);
-  afont_free(a);
+  ag->orig = a;
 
   return ag;
 }
@@ -38,7 +41,7 @@ afontgl *afont_gl_load_fp( FILE *fp )
 
   a = afont_load_fp(fp);
   ag = afont_gl_convert(a);
-  afont_free(a);
+  ag->orig = a;
 
   return ag;
 }
@@ -82,6 +85,7 @@ afontgl *afont_gl_convert( afont *a )
 void afont_gl_free( afontgl *ag )
 {
   glDeleteLists(ag->baselist, ag->nchars);
+  afont_free(ag->orig);
   free(ag);
 
   return;

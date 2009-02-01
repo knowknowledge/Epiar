@@ -5,7 +5,9 @@
 #ifndef _afont_gl_h
 #define _afont_gl_h
 
-#include "includes.h"
+#include <stdio.h>
+#include <GL/gl.h>
+
 #include "afont.h"
 
 typedef struct afontgl afontgl;
@@ -15,6 +17,7 @@ struct afontgl {
   int nchars;
   int base;
   GLuint baselist;
+  afont *orig;
 };
 
 afontgl *afont_gl_load( char *path );

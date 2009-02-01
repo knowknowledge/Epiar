@@ -1,3 +1,9 @@
+Saturday, January 31, 2009
+	Chris Thielen:
+		* Upgraded to afont-0.9
+		* Created Debug/graphics.cpp, Graphics/image2.cpp and
+		--graphics-demo to work on replacement Image class
+
 Friday, January 30, 2009
 	Chris Thielen:
 		* Reverted back font changes as Jared has sent me afont-0.7 which should have OpenGL fixes we need (afont is faster than NeHe's freetype/OpenGL code as fonts are pre-rendered and saved)
