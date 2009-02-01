@@ -5,6 +5,9 @@ Saturday, January 31, 2009
 		--graphics-demo to work on replacement Image class
 		* Graphics work, ensuring functions work, writing clean new
 		Image class (currently called Image2)
+		* Fixed a bug in DrawCircle where circle would be incomplete
+		(needed to go a little more than once around for the verticies
+		to fit together in OGL logic or something)
 
 Friday, January 30, 2009
 	Chris Thielen:
