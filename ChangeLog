@@ -3,6 +3,8 @@ Saturday, January 31, 2009
 		* Upgraded to afont-0.9
 		* Created Debug/graphics.cpp, Graphics/image2.cpp and
 		--graphics-demo to work on replacement Image class
+		* Graphics work, ensuring functions work, writing clean new
+		Image class (currently called Image2)
 
 Friday, January 30, 2009
 	Chris Thielen:

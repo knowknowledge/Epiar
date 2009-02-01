@@ -114,6 +114,9 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 		return( false );
 	}
 
+	// set window title
+	SDL_WM_SetCaption("Epiar","Epiar");
+
 	// set up some needed opengl facilities
 	glEnable( GL_TEXTURE_2D );
 	glShadeModel( GL_SMOOTH );
@@ -173,7 +176,7 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
 	glColor3f( r, g, b );
-	glRecti( x, y, x + w, y - h );
+	glRecti( x, y, x + w, y + h );
 }
 
 // same as above but takes alpha
@@ -181,7 +184,7 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, flo
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glColor4f( r, g, b, a );
-	glRecti( x, y, x + w, y - h );
+	glRecti( x, y, x + w, y + h );
 }
 
 void Video::DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b) {
@@ -197,7 +200,7 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glColor3f(r,g,b);
 	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
-	for(double angle = 0; angle <= 2*M_PI; angle = angle + 0.1)
+	for(double angle = 0; angle <= 2.5 * M_PI; angle = angle + 0.1)
 	{
 		glVertex2d(radius * cos(angle) + x, radius * sin(angle) + y);
 	}
@@ -208,7 +211,7 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 	//TODO: Make this draw a filled circle.
 	glColor3f(r,g,b);
 	glBegin(GL_LINE_STRIP);
-	for(double ang = 0; ang <= 2*M_PI; ang = ang + 0.1)
+	for(double ang = 0; ang <= 2.5 * M_PI; ang = ang + 0.1)
 	{
 		glVertex2d(radius * cos(ang) + x, radius * sin(ang) + y);
 	}

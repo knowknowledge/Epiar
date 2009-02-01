@@ -5,8 +5,8 @@
 	<version-macro>0</version-macro>
 	<logging>0</logging>
 	<video>
-		<w>1280</w>
-		<h>1024</h>
+		<w>800</w>
+		<h>600</h>
 		<bpp>32</bpp>
 		<fullscreen>0</fullscreen>
 	</video>
