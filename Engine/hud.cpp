@@ -17,12 +17,12 @@
 #define ALERT_DELAY 3500
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
-/* Location on screen of hull integrity bar (x,y) coord is lower-left */
+/* Location on screen of hull integrity bar (x,y) coord is top-left */
 #define HULL_INTEGRITY_X     5
-#define HULL_INTEGRITY_Y     578
+#define HULL_INTEGRITY_Y     5
 /* Center of radar in px coords. Derrived from hud_radarnav.png */
 #define RADAR_MIDDLE_X      61
-#define RADAR_MIDDLE_Y      561
+#define RADAR_MIDDLE_Y      61
 /* Width/height of radar. Derrived from hud_radarnav.png */
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
@@ -102,11 +102,11 @@ void Hud::DrawHullIntegrity() {
 }
 
 void Hud::DrawShieldIntegrity() {
-	im_shieldstat->Draw( 35, Video::GetHeight() - 105 );
+	im_shieldstat->Draw( 35, 30 );
 }
 
 void Hud::DrawRadarNav( SpriteList &sprites ) {
-	im_radarnav->Draw( Video::GetWidth() - 129, RADAR_MIDDLE_Y - im_radarnav->GetHalfHeight() );
+	im_radarnav->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw( sprites );
 }
@@ -136,7 +136,7 @@ void Radar::SetVisibility( int visibility ) {
 void Radar::Draw( SpriteList &sprites ) {
 	list<Sprite *>::iterator i;
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
-	short int radar_mid_y = RADAR_MIDDLE_Y - 5;
+	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
 	for( i = sprites.Enumerate(); i != (list<Sprite *>::iterator)NULL; i = sprites.Enumerate( i ) ) {

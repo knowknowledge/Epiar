@@ -61,8 +61,6 @@ void Ship::Rotate( int direction ) {
 	while( angle > 360. ) angle -= 360.;
 	
 	SetAngle( angle );
-
-	cout << "ship rotated, angle is " << angle << endl;
 }
 
 void Ship::Accelerate( void ) {
@@ -71,7 +69,7 @@ void Ship::Accelerate( void ) {
 	float angle = trig->DegToRad( GetAngle() );
 
 	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
-	                         trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
+	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
 	
 	SetMomentum( momentum );
 	
