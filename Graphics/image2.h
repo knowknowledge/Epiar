@@ -42,12 +42,20 @@ class Image2 {
 		void DrawCentered( int x, int y, float angle = 0. );
 
 	private:
+		// Converts an SDL surface to an OpenGL texture
+		bool ConvertToTexture( SDL_Surface *s );
 		// Expands surface 's' to width/height of w/h, keeping the original image in the upper-left
 		SDL_Surface *ExpandCanvas( SDL_Surface *s, int w, int h );
+		// Returns the next highest power of two if num is not a power of two
+		int PowerOfTwo(int num);
 
 		int w, h; // virtual w/h (effective, same as original file)
 		int rw, rh; // real w/h, size of expanded canvas (image) should expansion be needed
 		            //   to meet power of two requirements
+		float scale_w, scale_h; // used by draw() on images with expanded canvases to know what percent of
+		                        // the larger canvas actually contains the original image (<= 1.0)
+		                        // defaults = 1.0, this factor is always used, so non-expanded images are
+		                        // simply "scaled" at 1.0
 		GLuint image; // OpenGL pointer to texture
 };
 
