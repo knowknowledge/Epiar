@@ -8,6 +8,7 @@
 
 #include "Debug/graphics.h"
 #include "includes.h"
+#include "Graphics/image2.h"
 #include "Graphics/video.h"
 
 void graphics_demo(void) {
@@ -26,6 +27,10 @@ void graphics_demo(void) {
 	Video::DrawCircle(50, 550, 50, 1., 1., 1., 1.);
 	Video::DrawCircle(750, 50, 50, 1., 1., 1., 1.);
 	Video::DrawCircle(750, 550, 50, 1., 1., 1., 1.);
+
+	// load an image and draw it in the center of the screen
+	Image2 planet2("planet2.png");
+	planet2.Draw(400, 300, 0.);
 
 	Video::Update();
 

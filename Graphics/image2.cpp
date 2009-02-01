@@ -10,6 +10,7 @@
 
 #include "Graphics/image2.h"
 #include "Utilities/log.h"
+#include "Utilities/trig.h"
 
 // Create instance by loading image from file
 Image2::Image2( string filename ) {
@@ -36,7 +37,6 @@ bool Image2::Load( string filename ) {
 	if( ConvertToTexture( s ) == false ) {
 		Log::Warning( "Failed to load %s", filename.c_str() );
 		SDL_FreeSurface( s );
-
 		return( false );
 	}
 
@@ -45,17 +45,109 @@ bool Image2::Load( string filename ) {
 
 // Load image from buffer
 bool Image2::Load( unsigned char *buf, int bufSize ) {
+	SDL_RWops *rw;
+	SDL_Surface *s = NULL;
 
+	rw = SDL_RWFromMem( buf, bufSize );
+	if( !rw ) {
+		Log::Warning( "Image loading failed. Could not create RWops" );
+		return( false );
+	}
+
+	s = IMG_Load_RW( rw, 0 );
+	SDL_FreeRW( rw );
+
+	if( !s ) {
+		Log::Warning( "Image loading failed. Could not load image from RWops" );
+		return( false );
+	}
+
+	w = s->w;
+	h = s->h;
+
+	if( ConvertToTexture( s ) == false ) {
+		Log::Warning( "Failed to load image from buffer" );
+		SDL_FreeSurface( s );
+		return( false );
+	}
+
+	return( true );
 }
 
-// Draw the image
+// Draw the image (angle is in degrees)
 void Image2::Draw( int x, int y, float angle ) {
+	// the four rotated (if needed) corners of the image
+	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear The Background Color To Black
+	glClearDepth(1.0); // Enables Clearing Of The Depth Buffer
+	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
+	glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
+	glEnable(GL_TEXTURE_2D); // Enable 2D Texture Mapping
+
+	if( !image ) {
+		Log::Warning( "Trying to draw without loading an image first." );
+		return;
+	}
+
+	// bind the image and draw
+ 	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
+	// calculate the coordinates of the quad	
+	// avoid trig when you can
+	if( angle != 0. ) {
+		Trig *trig = Trig::Instance();
+		float a = -(float)trig->DegToRad( angle );
+		// ax/ay are the coordinate to rotate "about", hence "about points", "about x", "about y"
+		float ax = (float)x + (w / 2.);
+		float ay = (float)y + (h / 2.);
+
+		trig->RotatePoint( (float)x, (float)y, ax, ay, (float *)&ulx, (float *)&uly, a );
+		trig->RotatePoint( (float)x + w, (float)y + h, ax, ay, (float *)&urx, (float *)&ury, a );
+		trig->RotatePoint( (float)x, (float)y, ax, ay, (float *)&llx, (float *)&lly, a );
+		trig->RotatePoint( (float)x + w, (float)y, ax, ay, (float *)&lrx, (float *)&lry, a );
+	} else {
+		ulx = x;
+		urx = x + w;
+		llx = x;
+		lrx = x + w;
+		uly = y + h;
+		ury = y + h;
+		lly = y;
+		lry = y;
+	}
+
+	// draw it
+	glColor3f(1, 1, 1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture( GL_TEXTURE_2D, image );
+
+	glPushMatrix();
+	glBegin( GL_POLYGON );
+	glTexCoord2f( 0., scale_h );
+	glVertex2f( ulx, uly );
+	glTexCoord2f( scale_w, scale_h );
+	glVertex2f( urx, ury );
+	glTexCoord2f( scale_w, 0. );
+	glVertex2f( lrx, lry );
+	glTexCoord2f( 0., 0. );
+	glVertex2f( llx, lly );
+	glEnd();
+	glPopMatrix();
+
+	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
+	glDisable(GL_BLEND); // Disable Blending
+
+	glDisable(GL_TEXTURE_2D); // Disable 2D Texture Mapping
+	glBindTexture(GL_TEXTURE_2D,0); // Unbind The Blur Texture
 }
 
 // Draw the image centered on (x,y)
 void Image2::DrawCentered( int x, int y, float angle ) {
-
+	Draw( x - (w / 2), y - (h / 2), angle );
 }
 
 // Returns the next highest power of two if num is not a power of two

@@ -36,9 +36,9 @@ class Image2 {
 		int GetHalfWidth( void ) { return w / 2; };
 		int GetHalfHeight( void ) { return h / 2; };
 
-		// Draw the image
+		// Draw the image (angle in degrees)
 		void Draw( int x, int y, float angle = 0. );
-		// Draw the image centered on (x,y)
+		// Draw the image centered on (x,y) (angle in degrees)
 		void DrawCentered( int x, int y, float angle = 0. );
 
 	private:
