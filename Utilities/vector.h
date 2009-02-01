@@ -125,8 +125,8 @@ class Vector{
 	//Used internally to assign the internal "what" string a vale
 	//when Vector is thrown as an exception.
 	//inputs: s -- a description of the exception
-	Vector(char *s){
-		what=s;
+	Vector(const char *s){
+		what=strdup(s);
 		i=0; j=0;
 	}//end constructor
 

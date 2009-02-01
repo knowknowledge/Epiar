@@ -1,59 +1,63 @@
 /*
- * Filename      : image.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+ * Filename      : image2.h
+ * Author(s)     : Chris Thielen (chris@epiar.net)
+ * Date Created  : Saturday, January 31, 2009
+ * Purpose       : Image loading and display
+ * Notes         : You don't have to worry about OpenGL's power of 2 image dimension requirements.
+ *                 This class will scale for you while still displaying correctly.
+ *                 When editing this class, there are a number of curious variables and conventions to
+ *                 pay attention to. The real width/height of the image (rw, rh) is rarely used - it is
+ *                 the true width and height of the image according to OpenGL. However, as we often expand
+ *                 images whose dimensions weren't a power of two, but must be for proper OpenGL texture
+ *                 size requirements, we may internally expand the dimensions of the image (thus the rw,rh grow)
+ *                 but the w/h is still effectively (at least as far as we care on the outside) whatever non-
+ *                 power of two dimensions, and these effective, "fake" dimensions are called it's _virtual_
+ *                 dimensions, or virtual width/height, stored in w, h.
  */
 
-#ifndef __h_image__
-#define __h_image__
+#ifndef __H_IMAGE2__
+#define __H_IMAGE2__
 
 #include "includes.h"
 
-class Image {
+class Image2 {
 	public:
-		Image();
-		Image( string filename );
-		Image( char *filename , char *maskname);
-		~Image();
+		// Create instance by loading image from file
+		Image2( string filename );
 
-		bool _Load( SDL_Surface *s );
+		// Load image from file
 		bool Load( string filename );
-		bool o_Load( char *filename , char *maskname );
-		bool Load( FILE *fp, int size );
+		// Load image from buffer
 		bool Load( unsigned char *buf, int bufSize );
 
-		void DrawAbsolute( int x, int y );
-		void DrawAbsoluteTiled( int x, int y, int w, int h );
-
-		void Draw( int x, int y, float ang );
-		void Draw( int x, int y );
-
-		void LoadAndDraw(int x, int y, float ang, char *filename);
-
-		int GetWidth( void );
-		int GetHeight( void );
+		// Get information about image dimensions (always the virtual/effective size)
+		int GetWidth( void ) { return w; };
+		int GetHeight( void ) { return h; };
 		int GetHalfWidth( void ) { return w / 2; };
 		int GetHalfHeight( void ) { return h / 2; };
 
-		bool GetMasking() {return masking;}
-		void SetMasking(bool m) {masking = m;}
-		
-		void SetScaling( int nw, int nh );
+		// Draw the image (angle in degrees)
+		void Draw( int x, int y, float angle = 0. );
+		// Draw the image centered on (x,y) (angle in degrees)
+		void DrawCentered( int x, int y, float angle = 0. );
 
 	private:
+		// Converts an SDL surface to an OpenGL texture
+		bool ConvertToTexture( SDL_Surface *s );
+		// Expands surface 's' to width/height of w/h, keeping the original image in the upper-left
 		SDL_Surface *ExpandCanvas( SDL_Surface *s, int w, int h );
-		
-		GLuint image;
-		GLuint mask;
-		bool masking;
-		int w, h; // w/h of surface. may be bigger than original file if file's dimensions were not a power of 2, >= 2 - this is the true width/height of the opengl texture
-		int vw, vh; // virtual w/h. this only differs if the image was expanded (w,h must be true w/h for ogl, but game often needs the supposed width and height, before expansion, which is the virtual width/height) - this is the image's size according to the game, which varies form the opengl size in case we had to expand the image's size (not scale, merely add blank space) to get opengl powers of 2
-		int sw, sh; // scale width/height, if any - differs from both w,h and vw,vh above, this is in case we purposely wanted to scale an image
-		float tw, th; // texture scaling (u/v), used by ExpandCanvas
-		string filename; // filename the image was loaded from
+		// Returns the next highest power of two if num is not a power of two
+		int PowerOfTwo(int num);
+
+		int w, h; // virtual w/h (effective, same as original file)
+		int rw, rh; // real w/h, size of expanded canvas (image) should expansion be needed
+		            //   to meet power of two requirements
+		float scale_w, scale_h; // used by draw() on images with expanded canvases to know what percent of
+		                        // the larger canvas actually contains the original image (<= 1.0)
+		                        // defaults = 1.0, this factor is always used, so non-expanded images are
+		                        // simply "scaled" at 1.0
+		GLuint image; // OpenGL pointer to texture
 };
 
-#endif // __h_image__
+#endif // __H_IMAGE2__
+
