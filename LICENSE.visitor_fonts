@@ -1,0 +1,63 @@
+Please read this entire file.
+
+The "Visitor" bitmap fonts were created by Brian Kent (kentpw@norwich.net, http://www.aenigmafonts.com/) and came with the following disclaimer:
+
+[start disclaimer]
+
+-The font(s) in this zip file were created by me (Brian Kent).  All of my Fonts are Freeware, you can use them any way you want to (Personal use, Commercial use, or whatever).
+
+-If you have a Font related site and would like to offer my fonts on your site, go right ahead. All I ask is that you keep this text file intact with the Font.
+
+-You may not Sell or Distribute my Fonts for profit or alter them in any way without asking me first.  [e-mail -  kentpw@norwich.net]
+
+[end disclaimer]
+
+Permission was obtained for the fonts to be distributed freely with Epiar via e-mail on Monday, February 2, 2009. The e-mail is copied below:
+
+from	Chris Thielen <cthielen@gmail.com>
+to	aefonts@frontiernet.net,
+kentpw@norwich.net
+date	Mon, Feb 2, 2009 at 1:12 AM
+subject	Visitor Font Usage in Open Source Game
+mailed-by	gmail.com	
+	
+(my apologies if you receive this message more than once)
+
+I found your bitmap font, "Visitor", on dafont.com and would like to distribute it as part of my free, open source computer game, Epiar (www.epiar.net, screenshot: http://sourceforge.net/dbimage.php?id=125162 . There is no money involved and the game will always be free. Do I have your permission to distribute it freely with the game?
+
+- Chris
+
+(the reply:)
+
+from	Brian Kent <aefonts@frontiernet.net>
+to	Chris Thielen <cthielen@gmail.com>
+date	Mon, Feb 2, 2009 at 7:16 AM
+subject	Re: Visitor Font Usage in Open Source Game
+mailed-by	frontiernet.net
+	
+- Hide quoted text -
+Chris Thielen wrote:
+> (my apologies if you receive this message more than once)
+>
+> I found your bitmap font, "Visitor", on dafont.com and would like to distribute it as part of my free, open source computer game, Epiar (www.epiar.net, screenshot: http://sourceforge.net/dbimage.php?id=125162 . There is no money involved and the game will always be free. Do I have your permission to distribute it freely with the game?
+>
+> - Chris
+Hi,
+
+  Sure, feel free to use any of my fonts.
+
+-- 
+From
+Brian Kent
+aefonts@frontiernet.net
+ÆNIGMA GAMES & FONTS
+http://www.aenigmafonts.com/
+
+[ end e-mail conversation ]
+
+In the spirit of freeware, which is explicitly permitted under the original terms, as well as with Brian Kent's permission for distribution, it is safe to package this font with any repository RPMs, DEBs, etc. so long as it stays with the Epiar package.
+
+If you would like to simply include the Visitor font in your own game or font package, please see the original terms above and contact Brian Kent.
+
+If the nebulous quality of this license has prevented from distributing Epiar, please contact Chris Thielen at chris@epiar.net to arrange for the font's removal and replacement by a similar bitmap font.
+

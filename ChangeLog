@@ -1,3 +1,10 @@
+Monday, February 2, 2009
+	Chris Thielen:
+		* Received permission from Brian Kent to distribute his
+		Visitor bitmap font (choosen by Niros, the designer of the UI
+		and HUD) with Epiar. It is visitor1.ttf and visitor2.ttf, and
+		the similarly named .af files.
+
 Sunday, February 1, 2009
 	Chris Thielen:
 		* Fixed a bug with glScissor (it doesn't use our established
