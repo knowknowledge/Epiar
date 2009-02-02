@@ -125,6 +125,8 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	glEnable( GL_DEPTH_TEST );
 	glDepthFunc( GL_LEQUAL );
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// set up a pseudo-2D viewpoint
 	glViewport( 0, 0, w, h );
@@ -147,12 +149,12 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 }
 
 void Video::Update( void ) {
-  SDL_GL_SwapBuffers();
+	SDL_GL_SwapBuffers();
 }
 
 void Video::Erase( void ) {
-  glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  glLoadIdentity();
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glLoadIdentity();
 }
 
 int Video::GetWidth( void ) {

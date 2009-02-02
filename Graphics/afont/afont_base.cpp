@@ -141,7 +141,7 @@ void afont_free( afont *a )
   return;
 }
 
-void afont_size_text( afont *a, char *text, int *w, int *h, int *base )
+void afont_size_text( afont *a, const char *text, int *w, int *h, int *base )
 {
   int maxx, maxy, miny;
   int pen_x;

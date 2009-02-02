@@ -37,10 +37,6 @@ int main( int argc, char **argv ) {
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "options.xml" );
 
-	// load the main font used through the tree
-	Vera8 = new Font( "Vera-8.af" );
-	Vera10 = new Font( "Vera-10.af" );
-
 	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );
 
 #ifdef COMP_MSVC
@@ -50,20 +46,25 @@ int main( int argc, char **argv ) {
 	Log::Message( "Compiled with GCC vers: __GNUC__" );
 #endif // COMP_GCC
 
+	Video::Initialize();
+	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+
+	// load the main font used through the tree
+	Vera8 = new Font( "Vera-8.af" );
+	Vera10 = new Font( "Vera-10.af" );
+
 	if( parseArgs( argc, argv ) == 0 ) {
-		Video::Initialize();
-		Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
-	
 		Simulation debug( "sim-debug.xml" );
 		debug.Run();
-	
-		Video::Shutdown();
 	}
+
+	Video::Shutdown();
 	
 	Log::Message( "Epiar shutting down." );
 	
 	// free the main font files
 	delete Vera8;
+	delete Vera10;
 	// free the main data files
 	delete epiardata;
 	// free the configuration file data
@@ -97,22 +98,11 @@ int parseArgs( int argc, char **argv ) {
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "ui-demo" ) {
-			// this switch is temporary while the gui is developed/debugged
-			Video::Initialize();
-			Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
-		
 			ui_demo(); // temporary function
 
-			Video::Shutdown();
 			return( -1 );
 		} else if( parm == "graphics-demo" ) {
-			// this switch is temporary while the graphics subsystem is developed/debugged
-			Video::Initialize();
-			Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
-		
 			graphics_demo(); // temporary function
-
-			Video::Shutdown();
 			return( -1 );
 		}
 	}

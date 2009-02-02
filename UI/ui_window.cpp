@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "common.h"
 #include "Graphics/video.h"
 #include "includes.h"
 #include "UI/ui.h"
@@ -71,6 +72,10 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[5]->Draw( x, y + h - bitmaps[5]->GetHeight() );
 	bitmaps[6]->DrawTiled( x + bitmaps[5]->GetWidth(), y + h - bitmaps[6]->GetHeight(), w - bitmaps[5]->GetWidth() - bitmaps[7]->GetWidth(), bitmaps[6]->GetHeight() );
 	bitmaps[7]->Draw( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight() );
+
+	// Draw the window title
+	Vera10->SetColor( 1., 1., 1. );
+	Vera10->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
 	
 	Widget::Draw();
 }

@@ -3,10 +3,12 @@
 	<version-major>0</version-major>
 	<version-minor>7</version-minor>
 	<version-macro>0</version-macro>
-	<logging>0</logging>
+	<logging>1</logging>
 
 	<network>
-		<port>7386</port>
+		<port>51698</port>
 		<max-clients>500</max-clients>
 	</network>
+
+	<motd>motd.txt</motd>
 </options>

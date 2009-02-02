@@ -6,12 +6,15 @@
  * Notes         : 
  */
 
+#include "common.h"
 #include "Debug/graphics.h"
 #include "includes.h"
 #include "Graphics/image.h"
 #include "Graphics/video.h"
 
 void graphics_demo(void) {
+	Video::Erase();
+
 	// draw a grid
 	// -- draw the horizontal lines
 	for(int j = 50; j < Video::GetHeight(); j += 50) {
@@ -35,8 +38,7 @@ void graphics_demo(void) {
 	Image frigate("terran-frigate.png");
 	frigate.DrawCentered(400, 300, 45.);
 
-	Image hud("hud_radarnav.png");
-	hud.DrawTiled(0, 0, 300, 200);
+	Vera10->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
 
 	Video::Update();
 

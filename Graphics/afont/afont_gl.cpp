@@ -204,7 +204,7 @@ static void afont_gl_render_char( afont *a, char c )
   return;
 }
 
-void afont_gl_render_text( afontgl *ag, char *text )
+void afont_gl_render_text( afontgl *ag, const char *text )
 {
   int i;
   float color[4];

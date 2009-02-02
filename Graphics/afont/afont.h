@@ -67,7 +67,7 @@ afont *afont_load_fp( FILE *fp );
 void afont_free( afont *a );
   /* Free an afont structure and all associated data. */
 
-void afont_size_text( afont *a, char *text, int *w, int *h, int *base );
+void afont_size_text( afont *a, const char *text, int *w, int *h, int *base );
   /* Find the size of a string of text.  *w and *h will be set to the width
    * and height of a bounding box that will accomodate the rendered text,
    * and base is the location of the baseline, relative to the top of the

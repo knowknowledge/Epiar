@@ -192,7 +192,7 @@ void ui_demo( void ) {
 
 	Window *wnd = new Window( 200, 100, 400, 300, "UI Demo" );
 	UI::Add( wnd );
-	//wnd->AddChild( new Button( 0, 0, 200, 25, "OK" ) );
+	wnd->AddChild( new Button( 152, 255, 96, 32, "OK" ) );
 
 	// main game loop
 	while( !quit ) {
@@ -209,15 +209,6 @@ void ui_demo( void ) {
 		
 		// Draw cycle
 		UI::Draw();
-		// draw a grid
-		// -- draw the horizontal lines
-		//for(int j = 50; j < Video::GetHeight(); j += 50) {
-		//	Video::DrawRect(0, j, Video::GetWidth(), 1, .4, .4, .4);
-		//}
-		// -- draw the vertical lines
-		//for(int i = 50; i < Video::GetWidth(); i += 50) {
-		//	Video::DrawRect(i, 0, 1, Video::GetHeight(), .4, .4, .4);
-		//}
 		Video::Update();
 		
 		// Don't kill the CPU (play nice)

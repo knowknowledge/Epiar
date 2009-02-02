@@ -16,18 +16,18 @@ Font::Font() {
 	font = NULL;
 	filename = NULL;
 
-	r = 1.0f;
-	g = 1.0f;
-	b = 1.0f;
+	r = 1.;
+	g = 1.;
+	b = 1.;
 }
 
 Font::Font( char *filename ) {
 	font = NULL;
 	this->filename = NULL;
 
-	r = 1.0f;
-	g = 1.0f;
-	b = 1.0f;
+	r = 1.;
+	g = 1.;
+	b = 1.;
 
 	SetFont( filename );
 }
@@ -44,33 +44,34 @@ bool Font::SetFont( char *filename ) {
 	font = afont_gl_load( filename );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.", filename );
+		Log::Error( "Failed to load font '%s'.\n", filename );
 		return( false );
 	}
 
 	this->filename = strdup( filename );
 
-	Log::Message( "Font '%s' loaded.", filename );
+	Log::Message( "Font '%s' loaded.\n", filename );
 
 	return( true );
 }
 
-void Font::Render( int x, int y, char *text ) {
-	glColor3f( r, g, b );
+void Font::Render( int x, int y, const char *text ) {
+	glEnable(GL_BLEND);
 
+	glColor4f( r, g, b, 1. );
 	glRasterPos2i( x, y );
 
 	afont_gl_render_text( font, text );
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
-void Font::RenderCentered( int x, int y, char *text ) {
+void Font::RenderCentered( int x, int y, const char *text ) {
 	int w, h, base;
 
 	// determine size of text
 	afont_size_text( font->orig, text, &w, &h, &base );
 
-	Render( x - (w / 2), y + (h / 2) - base, text );
+	Render( x - (w / 2), y - (h / 2) + base - 1, text ); // -1 because it just kinda looks better
 }
 
 void Font::SetColor( float r, float g, float b ) {

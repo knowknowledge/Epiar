@@ -123,18 +123,15 @@ void Image::Draw( int x, int y, float angle ) {
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear The Background Color To Black
 	glClearDepth(1.0); // Enables Clearing Of The Depth Buffer
-	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
 	glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
 	glEnable(GL_TEXTURE_2D); // Enable 2D Texture Mapping
+ 	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 
 	if( !image ) {
 		Log::Warning( "Trying to draw without loading an image first." );
 		return;
 	}
-
-	// bind the image and draw
- 	glEnable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
 
 	// calculate the coordinates of the quad	
 	// avoid trig when you can

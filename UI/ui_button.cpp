@@ -39,14 +39,14 @@ void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
 	x = GetX() + relx;
-	y = rely - GetY();
+	y = GetY() + rely;
 
 	// draw the button (loaded image is simply scaled)
-	bitmap->Draw( x + (w / h), y + (h / 2) );
+	bitmap->Draw( x, y );
 
 	// draw the label
-	Vera8->SetColor( 1., 1., 1. );
-	Vera8->RenderCentered( x + (w / 2), y - (h / 2), (char *)label.c_str() );
+	Vera10->SetColor( 1., 1., 1. );
+	Vera10->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
 }
 
 void Button::Focus( int x, int y ) {

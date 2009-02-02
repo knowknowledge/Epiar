@@ -10,6 +10,7 @@
 #ifndef H_FONT
 #define H_FONT
 
+#include "includes.h"
 #include "Graphics/afont/afont_gl.h"
 
 class Font {
@@ -19,12 +20,14 @@ class Font {
 	~Font();
 
 	bool SetFont( char *filename );
-	void Render( int x, int y, char *text );
-	void RenderCentered( int x, int y, char *text );
+	void Render( int x, int y, const char *text );
+	void RenderCentered( int x, int y, const char *text );
 	void SetColor( float r, float g, float b );
 
+	afontgl *font;
+
  private:
-	afontgl *font; // handle to font
+	//afontgl *font; // handle to font
 	char *filename; // filename of the loaded font
 	float r, g, b; // color of text
 };

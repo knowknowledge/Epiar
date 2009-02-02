@@ -3,6 +3,7 @@ Sunday, February 1, 2009
 		* Fixed a bug with glScissor (it doesn't use our established
 		ortho??)
 		* Fixed UI dragging errors introduced by new coordinate system
+		* Fixed a bug where Font renderings weren't showing up
 
 Saturday, January 31, 2009
 	Chris Thielen:
