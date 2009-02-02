@@ -36,7 +36,7 @@ void graphics_demo(void) {
 	frigate.DrawCentered(400, 300, 45.);
 
 	Image hud("hud_radarnav.png");
-	hud.Draw(50, 5);
+	hud.DrawTiled(0, 0, 300, 200);
 
 	Video::Update();
 

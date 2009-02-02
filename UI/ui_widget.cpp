@@ -18,7 +18,6 @@ bool Widget::AddChild( Widget *widget ) {
 }
 
 void Widget::Draw( int relx, int rely ) {
-	cout << "generic widget draw" << endl;
 	// Draw any children
 	list<Widget *>::iterator i;
 	for( i = children.begin(); i != children.end(); ++i ) {

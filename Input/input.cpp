@@ -76,7 +76,7 @@ void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 
 	// translate so (0,0) is lower-left of screen
 	x = event->motion.x;
-	y = Video::GetHeight() - event->motion.y;
+	y = event->motion.y;
 	
 	events.push_front( InputEvent( MOUSE, MOUSEMOTION, x, y ) );
 }
@@ -88,7 +88,7 @@ void Input::_UpdateHandleMouseDown( SDL_Event *event ) {
 	
 	// translate so (0,0) is lower-left of screen
 	x = event->button.x;
-	y = Video::GetHeight() - event->button.y;
+	y = event->button.y;
 
 	events.push_front( InputEvent( MOUSE, MOUSEDOWN, x, y ) );
 }
@@ -100,7 +100,7 @@ void Input::_UpdateHandleMouseUp( SDL_Event *event ) {
 	
 	// translate so (0,0) is lower-left of screen					
 	x = event->button.x;
-	y = Video::GetHeight() - event->button.y;
+	y = event->button.y;
 
 	events.push_front( InputEvent( MOUSE, MOUSEUP, x, y ) );
 }

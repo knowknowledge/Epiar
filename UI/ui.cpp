@@ -11,6 +11,10 @@
 #include "includes.h"
 #include "UI/ui.h"
 
+// for ui_demo()
+#include "Input/input.h"
+#include "Utilities/timer.h"
+
 list<Widget *> UI::children;
 Widget *UI::mouseFocus, *UI::keyboardFocus; // remembers which widgets last had these focuses
 
@@ -69,7 +73,6 @@ void UI::Draw( void ) {
 	
 	// Draw all widgets
 	for( i = children.begin(); i != children.end(); ++i ) {
-		cout << "UI master drawing a child" << endl;
 		(*i)->Draw();
 	}
 }
@@ -88,9 +91,9 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 		h = (*i)->GetHeight();
 		
 		if( x > wx ) {
-			if( y < wy ) {
+			if( y > wy ) {
 				if( x < (wx + w ) ) {
-					if( y > (wy - h ) ) {
+					if( y < (wy + h ) ) {
 						cout << "mouse focus is on a widget" << endl;
 						return (*i);
 					}
@@ -122,7 +125,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			// mouse coordinates associated with the mouse event
 			x = i->mx;
 			y = i->my;
-			
+
 			switch(i->mstate) {
 			case MOUSEMOTION:
 				// if a widget has mouse focus, we are dragging
@@ -131,9 +134,9 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					
 					dx = mouseFocus->GetDragX();
 					dy = mouseFocus->GetDragY();
-					
+
 					mouseFocus->SetX( x - dx );
-					mouseFocus->SetY( y + dy );
+					mouseFocus->SetY( y - dy );
 					
 					// remove input from list, as we've handled it
 					events.remove( *i );
@@ -170,7 +173,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				
 				// pass the event to the widget
 				if( mouseFocus ) {
-					mouseFocus->MouseDown( x - mouseFocus->GetX(), mouseFocus->GetY() - y );
+					mouseFocus->MouseDown( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
 					
 					// remove input from list, as we've handled it
 					events.remove( *i );
@@ -184,9 +187,41 @@ void UI::HandleInput( list<InputEvent> & events ) {
 }
 
 void ui_demo( void ) {
-	Window *wnd = new Window( 200, 700, 500, 400, "UI Demo" );
+	bool quit = false;
+	Input inputs;
+
+	Window *wnd = new Window( 200, 100, 400, 300, "UI Demo" );
 	UI::Add( wnd );
-	wnd->AddChild( new Button( 0, 0, 200, 25, "OK" ) );
-	
+	//wnd->AddChild( new Button( 0, 0, 200, 25, "OK" ) );
+
+	// main game loop
+	while( !quit ) {
+		quit = inputs.Update();
+		
+		// Erase cycle
+		Video::Erase();
+		
+		// Update cycle
+		UI::Run(); // runs only a few loops
+		
+		// Keep this last (I think)
+		Timer::Update();
+		
+		// Draw cycle
+		UI::Draw();
+		// draw a grid
+		// -- draw the horizontal lines
+		//for(int j = 50; j < Video::GetHeight(); j += 50) {
+		//	Video::DrawRect(0, j, Video::GetWidth(), 1, .4, .4, .4);
+		//}
+		// -- draw the vertical lines
+		//for(int i = 50; i < Video::GetWidth(); i += 50) {
+		//	Video::DrawRect(i, 0, 1, Video::GetHeight(), .4, .4, .4);
+		//}
+		Video::Update();
+		
+		// Don't kill the CPU (play nice)
+		Timer::Delay();
+	}
 }
 

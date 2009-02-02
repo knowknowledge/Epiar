@@ -27,7 +27,7 @@ class Widget {
 		// This is called when a widget obtains focus (in case it wants to highlight itself or something)
 		virtual void Focus( int x, int y ) {
 			dragX = x - this->x;
-			dragY = this->y - y;
+			dragY = y - this->y;
 		};
 		virtual void Unfocus( void ) {};
 		int GetDragX( void ) { return dragX; }

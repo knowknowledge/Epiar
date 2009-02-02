@@ -9,6 +9,7 @@
  */
 
 #include "Graphics/image.h"
+#include "Graphics/video.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
 
@@ -283,7 +284,7 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 void Image::DrawTiled( int x, int y, int w, int h ) {
 	// set the clipping region to avoid tiles "spilling" out
 	glEnable(GL_SCISSOR_TEST);
-	glScissor(x, y + h, w, h);
+	glScissor(x, Video::GetHeight() - y - h, w, h); // for some reason, glScissor counts (0,0) as lower-left
 
 	for( int j = 0; j < h; j += this->h) {
 		for( int i = 0; i < w; i += this->w) {

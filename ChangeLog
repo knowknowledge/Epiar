@@ -1,3 +1,9 @@
+Sunday, February 1, 2009
+	Chris Thielen:
+		* Fixed a bug with glScissor (it doesn't use our established
+		ortho??)
+		* Fixed UI dragging errors introduced by new coordinate system
+
 Saturday, January 31, 2009
 	Chris Thielen:
 		* Upgraded to afont-0.9
