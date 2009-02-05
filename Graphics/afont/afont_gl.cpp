@@ -22,7 +22,7 @@ static void afont_gl_render_char( afont *a, char c );
    * character. 
    * Used in order to build the display lists. */
 
-afontgl *afont_gl_load( char *path )
+afontgl *afont_gl_load( const char *path )
 {
   afont *a;
   afontgl *ag;

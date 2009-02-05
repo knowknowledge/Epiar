@@ -43,7 +43,7 @@ void Log::Close( void ) {
 	}
 }
 
-void Log::realLog( int type, const char *func, char *message, ... ) {
+void Log::realLog( int type, const char *func, const char *message, ... ) {
 	va_list args;
 	time_t rawtime;
 	char *timestamp;

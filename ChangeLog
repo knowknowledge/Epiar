@@ -1,3 +1,8 @@
+Wednesday, February 4, 2009
+	Chris Thielen:
+		* Changed planet radar color to something more visible
+		* Cleaned up compiler warnings under GCC 4.3
+
 Monday, February 2, 2009
 	Chris Thielen:
 		* Received permission from Brian Kent to distribute his

@@ -24,7 +24,7 @@ class Log {
 
 		static void Initalize( void );
 
-		static void realLog( int type, const char *func, char *message, ... );
+		static void realLog( int type, const char *func, const char *message, ... );
 
 		static void Close( void );
 

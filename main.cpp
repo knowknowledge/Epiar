@@ -2,13 +2,13 @@
  * Filename      : main.cpp
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Sunday, June 4, 2006
- * Last Modified : Wednesday, January 9, 2008
  * Purpose       : Main entry point of Epiar codebase
  * Notes         :
  */
 
 #include "common.h"
 #include "Debug/graphics.h"
+#include "Debug/lua_test.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
@@ -88,9 +88,11 @@ int parseArgs( int argc, char **argv ) {
 		
 		if( parm == "help" ) {
 			// remember to keep this list updated when new parms are added
-			printf("\n\t--help    - Displays this message");
-			printf("\n\t--version - Displays program version");
-			printf("\n\t--ui-demo - Runs a debug/display demo of the UI [to be removed before release]");
+			printf("\n\t--help          - Displays this message");
+			printf("\n\t--version       - Displays program version");
+			printf("\n\t--ui-demo       - Runs a debug/display demo of the UI");
+			printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
+			printf("\n\t--lua-test      - Tests the Lua scripting functionality");
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "version" ) {
@@ -103,6 +105,9 @@ int parseArgs( int argc, char **argv ) {
 			return( -1 );
 		} else if( parm == "graphics-demo" ) {
 			graphics_demo(); // temporary function
+			return( -1 );
+		} else if( parm == "lua-test" ) {
+			lua_test(); // temporary function
 			return( -1 );
 		}
 	}

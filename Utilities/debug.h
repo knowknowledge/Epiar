@@ -16,7 +16,7 @@ class Debug {
 	public:
 		static void Set();
 		static void Unset();
-		static void Print(char *message, ...);
+		static void Print(const char *message, ...);
 		
 		static bool active;
 };

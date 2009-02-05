@@ -33,7 +33,7 @@ static int afont_ntohl( int n )
 #endif
 
 
-afont *afont_load( char *path )
+afont *afont_load( const char *path )
 {
   afont *a;
   FILE *fp;

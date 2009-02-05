@@ -41,7 +41,7 @@ class cPlanet : public Sprite {
 				Image *image = new Image( value );
 				SetImage( image );
 			}
-			SetRadarColor(Color::Get(0,0,255));
+			SetRadarColor(Color::Get(48, 160, 255));
 			return true;
 		}
 		

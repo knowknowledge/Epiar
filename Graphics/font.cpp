@@ -21,7 +21,7 @@ Font::Font() {
 	b = 1.;
 }
 
-Font::Font( char *filename ) {
+Font::Font( const char *filename ) {
 	font = NULL;
 	this->filename = NULL;
 
@@ -40,7 +40,7 @@ Font::~Font() {
 	free( filename );
 }
 
-bool Font::SetFont( char *filename ) {
+bool Font::SetFont( const char *filename ) {
 	font = afont_gl_load( filename );
 
 	if( font == NULL ) {

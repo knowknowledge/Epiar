@@ -59,7 +59,7 @@ struct afont {
   afont_type type;
 };
 
-afont *afont_load( char *path );
+afont *afont_load( const char *path );
   /* Load a font from a file */
 afont *afont_load_fp( FILE *fp );
   /* Load a font, given a stream that points to the beginning of a afont

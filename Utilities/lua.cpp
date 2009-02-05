@@ -1,8 +1,7 @@
 /*
  * Filename      : lua.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
+ * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 5, 2008
- * Last Modified : Saturday, January 5, 2008
  * Purpose       : Provides abilities to load, store, and run Lua scripts
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
@@ -53,6 +52,7 @@ bool LuaScript::InitLua() {
 	}
 	
 	luaVM = luaL_newstate();
+	luaL_openlibs( luaVM );
 		
 	if( !luaVM ) {
 		Log::Warning( "Could not initialize Lua VM." );

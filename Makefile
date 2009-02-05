@@ -64,7 +64,7 @@ am_Epiar_OBJECTS = main.$(OBJEXT) ai.$(OBJEXT) input.$(OBJEXT) \
 	font.$(OBJEXT) image.$(OBJEXT) video.$(OBJEXT) \
 	archive.$(OBJEXT) lua.$(OBJEXT) xml.$(OBJEXT) file.$(OBJEXT) \
 	ui_button.$(OBJEXT) ui_label.$(OBJEXT) debug.$(OBJEXT) \
-	graphics.$(OBJEXT)
+	graphics.$(OBJEXT) lua_test.$(OBJEXT)
 Epiar_OBJECTS = $(am_Epiar_OBJECTS)
 Epiar_DEPENDENCIES = Lua/src/liblua.a
 DEFAULT_INCLUDES = -I.
@@ -219,7 +219,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
                 Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
                 Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp \
-                Debug/graphics.cpp
+                Debug/graphics.cpp Debug/lua_test.cpp
 
 Epiar_LDADD = Lua/src/liblua.a
 SUBDIRS = Lua
@@ -331,6 +331,7 @@ include ./$(DEPDIR)/image.Po
 include ./$(DEPDIR)/input.Po
 include ./$(DEPDIR)/log.Po
 include ./$(DEPDIR)/lua.Po
+include ./$(DEPDIR)/lua_test.Po
 include ./$(DEPDIR)/main.Po
 include ./$(DEPDIR)/models.Po
 include ./$(DEPDIR)/planets.Po
@@ -896,6 +897,20 @@ graphics.obj: Debug/graphics.cpp
 #	source='Debug/graphics.cpp' object='graphics.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphics.obj `if test -f 'Debug/graphics.cpp'; then $(CYGPATH_W) 'Debug/graphics.cpp'; else $(CYGPATH_W) '$(srcdir)/Debug/graphics.cpp'; fi`
+
+lua_test.o: Debug/lua_test.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lua_test.o -MD -MP -MF $(DEPDIR)/lua_test.Tpo -c -o lua_test.o `test -f 'Debug/lua_test.cpp' || echo '$(srcdir)/'`Debug/lua_test.cpp
+	mv -f $(DEPDIR)/lua_test.Tpo $(DEPDIR)/lua_test.Po
+#	source='Debug/lua_test.cpp' object='lua_test.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lua_test.o `test -f 'Debug/lua_test.cpp' || echo '$(srcdir)/'`Debug/lua_test.cpp
+
+lua_test.obj: Debug/lua_test.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lua_test.obj -MD -MP -MF $(DEPDIR)/lua_test.Tpo -c -o lua_test.obj `if test -f 'Debug/lua_test.cpp'; then $(CYGPATH_W) 'Debug/lua_test.cpp'; else $(CYGPATH_W) '$(srcdir)/Debug/lua_test.cpp'; fi`
+	mv -f $(DEPDIR)/lua_test.Tpo $(DEPDIR)/lua_test.Po
+#	source='Debug/lua_test.cpp' object='lua_test.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lua_test.obj `if test -f 'Debug/lua_test.cpp'; then $(CYGPATH_W) 'Debug/lua_test.cpp'; else $(CYGPATH_W) '$(srcdir)/Debug/lua_test.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

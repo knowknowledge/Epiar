@@ -21,7 +21,7 @@ void Debug::Unset() {
 }
 
 // Displays debugging code only if debugging is set
-void Debug::Print(char *message, ...) {
+void Debug::Print(const char *message, ...) {
 	va_list args;
 
 	if(Debug::active) {

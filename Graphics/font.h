@@ -16,10 +16,10 @@
 class Font {
  public:
 	Font();
-	Font( char *filename );
+	Font( const char *filename );
 	~Font();
 
-	bool SetFont( char *filename );
+	bool SetFont( const char *filename );
 	void Render( int x, int y, const char *text );
 	void RenderCentered( int x, int y, const char *text );
 	void SetColor( float r, float g, float b );

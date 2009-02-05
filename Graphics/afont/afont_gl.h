@@ -20,7 +20,7 @@ struct afontgl {
   afont *orig;
 };
 
-afontgl *afont_gl_load( char *path );
+afontgl *afont_gl_load( const char *path );
 afontgl *afont_gl_load_fp( FILE *fp );
 afontgl *afont_gl_convert( afont *a );
 void afont_gl_free( afontgl *ag );

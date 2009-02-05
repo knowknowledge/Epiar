@@ -111,7 +111,7 @@ void Hud::DrawRadarNav( SpriteList &sprites ) {
 	Radar::Draw( sprites );
 }
 
-void Hud::Alert( char *message, ... )
+void Hud::Alert( const char *message, ... )
 {
 	va_list args;
 	char msgBuffer[ 4096 ] = {0};

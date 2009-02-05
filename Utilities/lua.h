@@ -24,13 +24,14 @@ class LuaScript {
 		~LuaScript();
 		bool Load( string filename );
 		bool Run();
-		
+
+		static lua_State *luaVM; // public for debugging purposes
 	private:
 		bool InitLua();
 		bool CloseLua();
 		
 		static bool luaInitialized;
-		static lua_State *luaVM;
+		//static lua_State *luaVM;
 		static int numScriptsLoaded; // when destructor decrements this to zero, we de-init the Lua VM
 };
 

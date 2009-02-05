@@ -31,7 +31,7 @@ class Hud {
 		static void Update( void );
 		static void Draw( SpriteList &sprites );
 		
-		static void Alert( char *, ... );
+		static void Alert( const char *, ... );
 
 	private:
 		static void DrawHullIntegrity();

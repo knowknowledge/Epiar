@@ -66,16 +66,6 @@ bool Simulation::Run( void ) {
 
 	sprites.Add( player->GetSprite() );
 
-	// generate a few ships randomly near the player
-	Ship *ships[40];
-	for(int i = 0; i < 40; i++) {
-		ships[i] = new Ship();
-		ships[i]->SetModel( models->GetModel( playerDefaultModel ) );
-		Coordinate c( (double)(rand() % 5000) - 2500., (double)(rand() % 5000) - 2500. );
-		ships[i]->SetWorldPosition( c );
-		sprites.Add( ships[i] );
-	}
-
 	// Focus the camera on the sprite
 	camera->Focus( player->GetSprite() );
 
