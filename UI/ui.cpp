@@ -192,7 +192,7 @@ void ui_demo( void ) {
 
 	Window *wnd = new Window( 200, 100, 400, 300, "UI Demo" );
 	UI::Add( wnd );
-	wnd->AddChild( new Button( 152, 255, 96, 32, "OK" ) );
+	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
 
 	// main game loop
 	while( !quit ) {
