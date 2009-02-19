@@ -38,6 +38,6 @@ class UI {
 };
 
 // temporary function to test/develop the UI
-void ui_demo( void );
+void ui_demo( bool in_loop = false );
 
 #endif // __H_UI__

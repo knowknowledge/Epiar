@@ -26,7 +26,7 @@ Archive *epiardata = NULL;
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
-Font *Vera8 = NULL, *Vera10 = NULL;
+Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL;
 
 int main( int argc, char **argv ) {
 	Log::Initalize();
@@ -52,6 +52,7 @@ int main( int argc, char **argv ) {
 	// load the main font used through the tree
 	Vera8 = new Font( "Vera-8.af" );
 	Vera10 = new Font( "Vera-10.af" );
+	Visitor10 = new Font( "Visitor1-10.af" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "sim-debug.xml" );
@@ -65,6 +66,7 @@ int main( int argc, char **argv ) {
 	// free the main font files
 	delete Vera8;
 	delete Vera10;
+	delete Visitor10;
 	// free the main data files
 	delete epiardata;
 	// free the configuration file data
@@ -100,7 +102,7 @@ int parseArgs( int argc, char **argv ) {
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "ui-demo" ) {
-			ui_demo(); // temporary function
+			ui_demo( true ); // temporary function
 
 			return( -1 );
 		} else if( parm == "graphics-demo" ) {

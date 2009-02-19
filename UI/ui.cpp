@@ -186,7 +186,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	}
 }
 
-void ui_demo( void ) {
+void ui_demo( bool in_loop ) {
 	bool quit = false;
 	Input inputs;
 
@@ -195,7 +195,7 @@ void ui_demo( void ) {
 	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
 
 	// main game loop
-	while( !quit ) {
+	while( !quit && in_loop ) {
 		quit = inputs.Update();
 		
 		// Erase cycle

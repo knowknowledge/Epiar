@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "common.h"
 #include "Engine/hud.h"
 #include "Graphics/video.h"
 #include "includes.h"
@@ -71,6 +72,12 @@ void Hud::Draw( SpriteList &sprites ) {
 	Hud::DrawHullIntegrity();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
+	Hud::DrawMessages();
+}
+
+// Draw HUD messages (eg Welcome to Epiar)
+void Hud::DrawMessages() {
+	Visitor10->Render( 5, Video::GetHeight() - 10, "Welcome to Epiar 0.7.0-alpha" );
 }
 
 void Hud::DrawHullIntegrity() {
