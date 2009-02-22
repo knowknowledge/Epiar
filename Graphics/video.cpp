@@ -45,6 +45,7 @@ bool Video::Initialize( void ) {
 	atexit( SDL_Quit );
 	
 	DisableMouse();
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	
 	return( true );
 }

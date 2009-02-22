@@ -15,16 +15,15 @@
 
 class Console {
 	public:
-		Console( void );
+		static void Initialize();
 
-		static Console *Instance();
 		static void Input( list<InputEvent> & events );
 		static void Draw();
 		static void Update();
 
 	private:
 		static vector<string> Buffer;
-		static bool enabled;
+		static bool enabled, initialized;
 };
 
 #endif // __h_console__

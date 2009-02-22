@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "Engine/console.h"
 #include "includes.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
@@ -61,6 +62,7 @@ bool Input::Update( void ) {
 	
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
+	Console::Input( events );
 	Handle( events ); // default handler. player motion is handled here
 
 	events.clear();
@@ -134,6 +136,7 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 			break;
 		default:
 			events.push_front( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
+			events.push_front( InputEvent( KEY, KEYTYPED, event->key.keysym.sym ) );
 			keyDown[ event->key.keysym.sym ] = 0;
 			break;
 	}

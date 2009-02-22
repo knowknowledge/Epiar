@@ -80,7 +80,7 @@ void Hud::Draw( SpriteList &sprites ) {
 
 // Draw HUD messages (eg Welcome to Epiar)
 void Hud::DrawMessages() {
-	//VeraMono10->Render( 5, Video::GetHeight() - 10, "Welcome to Epiar 0.7.0-alpha" );
+	Vera10->Render( 15, Video::GetHeight() - 15, "Welcome to Epiar 0.7.0-alpha" );
 }
 
 void Hud::DrawHullIntegrity() {

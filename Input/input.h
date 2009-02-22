@@ -15,8 +15,8 @@
 // Stores information about an input event.
 // We use this to build up a list of events and allow multiple sub-input systems
 // to dispatch the events at their discretion.
-typedef enum {KEYUP, KEYDOWN, KEYPRESSED} keyState;
-typedef enum { MOUSEMOTION, MOUSEUP, MOUSEDOWN } mouseState;
+typedef enum {KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED} keyState;
+typedef enum {MOUSEMOTION, MOUSEUP, MOUSEDOWN } mouseState;
 typedef enum {KEY, MOUSE} eventType;
 
 class InputEvent {
