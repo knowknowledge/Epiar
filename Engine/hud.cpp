@@ -73,11 +73,20 @@ void Hud::Draw( SpriteList &sprites ) {
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
 	Hud::DrawMessages();
+	Hud::DrawConsole();
 }
 
 // Draw HUD messages (eg Welcome to Epiar)
 void Hud::DrawMessages() {
-	Visitor10->Render( 5, Video::GetHeight() - 10, "Welcome to Epiar 0.7.0-alpha" );
+	//VeraMono10->Render( 5, Video::GetHeight() - 10, "Welcome to Epiar 0.7.0-alpha" );
+}
+
+// Draw the console (debugging console, hit tilde)
+void Hud::DrawConsole() {
+	VeraMono10->Render( 150, 13, "This is some sample" );
+	VeraMono10->Render( 150, 23, "output on the console" );
+	VeraMono10->Render( 150, 33, "to see what it would look like" );
+	VeraMono10->Render( 150, 43, "> _" );
 }
 
 void Hud::DrawHullIntegrity() {

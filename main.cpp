@@ -26,7 +26,7 @@ Archive *epiardata = NULL;
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
-Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL;
+Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 
 int main( int argc, char **argv ) {
 	Log::Initalize();
@@ -53,6 +53,7 @@ int main( int argc, char **argv ) {
 	Vera8 = new Font( "Vera-8.af" );
 	Vera10 = new Font( "Vera-10.af" );
 	Visitor10 = new Font( "Visitor1-10.af" );
+	VeraMono10 = new Font( "VeraMono-10.af" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "sim-debug.xml" );
@@ -67,6 +68,7 @@ int main( int argc, char **argv ) {
 	delete Vera8;
 	delete Vera10;
 	delete Visitor10;
+	delete VeraMono10;
 	// free the main data files
 	delete epiardata;
 	// free the configuration file data

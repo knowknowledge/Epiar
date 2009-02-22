@@ -20,7 +20,7 @@
 // defined in main.cpp. used through the codebase
 extern Archive *epiardata;
 extern XMLFile *optionsfile;
-extern Font *Vera8, *Vera10, *Visitor10;
+extern Font *Vera8, *Vera10, *Visitor10, *VeraMono10;
 
 // to simply accessing the options file
 #define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
