@@ -64,7 +64,7 @@ am_Epiar_OBJECTS = main.$(OBJEXT) ai.$(OBJEXT) input.$(OBJEXT) \
 	font.$(OBJEXT) image.$(OBJEXT) video.$(OBJEXT) \
 	archive.$(OBJEXT) lua.$(OBJEXT) xml.$(OBJEXT) file.$(OBJEXT) \
 	ui_button.$(OBJEXT) ui_label.$(OBJEXT) debug.$(OBJEXT) \
-	graphics.$(OBJEXT)
+	graphics.$(OBJEXT) console.$(OBJEXT)
 Epiar_OBJECTS = $(am_Epiar_OBJECTS)
 Epiar_DEPENDENCIES = Lua/src/liblua.a
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -218,7 +218,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
                 Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
                 Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp \
-                Debug/graphics.cpp 
+                Debug/graphics.cpp Engine/console.cpp
 
 Epiar_LDADD = Lua/src/liblua.a
 SUBDIRS = Lua
@@ -318,6 +318,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/archive.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/camera.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cmath.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coordinate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/engines.Po@am__quote@
@@ -895,6 +896,20 @@ graphics.obj: Debug/graphics.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Debug/graphics.cpp' object='graphics.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphics.obj `if test -f 'Debug/graphics.cpp'; then $(CYGPATH_W) 'Debug/graphics.cpp'; else $(CYGPATH_W) '$(srcdir)/Debug/graphics.cpp'; fi`
+
+console.o: Engine/console.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT console.o -MD -MP -MF $(DEPDIR)/console.Tpo -c -o console.o `test -f 'Engine/console.cpp' || echo '$(srcdir)/'`Engine/console.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/console.Tpo $(DEPDIR)/console.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Engine/console.cpp' object='console.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o console.o `test -f 'Engine/console.cpp' || echo '$(srcdir)/'`Engine/console.cpp
+
+console.obj: Engine/console.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT console.obj -MD -MP -MF $(DEPDIR)/console.Tpo -c -o console.obj `if test -f 'Engine/console.cpp'; then $(CYGPATH_W) 'Engine/console.cpp'; else $(CYGPATH_W) '$(srcdir)/Engine/console.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/console.Tpo $(DEPDIR)/console.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Engine/console.cpp' object='console.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o console.obj `if test -f 'Engine/console.cpp'; then $(CYGPATH_W) 'Engine/console.cpp'; else $(CYGPATH_W) '$(srcdir)/Engine/console.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.

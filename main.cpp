@@ -43,7 +43,7 @@ int main( int argc, char **argv ) {
 	Log::Message( "Compiled with MSVC vers: _MSC_VER" );
 #endif // COMP_MSVC
 #ifdef COMP_GCC
-	Log::Message( "Compiled with GCC vers: __GNUC__" );
+	Log::Message( "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
 #endif // COMP_GCC
 
 	Video::Initialize();

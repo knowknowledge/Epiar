@@ -2,6 +2,7 @@ Saturday, February 21, 2009
 	Chris Thielen:
 		* Fixed an issue with fonts not drawing correctly under Mac OS X
 		* Beginnings of console work
+		* Fixed GCC compiler identification
 
 Wednesday, February 18, 2009
 	Chris Thielen:

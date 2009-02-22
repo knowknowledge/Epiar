@@ -38,7 +38,6 @@ class Hud {
 		static void DrawShieldIntegrity();
 		static void DrawRadarNav( SpriteList &sprites );
 		static void DrawMessages();
-		static void DrawConsole();
 	
 		static Hud *pInstance;
 		

@@ -64,7 +64,7 @@ am_Epiar_OBJECTS = main.$(OBJEXT) ai.$(OBJEXT) input.$(OBJEXT) \
 	font.$(OBJEXT) image.$(OBJEXT) video.$(OBJEXT) \
 	archive.$(OBJEXT) lua.$(OBJEXT) xml.$(OBJEXT) file.$(OBJEXT) \
 	ui_button.$(OBJEXT) ui_label.$(OBJEXT) debug.$(OBJEXT) \
-	graphics.$(OBJEXT)
+	graphics.$(OBJEXT) console.$(OBJEXT)
 Epiar_OBJECTS = $(am_Epiar_OBJECTS)
 Epiar_DEPENDENCIES = Lua/src/liblua.a
 DEFAULT_INCLUDES = -I.
@@ -100,20 +100,20 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run aclocal-1.10
-AMTAR = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run tar
-AUTOCONF = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run autoconf
-AUTOHEADER = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run autoheader
-AUTOMAKE = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run automake-1.10
+ACLOCAL = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run aclocal-1.10
+AMTAR = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run tar
+AUTOCONF = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run autoconf
+AUTOHEADER = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run autoheader
+AUTOMAKE = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run automake-1.10
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
+CFLAGS = -g -O2 -I/usr/include/libxml2 -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
 CPP = gcc -E
 CPPFLAGS = 
 CXX = g++
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2 -I/sw/include/libxml2 -I/sw/include -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
+CXXFLAGS = -g -O2 -I/usr/include/libxml2 -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers -I/Library/Frameworks/SDL_image.Framework/Headers -I/Library/Frameworks/SDL_mixer.Framework/Headers -DDARWIN -Wall -DDEBUG
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -128,9 +128,9 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS =  -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -lz
+LIBS =  -L/usr/lib -lxml2 -lz -lpthread -licucore -lm -framework SDL -framework OpenGL -framework Cocoa SDLMain.m -framework SDL_image -framework SDL_mixer -lz
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /Users/chris/proj/epiar/src/epiar/missing --run makeinfo
+MAKEINFO = ${SHELL} /Users/cthielen/proj/epiar/src/epiar/missing --run makeinfo
 MKDIR_P = ./install-sh -c -d
 OBJEXT = o
 PACKAGE = 
@@ -148,13 +148,13 @@ SET_MAKE =
 SHELL = /bin/sh
 STRIP = 
 VERSION = 
-XML2_CONFIG = /sw/bin/xml2-config
-XML_CPPFLAGS = -I/sw/include/libxml2 -I/sw/include
-XML_LIBS = -L/sw/lib -lxml2 -lz -lpthread -L/sw/lib -liconv -lm
-abs_builddir = /Users/chris/proj/epiar/src/epiar
-abs_srcdir = /Users/chris/proj/epiar/src/epiar
-abs_top_builddir = /Users/chris/proj/epiar/src/epiar
-abs_top_srcdir = /Users/chris/proj/epiar/src/epiar
+XML2_CONFIG = /usr/bin/xml2-config
+XML_CPPFLAGS = -I/usr/include/libxml2
+XML_LIBS = -L/usr/lib -lxml2 -lz -lpthread -licucore -lm
+abs_builddir = /Users/cthielen/proj/epiar/src/epiar
+abs_srcdir = /Users/cthielen/proj/epiar/src/epiar
+abs_top_builddir = /Users/cthielen/proj/epiar/src/epiar
+abs_top_srcdir = /Users/cthielen/proj/epiar/src/epiar
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__include = include
@@ -182,7 +182,7 @@ host_vendor = apple
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = $(SHELL) /Users/chris/proj/epiar/src/epiar/install-sh
+install_sh = $(SHELL) /Users/cthielen/proj/epiar/src/epiar/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -218,7 +218,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
                 Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
                 Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp \
-                Debug/graphics.cpp 
+                Debug/graphics.cpp Engine/console.cpp
 
 Epiar_LDADD = Lua/src/liblua.a
 SUBDIRS = Lua
@@ -318,6 +318,7 @@ include ./$(DEPDIR)/animation.Po
 include ./$(DEPDIR)/archive.Po
 include ./$(DEPDIR)/camera.Po
 include ./$(DEPDIR)/cmath.Po
+include ./$(DEPDIR)/console.Po
 include ./$(DEPDIR)/coordinate.Po
 include ./$(DEPDIR)/debug.Po
 include ./$(DEPDIR)/engines.Po
@@ -895,6 +896,20 @@ graphics.obj: Debug/graphics.cpp
 #	source='Debug/graphics.cpp' object='graphics.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphics.obj `if test -f 'Debug/graphics.cpp'; then $(CYGPATH_W) 'Debug/graphics.cpp'; else $(CYGPATH_W) '$(srcdir)/Debug/graphics.cpp'; fi`
+
+console.o: Engine/console.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT console.o -MD -MP -MF $(DEPDIR)/console.Tpo -c -o console.o `test -f 'Engine/console.cpp' || echo '$(srcdir)/'`Engine/console.cpp
+	mv -f $(DEPDIR)/console.Tpo $(DEPDIR)/console.Po
+#	source='Engine/console.cpp' object='console.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o console.o `test -f 'Engine/console.cpp' || echo '$(srcdir)/'`Engine/console.cpp
+
+console.obj: Engine/console.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT console.obj -MD -MP -MF $(DEPDIR)/console.Tpo -c -o console.obj `if test -f 'Engine/console.cpp'; then $(CYGPATH_W) 'Engine/console.cpp'; else $(CYGPATH_W) '$(srcdir)/Engine/console.cpp'; fi`
+	mv -f $(DEPDIR)/console.Tpo $(DEPDIR)/console.Po
+#	source='Engine/console.cpp' object='console.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o console.obj `if test -f 'Engine/console.cpp'; then $(CYGPATH_W) 'Engine/console.cpp'; else $(CYGPATH_W) '$(srcdir)/Engine/console.cpp'; fi`
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
