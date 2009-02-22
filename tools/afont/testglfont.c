@@ -1,7 +1,12 @@
 /* testglfont.c */
 
+#ifdef MACOSX
+#include "gl.h"
+#include "glu.h"
+#else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#endif
 #include "SDL.h"
 
 #include "afont_gl.h"

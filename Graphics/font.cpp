@@ -56,6 +56,7 @@ bool Font::SetFont( const char *filename ) {
 }
 
 void Font::Render( int x, int y, const char *text ) {
+	glEnable( GL_TEXTURE_2D );
 	glEnable(GL_BLEND);
 
 	glColor4f( r, g, b, 1. );

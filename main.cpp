@@ -8,7 +8,7 @@
 
 #include "common.h"
 #include "Debug/graphics.h"
-#include "Debug/lua_test.h"
+//#include "Debug/lua_test.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
@@ -109,7 +109,7 @@ int parseArgs( int argc, char **argv ) {
 			graphics_demo(); // temporary function
 			return( -1 );
 		} else if( parm == "lua-test" ) {
-			lua_test(); // temporary function
+			//lua_test(); // temporary function
 			return( -1 );
 		}
 	}

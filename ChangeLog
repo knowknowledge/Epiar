@@ -1,3 +1,7 @@
+Saturday, February 21, 2009
+	Chris Thielen:
+		* Fixed an issue with fonts not drawing correctly under Mac OS X
+
 Wednesday, February 18, 2009
 	Chris Thielen:
 		* (Outside) Lua research for in-game bridge

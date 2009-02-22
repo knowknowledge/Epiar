@@ -149,7 +149,9 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 }
 
 void Video::Update( void ) {
+	glFlush();
 	SDL_GL_SwapBuffers();
+	glFinish();
 }
 
 void Video::Erase( void ) {

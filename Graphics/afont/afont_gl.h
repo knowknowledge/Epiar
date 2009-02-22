@@ -6,7 +6,7 @@
 #define _afont_gl_h
 
 #include <stdio.h>
-#include <GL/gl.h>
+#include "gl.h"
 
 #include "afont.h"
 

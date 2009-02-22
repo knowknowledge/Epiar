@@ -38,7 +38,7 @@ void graphics_demo(void) {
 	Image frigate("terran-frigate.png");
 	frigate.DrawCentered(400, 300, 45.);
 
-	Vera10->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
+	Visitor10->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
 
 	Video::Update();
 

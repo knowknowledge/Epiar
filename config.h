@@ -2,10 +2,10 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
-#define HAVE_LIBSDL_IMAGE 1
+/* #undef HAVE_LIBSDL_IMAGE */
 
 /* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
-#define HAVE_LIBSDL_MIXER 1
+/* #undef HAVE_LIBSDL_MIXER */
 
 /* Name of package */
 #define PACKAGE ""

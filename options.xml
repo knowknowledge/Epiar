@@ -7,8 +7,8 @@
 	<video>
 		<w>800</w>
 		<h>600</h>
-		<bpp>16</bpp>
-		<fullscreen>1</fullscreen>
+		<bpp>32</bpp>
+		<fullscreen>0</fullscreen>
 	</video>
 	<simulation>
 		<starfield-density>325</starfield-density>

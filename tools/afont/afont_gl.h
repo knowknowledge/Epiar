@@ -6,7 +6,11 @@
 #define _afont_gl_h
 
 #include <stdio.h>
+#ifdef MACOSX
+#include "gl.h"
+#else
 #include <GL/gl.h>
+#endif
 
 #include "afont.h"
 

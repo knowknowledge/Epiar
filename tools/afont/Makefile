@@ -1,8 +1,9 @@
 # afont Makefile
 
 # Define one of the following:
-SYSTEM=LINUX
+#SYSTEM=LINUX
 #SYSTEM=MINGW32
+SYSTEM=MACOSX
 
 #USE_OPTIMIZATION=TRUE
 #USE_PROFILING=TRUE
@@ -35,6 +36,19 @@ ifeq ($(SYSTEM),MINGW32)
 
 	CFLAGS+=-DSYS_IS_BRAINDEAD
 	PROGS=buildfont testafont testglfont testafonttxt
+endif
+ifeq ($(SYSTEM),MACOSX)
+	FT_CFLAGS=`freetype-config --cflags`
+	FT_LIBS=`freetype-config --libs` 
+	SDL_CFLAGS=-DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers
+	SDL_LIBS=-framework SDL -framework Cocoa SDLMain.m -I/Library/Frameworks/SDL.Framework/Headers
+	SDL_TTF_CFLAGS=
+	SDL_TTF_LIBS=-lSDL_ttf
+	GL_CFLAGS=-I/System/Library/Frameworks/OpenGL.framework/Headers
+	GL_LIBS=-framework OpenGL
+	CFLAGS+=-DMACOSX
+
+	PROGS=buildfont testafont testglfont benchmark testafonttxt
 endif
 
 LIB=afont_sdl.a afont_gl.a
@@ -87,7 +101,7 @@ testafont.o: testafont.c
 	$(CC) -c $(CFLAGS) $(SDL_CFLAGS) testafont.c
 
 testglfont.o: testglfont.c
-	$(CC) -c $(CFLAGS) $(SDL_CFLAGS) $(GL_CFLAGS) testglfont.c
+	$(CC) -c $(CFLAGS) $(SDL_CFLAGS) $(GL_CFLAGS) testglfont.c -lm
 
 testafonttxt.o: testafonttxt.c
 	$(CC) -c $(CFLAGS) testafonttxt.c
