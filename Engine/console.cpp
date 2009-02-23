@@ -11,6 +11,7 @@
 #include "Graphics/video.h"
 #include "includes.h"
 #include "Utilities/log.h"
+#include "Utilities/lua.h"
 #include "Utilities/timer.h"
 
 vector<string> Console::Buffer;
@@ -48,6 +49,7 @@ void Console::Input( list<InputEvent> & events ) {
 
 					switch(i->key) {
 					case '\n':
+						Lua::Run(back.substr(2));
 						Console::Buffer.push_back(back);
 						back = "> ";
 					break;

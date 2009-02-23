@@ -15,24 +15,20 @@
 #include "Lua/src/lualib.h"
 #include "Lua/src/lauxlib.h"
 
-// A LuaScript instance is required for each script. The class uses static variables, however, to share
-// one lua_State, meaning only one Lua script can run at once, so this is almost surely not thread-safe.
-class LuaScript {
+class Lua {
 	public:
-		LuaScript();
-		LuaScript( string filename );
-		~LuaScript();
-		bool Load( string filename );
-		bool Run();
+		static bool Load( string filename );
+		static bool Run( string line );
+		static vector<string> GetOutput();
 
 		static lua_State *luaVM; // public for debugging purposes
 	private:
-		bool InitLua();
-		bool CloseLua();
+		static vector<string> buffer;
+
+		static bool Init();
+		static bool Close();
 		
 		static bool luaInitialized;
-		//static lua_State *luaVM;
-		static int numScriptsLoaded; // when destructor decrements this to zero, we de-init the Lua VM
 };
 
 #endif // __H_LUA__

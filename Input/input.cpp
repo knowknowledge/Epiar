@@ -151,12 +151,6 @@ void Input::Handle( list<InputEvent> & events ) {
 	if( keyDown[ SDLK_LEFT ] ) player->Rotate( _LEFT );
 	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( _RIGHT );
 	if( keyDown[ SDLK_UP ] ) player->Accelerate();
-	if( keyDown[ SDLK_g] ) {
-		static int used = 0;
-		if(used == 0)
-			ui_demo();
-		used = 1;
-	}
 }
 
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
@@ -165,6 +159,10 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 
 	if((key == SDLK_LSHIFT) || (key == SDLK_RSHIFT)) return; // we don't care about modifiers here
 	if(key == SDLK_BACKQUOTE) return;
+	if(key == SDLK_LEFT) return;
+	if(key == SDLK_RIGHT) return;
+	if(key == SDLK_UP) return;
+	if(key == SDLK_DOWN) return;
 
 	if(key >= SDLK_a && key <= SDLK_z) {
 		letter = word[0];
@@ -215,6 +213,8 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 		letter = ':';
 	} else if(key == SDLK_BACKSPACE) {
 		letter = '\b';
+	} else if(key == SDLK_EQUALS && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+		letter = '+';
 	} else {
 		letter = word[0];
 	}

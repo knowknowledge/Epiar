@@ -9,43 +9,52 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
-bool LuaScript::luaInitialized = false;
-lua_State *LuaScript::luaVM = NULL;
-int LuaScript::numScriptsLoaded = 0; // when destructor decrements this to zero, we de-init the Lua VM
+bool Lua::luaInitialized = false;
+lua_State *Lua::luaVM = NULL;
+vector<string> Lua::buffer;
 
-LuaScript::LuaScript() {
-	// luaVM == null? load it and luaInitialized = true
-}
-
-LuaScript::LuaScript( string filename ) {
-	Load( filename );
-}
-
-LuaScript::~LuaScript() {
-	// numSciptsLoaded--. does it equal 0? deinit luaVM and luaInitialized = false
-}
-
-bool LuaScript::Load( string filename ) {
+bool Lua::Load( string filename ) {
 	if( ! luaInitialized ) {
-		if( InitLua() == false ) {
+		if( Init() == false ) {
 			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
 			return( false );
 		}
 	}
 	
 	Log::Message( "Function not finished." );
-	// numScriptsLoaded++;
 	
 	return( false );
 }
 
-bool LuaScript::Run() {
-	Log::Message( "STUB" );
-	
+bool Lua::Run( string line ) {
+	int error = 0;
+
+	if( ! luaInitialized ) {
+		if( Init() == false ) {
+			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
+			return( false );
+		}
+	}
+
+	error = luaL_loadbuffer(luaVM, line.c_str(), line.length(), "line") || lua_pcall(luaVM, 0, 0, 0);
+	if( error ) {
+		fprintf(stderr, "%s", lua_tostring(luaVM, -1));
+		lua_pop(luaVM, 1);  /* pop error message from the stack */
+	}
+
 	return( false );
 }
 
-bool LuaScript::InitLua() {
+// returns the output from the last lua script and deletes it from internal buffer
+vector<string> Lua::GetOutput() {
+	vector<string> ret = buffer;
+
+	buffer.clear();
+
+	return( ret );
+}
+
+bool Lua::Init() {
 	if( luaInitialized ) {
 		Log::Warning( "Cannot initialize Lua. It is already initialized." );
 		return( false );
@@ -66,8 +75,8 @@ bool LuaScript::InitLua() {
 	return( true );
 }
 
-bool LuaScript::CloseLua() {
-	if( luaInitialized && numScriptsLoaded == 0 ) {
+bool Lua::Close() {
+	if( luaInitialized ) {
 		lua_close( luaVM );
 	} else {
 		Log::Warning( "Cannot deinitialize Lua. It is either not initialized or a script is still loaded." );
@@ -76,3 +85,4 @@ bool LuaScript::CloseLua() {
 	
 	return( true );
 }
+
