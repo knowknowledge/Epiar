@@ -41,6 +41,11 @@ class InputEvent {
 			this->key = key;
 			this->kstate = kstate;
 		}
+		InputEvent( eventType type, keyState kstate, char key ) {
+			this->type = type;
+			this->key = (SDLKey)key; // CHECKME: we're assuming SDLKey will never be smaller than a char
+			this->kstate = kstate;
+		}
 		InputEvent( eventType type, mouseState mstate, int mx, int my ) {
 			this->type = type;
 			this->mstate = mstate;
@@ -68,6 +73,7 @@ class Input {
 		void _UpdateHandleMouseUp( SDL_Event *event );
 		void _UpdateHandleMouseMotion( SDL_Event *event );
 		void Handle( list<InputEvent> & events );
+		void PushTypeEvent( list<InputEvent> & events, SDLKey key );
 
 		bool keyDown[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems

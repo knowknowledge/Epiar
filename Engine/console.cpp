@@ -32,7 +32,7 @@ void Console::Input( list<InputEvent> & events ) {
 	for( i = events.begin(); i != events.end(); ++i ) {
 		switch( i->type ) {
 		case KEY:
-			if( i->kstate == KEYTYPED ) {
+			if( i->kstate == KEYUP ) {
 				if( i->key == SDLK_BACKQUOTE) {
 					if( enabled ) {
 						enabled = false;
@@ -40,37 +40,30 @@ void Console::Input( list<InputEvent> & events ) {
 						enabled = true;
 					}
 				}
+			} else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
-					if(( i->key >= SDLK_a && i->key <= SDLK_z ) || (i->key == SDLK_SPACE) || (i->key == SDLK_EQUALS) || (i->key == SDLK_COMMA) || (i->key == SDLK_LEFTPAREN) || (i->key == SDLK_RIGHTPAREN) || (i->key == SDLK_RETURN)) {
-						string back = Console::Buffer.back();
-						back.erase(back.size() - 1);
+					string back = Console::Buffer.back();
+					back.erase(back.size() - 1);
+					Console::Buffer.pop_back();
 
-						switch(i->key) {
-						case SDLK_SPACE:
-							back += " ";
-						break;
-						case SDLK_LEFTPAREN:
-							back += "(";
-						break;
-						case SDLK_RIGHTPAREN:
-							back += ")";
-						break;
-						case SDLK_RETURN:
-							Console::Buffer.push_back(back);
-							back = "> ";
-						break;
-						default:
-							back += SDL_GetKeyName(i->key);
-						break;
-						}
-						back += "_";
-						Console::Buffer.pop_back();
+					switch(i->key) {
+					case '\n':
 						Console::Buffer.push_back(back);
-
-						// remove it from the queue
-						events.remove( *i );
-						i = events.begin(); // removing elements mid-list upsets iterators
+						back = "> ";
+					break;
+					case '\b':
+						if(back.size() > 2) back.erase(back.size() - 1);
+					break;
+					default:
+						back += i->key;
+					break;
 					}
+					back += "_";
+					Console::Buffer.push_back(back);
+
+					// remove it from the queue
+					events.remove( *i );
+					i = events.begin(); // removing elements mid-list upsets iterators
 				}
 			}
 		break;
