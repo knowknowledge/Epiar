@@ -70,7 +70,7 @@ void Hud::Update( void ) {
 
 }
 
-void Hud::Draw( SpriteList &sprites ) {
+void Hud::Draw( SpriteManager &sprites ) {
 	Hud::DrawHullIntegrity();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
@@ -115,7 +115,7 @@ void Hud::DrawShieldIntegrity() {
 	im_shieldstat->Draw( 35, 30 );
 }
 
-void Hud::DrawRadarNav( SpriteList &sprites ) {
+void Hud::DrawRadarNav( SpriteManager &sprites ) {
 	im_radarnav->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw( sprites );
@@ -143,7 +143,7 @@ void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
 }
 
-void Radar::Draw( SpriteList &sprites ) {
+void Radar::Draw( SpriteManager &sprites ) {
 	list<Sprite *>::iterator i;
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;

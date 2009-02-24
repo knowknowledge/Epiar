@@ -1,26 +1,24 @@
 /*
- * Filename      : spritelist.cpp
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
  * Purpose       : 
  * Notes         :
  */
 
 #include "includes.h"
 #include "Sprites/player.h"
-#include "Sprites/spritelist.h"
+#include "Sprites/spritemanager.h"
 
-SpriteList::SpriteList() {
+SpriteManager::SpriteManager() {
 
 }
 
-void SpriteList::Add( Sprite *sprite ) {
+void SpriteManager::Add( Sprite *sprite ) {
 	if( sprite )
 		sprites.push_back( sprite );
 }
 
-bool SpriteList::Delete( Sprite *sprite ) {
+bool SpriteManager::Delete( Sprite *sprite ) {
 	list<Sprite *>::iterator i;
 
 	for( i = sprites.begin(); i != sprites.end(); ++i ) {
@@ -35,7 +33,7 @@ bool SpriteList::Delete( Sprite *sprite ) {
 	return( false );
 }
 
-void SpriteList::Update( void ) {
+void SpriteManager::Update() {
 	list<Sprite *>::iterator i;
 
 	for( i = sprites.begin(); i != sprites.end(); ++i ) {
@@ -43,7 +41,7 @@ void SpriteList::Update( void ) {
 	}
 }
 
-void SpriteList::Draw( void ) {
+void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 
 	for( i = sprites.begin(); i != sprites.end(); ++i ) {
@@ -52,7 +50,7 @@ void SpriteList::Draw( void ) {
 }
 
 // Reorders sprite list to ensure correct drawing order
-void SpriteList::Order( void ) {
+void SpriteManager::Order() {
 	list<Sprite *>::iterator i;
 	list<int> layerIDs;
 	list<Sprite *> planets;
@@ -93,11 +91,11 @@ void SpriteList::Order( void ) {
 	sprites = newSprites;
 }
 
-list<Sprite *>::iterator SpriteList::Enumerate() {
+list<Sprite *>::iterator SpriteManager::Enumerate() {
 	return( sprites.begin() );
 }
 
-list<Sprite *>::iterator SpriteList::Enumerate( list<Sprite *>::iterator &i ) {
+list<Sprite *>::iterator SpriteManager::Enumerate( list<Sprite *>::iterator &i ) {
 	i++;
 	
 	if( i == sprites.end() )
@@ -105,3 +103,4 @@ list<Sprite *>::iterator SpriteList::Enumerate( list<Sprite *>::iterator &i ) {
 	
 	return( i );
 }
+

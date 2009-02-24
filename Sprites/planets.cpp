@@ -35,7 +35,7 @@ bool Planets::Load( string filename ) {
 }
 
 // Adds all planets in the manager (this, Planets) to the spritelist
-void Planets::RegisterAll( SpriteList *sprites ) {
+void Planets::RegisterAll( SpriteManager *sprites ) {
 	if( !sprites ) {
 		Log::Warning( "Invalid spritelist passed to planets manager." );
 		

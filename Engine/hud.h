@@ -12,7 +12,7 @@
 
 #include "Graphics/image.h"
 #include "includes.h"
-#include "Sprites/spritelist.h"
+#include "Sprites/spritemanager.h"
 
 class AlertMessage {
 	public:
@@ -29,14 +29,14 @@ class Hud {
 		static Hud *Instance();
 
 		static void Update( void );
-		static void Draw( SpriteList &sprites );
+		static void Draw( SpriteManager &sprites );
 		
 		static void Alert( const char *, ... );
 
 	private:
 		static void DrawHullIntegrity();
 		static void DrawShieldIntegrity();
-		static void DrawRadarNav( SpriteList &sprites );
+		static void DrawRadarNav( SpriteManager &sprites );
 		static void DrawMessages();
 	
 		static Hud *pInstance;
@@ -57,7 +57,7 @@ class Hud {
 class Radar {
 	public:
 		Radar( void );
-		static void Draw( SpriteList &sprites );
+		static void Draw( SpriteManager &sprites );
 		static void SetVisibility( int visibility );
 	
 	private:

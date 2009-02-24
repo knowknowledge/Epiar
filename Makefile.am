@@ -6,7 +6,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Engine/engines.cpp Engine/hud.cpp Engine/models.cpp \
                 Engine/simulation.cpp Engine/starfield.cpp \
                 Sprites/planets.cpp Sprites/player.cpp Sprites/ship.cpp \
-                Sprites/sprite.cpp Sprites/spritelist.cpp \
+                Sprites/sprite.cpp Sprites/spritemanager.cpp \
                 Utilities/camera.cpp Utilities/cmath.cpp Utilities/coordinate.cpp \
                 Utilities/hashtbl.cpp Utilities/log.cpp \
                 Utilities/timer.cpp Utilities/trig.cpp Utilities/vector.cpp \

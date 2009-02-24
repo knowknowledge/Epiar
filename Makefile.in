@@ -56,7 +56,7 @@ am_Epiar_OBJECTS = main.$(OBJEXT) ai.$(OBJEXT) input.$(OBJEXT) \
 	alliances.$(OBJEXT) engines.$(OBJEXT) hud.$(OBJEXT) \
 	models.$(OBJEXT) simulation.$(OBJEXT) starfield.$(OBJEXT) \
 	planets.$(OBJEXT) player.$(OBJEXT) ship.$(OBJEXT) \
-	sprite.$(OBJEXT) spritelist.$(OBJEXT) camera.$(OBJEXT) \
+	sprite.$(OBJEXT) spritemanager.$(OBJEXT) camera.$(OBJEXT) \
 	cmath.$(OBJEXT) coordinate.$(OBJEXT) hashtbl.$(OBJEXT) \
 	log.$(OBJEXT) timer.$(OBJEXT) trig.$(OBJEXT) vector.$(OBJEXT) \
 	ui_widget.$(OBJEXT) ui_window.$(OBJEXT) ui.$(OBJEXT) \
@@ -210,7 +210,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Engine/engines.cpp Engine/hud.cpp Engine/models.cpp \
                 Engine/simulation.cpp Engine/starfield.cpp \
                 Sprites/planets.cpp Sprites/player.cpp Sprites/ship.cpp \
-                Sprites/sprite.cpp Sprites/spritelist.cpp \
+                Sprites/sprite.cpp Sprites/spritemanager.cpp \
                 Utilities/camera.cpp Utilities/cmath.cpp Utilities/coordinate.cpp \
                 Utilities/hashtbl.cpp Utilities/log.cpp \
                 Utilities/timer.cpp Utilities/trig.cpp Utilities/vector.cpp \
@@ -338,7 +338,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ship.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simulation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sprite.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spritelist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/spritemanager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/starfield.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/trig.Po@am__quote@
@@ -533,19 +533,19 @@ sprite.obj: Sprites/sprite.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sprite.obj `if test -f 'Sprites/sprite.cpp'; then $(CYGPATH_W) 'Sprites/sprite.cpp'; else $(CYGPATH_W) '$(srcdir)/Sprites/sprite.cpp'; fi`
 
-spritelist.o: Sprites/spritelist.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT spritelist.o -MD -MP -MF $(DEPDIR)/spritelist.Tpo -c -o spritelist.o `test -f 'Sprites/spritelist.cpp' || echo '$(srcdir)/'`Sprites/spritelist.cpp
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/spritelist.Tpo $(DEPDIR)/spritelist.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Sprites/spritelist.cpp' object='spritelist.o' libtool=no @AMDEPBACKSLASH@
+spritemanager.o: Sprites/spritemanager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT spritemanager.o -MD -MP -MF $(DEPDIR)/spritemanager.Tpo -c -o spritemanager.o `test -f 'Sprites/spritemanager.cpp' || echo '$(srcdir)/'`Sprites/spritemanager.cpp
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/spritemanager.Tpo $(DEPDIR)/spritemanager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Sprites/spritemanager.cpp' object='spritemanager.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o spritelist.o `test -f 'Sprites/spritelist.cpp' || echo '$(srcdir)/'`Sprites/spritelist.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o spritemanager.o `test -f 'Sprites/spritemanager.cpp' || echo '$(srcdir)/'`Sprites/spritemanager.cpp
 
-spritelist.obj: Sprites/spritelist.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT spritelist.obj -MD -MP -MF $(DEPDIR)/spritelist.Tpo -c -o spritelist.obj `if test -f 'Sprites/spritelist.cpp'; then $(CYGPATH_W) 'Sprites/spritelist.cpp'; else $(CYGPATH_W) '$(srcdir)/Sprites/spritelist.cpp'; fi`
-@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/spritelist.Tpo $(DEPDIR)/spritelist.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Sprites/spritelist.cpp' object='spritelist.obj' libtool=no @AMDEPBACKSLASH@
+spritemanager.obj: Sprites/spritemanager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT spritemanager.obj -MD -MP -MF $(DEPDIR)/spritemanager.Tpo -c -o spritemanager.obj `if test -f 'Sprites/spritemanager.cpp'; then $(CYGPATH_W) 'Sprites/spritemanager.cpp'; else $(CYGPATH_W) '$(srcdir)/Sprites/spritemanager.cpp'; fi`
+@am__fastdepCXX_TRUE@	mv -f $(DEPDIR)/spritemanager.Tpo $(DEPDIR)/spritemanager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Sprites/spritemanager.cpp' object='spritemanager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o spritelist.obj `if test -f 'Sprites/spritelist.cpp'; then $(CYGPATH_W) 'Sprites/spritelist.cpp'; else $(CYGPATH_W) '$(srcdir)/Sprites/spritelist.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o spritemanager.obj `if test -f 'Sprites/spritemanager.cpp'; then $(CYGPATH_W) 'Sprites/spritemanager.cpp'; else $(CYGPATH_W) '$(srcdir)/Sprites/spritemanager.cpp'; fi`
 
 camera.o: Utilities/camera.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT camera.o -MD -MP -MF $(DEPDIR)/camera.Tpo -c -o camera.o `test -f 'Utilities/camera.cpp' || echo '$(srcdir)/'`Utilities/camera.cpp

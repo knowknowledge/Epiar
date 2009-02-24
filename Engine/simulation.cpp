@@ -15,7 +15,7 @@
 #include "includes.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
-#include "Sprites/spritelist.h"
+#include "Sprites/spritemanager.h"
 #include "UI/ui.h"
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
@@ -57,13 +57,12 @@ bool Simulation::Run( void ) {
 	Starfield starfield( 700 );
 
 	// Create a spritelist
-	SpriteList sprites;
+	SpriteManager sprites;
 
 	Player *player = Player::Instance();
 
 	// Set player model based on simulation xml file settings
 	player->SetModel( models->GetModel( playerDefaultModel ) );
-
 	sprites.Add( player->GetSprite() );
 
 	// Focus the camera on the sprite

@@ -1,6 +1,7 @@
 Monday, February 23, 2009
 	Chris Thielen:
 		* Implemented 'echo' function for Lua console
+		* Renamed SpriteList to SpriteManager
 
 Sunday, February 22, 2009
 	Chris Thielen:

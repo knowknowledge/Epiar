@@ -1,30 +1,28 @@
 /*
- * Filename      : spritelist.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Wednesday, July 5, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : Header for sprite list services
+ * Purpose       : Sprite management services
  * Notes         :
  */
 
-#ifndef __H_SPRITELIST__
-#define __H_SPRITELIST__
+#ifndef __H_SPRITEMANAGER__
+#define __H_SPRITEMANAGER__
 
 #include "Sprites/sprite.h"
 
-class SpriteList {
+class SpriteManager {
 	public:
-		SpriteList();
+		SpriteManager();
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
-		void Update( void );
-		void Draw( void );
+		void Update();
+		void Draw();
 
 		bool LoadNPCs( string filename );
 		
 		// Reorders sprite list to ensure correct drawing order
-		void Order( void );
+		void Order();
 
 		// Enumeration functions - allows outside code to go through out internal list
 		list<Sprite *>::iterator Enumerate();
@@ -34,4 +32,5 @@ class SpriteList {
 		list<Sprite *> sprites;
 };
 
-#endif // __H_SPRITELIST__
+#endif // __H_SPRITEMANAGER__
+
