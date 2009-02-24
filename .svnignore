@@ -5,4 +5,5 @@ aclocal.m4
 config.log
 Epiar-Log*
 Makefile
+Makefile.in
 
