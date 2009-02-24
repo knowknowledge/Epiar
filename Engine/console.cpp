@@ -49,8 +49,8 @@ void Console::Input( list<InputEvent> & events ) {
 
 					switch(i->key) {
 					case '\n':
-						Lua::Run(back.substr(2));
 						Console::Buffer.push_back(back);
+						Lua::Run(back.substr(2));
 						back = "> ";
 					break;
 					case '\b':
@@ -84,6 +84,7 @@ void Console::Draw() {
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
 			VeraMono10->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
 			pos--;
+			if(pos < 0) break;
 		}
 	}
 }
@@ -92,5 +93,19 @@ void Console::Update() {
 	if( enabled ) {
 		
 	}
+}
+
+// used by lua functions, eg echo
+void Console::InsertResult(string result) {
+	// get the prompt off the buffer
+	//string back = Console::Buffer.back();
+	//back.erase(back.size() - 1);
+	//Console::Buffer.pop_back();
+
+	// insert result into buffer
+	Console::Buffer.push_back(result);
+
+	// insert prompt back into buffer
+	//Console::Buffer.push_back(back);
 }
 

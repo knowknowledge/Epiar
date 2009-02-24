@@ -27,6 +27,7 @@ class Lua {
 
 		static bool Init();
 		static bool Close();
+		static void RegisterFunctions();
 		
 		static bool luaInitialized;
 };

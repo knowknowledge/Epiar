@@ -6,12 +6,16 @@
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
+#include "Engine/console.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
 vector<string> Lua::buffer;
+
+// Exported functions
+static int lua_echo(lua_State *L);
 
 bool Lua::Load( string filename ) {
 	if( ! luaInitialized ) {
@@ -36,9 +40,9 @@ bool Lua::Run( string line ) {
 		}
 	}
 
-	error = luaL_loadbuffer(luaVM, line.c_str(), line.length(), "line") || lua_pcall(luaVM, 0, 0, 0);
+	error = luaL_loadbuffer(luaVM, line.c_str(), line.length(), "line") || lua_pcall(luaVM, 0, 1, 0);
 	if( error ) {
-		fprintf(stderr, "%s", lua_tostring(luaVM, -1));
+		Console::InsertResult(lua_tostring(luaVM, -1));
 		lua_pop(luaVM, 1);  /* pop error message from the stack */
 	}
 
@@ -69,6 +73,8 @@ bool Lua::Init() {
 	}
 
 	luaL_openlibs( luaVM );
+
+	RegisterFunctions();
 	
 	luaInitialized = true;
 	
@@ -84,5 +90,21 @@ bool Lua::Close() {
 	}
 	
 	return( true );
+}
+
+void Lua::RegisterFunctions() {
+	lua_pushcfunction(luaVM, lua_echo);
+	lua_setglobal(luaVM, "echo");
+}
+
+static int lua_echo(lua_State *L) {
+	const char *str = lua_tostring(L, 1); // get argument
+
+	if(str == NULL)
+		Console::InsertResult("nil");
+	else
+		Console::InsertResult(str);
+
+	return 0;
 }
 

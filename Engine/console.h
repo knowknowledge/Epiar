@@ -21,6 +21,8 @@ class Console {
 		static void Draw();
 		static void Update();
 
+		static void InsertResult(string result); // used by lua functions, eg echo
+
 	private:
 		static vector<string> Buffer;
 		static bool enabled, initialized;

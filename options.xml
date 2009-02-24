@@ -5,10 +5,10 @@
 	<version-macro>0</version-macro>
 	<logging>0</logging>
 	<video>
-		<w>1280</w>
-		<h>1024</h>
+		<w>1024</w>
+		<h>768</h>
 		<bpp>32</bpp>
-		<fullscreen>1</fullscreen>
+		<fullscreen>0</fullscreen>
 	</video>
 	<simulation>
 		<starfield-density>325</starfield-density>
