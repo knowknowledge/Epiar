@@ -11,7 +11,7 @@
 		<fullscreen>0</fullscreen>
 	</video>
 	<simulation>
-		<starfield-density>325</starfield-density>
+		<starfield-density>750</starfield-density>
 	</simulation>
 	<momentum-caps>
 		<top>5.0</top>

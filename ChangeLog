@@ -1,3 +1,7 @@
+Tuesday, June 23, 2009
+	Chris Thielen:
+		* Obey options.xml for starfield density
+
 Monday, February 23, 2009
 	Chris Thielen:
 		* Implemented 'echo' function for Lua console

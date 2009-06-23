@@ -2,11 +2,12 @@
  * Filename      : simulation.cpp
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : July 2006
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Tuesday, June 23, 2009
  * Purpose       : Contains the main game loop
  * Notes         :
  */
- 
+
+#include "common.h" 
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Engine/alliances.h"
@@ -54,7 +55,7 @@ bool Simulation::Run( void ) {
 	camera->Focus(0, 0);
 
 	// Generate a starfield
-	Starfield starfield( 700 );
+	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	// Create a spritelist
 	SpriteManager sprites;
