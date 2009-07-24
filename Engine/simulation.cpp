@@ -22,11 +22,14 @@
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 
+float Simulation::currentFPS = 0.;
+
 Simulation::Simulation( void ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
 	alliances = Alliances::Instance();
+	currentFPS = 0.;
 }
 
 Simulation::Simulation( string filename ) {
@@ -34,6 +37,7 @@ Simulation::Simulation( string filename ) {
 	planets = Planets::Instance();
 	models = Models::Instance();
 	alliances = Alliances::Instance();
+	currentFPS = 0.;
 
 	this->filename = filename;
 	
@@ -49,6 +53,8 @@ bool Simulation::Load( string filename ) {
 bool Simulation::Run( void ) {
 	bool quit = false;
 	Input inputs;
+	int fpsCount = 0; // for FPS calculations
+	Uint32 fpsTS = 0; // timestamp
 
 	// Grab the camera and give it coordinates
 	Camera *camera = Camera::Instance();
@@ -80,6 +86,7 @@ bool Simulation::Run( void ) {
 
 	Hud::Alert( "Captain, we don't have the power! Pow = %d", 3 );
 
+	fpsTS = Timer::GetTicks();
 	// main game loop
 	while( !quit ) {
 		quit = inputs.Update();
@@ -109,9 +116,22 @@ bool Simulation::Run( void ) {
 		Timer::Delay();
 		
 		Coordinate playerPos = player->GetWorldPosition();
+
+		// Update FPS
+		fpsCount++;
+
+		if((fpsTS + 1000) <= Timer::GetTicks()) {
+			Simulation::currentFPS = (float)fpsCount / (float)(Timer::GetTicks() - fpsTS);
+			fpsTS = Timer::GetTicks();
+			fpsCount = 0;
+		}
 	}
 
 	return true;
+}
+
+float Simulation::GetFPS() {
+	return Simulation::currentFPS;
 }
 
 bool Simulation::Parse( void ) {

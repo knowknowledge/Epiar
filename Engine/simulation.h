@@ -22,7 +22,9 @@ class Simulation {
 		
 		bool Load( string filename );
 		bool Run( void );
-	
+
+		static float GetFPS();
+
 	private:
 		bool Parse( void );
 	
@@ -35,6 +37,8 @@ class Simulation {
 		Alliances *alliances;
 		
 		string playerDefaultModel;
+
+		static float currentFPS;
 };
 
 #endif // __H_SIMULATION__

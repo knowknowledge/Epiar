@@ -65,6 +65,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()
 	SDL_Surface *screen = NULL; // pointer to main video surface
+	int ret = 0;
 
 	// get information about the video card (namely, does it support
 	// hardware surfaces?)
@@ -101,10 +102,9 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-	bpp = SDL_VideoModeOK( w, h, bpp, videoFlags );
-	if( !bpp ) {
+	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
+	if( !ret ) {
 		Log::Warning( "Video mode %dx%dx%d not available.", w, h, bpp );
-		bpp = 32;
 	} else {
 		Log::Message( "Video mode %dx%dx%d supported.", w, h, bpp );
 	}

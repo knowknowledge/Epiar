@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Engine/console.h"
 #include "Engine/hud.h"
+#include "Engine/simulation.h"
 #include "Graphics/video.h"
 #include "includes.h"
 #include "Sprites/player.h"
@@ -76,11 +77,20 @@ void Hud::Draw( SpriteManager &sprites ) {
 	Hud::DrawRadarNav( sprites );
 	Hud::DrawMessages();
 	Console::Draw();
+	Hud::DrawFPS();
 }
 
 // Draw HUD messages (eg Welcome to Epiar)
 void Hud::DrawMessages() {
 	Vera10->Render( 15, Video::GetHeight() - 15, "Welcome to Epiar 0.7.0-alpha" );
+}
+
+// Draw the current framerate (calculated in simulation.cpp)
+void Hud::DrawFPS() {
+	const char *frameRate[10] = {0};
+	memset(frameRate, 0, sizeof(char) * 10);
+	snprintf((char *)frameRate, 9, "%f fps", Simulation::GetFPS());
+	Vera10->Render( 30, Video::GetHeight() - 30, (const char *)frameRate );
 }
 
 void Hud::DrawHullIntegrity() {

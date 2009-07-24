@@ -1,3 +1,10 @@
+Thursday, July 23, 2009
+	Chris Thielen:
+		* Began adding a framerate counter
+		* Fixed bug with quadrant.cpp missing
+		* Do we need a resource manager to pass around simulation,
+		hud, etc. or is there another way to do this?
+
 Tuesday, June 23, 2009
 	Chris Thielen:
 		* Obey options.xml for starfield density
