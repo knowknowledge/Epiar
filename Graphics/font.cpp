@@ -72,7 +72,7 @@ void Font::RenderCentered( int x, int y, const char *text ) {
 	// determine size of text
 	afont_size_text( font->orig, text, &w, &h, &base );
 
-	Render( x - (w / 2), y - (h / 2) + base - 1, text ); // -1 because it just kinda looks better
+	Render( x - (w / 2), y - (h / 2) + base, text ); // -1 because it just kinda looks better
 }
 
 void Font::SetColor( float r, float g, float b ) {
