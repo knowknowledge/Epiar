@@ -52,3 +52,8 @@ Eye-candy
 * Camera lagging
 * Shield flares
 * Motion-blur
+
+Ignore This
+-----------
+The addition of this section is merely to create a test repository revision to see if the post-commit Subversion hook is operating correctly.
+
