@@ -1,0 +1,24 @@
+This document describes how to compile Epiar.
+
+Contents
+--------
+i. Generic Unix Instructions
+	ia. Mac OS X Notes
+
+i. Generic Unix Instructions
+----------------------------
+	Epiar uses the GNU automake/autoconf environment. In general, this requires the presence of gcc, make (or gmake on *BSD), autoconf, automake, and aclocal, among other tools.
+	Epiar also requires the following popular open source libraries. They are available for most common Unixes (various Linuxes, OS X, FreeBSD, etc.): SDL (libsdl.org), SDL_image (libsdl.org), SDL_mixer (libsdl.org), and libxml2 (xmlsoft.org). OpenGL compatible development libraries are also required, with SDL being built to utilize them.
+	Given the proper installation of these tools & libraries, the build process is as follows:
+
+	./autogen.sh
+	./configure
+	make
+
+	The Epiar binary will then appear in the root of the source tree. You can launch it by typing ./Epiar.
+
+ia. Mac OS X Notes
+------------------
+	To meet all needed requirements above, installation of the Apple XCode package is needed. This is available from apple.com. XCode will install GNU gcc, automake, autoconf, aclocal and other needed tools. Libxml2 is also provided on OS X (note: OS X 10.5 and above, though 10.4 should work and compilation on 10.3 is likely possible with some work).
+	In addition to XCode, you must also obtain the three SDL "frameworks" from libsdl.org. Download the SDL, SDL_image, and SDL_mixer OS X frameworks and place them either in /Library/Frameworks or ~/Library/Frameworks. That should complete OS X setup. Proceed with the ./autogen.sh step above to build Epiar.
+

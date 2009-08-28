@@ -1,3 +1,7 @@
+Thursday, August 27, 2009
+	Chris Thielen:
+		* Added a BUILDING file to describe the build process on various architectures
+
 Thursday, July 23, 2009
 	Chris Thielen:
 		* Began adding a framerate counter
