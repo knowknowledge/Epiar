@@ -13,8 +13,7 @@
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
 
-#define _LEFT  0
-#define _RIGHT 1
+enum Direction {_LEFT=-1,_STRAIGHT,_RIGHT};
 
 class Ship : public Sprite {
 	public:
@@ -30,6 +29,8 @@ class Ship : public Sprite {
 		void Draw( void );
 		
 		/* Status functions */
+        Direction directionTowards(Coordinate c);
+        Direction directionTowards(float angle);
 		float getHullIntegrityPct();
 		
 		virtual int GetDrawOrder( void ) {

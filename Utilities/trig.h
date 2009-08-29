@@ -41,4 +41,6 @@ class Trig {
 		double tanTable[360];
 };
 
+float normalizeAngle(float);
+
 #endif // __h_trig__

@@ -52,13 +52,13 @@ void Ship::Rotate( int direction ) {
 	
 	if( direction == _LEFT ) {
 		angle += (rotPerSecond * timerDelta) * 360.;
-	} else {
+	}
+    if( direction == _RIGHT){
 		angle -= (rotPerSecond * timerDelta) * 360.;
 	}
 	
 	// Normalize
-	while( angle < 0. ) angle += 360.;
-	while( angle > 360. ) angle -= 360.;
+    angle = normalizeAngle(angle);
 	
 	SetAngle( angle );
 }
@@ -109,6 +109,31 @@ void Ship::Draw( void ) {
 		
 		status.isAccelerating = false;
 	}
+}
+
+Direction Ship::directionTowards(Coordinate target){
+	float theta;
+	//Trig *trig = Trig::Instance();
+    Coordinate position = target - GetWorldPosition();
+
+    theta = position.GetAngle();//trig->RadToDeg(atan2( - position.GetY(), position.GetX()));
+    //Log::Message("Angle towards target (%f,%f) is %f.",target.GetX(),target.GetY(),theta);
+    //Log::Message("Current Angle %f",this->GetAngle());
+    return this->directionTowards(theta);
+}
+
+Direction Ship::directionTowards(float angle){
+    float aim;
+    // aim must be of the correct domain (0,360)
+    angle = normalizeAngle(angle);
+    aim = angle - this->GetAngle();
+    aim = normalizeAngle(aim);
+    
+    //Log::Message("Aim %f",aim);
+    // return the correct direction
+    if      ( aim < 180 ) return _LEFT ;
+    else if ( aim > 180 ) return _RIGHT; 
+    return _STRAIGHT;
 }
 
 // Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%)

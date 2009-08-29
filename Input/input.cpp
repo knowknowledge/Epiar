@@ -148,9 +148,17 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 void Input::Handle( list<InputEvent> & events ) {
 	Player *player = Player::Instance();
 
+	if( keyDown[ SDLK_UP ] ) player->Accelerate();
+    // TODO It shouldn't be possible to rotate in both directions at once
 	if( keyDown[ SDLK_LEFT ] ) player->Rotate( _LEFT );
 	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( _RIGHT );
-	if( keyDown[ SDLK_UP ] ) player->Accelerate();
+    if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
+        player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
+    }
+    // DEBUG CODE
+    if( keyDown[ 'c' ] ){  // Rotate towards the center of the Universe
+        player->Rotate( player->directionTowards( Coordinate(0,0) ) );
+    }
 }
 
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {

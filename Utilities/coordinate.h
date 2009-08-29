@@ -35,6 +35,8 @@ class Coordinate {
 		/* Returns coords converted to screen universe by Camera class */
 	 	int GetScreenX();
 	 	int GetScreenY();
+
+        float GetAngle();
 	
 		// Make an SDL Rectangle from coordinates
 		// Use width/height of 0

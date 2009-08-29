@@ -10,6 +10,7 @@
 #include "includes.h"
 #include "Utilities/camera.h"
 #include "Utilities/coordinate.h"
+#include "Utilities/trig.h"
 
 Coordinate::Coordinate() {
 	m_x = m_y = 0;
@@ -93,6 +94,13 @@ int Coordinate::GetScreenY() {
 	camera->Translate( *this, screen );
 	
 	return( (int)screen.GetY() );
+}
+
+float Coordinate::GetAngle() {
+    // 0 is right, 90 is up
+    // Due to the way coordinates are displayed, use negative Y
+	Trig *trig = Trig::Instance();
+	return trig->RadToDeg( atan2( -m_y , m_x ) );
 }
 
 ostream& operator<<(ostream &out, const Coordinate &c) {
