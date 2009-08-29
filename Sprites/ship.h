@@ -29,8 +29,8 @@ class Ship : public Sprite {
 		void Draw( void );
 		
 		/* Status functions */
-        Direction directionTowards(Coordinate c);
-        Direction directionTowards(float angle);
+		Direction directionTowards(Coordinate c);
+		Direction directionTowards(float angle);
 		float getHullIntegrityPct();
 		
 		virtual int GetDrawOrder( void ) {

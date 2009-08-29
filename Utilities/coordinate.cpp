@@ -97,8 +97,8 @@ int Coordinate::GetScreenY() {
 }
 
 float Coordinate::GetAngle() {
-    // 0 is right, 90 is up
-    // Due to the way coordinates are displayed, use negative Y
+	// 0 is right, 90 is up
+	// Due to the way coordinates are displayed, use negative Y
 	Trig *trig = Trig::Instance();
 	return trig->RadToDeg( atan2( -m_y , m_x ) );
 }

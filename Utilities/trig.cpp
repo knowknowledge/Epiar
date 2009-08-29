@@ -77,5 +77,5 @@ void Trig::RotatePoint( float x, float y, float ax, float ay, float *nx, float *
 float normalizeAngle(float angle){
 	while( angle < 0. ) angle += 360.;
 	while( angle > 360. ) angle -= 360.;
-    return angle;
+	return angle;
 }
