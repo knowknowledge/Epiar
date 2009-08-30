@@ -20,20 +20,18 @@ class Lua {
 	public:
 		static bool Load( string filename );
 		static bool Run( string line );
-		//static bool Update();
+		static bool Update();
 		static vector<string> GetOutput();
 
+		static void RegisterFunctions();
 		static bool SetSpriteList(SpriteManager* the_sprites);
+		static SpriteManager* GetSpriteList();
 	private:
 		static vector<string> buffer;
 
 		static bool Init();
 		static bool Close();
-		static void RegisterFunctions();
-		
-		// Functions t
-		static int newShip(lua_State *luaVM);
-		
+
 		// Internal variables
 		static SpriteManager* my_sprites;
 		static lua_State *luaVM;

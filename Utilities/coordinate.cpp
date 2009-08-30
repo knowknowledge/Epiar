@@ -103,6 +103,12 @@ float Coordinate::GetAngle() {
 	return trig->RadToDeg( atan2( -m_y , m_x ) );
 }
 
+float Coordinate::GetMagnitude() {
+	// 0 is right, 90 is up
+	// Due to the way coordinates are displayed, use negative Y
+	return sqrt( m_y*m_y + m_x*m_x );
+}
+
 ostream& operator<<(ostream &out, const Coordinate &c) {
 	out << "(" << c.m_x << ", " << c.m_y << ")";
 	return out;

@@ -97,6 +97,7 @@ bool Simulation::Run( void ) {
 	// main game loop
 	while( !quit ) {
 		quit = inputs.Update();
+		Lua::Update();
 		
 		// Erase cycle
 		Video::Erase();

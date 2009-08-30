@@ -37,6 +37,7 @@ class Coordinate {
 	 	int GetScreenY();
 
 		float GetAngle();
+		float GetMagnitude();
 	
 		// Make an SDL Rectangle from coordinates
 		// Use width/height of 0

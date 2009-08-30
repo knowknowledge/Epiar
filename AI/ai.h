@@ -22,6 +22,17 @@ class AI : public Ship{
 		AI();
 		void Update();
 		void SetScript(string script);
+
+		// Functions to communicate with Lua
+		static void RegisterAI(lua_State *luaVM);
+		static int newShip(lua_State *luaVM);
+
+		static int ShipAccelerate(lua_State* luaVM);
+		static int ShipRotate(lua_State* luaVM);
+		static int ShipGetAngle(lua_State* luaVM);
+		static int ShipGetPosition(lua_State* luaVM);
+		static int ShipGetMomentumAngle(lua_State* luaVM);
+		static int ShipGetMomentumSpeed(lua_State* luaVM);
 	private:
 		string my_script;
 };
