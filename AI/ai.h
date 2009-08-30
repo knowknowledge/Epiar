@@ -33,6 +33,7 @@ class AI : public Ship{
 		static int ShipGetPosition(lua_State* luaVM);
 		static int ShipGetMomentumAngle(lua_State* luaVM);
 		static int ShipGetMomentumSpeed(lua_State* luaVM);
+		static int ShipGetDirectionTowards(lua_State* luaVM); // Accepts either Angles or Coordinates
 	private:
 		string my_script;
 };

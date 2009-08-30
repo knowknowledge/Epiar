@@ -40,6 +40,7 @@ void AI::RegisterAI(lua_State *luaVM){
 		{"GetPosition", &AI::ShipGetPosition},
 		{"GetMomentumAngle", &ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &ShipGetMomentumSpeed},
+		{"directionTowards", &ShipGetDirectionTowards},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(luaVM, "EpiarLua.Ship");
@@ -181,4 +182,26 @@ int AI::ShipGetMomentumSpeed(lua_State* L){
 	return 1;
 }
 
+int AI::ShipGetDirectionTowards(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	AI** ptrAI;
+	AI* realAI;
 
+	if (n > 1) {
+		ptrAI = (AI**)lua_touserdata(L,1);
+		realAI = *ptrAI;
+	}
+
+	if (n == 2) { // Angle
+		double angle = (Direction)luaL_checknumber(L, 2);
+		lua_pushnumber(L, (double) realAI->directionTowards(angle) );
+	}
+	else if(n==3){ // Coordinate
+		double x = (Direction)luaL_checknumber(L, 2);
+		double y = (Direction)luaL_checknumber(L, 3);
+		lua_pushnumber(L, (double) realAI->directionTowards(Coordinate(x,y)) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}

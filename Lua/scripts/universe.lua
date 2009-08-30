@@ -3,7 +3,7 @@
 -- This is responsible for
 
 -- Generate Ships
-number_of_ships = 20
+number_of_ships = 200
 ship_list = {}
 
 for s =1,number_of_ships do
@@ -48,16 +48,27 @@ function Update ()
 	avg_vector = avg_vector / #ship_list
 	avg_speed = avg_speed / #ship_list
 
-	io.write("Center at ",avg_x,",",avg_y,"\n" )
-	io.write("Angle ",avg_angle,"\n" )
-	io.write("Speed ",avg_speed,"\n" )
-	io.write("Vector ",avg_vector,"\n" )
-	io.write("\n" )
-
 	-- Move towards the center
 	for s =1,number_of_ships do
 		cur_ship = ship_list[s]
-		EpiarLua.Ship.Rotate(cur_ship, math.random(3) -1 )
+		x,y = EpiarLua.Ship.GetPosition(cur_ship)
+		dir_point = EpiarLua.Ship.directionTowards(cur_ship, avg_x, avg_y)
+		dir_aim = EpiarLua.Ship.directionTowards(cur_ship, avg_angle )
+		dir_center = EpiarLua.Ship.directionTowards(cur_ship, 0,0)
+
+		if math.sqrt(x*x + y*y) >1000 then 
+			EpiarLua.Ship.Rotate(cur_ship, dir_center)
+		else
+			if dir_point == dir_aim then
+				EpiarLua.Ship.Rotate(cur_ship, dir_aim)
+			else
+				if math.random(2) == 1 then
+					EpiarLua.Ship.Rotate(cur_ship, dir_point)
+				else
+					EpiarLua.Ship.Rotate(cur_ship, dir_aim)
+				end
+			end
+		end
 		EpiarLua.Ship.Accelerate(cur_ship )
 	end
 end
