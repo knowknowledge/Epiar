@@ -18,6 +18,7 @@ Ship::Ship() {
 	/* Initalize ship's condition */
 	status.hullEnergyAbsorbed = 0;
 	SetRadarColor(Color::Get(255,0,0));
+	SetAngle( float( rand() %360 ) );
 }
 
 bool Ship::SetModel( Model *model ) {
