@@ -21,6 +21,8 @@
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
+#include "Utilities/lua.h"
+#include "AI/ai.h"
 
 float Simulation::currentFPS = 0.;
 
@@ -78,8 +80,13 @@ bool Simulation::Run( void ) {
 	// Add the planets
 	planets->RegisterAll( &sprites );
 
+	// Start the Lua Universe
+	Lua::SetSpriteList( &sprites );
+	Lua::Load("Lua/scripts/universe.lua");
+
 	// Ensure correct drawing order
 	sprites.Order();
+
 	
 	// Create the hud
 	Hud::Hud();

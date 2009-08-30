@@ -9,6 +9,22 @@
 
 #include "AI/ai.h"
 
+#include "Sprites/Player.h"
+
 AI::AI() {
 	
+}
+
+void AI::Update(){
+	// Decide
+	Player *player = Player::Instance();
+	this->Rotate( directionTowards( player->GetWorldPosition()  )  );
+	this->Accelerate();
+	
+	// Now act like a normal ship
+	this->Ship::Update();
+}
+
+void AI::SetScript(string script){
+	my_script = script;
 }

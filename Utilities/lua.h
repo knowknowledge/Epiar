@@ -14,14 +14,16 @@
 #include "Lua/src/lua.h"
 #include "Lua/src/lualib.h"
 #include "Lua/src/lauxlib.h"
+#include "Sprites/spriteManager.h"
 
 class Lua {
 	public:
 		static bool Load( string filename );
 		static bool Run( string line );
+		//static bool Update();
 		static vector<string> GetOutput();
 
-		static lua_State *luaVM; // public for debugging purposes
+		static bool SetSpriteList(SpriteManager* the_sprites);
 	private:
 		static vector<string> buffer;
 
@@ -29,6 +31,12 @@ class Lua {
 		static bool Close();
 		static void RegisterFunctions();
 		
+		// Functions t
+		static int newShip(lua_State *luaVM);
+		
+		// Internal variables
+		static SpriteManager* my_sprites;
+		static lua_State *luaVM;
 		static bool luaInitialized;
 };
 

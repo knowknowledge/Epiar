@@ -13,14 +13,17 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+#include "Sprites/ship.h"
 
 // Sprites have an AI object which is used to manipulate their attributes
 // to run an AI simulation
-class AI {
+class AI : public Ship{
 	public:
 		AI();
+		void Update();
+		void SetScript(string script);
 	private:
-	
+		string my_script;
 };
 
 #endif /*AI_H_*/
