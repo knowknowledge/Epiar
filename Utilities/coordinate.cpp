@@ -104,8 +104,6 @@ float Coordinate::GetAngle() {
 }
 
 float Coordinate::GetMagnitude() {
-	// 0 is right, 90 is up
-	// Due to the way coordinates are displayed, use negative Y
 	return sqrt( m_y*m_y + m_x*m_x );
 }
 
