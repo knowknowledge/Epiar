@@ -17,7 +17,7 @@ class Label : public Widget {
 		Label( int x, int y, string label );
 		~Label();
 		
-		void Draw( void );
+		void Draw(  int relx = 0, int rely = 0 );
 
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };

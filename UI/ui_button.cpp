@@ -13,6 +13,7 @@
 #include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/debug.h"
+#include "Utilities/log.h"
 
 Button::Button( int x, int y, int w, int h, string label ) {
 	SetX( x );
@@ -50,9 +51,9 @@ void Button::Draw( int relx, int rely ) {
 }
 
 void Button::Focus( int x, int y ) {
-	cout << "button has focus" << endl;
+	Log::Message( "Focused on: '%s'.", (char *)label.c_str() );
 }
 
 void Button::Unfocus( void ) {
-	cout << "button lost focus" << endl;
+	Log::Message( "Unfocused on: '%s'.", (char *)label.c_str() );
 }

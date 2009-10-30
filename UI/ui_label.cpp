@@ -7,9 +7,12 @@
  * Notes         :
  */
 
+#include "common.h"
 #include "Graphics/video.h"
+#include "Graphics/font.h"
 #include "includes.h"
 #include "UI/ui.h"
+#include "Utilities/log.h"
 
 Label::Label( int x, int y, string label ) {
 	SetX( x );
@@ -25,12 +28,14 @@ Label::~Label() {
 
 }
 
-void Label::Draw( void ) {
+void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	
-	x = GetX();
-	y = GetY();
+	x = GetX() + relx;
+	y = GetY() + rely;
 	
-	// Draw the label
+	// draw the label
+	Vera10->SetColor( 1., 1., 1. );
+	Vera10->RenderCentered( x, y, (char *)label.c_str() );
 	
 }

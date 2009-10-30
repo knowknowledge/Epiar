@@ -10,7 +10,7 @@ Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
                 Utilities/camera.cpp Utilities/cmath.cpp Utilities/coordinate.cpp \
                 Utilities/hashtbl.cpp Utilities/log.cpp \
                 Utilities/timer.cpp Utilities/trig.cpp Utilities/vector.cpp \
-                UI/ui_widget.cpp UI/ui_window.cpp UI/ui.cpp Graphics/afont/afont_base.cpp \
+                UI/ui_widget.cpp UI/ui_window.cpp UI/ui_lua.cpp UI/ui.cpp Graphics/afont/afont_base.cpp \
                 Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
                 Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
                 Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp Utilities/debug.cpp \
