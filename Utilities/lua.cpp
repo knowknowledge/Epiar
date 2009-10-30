@@ -9,8 +9,8 @@
 #include "Engine/console.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
-#include "AI/ai.h"
-#include "UI/UI_Lua.h"
+#include "AI/ai_lua.h"
+#include "UI/ui_lua.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
@@ -138,7 +138,7 @@ bool Lua::Close() {
 }
 
 void Lua::RegisterFunctions() {
-	AI::RegisterAI(luaVM);
+	AI_Lua::RegisterAI(luaVM);
 	UI_Lua::RegisterUI(luaVM);
 
 	lua_pushcfunction(luaVM, lua_echo);
