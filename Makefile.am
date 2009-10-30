@@ -2,7 +2,7 @@ AM_CXXFLAGS = -I$(top_srcdir)/ -I$(top_srcdir)/Lua/src
 
 bin_PROGRAMS = Epiar
 
-Epiar_SOURCES = main.cpp AI/ai.cpp Input/input.cpp Engine/alliances.cpp \
+Epiar_SOURCES = main.cpp AI/ai.cpp AI/ai_lua.cpp Input/input.cpp Engine/alliances.cpp \
                 Engine/engines.cpp Engine/hud.cpp Engine/models.cpp \
                 Engine/simulation.cpp Engine/starfield.cpp \
                 Sprites/planets.cpp Sprites/player.cpp Sprites/ship.cpp \

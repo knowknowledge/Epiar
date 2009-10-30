@@ -128,10 +128,10 @@ end
 	
 -- Create Some ships around the planets
 -- TODO, Lua should create these ships based off of information found in the planets-default.xml
-if 0 >0 then
+if 1 >0 then
 	CreateShips(3,345,215)
 	CreateShips(6,-40,-135)
 	CreateShips(6,4640,-735)
 end
 
-test()
+-- test()
