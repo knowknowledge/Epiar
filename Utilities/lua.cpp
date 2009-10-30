@@ -10,6 +10,7 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "AI/ai.h"
+#include "UI/UI_Lua.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
@@ -138,6 +139,7 @@ bool Lua::Close() {
 
 void Lua::RegisterFunctions() {
 	AI::RegisterAI(luaVM);
+	UI_Lua::RegisterUI(luaVM);
 
 	lua_pushcfunction(luaVM, lua_echo);
 	lua_setglobal(luaVM, "echo");

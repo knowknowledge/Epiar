@@ -9,6 +9,8 @@
 
 #include "Graphics/video.h"
 #include "includes.h"
+#include "Utilities/log.h"
+
 #include "UI/ui.h"
 
 // for ui_demo()
@@ -54,15 +56,14 @@ void UI::Run( void ) {
 }
 
 void UI::Close( void ) {
-	Widget *child = children.front();
-	children.pop_front();
+	Widget *child;
 	
 	// Free all widgets
-	while( child ) {
-		delete child;
-		
-		child = children.front();
+	child = children.front();	
+	while( child != NULL ){
 		children.pop_front();
+		delete child;
+		child=children.front();	
 	}
 	
 	Video::DisableMouse();

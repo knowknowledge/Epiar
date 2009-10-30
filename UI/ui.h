@@ -15,6 +15,7 @@
 #include "ui_widget.h"
 
 // Included UI widgets
+#include "ui_lua.h"
 #include "ui_label.h"
 #include "ui_window.h"
 #include "ui_button.h"
