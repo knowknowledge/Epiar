@@ -56,7 +56,8 @@ bool Simulation::Run( void ) {
 	bool quit = false;
 	Input inputs;
 	int fpsCount = 0; // for FPS calculations
-	Uint32 fpsTS = 0; // timestamp
+	int fpsTotal= 0; // for FPS calculations
+	Uint32 fpsTS = 0; // timestamp of last FPS printing
 
 	// Grab the camera and give it coordinates
 	Camera *camera = Camera::Instance();
@@ -125,16 +126,19 @@ bool Simulation::Run( void ) {
 		
 		Coordinate playerPos = player->GetWorldPosition();
 
-		// Update FPS
+		// Counting Frames
 		fpsCount++;
+		fpsTotal++;
 
-		if((fpsTS + 1000) <= Timer::GetTicks()) {
-			Simulation::currentFPS = (float)fpsCount / (float)(Timer::GetTicks() - fpsTS);
+		// Update the fps once per second
+		if( (Timer::GetTicks() - fpsTS) >1000 ) { 
+			Simulation::currentFPS = 1000.0 * ((float)fpsCount / (Timer::GetTicks() - fpsTS));
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
 		}
 	}
 
+	Log::Message("Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
 }
 
