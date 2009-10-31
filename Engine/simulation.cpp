@@ -25,6 +25,7 @@
 #include "AI/ai.h"
 
 float Simulation::currentFPS = 0.;
+bool Simulation::paused = false;
 
 Simulation::Simulation( void ) {
 	engines = Engines::Instance();
@@ -50,6 +51,13 @@ bool Simulation::Load( string filename ) {
 	this->filename = filename;
 	
 	return Parse();
+}
+
+void Simulation::pause(){
+	paused = true;
+}
+void Simulation::unpause(){
+	paused = false;
 }
 
 bool Simulation::Run( void ) {
@@ -87,7 +95,6 @@ bool Simulation::Run( void ) {
 
 	// Ensure correct drawing order
 	sprites.Order();
-
 	
 	// Create the hud
 	Hud::Hud();
@@ -98,21 +105,23 @@ bool Simulation::Run( void ) {
 	// main game loop
 	while( !quit ) {
 		quit = inputs.Update();
-		Lua::Update();
 		
+		if( !paused ) {
+			Lua::Update();
+			// Update cycle
+			starfield.Update();
+			camera->Update();
+			sprites.Update();
+			camera->Update();
+			Hud::Update();
+			UI::Run(); // runs only a few loops
+			
+			// Keep this last (I think)
+			Timer::Update();
+		}
+
 		// Erase cycle
 		Video::Erase();
-		
-		// Update cycle
-		starfield.Update();
-		camera->Update();
-		sprites.Update();
-		camera->Update();
-		Hud::Update();
-		UI::Run(); // runs only a few loops
-		
-		// Keep this last (I think)
-		Timer::Update();
 		
 		// Draw cycle
 		starfield.Draw();

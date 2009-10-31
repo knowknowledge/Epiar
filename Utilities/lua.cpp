@@ -7,18 +7,20 @@
  */
 
 #include "Engine/console.h"
+#include "Engine/Simulation.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "AI/ai_lua.h"
 #include "UI/ui_lua.h"
+#include "UI/ui.h"
+#include "UI/ui_window.h"
+#include "UI/ui_label.h"
+#include "UI/ui_button.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
 SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
-
-// Exported functions
-static int lua_echo(lua_State *L);
 
 bool Lua::Load( string filename ) {
 	if( ! luaInitialized ) {
@@ -138,14 +140,23 @@ bool Lua::Close() {
 }
 
 void Lua::RegisterFunctions() {
+	// Register these functions to the lua global namespace
+
+	static const luaL_Reg EngineFunctions[] = {
+		{"echo", &Lua::console_echo},
+		{"pause", &Lua::pause},
+		{"unpause", &Lua::unpause},
+		{NULL, NULL}
+	};
+	luaL_register(luaVM,"Epiar",EngineFunctions);
+
+
+	// Register these functions to their own lua namespaces
 	AI_Lua::RegisterAI(luaVM);
 	UI_Lua::RegisterUI(luaVM);
-
-	lua_pushcfunction(luaVM, lua_echo);
-	lua_setglobal(luaVM, "echo");
 }
 
-static int lua_echo(lua_State *L) {
+int Lua::console_echo(lua_State *L) {
 	const char *str = lua_tostring(L, 1); // get argument
 
 	if(str == NULL)
@@ -156,3 +167,17 @@ static int lua_echo(lua_State *L) {
 	return 0;
 }
 
+int Lua::pause(lua_State *luaVM){
+	Window *win = new Window(300,300,200,200,"Game Paused");
+	win->AddChild( new Label(100,75,"Press this button to continue."));
+	win->AddChild( new Button(50,100,100,30, "Unpause"));
+	UI::Add(win);
+	
+	Simulation::pause();
+	return 0;
+}
+
+int Lua::unpause(lua_State *luaVM){
+	Simulation::unpause();
+	return 0;
+}

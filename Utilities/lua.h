@@ -26,6 +26,10 @@ class Lua {
 		static void RegisterFunctions();
 		static bool SetSpriteList(SpriteManager* the_sprites);
 		static SpriteManager* GetSpriteList();
+
+		static int console_echo(lua_State *L);
+		static int pause(lua_State *L);
+		static int unpause(lua_State *L);
 	private:
 		static vector<string> buffer;
 

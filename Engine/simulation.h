@@ -24,6 +24,9 @@ class Simulation {
 		bool Run( void );
 
 		static float GetFPS();
+		
+		static void pause();
+		static void unpause();
 
 	private:
 		bool Parse( void );
@@ -39,6 +42,7 @@ class Simulation {
 		string playerDefaultModel;
 
 		static float currentFPS;
+		static bool paused;
 };
 
 #endif // __H_SIMULATION__
