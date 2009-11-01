@@ -39,6 +39,7 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 }
 
 Window::~Window() {
+	Log::Message( "Deleting Window: '%s'.", (char *)caption.c_str() );
 	delete bitmaps[0];
 	delete bitmaps[1];
 	delete bitmaps[2];
@@ -95,6 +96,7 @@ void Window::MouseDown( int wx, int wy ) {
 	Widget *down_on = DetermineMouseFocus( wx, wy );
 	if(down_on) {
 		cout << "mouse down on child of window widget" << endl;
+		down_on->MouseDown(wx,wy);
 	} else {
 		cout << "mouse NOT down on child of window widget" << endl;
 	}

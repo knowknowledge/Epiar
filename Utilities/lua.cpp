@@ -58,6 +58,7 @@ bool Lua::Update(){
 
 bool Lua::Run( string line ) {
 	int error = 0;
+	Log::Message("Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
@@ -168,11 +169,6 @@ int Lua::console_echo(lua_State *L) {
 }
 
 int Lua::pause(lua_State *luaVM){
-	Window *win = new Window(300,300,200,200,"Game Paused");
-	win->AddChild( new Label(100,75,"Press this button to continue."));
-	win->AddChild( new Button(50,100,100,30, "Unpause"));
-	UI::Add(win);
-	
 	Simulation::pause();
 	return 0;
 }

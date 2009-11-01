@@ -70,18 +70,20 @@ int UI_Lua::close(lua_State *luaVM){
 
 int UI_Lua::newButton(lua_State *luaVM){
 	int n = lua_gettop(luaVM);  // Number of arguments
-	if (n != 6)
-		return luaL_error(luaVM, "Got %d arguments expected 5 (class, x, y, w, h, caption)", n);
+	if ( (n != 6) && (n != 7) )
+		return luaL_error(luaVM, "Got %d arguments expected 6 or 7 (class, x, y, w, h, caption [Lua_code])", n);
 
 	double x = luaL_checknumber (luaVM, 2);
 	double y = luaL_checknumber (luaVM, 3);
 	double w = luaL_checknumber (luaVM, 4);
 	double h = luaL_checknumber (luaVM, 5);
 	string caption = luaL_checkstring (luaVM, 6);
+	string code = "";
+	if(n==7) code = luaL_checkstring (luaVM, 7);
 
 	// Allocate memory for a pointer to object
 	Button **button= (Button**)lua_newuserdata(luaVM, sizeof(Button*));
-	*button = new Button(x,y,w,h,caption);
+	*button = new Button(x,y,w,h,caption,code);
 
 	// Note: We're not putting this button anywhere!
 	//       Lua will have to do that for us.

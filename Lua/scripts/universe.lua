@@ -105,24 +105,13 @@ function close() -- Close all the windows
 	EpiarLua.UI:close()
 end
 
-function test() -- Generate a test window
-	-- TODO: remove.  This is a useless function.
+function menu() -- Generate a test window
 	-- Create windows
-	-- Stand alone window
-	win1 = EpiarLua.UI:newWindow( 900,200,80,200,"UI Demo 1")
-	-- window with buttons in it at initialization
-	win2 = EpiarLua.UI:newWindow(
-		300,300,300,300,"UI Demo 2",
-		EpiarLua.UI:newButton(100,40,100,30,"Button 1"),
-		EpiarLua.UI:newLabel(140,80,"Lorem ipsum dolor sit amet"),
-
-		EpiarLua.UI:newButton(100,140,100,30,"Button 2"),
-		EpiarLua.UI:newLabel(150,180,"Duis aute irure dolor in reprehenderit")
-		)
-	-- dynamically adding buttons to a window
-	EpiarLua.UI.add(
-		win2,
-		EpiarLua.UI:newButton(180,240,100,30,"Button Three")
+	menuWin = EpiarLua.UI:newWindow( 900,200,120,250,"Menu",
+		EpiarLua.UI:newButton(10,40,100,30,"Pause","Epiar.pause()"),
+		EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()"),
+		EpiarLua.UI:newButton(10,140,100,30,"AI Drift","stop()"),
+		EpiarLua.UI:newButton(10,190,100,30,"AI Think","go()")
 		)
 end
 	
@@ -133,5 +122,3 @@ if 1 >0 then
 	CreateShips(6,-40,-135)
 	CreateShips(6,4640,-735)
 end
-
--- test()
