@@ -12,6 +12,8 @@
 #include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/debug.h"
+#include "Utilities/log.h"
+
 
 Window::Window( int x, int y, int w, int h, string caption ) {
 	SetX( x );
