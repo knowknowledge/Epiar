@@ -16,6 +16,7 @@
 #include "UI/ui_window.h"
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
+#include "Sprites/Player.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
@@ -147,6 +148,7 @@ void Lua::RegisterFunctions() {
 		{"echo", &Lua::console_echo},
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
+		{"player", &Lua::getPlayer},
 		{NULL, NULL}
 	};
 	luaL_register(luaVM,"Epiar",EngineFunctions);
@@ -176,4 +178,10 @@ int Lua::pause(lua_State *luaVM){
 int Lua::unpause(lua_State *luaVM){
 	Simulation::unpause();
 	return 0;
+}
+
+int Lua::getPlayer(lua_State *luaVM){
+	Player **player = (Player**)lua_newuserdata(luaVM, sizeof(Player*));
+	*player = Player::Instance();
+	return 1;
 }
