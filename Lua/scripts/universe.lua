@@ -3,11 +3,9 @@
 
 -- Lua Global variables
 shipList = {}  -- The ships that Lua has access to.  TODO: This list should probably be generated at each tick from a c++ call.
-frozen=0 -- Setting this to 1 causes all AI to stop 'thinking' and just drift.
-ticks=0
 player  = Epiar.player()
 shipList[0] = player
-it_countdown=100
+AIPlans = {}
 
 function CreateShips(number_of_ships, X, Y)
 	-- Generate Ships
@@ -20,17 +18,27 @@ function CreateShips(number_of_ships, X, Y)
 				"chase"                 -- Ship Script
 				)
 		table.insert(shipList, cur_ship )
+		table.insert(AIPlans, newPlan() )
 	end
-
 	io.write("Ships Total: ", #shipList ,"\n")
 end
 
-function SwarmAverage()
-	-- Find the swarm center
-	avg_x,avg_y = 0,0
-	avg_angle = 0
-	avg_vector= 0
-	avg_speed = 0
+-- The swarm is the net average of all non-player ships
+swarm = {}
+swarm.reset = function()
+	swarm.avg_x= 0
+	swarm.avg_y= 0
+	swarm.avg_angle = 0
+	swarm.avg_vector= 0
+	swarm.avg_speed = 0
+end
+swarm.findAverage = function()
+	local avg_x= 0
+	local avg_y= 0
+	local avg_angle = 0
+	local avg_vector= 0
+	local avg_speed = 0
+	-- Average the statistics of each ship
 	for s =1,#shipList do
 		cur_ship = shipList[s]
 		x,y = EpiarLua.Ship.GetPosition(cur_ship)
@@ -43,13 +51,13 @@ function SwarmAverage()
 		avg_vector= avg_vector+ vec
 		avg_speed = avg_speed + speed
 	end
-	avg_x = avg_x / #shipList
-	avg_y = avg_y / #shipList
-	avg_angle = avg_angle / #shipList
-	avg_vector = avg_vector / #shipList
-	avg_speed = avg_speed / #shipList
-    return avg_x,avg_y,avg_angle,avg_vector,avg_speed
+	swarm.avg_x = avg_x / #shipList
+	swarm.avg_y = avg_y / #shipList
+	swarm.avg_angle = avg_angle / #shipList
+	swarm.avg_vector = avg_vector / #shipList
+	swarm.avg_speed = avg_speed / #shipList
 end
+swarm.reset()
 
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	x_diff = (pt1_x - pt2_x)
@@ -57,131 +65,180 @@ function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
-function closestToIT()
-	target=-1
-	mindist = 100000
-	min_x,min_y = 10000,10000
-	it_x,it_y = EpiarLua.Ship.GetPosition(shipList[it])
+
+it = {}
+it.ship =0
+it.countdown=100
+it.pic = EpiarLua.UI:newPicture(60,30,100,30,"terran-frigate.png")
+it.label = EpiarLua.UI:newLabel(90,100,"default")
+it.findClosest = function()
+	it.target=-1
+	it.target_dist= 100000
+	it.target_x,target_y= 10000,10000
+	it.x,it.y = EpiarLua.Ship.GetPosition(shipList[it.ship])
 
 	-- Find the closest ship to whomever is IT
 	for other=0, #shipList do 
-		if not(other == it) then
+		if other ~= it.ship then
 			other_x,other_y = EpiarLua.Ship.GetPosition(shipList[other])
-			dist = distfrom(other_x,other_y,it_x,it_y)
-			if dist < mindist then
-				target = other
-				mindist = dist
-				min_x,min_y = other_x,other_y
+			dist = distfrom(other_x,other_y,it.x,it.y)
+			if dist < it.target_dist then
+				it.target = other
+				it.target_dist= dist
+				it.target_x,it.target_y = other_x,other_y
 			end
 		end
 	end
-	return target, min_x, min_y, mindist
+end
+it.tag = function(target)
+	io.write("Making "..target.." IT")
+	if target >= #shipList then
+		io.write('Cannot')
+		return 1
+	end
+	-- the old IT now runs
+	AIPlans[it.ship] = {}
+	AIPlans[it.ship].time=20
+	AIPlans[it.ship].plan=aimAwayFromIT
+	-- The new it doesn't become active for 100 ticks
+	it.ship=target
+	it.countdown = 100
+	AIPlans[it.ship] = {}
+	AIPlans[it.ship].time=0
+	AIPlans[it.ship].plan=chaseClosest
+end
+
+--
+-- AI Plans
+--
+
+function chaseClosest(cur_ship,timeleft)
+	-- in the game of tag, this is 'it'
+	EpiarLua.Ship.Rotate(cur_ship, 
+		EpiarLua.Ship.directionTowards(cur_ship, it.target_x, it.target_y) )
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+function aimCenter(cur_ship,timeleft)
+	-- direction towards the center or the universe
+	if timeleft%3 ==0 then
+		EpiarLua.Ship.Rotate(cur_ship,
+			EpiarLua.Ship.directionTowards(cur_ship, 0,0) )
+	end
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+function aimTowardsIT(cur_ship,timeleft)
+	-- direction towards the ship that is IT
+	EpiarLua.Ship.Rotate(cur_ship,
+		EpiarLua.Ship.directionTowards(cur_ship, it.x, it.y) )
+	if timeleft %2 == 0 then
+		EpiarLua.Ship.Accelerate(cur_ship )
+	end
+end
+
+function aimAwayFromIT(cur_ship,timeleft)
+	-- direction away from the ship that is IT
+	EpiarLua.Ship.Rotate(cur_ship,
+		-EpiarLua.Ship.directionTowards(cur_ship, it.x, it.y) )
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+function aimSwarmCenter(cur_ship,timeleft)
+	-- direction towards the center of the swarm
+	if timeleft %2 == 0 then
+		EpiarLua.Ship.Rotate(cur_ship, 
+			EpiarLua.Ship.directionTowards(cur_ship, swarm.avg_x, swarm.avg_y) )
+	end
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+function aimSwarmDirection(cur_ship,timeleft)
+	-- direction away from the ship that is IT
+	EpiarLua.Ship.Rotate(cur_ship,
+		EpiarLua.Ship.directionTowards(cur_ship, swarm.avg_angle) )
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+function zigzag(cur_ship,timeleft)
+	-- direction away from the ship that is IT
+	if timeleft % 10 <=3 then
+		EpiarLua.Ship.Rotate(cur_ship, 1)
+	elseif timeleft % 10 >=7 then
+		EpiarLua.Ship.Rotate(cur_ship, -1)
+	end
+	EpiarLua.Ship.Accelerate(cur_ship )
+end
+
+-- Generate a new plan from the list above
+function newPlan()
+	randomChoice = math.random(100)
+	theNewPlan = {}
+	theNewPlan.time = math.random(30)
+	if randomChoice <30 then
+		theNewPlan.plan=aimAwayFromIT
+	elseif randomChoice<40 then
+		theNewPlan.plan=zigzag
+	elseif randomChoice<75 then
+		theNewPlan.plan=aimSwarmCenter
+	elseif randomChoice<95 then
+		theNewPlan.plan=aimSwarmDirection
+	else
+		theNewPlan.plan=aimTowardsIT
+	end
+	return theNewPlan
 end
 
 
 -- The C++ engine calls this function once per tick.
 -- This function is responsible for directing all of the game AI.
 function Update ()
-	if frozen>0 then
-		return 1
-	end
-
-
-	avg_x,avg_y,avg_angle,avg_vector,avg_speed = SwarmAverage()
-
-	player_x,player_y = EpiarLua.Ship.GetPosition(player)
-	it_x,it_y = EpiarLua.Ship.GetPosition(shipList[it])
-
-	-- Move
+	-- Calculate variables
+	swarm.findAverage()
+	it.findClosest()
+	-- Move Non-Player ships
 	for s =1, # shipList do
 		cur_ship = shipList[s]
-		x,y = EpiarLua.Ship.GetPosition(cur_ship)
-
-		if s == it then -- IT
-			dir_closest = EpiarLua.Ship.directionTowards(cur_ship, min_x,min_y) -- direction towards the closest target
-			EpiarLua.Ship.Rotate(cur_ship, dir_closest)
-		else -- Not IT
-			if math.sqrt(x*x + y*y) >3000 then 
-				dir_center = EpiarLua.Ship.directionTowards(cur_ship, 0,0) -- direction towards the center of the universe
-				EpiarLua.Ship.Rotate(cur_ship, dir_center)
-			else
-				if math.random(100) <10 then
-					dir_it = EpiarLua.Ship.directionTowards(cur_ship, it_x, it_y) -- direction towards the ship that is IT
-					EpiarLua.Ship.Rotate(cur_ship, dir_it)
-				elseif math.random(100) <40 then
-					dir_it = EpiarLua.Ship.directionTowards(cur_ship, it_x, it_y) -- direction away from the ship that is IT
-					EpiarLua.Ship.Rotate(cur_ship, -dir_it)
-				elseif math.random(100) <70 then
-					dir_swarm_center = EpiarLua.Ship.directionTowards(cur_ship, avg_x, avg_y) -- direction towards the center of the swarm
-					EpiarLua.Ship.Rotate(cur_ship, dir_swarm_center)
-				else
-					dir_swarm_aim = EpiarLua.Ship.directionTowards(cur_ship, avg_angle ) -- direction towards the swarm direction
-					EpiarLua.Ship.Rotate(cur_ship, dir_swarm_aim)
-				end
-			end
-
+		--zigzag(cur_ship,tick)
+		AIPlans[s].plan( cur_ship, AIPlans[s].time )
+		AIPlans[s].time = AIPlans[s].time -1
+		-- When the current plan is complete, pick a new plan
+		if AIPlans[s].time == 0 then 
+			AIPlans[s] = newPlan()
 		end
-		EpiarLua.Ship.Accelerate(cur_ship )
 	end
 
-	if it_countdown==0 then
+	-- Rotate the itpic to match the ship that's it
+	EpiarLua.UI.rotatePicture(it.pic, EpiarLua.Ship.GetAngle(shipList[it.ship]) )
+
+	if it.countdown==0 then
+		-- Show who's it
+		if it.ship==0 then
+			EpiarLua.UI.setText(it.label,"You're IT!")
+		else
+			EpiarLua.UI.setText(it.label,"Player "..(it.ship).." is IT!")
+		end
 		-- Is someone else it now?
-		target, min_x, min_y, mindist = closestToIT()
-		if mindist < 200 then 
-			setIt(target)
+		if it.target_dist < 200 then 
+			it.tag(it.target)
 		end
 	else
-		it_countdown= it_countdown-1
-		if it_countdown==0 then
-			Epiar.echo("Let the games begin")
-		elseif it_countdown%10==0 then
-			Epiar.echo("Player "..it.." is counting down: "..it_countdown/10)
+		it.countdown= (it.countdown)-1
+		-- Update the countdown only every 10th tick
+		if it.countdown%10==0 then
+			if it.ship==0 then
+				EpiarLua.UI.setText(it.label,"You're IT in: "..(it.countdown/10))
+			else
+				EpiarLua.UI.setText(it.label,"Player "..(it.ship).." is IT in: "..(it.countdown/10))
+			end
 		end
 	end
-
 end
 
 -- Functions to use from the console. ( Enter the console by hitting backtick. )
--- TODO: Remove these functions, they are only interesting for debugging and even very useful then.
-function stop()
-	frozen=1
-end
-
-function go()
-	frozen=0
-end
-
-function open(x,y,w,h,someString) -- Create an Arbitrary Window
-	EpiarLua.UI:newWindow(x,y,w,h,someString)
-end
 
 function close() -- Close all the windows
 	EpiarLua.UI:close()
-end
-
--- Tag Functions
-function setIt(target)
-	it=target
-	it_countdown = 100
-	if it==0 then
-	Epiar.echo("TAG!  You're now it!")
-	--pauseMessage("TAG!  You're now it!")
-	else
-	Epiar.echo("Ship "..target.." is now IT.")
-	--pauseMessage("Ship "..target.." is now IT.")
-	end
-end
-function whosit()
-	if it==0 then
-		Epiar.echo("You are it")
-	else
-		Epiar.echo("Player "..it.." is it.")
-	end
-end
-function whosClosest()
-	it_x,it_y = EpiarLua.Ship.GetPosition(shipList[it])
-	target, min_x, min_y, mindist = closestToIT()
-	Epiar.echo("Closest ship to IT "..it.." at ("..it_x..","..it_y..") is ".. target.." at ("..min_x..","..min_y..") "..mindist)
 end
 
 function pauseMessage(message)
@@ -192,26 +249,21 @@ function pauseMessage(message)
 		)
 end
 
-function menu() -- Generate a test window
-	-- Create windows
-	menuWin = EpiarLua.UI:newWindow( 900,200,120,450,"Menu",
-		EpiarLua.UI:newButton(10,40,100,30,"Pause","Epiar.pause()"),
-		EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()"),
-		EpiarLua.UI:newButton(10,140,100,30,"AI Drift","stop()"),
-		EpiarLua.UI:newButton(10,190,100,30,"AI Think","go()"),
-		EpiarLua.UI:newButton(10,240,100,30,"IT","setIt(0)"),
-		EpiarLua.UI:newButton(10,290,100,30,"NOT IT","setIt(math.random(#shipList))")
-		)
-end
+-- Create windows
+menuWin = EpiarLua.UI:newWindow( 900,200,120,250,"Menu",
+	EpiarLua.UI:newButton(10,40,100,30,"Pause","Epiar.pause()"),
+	EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()"),
+	EpiarLua.UI:newButton(10,140,100,30,"IT","it.tag(0)"),
+	EpiarLua.UI:newButton(10,190,100,30,"NOT IT","it.tag(math.random(#shipList))")
+	)
+tagWin = EpiarLua.UI:newWindow( 830,450,180,130,"Who's IT?",
+	it.pic,
+	it.label
+	)
 	
 -- Create Some ships around the planets
 -- TODO, Lua should create these ships based off of information found in the planets-default.xml
-if 1 >0 then
-	CreateShips(3,345,215)
-	CreateShips(6,-40,-135)
-	CreateShips(6,4640,-735)
-end
-it=math.random(#shipList)
-it=0
-
+CreateShips(3,345,215)
+CreateShips(6,-40,-135)
+CreateShips(6,4640,-735)
 

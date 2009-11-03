@@ -21,6 +21,8 @@ class Label : public Widget {
 
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
+		
+		void setText(string text){label=text;}
 	
 	private:
 		int w, h;

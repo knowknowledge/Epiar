@@ -24,11 +24,17 @@ class UI_Lua {
 		// Functions to communicate with Lua
 		static void RegisterUI(lua_State *luaVM);
 
+		// Functions to create new Widgets
 		static int newWindow(lua_State *luaVM);
 		static int newButton(lua_State *luaVM);
 		static int newLabel(lua_State *luaVM);
+		static int newPicture(lua_State *luaVM);
+
+		// Functions to manipulate Widgets
 		static int add(lua_State *luaVM);
 		static int close(lua_State *luaVM);
+		static int rotatePicture(lua_State *luaVM);
+		static int setText(lua_State *luaVM);
 	private:
 };
 #endif /*__H_UI_LUA*/

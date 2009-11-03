@@ -2,6 +2,9 @@ Tuesday, November 3, 2009
 	Chris Thielen:
 		* Fixed 'brown planet' bug
 		* Fixed animation loading bug
+	Matt Zweig
+		* Cleaned up the TAG game so that it is more understandable.
+		* The AI Plan model used here could be adapted for more complex scenes.
 
 Monday, October 19, 2009
 	Chris Thielen:

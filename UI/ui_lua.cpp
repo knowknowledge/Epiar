@@ -12,6 +12,7 @@
 #include "ui_label.h"
 #include "ui_window.h"
 #include "ui_button.h"
+#include "ui_picture.h"
 
 void UI_Lua::RegisterUI(lua_State *luaVM){
 	static const luaL_Reg uiFunctions[] = {
@@ -19,8 +20,11 @@ void UI_Lua::RegisterUI(lua_State *luaVM){
 		{"newWindow", &UI_Lua::newWindow},
 		{"newButton", &UI_Lua::newButton},
 		{"newLabel", &UI_Lua::newLabel},
-		{"close", &UI_Lua::close},
+		{"newPicture", &UI_Lua::newPicture},
 		{"add", &UI_Lua::add},
+		{"close", &UI_Lua::close},
+		{"rotatePicture", &UI_Lua::rotatePicture},
+		{"setText", &UI_Lua::setText},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(luaVM, "EpiarLua.UI");
@@ -112,6 +116,28 @@ int UI_Lua::newLabel(lua_State *luaVM){
 	return 1;
 }
 
+int UI_Lua::newPicture(lua_State *luaVM){
+	int n = lua_gettop(luaVM);  // Number of arguments
+	if (n != 6)
+		return luaL_error(luaVM, "Got %d arguments expected 6 (class, x, y, w, h, caption )", n);
+
+	double x = luaL_checknumber (luaVM, 2);
+	double y = luaL_checknumber (luaVM, 3);
+	double w = luaL_checknumber (luaVM, 4);
+	double h = luaL_checknumber (luaVM, 5);
+	string filename = luaL_checkstring (luaVM, 6);
+
+	// Allocate memory for a pointer to object
+	Picture **pic= (Picture**)lua_newuserdata(luaVM, sizeof(Picture*));
+	*pic = new Picture(x,y,w,h,filename);
+
+	// Note: We're not putting this Label anywhere!
+	//       Lua will have to do that for us.
+	//       This may be a bad idea (memory leaks from bad lua scripts)
+
+	return 1;
+}
+
 int UI_Lua::add(lua_State *luaVM){
 	int n = lua_gettop(luaVM);  // Number of arguments
 	if (n == 2){
@@ -122,4 +148,28 @@ int UI_Lua::add(lua_State *luaVM){
 		luaL_error(luaVM, "Got %d arguments expected 2 (self, widget)", n); 
 	}
 	return 0;
+}
+
+int UI_Lua::rotatePicture(lua_State *luaVM){
+	int n = lua_gettop(luaVM);  // Number of arguments
+	if (n != 2)
+		return luaL_error(luaVM, "Got %d arguments expected 2 (self, angle )", n);
+
+	Picture **pic= (Picture**)lua_touserdata(luaVM,1);
+	double angle = luaL_checknumber (luaVM, 2);
+	(*pic)->Rotate(angle);
+
+	return 1;
+}
+
+int UI_Lua::setText(lua_State *luaVM){
+	int n = lua_gettop(luaVM);  // Number of arguments
+	if (n != 2)
+		return luaL_error(luaVM, "Got %d arguments expected 2 (self, text)", n);
+
+	Label **label= (Label**)lua_touserdata(luaVM,1);
+	string text = luaL_checkstring(luaVM, 2);
+	(*label)->setText(text);
+
+	return 1;
 }
