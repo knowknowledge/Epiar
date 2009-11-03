@@ -1,3 +1,8 @@
+Monday, November 3, 2009
+	Matt Zweig
+		* Cleaned up the TAG game so that it is more understandable.
+		* The AI Plan model used here could be adapted for more complex scenes.
+
 Thursday, August 27, 2009
 	Chris Thielen:
 		* Added a BUILDING file to describe the build process on various architectures
