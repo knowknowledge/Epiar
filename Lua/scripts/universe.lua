@@ -65,7 +65,6 @@ function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
-
 it = {}
 it.ship =0
 it.countdown=100
