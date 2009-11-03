@@ -65,7 +65,6 @@ function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
-
 it = {}
 it.ship =0
 it.countdown=100
@@ -231,8 +230,25 @@ function Update ()
 			else
 				EpiarLua.UI.setText(it.label,"Player "..(it.ship).." is IT in: "..(it.countdown/10))
 			end
+
 		end
 	end
+
+	if it_countdown==0 then
+		-- Is someone else it now?
+		target, min_x, min_y, mindist = closestToIT()
+		if mindist < 200 then 
+			setIt(target)
+		end
+	else
+		it_countdown= it_countdown-1
+		if it_countdown==0 then
+			Epiar.echo("Let the games begin")
+		elseif it_countdown%10==0 then
+			Epiar.echo("Player "..it.." is counting down: "..it_countdown/10)
+		end
+	end
+
 end
 
 -- Functions to use from the console. ( Enter the console by hitting backtick. )
