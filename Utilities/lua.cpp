@@ -7,7 +7,7 @@
  */
 
 #include "Engine/console.h"
-#include "Engine/Simulation.h"
+#include "Engine/simulation.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "AI/ai_lua.h"
