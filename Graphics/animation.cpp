@@ -36,10 +36,10 @@ bool Animation::Load( string filename ) {
 		return( false );
 	}
 
-	//Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
+	Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
 
 	fread( 	&byte, sizeof( byte ), 1, fp );
-	//cout << "\tVersion: " << (int)byte << endl;
+	cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
 		Log::Error( "Incorrect ani version" );
 		fclose( fp );
@@ -53,6 +53,7 @@ bool Animation::Load( string filename ) {
 		return( false );
 	}
 	numFrames = byte;
+	cout << "\tNum Frames: " << numFrames << endl;
 	// Allocate space for frames
 	frames = new Image[byte];
 
@@ -65,16 +66,28 @@ bool Animation::Load( string filename ) {
 		return( false );
 	}
 	delay = byte;
+	cout << "\tDelay: " << delay << endl;
 
 	for( int i = 0; i < numFrames; i++ ) {
-		long fs, pos;
+		long pos;
+		int fs;
 
 		fread( &fs, sizeof( fs ), 1, fp );
 
 		pos = ftell( fp );
+		
+		// On OS X 10.6 with SDL_image 1.2.8, the load from fp is broken, so we load it into a buffer ourselves and SDL_image
+		// loads from that correctly. It's an extra step on our part, but performance/functionally they're identical. Hopefully
+		// this gets fixed in a future SDL_image
+		unsigned char *buf = (unsigned char *)malloc(sizeof(unsigned char) * fs);
+		fread(buf, sizeof(unsigned char), fs, fp);
+		
+		//frames[i].Load( fp, (int)fs );
+		frames[i].Load( buf, fs );
 
-		frames[i].Load( fp, fs );
-
+		free(buf);
+		buf = NULL;
+		
 		fseek( fp, pos + fs, SEEK_SET );
 	}
 
@@ -83,7 +96,7 @@ bool Animation::Load( string filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	//Log::Message( "Animation loading done." );
+	Log::Message( "Animation loading done." );
 
 	return( true );
 }

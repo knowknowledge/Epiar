@@ -33,7 +33,7 @@ case "$target" in
 esac
 case "$target" in
 	*-apple-darwin*)
-	CFLAGS="$CFLAGS -DCOMP_GCC -I/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers"
+	CFLAGS="$CFLAGS -DCOMP_GCC -I/Developer/Library/Frameworks/SDL.Framework/Headers -I/System/Library/Frameworks/OpenGL.framework/Headers"
 	LIBS="$LIBS -framework SDL -framework OpenGL -framework Cocoa SDLMain.m"
 esac
 
@@ -45,7 +45,7 @@ case "$target" in
 esac
 case "$target" in
 	*-apple-darwin*)
-	CFLAGS="$CFLAGS -I/Library/Frameworks/SDL_image.Framework/Headers"
+	CFLAGS="$CFLAGS -I/Developer/Library/Frameworks/SDL_image.Framework/Headers"
 	LIBS="$LIBS -framework SDL_image"
 esac
 

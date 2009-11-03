@@ -1,3 +1,12 @@
+Tuesday, November 3, 2009
+	Chris Thielen:
+		* Fixed 'brown planet' bug
+		* Fixed animation loading bug
+
+Monday, October 19, 2009
+	Chris Thielen:
+		* Updated OS X SDL files to v1.2.14 for OS X 10.6 support
+
 Thursday, August 27, 2009
 	Chris Thielen:
 		* Added a BUILDING file to describe the build process on various architectures

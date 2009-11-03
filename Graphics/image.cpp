@@ -100,7 +100,7 @@ bool Image::Load( FILE *fp, int size ) {
 	s = IMG_Load_RW( rw, 0 );
 	SDL_FreeRW( rw );
 	if( !s ) {
-		Log::Warning( "Image loading failed. Could not load image from RWops" );
+		Log::Warning( "Image loading failed. Could not load image from RWops: %s", IMG_GetError() );
 		return( false );
 	}
 
@@ -240,7 +240,7 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
  	GLenum img_format, img_type;
 	switch (s->format->BitsPerPixel) {
 		case 32:
-			img_format = GL_RGBA;
+			img_format = GL_BGRA;
 			img_type = GL_UNSIGNED_BYTE;
 			internal_format = GL_RGBA8;
 			break;
