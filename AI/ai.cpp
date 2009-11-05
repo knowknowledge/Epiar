@@ -9,8 +9,8 @@
 
 #include "AI/ai.h"
 
-#include "Sprites/Player.h"
-#include "Sprites/spriteManager.h"
+#include "Sprites/player.h"
+#include "Sprites/spritemanager.h"
 
 AI::AI() {
 	
