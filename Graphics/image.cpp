@@ -47,6 +47,9 @@ bool Image::Load( string filename ) {
 		return( false );
 	}
 
+	SDL_FreeSurface(s);
+	s = NULL;
+
 	return( true );
 }
 
@@ -77,6 +80,9 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 		SDL_FreeSurface( s );
 		return( false );
 	}
+
+	SDL_FreeSurface(s);
+	s = NULL;
 
 	return( true );
 }
@@ -112,6 +118,9 @@ bool Image::Load( FILE *fp, int size ) {
 		SDL_FreeSurface( s );
 		return( false );
 	}
+
+	SDL_FreeSurface(s);
+	s = NULL;
 
 	return( true );
 }

@@ -1,3 +1,7 @@
+Wednesday, November 4, 2009
+	Chris Thielen:
+		* Plugged some memory leaks that moses7 mentioned in #epiar
+
 Tuesday, November 3, 2009
 	Chris Thielen:
 		* Fixed 'brown planet' bug
