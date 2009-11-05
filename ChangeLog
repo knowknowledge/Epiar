@@ -2,6 +2,7 @@ Wednesday, November 4, 2009
 	Chris Thielen:
 		* Plugged some memory leaks that moses7 mentioned in #epiar
 		  and redesigned Image::ConvertToTexture() a bit to avoid them
+		* Added a check to detect if we need GL_RGBA or GL_BGRA in Image::ConvertToTexture
 
 Tuesday, November 3, 2009
 	Chris Thielen:
