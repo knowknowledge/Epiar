@@ -1,6 +1,7 @@
 Wednesday, November 4, 2009
 	Chris Thielen:
 		* Plugged some memory leaks that moses7 mentioned in #epiar
+		  and redesigned Image::ConvertToTexture() a bit to avoid them
 
 Tuesday, November 3, 2009
 	Chris Thielen:

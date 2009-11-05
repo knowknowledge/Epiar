@@ -47,8 +47,7 @@ bool Image::Load( string filename ) {
 		return( false );
 	}
 
-	SDL_FreeSurface(s);
-	s = NULL;
+	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -81,8 +80,7 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 		return( false );
 	}
 
-	SDL_FreeSurface(s);
-	s = NULL;
+	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -119,8 +117,7 @@ bool Image::Load( FILE *fp, int size ) {
 		return( false );
 	}
 
-	SDL_FreeSurface(s);
-	s = NULL;
+	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -214,7 +211,7 @@ int Image::PowerOfTwo(int num) {
 	}
 }
 
-// Converts an SDL surface to an OpenGL texture
+// Converts an SDL surface to an OpenGL texture. Will free 's' by design. Do not do anything with it after this point.
 bool Image::ConvertToTexture( SDL_Surface *s ) {
 	assert(s);
 
@@ -283,6 +280,8 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+	SDL_FreeSurface( s );
+
 	return( true );
 }
 
@@ -302,6 +301,8 @@ void Image::DrawTiled( int x, int y, int w, int h ) {
 	glDisable(GL_SCISSOR_TEST);
 }
 
+// Will destroy 's' so don't do anything with it after this and don't worry about freeing it (it's freed here)
+// e.g. proper usage: convert = ExpandCanvas( convert, w, h );
 SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	SDL_Surface *expanded = NULL;
 	SDL_Surface *original = s;
