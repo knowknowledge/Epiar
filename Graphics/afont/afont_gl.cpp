@@ -2,6 +2,12 @@
 
 /* See the file LICENSE for copyright and license information */
 
+#ifdef _MSC_VER
+// The Microsoft GL header files require windows.h to be included first.
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

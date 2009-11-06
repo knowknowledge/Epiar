@@ -246,10 +246,12 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
  	GLenum img_format, img_type;
 	switch (s->format->BitsPerPixel) {
 		case 32:
-			if(s->format->Bmask == 0x00ff0000)
-				img_format = GL_RGBA;
-			else
+			img_format = GL_RGBA;
+#ifndef _MSC_VER
+			// Microsoft's GL doesn't define GL_BGRA
+			if(s->format->Bmask != 0x00ff0000)
 				img_format = GL_BGRA;
+#endif
 			img_type = GL_UNSIGNED_BYTE;
 			internal_format = GL_RGBA8;
 			break;

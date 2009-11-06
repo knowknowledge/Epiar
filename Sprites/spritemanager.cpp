@@ -91,16 +91,8 @@ void SpriteManager::Order() {
 	sprites = newSprites;
 }
 
-list<Sprite *>::iterator SpriteManager::Enumerate() {
-	return( sprites.begin() );
+const list<Sprite *>& SpriteManager::GetSprites() {
+	return( sprites );
 }
 
-list<Sprite *>::iterator SpriteManager::Enumerate( list<Sprite *>::iterator &i ) {
-	i++;
-	
-	if( i == sprites.end() )
-		return( (list<Sprite *>::iterator)NULL );
-	
-	return( i );
-}
 

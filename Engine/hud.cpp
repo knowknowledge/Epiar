@@ -87,9 +87,9 @@ void Hud::DrawMessages() {
 
 // Draw the current framerate (calculated in simulation.cpp)
 void Hud::DrawFPS() {
-	const char *frameRate[10] = {0};
+	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
-	snprintf((char *)frameRate, 9, "%f fps", Simulation::GetFPS());
+	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
 	Vera10->Render( 30, Video::GetHeight() - 30, (const char *)frameRate );
 }
 
@@ -154,14 +154,15 @@ void Radar::SetVisibility( int visibility ) {
 }
 
 void Radar::Draw( SpriteManager &sprites ) {
-	list<Sprite *>::iterator i;
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	for( i = sprites.Enumerate(); i != (list<Sprite *>::iterator)NULL; i = sprites.Enumerate( i ) ) {
+	const list<Sprite*>& spriteList = sprites.GetSprites();
+	for( list<Sprite*>::const_iterator iter = spriteList.begin(); iter != spriteList.end(); iter++)
+	{
 		Coordinate blip( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) );
-		Sprite *sprite = *i;
+		Sprite *sprite = *iter;
 		
 		if( sprite->GetDrawOrder() == DRAW_ORDER_PLAYER ) continue;
 		
