@@ -9,6 +9,7 @@
 
 #include "Graphics/video.h"
 #include "includes.h"
+#include "common.h"
 #include "Utilities/log.h"
 
 #include "UI/ui.h"
@@ -59,12 +60,11 @@ void UI::Close( void ) {
 	Widget *child;
 	
 	// Free all widgets
-	child = children.front();	
-	while( child != NULL ){
-		children.pop_front();
-		delete child;
-		child=children.front();	
-	}
+	std::for_each(children.begin(), children.end(), create_delete_functor());
+	children.clear();
+
+	mouseFocus = NULL;
+	keyboardFocus = NULL;
 	
 	Video::DisableMouse();
 }
