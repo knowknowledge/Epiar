@@ -21,7 +21,7 @@
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
-#include "Utilities/lua.h"
+#include "Utilities/luamanager.h"
 #include "AI/ai.h"
 
 float Simulation::currentFPS = 0.;

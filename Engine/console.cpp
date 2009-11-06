@@ -11,7 +11,7 @@
 #include "Graphics/video.h"
 #include "includes.h"
 #include "Utilities/log.h"
-#include "Utilities/lua.h"
+#include "Utilities/luamanager.h"
 #include "Utilities/timer.h"
 
 vector<string> Console::Buffer;

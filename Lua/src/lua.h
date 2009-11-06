@@ -12,6 +12,9 @@
 #include <stdarg.h>
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "luaconf.h"
 
@@ -357,6 +360,9 @@ struct lua_Debug {
 
 /* }====================================================================== */
 
+#ifdef __cplusplus
+}
+#endif
 
 /******************************************************************************
 * Copyright (C) 1994-2007 Lua.org, PUC-Rio.  All rights reserved.

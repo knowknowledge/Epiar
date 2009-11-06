@@ -9,6 +9,7 @@
 		<h>768</h>
 		<bpp>16</bpp>
 		<fullscreen>0</fullscreen>
+    <fps>50</fps>
 	</video>
 	<simulation>
 		<starfield-density>750</starfield-density>

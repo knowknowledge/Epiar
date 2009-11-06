@@ -110,15 +110,18 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 // list of events is passed from main input handler. we remove the events we handle and leave the rest to be handled
 // by the next input handler. the order of input handlers is in input.cpp
 void UI::HandleInput( list<InputEvent> & events ) {
-	list<InputEvent>::iterator i;
-	
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
-	for( i = events.begin(); i != events.end(); ++i ) {
+
+	list<InputEvent>::iterator i = events.begin();
+	while( i != events.end() )
+	{
+		bool eventWasHandled = false;
+	
 		switch( i->type ) {
 		case KEY:
-			
+
 			break;
 		case MOUSE:
 			int x, y;
@@ -139,9 +142,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					mouseFocus->SetX( x - dx );
 					mouseFocus->SetY( y - dy );
 					
-					// remove input from list, as we've handled it
-					events.remove( *i );
-					i = events.begin(); // removing elements mid-list upsets iterators
+					eventWasHandled = true;
 				}
 				break;
 			case MOUSEUP:
@@ -151,9 +152,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					mouseFocus->Unfocus();
 					mouseFocus = NULL;
 
-					// remove input from list, as we've handled it
-					events.remove( *i );
-					i = events.begin(); // removing elements mid-list upsets iterators
+					eventWasHandled = true;
 				}
 				break;
 			case MOUSEDOWN:
@@ -176,13 +175,17 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				if( mouseFocus ) {
 					mouseFocus->MouseDown( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
 					
-					// remove input from list, as we've handled it
-					events.remove( *i );
-					i = events.begin(); // removing elements mid-list upsets iterators					
+					eventWasHandled = true;				
 				}
 				break;
 			}
 			break;
+		}
+
+		if( eventWasHandled ) {
+			i = events.erase( i );
+		} else {
+			i++;
 		}
 	}
 }
@@ -197,6 +200,9 @@ void ui_demo( bool in_loop ) {
 
 	// main game loop
 	while( !quit && in_loop ) {
+		// Do this first, so that the frame capping works correctly
+		Timer::Update();
+
 		quit = inputs.Update();
 		
 		// Erase cycle
@@ -204,9 +210,6 @@ void ui_demo( bool in_loop ) {
 		
 		// Update cycle
 		UI::Run(); // runs only a few loops
-		
-		// Keep this last (I think)
-		Timer::Update();
 		
 		// Draw cycle
 		UI::Draw();
