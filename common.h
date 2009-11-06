@@ -25,4 +25,13 @@ extern Font *Vera8, *Vera10, *Visitor10, *VeraMono10;
 // to simply accessing the options file
 #define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
 
+struct create_delete_functor
+{
+	template <typename T>
+	void operator()(T* _p)
+	{
+		delete _p;
+	}
+};
+
 #endif // __H_COMMON__
