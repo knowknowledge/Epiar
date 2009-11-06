@@ -14,7 +14,7 @@
 #include "UI/ui.h"
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
-#include "Utilities/luamanager.h"
+#include "Utilities/lua.h"
 
 void Button::init( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor

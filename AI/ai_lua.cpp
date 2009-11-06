@@ -7,7 +7,7 @@
  * Notes         :
  */
 
-#include "Utilities/luamanager.h"
+#include "Utilities/lua.h"
 
 #include <lua.h>
 #include <lauxlib.h>
