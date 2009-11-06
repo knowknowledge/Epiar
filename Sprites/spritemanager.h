@@ -24,9 +24,7 @@ class SpriteManager {
 		// Reorders sprite list to ensure correct drawing order
 		void Order();
 
-		// Enumeration functions - allows outside code to go through out internal list
-		list<Sprite *>::iterator Enumerate();
-		list<Sprite *>::iterator Enumerate( list<Sprite *>::iterator &i );
+		const list<Sprite*>& GetSprites();
 
 	private:
 		list<Sprite *> sprites;

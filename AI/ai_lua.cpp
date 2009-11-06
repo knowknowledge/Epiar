@@ -98,7 +98,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 	if (n == 2) {
 		AI** ptrAI= (AI**)lua_touserdata(L,1);
 		AI* realAI = *ptrAI;
-		Direction dir = (Direction)luaL_checknumber(L, 2);
+		Direction dir = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
 		if(realAI){
 			realAI->Rotate(dir);
 		} else {
@@ -180,12 +180,12 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	}
 
 	if (n == 2) { // Angle
-		double angle = (Direction)luaL_checknumber(L, 2);
+		double angle = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
 		lua_pushnumber(L, (double) realAI->directionTowards(angle) );
 	}
 	else if(n==3){ // Coordinate
-		double x = (Direction)luaL_checknumber(L, 2);
-		double y = (Direction)luaL_checknumber(L, 3);
+		double x = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
+		double y = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 3));
 		lua_pushnumber(L, (double) realAI->directionTowards(Coordinate(x,y)) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 

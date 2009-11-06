@@ -14,6 +14,7 @@
 #include "Sprites/sprite.h"
 
 enum Direction {_LEFT=-1,_STRAIGHT,_RIGHT};
+#define LUA_NUMBER_TO_DIRECTION(_ln) ((Direction) ((int) (_ln)))
 
 class Ship : public Sprite {
 	public:

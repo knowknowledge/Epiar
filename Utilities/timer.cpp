@@ -8,15 +8,18 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Utilities/timer.h"
 
 Timer *Timer::pInstance = 0; // initialize pointer
 Uint32 Timer::lastLoopLength = 25;
 Uint32 Timer::lastLoopTick = SDL_GetTicks();
+Uint32 Timer::ticksPerFrame = 0;
 
 Timer::Timer( void ) {
 	lastLoopLength = 25;
 	lastLoopTick = SDL_GetTicks();
+	ticksPerFrame = 1000 / OPTION( Uint32, "options/video/fps" );
 }
 
 Timer *Timer::Instance( void ) {
@@ -40,7 +43,12 @@ Uint32 Timer::GetTicks( void )
 }
 
 void Timer::Delay( void ) {
-	SDL_Delay( 15 );
+	Uint32 ticksElapsed = SDL_GetTicks() - lastLoopTick;
+	if(ticksElapsed < ticksPerFrame)
+	{
+		Uint32 ticksToSleep = ticksPerFrame - ticksElapsed;
+		SDL_Delay(ticksToSleep);
+	}
 }
 
 float Timer::GetDelta( void ) {

@@ -30,6 +30,7 @@ class Timer {
   		static Timer *pInstance;
   		static Uint32 lastLoopLength;
   		static Uint32 lastLoopTick;
+		static Uint32 ticksPerFrame;
 };
 
 #endif // __h_timer__
