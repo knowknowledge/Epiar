@@ -1,0 +1,29 @@
+### Epiar .gitignore
+#
+
+### GNU Auto-Tools generated files
+Makefile
+Makefile.in
+autom4te.cache/
+config.log
+config.status
+configure
+aclocal.m4
+
+### Lua binaries
+Lua/src/lua
+Lua/src/luac
+
+### vim development files
+tags
+.vimrc
+
+### Epiar Binaries
+Epiar
+.deps
+*.o
+*.a
+
+### Epiar Log Files
+Epiar-Log*.xml
+

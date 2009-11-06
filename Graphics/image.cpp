@@ -47,6 +47,8 @@ bool Image::Load( string filename ) {
 		return( false );
 	}
 
+	// do not free s! convert to texture does that
+
 	return( true );
 }
 
@@ -77,6 +79,8 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 		SDL_FreeSurface( s );
 		return( false );
 	}
+
+	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -112,6 +116,8 @@ bool Image::Load( FILE *fp, int size ) {
 		SDL_FreeSurface( s );
 		return( false );
 	}
+
+	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -205,7 +211,7 @@ int Image::PowerOfTwo(int num) {
 	}
 }
 
-// Converts an SDL surface to an OpenGL texture
+// Converts an SDL surface to an OpenGL texture. Will free 's' by design. Do not do anything with it after this point.
 bool Image::ConvertToTexture( SDL_Surface *s ) {
 	assert(s);
 
@@ -241,6 +247,11 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	switch (s->format->BitsPerPixel) {
 		case 32:
 			img_format = GL_RGBA;
+#ifndef _MSC_VER
+			// Microsoft's GL doesn't define GL_BGRA
+			if(s->format->Bmask != 0x00ff0000)
+				img_format = GL_BGRA;
+#endif
 			img_type = GL_UNSIGNED_BYTE;
 			internal_format = GL_RGBA8;
 			break;
@@ -274,6 +285,8 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+	SDL_FreeSurface( s );
+
 	return( true );
 }
 
@@ -293,6 +306,8 @@ void Image::DrawTiled( int x, int y, int w, int h ) {
 	glDisable(GL_SCISSOR_TEST);
 }
 
+// Will destroy 's' so don't do anything with it after this and don't worry about freeing it (it's freed here)
+// e.g. proper usage: convert = ExpandCanvas( convert, w, h );
 SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	SDL_Surface *expanded = NULL;
 	SDL_Surface *original = s;
