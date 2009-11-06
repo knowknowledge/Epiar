@@ -16,7 +16,7 @@
 #include "UI/ui_window.h"
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
-#include "Sprites/Player.h"
+#include "Sprites/player.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;

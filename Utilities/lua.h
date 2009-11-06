@@ -14,7 +14,7 @@
 #include "Lua/src/lua.h"
 #include "Lua/src/lualib.h"
 #include "Lua/src/lauxlib.h"
-#include "Sprites/spriteManager.h"
+#include "Sprites/spritemanager.h"
 
 class Lua {
 	public:
