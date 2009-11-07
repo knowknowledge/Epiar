@@ -15,7 +15,6 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
-#include "Utilities/timer.h"
 
 void Button::init( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
