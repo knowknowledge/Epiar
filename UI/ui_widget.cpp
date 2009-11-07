@@ -33,6 +33,8 @@ void Widget::Update( void ) {
 Widget *Widget::DetermineMouseFocus( int x, int y ) {
 	list<Widget *>::iterator i;
 
+	cout << "widget determine mouse focus at " << x << ", " << y << endl;
+
 	for( i = children.begin(); i != children.end(); ++i ) {
 		int wx, wy, w, h;
 		
@@ -51,6 +53,38 @@ Widget *Widget::DetermineMouseFocus( int x, int y ) {
 			}
 		}
 	}
-	
+
 	return( NULL );
+}
+
+void Widget::Focus( int x, int y ) {
+	// update drag coordinates in case this is draggable
+	dragX = x;
+	dragY = y;
+
+	cout << "widget focus on " << x << ", " << y << endl;
+	
+	Widget *mouseFocus = DetermineMouseFocus( x, y );
+	
+	if(mouseFocus) mouseFocus->Focus( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+}
+
+void Widget::MouseDown( int x, int y ) {
+	cout << "mouse down event on widget, relative at " << x << ", " << y << endl;
+	Widget *down_on = DetermineMouseFocus( x, y );
+	if(down_on) {
+		cout << "mouse down on child of widget" << endl;
+		down_on->MouseDown( x, y );
+	} else {
+		cout << "mouse NOT down on child of widget" << endl;
+	}
+}
+
+// when a widget loses focus, so do all of its children
+void Widget::Unfocus( void ) {
+	list<Widget *>::iterator i;
+
+	for( i = children.begin(); i != children.end(); ++i ) {
+		(*i)->Unfocus();
+	}
 }

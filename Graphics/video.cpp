@@ -102,6 +102,8 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
+	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // vsync
+
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
 	if( !ret ) {
 		Log::Warning( "Video mode %dx%dx%d not available.", w, h, bpp );

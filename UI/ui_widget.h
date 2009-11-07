@@ -25,19 +25,16 @@ class Widget {
 		void SetY( int y ) { this->y = y; }
 
 		// This is called when a widget obtains focus (in case it wants to highlight itself or something)
-		virtual void Focus( int x, int y ) {
-			dragX = x - this->x;
-			dragY = y - this->y;
-		};
-		virtual void Unfocus( void ) {};
+		virtual void Focus( int x, int y );
+		virtual void Unfocus( void );
 		int GetDragX( void ) { return dragX; }
 		int GetDragY( void ) { return dragY; }
 		
 		virtual int GetWidth( void ) = 0;
 		virtual int GetHeight( void ) = 0;
 	
-		Widget *DetermineMouseFocus( int x, int y );
-		virtual void MouseDown( int wx, int wy ) {}; // coords of mouse down, relative to widget's upper left (0,0)
+		virtual Widget *DetermineMouseFocus( int x, int y );
+		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 	
 	private:
 		int x, y;

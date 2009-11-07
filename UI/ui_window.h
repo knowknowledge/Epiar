@@ -26,7 +26,9 @@ class Window : public Widget {
 		void Focus( int x, int y );
 		void Unfocus( void );
 
-		void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
+		Widget *DetermineMouseFocus( int x, int y );
+
+		//void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 
 	private:
 		int w, h;

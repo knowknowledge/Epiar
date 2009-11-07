@@ -139,6 +139,9 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					dx = mouseFocus->GetDragX();
 					dy = mouseFocus->GetDragY();
 
+					cout << "mouse motion, dx dy is " << dx << ", " << dy << endl;
+					cout << "mouse focus will set x y to " << x - dx << ", " << y - dy << endl;
+
 					mouseFocus->SetX( x - dx );
 					mouseFocus->SetY( y - dy );
 					
@@ -167,7 +170,8 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					mouseFocus = mouseFocusWidget;
 					
 					if( mouseFocus ) {
-						mouseFocus->Focus( x, y );
+						mouseFocus->Focus( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+						cout << "setting mouse focus point to " << x - mouseFocus->GetX() << ", " << y - mouseFocus->GetY() << endl;
 					}
 				}
 				

@@ -15,6 +15,7 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
+#include "Utilities/timer.h"
 
 void Button::init( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
@@ -77,12 +78,12 @@ void Button::Draw( int relx, int rely ) {
 
 void Button::Focus( int x, int y ) {
 	bitmap_current = bitmap_pressed;
-	Log::Message( "Focused on: '%s'.", (char *)label.c_str() );
+	cout << "button focus: " << label << endl;
 }
 
 void Button::Unfocus( void ) {
 	bitmap_current = bitmap_normal;
-	Log::Message( "Unfocused on: '%s'.", (char *)label.c_str() );
+	cout << "button unfocus: " << label << endl;
 }
 
 void Button::MouseDown( int wx, int wy ) {

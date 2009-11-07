@@ -90,16 +90,22 @@ void Window::Focus( int x, int y ) {
 
 void Window::Unfocus( void ) {
 	cout << "window lost focus" << endl;
+	Widget::Unfocus();
 }
 
 // wx & wy are coords of mouse down, relative to widget's upper left (0,0)
-void Window::MouseDown( int wx, int wy ) {
-	cout << "mouse down event on window, relative at " << wx << ", " << wy << endl;
-	Widget *down_on = DetermineMouseFocus( wx, wy );
-	if(down_on) {
-		cout << "mouse down on child of window widget" << endl;
-		down_on->MouseDown(wx,wy);
-	} else {
-		cout << "mouse NOT down on child of window widget" << endl;
-	}
+//void Window::MouseDown( int wx, int wy ) {
+//	cout << "mouse down event on window, relative at " << wx << ", " << wy << endl;
+//	Widget *down_on = DetermineMouseFocus( wx, wy );
+//	if(down_on) {
+//		cout << "mouse down on child of window widget" << endl;
+//		down_on->MouseDown(wx,wy);
+//	} else {
+//		cout << "mouse NOT down on child of window widget" << endl;
+//	}
+//}
+
+Widget *Window::DetermineMouseFocus( int x, int y ) {
+	cout << "window determine mouse focus" << endl;
+	return Widget::DetermineMouseFocus( x, y );
 }
