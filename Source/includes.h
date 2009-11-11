@@ -41,6 +41,8 @@
 #include "defines.h"
 #include "version.h"
 
+#include <algorithm>
+
 using namespace std;
 
 #endif // __H_INCLUDES__
