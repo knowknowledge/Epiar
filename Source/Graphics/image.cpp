@@ -30,6 +30,14 @@ Image::Image( string filename ) {
 	Load(filename);
 }
 
+//Deallocate allocations
+Image::~Image() {
+	if ( image ) {
+		glDeleteTextures( 1, &image );
+		image = 0;
+	}
+}
+
 // Load image from file
 bool Image::Load( string filename ) {
 	SDL_Surface *s = NULL;
