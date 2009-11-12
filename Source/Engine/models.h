@@ -20,7 +20,7 @@
 // Abstraction of a single ship model
 class Model {
 	public:
-		bool parserCB( string& sectionName, string& subName, string& value ) {
+		bool parserCB( string sectionName, string subName, string value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "image" ) {
