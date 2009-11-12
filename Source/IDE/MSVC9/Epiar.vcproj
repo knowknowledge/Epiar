@@ -231,18 +231,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Debug"
-			>
-			<File
-				RelativePath="..\..\Debug\graphics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\Debug\graphics.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="Engine"
 			>
 			<File
@@ -787,6 +775,14 @@
 			</File>
 			<File
 				RelativePath="..\..\UI\ui_picture.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\UI\ui_textbox.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\UI\ui_textbox.h"
 				>
 			</File>
 			<File
