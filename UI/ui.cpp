@@ -11,8 +11,8 @@
 #include "includes.h"
 #include "common.h"
 #include "Utilities/log.h"
-
 #include "UI/ui.h"
+#include "Utilities/camera.h" //Temp for testing camera shaking
 
 // for ui_demo()
 #include "Input/input.h"
@@ -113,7 +113,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
-
 	list<InputEvent>::iterator i = events.begin();
 	while( i != events.end() )
 	{
@@ -161,6 +160,8 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			case MOUSEDOWN:
 				Widget *mouseFocusWidget = DetermineMouseFocus( x, y );
 				
+				Camera::Shake(100, 30);//Temp for testing camera shaking
+					
 				// did they click a different widget than the one already in mouse focus?
 				if( mouseFocus != mouseFocusWidget ) {
 					// A new widget now has mouse focus

@@ -13,6 +13,10 @@
 #include "Utilities/log.h"
 
 Camera *Camera::pInstance = 0; // initialize pointer
+int Camera::cameraShakeDur = 0;
+int Camera::cameraShakeXOffset = 0;
+int Camera::cameraShakeYOffset = 0;
+int Camera::cameraShakeDec = 0;
 
 Camera *Camera::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
@@ -29,6 +33,7 @@ Camera::Camera( void ) {
 	focusSprite = NULL;
 	zoom = 1.;
 	hasZoomed = true;
+	cameraShakeDur = 0;
 }
 
 void Camera::Focus( double x, double y ) {
@@ -92,11 +97,36 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Focus( pos.GetX(), pos.GetY() );
+		if (cameraShakeDur == 0) {
+			Focus( pos.GetX(), pos.GetY() );
+		} else {
+			Shake();
+		}
 	}
+	
 }
+// "Shakes" the camera for the duration specified
+void Camera::Shake( Uint32 duration, int intensity ) {
+	cameraShakeDur = duration;
+	cameraShakeXOffset = intensity;
+	if (cameraShakeDur != 0) {
+		cameraShakeDec = cameraShakeXOffset/(cameraShakeDur/10);
+	}
 
-// "Shakes" the camera (as eye candy for battles)
-void Camera::Shake( Uint32 duration ) {
-	// TODO: write me
+}
+// "Shakes" the camera 
+//Note: Later update so it shakes based on direction of impact
+void Camera::Shake() {
+	//Only shake the camera every 10 updates
+	if (cameraShakeDur % 10 == 0) {
+		Coordinate pos = focusSprite->GetWorldPosition();
+		Focus( pos.GetX() + cameraShakeXOffset, pos.GetY());
+		if (cameraShakeXOffset > 0) {
+			cameraShakeXOffset -= cameraShakeDec;
+		} else {
+			cameraShakeXOffset += cameraShakeDec;
+		}
+		cameraShakeXOffset *= -1;
+	} 
+	cameraShakeDur--;
 }
