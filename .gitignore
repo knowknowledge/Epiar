@@ -9,6 +9,10 @@ config.log
 config.status
 configure
 aclocal.m4
+depcomp
+install-sh
+missing
+stamp-h1
 
 ### Lua binaries
 Lua/src/lua
