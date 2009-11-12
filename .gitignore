@@ -13,6 +13,9 @@ depcomp
 install-sh
 missing
 stamp-h1
+config.guess
+config.h
+config.h.in
 
 ### Lua binaries
 Lua/src/lua

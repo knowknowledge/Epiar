@@ -1,7 +1,0 @@
-local sprite = Sprite:new(x, y, type);
-sprite:setPosition(x,y)
-sprite:setMood(NEUTRAL);
-sprite:setBehavior(GUARD);
-sprite:setDefendTarget(some_planet);
-
-
