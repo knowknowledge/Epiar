@@ -27,3 +27,6 @@ Epiar
 ### Epiar Log Files
 Epiar-Log*.xml
 
+.DS_Store
+Epiar.tmproj
+
