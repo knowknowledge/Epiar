@@ -16,7 +16,7 @@
 
 class AlertMessage {
 	public:
-		AlertMessage( string& message, Uint32 length );
+		AlertMessage( string message, Uint32 length );
 
 		string message;
 		Uint32 length;

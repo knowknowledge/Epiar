@@ -39,7 +39,7 @@ Image *Hud::im_shieldstat = NULL;
 Image *Hud::im_radarnav = NULL;
 int Radar::visibility = 4000;
 
-AlertMessage::AlertMessage( string& message, Uint32 length )
+AlertMessage::AlertMessage( string message, Uint32 length )
 {
 	this->message = message;
 	this->length = length;
@@ -142,7 +142,7 @@ void Hud::Alert( const char *message, ... )
 
 	va_end( args );
 
-	AlertMessages.push_back( AlertMessage( string( msgBuffer ), Timer::GetTicks() + ALERT_DELAY ) );
+	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() + ALERT_DELAY ) );
 }
 
 Radar::Radar( void ) {
