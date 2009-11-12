@@ -20,7 +20,7 @@
 // Abstraction of a single ship model
 class Model {
 	public:
-		bool parserCB( string sectionName, string subName, string value ) {
+		bool parserCB( string& sectionName, string& subName, string& value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "image" ) {
@@ -50,7 +50,7 @@ class Model {
 		
 		}
 		
-		string GetName( void ) {
+		string GetName( void ) const {
 			return name;
 		}
 		
@@ -98,8 +98,8 @@ class Model {
 class Models {
 	public:
 		static Models *Instance();
-		bool Load( string filename );
-		Model *GetModel( string modelName );
+		bool Load( string& filename );
+		Model *GetModel( string& modelName );
 
 	protected:
 		Models() {};

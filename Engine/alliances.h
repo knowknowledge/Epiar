@@ -17,7 +17,7 @@
 // Abstraction of a single planet
 class Alliance {
 	public:
-		bool parserCB( string sectionName, string subName, string value ) {
+		bool parserCB( string& sectionName, string& subName, string& value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "aggressiveness" ) {
@@ -40,7 +40,7 @@ class Alliances {
 	public:
 		static Alliances *Instance();
 		
-		bool Load( string filename );
+		bool Load( string& filename );
 
 	protected:
 		Alliances() {};

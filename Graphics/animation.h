@@ -16,8 +16,8 @@
 class Animation {
 	public:
 		Animation();
-		Animation( string filename );
-		bool Load( string filename );
+		Animation( string& filename );
+		bool Load( string& filename );
 		bool Draw( int x, int y, float ang );
 		void SetLooping( bool looping ) { this->looping = looping; };
 		void Reset( void );

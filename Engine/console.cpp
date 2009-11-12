@@ -25,12 +25,12 @@ void Console::Initialize() {
 }
 
 void Console::Input( list<InputEvent> & events ) {
-	list<InputEvent>::iterator i;
-
 	if(Console::initialized == false) Console::Initialize();
 
 	// look for the bcakquote (`) key to toggle the console
-	for( i = events.begin(); i != events.end(); ++i ) {
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ) {
+		bool skipIncrement = false;
+
 		switch( i->type ) {
 		case KEY:
 			if( i->kstate == KEYUP ) {
@@ -64,14 +64,18 @@ void Console::Input( list<InputEvent> & events ) {
 					Console::Buffer.push_back(back);
 
 					// remove it from the queue
-					events.remove( *i );
-					i = events.begin(); // removing elements mid-list upsets iterators
+					i = events.erase( i );
+					skipIncrement = true;
+					
 				}
 			}
 		break;
 		default:
 		break;
 		}
+
+		if(!skipIncrement)
+			++i;
 	}
 }
 

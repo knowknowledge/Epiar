@@ -77,7 +77,7 @@ list<T *> Parser<T>::Parse( string filename, string rootName, string unitName ) 
 						
 						// On cases (comments?) subKey will be NULL
 						if( subKey )						
-							obj->parserCB( sectionName, subName, string( (char *)subKey) );
+							obj->parserCB( string( sectionName ), string( subName ), string( (const char*) subKey ) );
 						
 						xmlFree( subKey );
 					}

@@ -18,7 +18,7 @@
 // Abstraction of a single engine
 class Engine {
 	public:
-		bool parserCB( string sectionName, string subName, string value ) {
+		bool parserCB( string& sectionName, string& subName, string& value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "forceOutput" ) {

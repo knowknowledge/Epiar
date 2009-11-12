@@ -19,7 +19,7 @@ Animation::Animation() {
 	w = h = 0;
 }
 
-Animation::Animation( string filename ) {
+Animation::Animation( string& filename ) {
 	frames = NULL;
 	startTime = 0;
 	looping = false;
@@ -27,7 +27,7 @@ Animation::Animation( string filename ) {
 	Load( filename );
 }
 
-bool Animation::Load( string filename ) {
+bool Animation::Load( string& filename ) {
 	char byte;
 	FILE *fp = NULL;
 

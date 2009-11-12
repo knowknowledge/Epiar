@@ -20,7 +20,8 @@ Alliances *Alliances::Instance( void ) {
 	return( pInstance );
 }
 
-bool Alliances::Load( string filename ) {
+bool Alliances::Load( string& filename )
+{
 	Parser<Alliance> parser;
 	
 	alliances = parser.Parse( filename, "alliances", "alliance" );

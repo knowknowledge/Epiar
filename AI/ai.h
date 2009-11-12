@@ -18,7 +18,7 @@ class AI : public Ship{
 	public:
 		AI();
 		void Update();
-		void SetScript(string script);
+		void SetScript(string& script);
 
 	private:
 		string my_script;

@@ -30,11 +30,12 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "SDL_image.h"
-#include "gl.h"
-#include "glu.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <zlib.h>
+
+#include "gl.h"
+#include "glu.h"
 
 // Local includes
 #include "defines.h"

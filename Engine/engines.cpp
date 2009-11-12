@@ -24,9 +24,7 @@ bool Engines::Load( string filename ) {
 	
 	engines = parser.Parse( filename, "engines", "engine" );
 
-	list<Engine *>::iterator i;
-
-	for( i = engines.begin(); i != engines.end(); ++i ) {
+	for( list<Engine *>::iterator i = engines.begin(); i != engines.end(); ++i ) {
 		(*i)->_dbg_PrintInfo();
 	}
 
@@ -34,9 +32,7 @@ bool Engines::Load( string filename ) {
 }
 
 Engine *Engines::LookUp( string engineName ) {
-	list<Engine *>::iterator i;
-
-	for( i = engines.begin(); i != engines.end(); ++i ) {
+	for( list<Engine *>::iterator i = engines.begin(); i != engines.end(); ++i ) {
 		if( (*i)->IsNamed( engineName ) )
 			return (*i);
 	}

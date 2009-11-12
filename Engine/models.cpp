@@ -10,6 +10,15 @@
 #include "Engine/models.h"
 #include "Utilities/parser.h"
 
+struct model_name_equals
+	: public std::binary_function<Model*, string, bool>
+{
+	bool operator()( Model* model, const string& name ) const
+	{
+		return model->GetName() == name;		
+	}
+};
+
 Models *Models::pInstance = 0; // initialize pointer
 
 Models *Models::Instance( void ) {
@@ -19,26 +28,24 @@ Models *Models::Instance( void ) {
 	return( pInstance );
 }
 
-bool Models::Load( string filename ) {
+bool Models::Load( string& filename )
+{
 	Parser<Model> parser;
 	
 	models = parser.Parse( filename, "models", "model" );
 
-	list<Model *>::iterator i;
-
-	for( i = models.begin(); i != models.end(); ++i ) {
+	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
 		(*i)->_dbg_PrintInfo();
 	}
 
 	return true;
 }
 
-Model *Models::GetModel( string modelName ) {
-	list<Model *>::iterator i;
-
-	for( i = models.begin(); i != models.end(); ++i ) {
-		if( (*i)->GetName() == modelName )
-			return( (*i) );
+Model * Models::GetModel( string& modelName )
+{
+	list<Model *>::iterator i = std::find_if( models.begin(), models.end(), std::bind2nd( model_name_equals(), modelName ));
+	if( i != models.end() ) {
+		return( *i );
 	}
 	
 	return( NULL );

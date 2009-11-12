@@ -19,15 +19,12 @@ void SpriteManager::Add( Sprite *sprite ) {
 }
 
 bool SpriteManager::Delete( Sprite *sprite ) {
-	list<Sprite *>::iterator i;
+	list<Sprite *>::iterator i = std::find( sprites.begin(), sprites.end(), sprite );
 
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
-		if( (*i) == sprite ) {
-			// Found sprite
-			sprites.erase( i );
-			
-			return( true );
-		}
+	if(i != sprites.end())
+	{
+		i = sprites.erase( i );
+		return( true );
 	}
 	
 	return( false );

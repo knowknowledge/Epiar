@@ -23,7 +23,8 @@ void AI::Update(){
 	this->Ship::Update();
 }
 
-void AI::SetScript(string script){
+void AI::SetScript( string& script )
+{
 	my_script = script;
 }
 

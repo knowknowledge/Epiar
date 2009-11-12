@@ -25,9 +25,7 @@ bool Planets::Load( string filename ) {
 	
 	planets = parser.Parse( filename, "planets", "planet" );
 
-	list<cPlanet *>::iterator i;
-
-	for( i = planets.begin(); i != planets.end(); ++i ) {
+	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
 		(*i)->_dbg_PrintInfo();
 	}
 
@@ -41,10 +39,8 @@ void Planets::RegisterAll( SpriteManager *sprites ) {
 		
 		return;
 	}
-	
-	list<cPlanet *>::iterator i;
 
-	for( i = planets.begin(); i != planets.end(); ++i ) {
+	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
 		sprites->Add( (*i) );
 	}	
 }
