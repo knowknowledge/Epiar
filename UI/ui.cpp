@@ -159,8 +159,9 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				break;
 			case MOUSEDOWN:
 				Widget *mouseFocusWidget = DetermineMouseFocus( x, y );
+				Camera *pInstance = Camera::Instance();//debug
 				
-				Camera::Shake(100, 30);//Temp for testing camera shaking
+				pInstance->Shake(100, 3,  new Coordinate(10,0));//Temp for testing camera shaking
 					
 				// did they click a different widget than the one already in mouse focus?
 				if( mouseFocus != mouseFocusWidget ) {

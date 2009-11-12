@@ -13,10 +13,6 @@
 #include "Utilities/log.h"
 
 Camera *Camera::pInstance = 0; // initialize pointer
-int Camera::cameraShakeDur = 0;
-int Camera::cameraShakeXOffset = 0;
-int Camera::cameraShakeYOffset = 0;
-int Camera::cameraShakeDec = 0;
 
 Camera *Camera::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
@@ -34,6 +30,10 @@ Camera::Camera( void ) {
 	zoom = 1.;
 	hasZoomed = true;
 	cameraShakeDur = 0;
+	cameraShakeXOffset = 0;
+	cameraShakeYOffset = 0;
+	cameraShakeXDec = 0;
+	cameraShakeYDec = 0;
 }
 
 void Camera::Focus( double x, double y ) {
@@ -106,11 +106,21 @@ void Camera::Update( void ) {
 	
 }
 // "Shakes" the camera for the duration specified
-void Camera::Shake( Uint32 duration, int intensity ) {
+void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
+
+	Coordinate pos = focusSprite->GetWorldPosition();
+	int xdiff = source->GetX() - pos.GetX();
+	int ydiff = source->GetY() - pos.GetY();
+
+	xdiff = 10; // debug for testing purpose
+	ydiff = 0; //debug for testing purposes
+
 	cameraShakeDur = duration;
-	cameraShakeXOffset = intensity;
+	cameraShakeXOffset = xdiff * intensity;
+	cameraShakeYOffset = ydiff * intensity;
 	if (cameraShakeDur != 0) {
-		cameraShakeDec = cameraShakeXOffset/(cameraShakeDur/10);
+		cameraShakeXDec = cameraShakeXOffset/(cameraShakeDur/10);
+		cameraShakeYDec = cameraShakeYOffset/(cameraShakeDur/10);
 	}
 
 }
@@ -120,13 +130,16 @@ void Camera::Shake() {
 	//Only shake the camera every 10 updates
 	if (cameraShakeDur % 10 == 0) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Focus( pos.GetX() + cameraShakeXOffset, pos.GetY());
+		Focus( pos.GetX() + cameraShakeXOffset, pos.GetY() + cameraShakeYOffset);
 		if (cameraShakeXOffset > 0) {
-			cameraShakeXOffset -= cameraShakeDec;
+			cameraShakeXOffset -= cameraShakeXDec;
+			cameraShakeYOffset -= cameraShakeYDec;
 		} else {
-			cameraShakeXOffset += cameraShakeDec;
+			cameraShakeXOffset += cameraShakeXDec;
+			cameraShakeYOffset += cameraShakeYDec;
 		}
 		cameraShakeXOffset *= -1;
+		cameraShakeYOffset *= -1;
 	} 
 	cameraShakeDur--;
 }

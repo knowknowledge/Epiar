@@ -38,8 +38,10 @@ class Camera {
 			}
 		}
 		float getZoom(){return zoom;}
-		//shakes the camera 
-		static void Shake( Uint32 duration, int intensity );
+		/*shakes the camera (duration= how long to shake in updates), 
+		(intesity multiplyer is how hard to shake eg. 3)
+		(source is the coordinate of the object that hit the ship)  */
+		void Shake( Uint32 duration, int intensity, Coordinate* source );
 
 	protected:
 		Camera();
@@ -48,10 +50,11 @@ class Camera {
 
  	private:
   		static Camera *pInstance;
-		static int cameraShakeDur;
-		static int cameraShakeXOffset;
-		static int cameraShakeYOffset;
-		static int cameraShakeDec;
+		int cameraShakeDur;
+		int cameraShakeXOffset;
+		int cameraShakeYOffset;
+		int cameraShakeXDec;
+		int cameraShakeYDec;
 		Sprite *focusSprite; // focused on sprite - always favored, use NULL to set camera to static locations
   		double x, y; // point where camera is looking
   		double dx, dy; // the difference in the current and last camera position
