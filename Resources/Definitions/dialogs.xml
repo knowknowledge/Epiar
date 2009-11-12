@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dialogs>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	
+	<dialog name="ui-demo" script="dialogs.lua">
+		<window x="200" y="100" w="400" h="300" caption="UI Demo">
+			<textbox>
+			Welcome to Epiar. This dialog is a demo of the user-interface system,
+			and is not meant to be seen by non-developers. If you see this message,
+			be sure to send an e-mail to chris@epiar.net and let him know how
+			you found this dialog.
+			</textbox>
+			<button x="152" y="255" w="96" h="32" caption="OK" onClick="lua:close_widget('UI Demo');" />
+		</window>
+	</dialog>
+</dialogs>
+

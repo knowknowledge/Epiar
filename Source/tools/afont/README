@@ -1,0 +1,32 @@
+afont version 0.8
+by Jared Minch
+
+afont is a simple library to generate bitmapped fonts from TrueType fonts,
+and then display text using SDL or OpenGL, without depending on the freetype
+or SDL_ttf libraries in your SDL program.
+
+Building the ".af" font files is done using the buildfont program.  The
+usage is:
+  buildfont [font.ttf] [size] [bpp]
+where font.ttf is the TrueType font you want to convert, and size is the
+pixel size that the font should be bitmapped at.  If bpp is 1, then a 1-bit
+mono font is created; if bpp is 8, then a 8-bit antialiased font is created.
+(Note that 1-bit fonts only work with GL rendering at the moment.)
+Normally, the generated font is dumped to standard output; under windows, it
+is saved to the file "out.af".
+
+There is a comment explaining the format of the .af files in buildfont.c.
+If the file format changes, the version number in the header will be updated
+to reflect the change.
+
+To use the fonts, link afont_base.c in with the rest of your program, as
+well as afont_sdl.c or afont_gl.c, depending on whether you want the SDL or
+openGL rendering functionality.  See the comments in the appropriate header
+files for information about usage.
+
+If your system does not have the ntohl and htonl functions, then define
+SYS_IS_BRAINDEAD in order to use builtin versions.
+
+Sample programs, testafont and testglfont, are included.
+
+See the file LICENSE for license and copyright info.
