@@ -1,21 +1,21 @@
-AM_CXXFLAGS = -I$(top_srcdir)/ -I$(top_srcdir)/Lua/src
+AM_CXXFLAGS = -I$(top_srcdir)/Source/ -I$(top_srcdir)/Source/Lua/src
 
 bin_PROGRAMS = Epiar
 
-Epiar_SOURCES = main.cpp AI/ai.cpp AI/ai_lua.cpp Input/input.cpp Engine/alliances.cpp \
-                Engine/engines.cpp Engine/hud.cpp Engine/models.cpp \
-                Engine/simulation.cpp Engine/starfield.cpp \
-                Sprites/planets.cpp Sprites/player.cpp Sprites/ship.cpp \
-                Sprites/sprite.cpp Sprites/spritemanager.cpp \
-                Utilities/camera.cpp Utilities/cmath.cpp Utilities/coordinate.cpp \
-                Utilities/hashtbl.cpp Utilities/log.cpp \
-                Utilities/timer.cpp Utilities/trig.cpp Utilities/vector.cpp \
-                UI/ui_widget.cpp UI/ui_window.cpp UI/ui_lua.cpp UI/ui.cpp Graphics/afont/afont_base.cpp \
-                Graphics/afont/afont_gl.cpp Graphics/animation.cpp Graphics/font.cpp Graphics/image.cpp \
-                Graphics/video.cpp Utilities/archive.cpp Utilities/lua.cpp Utilities/xml.cpp \
-                Utilities/file.cpp UI/ui_button.cpp UI/ui_label.cpp UI/ui_picture.cpp Utilities/debug.cpp \
-                Debug/graphics.cpp Engine/console.cpp Engine/quadrant.cpp
+Epiar_SOURCES = Source/main.cpp Source/AI/ai.cpp Source/AI/ai_lua.cpp Source/Input/input.cpp Source/Engine/alliances.cpp \
+                Source/Engine/engines.cpp Source/Engine/hud.cpp Source/Engine/models.cpp \
+                Source/Engine/simulation.cpp Source/Engine/starfield.cpp \
+                Source/Sprites/planets.cpp Source/Sprites/player.cpp Source/Sprites/ship.cpp \
+                Source/Sprites/sprite.cpp Source/Sprites/spritemanager.cpp \
+                Source/Utilities/camera.cpp Source/Utilities/cmath.cpp Source/Utilities/coordinate.cpp \
+                Source/Utilities/hashtbl.cpp Source/Utilities/log.cpp \
+                Source/Utilities/timer.cpp Source/Utilities/trig.cpp Source/Utilities/vector.cpp \
+                Source/UI/ui_widget.cpp Source/UI/ui_window.cpp Source/UI/ui_lua.cpp Source/UI/ui.cpp Source/Graphics/afont/afont_base.cpp \
+                Source/Graphics/afont/afont_gl.cpp Source/Graphics/animation.cpp Source/Graphics/font.cpp Source/Graphics/image.cpp \
+                Source/Graphics/video.cpp Source/Utilities/archive.cpp Source/Utilities/lua.cpp Source/Utilities/xml.cpp \
+                Source/Utilities/file.cpp Source/UI/ui_button.cpp Source/UI/ui_label.cpp Source/UI/ui_picture.cpp Source/Utilities/debug.cpp \
+                Source/Engine/console.cpp Source/Engine/quadrant.cpp Source/UI/ui_textbox.cpp
 
-Epiar_LDADD = Lua/src/liblua.a
+Epiar_LDADD = Source/Lua/src/liblua.a
 
-SUBDIRS=Lua
+SUBDIRS=Source/Lua
