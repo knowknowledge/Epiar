@@ -85,7 +85,7 @@ case "$target" in
 		;;
 esac
 
-CFLAGS="$CFLAGS -Wall -DDEBUG"
+CFLAGS="$CFLAGS -Wall"
 CXXFLAGS="$CFLAGS"
 
 AC_OUTPUT([Makefile])
