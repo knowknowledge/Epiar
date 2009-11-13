@@ -291,4 +291,3 @@ tagWin = EpiarLua.UI:newWindow( 840,500,180,130,"Who's IT?",
 CreateShips(3,345,215)
 CreateShips(6,-40,-135)
 CreateShips(6,4640,-735)
-
