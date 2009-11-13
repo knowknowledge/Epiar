@@ -11,6 +11,7 @@
 #include "includes.h"
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
+#include "Utilities/trig.h"
 
 Camera *Camera::pInstance = 0; // initialize pointer
 
@@ -43,7 +44,6 @@ void Camera::Focus( double x, double y ) {
 
 	this->x += dx;
 	this->y += dy;
-	
 	// assign the new camera position
 	//if(hasZoomed){
 		//this->x = x;
@@ -105,19 +105,18 @@ void Camera::Update( void ) {
 	}
 	
 }
-// "Shakes" the camera for the duration specified
+// "Shakes" the camera based on the duration, intensity, source specified
 void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
+	Trig *trig = Trig::Instance();
+	float angle;
+	Coordinate position = focusSprite->GetWorldPosition() - *source;
+	angle = position.GetAngle();
 
-	Coordinate pos = focusSprite->GetWorldPosition();
-	int xdiff = source->GetX() - pos.GetX();
-	int ydiff = source->GetY() - pos.GetY();
-
-	xdiff = 10; // debug for testing purpose
-	ydiff = 0; //debug for testing purposes
+	cameraShakeXOffset = (int)(intensity * trig->GetCos(angle));
+	cameraShakeYOffset = (int)(intensity * trig->GetSin(angle));	
 
 	cameraShakeDur = duration;
-	cameraShakeXOffset = xdiff * intensity;
-	cameraShakeYOffset = ydiff * intensity;
+
 	if (cameraShakeDur != 0) {
 		cameraShakeXDec = cameraShakeXOffset/(cameraShakeDur/10);
 		cameraShakeYDec = cameraShakeYOffset/(cameraShakeDur/10);
@@ -125,12 +124,12 @@ void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 
 }
 // "Shakes" the camera 
-//Note: Later update so it shakes based on direction of impact
+//Note: Shakes the camera 
 void Camera::Shake() {
-	//Only shake the camera every 10 updates
+	Coordinate pos = focusSprite->GetWorldPosition();
+		
+	Focus( pos.GetX() + cameraShakeXOffset, pos.GetY() + cameraShakeYOffset );
 	if (cameraShakeDur % 10 == 0) {
-		Coordinate pos = focusSprite->GetWorldPosition();
-		Focus( pos.GetX() + cameraShakeXOffset, pos.GetY() + cameraShakeYOffset);
 		if (cameraShakeXOffset > 0) {
 			cameraShakeXOffset -= cameraShakeXDec;
 			cameraShakeYOffset -= cameraShakeYDec;

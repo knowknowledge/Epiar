@@ -12,7 +12,6 @@
 #include "common.h"
 #include "Utilities/log.h"
 #include "UI/ui.h"
-#include "Utilities/camera.h" //Temp for testing camera shaking
 
 // for ui_demo()
 #include "Input/input.h"
@@ -159,10 +158,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				break;
 			case MOUSEDOWN:
 				Widget *mouseFocusWidget = DetermineMouseFocus( x, y );
-				Camera *pInstance = Camera::Instance();//debug
 				
-				pInstance->Shake(100, 3,  new Coordinate(10,0));//Temp for testing camera shaking
-					
 				// did they click a different widget than the one already in mouse focus?
 				if( mouseFocus != mouseFocusWidget ) {
 					// A new widget now has mouse focus

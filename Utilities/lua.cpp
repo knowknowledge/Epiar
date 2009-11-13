@@ -17,6 +17,7 @@
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
 #include "Sprites/player.h"
+#include "Utilities/camera.h" 
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
@@ -149,6 +150,7 @@ void Lua::RegisterFunctions() {
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
 		{"player", &Lua::getPlayer},
+		{"shakeCamera", &Lua::shakeCamera},
 		{NULL, NULL}
 	};
 	luaL_register(luaVM,"Epiar",EngineFunctions);
@@ -184,4 +186,12 @@ int Lua::getPlayer(lua_State *luaVM){
 	Player **player = (Player**)lua_newuserdata(luaVM, sizeof(Player*));
 	*player = Player::Instance();
 	return 1;
+}
+//Allow camera shaking from Lua
+int Lua::shakeCamera(lua_State *L){
+	if (lua_gettop(L) == 4) {
+		Camera *pInstance = Camera::Instance();
+		pInstance->Shake(luaL_checknumber(L, 1), luaL_checknumber(L, 2),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
+	}
+	return 0;
 }

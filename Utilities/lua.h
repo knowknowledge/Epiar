@@ -31,6 +31,7 @@ class Lua {
 		static int pause(lua_State *L);
 		static int unpause(lua_State *L);
 		static int getPlayer(lua_State *luaVM);
+		static int shakeCamera(lua_State *luaVM);
 	private:
 		static vector<string> buffer;
 
