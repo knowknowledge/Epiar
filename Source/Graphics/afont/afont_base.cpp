@@ -316,8 +316,7 @@ void afont_dump_char( afont *a, char c )
         }
         buf[i] = '\0';
 
-        printf(buf);
-        printf("\n");
+        printf("%s\n",buf);
       }
       break;
 
@@ -333,8 +332,7 @@ void afont_dump_char( afont *a, char c )
 
         buf[i] = '\0';
 
-        printf(buf);
-        printf("\n");
+        printf("%s\n",buf);
       }
       break;
   }

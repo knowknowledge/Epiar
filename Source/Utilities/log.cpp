@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "common.h"
 #include "includes.h"
 #include "Utilities/log.h"
 
@@ -89,7 +90,7 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
-	fprintf( fp, logBuffer );
+	fprintf( fp, "%s\n", logBuffer );
 #ifdef DEBUG
 	printf( "%s\n", logBuffer );
 #endif
