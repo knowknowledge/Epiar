@@ -1,11 +1,17 @@
 Epiar
-Version 0.7.0
-Written by Chris Thielen, others
+Version 0.1.0
+Written by Chris Thielen, others (see AUTHORS)
 
 http://www.epiar.net/
 
 Copyright (C) 2002-2009 Christopher Thielen.
 Licensed under GNU GPL version 2. Some parts (eg fonts) licensed differently and indicated where appropriate.
+
+----------------------
+-       NOTICE       -
+----------------------
+This document and source code are under heavy development and may contain inaccurate information, bugs, and
+other issues. Use at your own risk!
 
 Contents
 --------
@@ -37,6 +43,7 @@ Contents
 
 5. Reporting Problems
 ---------------------
+See http://epiar.net/
 
 6. Credits
 ----------

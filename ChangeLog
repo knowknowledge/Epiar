@@ -1,3 +1,7 @@
+Tuesday, November 10, 2009
+	Matt Zweig:
+		* Added 17 old Epiar ship images and models.
+
 Saturday, November 7, 2009
 	Chris Thielen:
 		* UI logic about mouse focus is much better
@@ -14,7 +18,7 @@ Tuesday, November 3, 2009
 	Chris Thielen:
 		* Fixed 'brown planet' bug
 		* Fixed animation loading bug
-	Matt Zweig
+	Matt Zweig:
 		* Cleaned up the TAG game so that it is more understandable.
 		* The AI Plan model used here could be adapted for more complex scenes.
 

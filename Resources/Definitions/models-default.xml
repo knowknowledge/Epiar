@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<models>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<model>
+		<name>Terran FV-5 Frigate</name>
+		<image>Resources/Graphics/terran-frigate.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.0</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>175</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Solaran Battle Cuiser</name>
+		<image>Resources/Graphics/btlcruiser.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>2.0</mass>
+		<rotationsPerSecond>0.25</rotationsPerSecond>
+		<thrustOffset>70</thrustOffset>
+		<maxEnergyAbsorption>775</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran Miner</name>
+		<image>Resources/Graphics/cargoclaw.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.3</mass>
+		<rotationsPerSecond>0.30</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>245</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran Corvert Mark I</name>
+		<image>Resources/Graphics/corvet.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.7</mass>
+		<rotationsPerSecond>0.25</rotationsPerSecond>
+		<thrustOffset>34</thrustOffset>
+		<maxEnergyAbsorption>215</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran Corvert Mark II</name>
+		<image>Resources/Graphics/corvet2.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.8</mass>
+		<rotationsPerSecond>0.20</rotationsPerSecond>
+		<thrustOffset>50</thrustOffset>
+		<maxEnergyAbsorption>245</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Gate Enforcer</name>
+		<image>Resources/Graphics/gate_patrol.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>2.0</mass>
+		<rotationsPerSecond>0.20</rotationsPerSecond>
+		<thrustOffset>35</thrustOffset>
+		<maxEnergyAbsorption>300</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Hammer Freighter</name>
+		<image>Resources/Graphics/hammerhead.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>2.0</mass>
+		<rotationsPerSecond>0.15</rotationsPerSecond>
+		<thrustOffset>44</thrustOffset>
+		<maxEnergyAbsorption>215</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Kartanal</name>
+		<image>Resources/Graphics/kartanal.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.5</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>31</thrustOffset>
+		<maxEnergyAbsorption>075</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Patitu</name>
+		<image>Resources/Graphics/palitu01.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.6</mass>
+		<rotationsPerSecond>0.55</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>075</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Fleet Guard</name>
+		<image>Resources/Graphics/patrol.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.2</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>175</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Escape Pod</name>
+		<image>Resources/Graphics/podv.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.1</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>10</thrustOffset>
+		<maxEnergyAbsorption>30</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Raven</name>
+		<image>Resources/Graphics/raven.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.6</mass>
+		<rotationsPerSecond>0.35</rotationsPerSecond>
+		<thrustOffset>30</thrustOffset>
+		<maxEnergyAbsorption>110</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran Explorer</name>
+		<image>Resources/Graphics/scivessel.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.0</mass>
+		<rotationsPerSecond>0.25</rotationsPerSecond>
+		<thrustOffset>40</thrustOffset>
+		<maxEnergyAbsorption>155</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Mid Vesper</name>
+		<image>Resources/Graphics/trans.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.7</mass>
+		<rotationsPerSecond>0.25</rotationsPerSecond>
+		<thrustOffset>20</thrustOffset>
+		<maxEnergyAbsorption>95</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Large Vesper</name>
+		<image>Resources/Graphics/trans2.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>0.7</mass>
+		<rotationsPerSecond>0.45</rotationsPerSecond>
+		<thrustOffset>25</thrustOffset>
+		<maxEnergyAbsorption>95</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran Assist</name>
+		<image>Resources/Graphics/tugship.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>2.2</mass>
+		<rotationsPerSecond>0.25</rotationsPerSecond>
+		<thrustOffset>40</thrustOffset>
+		<maxEnergyAbsorption>215</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Uber</name>
+		<image>Resources/Graphics/uber.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>10.0</mass>
+		<rotationsPerSecond>0.10</rotationsPerSecond>
+		<thrustOffset>90</thrustOffset>
+		<maxEnergyAbsorption>775</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+	<model>
+		<name>Terran XV</name>
+		<image>Resources/Graphics/xv-1.png</image>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<mass>1.0</mass>
+		<rotationsPerSecond>0.20</rotationsPerSecond>
+		<thrustOffset>27</thrustOffset>
+		<maxEnergyAbsorption>175</maxEnergyAbsorption> <!-- hull strength -->
+	</model>
+
+</models>

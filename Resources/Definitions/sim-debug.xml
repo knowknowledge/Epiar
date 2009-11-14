@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<simulation>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<planets>Resources/Definitions/planets-default.xml</planets>
+	<models>Resources/Definitions/models-default.xml</models>
+	<engines>Resources/Definitions/engines-default.xml</engines>
+	<weapons></weapons>
+	<armor></armor>
+	<outfits></outfits>
+	<commodities></commodities>
+	<playerDefaultModel>Terran FV-5 Frigate</playerDefaultModel>
+</simulation>

@@ -9,10 +9,18 @@ config.log
 config.status
 configure
 aclocal.m4
+depcomp
+install-sh
+missing
+stamp-h1
+config.guess
+config.h
+config.h.in
+config.sub
 
 ### Lua binaries
-Lua/src/lua
-Lua/src/luac
+Source/Lua/src/lua
+Source/Lua/src/luac
 
 ### vim development files
 tags
@@ -26,4 +34,7 @@ Epiar
 
 ### Epiar Log Files
 Epiar-Log*.xml
+
+.DS_Store
+Epiar.tmproj
 

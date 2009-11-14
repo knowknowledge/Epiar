@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<engines>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<engine>
+		<name>Altaire Corp. NM66 Sublight Thrusters</name>
+		<forceOutput>3</forceOutput>
+		<msrp>500</msrp>
+		<foldDrive>0</foldDrive>
+		<flareAnimation>Resources/Animations/thrust.ani</flareAnimation>
+	</engine>
+</engines>
