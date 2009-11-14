@@ -1,9 +1,9 @@
 /*
  * Filename      : ui_picture.h
  * Author(s)     : Matt Zweig
- * Date Created  : November 2, 2009
- * Last Modified : November 2, 2009
- * Purpose       : 
+ * Date Created  : Tuesday, November 2, 2009
+ * Last Modified : Friday, November 14, 2009
+ * Purpose       : Widget for displaying Images
  * Notes         : 
  */
 

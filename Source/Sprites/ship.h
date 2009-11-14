@@ -2,7 +2,7 @@
  * Filename      : ship.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Friday, July 7, 2006
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Header for ship class, child of sprite class, Sprite
  * Notes         :
  */

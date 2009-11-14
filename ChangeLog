@@ -1,3 +1,9 @@
+Friday, November 14, 2009
+	Matt Zweig:
+		* Added Lua functions to set ui_picture images based off of Ship
+		models
+		* Added Lua functions to change radar color.
+
 Tuesday, November 10, 2009
 	Matt Zweig:
 		* Added 17 old Epiar ship images and models.

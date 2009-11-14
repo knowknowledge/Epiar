@@ -2,7 +2,7 @@
  * Filename      : ai_lua.cpp
  * Author(s)     : Matt Zweig (thezweig@gmail.com)
  * Date Created  : Thursday, October 29, 2009
- * Last Modified : Thursday, October 29, 2009
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Lua Bridge for AI objects
  * Notes         :
  */

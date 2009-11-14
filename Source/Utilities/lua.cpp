@@ -2,6 +2,7 @@
  * Filename      : lua.cpp
  * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Provides abilities to load, store, and run Lua scripts
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */

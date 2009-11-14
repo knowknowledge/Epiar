@@ -2,7 +2,7 @@
  * Filename      : ship.cpp
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : 
  * Notes         :
  */
