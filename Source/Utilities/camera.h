@@ -14,6 +14,7 @@
 #include "Sprites/sprite.h"
 #include "Utilities/coordinate.h"
 
+
 class Camera {
 	public:
 		static Camera *Instance();
@@ -37,9 +38,11 @@ class Camera {
 			}
 		}
 		float getZoom(){return zoom;}
-		
-		void Shake( Uint32 duration );
-	        
+		/*shakes the camera (duration= how long to shake in updates), 
+		(intesity multiplyer is how hard to shake eg. 3)
+		(source is the coordinate of the object that hit the ship)  */
+		void Shake( Uint32 duration, int intensity, Coordinate* source );
+
 	protected:
 		Camera();
   		Camera( const Camera & );
@@ -47,12 +50,19 @@ class Camera {
 
  	private:
   		static Camera *pInstance;
+		int cameraShakeDur;
+		int cameraShakeXOffset;
+		int cameraShakeYOffset;
+		int cameraShakeXDec;
+		int cameraShakeYDec;
 		Sprite *focusSprite; // focused on sprite - always favored, use NULL to set camera to static locations
   		double x, y; // point where camera is looking
   		double dx, dy; // the difference in the current and last camera position
   					// (this is used by Starfield)
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
+		void Shake();
+		
 };
 
 #endif // __h_camera__

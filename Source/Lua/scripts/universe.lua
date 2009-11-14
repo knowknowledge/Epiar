@@ -121,6 +121,15 @@ it.tag = function(target)
 	AIPlans[it.ship].time=20
 	AIPlans[it.ship].plan=aimAwayFromIT
 	EpiarLua.Ship.SetRadarColor(shipList[it.ship],0,255,0)
+	
+	--shake the camera
+	other_x,other_y = EpiarLua.Ship.GetPosition(shipList[target])
+	if it.ship == 0 then
+		Epiar.shakeCamera(100, 3, other_x,other_y)
+	elseif target == 0 then
+		Epiar.shakeCamera(100, 3, it.x,it.y)
+	end
+
 	-- The new it doesn't become active for 100 ticks
 	it.ship=target
 	it.countdown = 100

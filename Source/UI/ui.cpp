@@ -11,7 +11,6 @@
 #include "includes.h"
 #include "common.h"
 #include "Utilities/log.h"
-
 #include "UI/ui.h"
 
 // for ui_demo()
@@ -111,7 +110,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
-
 	list<InputEvent>::iterator i = events.begin();
 	while( i != events.end() )
 	{

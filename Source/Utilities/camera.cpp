@@ -11,6 +11,7 @@
 #include "includes.h"
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
+#include "Utilities/trig.h"
 
 Camera *Camera::pInstance = 0; // initialize pointer
 
@@ -29,6 +30,11 @@ Camera::Camera( void ) {
 	focusSprite = NULL;
 	zoom = 1.;
 	hasZoomed = true;
+	cameraShakeDur = 0;
+	cameraShakeXOffset = 0;
+	cameraShakeYOffset = 0;
+	cameraShakeXDec = 0;
+	cameraShakeYDec = 0;
 }
 
 void Camera::Focus( double x, double y ) {
@@ -38,7 +44,6 @@ void Camera::Focus( double x, double y ) {
 
 	this->x += dx;
 	this->y += dy;
-	
 	// assign the new camera position
 	//if(hasZoomed){
 		//this->x = x;
@@ -92,11 +97,48 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Focus( pos.GetX(), pos.GetY() );
+		if (cameraShakeDur == 0) {
+			Focus( pos.GetX(), pos.GetY() );
+		} else {
+			Shake();
+		}
 	}
+	
 }
+// "Shakes" the camera based on the duration, intensity, source specified
+void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
+	Trig *trig = Trig::Instance();
+	float angle;
+	Coordinate position = focusSprite->GetWorldPosition() - *source;
+	angle = position.GetAngle();
 
-// "Shakes" the camera (as eye candy for battles)
-void Camera::Shake( Uint32 duration ) {
-	// TODO: write me
+	cameraShakeXOffset = (int)(intensity * trig->GetCos(angle));
+	cameraShakeYOffset = (int)(intensity * trig->GetSin(angle));	
+
+	cameraShakeDur = duration;
+
+	if (cameraShakeDur != 0) {
+		cameraShakeXDec = cameraShakeXOffset/(cameraShakeDur/10);
+		cameraShakeYDec = cameraShakeYOffset/(cameraShakeDur/10);
+	}
+
+}
+// "Shakes" the camera 
+//Note: Shakes the camera 
+void Camera::Shake() {
+	Coordinate pos = focusSprite->GetWorldPosition();
+		
+	Focus( pos.GetX() + cameraShakeXOffset, pos.GetY() + cameraShakeYOffset );
+	if (cameraShakeDur % 10 == 0) {
+		if (cameraShakeXOffset > 0) {
+			cameraShakeXOffset -= cameraShakeXDec;
+			cameraShakeYOffset -= cameraShakeYDec;
+		} else {
+			cameraShakeXOffset += cameraShakeXDec;
+			cameraShakeYOffset += cameraShakeYDec;
+		}
+		cameraShakeXOffset *= -1;
+		cameraShakeYOffset *= -1;
+	} 
+	cameraShakeDur--;
 }
