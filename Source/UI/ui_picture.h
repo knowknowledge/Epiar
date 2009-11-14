@@ -20,8 +20,10 @@ class Picture: public Widget {
 		~Picture();
 		void Draw( int relx, int rely );
 		void Rotate( double angle );
+		void Set( Image *img );
+		void Set( string filename );
 
-		// 
+		// Widget functions
 		void Focus( int x, int y ) {};
 		void Unfocus( void ) {};
 		int GetWidth( void ) {return w;}

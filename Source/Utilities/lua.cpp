@@ -36,6 +36,7 @@ bool Lua::Load( string filename ) {
 	if( luaL_dofile(luaVM,filename.c_str()) ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(luaVM, -1));
+		cout << lua_tostring(luaVM, -1) << endl;
 	} else {
 		Log::Message("Loaded the universe");
 	}

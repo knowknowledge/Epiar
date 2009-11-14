@@ -23,6 +23,7 @@ class Ship : public Sprite {
 		bool SetModel( Model *model );
 		bool SetFlareAnimation( string filename );
 		Sprite *GetSprite();
+		string GetModelName();
 		
 		void Update( void );
 		void Rotate( int direction );

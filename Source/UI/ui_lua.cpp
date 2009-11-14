@@ -14,6 +14,8 @@
 #include "ui_button.h"
 #include "ui_picture.h"
 
+#include "Engine/models.h"
+
 void UI_Lua::RegisterUI(lua_State *luaVM){
 	static const luaL_Reg uiFunctions[] = {
 		// Creation
@@ -22,9 +24,13 @@ void UI_Lua::RegisterUI(lua_State *luaVM){
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
+		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
+		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
+		{"setPicture", &UI_Lua::setPicture},
+		// Label Modification
 		{"setText", &UI_Lua::setText},
 		{NULL, NULL}
 	};
@@ -161,6 +167,19 @@ int UI_Lua::newPicture(lua_State *luaVM){
 	//       This may be a bad idea (memory leaks from bad lua scripts)
 
 	return 1;
+}
+
+int UI_Lua::setPicture(lua_State *luaVM){
+	int n = lua_gettop(luaVM);  // Number of arguments
+	if (n == 2){
+		Picture** pic = (Picture**)lua_touserdata(luaVM,1);
+		string modelname = luaL_checkstring (luaVM, 2);
+		(*pic)->Set( Models::Instance()->GetModel(modelname)->GetImage() );
+	
+	} else {
+		luaL_error(luaVM, "Got %d arguments expected 2 (self, ModelName)", n); 
+	}
+	return 0;
 }
 
 int UI_Lua::add(lua_State *luaVM){

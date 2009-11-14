@@ -36,6 +36,7 @@ class UI_Lua {
 		static int close(lua_State *luaVM);
 		static int rotatePicture(lua_State *luaVM);
 		static int setText(lua_State *luaVM);
+		static int setPicture(lua_State *luaVM);
 	private:
 };
 #endif /*__H_UI_LUA*/

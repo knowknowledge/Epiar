@@ -38,6 +38,14 @@ Sprite *Ship::GetSprite() {
 	return( (Sprite *)this );
 }
 
+string Ship::GetModelName() {
+	if (model){
+		return model->GetName();
+	} else {
+		return "";
+	}
+}
+
 void Ship::Rotate( int direction ) {
 	float rotPerSecond, timerDelta;
 	float angle = GetAngle();

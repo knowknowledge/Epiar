@@ -18,13 +18,21 @@ class AI_Lua{
 		static void RegisterAI(lua_State *luaVM);
 		static int newShip(lua_State *luaVM);
 
+		// Actions
 		static int ShipAccelerate(lua_State* luaVM);
 		static int ShipRotate(lua_State* luaVM);
+		static int ShipRadarColor(lua_State* luaVM);
+
+		// Current Ship State
 		static int ShipGetAngle(lua_State* luaVM);
 		static int ShipGetPosition(lua_State* luaVM);
 		static int ShipGetMomentumAngle(lua_State* luaVM);
 		static int ShipGetMomentumSpeed(lua_State* luaVM);
 		static int ShipGetDirectionTowards(lua_State* luaVM); // Accepts either Angles or Coordinates
+
+		// Ship Properties
+		static int ShipGetModelName(lua_State* luaVM);
+		static int ShipGetHull(lua_State* luaVM);
 	private:
 };
 

@@ -34,3 +34,18 @@ void Picture::Rotate(double angle){
 void Picture::Draw( int relx, int rely ){
 	bitmap->Draw( GetX()+relx, GetY()+rely, rotation);
 }
+
+void Picture::Set( Image *img ){
+	// Potential Memory Leak
+	// If the previous bitmap was created from new,
+	// then that image is now lost.
+	// We can't delete it though, since it could be shared (eg, Ship Model).
+	bitmap = img;
+}
+
+void Picture::Set( string filename ){
+	// Potential Memory Leak
+	// If the previous bitmap was created from new,
+	// then that image is now lost
+	bitmap = new Image(filename);
+}
