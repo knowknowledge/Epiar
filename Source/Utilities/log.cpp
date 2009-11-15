@@ -24,6 +24,10 @@ void Log::Initalize( void ) {
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
 
+	// Need to replace ":" with "_" because windows can't handle it
+	timestamp[ 13 ] ='_';
+	timestamp[ 16 ] ='_';
+
 	// generate the log's filename based on the time
 	sprintf( logFilename, "Epiar-Log-%s.xml", timestamp );
 
