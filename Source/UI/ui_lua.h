@@ -10,9 +10,15 @@
 #ifndef __H_UI_LUA
 #define __H_UI_LUA
 
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+#	include <lua.h>
+#	include <lauxlib.h>
+#	include <lualib.h>
+#ifdef __cplusplus
+}
+#endif
 
 #include "UI/ui.h"
 #include "ui_label.h"
