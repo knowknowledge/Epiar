@@ -32,7 +32,7 @@ void Picture::Rotate(double angle){
 }
 
 void Picture::Draw( int relx, int rely ){
-	bitmap->Draw( GetX()+relx, GetY()+rely, rotation);
+	bitmap->Draw( GetX()+relx, GetY()+rely, static_cast<float>(rotation));
 }
 
 void Picture::Set( Image *img ){

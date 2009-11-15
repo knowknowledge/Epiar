@@ -177,8 +177,9 @@ static void afont_gl_render_char( afont *a, char c )
       /* Move to the correct raster position; the bitmap will be positioned
        * with the lower left corner at that position, so the raster position
        * should be pen_x + bitmap_left, pen_y - bitmap_top + bmpy */
-      glBitmap(0, 0, 0, 0, a->glyph_info[ch].bitmap_left, 
-              a->glyph_info[ch].bitmap_top - a->glyph_info[ch].bmpy,
+      glBitmap(0, 0, 0, 0, static_cast<GLfloat>( a->glyph_info[ch].bitmap_left), 
+              static_cast<GLfloat>(a->glyph_info[ch].bitmap_top -
+				  a->glyph_info[ch].bmpy),
               NULL);
 
       /* Draw the pixels */
@@ -189,17 +190,20 @@ static void afont_gl_render_char( afont *a, char c )
 
       /* Advance the pen for another character */
       glBitmap(0, 0, 0, 0, 
-              a->glyph_info[ch].advance - a->glyph_info[ch].bitmap_left, 
-              a->glyph_info[ch].bmpy - a->glyph_info[ch].bitmap_top,
+              static_cast<GLfloat>(a->glyph_info[ch].advance -
+				  a->glyph_info[ch].bitmap_left), 
+              static_cast<GLfloat>(a->glyph_info[ch].bmpy -
+				  a->glyph_info[ch].bitmap_top),
               NULL);
 
       break;
 
     case AFONT_GL_1BIT:
       glBitmap(a->glyph_info[ch].bmpx, a->glyph_info[ch].bmpy,
-              -a->glyph_info[ch].bitmap_left,
-              a->glyph_info[ch].bitmap_top - a->glyph_info[ch].bmpy,
-              a->glyph_info[ch].advance, 0,
+              static_cast<GLfloat>(-a->glyph_info[ch].bitmap_left),
+              static_cast<GLfloat>(a->glyph_info[ch].bitmap_top -
+				  a->glyph_info[ch].bmpy),
+              static_cast<GLfloat>(a->glyph_info[ch].advance), 0,
               (const GLubyte *)a->glyph_info[ch].bmp);
       break;
 

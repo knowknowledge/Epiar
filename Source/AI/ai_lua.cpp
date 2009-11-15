@@ -197,7 +197,7 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	if (n == 2) { // Angle
 		ptrAI = (AI**)lua_touserdata(L,1);
 		realAI = *ptrAI;
-		double angle = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
+		float angle = static_cast<float> (LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2)));
 		lua_pushnumber(L, (double) realAI->directionTowards(angle) );
 	}
 	else if(n==3){ // Coordinate

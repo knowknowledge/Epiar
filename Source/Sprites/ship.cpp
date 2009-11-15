@@ -60,10 +60,10 @@ void Ship::Rotate( int direction ) {
 	timerDelta = Timer::GetDelta();
 	
 	if( direction == _LEFT ) {
-		angle += (rotPerSecond * timerDelta) * 360.;
+		angle += static_cast<float>((rotPerSecond * timerDelta) * 360.);
 	}
     if( direction == _RIGHT){
-		angle -= (rotPerSecond * timerDelta) * 360.;
+		angle -= static_cast<float>((rotPerSecond * timerDelta) * 360.);
 	}
 	
 	// Normalize
@@ -75,7 +75,7 @@ void Ship::Rotate( int direction ) {
 void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
-	float angle = trig->DegToRad( GetAngle() );
+	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
 
 	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
@@ -113,7 +113,12 @@ void Ship::Draw( void ) {
 		float direction = GetAngle();
 		float tx, ty;
 		
-		trig->RotatePoint( (float)(position.GetScreenX() - model->GetThrustOffset()), (float)position.GetScreenY(), (float)position.GetScreenX(), (float)position.GetScreenY(), &tx, &ty, trig->DegToRad( direction ) );
+		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
+						model->GetThrustOffset())),
+				static_cast<float>(position.GetScreenY()),
+				static_cast<float>(position.GetScreenX()),
+				static_cast<float>(position.GetScreenY()), &tx, &ty,
+				static_cast<float>( trig->DegToRad( direction ) ));
 		flareAnimation->Draw( (int)tx, (int)ty, direction );
 		
 		status.isAccelerating = false;

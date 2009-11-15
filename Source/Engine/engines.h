@@ -22,11 +22,11 @@ class Engine {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "forceOutput" ) {
-				forceOutput = atof( value.c_str() );
+				forceOutput = static_cast<float> (atof( value.c_str() ));
 			} else PPA_MATCHES( "msrp" ) {
 				msrp = (short int)atoi( value.c_str() );
 			} else PPA_MATCHES( "foldDrive" ) {
-				foldDrive = (bool)atoi( value.c_str() );
+				foldDrive = (atoi( value.c_str() ) != 0);
 			} else PPA_MATCHES( "flareAnimation" ) {
 				flareAnimation = value;
 			}

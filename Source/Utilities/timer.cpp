@@ -52,6 +52,6 @@ void Timer::Delay( void ) {
 }
 
 float Timer::GetDelta( void ) {
-	return( (float)lastLoopLength / 1000. );
+	return( static_cast<float>(lastLoopLength / 1000. ));
 }
 

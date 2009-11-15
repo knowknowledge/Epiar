@@ -21,7 +21,7 @@ class Alliance {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "aggressiveness" ) {
-				aggressiveness = (float)atof( value.c_str() ) / 10.;
+				aggressiveness = static_cast<float>(atof( value.c_str() ) / 10.);
 			} else PPA_MATCHES( "attackSize" ) {
 				attackSize = (short int)atof( value.c_str() );
 			}

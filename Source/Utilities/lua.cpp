@@ -193,7 +193,8 @@ int Lua::getPlayer(lua_State *luaVM){
 int Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
 		Camera *pInstance = Camera::Instance();
-		pInstance->Shake(luaL_checknumber(L, 1), luaL_checknumber(L, 2),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
+		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
+						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
 	return 0;
 }

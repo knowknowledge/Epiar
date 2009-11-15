@@ -19,9 +19,9 @@ class Color {
 	static Color Get( int r, int g, int b ) {
 		Color clr;
 
-		clr.r = (float)r / 255.;
-		clr.g = (float)g / 255.;
-		clr.b = (float)b / 255.;
+		clr.r = static_cast<float> (r / 255.);
+		clr.g = static_cast<float> (g / 255.);
+		clr.b = static_cast<float> (b / 255.);
 
 		return clr;
 	}
