@@ -44,11 +44,16 @@ Uint32 Timer::GetTicks( void )
 
 void Timer::Delay( void ) {
 	Uint32 ticksElapsed = SDL_GetTicks() - lastLoopTick;
+// Require a definition to activate frame cap (so we can check performance)
+#ifdef EPIAR_CAP_FRAME
 	if(ticksElapsed < ticksPerFrame)
 	{
 		Uint32 ticksToSleep = ticksPerFrame - ticksElapsed;
 		SDL_Delay(ticksToSleep);
 	}
+#else
+	SDL_Delay(2);
+#endif
 }
 
 float Timer::GetDelta( void ) {

@@ -101,6 +101,8 @@ bool Simulation::Run( void ) {
 
 	Hud::Alert( "Captain, we don't have the power! Pow = %d", 3 );
 
+	Video::CreateMotionBlurTexture(0,0);
+
 	fpsTS = Timer::GetTicks();
 	// main game loop
 	while( !quit ) {
@@ -128,6 +130,7 @@ bool Simulation::Run( void ) {
 		sprites.Draw();
 		Hud::Draw( sprites );
 		UI::Draw();
+		Video::MotionBlurTexture();
 		Video::Update();
 		
 		// Don't kill the CPU (play nice)
@@ -140,7 +143,7 @@ bool Simulation::Run( void ) {
 		fpsTotal++;
 
 		// Update the fps once per second
-		if( (Timer::GetTicks() - fpsTS) >1000 ) { 
+		if( (Timer::GetTicks() - fpsTS) >2000 ) { 
 			Simulation::currentFPS = static_cast<float>(1000.0 *
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();
