@@ -301,40 +301,40 @@ void Video::MotionBlurTexture ( void ) {
 		Video::motionBlur_Texture_X, Video::motionBlur_Texture_Y, 0);
 
 	// End render texture code
-	glClearColor(0.0,0.0,0.0,0.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
-	glLoadIdentity();
+//	glClearColor(0.0,0.0,0.0,0.0);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	// Clear The Screen And The Depth Buffer
+//	glLoadIdentity();
 
-	// put the texture on the screen
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-
-		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
-			// put the result onto the screen
-			glBindTexture(GL_TEXTURE_2D, Video::motionBlur_Texture);
-
-			// go to orthogonal view
-			glLoadIdentity();
-			glOrtho(0, w, h, 0, 0, 1);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-
-			glBegin(GL_QUADS);
-				glColor3f(1.0, 1.0, 1.0);
-
-				glTexCoord2f(0.0, 1.0);  glVertex2f(0, 0);
-				glTexCoord2f(0.0, 0.0);  glVertex2f(0, (GLfloat)h);
-				glTexCoord2f(1.0, 0.0);  glVertex2f((GLfloat)w, (GLfloat)h);
-				glTexCoord2f(1.0, 1.0);  glVertex2f((GLfloat)w, 0);
-
-			glEnd();
-
-			glMatrixMode(GL_PROJECTION);
-		glPopMatrix();
-
-		glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+//	// put the texture on the screen
+//	glMatrixMode(GL_MODELVIEW);
+//	glPushMatrix();
+//
+//		glMatrixMode(GL_PROJECTION);
+//		glPushMatrix();
+//			// put the result onto the screen
+//			glBindTexture(GL_TEXTURE_2D, Video::motionBlur_Texture);
+//
+//			// go to orthogonal view
+//			glLoadIdentity();
+//			glOrtho(0, w, h, 0, 0, 1);
+//			glMatrixMode(GL_MODELVIEW);
+//			glLoadIdentity();
+//
+//			glBegin(GL_QUADS);
+//				glColor3f(1.0, 1.0, 1.0);
+//
+//				glTexCoord2f(0.0, 1.0);  glVertex2f(0, 0);
+//				glTexCoord2f(0.0, 0.0);  glVertex2f(0, (GLfloat)h);
+//				glTexCoord2f(1.0, 0.0);  glVertex2f((GLfloat)w, (GLfloat)h);
+//				glTexCoord2f(1.0, 1.0);  glVertex2f((GLfloat)w, 0);
+//
+//			glEnd();
+//
+//			glMatrixMode(GL_PROJECTION);
+//		glPopMatrix();
+//
+//		glMatrixMode(GL_MODELVIEW);
+//	glPopMatrix();
 }
 
 #define Texture_Interpolation	1
