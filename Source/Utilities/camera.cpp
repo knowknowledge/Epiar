@@ -37,7 +37,6 @@ Camera::Camera( void ) {
 	cameraShakeYOffset = 0;
 	cameraShakeXDec = 0;
 	cameraShakeYDec = 0;
-	lastPlayerMomentum = Coordinate();
 }
 
 void Camera::Focus( double x, double y ) {
@@ -100,12 +99,10 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Coordinate mom = Player::Instance()->GetMomentum();
-		Coordinate playerMomentum = mom - lastPlayerMomentum;
-		cout << playerMomentum << endl;
-		Focus( pos.GetX() + cameraShakeXOffset - (playerMomentum.GetX() * 100), 
-			pos.GetY() + cameraShakeYOffset - (playerMomentum.GetY() * 100));
-		lastPlayerMomentum = mom;
+		Coordinate cameraLag = Player::Instance()->GetMomentum();
+		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
+			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
+
 		UpdateShake();
 	}
 	
