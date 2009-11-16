@@ -2,7 +2,7 @@
  * Filename      : ship.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Friday, July 7, 2006
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Header for ship class, child of sprite class, Sprite
  * Notes         :
  */
@@ -23,6 +23,7 @@ class Ship : public Sprite {
 		bool SetModel( Model *model );
 		bool SetFlareAnimation( string filename );
 		Sprite *GetSprite();
+		string GetModelName();
 		
 		void Update( void );
 		void Rotate( int direction );

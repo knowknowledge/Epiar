@@ -34,7 +34,7 @@ class cPlanet : public Sprite {
 				pos.SetY( (double)atof( value.c_str() ) );
 				SetWorldPosition( pos );
 			} else PPA_MATCHES( "landable" ) {
-				landable = (bool)atoi( value.c_str() );
+				landable = (atoi( value.c_str() ) !=0);
 			} else PPA_MATCHES( "traffic" ) {
 				traffic = (short int)atoi( value.c_str() );
 			} else PPA_MATCHES( "image" ) {

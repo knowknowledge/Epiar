@@ -25,6 +25,7 @@ class Image {
 		Image();
 		// Create instance by loading image from file
 		Image( string filename );
+		~Image();
 
 		// Load image from file
 		bool Load( string filename );

@@ -82,7 +82,9 @@ void Console::Input( list<InputEvent> & events ) {
 void Console::Draw() {
 	if( enabled ) {
 		// draw bg
-		Video::DrawRect(150, 5, 550, 100, .5, .5, .5, .3 );
+		Video::DrawRect(150, 5, 550, 100, 
+				static_cast<float>(.5), static_cast<float>(.5),
+				static_cast<float>(.5), static_cast<float>(.3) );
 
 		int pos = 8;
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {

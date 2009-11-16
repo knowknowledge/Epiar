@@ -2,7 +2,7 @@
  * Filename      : UI/ui_lua.cpp
  * Author(s)     : Matt Zweig (thezweig@gmail.com)
  * Date Created  : Thursday, October 29, 2009
- * Last Modified : Thursday, October 29, 2009
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Lua bridge for UI objects
  * Notes         :
  */
@@ -14,6 +14,8 @@
 #include "ui_button.h"
 #include "ui_picture.h"
 
+#include "Engine/models.h"
+
 void UI_Lua::RegisterUI(lua_State *luaVM){
 	static const luaL_Reg uiFunctions[] = {
 		// Creation
@@ -22,9 +24,13 @@ void UI_Lua::RegisterUI(lua_State *luaVM){
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
+		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
+		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
+		{"setPicture", &UI_Lua::setPicture},
+		// Label Modification
 		{"setText", &UI_Lua::setText},
 		{NULL, NULL}
 	};
@@ -38,10 +44,10 @@ int UI_Lua::newWindow(lua_State *luaVM){
 	if (n < 6)
 		return luaL_error(luaVM, "Got %d arguments expected 6 (class, x, y, w, h, caption, [ Widgets ... ])", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
-	double w = luaL_checknumber (luaVM, 4);
-	double h = luaL_checknumber (luaVM, 5);
+	int x = int(luaL_checknumber (luaVM, 2));
+	int y = int(luaL_checknumber (luaVM, 3));
+	int w = int(luaL_checknumber (luaVM, 4));
+	int h = int(luaL_checknumber (luaVM, 5));
 	string caption = luaL_checkstring (luaVM, 6);
 
 	// Allocate memory for a pointer to object
@@ -67,8 +73,12 @@ int UI_Lua::close(lua_State *luaVM){
 	if (n == 1) {
 		UI::Close();
 	}
+	else if(n == 2) {
+		Widget** window= (Widget**)lua_touserdata(luaVM,2);
+		UI::Close(*window);
+	}
 	else {
-		luaL_error(luaVM, "Got %d arguments expected 1 (class)", n); 
+		luaL_error(luaVM, "Got %d arguments expected 1 or 2 (class, [window])", n); 
 	}
 	return 0;
 }
@@ -78,10 +88,10 @@ int UI_Lua::newButton(lua_State *luaVM){
 	if ( (n != 6) && (n != 7) )
 		return luaL_error(luaVM, "Got %d arguments expected 6 or 7 (class, x, y, w, h, caption [Lua_code])", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
-	double w = luaL_checknumber (luaVM, 4);
-	double h = luaL_checknumber (luaVM, 5);
+	int x = int(luaL_checknumber (luaVM, 2));
+	int y = int(luaL_checknumber (luaVM, 3));
+	int w = int(luaL_checknumber (luaVM, 4));
+	int h = int(luaL_checknumber (luaVM, 5));
 	string caption = luaL_checkstring (luaVM, 6);
 	string code = "";
 	if(n==7) code = luaL_checkstring (luaVM, 7);
@@ -102,10 +112,10 @@ int UI_Lua::newTextbox(lua_State *luaVM){
 	if ( n != 6 )
 		return luaL_error(luaVM, "Got %d arguments expected 6 (class, x, y, w, h, text)", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
-	double w = luaL_checknumber (luaVM, 4);
-	double h = luaL_checknumber (luaVM, 5);
+	int x = int(luaL_checknumber (luaVM, 2));
+	int y = int(luaL_checknumber (luaVM, 3));
+	int w = int(luaL_checknumber (luaVM, 4));
+	int h = int(luaL_checknumber (luaVM, 5));
 	string text = luaL_checkstring (luaVM, 6);
 	string code = "";
 	if(n==7) code = luaL_checkstring (luaVM, 7);
@@ -126,8 +136,8 @@ int UI_Lua::newLabel(lua_State *luaVM){
 	if (n != 4)
 		return luaL_error(luaVM, "Got %d arguments expected 4 (class, x, y, caption)", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
+	int x = int(luaL_checknumber (luaVM, 2));
+	int y = int(luaL_checknumber (luaVM, 3));
 	string caption = luaL_checkstring (luaVM, 4);
 
 	// Allocate memory for a pointer to object
@@ -146,10 +156,10 @@ int UI_Lua::newPicture(lua_State *luaVM){
 	if (n != 6)
 		return luaL_error(luaVM, "Got %d arguments expected 6 (class, x, y, w, h, caption )", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
-	double w = luaL_checknumber (luaVM, 4);
-	double h = luaL_checknumber (luaVM, 5);
+	int x = int(luaL_checknumber (luaVM, 2));
+	int y = int(luaL_checknumber (luaVM, 3));
+	int w = int(luaL_checknumber (luaVM, 4));
+	int h = int(luaL_checknumber (luaVM, 5));
 	string filename = luaL_checkstring (luaVM, 6);
 
 	// Allocate memory for a pointer to object
@@ -161,6 +171,19 @@ int UI_Lua::newPicture(lua_State *luaVM){
 	//       This may be a bad idea (memory leaks from bad lua scripts)
 
 	return 1;
+}
+
+int UI_Lua::setPicture(lua_State *luaVM){
+	int n = lua_gettop(luaVM);  // Number of arguments
+	if (n == 2){
+		Picture** pic = (Picture**)lua_touserdata(luaVM,1);
+		string modelname = luaL_checkstring (luaVM, 2);
+		(*pic)->Set( Models::Instance()->GetModel(modelname)->GetImage() );
+	
+	} else {
+		luaL_error(luaVM, "Got %d arguments expected 2 (self, ModelName)", n); 
+	}
+	return 0;
 }
 
 int UI_Lua::add(lua_State *luaVM){

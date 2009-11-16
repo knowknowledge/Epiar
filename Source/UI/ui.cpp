@@ -21,8 +21,7 @@ list<Widget *> UI::children;
 Widget *UI::mouseFocus, *UI::keyboardFocus; // remembers which widgets last had these focuses
 
 UI::UI() {
-	mouseFocus = NULL;
-	keyboardFocus = NULL;
+	ResetInput();
 }
 
 UI::~UI() {
@@ -59,11 +58,12 @@ void UI::Close( void ) {
 	// Free all widgets
 	std::for_each(children.begin(), children.end(), create_delete_functor());
 	children.clear();
+	ResetInput();
+}
 
-	mouseFocus = NULL;
-	keyboardFocus = NULL;
-	
-	Video::DisableMouse();
+void UI::Close( Widget *widget ) {
+	children.remove(widget);
+	ResetInput();
 }
 
 void UI::Draw( void ) {
@@ -188,6 +188,15 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			i++;
 		}
 	}
+}
+
+// Clears current input to prevent accidental usage of invalid values
+// Use this whenever the UI removes focusable widgets
+void UI::ResetInput() {
+	mouseFocus = NULL;
+	keyboardFocus = NULL;
+	
+	Video::DisableMouse();
 }
 
 void ui_demo( bool in_loop ) {

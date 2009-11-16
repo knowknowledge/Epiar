@@ -35,9 +35,10 @@ function CreateShips(number_of_ships, X, Y)
 		cur_ship = EpiarLua.Ship:new(
 				math.random(1000)-500+X, -- X
 				math.random(1000)-500+Y, -- Y
-				shiptypes[s],
+				shiptypes[math.random(#shiptypes)],
 				"chase"                 -- Ship Script
 				)
+		EpiarLua.Ship.SetRadarColor(cur_ship,0,255,0)
 		table.insert(shipList, cur_ship )
 		table.insert(AIPlans, newPlan() )
 	end
@@ -89,8 +90,8 @@ end
 it = {}
 it.ship =0
 it.countdown=100
-it.pic = EpiarLua.UI:newPicture(60,30,100,30,"Resources/Graphics/terran-frigate.png")
-it.label = EpiarLua.UI:newLabel(90,100,"default")
+it.pic = EpiarLua.UI:newPicture(60,30,100,30, EpiarLua.Ship.GetModelName(shipList[it.ship]) )
+it.label = EpiarLua.UI:newLabel(90,100,"You're It")
 it.findClosest = function()
 	it.target=-1
 	it.target_dist= 100000
@@ -111,15 +112,15 @@ it.findClosest = function()
 	end
 end
 it.tag = function(target)
-	-- io.write("Making "..target.." IT")
+	--io.write("Making "..target.." IT\n")
 	if target >= #shipList then
-		-- io.write('Cannot')
 		return 1
 	end
 	-- the old IT now runs
 	AIPlans[it.ship] = {}
 	AIPlans[it.ship].time=20
 	AIPlans[it.ship].plan=aimAwayFromIT
+	EpiarLua.Ship.SetRadarColor(shipList[it.ship],0,255,0)
 	
 	--shake the camera
 	if it.ship == 0 then
@@ -128,12 +129,14 @@ it.tag = function(target)
 	elseif target == 0 then
 		Epiar.shakeCamera(100, 3, it.x,it.y)
 	end
+
 	-- The new it doesn't become active for 100 ticks
 	it.ship=target
 	it.countdown = 100
 	AIPlans[it.ship] = {}
 	AIPlans[it.ship].time=0
 	AIPlans[it.ship].plan=chaseClosest
+	EpiarLua.Ship.SetRadarColor(shipList[it.ship],255,0,0)
 end
 
 --
@@ -241,7 +244,8 @@ function Update ()
 		end
 	end
 
-	-- Rotate the itpic to match the ship that's it
+	-- Set the Who's It? Dashboard to the correct Image
+	EpiarLua.UI.setPicture(it.pic, EpiarLua.Ship.GetModelName(shipList[it.ship]) )
 	EpiarLua.UI.rotatePicture(it.pic, EpiarLua.Ship.GetAngle(shipList[it.ship]) )
 
 	if it.countdown==0 then
@@ -275,17 +279,17 @@ function close() -- Close all the windows
 end
 
 function pauseMessage(message)
-	Epiar.pause()
-	menuWin = EpiarLua.UI:newWindow( 900,200,120,250,"Paused",
-		EpiarLua.UI:newLabel(10,40,message),
-		EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()")
+	if 1 == Epiar.ispaused() then return end
+	pauseWin= EpiarLua.UI:newWindow( 400,100,320,150,"Paused",
+		EpiarLua.UI:newLabel(160,70,message),
+		EpiarLua.UI:newButton(110,100,100,30,"Unpause","Epiar.unpause();EpiarLua.UI:close(pauseWin)")
 		)
+	Epiar.pause()
 end
 
 -- Create windows
 menuWin = EpiarLua.UI:newWindow( 900,200,120,250,"Menu",
-	EpiarLua.UI:newButton(10,40,100,30,"Pause","Epiar.pause()"),
-	EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()"),
+	EpiarLua.UI:newButton(10,40,100,30,"Pause","pauseMessage('You hit the pause button')"),
 	EpiarLua.UI:newButton(10,140,100,30,"IT","it.tag(0)"),
 	EpiarLua.UI:newButton(10,190,100,30,"NOT IT","it.tag(math.random(#shipList))")
 	)

@@ -1,9 +1,9 @@
 /*
  * Filename      : ui_picture.h
  * Author(s)     : Matt Zweig
- * Date Created  : November 2, 2009
- * Last Modified : November 2, 2009
- * Purpose       : 
+ * Date Created  : Tuesday, November 2, 2009
+ * Last Modified : Friday, November 14, 2009
+ * Purpose       : Widget for displaying Images
  * Notes         : 
  */
 
@@ -32,5 +32,20 @@ void Picture::Rotate(double angle){
 }
 
 void Picture::Draw( int relx, int rely ){
-	bitmap->Draw( GetX()+relx, GetY()+rely, rotation);
+	bitmap->Draw( GetX()+relx, GetY()+rely, static_cast<float>(rotation));
+}
+
+void Picture::Set( Image *img ){
+	// Potential Memory Leak
+	// If the previous bitmap was created from new,
+	// then that image is now lost.
+	// We can't delete it though, since it could be shared (eg, Ship Model).
+	bitmap = img;
+}
+
+void Picture::Set( string filename ){
+	// Potential Memory Leak
+	// If the previous bitmap was created from new,
+	// then that image is now lost
+	bitmap = new Image(filename);
 }

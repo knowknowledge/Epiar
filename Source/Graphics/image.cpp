@@ -30,6 +30,14 @@ Image::Image( string filename ) {
 	Load(filename);
 }
 
+//Deallocate allocations
+Image::~Image() {
+	if ( image ) {
+		glDeleteTextures( 1, &image );
+		image = 0;
+	}
+}
+
 // Load image from file
 bool Image::Load( string filename ) {
 	SDL_Surface *s = NULL;
@@ -147,22 +155,22 @@ void Image::Draw( int x, int y, float angle ) {
 		Trig *trig = Trig::Instance();
 		float a = (float)trig->DegToRad( angle );
 		// ax/ay are the coordinate to rotate "about", hence "about points", "about x", "about y"
-		float ax = (float)x + (w / 2.);
-		float ay = (float)y + (h / 2.);
+		float ax = static_cast<float>(x + (w / 2.));
+		float ay = static_cast<float>(y + (h / 2.));
 
 		trig->RotatePoint( (float)x, (float)y + h, ax, ay, (float *)&ulx, (float *)&uly, a );
 		trig->RotatePoint( (float)x + w, (float)y + h, ax, ay, (float *)&urx, (float *)&ury, a );
 		trig->RotatePoint( (float)x, (float)y, ax, ay, (float *)&llx, (float *)&lly, a );
 		trig->RotatePoint( (float)x + w, (float)y, ax, ay, (float *)&lrx, (float *)&lry, a );
 	} else {
-		ulx = x;
-		urx = x + w;
-		llx = x;
-		lrx = x + w;
-		uly = y + h;
-		ury = y + h;
-		lly = y;
-		lry = y;
+		ulx = static_cast<float>(x);
+		urx = static_cast<float>(x + w);
+		llx = static_cast<float>(x);
+		lrx = static_cast<float>(x + w);
+		uly = static_cast<float>(y + h);
+		ury = static_cast<float>(y + h);
+		lly = static_cast<float>(y);
+		lry = static_cast<float>(y);
 	}
 
 	// draw it

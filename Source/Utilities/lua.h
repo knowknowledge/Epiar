@@ -11,9 +11,17 @@
 #define __H_LUA__
 
 #include "includes.h"
-#include "Lua/src/lua.h"
-#include "Lua/src/lualib.h"
-#include "Lua/src/lauxlib.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#	include <lua.h>
+#	include <lualib.h>
+#	include <lauxlib.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include "Sprites/spritemanager.h"
 
 class Lua {
@@ -30,6 +38,7 @@ class Lua {
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
 		static int unpause(lua_State *L);
+		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *luaVM);
 		static int shakeCamera(lua_State *luaVM);
 	private:

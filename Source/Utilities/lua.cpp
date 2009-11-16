@@ -2,6 +2,7 @@
  * Filename      : lua.cpp
  * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Provides abilities to load, store, and run Lua scripts
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
@@ -37,6 +38,7 @@ bool Lua::Load( string filename ) {
 	if( luaL_dofile(luaVM,filename.c_str()) ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(luaVM, -1));
+		cout << lua_tostring(luaVM, -1) << endl;
 	} else {
 		Log::Message("Loaded the universe");
 	}
@@ -149,6 +151,7 @@ void Lua::RegisterFunctions() {
 		{"echo", &Lua::console_echo},
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
+		{"ispaused", &Lua::ispaused},
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{NULL, NULL}
@@ -182,16 +185,23 @@ int Lua::unpause(lua_State *luaVM){
 	return 0;
 }
 
+int Lua::ispaused(lua_State *L){
+	lua_pushnumber(L, (int) Simulation::isPaused() );
+	return 1;
+}
+
 int Lua::getPlayer(lua_State *luaVM){
 	Player **player = (Player**)lua_newuserdata(luaVM, sizeof(Player*));
 	*player = Player::Instance();
 	return 1;
 }
+
 //Allow camera shaking from Lua
 int Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
 		Camera *pInstance = Camera::Instance();
-		pInstance->Shake(luaL_checknumber(L, 1), luaL_checknumber(L, 2),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
+		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
+						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
 	return 0;
 }

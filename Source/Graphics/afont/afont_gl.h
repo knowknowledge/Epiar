@@ -6,7 +6,12 @@
 #define _afont_gl_h
 
 #include <stdio.h>
-#include "gl.h"
+
+#if __APPLE__
+#include <OpenGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
 
 #include "afont.h"
 

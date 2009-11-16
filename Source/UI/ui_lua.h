@@ -2,7 +2,7 @@
  * Filename      : UI/ui_lua.h
  * Author(s)     : Matt Zweig (thezweig@gmail.com)
  * Date Created  : Thursday, October 29, 2009
- * Last Modified : Thursday, October 29, 2009
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Lua bridge for UI objects
  * Notes         :
  */
@@ -10,9 +10,15 @@
 #ifndef __H_UI_LUA
 #define __H_UI_LUA
 
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+#	include <lua.h>
+#	include <lauxlib.h>
+#	include <lualib.h>
+#ifdef __cplusplus
+}
+#endif
 
 #include "UI/ui.h"
 #include "ui_label.h"
@@ -36,6 +42,7 @@ class UI_Lua {
 		static int close(lua_State *luaVM);
 		static int rotatePicture(lua_State *luaVM);
 		static int setText(lua_State *luaVM);
+		static int setPicture(lua_State *luaVM);
 	private:
 };
 #endif /*__H_UI_LUA*/

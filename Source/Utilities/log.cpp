@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "common.h"
 #include "includes.h"
 #include "Utilities/log.h"
 
@@ -22,6 +23,10 @@ void Log::Initalize( void ) {
 
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
+
+	// Need to replace ":" with "_" because windows can't handle it
+	timestamp[ 13 ] ='_';
+	timestamp[ 16 ] ='_';
 
 	// generate the log's filename based on the time
 	sprintf( logFilename, "Epiar-Log-%s.xml", timestamp );
@@ -89,7 +94,7 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
-	fprintf( fp, logBuffer );
+	fprintf( fp, "%s\n", logBuffer );
 #ifdef DEBUG
 	printf( "%s\n", logBuffer );
 #endif

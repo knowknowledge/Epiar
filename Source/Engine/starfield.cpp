@@ -16,7 +16,7 @@ Starfield::Starfield( int num ) {
 	int i;
 	
 	// seed the random number generator
-	srand( time(NULL) );
+	srand(static_cast<unsigned int>( time(NULL) ));
 
 	// allocate space for stars
 	stars = (struct _stars *)malloc( sizeof(struct _stars) * num );
@@ -28,7 +28,7 @@ Starfield::Starfield( int num ) {
 		stars[i].x = (float)(rand() % (int)(1.3 * Video::GetWidth()));
 		stars[i].y = (float)(rand() % (int)(1.4 * Video::GetHeight()));
 		c = rand() % 225; // generate greys between 0 and 225
-		stars[i].clr = (float)c / 256.;
+		stars[i].clr = static_cast<float>( c / 256. );
 	}
 
 	this->num = num;
@@ -54,8 +54,8 @@ void Starfield::Update( void ) {
 
 	camera->GetDelta( &dx, &dy );
 	
-	w = 1.3 * (float)Video::GetWidth();
-	h = 1.4 * (float)Video::GetHeight();
+	w = static_cast<float>(1.3 * Video::GetWidth());
+	h = static_cast<float>(1.4 * Video::GetHeight());
 	
 	for( i = 0; i < num; i++ ) {
 		stars[i].x -= (float)dx * stars[i].clr;

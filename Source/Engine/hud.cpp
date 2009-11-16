@@ -176,7 +176,7 @@ void Radar::Draw( SpriteManager &sprites ) {
 			blip.SetX( blip.GetX() + radar_mid_x );
 			blip.SetY( blip.GetY() + radar_mid_y );
 
-			radarSize = (sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0);
+			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 			
 			
 			Video::DrawCircle(

@@ -28,7 +28,7 @@ class Model {
 			} else PPA_MATCHES( "mass" ) {
 				mass = atoi( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
-				rotPerSecond = atof( value.c_str() );
+				rotPerSecond = static_cast<float>(atof( value.c_str() ));
 			} else PPA_MATCHES( "engine" ) {
 				Engines *engines = Engines::Instance();
 
