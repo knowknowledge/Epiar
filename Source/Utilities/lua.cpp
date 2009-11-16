@@ -151,6 +151,7 @@ void Lua::RegisterFunctions() {
 		{"echo", &Lua::console_echo},
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
+		{"ispaused", &Lua::ispaused},
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{NULL, NULL}
@@ -184,11 +185,17 @@ int Lua::unpause(lua_State *luaVM){
 	return 0;
 }
 
+int Lua::ispaused(lua_State *L){
+	lua_pushnumber(L, (int) Simulation::isPaused() );
+	return 1;
+}
+
 int Lua::getPlayer(lua_State *luaVM){
 	Player **player = (Player**)lua_newuserdata(luaVM, sizeof(Player*));
 	*player = Player::Instance();
 	return 1;
 }
+
 //Allow camera shaking from Lua
 int Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {

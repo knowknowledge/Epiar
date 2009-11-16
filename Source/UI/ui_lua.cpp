@@ -73,8 +73,12 @@ int UI_Lua::close(lua_State *luaVM){
 	if (n == 1) {
 		UI::Close();
 	}
+	else if(n == 2) {
+		Widget** window= (Widget**)lua_touserdata(luaVM,2);
+		UI::Close(*window);
+	}
 	else {
-		luaL_error(luaVM, "Got %d arguments expected 1 (class)", n); 
+		luaL_error(luaVM, "Got %d arguments expected 1 or 2 (class, [window])", n); 
 	}
 	return 0;
 }

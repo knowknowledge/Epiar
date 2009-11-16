@@ -30,7 +30,9 @@ class UI {
 		static void Run( void );
 		static void Draw( void );
 		static void Close( void );
+		static void Close( Widget *widget );
 		static void HandleInput( list<InputEvent> & events );
+		static void ResetInput(void);
 		
 		static Widget *DetermineMouseFocus( int x, int y );
 		

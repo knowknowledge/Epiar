@@ -34,9 +34,14 @@
 #include <libxml/parser.h>
 #include <zlib.h>
 
-#include "GL/gl.h"
-#include "GL/glu.h"
+#if __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
 #include "GL/glext.h"
+#endif
 
 // Local includes
 #include "defines.h"
