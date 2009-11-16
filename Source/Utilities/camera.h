@@ -62,7 +62,8 @@ class Camera {
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
 		void UpdateShake();
-		
+		Coordinate lastPlayerMomentum;
+
 };
 
 #endif // __h_camera__
