@@ -2,7 +2,7 @@
  * Filename      : lua.cpp
  * Author(s)     : Chris Thielen (chris@epiar.net)
  * Date Created  : Saturday, January 5, 2008
- * Last Modified : Friday, November 14, 2009
+ * Last Modified : Monday, November 16 2009
  * Purpose       : Provides abilities to load, store, and run Lua scripts
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
@@ -19,6 +19,7 @@
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
 #include "Sprites/player.h"
+#include "Sprites/sprite.h"
 #include "Utilities/camera.h" 
 
 bool Lua::luaInitialized = false;
@@ -156,6 +157,8 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"models", &Lua::getModelNames},
+		{"ships", &Lua::getShips},
+		{"planets", &Lua::getPlanets},
 		{NULL, NULL}
 	};
 	luaL_register(luaVM,"Epiar",EngineFunctions);
@@ -164,6 +167,7 @@ void Lua::RegisterFunctions() {
 	// Register these functions to their own lua namespaces
 	AI_Lua::RegisterAI(luaVM);
 	UI_Lua::RegisterUI(luaVM);
+	Planets_Lua::RegisterPlanets(luaVM);
 }
 
 int Lua::console_echo(lua_State *L) {
@@ -224,4 +228,41 @@ int Lua::getModelNames(lua_State *L){
     }
 	delete names;
     return 1;
+}
+
+int Lua::getSprites(lua_State *L, int type){
+	list<Sprite *> filtered;
+	list<Sprite *> sprites = my_sprites->GetSprites();
+	
+	// Collect only the ships
+	list<Sprite *>::iterator i;
+	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+		if( (*i)->GetDrawOrder() == type){
+			filtered.push_back( (*i) );
+		}
+	}
+
+	// Populate a Lua table with ships
+    lua_createtable(L, filtered.size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+    list<Sprite *>::const_iterator iter = filtered.begin();
+    while(iter != filtered.end()) {
+		// push userdata
+		Sprite **s = (Sprite **)lua_newuserdata(luaVM, sizeof(Sprite*));
+		*s = *iter;
+        lua_rawseti(L, newTable, index);
+        ++iter;
+        ++index;
+    }
+    return 1;
+}
+
+
+int Lua::getShips(lua_State *L){
+	return Lua::getSprites(L,DRAW_ORDER_SHIP);
+}
+
+int Lua::getPlanets(lua_State *L){
+	return Lua::getSprites(L,DRAW_ORDER_PLANET);
 }

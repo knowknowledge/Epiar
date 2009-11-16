@@ -3,6 +3,8 @@ Sunday, November 15, 2009
 		* Added single-window close.
 		* Fixed Lua pauseMessage() function.
 		* Added function to fetch model names from Lua.
+		* Added Lua Bridge for Planets.
+		* Added function to fetch ship and planet lists from Lua.
 
 	Maoserr:
 		* Fixing cross-platform compilation warnings.
@@ -15,7 +17,7 @@ Saturday, November 14, 2009
 		* Added Lua functions to change radar color.
 
 Friday, November 13, 2009
-	Ebos:
+	Shawn Reynolds:
 		* Added screen shaking.
 
 Tuesday, November 10, 2009

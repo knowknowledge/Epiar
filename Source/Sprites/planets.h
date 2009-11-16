@@ -2,13 +2,23 @@
  * Filename      : planets.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Monday, November 16 2009
  * Purpose       : 
  * Notes         :
  */
 
 #ifndef __h_planets__
 #define __h_planets__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#	include <lua.h>
+#	include <lauxlib.h>
+#	include <lualib.h>
+#ifdef __cplusplus
+}
+#endif
 
 #include "includes.h"
 #include "Sprites/sprite.h"
@@ -58,6 +68,12 @@ class cPlanet : public Sprite {
 			if( image )
 				delete image; // planets delete their own images. not all Sprites do
 		}
+
+		string GetName() {return name;}
+		string GetAlliance() {return alliance;}
+		short int GetTraffic() {return traffic;}
+		short int GetMilitiaSize() {return militiaSize;}
+		bool GetLandable() {return landable;}
 		
 	private:
 		string name;
@@ -85,6 +101,19 @@ class Planets {
 	private:
 		static Planets *pInstance;
 		list<cPlanet *> planets;
+};
+
+class Planets_Lua {
+	public:
+		static void RegisterPlanets(lua_State *luaVM);
+		
+		static int GetName(lua_State* luaVM);
+		static int GetPosition(lua_State* luaVM);
+		static int GetAlliance(lua_State* luaVM);
+		static int GetTraffic(lua_State* luaVM);
+		static int GetMilitiaSize(lua_State* luaVM);
+		static int GetLandable(lua_State* luaVM);
+	private:
 };
 
 #endif // __h_planets__
