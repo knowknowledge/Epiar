@@ -12,6 +12,8 @@
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
+#include "Sprites/player.h"
+#include "Utilities/coordinate.h"
 
 Camera *Camera::pInstance = 0; // initialize pointer
 
@@ -97,11 +99,10 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		if (cameraShakeDur == 0) {
-			Focus( pos.GetX(), pos.GetY() );
-		} else {
-			Shake();
-		}
+		Coordinate playerMomentum = Player::Instance()->GetMomentum();
+		Focus( pos.GetX() + cameraShakeXOffset + (playerMomentum.GetX() * 10), 
+			pos.GetY() + cameraShakeYOffset + (playerMomentum.GetY() * 10));
+		UpdateShake();
 	}
 	
 }
@@ -125,10 +126,13 @@ void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 }
 // "Shakes" the camera 
 //Note: Shakes the camera 
-void Camera::Shake() {
-	Coordinate pos = focusSprite->GetWorldPosition();
-		
-	Focus( pos.GetX() + cameraShakeXOffset, pos.GetY() + cameraShakeYOffset );
+void Camera::UpdateShake() {
+	if (cameraShakeDur < 1) {
+		cameraShakeXOffset = 0;
+		cameraShakeYOffset = 0;
+		return;
+	}
+
 	if (cameraShakeDur % 10 == 0) {
 		if (cameraShakeXOffset > 0) {
 			cameraShakeXOffset -= cameraShakeXDec;
