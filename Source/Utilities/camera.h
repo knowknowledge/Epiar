@@ -61,7 +61,7 @@ class Camera {
   					// (this is used by Starfield)
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
-		void Shake();
+		void UpdateShake();
 		
 };
 

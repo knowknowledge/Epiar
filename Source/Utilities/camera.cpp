@@ -99,12 +99,10 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		if (cameraShakeDur == 0) {
-			Coordinate playerMomentum = Player::Instance()->GetMomentum();
-			Focus( pos.GetX() + (playerMomentum.GetX() * 10), pos.GetY() + (playerMomentum.GetY() * 10));
-		} else {
-			Shake();
-		}
+		Coordinate playerMomentum = Player::Instance()->GetMomentum();
+		Focus( pos.GetX() + cameraShakeXOffset + (playerMomentum.GetX() * 10), 
+			pos.GetY() + cameraShakeYOffset + (playerMomentum.GetY() * 10));
+		UpdateShake();
 	}
 	
 }
@@ -128,11 +126,13 @@ void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 }
 // "Shakes" the camera 
 //Note: Shakes the camera 
-void Camera::Shake() {
-	Coordinate pos = focusSprite->GetWorldPosition();
-	Coordinate playerMomentum = Player::Instance()->GetMomentum();	
-	Focus( pos.GetX() + cameraShakeXOffset + (playerMomentum.GetX() * 10)
-		, pos.GetY() + cameraShakeYOffset + (playerMomentum.GetY() * 10) );
+void Camera::UpdateShake() {
+	if (cameraShakeDur < 1) {
+		cameraShakeXOffset = 0;
+		cameraShakeYOffset = 0;
+		return;
+	}
+
 	if (cameraShakeDur % 10 == 0) {
 		if (cameraShakeXOffset > 0) {
 			cameraShakeXOffset -= cameraShakeXDec;
