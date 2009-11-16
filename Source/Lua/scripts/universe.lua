@@ -102,8 +102,8 @@ it.tag = function(target)
 	EpiarLua.Ship.SetRadarColor(ships[it.ship],0,255,0)
 	
 	--shake the camera
-	other_x,other_y = EpiarLua.Ship.GetPosition(ships[target])
 	if it.ship == 0 then
+		other_x,other_y = EpiarLua.Ship.GetPosition(ships[target])
 		Epiar.shakeCamera(100, 3, other_x,other_y)
 	elseif target == 0 then
 		Epiar.shakeCamera(100, 3, it.x,it.y)
