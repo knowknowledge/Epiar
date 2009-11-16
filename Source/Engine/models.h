@@ -100,6 +100,7 @@ class Models {
 		static Models *Instance();
 		bool Load( string& filename );
 		Model *GetModel( string& modelName );
+		list<string> *GetModelNames();
 
 	protected:
 		Models() {};

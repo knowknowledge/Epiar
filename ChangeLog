@@ -1,8 +1,22 @@
-Friday, November 14, 2009
+Sunday, November 15, 2009
+	Matt Zweig:
+		* Added single-window close.
+		* Fixed Lua pauseMessage() function.
+		* Added function to fetch model names from Lua.
+
+	Maoserr:
+		* Fixing cross-platform compilation warnings.
+		* Fixed Logging on Windows.
+
+Saturday, November 14, 2009
 	Matt Zweig:
 		* Added Lua functions to set ui_picture images based off of Ship
 		models
 		* Added Lua functions to change radar color.
+
+Friday, November 13, 2009
+	Ebos:
+		* Added screen shaking.
 
 Tuesday, November 10, 2009
 	Matt Zweig:
@@ -24,6 +38,7 @@ Tuesday, November 3, 2009
 	Chris Thielen:
 		* Fixed 'brown planet' bug
 		* Fixed animation loading bug
+
 	Matt Zweig:
 		* Cleaned up the TAG game so that it is more understandable.
 		* The AI Plan model used here could be adapted for more complex scenes.
@@ -128,6 +143,7 @@ Sunday October 12, 2008
 		* Fixed a bug with Coordinate where it would enforce boundaries that hadn't been set
 		* Continued UI work, getting mouse focus features down so clicking buttons work, then continue on
 		  with additional widgets
+
 	Matthew Zweig:
 		* Changed scaling and coloring in the Hud Radar.  Ships are Red, Planets are Blue, else grey.
 

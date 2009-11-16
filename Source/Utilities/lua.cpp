@@ -9,6 +9,7 @@
 
 #include "Engine/console.h"
 #include "Engine/simulation.h"
+#include "Engine/models.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "AI/ai_lua.h"
@@ -154,6 +155,7 @@ void Lua::RegisterFunctions() {
 		{"ispaused", &Lua::ispaused},
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
+		{"models", &Lua::getModelNames},
 		{NULL, NULL}
 	};
 	luaL_register(luaVM,"Epiar",EngineFunctions);
@@ -204,4 +206,22 @@ int Lua::shakeCamera(lua_State *L){
 						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
 	return 0;
+}
+
+int Lua::getModelNames(lua_State *L){
+	Models *models = Models::Instance();
+	list<string> *names = models->GetModelNames();
+
+    lua_createtable(L, names->size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+    list<string>::const_iterator iter = names->begin();
+    while(iter != names->end()) {
+        lua_pushstring(L, (*iter).c_str());
+        lua_rawseti(L, newTable, index);
+        ++iter;
+        ++index;
+    }
+	delete names;
+    return 1;
 }
