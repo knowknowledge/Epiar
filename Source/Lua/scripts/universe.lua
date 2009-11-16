@@ -35,7 +35,7 @@ function CreateShips(number_of_ships, X, Y)
 		cur_ship = EpiarLua.Ship:new(
 				math.random(1000)-500+X, -- X
 				math.random(1000)-500+Y, -- Y
-				shiptypes[s],
+				shiptypes[math.random(#shiptypes)],
 				"chase"                 -- Ship Script
 				)
 		EpiarLua.Ship.SetRadarColor(cur_ship,0,255,0)
@@ -91,7 +91,7 @@ it = {}
 it.ship =0
 it.countdown=100
 it.pic = EpiarLua.UI:newPicture(60,30,100,30, EpiarLua.Ship.GetModelName(shipList[it.ship]) )
-it.label = EpiarLua.UI:newLabel(90,100,"default")
+it.label = EpiarLua.UI:newLabel(90,100,"You're It")
 it.findClosest = function()
 	it.target=-1
 	it.target_dist= 100000
@@ -279,9 +279,10 @@ function close() -- Close all the windows
 end
 
 function pauseMessage(message)
-	menuWin = EpiarLua.UI:newWindow( 400,400,320,150,"Paused",
-		EpiarLua.UI:newLabel(10,200,message),
-		EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()")
+	if 1 == Epiar.ispaused() then return end
+	pauseWin= EpiarLua.UI:newWindow( 400,100,320,150,"Paused",
+		EpiarLua.UI:newLabel(160,70,message),
+		EpiarLua.UI:newButton(110,100,100,30,"Unpause","Epiar.unpause();EpiarLua.UI:close(pauseWin)")
 		)
 	Epiar.pause()
 end
@@ -289,7 +290,6 @@ end
 -- Create windows
 menuWin = EpiarLua.UI:newWindow( 900,200,120,250,"Menu",
 	EpiarLua.UI:newButton(10,40,100,30,"Pause","pauseMessage('You hit the pause button')"),
-	EpiarLua.UI:newButton(10,90,100,30,"Unpause","Epiar.unpause()"),
 	EpiarLua.UI:newButton(10,140,100,30,"IT","it.tag(0)"),
 	EpiarLua.UI:newButton(10,190,100,30,"NOT IT","it.tag(math.random(#shipList))")
 	)

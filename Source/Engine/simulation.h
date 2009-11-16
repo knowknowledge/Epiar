@@ -27,6 +27,7 @@ class Simulation {
 		
 		static void pause();
 		static void unpause();
+		static bool isPaused() {return paused;}
 
 	private:
 		bool Parse( void );
