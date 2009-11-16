@@ -20,6 +20,8 @@ extern "C" {
 }
 #endif
 
+#define EPIAR_PLANET "Epiar.Planet"
+
 #include "includes.h"
 #include "Sprites/sprite.h"
 #include "Sprites/spritemanager.h"
@@ -106,6 +108,8 @@ class Planets {
 class Planets_Lua {
 	public:
 		static void RegisterPlanets(lua_State *luaVM);
+        static cPlanet **pushPlanet(lua_State *luaVM);
+        static cPlanet **checkPlanet(lua_State *luaVM, int index);
 		
 		static int GetName(lua_State* luaVM);
 		static int GetPosition(lua_State* luaVM);

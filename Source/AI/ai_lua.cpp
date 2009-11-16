@@ -2,18 +2,13 @@
  * Filename      : ai_lua.cpp
  * Author(s)     : Matt Zweig (thezweig@gmail.com)
  * Date Created  : Thursday, October 29, 2009
- * Last Modified : Friday, November 14, 2009
+ * Last Modified : Monday, November 16 2009
  * Purpose       : Lua Bridge for AI objects
  * Notes         :
  */
 
 #include "Utilities/lua.h"
 
-#include <lua.h>
-#include <lauxlib.h>
-#include <lualib.h>
-
-#include "AI/ai.h"
 #include "AI/ai_lua.h"
 
 void AI_Lua::RegisterAI(lua_State *luaVM){
@@ -36,8 +31,24 @@ void AI_Lua::RegisterAI(lua_State *luaVM){
 		{"GetHull", &AI_Lua::ShipGetHull},
 		{NULL, NULL}
 	};
-	luaL_newmetatable(luaVM, "EpiarLua.Ship");
-	luaL_openlib(luaVM, "EpiarLua.Ship", shipFunctions,0);  
+	luaL_newmetatable(luaVM, EPIAR_SHIP);
+	luaL_openlib(luaVM, EPIAR_SHIP, shipFunctions,0);  
+}
+
+AI **AI_Lua::pushShip(lua_State *luaVM){
+	AI **s = (AI **)lua_newuserdata(luaVM, sizeof(AI*));
+    *s = new AI();
+    luaL_getmetatable(luaVM, EPIAR_SHIP);
+    lua_setmetatable(luaVM, -2);
+    return s;
+}
+
+AI **AI_Lua::checkShip(lua_State *luaVM, int index){
+  AI **ai;
+  luaL_checktype(luaVM, index, LUA_TUSERDATA);
+  ai = (AI**)luaL_checkudata(luaVM, index, EPIAR_SHIP);
+  if (ai == NULL) luaL_typerror(luaVM, index, EPIAR_SHIP);
+  return ai;
 }
 
 int AI_Lua::newShip(lua_State *luaVM){
@@ -53,8 +64,7 @@ int AI_Lua::newShip(lua_State *luaVM){
 	Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
-	AI **s = (AI **)lua_newuserdata(luaVM, sizeof(AI*));
-	*s = new AI();
+	AI **s = pushShip(luaVM);
 	(*s)->SetWorldPosition( Coordinate(x, y) );
 	(*s)->SetModel( Models::Instance()->GetModel(modelname) );
 	(*s)->SetScript( scriptname );
@@ -65,32 +75,14 @@ int AI_Lua::newShip(lua_State *luaVM){
 	return 1;
 }
 
-AI* checkAI(lua_State* L, int index)
-{
-	void* ud = 0;
-	luaL_checktype(L, index, LUA_TTABLE); 
-	lua_getfield(L, index, "__self");
-	ud = luaL_checkudata(L, index, "EpiarLua.Ship");
-	luaL_argcheck(L, ud != NULL, index, "`EpiarLua.Ship' expected");  
-
-	return *((AI**)ud);
-}
-
-
 // Ship Functions
 
 int AI_Lua::ShipAccelerate(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
-		if(realAI){
-			realAI->Accelerate();
-		} else {
-			Log::Error("Failed to find the Associated AI");
-			exit(100);
-		}
+		AI** ai= checkShip(L,1);
+        (*ai)->Accelerate();
 	}
 	else
 		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
@@ -102,15 +94,9 @@ int AI_Lua::ShipRotate(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 2) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
+		AI** ai = checkShip(L,1);
 		Direction dir = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
-		if(realAI){
-			realAI->Rotate(dir);
-		} else {
-			Log::Error("Failed to find the Associated AI");
-			exit(100);
-		}
+        (*ai)->Rotate(dir);
 	}
 	else
 		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
@@ -121,11 +107,11 @@ int AI_Lua::ShipRotate(lua_State* L){
 int AI_Lua::ShipRadarColor(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 4) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
+		AI** ai = checkShip(L,1);
 		int red = (int) luaL_checknumber (L, 2);
 		int green = (int) luaL_checknumber (L, 3);
 		int blue = (int) luaL_checknumber (L, 4);
-		(*ptrAI)->SetRadarColor(Color::Get(red,green,blue));
+		(*ai)->SetRadarColor(Color::Get(red,green,blue));
 	} else {
 		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n); 
 	}
@@ -136,9 +122,8 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
-		lua_pushnumber(L, (double) realAI->GetAngle() );
+		AI** ai = checkShip(L,1);
+		lua_pushnumber(L, (double) (*ai)->GetAngle() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -150,10 +135,9 @@ int AI_Lua::ShipGetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
-		lua_pushnumber(L, (double) realAI->GetWorldPosition().GetX() );
-		lua_pushnumber(L, (double) realAI->GetWorldPosition().GetY() );
+		AI** ai = checkShip(L,1);
+		lua_pushnumber(L, (double) (*ai)->GetWorldPosition().GetX() );
+		lua_pushnumber(L, (double) (*ai)->GetWorldPosition().GetY() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -165,9 +149,8 @@ int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
-		lua_pushnumber(L, (double) realAI->GetMomentum().GetAngle() );
+		AI** ai= checkShip(L,1);
+		lua_pushnumber(L, (double) (*ai)->GetMomentum().GetAngle() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -179,9 +162,8 @@ int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ptrAI= (AI**)lua_touserdata(L,1);
-		AI* realAI = *ptrAI;
-		lua_pushnumber(L, (double) realAI->GetMomentum().GetMagnitude() );
+		AI** ai = checkShip(L,1);
+		lua_pushnumber(L, (double) (*ai)->GetMomentum().GetMagnitude() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -191,21 +173,16 @@ int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
 
 int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
-	AI** ptrAI;
-	AI* realAI;
-
 	if (n == 2) { // Angle
-		ptrAI = (AI**)lua_touserdata(L,1);
-		realAI = *ptrAI;
+		AI** ai = checkShip(L,1);
 		float angle = static_cast<float> (LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2)));
-		lua_pushnumber(L, (double) realAI->directionTowards(angle) );
+		lua_pushnumber(L, (double) (*ai)->directionTowards(angle) );
 	}
 	else if(n==3){ // Coordinate
-		ptrAI = (AI**)lua_touserdata(L,1);
-		realAI = *ptrAI;
+		AI** ai = checkShip(L,1);
 		double x = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
 		double y = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 3));
-		lua_pushnumber(L, (double) realAI->directionTowards(Coordinate(x,y)) );
+		lua_pushnumber(L, (double) (*ai)->directionTowards(Coordinate(x,y)) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -215,7 +192,7 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 int AI_Lua::ShipGetModelName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		AI** ai = (AI**)lua_touserdata(L,1);
+		AI** ai = checkShip(L,1);
 		lua_pushfstring(L, ((*ai)->GetModelName()).c_str() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
@@ -226,7 +203,7 @@ int AI_Lua::ShipGetModelName(lua_State* L){
 int AI_Lua::ShipGetHull(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		AI** ai = (AI**)lua_touserdata(L,1);
+		AI** ai = checkShip(L,1);
 		lua_pushnumber(L, (int) (*ai)->getHullIntegrityPct() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);

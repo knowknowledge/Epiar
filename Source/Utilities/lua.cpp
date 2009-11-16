@@ -197,7 +197,7 @@ int Lua::ispaused(lua_State *L){
 }
 
 int Lua::getPlayer(lua_State *luaVM){
-	Player **player = (Player**)lua_newuserdata(luaVM, sizeof(Player*));
+	Player **player = (Player**)AI_Lua::pushShip(luaVM);
 	*player = Player::Instance();
 	return 1;
 }
@@ -246,10 +246,24 @@ int Lua::getSprites(lua_State *L, int type){
     lua_createtable(L, filtered.size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
+    Sprite **s;
     list<Sprite *>::const_iterator iter = filtered.begin();
     while(iter != filtered.end()) {
 		// push userdata
-		Sprite **s = (Sprite **)lua_newuserdata(luaVM, sizeof(Sprite*));
+        switch(type){
+            case DRAW_ORDER_PLAYER:
+            case DRAW_ORDER_SHIP:
+                s = (Sprite **)AI_Lua::pushShip(luaVM);
+                break;
+            case DRAW_ORDER_PLANET:
+                s = (Sprite **)Planets_Lua::pushPlanet(luaVM);
+                break;
+            default:
+                Log::Error("Unexpected Sprite Type '%d'",type);
+                s = (Sprite **)lua_newuserdata(luaVM, sizeof(Sprite*));
+                break;
+        }
+    
 		*s = *iter;
         lua_rawseti(L, newTable, index);
         ++iter;
