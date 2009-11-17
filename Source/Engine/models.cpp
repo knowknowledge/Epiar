@@ -50,3 +50,12 @@ Model * Models::GetModel( string& modelName )
 	
 	return( NULL );
 }
+
+list<string>* Models::GetModelNames()
+{
+	list<string> *names = new list<string>();
+	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
+		names->push_back( (*i)->GetName() );
+	}
+	return names;
+}

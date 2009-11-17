@@ -99,9 +99,10 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Coordinate playerMomentum = Player::Instance()->GetMomentum();
-		Focus( pos.GetX() + cameraShakeXOffset + (playerMomentum.GetX() * 10), 
-			pos.GetY() + cameraShakeYOffset + (playerMomentum.GetY() * 10));
+		Coordinate cameraLag = Player::Instance()->GetMomentum();
+		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
+			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
+
 		UpdateShake();
 	}
 	
