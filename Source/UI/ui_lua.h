@@ -25,6 +25,8 @@ extern "C" {
 #include "ui_window.h"
 #include "ui_button.h"
 
+#define EPIAR_UI "UI"
+
 class UI_Lua {
 	public:
 		// Functions to communicate with Lua

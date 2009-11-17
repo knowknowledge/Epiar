@@ -20,7 +20,7 @@ extern "C" {
 }
 #endif
 
-#define EPIAR_PLANET "Epiar.Planet"
+#define EPIAR_PLANET "Planet"
 
 #include "includes.h"
 #include "Sprites/sprite.h"

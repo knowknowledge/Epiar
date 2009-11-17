@@ -14,7 +14,7 @@
 #include "AI/ai.h"
 #include "Utilities/lua.h"
 
-#define EPIAR_SHIP "EpiarLua.Ship"
+#define EPIAR_SHIP "Ship"
 
 class AI_Lua{
 	public:

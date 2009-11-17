@@ -34,8 +34,8 @@ void UI_Lua::RegisterUI(lua_State *luaVM){
 		{"setText", &UI_Lua::setText},
 		{NULL, NULL}
 	};
-	luaL_newmetatable(luaVM, "EpiarLua.UI");
-	luaL_openlib(luaVM, "EpiarLua.UI", uiFunctions,0);  
+	luaL_newmetatable(luaVM, EPIAR_UI);
+	luaL_openlib(luaVM, EPIAR_UI, uiFunctions,0);  
 }
 
 int UI_Lua::newWindow(lua_State *luaVM){
