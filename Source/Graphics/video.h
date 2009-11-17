@@ -65,13 +65,6 @@ class Video {
 		static void DrawCircle( Coordinate c, int radius, float line_width, Color col);
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b);
 
-		static void MotionBlurTexture ( void );
-		static int CreateMotionBlurTexture(int quality, int interpolation);
-		static int GenerateTexture(GLuint &Texture, int SizeX, int SizeY, int Channels, int Format,
-			int Min_Filter, int Mag_Filter);
-		static int GenerateTexture(GLuint &Texture, int SizeX, int SizeY, int Channels, int Format,
-			int Min_Filter, int Mag_Filter, unsigned int *memoryArea);
-
  	protected:
  		Video();
   		Video( const Video & );
@@ -81,12 +74,7 @@ class Video {
   		static Video *pInstance;
   		static int w, h; // width/height of screen
 		static int w2, h2; // width/height divided by 2
-		static GLuint		motionBlur_Texture;				// The Texture
-		static int motionBlur_Texture_X,					// X Coordonate
-			motionBlur_Texture_Y,					// Y Coordonate
-			motionBlur_Texture_channels,			// Number of Chanels
-			motionBlur_Texture_type;				// The Type
-
 };
 
 #endif // __H_VIDEO__
+
