@@ -27,7 +27,8 @@ tags
 .vimrc
 
 ### Epiar Binaries
-Epiar
+Epiar*
+epiar*
 .deps
 *.o
 *.a
