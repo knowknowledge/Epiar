@@ -39,6 +39,9 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 void Sprite::Update( void ) {
 	// Apply their momentum to change their coordinates
 	worldPosition += momentum;
+	//update acceleration
+	acceleration = lastMomentum - momentum; 
+	lastMomentum = momentum;
 }
 
 // sprites are drawn centered on wx,wy by design of Image
