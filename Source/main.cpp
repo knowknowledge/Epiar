@@ -14,6 +14,7 @@
 #include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/archive.h"
+#include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
@@ -29,7 +30,9 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 
 int main( int argc, char **argv ) {
 	Log::Initalize();
-
+	Filesystem::Init();
+	Filesystem::AddArchive(PHYSFS_getBaseDir());
+	Filesystem::AddArchive("Resources.7z");
 	// load the main data files (used throughout the tree)
 	epiardata = new Archive( "data.tgz" );
 
@@ -73,6 +76,7 @@ int main( int argc, char **argv ) {
 	// free the configuration file data
 	delete optionsfile;
 	
+	Filesystem::DeInit();
 	Log::Close();
 
 	return( 0 );

@@ -10,6 +10,7 @@
 
 #include "Graphics/image.h"
 #include "Graphics/video.h"
+#include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
 
@@ -41,25 +42,17 @@ Image::~Image() {
 // Load image from file
 bool Image::Load( string filename ) {
 	SDL_Surface *s = NULL;
+	int bytesread = 0;
+	unsigned char* buffer = Filesystem::CopyFileToMem( filename, &bytesread );
 
-	if( ( s = IMG_Load( filename.c_str() ) ) == NULL ) {
-		Log::Warning( "Failed to load %s", filename.c_str() );
-		return( false );
+	if ( buffer == NULL )
+		return NULL;
+
+	if (Load( buffer, bytesread )){
+		delete [] buffer;
+		buffer = NULL;
+		return true;
 	}
-
-	// virtual/effective w/h is whatever the original file intended (eg ignoring canvas expansion)
-	w = s->w;
-	h = s->h;
-
-	if( ConvertToTexture( s ) == false ) {
-		Log::Warning( "Failed to load %s", filename.c_str() );
-		SDL_FreeSurface( s );
-		return( false );
-	}
-
-	// do not free s! convert to texture does that
-
-	return( true );
 }
 
 // Load image from buffer
@@ -74,7 +67,6 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 	}
 
 	s = IMG_Load_RW( rw, 0 );
-	SDL_FreeRW( rw );
 
 	if( !s ) {
 		Log::Warning( "Image loading failed. Could not load image from RWops" );
