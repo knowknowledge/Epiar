@@ -62,6 +62,7 @@ class Camera {
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
 		void UpdateShake();
+		Coordinate cameraLag;
 };
 
 #endif // __h_camera__
