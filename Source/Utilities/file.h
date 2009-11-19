@@ -2,30 +2,36 @@
  * Filename      : file.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
+ * Last Modified : Wednesday, November 18, 2009
  * Purpose       : Filesystem abstraction
- * Notes         : This is needed to implement transparent loading from the FS or from the .tgz file, or other future areas
- *               : This class should be used like FILE pointers. Specifically, you shouldn't leave a File object in existence for
- *               : very long as the entire file is loaded into memory!
+ * Notes         : This is an interface to the physicsFS file
  */
 
 #ifndef __H_FILE__
 #define __H_FILE__
 
 #include "includes.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include <physfs.h>
+#ifdef __cplusplus
+}
+#endif
 
 class File {
 	public:
-		File();
-		File( string filename );
+		File( void );
+		File( const std::string& filename );
 		~File();
 		bool Open( string filename );
+		bool Read( int numBytes, unsigned char *buffer );
+		long GetLength( void );
 		bool Close();
-		void *Read( long *bytesRead, int len ); // reads 'len' bytes into a buffer. Callee must free the buffer!
-		
+
 	private:
-		unsigned char *contents; // the entire contents of the file
-		long contentsSize; // size of file read in & size of the contents buffer
+		PHYSFS_file *fp;			/**<File pointer.  */
+		long contentsSize;			/**<Number of bytes in the file. */
 };
 
 #endif // __H_XML__

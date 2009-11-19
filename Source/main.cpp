@@ -32,9 +32,6 @@ int main( int argc, char **argv ) {
 	Log::Initalize();
 	Filesystem::Init();
 	Filesystem::AddArchive(PHYSFS_getBaseDir());
-	Filesystem::AddArchive("Resources.7z");
-	// load the main data files (used throughout the tree)
-	epiardata = new Archive( "data.tgz" );
 
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
