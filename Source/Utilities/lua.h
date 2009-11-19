@@ -2,7 +2,7 @@
  * Filename      : lua.h
  * Author(s)     : Chris Thielen (chris@luethy.net)
  * Date Created  : Saturday, January 5, 2008
- * Last Modified : Saturday, January 5, 2008
+ * Last Modified : Friday, November 14, 2009
  * Purpose       : Provides abilities to load, store, and run Lua scripts
  * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
@@ -41,6 +41,10 @@ class Lua {
 		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *luaVM);
 		static int shakeCamera(lua_State *luaVM);
+		static int getModelNames(lua_State *luaVM);
+		static int getSprites(lua_State *luaVM, int type);
+		static int getShips(lua_State *luaVM);
+		static int getPlanets(lua_State *luaVM);
 	private:
 		static vector<string> buffer;
 
