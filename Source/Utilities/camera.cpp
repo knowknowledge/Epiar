@@ -99,7 +99,11 @@ void Camera::Move( int dx, int dy ) {
 void Camera::Update( void ) {
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
-		Coordinate cameraLag = Player::Instance()->GetMomentum();
+		//get player acceleration
+		cameraLag += Player::Instance()->GetAcceleration();
+		//use the inverase of the acceleration to reduce camer back to center
+		Coordinate cameraCatchup = Coordinate( -cameraLag.GetX()*0.003,-cameraLag.GetY()*0.003 );
+		cameraLag += cameraCatchup;
 		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
 			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
 

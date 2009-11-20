@@ -43,6 +43,9 @@ class Sprite {
 		void SetMomentum( Coordinate momentum ) {
 			this->momentum = momentum;
 		}
+		Coordinate GetAcceleration( void ) {
+			return acceleration;
+		}
 		void SetImage( Image *image ) {
 			this->image = image;
 			this->radarSize = ( image->GetWidth() + image->GetHeight() ) /(2);
@@ -61,6 +64,8 @@ class Sprite {
 	private:
 		Coordinate worldPosition;
 		Coordinate momentum;
+		Coordinate acceleration;
+		Coordinate lastMomentum;
 		Image *image;
 		float angle;
 		int radarSize;
