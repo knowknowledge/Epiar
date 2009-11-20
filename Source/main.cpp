@@ -1,9 +1,14 @@
-/*
- * Filename      : main.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Purpose       : Main entry point of Epiar codebase
- * Notes         :
+/**
+ * \file		main.cpp
+ * \author		Chris Thielen (chris@luethy.net)
+ * \author		and others.
+ * \date		Created:	Sunday, June 4, 2006
+ * \date		Modified:	Thursday, November 19, 2009
+ * \brief		Main entry point of Epiar codebase
+ * \details
+ *	This file performs two functions:
+ *		- Runs the Epiar simulation.
+ *		- Parse command line arguments.
  */
 
 #include "common.h"
