@@ -91,7 +91,10 @@ bool Simulation::Run( void ) {
 
 	// Start the Lua Universe
 	Lua::SetSpriteList( &sprites );
-	Lua::Load("Source/Lua/scripts/universe.lua");
+	Lua::Load("Resources/Scripts/universe.lua");
+
+	// Start the Lua Scenarios
+	Lua::Run("Start()");
 
 	// Ensure correct drawing order
 	sprites.Order();
