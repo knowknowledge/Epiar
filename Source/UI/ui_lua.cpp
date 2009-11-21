@@ -154,17 +154,19 @@ int UI_Lua::newLabel(lua_State *L){
 int UI_Lua::newPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 6)
-		return luaL_error(L, "Got %d arguments expected 6 (class, x, y, w, h, caption )", n);
+		return luaL_error(L, "Got %d arguments expected 6 (class, x, y, w, h, modelname )", n);
 
 	int x = int(luaL_checknumber (L, 2));
 	int y = int(luaL_checknumber (L, 3));
 	int w = int(luaL_checknumber (L, 4));
 	int h = int(luaL_checknumber (L, 5));
-	string filename = luaL_checkstring (L, 6);
+	string modelname = luaL_checkstring (L, 6);
+
+	Models *models = Models::Instance();
 
 	// Allocate memory for a pointer to object
 	Picture **pic= (Picture**)lua_newuserdata(L, sizeof(Picture*));
-	*pic = new Picture(x,y,w,h,filename);
+	*pic = new Picture(x,y,w,h, models->GetModel(modelname)->GetImage() );
 
 	// Note: We're not putting this Label anywhere!
 	//       Lua will have to do that for us.
