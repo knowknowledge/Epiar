@@ -30,7 +30,7 @@ function registerPostStep(step)
 end
 
 function Start()
-	-- io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
+	io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
     for i,func in ipairs(Init) do
         func()
     end
@@ -101,12 +101,7 @@ function MoveShips()
 		AIPlans[s].time = AIPlans[s].time -1
 		-- When the current plan is complete, pick a new plan
 		if AIPlans[s].time == 0 then 
-			x,y = Ship.GetPosition(cur_ship)
-			if distfrom(x,y,0,0) >1000 then
-				AIPlans[s] = {plan=aimCenter,time=300}
-			else
-				AIPlans[s] = newPlan()
-			end
+			AIPlans[s] = newPlan()
 		end
 	end
 end
@@ -133,12 +128,11 @@ function aimCenter(cur_ship,timeleft)
 	Ship.Accelerate(cur_ship )
 end
 registerInit(planetTraffic)
---registerPlan(aimCenter)
+registerPlan(aimCenter)
 
 --------------------------------------------------------------------------------
 -- Load Scenarios
 
-
---dofile "Resources/Scripts/basics.lua"
---dofile "Resources/Scripts/tag.lua"
+dofile "Resources/Scripts/basics.lua"
+dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
