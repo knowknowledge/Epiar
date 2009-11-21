@@ -11,11 +11,8 @@ function aimCenter(cur_ship,timeleft)
 end
 
 function chaseClosure(targetShip)
-	x,y = Ship.GetPosition( targetShip )
-	io.write("("..x..","..y..")\n")
 	function chase(cur_ship,timeleft)
 		x,y = Ship.GetPosition( targetShip )
-		io.write("("..x..","..y..")\n")
 		Ship.Rotate(cur_ship,
 			Ship.directionTowards(cur_ship, x, y) )
 		Ship.Accelerate(cur_ship )
@@ -42,9 +39,12 @@ function boundingClosure(distance, ticks)
 		ships = Epiar.ships()
 		-- Move Non-Player ships
 		for s =1, #ships do
-			x,y = Ship.GetPosition(cur_ship)
-			if distfrom(x,y,0,0) >distance then
-				AIPlans[s] = {plan=aimCenter,time=ticks}
+			if AIPlans[s].time < 3 then
+				x,y = Ship.GetPosition(ships[s])
+				dist = distfrom(x,y,0,0)
+				if dist > distance then
+					AIPlans[s] = {plan=aimCenter,time=ticks}
+				end
 			end
 		end
 	end
@@ -54,5 +54,5 @@ end
 -- Register the Basics
 registerPlan(zigzag)
 registerPlan(chasePlayer)
-registerPreStep(boundingClosure(1000,300))
+registerPostStep(boundingClosure(4000,300))
 
