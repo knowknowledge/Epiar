@@ -1,54 +1,57 @@
-/*
- * Filename      : file.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
- * Purpose       : Low level interface for file access.
- * Notes         : Use filesystem for higher level access.
- */
+/**\file			file.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, April 21, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Low level interface for file access.
+ * \details
+ * Use filesystem for higher level access.*/
 
 #include "includes.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
 
-/** Constructor: does nothing
-  */
-File::File( void ){
+/** \class File
+ * Low level file access abstraction through PhysicsFS. */
+
+/**Creates empty file instance.*/
+File::File( void ):
+contentSize(0), bufSize(1024*5), fBuffer(NULL) {
 }
 
-/** Constructor: opens a file pointer to target
-  * \param filename Name of the file to open
-  */
-File::File( const std::string& filename ) {
+/**Creates file instance linked to filename. \sa Open.*/
+File::File( const string& filename):
+contentSize(0), bufSize(1024*5), fBuffer(NULL){
 	Open( filename );
 }
 
-/** Opens a file pointer
-  * \param filename Name of the file to open
-  * \return true on success, false otherwise
-  */
-bool File::Open( const std::string& filename ) {
-	PHYSFS_file *fp = PHYSFS_openRead( filename.c_str() );
+/**Returns a handle to the filename.
+ * \param filename The filename path.
+ * \return true if successful, false otherwise.*/
+bool File::Open( const string& filename ) {
+	fp = PHYSFS_openRead( filename.c_str() );
 	if( fp == NULL ){
 		Log::Error("Could not open file: %s.\n%s", filename.c_str(),
 			PHYSFS_getLastError());
+		return( false );
+	}
+	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
+		Log::Error("Could not create internal buffer for file: %s.\n%s",
+				filename.c_str(),PHYSFS_getLastError());
+		Close();
 		return( false );
 	}
 	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
 	return( true );
 }
 
-/** Reads a specified number of bytes from the file
-  * This function requires you to provide your own buffer
-  * as it will be more efficient.
-  * \param numBytes Number of bytes to read
-  * \param buffer Buffer to hold the data
-  * \return true on success, false otherwise
-  */
-bool File::Read( long numBytes, unsigned char *buffer ){
+/**Reads a specified number of bytes.
+ * \param numBytes Number of bytes to read.
+ * \param buffer Buffer to read bytes into.
+ * \return true if successful, false otherwise.*/
+bool File::Read( long numBytes, char *buffer ){
 	long bytesRead = static_cast<long>(
 		PHYSFS_read( fp, buffer, contentSize, numBytes ));
-	if( bytesRead == numBytes){
+	if ( bytesRead == numBytes ){
 		return true;
 	} else {
 		Log::Error("Unable to read specified number of bytes. %s",
@@ -57,9 +60,27 @@ bool File::Read( long numBytes, unsigned char *buffer ){
 	}
 }
 
-/** Returns the current position within the file
-  * \return offset in bytes from start of file
-  */
+/**Reads the whole file into a buffer.
+ * \return Pointer to buffer, NULL otherwise.*/
+char *File::Read( void ){
+	if ( fBuffer != NULL ){
+		Log::Warning("File has already been read.")
+		return fBuffer;
+	}
+	fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
+	long bytesRead = static_cast<long>(
+		PHYSFS_read( fp, fBuffer, 1, static_cast<PHYSFS_uint32>(contentSize) ));
+	if( bytesRead == contentSize ){
+		return fBuffer;
+	} else {
+		Log::Error("Unable to read file into memory. %s",
+			PHYSFS_getLastError());
+		return NULL;
+	}
+}
+
+/**Gets the current offset from the beginning of the file.
+ * \return Offset in bytes from the beginning of the file.*/
 long File::Tell( void ){
 	long offset;
 	offset = static_cast<long>(
@@ -68,32 +89,36 @@ long File::Tell( void ){
 		Log::Error("Error using file tell. %s",
 			PHYSFS_getLastError());
 	}
-	return offset
+	return offset;
 }
 
-/** Seek to a new position
-  * \return true on success, false otherwise
-  */
+/**Seek to new position in the file.
+ * \param pos Position in bytes form the beginning of the file.
+ * \return true if successful, false otherwise.*/
 bool File::Seek( long pos ){
 	int retval;
 	retval = PHYSFS_seek( fp,
 		static_cast<PHYSFS_uint64>( pos ));
+	if ( retval == 0 ){
+		Log::Error("Error using file seek. %s",PHYSFS_getLastError());
+		return false;
+	}
+	return true;
+}
 
-/** Gets the length of the file in bytes
-  * \return Length of the file in bytes
-  */
+/**Gets the total length in bytes of the file.
+ * \return Total length of the file in bytes.*/
 long File::GetLength( void ){
 	return contentSize;
 }
 
-/** Destructor: closes file and frees buffer
-  */
+/**Destroys file instance. \sa Close.*/
 File::~File() {
 	Close();
 }
 
-/** Close function, closes file handle and frees buffer
-  */
+/**Closes the file handle.
+ * \return true if successful, false otherwise*/
 bool File::Close() {
 	int retval = PHYSFS_close( fp );
 	if ( retval == 0 ){
@@ -101,7 +126,9 @@ bool File::Close() {
 			PHYSFS_getLastError());
 		return false;
 	}
-	contentsSize = 0;
+	if ( fBuffer != NULL ){
+		delete [] fBuffer;
+	}
+	contentSize = 0;
 	return true;
 }
-

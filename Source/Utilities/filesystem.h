@@ -25,9 +25,8 @@ extern "C" {
 class Filesystem {
 	public:
 		static int Init( void );
-		static int AddArchive( const std::string &archivename );
-		static unsigned char* Filesystem::CopyFileToMem( const std::string &filename,
-			int* bytesRead );
+		static int AddPath( const string &archivename );
+		static unsigned char *Filesystem::CopyFileToMem( const string &filename,int* bytesRead );
 		static int DeInit( void );
 };
 

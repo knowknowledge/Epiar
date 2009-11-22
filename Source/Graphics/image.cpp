@@ -53,6 +53,7 @@ bool Image::Load( string filename ) {
 		buffer = NULL;
 		return true;
 	}
+	return NULL;
 }
 
 // Load image from buffer

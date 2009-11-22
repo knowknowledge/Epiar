@@ -21,6 +21,8 @@ int Filesystem::Init() {
 	int retval;
 	if ( (retval = PHYSFS_init(NULL)) == 0 )
 		Log::Error("Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+	// Always add executable base path.
+	Filesystem::AddPath(PHYSFS_getBaseDir());
 	return retval;
 }
 
@@ -29,14 +31,14 @@ int Filesystem::Init() {
   * \param archivename The path to the archive
   * \return Nonzero on success
   */
-int Filesystem::AddArchive( const std::string& archivename ) {
+int Filesystem::AddPath( const string& archivename ) {
 	int retval;
 	if ( (retval = PHYSFS_addToSearchPath(archivename.c_str(), 1)) == 0 )
 		Log::Error("Error adding search path.\n%s",PHYSFS_getLastError());
 	return retval;
 }
 
-unsigned char *Filesystem::CopyFileToMem( const std::string &filename,
+unsigned char *Filesystem::CopyFileToMem( const string &filename,
 		int *bytesRead ){
 	const char *cName;
 

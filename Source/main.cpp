@@ -11,12 +11,12 @@
  *		- Parse command line arguments.
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/archive.h"
 #include "Utilities/filesystem.h"
@@ -36,8 +36,6 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 int main( int argc, char **argv ) {
 	Log::Initalize();
 	Filesystem::Init();
-	Filesystem::AddArchive(PHYSFS_getBaseDir());
-
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
