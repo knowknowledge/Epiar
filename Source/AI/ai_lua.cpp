@@ -22,6 +22,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Explode", &AI_Lua::ShipExplode},
+		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
@@ -141,6 +142,19 @@ int AI_Lua::ShipExplode(lua_State* L){
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
 	}
 	return 0;
+}
+
+int AI_Lua::ShipSetModel(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		string modelname = luaL_checkstring (L, 2);
+		(*ai)->SetModel( Models::Instance()->GetModel(modelname) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, modelname)", n); 
+	}
+	return 0;
+
 }
 
 int AI_Lua::ShipGetAngle(lua_State* L){
