@@ -95,7 +95,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 
 	if (n == 2) {
 		AI** ai = checkShip(L,1);
-		Direction dir = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
+		float dir = static_cast<float>( luaL_checknumber(L, 2) );
         (*ai)->Rotate(dir);
 	}
 	else
@@ -175,13 +175,13 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) { // Angle
 		AI** ai = checkShip(L,1);
-		float angle = static_cast<float> (LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2)));
+		float angle = static_cast<float>( luaL_checknumber(L, 2) );
 		lua_pushnumber(L, (double) (*ai)->directionTowards(angle) );
 	}
 	else if(n==3){ // Coordinate
 		AI** ai = checkShip(L,1);
-		double x = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
-		double y = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 3));
+		double x = static_cast<float>( luaL_checknumber(L, 2) );
+		double y = static_cast<float>( luaL_checknumber(L, 3) );
 		lua_pushnumber(L, (double) (*ai)->directionTowards(Coordinate(x,y)) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
