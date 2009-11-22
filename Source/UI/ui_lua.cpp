@@ -133,8 +133,8 @@ int UI_Lua::newTextbox(lua_State *L){
 
 int UI_Lua::newLabel(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 4)
-		return luaL_error(L, "Got %d arguments expected 4 (class, x, y, caption)", n);
+	if ((n != 4) && (n != 5))
+		return luaL_error(L, "Got %d arguments expected 4 or 5 (class, x, y, caption, [centered] )", n);
 
 	int x = int(luaL_checknumber (L, 2));
 	int y = int(luaL_checknumber (L, 3));
@@ -142,7 +142,12 @@ int UI_Lua::newLabel(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Label **label= (Label**)lua_newuserdata(L, sizeof(Label*));
-	*label = new Label(x,y,caption);
+	if(n==4){
+		*label = new Label(x,y,caption);
+	} else if(n==5) {
+		bool centered = bool(luaL_checknumber (L, 5));
+		*label = new Label(x,y,caption,centered);
+	}
 
 	// Note: We're not putting this Label anywhere!
 	//       Lua will have to do that for us.
