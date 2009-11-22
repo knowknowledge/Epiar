@@ -35,6 +35,7 @@ class File {
 		PHYSFS_file *fp;		/** File pointer.  */
 		long contentSize;		/** Number of bytes in the file. */
 		PHYSFS_uint64 bufSize;	/** Buffer for read/write.*/
+		string validName;		/** Name of the file referenced (tested for existence).*/
 };
 
 #endif // __H_XML__

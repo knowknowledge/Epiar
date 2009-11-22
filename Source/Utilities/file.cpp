@@ -15,12 +15,12 @@
 
 /**Creates empty file instance.*/
 File::File( void ):
-contentSize(0), bufSize(1024*5) {
+fp(NULL), contentSize(0), bufSize(1024*5), validName("") {
 }
 
 /**Creates file instance linked to filename. \sa Open.*/
 File::File( const string& filename):
-contentSize(0), bufSize(1024*5) {
+fp(NULL), contentSize(0), bufSize(1024*5), validName("") {
 	Open( filename );
 }
 
@@ -28,20 +28,30 @@ contentSize(0), bufSize(1024*5) {
  * \param filename The filename path.
  * \return true if successful, false otherwise.*/
 bool File::Open( const string& filename ) {
-	fp = PHYSFS_openRead( filename.c_str() );
+	const char *cName;
+
+	cName = filename.c_str();
+	// Check for file existence
+	if ( !PHYSFS_exists( cName ) ){
+		Log::Error("File does not exist: %s.", cName);
+		return false;
+	}
+	validName.assign( filename );
+
+	fp = PHYSFS_openRead( cName );
 	if( fp == NULL ){
 		Log::Error("Could not open file: %s.\n%s", filename.c_str(),
 			PHYSFS_getLastError());
-		return( false );
+		return false ;
 	}
 	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
 		Log::Error("Could not create internal buffer for file: %s.\n%s",
 				filename.c_str(),PHYSFS_getLastError());
-		Close();
-		return( false );
+		PHYSFS_close( fp );
+		return false ;
 	}
 	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
-	return( true );
+	return true ;
 }
 
 /**Reads a specified number of bytes.
@@ -49,13 +59,16 @@ bool File::Open( const string& filename ) {
  * \param buffer Buffer to read bytes into.
  * \return true if successful, false otherwise.*/
 bool File::Read( long numBytes, char *buffer ){
+	if ( fp == NULL )
+		return false;
+
 	long bytesRead = static_cast<long>(
 		PHYSFS_read( fp, buffer, contentSize, numBytes ));
 	if ( bytesRead == numBytes ){
 		return true;
 	} else {
-		Log::Error("Unable to read specified number of bytes. %s",
-			PHYSFS_getLastError());
+		Log::Error("%s: Unable to read specified number of bytes. %s",
+			validName, PHYSFS_getLastError());
 		return false;
 	}
 }
@@ -64,6 +77,9 @@ bool File::Read( long numBytes, char *buffer ){
  * for you, but you must explicitly free it by using "delete [] buffer"
  * \return Pointer to buffer, NULL otherwise.*/
 char *File::Read( void ){
+	if ( fp == NULL )
+		return NULL;
+
 	char *fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
 	long bytesRead = static_cast<long>(
 		PHYSFS_read( fp, fBuffer, 1, static_cast<PHYSFS_uint32>(contentSize) ));
@@ -71,8 +87,8 @@ char *File::Read( void ){
 		return fBuffer;
 	} else {
 		delete [] fBuffer;
-		Log::Error("Unable to read file into memory. %s",
-			PHYSFS_getLastError());
+		Log::Error("%s: Unable to read file into memory. %s",
+			validName, PHYSFS_getLastError());
 		return NULL;
 	}
 }
@@ -84,8 +100,8 @@ long File::Tell( void ){
 	offset = static_cast<long>(
 		PHYSFS_tell( fp ));
 	if ( offset == -1 ){
-		Log::Error("Error using file tell. %s",
-			PHYSFS_getLastError());
+		Log::Error("%s: Error using file tell. %s",
+			validName, PHYSFS_getLastError());
 	}
 	return offset;
 }
@@ -98,7 +114,8 @@ bool File::Seek( long pos ){
 	retval = PHYSFS_seek( fp,
 		static_cast<PHYSFS_uint64>( pos ));
 	if ( retval == 0 ){
-		Log::Error("Error using file seek. %s",PHYSFS_getLastError());
+		Log::Error("%s: Error using file seek. %s",
+				validName, PHYSFS_getLastError());
 		return false;
 	}
 	return true;
@@ -118,10 +135,16 @@ File::~File() {
 /**Closes the file handle and frees associated buffer.
  * \return true if successful, false otherwise*/
 bool File::Close() {
+	if ( validName.compare( "" ) == 0 )
+		return NULL;
+
+	if ( fp == NULL )
+		return false;
+
 	int retval = PHYSFS_close( fp );
 	if ( retval == 0 ){
-		Log::Error("Unable to close file handle.%s",
-			PHYSFS_getLastError());
+		Log::Error("%s: Unable to close file handle.%s",
+			validName, PHYSFS_getLastError());
 		return false;
 	}
 	contentSize = 0;

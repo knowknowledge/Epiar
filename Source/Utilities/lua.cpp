@@ -1,12 +1,13 @@
-/*
- * Filename      : lua.cpp
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 5, 2008
- * Last Modified : Monday, November 16 2009
- * Purpose       : Provides abilities to load, store, and run Lua scripts
- * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
+/**\file			lua.cpp
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 5, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Provides abilities to load, store, and run Lua scripts
+ * \details
+ * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
+#include "includes.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -20,14 +21,15 @@
 #include "UI/ui_button.h"
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
-#include "Utilities/camera.h" 
+#include "Utilities/camera.h"
+#include "Utilities/file.h"
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
 SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
 
-bool Lua::Load( string filename ) {
+bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
 			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
@@ -36,17 +38,23 @@ bool Lua::Load( string filename ) {
 	}
 
 	// Start the lua script
-	
-	if( luaL_dofile(luaVM,filename.c_str()) ){
+	File luaFile = File( filename );
+	char *buffer = luaFile.Read();
+	if ( buffer == NULL ){
+		Log::Error("Error reading Lua file: %s", filename.c_str());
+		return false;
+	}
+	long bufsize = luaFile.GetLength();
+	if( (luaL_loadbuffer(luaVM, buffer, bufsize, filename.c_str())) ||
+			lua_pcall(luaVM, 0, LUA_MULTRET, 0)){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(luaVM, -1));
 		cout << lua_tostring(luaVM, -1) << endl;
-	} else {
-		Log::Message("Loaded the universe");
+		return false;
 	}
-	
+	Log::Message("Loaded the universe");
 
-	return( false );
+	return( true );
 }
 
 bool Lua::Update(){
