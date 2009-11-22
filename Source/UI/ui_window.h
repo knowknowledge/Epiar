@@ -32,6 +32,7 @@ class Window : public Widget {
 
 	private:
 		int w, h;
+		int inner_top,inner_left,inner_right,inner_low;
 		string caption;
 		Image *bitmaps[9];
 };

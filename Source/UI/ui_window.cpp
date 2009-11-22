@@ -38,6 +38,11 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	bitmaps[6] = new Image( "Resources/Graphics/ui_wnd_low.png" );
 	bitmaps[7] = new Image( "Resources/Graphics/ui_wnd_low_right.png" );
 	bitmaps[8] = new Image( "Resources/Graphics/ui_wnd_back.png" );
+
+	inner_top = bitmaps[0]->GetHeight();
+	inner_left = bitmaps[0]->GetWidth();
+	inner_right = w - bitmaps[7]->GetWidth();
+	inner_low = h - bitmaps[7]->GetHeight();
 }
 
 Window::~Window() {
@@ -80,7 +85,7 @@ void Window::Draw( int relx, int rely ) {
 	Vera10->SetColor( 1., 1., 1. );
 	Vera10->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
 	
-	Widget::Draw();
+	Widget::Draw(inner_left,inner_top);
 }
 
 void Window::Focus( int x, int y ) {
@@ -107,5 +112,5 @@ void Window::Unfocus( void ) {
 
 Widget *Window::DetermineMouseFocus( int x, int y ) {
 	//cout << "window determine mouse focus" << endl;
-	return Widget::DetermineMouseFocus( x, y );
+	return Widget::DetermineMouseFocus(x - inner_left, y - inner_top );
 }
