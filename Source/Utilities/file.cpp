@@ -63,7 +63,7 @@ bool File::Read( long numBytes, char *buffer ){
 		return false;
 
 	long bytesRead = static_cast<long>(
-		PHYSFS_read( fp, buffer, contentSize, numBytes ));
+		PHYSFS_read( fp, buffer, 1, numBytes ));
 	if ( bytesRead == numBytes ){
 		return true;
 	} else {

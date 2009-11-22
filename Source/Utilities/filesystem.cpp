@@ -21,6 +21,7 @@ int Filesystem::Init() {
 	int retval;
 	if ( (retval = PHYSFS_init(NULL)) == 0 )
 		Log::Error("Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+	Filesystem::AddPath("Resources.7z");
 	// Always add executable base path.
 	Filesystem::AddPath(PHYSFS_getBaseDir());
 	return retval;
@@ -36,46 +37,6 @@ int Filesystem::AddPath( const string& archivename ) {
 	if ( (retval = PHYSFS_addToSearchPath(archivename.c_str(), 1)) == 0 )
 		Log::Error("Error adding search path.\n%s",PHYSFS_getLastError());
 	return retval;
-}
-
-unsigned char *Filesystem::CopyFileToMem( const string &filename,
-		int *bytesRead ){
-	const char *cName;
-
-	cName = filename.c_str();
-	// Check for file existence
-	if ( !PHYSFS_exists( cName ) ){
-		Log::Error("File does not exist: %s.", cName);
-		return NULL;
-	}
-
-	PHYSFS_file *hImg;
-	// Try to open it
-	if ( (hImg = PHYSFS_openRead( cName )) == NULL ){
-		Log::Error("Could not open image file: %s.\n%s", cName,
-			PHYSFS_getLastError());
-		return NULL;
-	}
-
-	PHYSFS_sint64 fileSize = PHYSFS_fileLength( hImg );
-	unsigned char* buffer = new unsigned char[static_cast<int> (fileSize)];
-	// Allocate buffer for it
-	if ( buffer == NULL ){
-		Log::Error("Could not allocate memory for: %s.",cName);
-		PHYSFS_close( hImg );
-	}
-
-	// Read the file
-	*bytesRead = static_cast<int>(PHYSFS_read( hImg, buffer, 1,
-				static_cast<PHYSFS_uint32>(fileSize)));
-	if ( *bytesRead != fileSize ){
-		Log::Error("Could not read image file: %s.",cName);
-		delete [] buffer;
-		buffer = NULL;
-		PHYSFS_close( hImg );
-		return NULL;
-	}
-	return buffer;
 }
 
 /**
