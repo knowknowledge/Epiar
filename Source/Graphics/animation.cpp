@@ -79,7 +79,7 @@ bool Animation::Load( string& filename ) {
 		// On OS X 10.6 with SDL_image 1.2.8, the load from fp is broken, so we load it into a buffer ourselves and SDL_image
 		// loads from that correctly. It's an extra step on our part, but performance/functionally they're identical. Hopefully
 		// this gets fixed in a future SDL_image
-		unsigned char *buf = (unsigned char *)malloc(sizeof(unsigned char) * fs);
+		char *buf = new char [fs];
 		fread(buf, sizeof(unsigned char), fs, fp);
 		
 		//frames[i].Load( fp, (int)fs );

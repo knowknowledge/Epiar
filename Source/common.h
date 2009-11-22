@@ -1,5 +1,4 @@
-/**
- * \file		common.h
+/**\file		common.h
  * \author		Chris Thielen (chris@luethy.net)
  * \author		and others.
  * \date		Created:	Saturday, January 5, 2008
@@ -14,14 +13,12 @@
 #define __H_COMMON__
 
 #include "Graphics/font.h"
-#include "Utilities/archive.h"
 #include "Utilities/xml.h"
 
 // FORPRODUCTION: switch this to 0
 #define DEBUG 1
 
 // defined in main.cpp. used through the codebase
-extern Archive *epiardata;
 extern XMLFile *optionsfile;
 extern Font *Vera8, *Vera10, *Visitor10, *VeraMono10;
 
