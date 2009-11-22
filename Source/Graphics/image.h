@@ -59,7 +59,7 @@ class Image {
 		int PowerOfTwo(int num);
 
 		int w, h; // virtual w/h (effective, same as original file)
-		int rw, rh; // real w/h, size of expanded canvas (image) should expansion be needed
+		int real_w, real_h; // real w/h, size of expanded canvas (image) should expansion be needed
 		            //   to meet power of two requirements
 		float scale_w, scale_h; // used by draw() on images with expanded canvases to know what percent of
 		                        // the larger canvas actually contains the original image (<= 1.0)
