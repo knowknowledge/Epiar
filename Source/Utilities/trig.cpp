@@ -73,9 +73,3 @@ void Trig::RotatePoint( float x, float y, float ax, float ay, float *nx, float *
 	*ny = ay - (dist * sin( ntheta ) );
 }
 
-// Turns an arbitrary angle into an angle between -180 and 180 degrees
-float normalizeAngle(float angle){
-	while( angle < -180. ) angle += 360.;
-	while( angle > 180. ) angle -= 360.;
-	return angle;
-}
