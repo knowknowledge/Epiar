@@ -29,7 +29,7 @@ it.findClosest = function()
 	it.x,it.y = Ship.GetPosition(ships[it.ship])
 
 	-- Find the closest ship to whomever is IT
-	for other=1, #ships do 
+	for other=0, #ships do 
 		if other ~= it.ship then
 			other_x,other_y = Ship.GetPosition(ships[other])
 			dist = distfrom(other_x,other_y,it.x,it.y)
