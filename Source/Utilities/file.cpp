@@ -15,12 +15,12 @@
 
 /**Creates empty file instance.*/
 File::File( void ):
-contentSize(0), bufSize(1024*5), fBuffer(NULL) {
+contentSize(0), bufSize(1024*5) {
 }
 
 /**Creates file instance linked to filename. \sa Open.*/
 File::File( const string& filename):
-contentSize(0), bufSize(1024*5), fBuffer(NULL){
+contentSize(0), bufSize(1024*5) {
 	Open( filename );
 }
 
@@ -60,19 +60,17 @@ bool File::Read( long numBytes, char *buffer ){
 	}
 }
 
-/**Reads the whole file into a buffer.
+/**Reads the whole file into a buffer. Buffer will be automatically allocated
+ * for you, but you must explicitly free it by using "delete [] buffer"
  * \return Pointer to buffer, NULL otherwise.*/
 char *File::Read( void ){
-	if ( fBuffer != NULL ){
-		Log::Warning("File has already been read.")
-		return fBuffer;
-	}
-	fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
+	char *fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
 	long bytesRead = static_cast<long>(
 		PHYSFS_read( fp, fBuffer, 1, static_cast<PHYSFS_uint32>(contentSize) ));
 	if( bytesRead == contentSize ){
 		return fBuffer;
 	} else {
+		delete [] fBuffer;
 		Log::Error("Unable to read file into memory. %s",
 			PHYSFS_getLastError());
 		return NULL;
@@ -117,7 +115,7 @@ File::~File() {
 	Close();
 }
 
-/**Closes the file handle.
+/**Closes the file handle and frees associated buffer.
  * \return true if successful, false otherwise*/
 bool File::Close() {
 	int retval = PHYSFS_close( fp );
@@ -125,9 +123,6 @@ bool File::Close() {
 		Log::Error("Unable to close file handle.%s",
 			PHYSFS_getLastError());
 		return false;
-	}
-	if ( fBuffer != NULL ){
-		delete [] fBuffer;
 	}
 	contentSize = 0;
 	return true;

@@ -1,5 +1,4 @@
-/**
- * \file		main.cpp
+/**\file		main.cpp
  * \author		Chris Thielen (chris@luethy.net)
  * \author		and others.
  * \date		Created:	Sunday, June 4, 2006
@@ -18,7 +17,6 @@
 #include "Graphics/font.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
-#include "Utilities/archive.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
@@ -26,8 +24,6 @@
 // parse command line switches
 int parseArgs( int argc, char **argv );
 
-// main data file, used throughout the tree (extern in common.h)
-Archive *epiardata = NULL;
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
@@ -71,8 +67,6 @@ int main( int argc, char **argv ) {
 	delete Vera10;
 	delete Visitor10;
 	delete VeraMono10;
-	// free the main data files
-	delete epiardata;
 	// free the configuration file data
 	delete optionsfile;
 	

@@ -39,6 +39,7 @@ bool XMLFile::Open( const string& filename ) {
 	}
 
 	xmlPtr = xmlParseMemory( buf, bufSize );
+	delete [] buf;
 
 	this->filename.assign( filename );
 

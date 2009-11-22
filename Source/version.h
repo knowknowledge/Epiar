@@ -1,3 +1,12 @@
+/**\file		version.h
+ * \author		Chris Thielen
+ * \author		and others
+ * \date		Saturday, November 21, 2009
+ * \date		Saturday, November 21, 2009
+ * \brief		Epiar version
+ * \details
+ */
+
 #ifndef __H_VERSION__
 #define __H_VERSION__
 

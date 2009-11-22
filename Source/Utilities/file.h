@@ -35,7 +35,6 @@ class File {
 		PHYSFS_file *fp;		/** File pointer.  */
 		long contentSize;		/** Number of bytes in the file. */
 		PHYSFS_uint64 bufSize;	/** Buffer for read/write.*/
-		char *fBuffer;			/** Pointer to any currently allocated buffer.*/
 };
 
 #endif // __H_XML__
