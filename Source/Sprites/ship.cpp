@@ -89,6 +89,11 @@ void Ship::Accelerate( void ) {
 	status.isAccelerating = true;
 }
 
+
+void Ship::Damage(short int damage) {
+	status.hullEnergyAbsorbed += damage;
+}
+
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	
@@ -148,5 +153,7 @@ float Ship::directionTowards(float angle){
 // Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%)
 float Ship::getHullIntegrityPct() {
 	assert( model );
-	return( ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption() );
+	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
+	//Log::Message("Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
+	return(remaining);
 }

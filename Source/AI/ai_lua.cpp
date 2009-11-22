@@ -20,6 +20,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Accelerate", &AI_Lua::ShipAccelerate},
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
+		{"Damage", &AI_Lua::ShipDamage},
+		{"Explode", &AI_Lua::ShipExplode},
 		// Current State
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
@@ -117,6 +119,29 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 	}
 	return 0;
 }
+int AI_Lua::ShipDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		int damage = (int) luaL_checknumber (L, 2);
+		(*ai)->Damage( damage );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipExplode(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
+		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
 
 int AI_Lua::ShipGetAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -204,9 +229,9 @@ int AI_Lua::ShipGetHull(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
-		lua_pushnumber(L, (int) (*ai)->getHullIntegrityPct() );
+		lua_pushnumber(L, (double) (*ai)->getHullIntegrityPct() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+		luaL_error(L, "Got %d arguments expected 2 (self)", n);
 	}
 	return 1;
 }

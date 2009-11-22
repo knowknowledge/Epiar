@@ -130,9 +130,25 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
+function hitEveryOne()
+	ships = Epiar.ships()
+	for s =1, #ships do
+		ship = ships[s]
+		Ship.Damage(ship,1)
+		pct = Ship.GetHull(ship)
+		-- io.write(string.format("Ship %d is at %f%% Hull\n",s,pct))
+		if pct <= 0 then
+			Ship.Explode(cur_ship)
+		else
+			Ship.SetRadarColor(cur_ship,255 *pct,0 ,0)
+		end
+	end
+end
+registerPostStep(hitEveryOne)
+
 --------------------------------------------------------------------------------
 -- Load Scenarios
 
 dofile "Resources/Scripts/basics.lua"
-dofile "Resources/Scripts/tag.lua"
+--dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
