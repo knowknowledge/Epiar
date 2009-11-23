@@ -1,15 +1,17 @@
-/*
- * Filename      : ai_lua.cpp
- * Author(s)     : Matt Zweig (thezweig@gmail.com)
- * Date Created  : Thursday, October 29, 2009
- * Last Modified : Monday, November 16 2009
- * Purpose       : Lua Bridge for AI objects
- * Notes         :
+/**\file			ai_lua.cpp
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Thursday, October 29, 2009
+ * \date			Modified: Monday, November 16 2009
+ * \brief			Lua Bridge for AI objects
+ * \details
  */
 
+#include "includes.h"
 #include "Utilities/lua.h"
-
 #include "AI/ai_lua.h"
+
+/**\class AI_Lua
+ * \brief Lua bridge for AI.*/
 
 void AI_Lua::RegisterAI(lua_State *luaVM){
 	// These are the Ship Functions we're supporting in Lua

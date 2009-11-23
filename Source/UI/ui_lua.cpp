@@ -1,20 +1,22 @@
-/*
- * Filename      : UI/ui_lua.cpp
- * Author(s)     : Matt Zweig (thezweig@gmail.com)
- * Date Created  : Thursday, October 29, 2009
- * Last Modified : Friday, November 14, 2009
- * Purpose       : Lua bridge for UI objects
- * Notes         :
+/**\file			ui_lua.cpp
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Thursday, October 29, 2009
+ * \date			Modified: Friday, November 14, 2009
+ * \brief			Lua bridge for UI objects
+ * \details
  */
-  
+
+#include "includes.h"
 #include "UI/ui.h"
 #include "ui_lua.h"
 #include "ui_label.h"
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_picture.h"
-
 #include "Engine/models.h"
+
+/**\class UI_Lua
+ * \brief Lua bridge fro UI. */
 
 void UI_Lua::RegisterUI(lua_State *luaVM){
 	static const luaL_Reg uiFunctions[] = {

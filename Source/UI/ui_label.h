@@ -1,10 +1,9 @@
-/*
- * Filename      : ui_label.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, April 25, 2008
- * Last Modified : Friday, April 25, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui_label.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Friday, April 25, 2008
+ * \date			Modified: Friday, April 25, 2008
+ * \brief
+ * \details
  */
 
 #ifndef __H_LABEL__

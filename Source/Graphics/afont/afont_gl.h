@@ -5,14 +5,8 @@
 #ifndef _afont_gl_h
 #define _afont_gl_h
 
-#include <stdio.h>
-
-#if __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
-
+#include "includes.h"
+#include "Utilities/file.h"
 #include "afont.h"
 
 typedef struct afontgl afontgl;
@@ -26,7 +20,7 @@ struct afontgl {
 };
 
 afontgl *afont_gl_load( const char *path );
-afontgl *afont_gl_load_fp( FILE *fp );
+afontgl *afont_gl_load_fp( File& file );
 afontgl *afont_gl_convert( afont *a );
 void afont_gl_free( afontgl *ag );
 void afont_gl_render_text( afontgl *a, const char *text );

@@ -1,10 +1,9 @@
-/*
- * Filename      : ui_textbox.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, November 9, 2009
- * Last Modified : Monday, November 9, 2009
- * Purpose       : 
- * Notes         :
+/**\file			ui_textbox.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, November 9, 2009
+ * \date			Modified: Monday, November 9, 2009
+ * \brief
+ * \details
  */
 
 #ifndef __H_TEXTBOX__

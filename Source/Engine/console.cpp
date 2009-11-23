@@ -1,18 +1,21 @@
-/*
- * Filename      : console.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Saturday, February 21, 2009
- * Purpose       : Handles the Heads-Up-Display
- * Notes         :
+/**\file			console.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Saturday, February 21, 2009
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Handles the Heads-Up-Display
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Engine/console.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "Utilities/timer.h"
+
+/**\class Console
+ * \brief Handles the Heads-Up-Display. */
 
 vector<string> Console::Buffer;
 bool Console::enabled = false;

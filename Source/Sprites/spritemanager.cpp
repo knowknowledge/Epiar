@@ -1,13 +1,16 @@
-/*
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Purpose       : 
- * Notes         :
+/**\file			spritemanager.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \brief
+ * \details
  */
 
 #include "includes.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
+
+/**\class SpriteManager
+ * \brief Mangers sprites. */
 
 SpriteManager::SpriteManager() {
 

@@ -24,6 +24,9 @@
 #include "Utilities/camera.h"
 #include "Utilities/file.h"
 
+/**\class Lua
+ * \brief Lua subsystem. */
+
 bool Lua::luaInitialized = false;
 lua_State *Lua::luaVM = NULL;
 SpriteManager *Lua::my_sprites= NULL;

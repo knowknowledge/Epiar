@@ -7,6 +7,7 @@
  * Notes         :
  */
 
+#include "includes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,7 +24,6 @@
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/archive.h"
 #include "Utilities/log.h"

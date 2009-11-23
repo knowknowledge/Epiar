@@ -12,6 +12,9 @@
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
+/**\class XMLFile
+ * \brief XML handling. */
+
 XMLFile::XMLFile() {
 	xmlPtr = NULL;
 }

@@ -1,9 +1,10 @@
-/*
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Wednesday, July 5, 2006
- * Purpose       : Sprite management services
- * Notes         :
+/**\file			spritemanager.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \brief
+ * \details
  */
+
 
 #ifndef __H_SPRITEMANAGER__
 #define __H_SPRITEMANAGER__

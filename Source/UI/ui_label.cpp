@@ -1,18 +1,20 @@
-/*
- * Filename      : ui_label.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, April 25, 2008
- * Last Modified : Friday, April 25, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui_label.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Friday, April 25, 2008
+ * \date			Modified: Friday, April 25, 2008
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Graphics/video.h"
 #include "Graphics/font.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/log.h"
+
+/**\class Label
+ * \brief UI label. */
 
 Label::Label( int x, int y, string label ) {
 	SetX( x );

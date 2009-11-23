@@ -1,10 +1,9 @@
-/*
- * Filename      : filesystem.h
- * Author(s)     : Maoserr
- * Date Created  : Wednesday, November 18, 2009
- * Last Modified : Wednesday, November 18, 2009
- * Purpose       : Provides an abstraction to the file system
- * Notes         :
+/**\file			filesystem.h
+ * \author			Maoserr
+ * \date			Created: Wednesday, November 18, 2009
+ * \date			Modified: Wednesday, November 18, 2009
+ * \brief			Provides an abstraction to the file system
+ * \details
  */
 
 #ifndef __H_FILESYSTEM__
@@ -19,9 +18,6 @@ extern "C" {
 }
 #endif
 
-/** Filesystem class is an interface to deal with file system operations.
-  * see the File class for dealing with specific files.
-  */
 class Filesystem {
 	public:
 		static int Init( void );

@@ -16,6 +16,9 @@
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
 
+/**\class Image
+ * \brief Image handling. */
+
 Image::Image() {
 	// Initialize variables
 	w = h = rw = rh = image = 0;

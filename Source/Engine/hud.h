@@ -1,10 +1,9 @@
-/*
- * Filename      : hud.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			hud.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created  : Sunday, July 23, 2006
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Handles the Heads-Up-Display
+ * \detailsNotes
  */
 
 #ifndef __h_hud__

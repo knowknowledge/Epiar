@@ -1,20 +1,22 @@
-/*
- * Filename      : ui_textbox.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, November 9, 2009
- * Last Modified : Monday, November 9, 2009
- * Purpose       : 
- * Notes         :
+/**\file			ui_textbox.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, November 9, 2009
+ * \date			Modified: Monday, November 9, 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
+
+/**\class Textbox
+ * \brief UI textbox. */
 
 void Textbox::init( int x, int y, int w, int h, string text ) {
 	// This is the main Button Constructor

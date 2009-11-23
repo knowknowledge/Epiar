@@ -13,6 +13,9 @@
 
 #define ANI_VERSION 1
 
+/**\class Animation
+ * \brief Animations */
+
 Animation::Animation() {
 	frames = NULL;
 	startTime = 0;

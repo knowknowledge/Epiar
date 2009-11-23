@@ -1,14 +1,14 @@
-/*
- * Filename      : graphics.cpp
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 31, 2009
- * Purpose       : Graphics demo & debugging
- * Notes         : 
+/**\file			graphics.cpp
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 31, 2009
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Graphics demo & debugging
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Debug/graphics.h"
-#include "includes.h"
 #include "Graphics/image.h"
 #include "Graphics/video.h"
 

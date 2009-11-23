@@ -1,10 +1,9 @@
-/*
- * Filename      : debug.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, October 3, 2008
- * Last Modified : Friday, October 3, 2008
- * Purpose       : Code debugging
- * Notes         : 
+/**\file			debug.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Saturday, Ocotober 4, 2008
+ * \date			Modified: Saturday, October 4, 2008
+ * \brief
+ * \details
  */
 
 #ifndef __H_DEBUG__

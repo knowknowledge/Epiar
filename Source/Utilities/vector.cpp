@@ -1,16 +1,16 @@
-/*
- * Filename      : vector.cpp
- * Author(s)     : Douglas Moyes (dbmoyes@gmail.com), Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			vector.cpp
+ * \author			Douglas Moyes (dbmoyes@gmail.com), Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
 // Some additional functions for the Vector class that were
 // too big to inline, or for whatever reason wound up in here. All
 // functions are described fully in the header file.
 
+#include "includes.h"
 #include "vector.h"
 
 // double Vector::radangle()

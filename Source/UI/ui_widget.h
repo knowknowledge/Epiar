@@ -1,11 +1,11 @@
-/*
- * Filename      : ui_widget.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui_widget.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
+
 
 #ifndef __H_UI_WIDGET__
 #define __H_UI_WIDGET__

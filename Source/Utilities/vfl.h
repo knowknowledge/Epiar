@@ -1,10 +1,9 @@
-/*
- * Filename      : vfl.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Tuesday, October 14, 2008
- * Last Modified : Tuesday, October 14, 2008
- * Purpose       : Filesystem abstraction translator for multi-platform data file placement
- * Notes         :
+/**\file			vfl.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Tuesday, October 14, 2008
+ * \date			Modified: Tuesday, October 14, 2008
+ * \brief			Filesystem abstraction translator for multi-platform data file placement
+ * \details
  */
 
 #ifndef __H_VFL__

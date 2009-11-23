@@ -1,15 +1,18 @@
-/*
- * Filename      : planets.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Monday, November 16 2009
- * Purpose       : 
- * Notes         :
+/**\file			planets.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Monday, November 16 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+
+/**\class Planets
+ * \brief Planets. */
 
 Planets *Planets::pInstance = 0; // initialize pointer
 

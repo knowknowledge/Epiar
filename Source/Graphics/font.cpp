@@ -6,10 +6,14 @@
  * \details
  */
 
+#include "includes.h"
 #include "Graphics/font.h"
 #include "Graphics/afont/afont_gl.h"
 #include "includes.h"
 #include "Utilities/log.h"
+
+/**\class Font
+ * \brief Font class takes care of initializing fonts. */
 
 Font::Font() {
 	font = NULL;
