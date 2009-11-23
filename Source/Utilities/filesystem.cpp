@@ -34,7 +34,8 @@ int Filesystem::Init() {
 int Filesystem::AddPath( const string& archivename ) {
 	int retval;
 	if ( (retval = PHYSFS_addToSearchPath(archivename.c_str(), 1)) == 0 )
-		Log::Error("Error adding search path.\n%s",PHYSFS_getLastError());
+		Log::Error("Error adding search path %s.\n%s",archivename.c_str(),
+				PHYSFS_getLastError());
 	return retval;
 }
 

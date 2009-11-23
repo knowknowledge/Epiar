@@ -25,24 +25,26 @@ extern "C" {
 #include "ui_window.h"
 #include "ui_button.h"
 
+#define EPIAR_UI "UI"
+
 class UI_Lua {
 	public:
 		// Functions to communicate with Lua
-		static void RegisterUI(lua_State *luaVM);
+		static void RegisterUI(lua_State *L);
 
 		// Functions to create new Widgets
-		static int newWindow(lua_State *luaVM);
-		static int newButton(lua_State *luaVM);
-		static int newTextbox(lua_State *luaVM);
-		static int newLabel(lua_State *luaVM);
-		static int newPicture(lua_State *luaVM);
+		static int newWindow(lua_State *L);
+		static int newButton(lua_State *L);
+		static int newTextbox(lua_State *L);
+		static int newLabel(lua_State *L);
+		static int newPicture(lua_State *L);
 
 		// Functions to manipulate Widgets
-		static int add(lua_State *luaVM);
-		static int close(lua_State *luaVM);
-		static int rotatePicture(lua_State *luaVM);
-		static int setText(lua_State *luaVM);
-		static int setPicture(lua_State *luaVM);
+		static int add(lua_State *L);
+		static int close(lua_State *L);
+		static int rotatePicture(lua_State *L);
+		static int setText(lua_State *L);
+		static int setPicture(lua_State *L);
 	private:
 };
 #endif /*__H_UI_LUA*/

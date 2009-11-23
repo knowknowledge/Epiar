@@ -15,13 +15,23 @@
 /**\class Picture
  * \brief UI picture. */
 
-Picture::Picture( int x, int y, int w, int h, string filename ){
+void Picture::Default( int x, int y, int w, int h ){
 	SetX( x );
 	SetY( y );
 
 	this->w = w;
 	this->h = h;
 	rotation=0.;
+	bitmap = NULL;
+}
+
+Picture::Picture( int x, int y, int w, int h, Image* pic ){
+	Default(x,y,w,h);
+	bitmap = pic;
+}
+
+Picture::Picture( int x, int y, int w, int h, string filename ){
+	Default(x,y,w,h);
 	bitmap = new Image(filename);
 }
 
