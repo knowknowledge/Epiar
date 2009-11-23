@@ -68,7 +68,7 @@ bool File::Read( long numBytes, char *buffer ){
 		return true;
 	} else {
 		Log::Error("%s: Unable to read specified number of bytes. %s",
-			validName, PHYSFS_getLastError());
+			validName.c_str(), PHYSFS_getLastError());
 		return false;
 	}
 }
@@ -88,7 +88,7 @@ char *File::Read( void ){
 	} else {
 		delete [] fBuffer;
 		Log::Error("%s: Unable to read file into memory. %s",
-			validName, PHYSFS_getLastError());
+			validName.c_str(), PHYSFS_getLastError());
 		return NULL;
 	}
 }
@@ -101,7 +101,7 @@ long File::Tell( void ){
 		PHYSFS_tell( fp ));
 	if ( offset == -1 ){
 		Log::Error("%s: Error using file tell. %s",
-			validName, PHYSFS_getLastError());
+			validName.c_str(), PHYSFS_getLastError());
 	}
 	return offset;
 }
@@ -115,7 +115,7 @@ bool File::Seek( long pos ){
 		static_cast<PHYSFS_uint64>( pos ));
 	if ( retval == 0 ){
 		Log::Error("%s: Error using file seek. %s",
-				validName, PHYSFS_getLastError());
+				validName.c_str(), PHYSFS_getLastError());
 		return false;
 	}
 	return true;
@@ -144,7 +144,7 @@ bool File::Close() {
 	int retval = PHYSFS_close( fp );
 	if ( retval == 0 ){
 		Log::Error("%s: Unable to close file handle.%s",
-			validName, PHYSFS_getLastError());
+			validName.c_str(), PHYSFS_getLastError());
 		return false;
 	}
 	contentSize = 0;

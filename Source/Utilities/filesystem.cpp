@@ -18,11 +18,11 @@
 
 /**Initialize the PhysFS system
  * \return Nonzero on success. */
-int Filesystem::Init() {
+int Filesystem::Init( const char* argv0 ) {
 	int retval;
-	if ( (retval = PHYSFS_init(NULL)) == 0 )
+	if ( (retval = PHYSFS_init(argv0)) == 0 )
 		Log::Error("Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
-	Filesystem::AddPath("Resources.zip");
+//	Filesystem::AddPath("Resources.zip");
 	// Always add executable base path.
 	Filesystem::AddPath(PHYSFS_getBaseDir());
 	return retval;

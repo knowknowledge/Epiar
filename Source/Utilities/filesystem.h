@@ -20,9 +20,8 @@ extern "C" {
 
 class Filesystem {
 	public:
-		static int Init( void );
+		static int Init( const char* argv0 );
 		static int AddPath( const string &archivename );
-		static unsigned char *Filesystem::CopyFileToMem( const string &filename,int* bytesRead );
 		static int DeInit( void );
 };
 
