@@ -29,6 +29,7 @@ class Font {
 	//afontgl *font; // handle to font
 	char *filename; // filename of the loaded font
 	float r, g, b; // color of text
+	int height,width,base;
 };
 
 #endif // H_FONT

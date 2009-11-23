@@ -53,6 +53,8 @@ bool Font::SetFont( const char *filename ) {
 
 	this->filename = strdup( filename );
 
+	afont_size_text( font->orig, "A", &(this->width), &(this->height), &(this->base));
+
 	Log::Message( "Font '%s' loaded.\n", filename );
 
 	return( true );
@@ -63,7 +65,7 @@ void Font::Render( int x, int y, const char *text ) {
 	glEnable(GL_BLEND);
 
 	glColor4f( r, g, b, 1. );
-	glRasterPos2i( x, y );
+	glRasterPos2i( x, y + height); // + height so that the top corner is at (x,y) like everything else.
 
 	afont_gl_render_text( font, text );
 }
@@ -75,7 +77,7 @@ void Font::RenderCentered( int x, int y, const char *text ) {
 	// determine size of text
 	afont_size_text( font->orig, text, &w, &h, &base );
 
-	Render( x - (w / 2), y - (h / 2) + base, text ); // -1 because it just kinda looks better
+	Render( x - (w / 2), y - (h / 2) , text ); // -1 because it just kinda looks better
 }
 
 void Font::SetColor( float r, float g, float b ) {

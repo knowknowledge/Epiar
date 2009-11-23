@@ -6,14 +6,15 @@ it.setup = function()
     -- Setup Tag variables
     it.ship =0
     it.countdown=100
-    it.pic = UI:newPicture(60,30,100,30, Ship.GetModelName(Epiar.player()) )
-    it.label = UI:newLabel(90,100,"You're It")
+    it.pic = UI:newPicture(0,0,100,30, Ship.GetModelName(Epiar.player()) )
+    it.label = UI:newLabel(90,80,"You're It",1)
 
     -- Create Tag Windows
-    menuWin = UI:newWindow( 900,200,120,250,"Menu",
-        UI:newButton(10,40,100,30,"Pause","pauseMessage('You hit the pause button')"),
-        UI:newButton(10,140,100,30,"IT","it.tag(0)"),
-        UI:newButton(10,190,100,30,"NOT IT","it.tag(math.random(#(Epiar.ships())))")
+    menuWin = UI:newWindow( 900,200,110,250,"Menu",
+        UI:newButton(0,0,100,30,"Pause","pauseMessage('You hit the pause button')"),
+        UI:newButton(0,40,100,30,"Store","store()"),
+        UI:newButton(0,80,100,30,"IT","it.tag(0)"),
+        UI:newButton(0,120,100,30,"NOT IT","it.tag(math.random(#(Epiar.ships())))")
         )
     tagWin = UI:newWindow( 840,500,180,130,"Who's IT?",
         it.pic,
@@ -29,7 +30,7 @@ it.findClosest = function()
 	it.x,it.y = Ship.GetPosition(ships[it.ship])
 
 	-- Find the closest ship to whomever is IT
-	for other=1, #ships do 
+	for other=0, #ships do 
 		if other ~= it.ship then
 			other_x,other_y = Ship.GetPosition(ships[other])
 			dist = distfrom(other_x,other_y,it.x,it.y)

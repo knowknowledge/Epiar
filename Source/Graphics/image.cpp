@@ -21,7 +21,7 @@
 
 Image::Image() {
 	// Initialize variables
-	w = h = rw = rh = image = 0;
+	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
 	resize_ratio_w = resize_ratio_h = 1.;
 }
@@ -29,7 +29,7 @@ Image::Image() {
 // Create instance by loading image from file
 Image::Image( const string& filename ) {
 	// Initialize variables
-	w = h = rw = rh = image = 0;
+	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
 	resize_ratio_w = resize_ratio_h = 1.;
 
@@ -209,8 +209,8 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	}
 
 	// real width/height always equal the expanded canvas (or original canvas if no expansion)'s w/h
-	rw = s->w;
-	rh = s->h;
+	real_w = s->w;
+	real_h = s->h;
 
 	// check the pixel format, since it could depend on the file format:
 	GLenum internal_format;
@@ -247,7 +247,7 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	glBindTexture( GL_TEXTURE_2D, (unsigned int)image );
 
 	// upload the texture data, letting OpenGL do any required conversion.
-	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, rw, rh, 0, img_format, img_type, s->pixels );
+	glTexImage2D( GL_TEXTURE_2D, 0, internal_format, real_w, real_h, 0, img_format, img_type, s->pixels );
 
 	// linear filtering
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
@@ -259,20 +259,55 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 }
 
 // Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
-void Image::DrawTiled( int x, int y, int w, int h ) {
-	// set the clipping region to avoid tiles "spilling" out
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(x, Video::GetHeight() - y - h, w, h); // for some reason, glScissor counts (0,0) as lower-left
+void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
+{
+	if( !image ) {
+		Log::Warning( "Trying to draw without loading an image first." );
+		return;
+	}
 
-	for( int j = 0; j < h; j += this->h) {
-		for( int i = 0; i < w; i += this->w) {
-			Draw( x + i, y + j );
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear The Background Color To Black
+	glClearDepth(1.0); // Enables Clearing Of The Depth Buffer
+	glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
+	glEnable(GL_TEXTURE_2D); // Enable 2D Texture Mapping
+ 	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
+
+	// draw it
+	glColor3f(1, 1, 1);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture( GL_TEXTURE_2D, image );
+
+	glPushMatrix();
+
+	glEnable(GL_SCISSOR_TEST);
+	glScissor(x, Video::GetHeight() - y - fill_h, fill_w, fill_h); // for some reason, glScissor counts (0,0) as lower-left
+
+	glBegin( GL_QUADS );
+	for( int j = 0; j < fill_h; j += h) {
+		for( int i = 0; i < fill_w; i += w) {
+			//cout<<"Image "<<j<<","<<i<<endl;
+			glTexCoord2f( 0., 0. ); glVertex2f( x+i, y+j ); // Lower Left
+			glTexCoord2f( scale_w, 0. ); glVertex2f( (x+w+i) , y+j); // Lower Right
+			glTexCoord2f( scale_w, scale_h ); glVertex2f( (x+w+i) , (y+h+j) ); // Upper Right
+			glTexCoord2f( 0., scale_h ); glVertex2f( x+i, (y+h+j) ); // Upper Left
 		}
 	}
-	
-	// restore previous clipping region
+	glEnd();
+
 	glDisable(GL_SCISSOR_TEST);
+
+	glPopMatrix();
+
+	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
+	glDisable(GL_BLEND); // Disable Blending
+
+	glDisable(GL_TEXTURE_2D); // Disable 2D Texture Mapping
+	glBindTexture(GL_TEXTURE_2D,0); // Unbind The Blur Texture
 }
+
 
 // Will destroy 's' so don't do anything with it after this and don't worry about freeing it (it's freed here)
 // e.g. proper usage: convert = ExpandCanvas( convert, w, h );

@@ -40,6 +40,11 @@ class Trig {
 		double tanTable[360];
 };
 
-float normalizeAngle(float);
+// Turns an arbitrary angle into an angle between -180 and 180 degrees
+inline float normalizeAngle(float angle){
+	float result = fmod(angle,540.0f);
+	if(result>=180.0f)result-=360.0f;
+	return result;
+}
 
 #endif // __h_trig__

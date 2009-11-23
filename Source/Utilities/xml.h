@@ -12,6 +12,8 @@
 #define __H_XML__
 
 #include "includes.h"
+#include <map>
+#include <zlib.h>
 
 class XMLFile {
 	public:
@@ -24,6 +26,7 @@ class XMLFile {
 
 	private:
 		xmlDocPtr xmlPtr;
+		map<string,string> values;
 		string filename;
 };
 

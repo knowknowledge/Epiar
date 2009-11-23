@@ -152,8 +152,8 @@ void Input::Handle( list<InputEvent> & events ) {
 
 	if( keyDown[ SDLK_UP ] ) player->Accelerate();
 	// TODO It shouldn't be possible to rotate in both directions at once
-	if( keyDown[ SDLK_LEFT ] ) player->Rotate( _LEFT );
-	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( _RIGHT );
+	if( keyDown[ SDLK_LEFT ] ) player->Rotate( 30.0 );
+	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( -30.0 );
 	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}

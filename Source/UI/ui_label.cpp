@@ -16,7 +16,7 @@
 /**\class Label
  * \brief UI label. */
 
-Label::Label( int x, int y, string label ) {
+Label::Label( int x, int y, string label, bool centered) {
 	SetX( x );
 	SetY( y );
 
@@ -24,6 +24,7 @@ Label::Label( int x, int y, string label ) {
 	this->h = h;
 	
 	this->label = label;
+	this->centered = centered;
 }
 
 Label::~Label() {
@@ -35,9 +36,13 @@ void Label::Draw(  int relx, int rely ) {
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
-	
+
 	// draw the label
 	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered( x, y, (char *)label.c_str() );
+	if(centered){
+		Vera10->RenderCentered( x, y, (char *)label.c_str() );
+	} else {
+		Vera10->Render( x, y, (char *)label.c_str() );
+	}
 	
 }

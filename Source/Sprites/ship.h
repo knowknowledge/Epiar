@@ -13,9 +13,6 @@
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
 
-enum Direction {_LEFT=-1,_STRAIGHT,_RIGHT};
-#define LUA_NUMBER_TO_DIRECTION(_ln) ((Direction) ((int) (_ln)))
-
 class Ship : public Sprite {
 	public:
 		Ship();
@@ -26,13 +23,15 @@ class Ship : public Sprite {
 		string GetModelName();
 		
 		void Update( void );
-		void Rotate( int direction );
+		void Rotate( float direction );
 		void Accelerate( void );
+		void Damage( short int damage );
+
 		void Draw( void );
 		
 		/* Status functions */
-		Direction directionTowards(Coordinate c);
-		Direction directionTowards(float angle);
+		float directionTowards(Coordinate c);
+		float directionTowards(float angle);
 		float getHullIntegrityPct();
 		
 		virtual int GetDrawOrder( void ) {

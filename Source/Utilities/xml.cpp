@@ -63,6 +63,12 @@ bool XMLFile::Close() {
 string XMLFile::Get( const string& path ) {
 	xmlNodePtr cur;
 
+	map<string,string>::iterator val = values.find( path );
+	if( val != values.end() ){
+		//Log::Message("Found that key '%s' of XML file '%s' is '%s'",path.c_str(),filename.c_str(),(val->second).c_str());
+		return val->second;
+	}
+
 	// take apart the path and put it in a queue
 	queue<string> pathTree;
 	string nodeBuffer;
@@ -82,7 +88,8 @@ string XMLFile::Get( const string& path ) {
 	cur = xmlDocGetRootElement( xmlPtr );
 
 	if( cur == NULL ) {
-		Log::Warning( "XML file () appears to be empty." );
+		Log::Warning( "XML file (%s) appears to be empty.",filename );
+		values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 		return( string() );
 	}
 
@@ -102,7 +109,10 @@ string XMLFile::Get( const string& path ) {
 			if( nodeToLocate == pathTree.back() ) {
 				// nothing left to look for, return this value
 				xmlChar *subKey = xmlNodeListGetString( xmlPtr, cur->xmlChildrenNode, 1 );
-				return( string( (char *)subKey ) );
+				string result = string( (char *)subKey ); 
+				values.insert(make_pair(path,result)); // Insert dummy value so that we don't need to search for it again
+				//Log::Message("Populating key '%s' of XML file '%s' as '%s'",path.c_str(),filename.c_str(),result.c_str());
+				return(result);
 			} else {
 				// more path, explore the child tree
 				cur = cur->xmlChildrenNode;
@@ -113,6 +123,9 @@ string XMLFile::Get( const string& path ) {
 
 		cur = cur->next;
 	}
+
+	Log::Warning("Attempted to Get non-existant value '%s' from XML file '%s'",path.c_str(),filename.c_str());
+	values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 
 	// didn't find it
 	return( string() );

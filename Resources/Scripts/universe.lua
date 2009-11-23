@@ -53,11 +53,12 @@ end
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
 	pauseWin= UI:newWindow( 400,100,320,150,"Paused",
-		UI:newLabel(160,70,message),
-		UI:newButton(110,100,100,30,"Unpause","Epiar.unpause();UI:close(pauseWin)")
+		UI:newLabel(160,40,message,1),
+		UI:newButton(110,80,100,30,"Unpause","Epiar.unpause();UI:close(pauseWin)")
 		)
 	Epiar.pause()
 end
+--registerInit(function() pauseMessage("hello world") end)
 
 -- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
@@ -129,6 +130,48 @@ function aimCenter(cur_ship,timeleft)
 end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
+
+function hitEveryOne()
+	ships = Epiar.ships()
+	for s =1, #ships do
+		ship = ships[s]
+		Ship.Damage(ship,1)
+		pct = Ship.GetHull(ship)
+		-- io.write(string.format("Ship %d is at %f%% Hull\n",s,pct))
+		if pct <= 0 then
+			Ship.Explode(cur_ship)
+		else
+			Ship.SetRadarColor(cur_ship,255 *pct,0 ,0)
+		end
+	end
+end
+--registerPostStep(hitEveryOne)
+
+function buy(model)
+	io.write("Player just bought "..model.."\n")
+	Ship.SetModel(Epiar.player(),model)
+	return 1
+end
+
+function store()
+	Epiar.pause()
+	width = 820
+	height = 500
+	pad = 10
+	box = 130
+	storefront = UI:newWindow( 30,30,width,height,"Ship Yard")
+	models = Epiar.models()
+	row,col = 1,1	
+	for m =1,#models do
+		UI.add(storefront, UI:newButton(pad*(col)+box*(col-1), pad*(row)+box*(row-1), 100,30, models[m], " Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront); ")) --
+		UI.add(storefront, UI:newPicture(pad*(col+2)+box*(col-1),30+(pad)*(row+2)+box*(row-1),box,box,models[m]))
+		col =col+1
+		-- When there isn't enough room, wrap to the next row.
+		if pad*(col+2)+box*(col-1) >= width then 
+			col=1; row=row+1
+		end
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Load Scenarios
