@@ -15,19 +15,22 @@
 
 /**Creates empty file instance.*/
 File::File( void ):
-fp(NULL), contentSize(0), bufSize(1024*5), validName("") {
+fp(NULL), contentSize(0),validName("") {
 }
 
 /**Creates file instance linked to filename. \sa Open.*/
 File::File( const string& filename):
-fp(NULL), contentSize(0), bufSize(1024*5), validName("") {
-	Open( filename );
+fp(NULL), contentSize(0), validName("") {
+	OpenRead( filename );
 }
 
-/**Returns a handle to the filename.
+/**Opens a file for reading
  * \param filename The filename path.
  * \return true if successful, false otherwise.*/
-bool File::Open( const string& filename ) {
+bool File::OpenRead( const string& filename ) {
+	if ( fp != NULL )
+		this->Close();
+
 	const char *cName;
 
 	cName = filename.c_str();
@@ -36,22 +39,35 @@ bool File::Open( const string& filename ) {
 		Log::Error("File does not exist: %s.", cName);
 		return false;
 	}
-	validName.assign( filename );
 
 	fp = PHYSFS_openRead( cName );
 	if( fp == NULL ){
-		Log::Error("Could not open file: %s.\n%s", filename.c_str(),
+		Log::Error("Could not open file: %s.\n%s", cName,
 			PHYSFS_getLastError());
 		return false ;
 	}
-	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
-		Log::Error("Could not create internal buffer for file: %s.\n%s",
-				filename.c_str(),PHYSFS_getLastError());
-		PHYSFS_close( fp );
-		return false ;
-	}
 	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
+	validName.assign( filename );
 	return true ;
+}
+
+/**Opens a file for writing
+ * \param filename The filename path
+ * \return true if successful, false otherwise.*/
+bool File::OpenWrite( const string& filename ) {
+	if ( fp != NULL )
+		this->Close();
+
+	const char *cName;
+	cName = filename.c_str();
+	this->fp = PHYSFS_openWrite( cName );
+	if( fp == NULL ){
+		Log::Error("Could not open file for writing: %s.\n%s",cName,
+				PHYSFS_getLastError());
+		return false;
+	}
+	validName.assign( filename );
+	return true;
 }
 
 /**Reads a specified number of bytes.
@@ -80,10 +96,12 @@ char *File::Read( void ){
 	if ( fp == NULL )
 		return NULL;
 
+	// Seek to beginning
+	Seek( 0 );
 	char *fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
 	long bytesRead = static_cast<long>(
-		PHYSFS_read( fp, fBuffer, 1, static_cast<PHYSFS_uint32>(contentSize) ));
-	if( bytesRead == contentSize ){
+		PHYSFS_read( this->fp, fBuffer, 1, contentSize ));
+	if( bytesRead == contentSize){
 		return fBuffer;
 	} else {
 		delete [] fBuffer;
@@ -91,6 +109,22 @@ char *File::Read( void ){
 			validName.c_str(), PHYSFS_getLastError());
 		return NULL;
 	}
+}
+
+/**Writes buffer to file.
+ * \param buffer The buffer to write
+ * \param bufsize The size of the buffer in bytes
+ * \return true if successful, false otherwise. */
+bool File::Write( char *buffer, const long bufsize ){
+	if ( fp == NULL )
+		return false;
+	PHYSFS_sint64 bytesWritten = PHYSFS_write(this->fp, buffer, bufsize, 1);
+	if ( bytesWritten != bufsize){
+		Log::Error("%s: Unable to write to file. %s",this->validName.c_str(),
+				PHYSFS_getLastError());
+		return false;
+	}
+	return true;
 }
 
 /**Gets the current offset from the beginning of the file.
@@ -125,6 +159,18 @@ bool File::Seek( long pos ){
  * \return Total length of the file in bytes.*/
 long File::GetLength( void ){
 	return contentSize;
+}
+
+/**Sets the internal buffer for read/write operations.
+ * \return Nonzero on success */
+int File::SetBuffer( int bufSize ){
+	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
+		Log::Error("Could not create internal buffer for file: %s.\n%s",
+				validName.c_str(),PHYSFS_getLastError());
+		PHYSFS_close( fp );
+		return 0;
+	}
+	return 1;
 }
 
 /**Destroys file instance. \sa Close.*/

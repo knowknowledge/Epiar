@@ -10,18 +10,17 @@
 #define __H_FILESYSTEM__
 
 #include "includes.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <physfs.h>
-#ifdef __cplusplus
-}
-#endif
 
 class Filesystem {
 	public:
 		static int Init( const char* argv0 );
-		static int AddPath( const string &archivename );
+		static int Init( const char* argv0, const string &extension );
+		static int AppendPath( const string &archivename );
+		static int PrependPath( const string &archivename );
+		static int Enumerate( const string &path );
+		static void Version( void );
+		static void OutputArchivers( void );
 		static int DeInit( void );
 };
 

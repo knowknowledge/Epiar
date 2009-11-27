@@ -29,7 +29,7 @@ bool XMLFile::Open( const string& filename ) {
 	long bufSize = 0;
 	File xmlfile;
 
-	if( xmlfile.Open( filename ) == false ) {
+	if( xmlfile.OpenRead( filename ) == false ) {
 		Log::Error( "Could not find file %s", filename.c_str() );
 		return( false );
 	}

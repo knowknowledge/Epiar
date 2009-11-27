@@ -10,32 +10,28 @@
 #define __H_FILE__
 
 #include "includes.h"
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <physfs.h>
-#ifdef __cplusplus
-}
-#endif
 
 class File {
 	public:
 		File( void );
 		File( const string& filename );
 		~File();
-		bool Open( const string& filename );
+		bool OpenRead( const string& filename );
+		bool OpenWrite( const string& filename );
 		bool Read( long numBytes, char *buffer );
 		char *Read( void );
+		bool Write( char *buffer, const long bufsize );
 		long Tell( void );
 		bool Seek( long pos );
 		long GetLength( void );
+		int SetBuffer( int bufSize );
 		bool Close();
 
 	private:
 		PHYSFS_file *fp;		/** File pointer.  */
 		long contentSize;		/** Number of bytes in the file. */
-		PHYSFS_uint64 bufSize;	/** Buffer for read/write.*/
-		string validName;		/** Name of the file referenced (tested for existence).*/
+		string validName;		/** Name of the file referenced (exists).*/
 };
 
 #endif // __H_XML__

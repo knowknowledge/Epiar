@@ -11,20 +11,19 @@
 
 #include "includes.h"
 #include "Utilities/log.h"
-#include "Utilities/parser.h"
 #include "Utilities/file.h"
 
 template<class T>
 class Parser {
 	public:
 		Parser() {};
-		list<T *> Parse( string filename, string rootName, string unitName );
+		list<T *> Parse( const string& filename, string rootName, string unitName );
 
 	private:
 };
 
 template< class T >
-list<T *> Parser<T>::Parse( string filename, string rootName, string unitName ) {
+list<T *> Parser<T>::Parse( const string& filename, string rootName, string unitName ) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
@@ -32,7 +31,7 @@ list<T *> Parser<T>::Parse( string filename, string rootName, string unitName ) 
 	T *obj = NULL;
 	int numObjs = 0;
 	
-	File xmlfile = File( filename.c_str() );
+	File xmlfile = File (filename);
 	long filelen = xmlfile.GetLength();
 	char *buffer = xmlfile.Read();
 	doc = xmlParseMemory( buffer, static_cast<int>(filelen) );

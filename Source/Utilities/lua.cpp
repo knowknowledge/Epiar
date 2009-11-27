@@ -48,8 +48,9 @@ bool Lua::Load( const string& filename ) {
 		return false;
 	}
 	long bufsize = luaFile.GetLength();
-	if( (luaL_loadbuffer(L, buffer, bufsize, filename.c_str())) ||
-			lua_pcall(L, 0, LUA_MULTRET, 0)){
+	int loadRet = luaL_loadbuffer(L, buffer, bufsize, filename.c_str());
+	int execRet = lua_pcall(L, 0, 0, 0);
+	if( loadRet || execRet ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(L, -1));
 		cout << lua_tostring(L, -1) << endl;

@@ -31,7 +31,8 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 
 int main( int argc, char **argv ) {
 	Log::Initalize();
-	Filesystem::Init( argv[0] );
+	// Use ".dat" extension for data files
+	Filesystem::Init( argv[0], "dat" );
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
