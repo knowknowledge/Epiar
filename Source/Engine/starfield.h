@@ -20,7 +20,7 @@ class Starfield {
 
 	private:
 		struct _stars {
-			float x, y;
+			short int x, y;
 			float clr;
 		} *stars;
 

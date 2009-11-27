@@ -27,8 +27,8 @@ Starfield::Starfield( int num ) {
 	for( i = 0; i < num; i++ ) {
 		int c;
 
-		stars[i].x = (float)(rand() % (int)(1.3 * Video::GetWidth()));
-		stars[i].y = (float)(rand() % (int)(1.4 * Video::GetHeight()));
+		stars[i].x = (rand() % (int)(1.3 * Video::GetWidth()));
+		stars[i].y = (rand() % (int)(1.4 * Video::GetHeight()));
 		c = rand() % 225; // generate greys between 0 and 225
 		stars[i].clr = static_cast<float>( c / 256. );
 	}
@@ -52,21 +52,21 @@ void Starfield::Update( void ) {
 	int i;
 	double dx, dy;
 	Camera *camera = Camera::Instance();
-	float w, h;
+	short int w, h;
 
 	camera->GetDelta( &dx, &dy );
 	
-	w = static_cast<float>(1.3 * Video::GetWidth());
-	h = static_cast<float>(1.4 * Video::GetHeight());
+	w = 1.3 * Video::GetWidth();
+	h = 1.4 * Video::GetHeight();
 	
 	for( i = 0; i < num; i++ ) {
-		stars[i].x -= (float)dx * stars[i].clr;
-		stars[i].y -= (float)dy * stars[i].clr;
+		stars[i].x -= dx * stars[i].clr;
+		stars[i].y -= dy * stars[i].clr;
 
 		// handle wrapping the stars around if they go offscreen top/left
-		while( stars[i].x < 0.0f )
+		while( stars[i].x < 0 )
 			stars[i].x += w;
-		while( stars[i].y < 0.0f )
+		while( stars[i].y < 0 )
 			stars[i].y += h;
 
 		// handle wrapping the stars around if they go offscreen bottom/right
