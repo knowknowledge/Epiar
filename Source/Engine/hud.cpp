@@ -157,8 +157,8 @@ void Radar::Draw( SpriteManager &sprites ) {
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	const list<Sprite*>& spriteList = sprites.GetSprites();
-	for( list<Sprite*>::const_iterator iter = spriteList.begin(); iter != spriteList.end(); iter++)
+	list<Sprite*> *spriteList = sprites.GetSprites();
+	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
 		Coordinate blip( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) );
 		Sprite *sprite = *iter;

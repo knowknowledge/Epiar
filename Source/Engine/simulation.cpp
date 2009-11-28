@@ -96,9 +96,6 @@ bool Simulation::Run( void ) {
 	// Start the Lua Scenarios
 	Lua::Run("Start()");
 
-	// Ensure correct drawing order
-	sprites.Order();
-	
 	// Create the hud
 	Hud::Hud();
 

@@ -10,41 +10,30 @@
 #include "Sprites/spritemanager.h"
 
 SpriteManager::SpriteManager() {
-
+    tree = new QuadTree(Coordinate(0,0), 10000.0f, 30);
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
-	if( sprite )
-		sprites.push_back( sprite );
+	cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
+	tree->Insert(sprite);
 }
 
 bool SpriteManager::Delete( Sprite *sprite ) {
-	list<Sprite *>::iterator i = std::find( sprites.begin(), sprites.end(), sprite );
-
-	if(i != sprites.end())
-	{
-		i = sprites.erase( i );
-		return( true );
-	}
-	
-	return( false );
+	return tree->Delete(sprite);
 }
 
 void SpriteManager::Update() {
-	list<Sprite *>::iterator i;
-
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
-		(*i)->Update();
-	}
+	tree->Update();
 }
 
 void SpriteManager::Draw() {
-	list<Sprite *>::iterator i;
-
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
-		(*i)->Draw();
-	}
+	tree->Draw();
 }
+
+list<Sprite *> *SpriteManager::GetSprites() {
+	return( tree->GetSprites() );
+}
+
 
 // Reorders sprite list to ensure correct drawing order
 void SpriteManager::Order() {
@@ -53,9 +42,10 @@ void SpriteManager::Order() {
 	list<Sprite *> planets;
 	list<Sprite *> ships;
 	list<Sprite *> newSprites;
+	list<Sprite *> *sprites = tree->GetSprites();
 
 	// break our master list into its type lists
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+	for( i = sprites->begin(); i != sprites->end(); ++i ) {
 		int order = (*i)->GetDrawOrder();
 		
 		switch( order ) {
@@ -85,11 +75,5 @@ void SpriteManager::Order() {
 	Sprite *player = Player::Instance()->GetSprite();
 	newSprites.push_back( player );
 	
-	sprites = newSprites;
+	//sprites = newSprites;
 }
-
-const list<Sprite *>& SpriteManager::GetSprites() {
-	return( sprites );
-}
-
-

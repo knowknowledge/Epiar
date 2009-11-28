@@ -232,11 +232,11 @@ int Lua::getModelNames(lua_State *L){
 
 int Lua::getSprites(lua_State *L, int type){
 	list<Sprite *> filtered;
-	list<Sprite *> sprites = my_sprites->GetSprites();
+	list<Sprite *> *sprites = my_sprites->GetSprites();
 	
 	// Collect only the ships
 	list<Sprite *>::iterator i;
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+	for( i = sprites->begin(); i != sprites->end(); ++i ) {
 		if( (*i)->GetDrawOrder() == type){
 			filtered.push_back( (*i) );
 		}

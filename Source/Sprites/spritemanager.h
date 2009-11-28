@@ -9,6 +9,7 @@
 #define __H_SPRITEMANAGER__
 
 #include "Sprites/sprite.h"
+#include "Utilities/quadtree.h"
 
 class SpriteManager {
 	public:
@@ -24,10 +25,10 @@ class SpriteManager {
 		// Reorders sprite list to ensure correct drawing order
 		void Order();
 
-		const list<Sprite*>& GetSprites();
+		list<Sprite*> *GetSprites();
 
 	private:
-		list<Sprite *> sprites;
+        QuadTree *tree;
 };
 
 #endif // __H_SPRITEMANAGER__
