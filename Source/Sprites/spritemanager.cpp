@@ -10,12 +10,13 @@
 #include "Sprites/spritemanager.h"
 
 SpriteManager::SpriteManager() {
-    tree = new QuadTree(Coordinate(0,0), 10000.0f, 30);
+    tree = new QuadTree(Coordinate(0,0), 1<<16, 3);
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
 	cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
 	tree->Insert(sprite);
+	cout<<"ADD COMPLETE\n\n";
 }
 
 bool SpriteManager::Delete( Sprite *sprite ) {
