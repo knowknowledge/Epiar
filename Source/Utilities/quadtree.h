@@ -7,6 +7,9 @@
  * Notes         :
  */
 
+#ifndef __h_quadtree__
+#define __h_quadtree__
+
 #include "includes.h"
 #include "Sprites/sprite.h"
 
@@ -26,7 +29,7 @@ class QuadTree {
 		bool Delete(Sprite* obj);
 
 		list<Sprite*> *GetSprites();
-		//list<Sprite*> GetObjects(Coordinate point, int radius);
+		list<Sprite*> *FixOutOfBounds();
 
 		void Update();
 		void Draw();
@@ -46,3 +49,4 @@ class QuadTree {
 		bool isLeaf;
 };
 
+#endif // __h_quadtree__

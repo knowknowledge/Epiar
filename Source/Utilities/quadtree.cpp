@@ -9,7 +9,7 @@
 
 #include "Utilities/quadtree.h"
 
-char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
+const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
 QuadTree::QuadTree(Coordinate _center, int _radius, unsigned int _maxobjects){
 	assert(_maxobjects>0);
@@ -27,8 +27,7 @@ QuadTree::QuadTree(Coordinate _center, int _radius, unsigned int _maxobjects){
 
 QuadTree::~QuadTree(){
 	// Delete the Subtrees (Node)
-	int t;
-	for(t=0;t<4;t++){
+	for(int t=0;t<4;t++){
 		if(NULL != (subtrees[t])) delete subtrees[t];
 	}
 
@@ -50,8 +49,8 @@ unsigned int QuadTree::Count(){
 	if(isLeaf){
 		return objects->size();
 	} else {
-		int t,total=0;
-		for(t=0;t<4;t++){
+		int total=0;
+		for(int t=0;t<4;t++){
 			if(NULL != subtrees[t])
 				total += subtrees[t]->Count();
 		}
@@ -121,8 +120,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 	list<Sprite*> *full = new list<Sprite*>();
 	if(!isLeaf){ // Node
 		//cout<<"Tree at "<<center.GetX()<<","<<center.GetY()<<" is a NODE with "<<this->Count()<<" Sprites.\n";
-		int t;
-		for(t=0;t<4;t++){
+		for(int t=0;t<4;t++){
 			//cout<<"Size before processing subtree["<<t<<"] is "<<full->size()<<" Sprites.\n";
 			if(NULL != (subtrees[t])){
 				list<Sprite*>::iterator i;
@@ -147,14 +145,50 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
-void QuadTree::Update(){
+list<Sprite*> *QuadTree::FixOutOfBounds(){
+	list<Sprite*>::iterator i;
+	list<Sprite*> *other;
+	list<Sprite*> *outofbounds = new list<Sprite*>();
 	if(!isLeaf){ // Node
-		int t;
-		for(t=0;t<4;t++){
-			if(NULL != (subtrees[t])) subtrees[t]->Update();
+		// Collect out of bound sprites from sub-trees
+		for(int t=0;t<4;t++){
+			if(NULL != (subtrees[t])){
+				other = subtrees[t]->FixOutOfBounds();
+				outofbounds->splice(outofbounds->end(),*other);
+				delete other;
+			}
+		}
+		// Insert any sprites that are inside of this Tree
+		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
+			if( this->Contains((*i)->GetWorldPosition()) ){
+				this->Insert(*i);
+				outofbounds->erase(i);
+			}
 		}
 	} else { // Leaf
-		list<Sprite *>::iterator i;
+		// Collect and forget any out of bound sprites from object list
+		for( i = objects->begin(); i != objects->end(); ++i ) {
+			if(! this->Contains((*i)->GetWorldPosition()) ){
+				outofbounds->push_back( *i );
+				objects->erase(i);
+			}
+		}
+	}
+	// Return any sprites that couldn't be re-inserted
+	return outofbounds;
+}
+
+
+void QuadTree::Update(){
+	list<Sprite*>::iterator i;
+	// Update all internal sprites
+	if(!isLeaf){ // Node
+		for(int t=0;t<4;t++){
+			if(NULL != (subtrees[t])){
+				subtrees[t]->Update();
+			}
+		}
+	} else { // Leaf
 		for( i = objects->begin(); i != objects->end(); ++i ) {
 			(*i)->Update();
 		}
@@ -163,8 +197,7 @@ void QuadTree::Update(){
 
 void QuadTree::Draw(){
 	if(!isLeaf){ // Node
-		int t;
-		for(t=0;t<4;t++){
+		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])) subtrees[t]->Draw();
 		}
 	} else { // Leaf
@@ -227,8 +260,7 @@ void QuadTree::ReBallance(){
 	} else if(!isLeaf && numObjects<=maxobjects ){
 		assert(0 == objects->size()); // The Leaf list should be empty
 		//cout << "NODE at "<<center.GetX()<<","<<center.GetY()<<" is becoming a LEAF.\n";
-		int t;
-		for(t=0;t<4;t++){
+		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
 				list<Sprite*> *other = subtrees[t]->GetSprites();
 				for( i = other->begin(); i != other->end(); ++i ) {

@@ -25,6 +25,10 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 
 void SpriteManager::Update() {
 	tree->Update();
+	list<Sprite *>* oob = tree->FixOutOfBounds();
+	if(oob->size())
+		Log::Error("%d ships went out of bounds",oob->size());
+	delete oob;
 }
 
 void SpriteManager::Draw() {
