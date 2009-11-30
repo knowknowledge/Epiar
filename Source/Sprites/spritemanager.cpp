@@ -32,7 +32,14 @@ void SpriteManager::Update() {
 }
 
 void SpriteManager::Draw() {
-	tree->Draw();
+	list<Sprite *>::iterator i;
+	// TODO Have the drawing based directly on the screen dimensions
+	// 700 was arbitrarily chosen as a bit more than my current screen size.
+	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 700);
+	//cout<<onscreen->size()<<" sprites are in range.\n";
+	for( i = onscreen->begin(); i != onscreen->end(); ++i ) {
+		(*i)->Draw();
+	}
 }
 
 list<Sprite *> *SpriteManager::GetSprites() {

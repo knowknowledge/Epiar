@@ -116,6 +116,43 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
+list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, int distance){
+	list<Sprite*> *other;
+	list<Sprite*> *near = new list<Sprite*>();
+
+	// The Maximum range is when the center and point are on a 45 degree angle.
+	//   Root-2 of the distance+radius
+	const float maxrange = 1.42* float(radius) + float(distance);
+
+	// If the distance to the point is greater than the max range,
+	//   then no collisions are possible
+	if( (point-center).GetMagnitude() > maxrange){
+		return near;
+	}
+
+	if(!isLeaf){ // Node
+		for(int t=0;t<4;t++){
+			if(NULL != (subtrees[t])){
+				list<Sprite*>::iterator i;
+				other = subtrees[t]->GetSpritesNear(point,distance);
+				for( i = other->begin(); i != other->end(); ++i ) {
+					near->push_back( *i);
+				}
+				delete other;
+			}
+		}
+		return near;
+	} else { // Leaf
+		list<Sprite*>::iterator i;
+		for( i = objects->begin(); i != objects->end(); ++i ) {
+			if( (point - (*i)->GetWorldPosition()).GetMagnitude() < distance ) {
+				near->push_back( *i);
+			}
+		}
+		return near;
+	}
+}
+
 list<Sprite*> *QuadTree::FixOutOfBounds(){
 	list<Sprite*>::iterator i;
 	list<Sprite*> *other;
