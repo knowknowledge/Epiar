@@ -20,7 +20,6 @@ class QuadTree {
 	public:
 		QuadTree(Coordinate center, int radius,unsigned int maxobjects);
 		~QuadTree();
-		void Build(list<Sprite*> *sprites);
 
 		unsigned int Count();
 		bool Contains(Coordinate point);

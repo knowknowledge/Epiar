@@ -22,7 +22,6 @@ QuadTree::QuadTree(Coordinate _center, int _radius, unsigned int _maxobjects){
 	this->center = _center;
 	this->maxobjects = _maxobjects;
 	this->isLeaf = true;
-	//cout<<"NEW QuadTree at "<<center.GetX()<<","<<center.GetY()<<" with radius "<<radius<<".\n";
 }
 
 QuadTree::~QuadTree(){
@@ -30,19 +29,6 @@ QuadTree::~QuadTree(){
 	for(int t=0;t<4;t++){
 		if(NULL != (subtrees[t])) delete subtrees[t];
 	}
-
-	// Delete objects (Leaf)
-	if( objects ) delete objects;
-}
-
-void QuadTree::Build(list<Sprite*> *sprites){
-	list<Sprite *>::iterator i;
-	//cout<<"BUILDING a new QuadTree from a list with "<<sprites->size()<<" Sprites\n";
-	// Insert each object
-	for( i = sprites->begin(); i != sprites->end(); ++i ) {
-		this->Insert(*i);
-	}
-	assert(sprites->size() == this->Count()); // All elements must be added
 }
 
 unsigned int QuadTree::Count(){
@@ -59,21 +45,14 @@ unsigned int QuadTree::Count(){
 }
 
 bool QuadTree::Contains(Coordinate point){
-	//cout<<"Bounding box for NODE at "<<center.GetX()<<","<<center.GetY()<<" with radius "<<radius<<".\n";
 	bool insideLeftBorder = (center.GetX()-radius) <= point.GetX();
 	bool insideRightBorder = (center.GetX()+radius) >= point.GetX();
 	bool insideTopBorder = 	(center.GetY()+radius) >= point.GetY();
 	bool insideBottomBorder = (center.GetY()-radius) <= point.GetY();
-	//cout<<"\tLEFT "<<(center.GetX()-radius)<<" : "<<(insideLeftBorder?"PASS":"FAIL")<<endl;
-	//cout<<"\tRIGHT "<<(center.GetX()+radius)<<" : "<<(insideRightBorder?"PASS":"FAIL")<<endl;
-	//cout<<"\tTOP "<<(center.GetY()+radius)<<" : "<<(insideTopBorder?"PASS":"FAIL")<<endl;
-	//cout<<"\tBOTTOM "<<(center.GetY()-radius)<<" : "<<(insideBottomBorder?"PASS":"FAIL")<<endl;
-	//cout<<"Point "<<point.GetX()<<","<<point.GetY()<<" is "<<((insideLeftBorder && insideRightBorder && insideTopBorder && insideBottomBorder)?"IN":"OUT")<<"SIDE of these bounds"<<endl;
 	return insideLeftBorder && insideRightBorder && insideTopBorder && insideBottomBorder;
 }
 
 void QuadTree::Insert(Sprite *obj){
-	//cout<<"Tree at "<<center.GetX()<<","<<center.GetY()<<" is Inserting Sprite #"<<(this->Count()+1)<<".\n";
 	if(! isLeaf ){ // Node
 		InsertSubTree(obj);
 	} else { // Leaf
@@ -81,7 +60,6 @@ void QuadTree::Insert(Sprite *obj){
 		// An over Full Leaf should become a Node
 		ReBallance();
 	}
-	//cout<<"Finally: Tree at "<<center.GetX()<<","<<center.GetY()<<" has "<<(this->Count())<<" Sprites\n";
 }
 
 bool QuadTree::Delete(Sprite* obj){
@@ -115,13 +93,10 @@ bool QuadTree::Delete(Sprite* obj){
 }
 
 list<Sprite *> *QuadTree::GetSprites() {
-	//cout<<"Tree at "<<center.GetX()<<","<<center.GetY()<<" is getting Sprites.\n";
 	list<Sprite*> *other;
 	list<Sprite*> *full = new list<Sprite*>();
 	if(!isLeaf){ // Node
-		//cout<<"Tree at "<<center.GetX()<<","<<center.GetY()<<" is a NODE with "<<this->Count()<<" Sprites.\n";
 		for(int t=0;t<4;t++){
-			//cout<<"Size before processing subtree["<<t<<"] is "<<full->size()<<" Sprites.\n";
 			if(NULL != (subtrees[t])){
 				list<Sprite*>::iterator i;
 				other = subtrees[t]->GetSprites();
@@ -130,17 +105,13 @@ list<Sprite *> *QuadTree::GetSprites() {
 				}
 				delete other;
 			}
-			//cout<<"Size after processing subtree["<<t<<"] is "<<full->size()<<" Sprites.\n";
 		}
 		return full;
 	} else { // Leaf
-		//cout<<"Tree at "<<center.GetX()<<","<<center.GetY()<<" is a LEAF with "<<this->Count()<<" Sprites.\n";
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
 			full->push_back( *i);
-			//cout<<"\tSprite is at "<<((*i)->GetWorldPosition().GetX())<<','<<((*i)->GetWorldPosition().GetY())<<" .\n";
 		}
-		//cout<<"\tFound "<<full->size()<<" Sprites.\n";
 		return full;
 	}
 }
@@ -174,6 +145,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 			}
 		}
 	}
+	ReBallance();
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
 }
@@ -212,7 +184,6 @@ QuadPosition QuadTree::SubTreeThatContains(Coordinate point){
 	bool rightOfCenter = point.GetX() > center.GetX();
 	bool aboveCenter = point.GetY() > center.GetY();
 	int pos =  (aboveCenter?0:2) | (rightOfCenter?1:0);
-	//cout<<"Point "<<point.GetX()<<","<<point.GetY()<<" should go in subtree["<<pos<<"] of NODE at "<<center.GetX()<<","<<center.GetY()<<" with radius "<<radius<<".\n";
 	assert(this->Contains(point)); // Ensure that this point is in this region
 	return QuadPosition(pos);
 }
@@ -233,12 +204,12 @@ void QuadTree::CreateSubTree(QuadPosition pos){
 	subtrees[pos] = new QuadTree(center+offset,half,maxobjects);
 	assert(subtrees[pos]!=NULL);
 }
+
 void QuadTree::InsertSubTree(Sprite *obj){
-	//cout << "INSERTING Sprite at "<<obj->GetWorldPosition().GetX()<<","<<obj->GetWorldPosition().GetY()<<" into NODE at "<<center.GetX()<<","<<center.GetY()<<".\n";
 	QuadPosition pos = SubTreeThatContains( obj->GetWorldPosition() );
-	//cout << "\t..into subtree "<<PositionNames[pos]<<" of NODE at "<<center.GetX()<<","<<center.GetY()<<".\n";
 	if(subtrees[pos]==NULL)
 		CreateSubTree(pos);
+	assert(subtrees[pos]!=NULL);
 	subtrees[pos]->Insert(obj);
 }
 
@@ -247,7 +218,7 @@ void QuadTree::ReBallance(){
 	list<Sprite*>::iterator i;
 	
 	if( isLeaf && numObjects>maxobjects ){
-		//cout << "LEAF at "<<center.GetX()<<","<<center.GetY()<<" is becoming a NODE.\n";
+		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;
 
 		assert(0 != objects->size()); // The Leaf list should not be empty
@@ -259,7 +230,8 @@ void QuadTree::ReBallance(){
 		this->objects->clear();
 	} else if(!isLeaf && numObjects<=maxobjects ){
 		assert(0 == objects->size()); // The Leaf list should be empty
-		//cout << "NODE at "<<center.GetX()<<","<<center.GetY()<<" is becoming a LEAF.\n";
+		//cout << "NODE at "<<center<<" is becoming a LEAF.\n";
+		isLeaf = true;
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
 				list<Sprite*> *other = subtrees[t]->GetSprites();
@@ -268,6 +240,7 @@ void QuadTree::ReBallance(){
 				}
 				delete other;
 				delete subtrees[t];
+				subtrees[t] = NULL;
 			}
 		}
 		assert(isLeaf); // Still a Leaf
