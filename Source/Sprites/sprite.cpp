@@ -12,7 +12,11 @@
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
+int Sprite::sprite_ids = 0;
+
 Sprite::Sprite() {
+	id = sprite_ids++;
+
 	// Momentum caps
 	float top = OPTION( float, "options/momentum-caps/top" );
 	float right = OPTION( float, "options/momentum-caps/right" );
@@ -55,5 +59,13 @@ void Sprite::Draw( void ) {
 		image->DrawCentered( wx, wy, angle );
 	} else {
 		Log::Warning( "Attempt to draw a sprite before an image was assigned." );
+	}
+}
+
+bool compareSpritePtrs(Sprite* a, Sprite* b){
+	if(a->GetDrawOrder() != b->GetDrawOrder()) {
+		return a->GetDrawOrder() < b->GetDrawOrder();
+	} else {
+		return a->GetID() < b->GetID();
 	}
 }

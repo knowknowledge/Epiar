@@ -34,9 +34,11 @@ void SpriteManager::Update() {
 void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	// TODO Have the drawing based directly on the screen dimensions
-	// 700 was arbitrarily chosen as a bit more than my current screen size.
-	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 700);
+	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000);
 	//cout<<onscreen->size()<<" sprites are in range.\n";
+
+	onscreen->sort(compareSpritePtrs);
+
 	for( i = onscreen->begin(); i != onscreen->end(); ++i ) {
 		(*i)->Draw();
 	}
@@ -46,46 +48,3 @@ list<Sprite *> *SpriteManager::GetSprites() {
 	return( tree->GetSprites() );
 }
 
-
-// Reorders sprite list to ensure correct drawing order
-void SpriteManager::Order() {
-	list<Sprite *>::iterator i;
-	list<int> layerIDs;
-	list<Sprite *> planets;
-	list<Sprite *> ships;
-	list<Sprite *> newSprites;
-	list<Sprite *> *sprites = tree->GetSprites();
-
-	// break our master list into its type lists
-	for( i = sprites->begin(); i != sprites->end(); ++i ) {
-		int order = (*i)->GetDrawOrder();
-		
-		switch( order ) {
-			case DRAW_ORDER_PLANET:
-				planets.push_back( (*i) );
-				break;
-			case DRAW_ORDER_SHIP:
-				ships.push_back( (*i) );
-				break;
-			default:
-				break;
-		}
-	}
-	
-	// insert the various type lists in the correct order
-	// planets
-	for( i = planets.begin(); i != planets.end(); ++i ) {
-		newSprites.push_back( (*i) );
-	}
-
-	// ships
-	for( i = ships.begin(); i != ships.end(); ++i ) {
-		newSprites.push_back( (*i) );
-	}
-	
-	// the player
-	Sprite *player = Player::Instance()->GetSprite();
-	newSprites.push_back( player );
-	
-	//sprites = newSprites;
-}

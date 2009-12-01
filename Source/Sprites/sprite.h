@@ -31,6 +31,8 @@ class Sprite {
 		virtual void Update( void );
 		virtual void Draw( void );
 		
+		int GetID( void ) { return id; }
+
 		float GetAngle( void ) {
 			return( angle );
 		}
@@ -62,6 +64,8 @@ class Sprite {
 		virtual int GetDrawOrder( void ) = 0;
 		
 	private:
+		static int sprite_ids;
+		int id;
 		Coordinate worldPosition;
 		Coordinate momentum;
 		Coordinate acceleration;
@@ -71,5 +75,7 @@ class Sprite {
 		int radarSize;
 		Color radarColor;
 };
+
+bool compareSpritePtrs(Sprite* a, Sprite* b);
 
 #endif // __h_sprite__

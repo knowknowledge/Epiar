@@ -22,9 +22,6 @@ class SpriteManager {
 
 		bool LoadNPCs( string filename );
 		
-		// Reorders sprite list to ensure correct drawing order
-		void Order();
-
 		list<Sprite*> *GetSprites();
 
 	private:
