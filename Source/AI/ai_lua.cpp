@@ -24,6 +24,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Explode", &AI_Lua::ShipExplode},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
+		{"GetID", &AI_Lua::ShipGetID},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
@@ -40,7 +41,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 AI **AI_Lua::pushShip(lua_State *L){
 	AI **s = (AI **)lua_newuserdata(L, sizeof(AI*));
-    *s = new AI();
+    *s = NULL;
     luaL_getmetatable(L, EPIAR_SHIP);
     lua_setmetatable(L, -2);
     return s;
@@ -68,6 +69,7 @@ int AI_Lua::newShip(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	AI **s = pushShip(L);
+	*s = new AI();
 	(*s)->SetWorldPosition( Coordinate(x, y) );
 	(*s)->SetModel( Models::Instance()->GetModel(modelname) );
 	(*s)->SetScript( scriptname );
@@ -155,6 +157,19 @@ int AI_Lua::ShipSetModel(lua_State* L){
 	}
 	return 0;
 
+}
+
+int AI_Lua::ShipGetID(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		lua_pushinteger(L, (*ai)->GetID() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
 }
 
 int AI_Lua::ShipGetAngle(lua_State* L){
