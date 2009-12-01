@@ -45,6 +45,8 @@ void SpriteManager::Draw() {
 }
 
 list<Sprite *> *SpriteManager::GetSprites() {
-	return( tree->GetSprites() );
+	list<Sprite*> *sprites = tree->GetSprites();
+	sprites->sort(compareSpritePtrs);
+	return( sprites );
 }
 
