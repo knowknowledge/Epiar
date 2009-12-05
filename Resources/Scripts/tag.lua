@@ -24,6 +24,9 @@ end
 it.findClosest = function()
 	ships = Epiar.ships()
 	ships[0] = Epiar.player()
+
+	if nil == ships[it.ship] then return end
+
 	it.target=-1
 	it.target_dist= 100000
 	it.target_x,target_y= 10000,10000
@@ -74,6 +77,9 @@ end
 it.UpdateIT = function()
 	ships = Epiar.ships()
 	ships[0] = Epiar.player()
+
+	if nil == ships[it.ship] then return end
+
 	-- Set the Who's It? Dashboard to the correct Image
 	UI.setPicture(it.pic, Ship.GetModelName(ships[it.ship]) )
 	UI.rotatePicture(it.pic, Ship.GetAngle(ships[it.ship]) )

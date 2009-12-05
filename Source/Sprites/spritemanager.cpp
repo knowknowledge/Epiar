@@ -50,3 +50,9 @@ list<Sprite *> *SpriteManager::GetSprites() {
 	return( sprites );
 }
 
+list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, int r) {
+	list<Sprite*> *sprites = tree->GetSpritesNear(c,r);
+	sprites->sort(compareSpritePtrs);
+	return( sprites );
+}
+
