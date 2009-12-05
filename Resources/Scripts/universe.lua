@@ -155,21 +155,43 @@ end
 
 function store()
 	Epiar.pause()
+
+	-- The Store layout parameters
 	width = 820
 	height = 500
 	pad = 10
-	box = 130
+	box = 120
+	button_h = 30
+	button_w = 100
+	row,col = 1,1	
+	getPos = function(c,r)
+		pos_x = pad*(col)+box*(col-1)
+		pos_y = pad*(row)+box*(row-1)
+		return pos_x,pos_y
+	end
+
+	-- Layout the Store in a grid
 	storefront = UI:newWindow( 30,30,width,height,"Ship Yard")
 	models = Epiar.models()
-	row,col = 1,1	
 	for m =1,#models do
-		UI.add(storefront, UI:newButton(pad*(col)+box*(col-1), pad*(row)+box*(row-1), 100,30, models[m], " Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront); ")) --
-		UI.add(storefront, UI:newPicture(pad*(col+2)+box*(col-1),30+(pad)*(row+2)+box*(row-1),box,box,models[m]))
-		col =col+1
+		pos_x,pos_y = getPos(col,row)
 		-- When there isn't enough room, wrap to the next row.
-		if pad*(col+2)+box*(col-1) >= width then 
+		if  pos_x+box >= width then 
 			col=1; row=row+1
+			pos_x,pos_y = getPos(col,row)
 		end
+
+		UI.add(storefront, UI:newButton(
+			pos_x+(box-button_w)/2,
+			pos_y,
+			button_w,button_h, models[m],
+			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront); "))
+		UI.add(storefront, UI:newPicture(
+			pos_x,
+			pos_y + button_h,
+			box,box-button_h,models[m]))
+
+		col =col+1
 	end
 end
 
