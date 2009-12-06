@@ -78,4 +78,19 @@ class Sprite {
 
 bool compareSpritePtrs(Sprite* a, Sprite* b);
 
+// Creates a binary comparison object that can be passed to stl sort.
+// Sprites will be sorted by distance from the point in ascending order.
+struct compareSpriteDistFromPoint
+	: public std::binary_function<Sprite*, Sprite*, bool>
+{
+	compareSpriteDistFromPoint(const Coordinate& c) : point(c) {}
+
+	bool operator() (Sprite* a, Sprite* b) {
+		return (point - a->GetWorldPosition()).GetMagnitude()
+		     < (point - b->GetWorldPosition()).GetMagnitude() ;
+	}
+
+	Coordinate point;
+};
+
 #endif // __h_sprite__

@@ -33,17 +33,15 @@ it.findClosest = function()
 	it.x,it.y = Ship.GetPosition(ships[it.ship])
 
 	-- Find the closest ship to whomever is IT
-	for other=0, #ships do 
-		if other ~= it.ship then
-			other_x,other_y = Ship.GetPosition(ships[other])
-			dist = distfrom(other_x,other_y,it.x,it.y)
-			if dist < it.target_dist then
-				it.target = other
-				it.target_dist= dist
-				it.target_x,it.target_y = other_x,other_y
-			end
-		end
-	end
+	closeShips = Epiar.ships( it.x, it.y, 1000)
+	if 0 == #closeShips then return end
+	-- for i,ship in ipairs(closeShips) do
+	-- 	io.write(string.format("Ship %d is '%s'\n",i,Ship.GetModelName(ship) ))
+	-- end
+
+	it.target = Ship.GetID( closeShips[1])
+	it.target_x,it.target_y = Ship.GetPosition(closeShips[1])
+	it.target_dist= distfrom(it.target_x,it.target_y, it.x,it.y)
 	-- io.write(string.format("Closest Ship to (%d,%d): Ship #%d is at (%d,%d) %d clicks away.\n", it.x,it.y, it.target,it.target_x,it.target_y,it.target_dist))
 end
 it.tag = function(target)

@@ -69,3 +69,4 @@ bool compareSpritePtrs(Sprite* a, Sprite* b){
 		return a->GetID() < b->GetID();
 	}
 }
+

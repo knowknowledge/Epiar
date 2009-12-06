@@ -53,7 +53,7 @@ list<Sprite *> *SpriteManager::GetSprites() {
 
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	list<Sprite*> *sprites = tree->GetSpritesNear(c,r);
-	sprites->sort(compareSpritePtrs);
+	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );
 }
 
