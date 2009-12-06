@@ -146,6 +146,8 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 }
 
 void Input::Handle( list<InputEvent> & events ) {
+	if ( Simulation::isPaused() ) return;
+
 	Player *player = Player::Instance();
 
 	if( keyDown[ SDLK_UP ] ) player->Accelerate();
