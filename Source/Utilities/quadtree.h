@@ -18,7 +18,7 @@ enum QuadPosition{ UPPER_LEFT, UPPER_RIGHT,
 
 class QuadTree {
 	public:
-		QuadTree(Coordinate center, int radius,unsigned int maxobjects);
+		QuadTree(Coordinate center, float radius, unsigned int maxobjects);
 		~QuadTree();
 
 		unsigned int Count();
@@ -28,7 +28,7 @@ class QuadTree {
 		bool Delete(Sprite* obj);
 
 		list<Sprite*> *GetSprites();
-		list<Sprite*> *GetSpritesNear(Coordinate point, int distance);
+		list<Sprite*> *GetSpritesNear(Coordinate point, float distance);
 		list<Sprite*> *FixOutOfBounds();
 
 		void Update();
@@ -44,7 +44,7 @@ class QuadTree {
 		QuadTree* subtrees[4];
 		list<Sprite*> *objects;
 		Coordinate center;
-		int radius;
+		float radius;
 		unsigned int maxobjects;
 		bool isLeaf;
 };

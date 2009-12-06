@@ -237,7 +237,7 @@ int Lua::getSprites(lua_State *L, int type){
 	if( n==3 ){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
-		int r = luaL_checkinteger (L, 3);
+		double r = luaL_checknumber (L, 3);
 		sprites = my_sprites->GetSpritesNear(Coordinate(x,y),r);
 	} else {
 		sprites = my_sprites->GetSprites();

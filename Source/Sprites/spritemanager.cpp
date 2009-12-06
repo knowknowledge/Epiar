@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/quadtree.h"
 
 SpriteManager::SpriteManager() {
     tree = new QuadTree(Coordinate(0,0), 1<<16, 3);
@@ -34,7 +35,7 @@ void SpriteManager::Update() {
 void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	// TODO Have the drawing based directly on the screen dimensions
-	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000);
+	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f);
 	//cout<<onscreen->size()<<" sprites are in range.\n";
 
 	onscreen->sort(compareSpritePtrs);
@@ -50,7 +51,7 @@ list<Sprite *> *SpriteManager::GetSprites() {
 	return( sprites );
 }
 
-list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, int r) {
+list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	list<Sprite*> *sprites = tree->GetSpritesNear(c,r);
 	sprites->sort(compareSpritePtrs);
 	return( sprites );

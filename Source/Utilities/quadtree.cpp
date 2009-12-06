@@ -11,7 +11,7 @@
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
-QuadTree::QuadTree(Coordinate _center, int _radius, unsigned int _maxobjects){
+QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	assert(_maxobjects>0);
 	assert(_radius>0.0f);
 	for(int t=0;t<4;t++){
@@ -116,13 +116,13 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
-list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, int distance){
+list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 	list<Sprite*> *other;
 	list<Sprite*> *near = new list<Sprite*>();
 
 	// The Maximum range is when the center and point are on a 45 degree angle.
-	//   Root-2 of the distance+radius
-	const float maxrange = 1.42* float(radius) + float(distance);
+	//   Root-2 of the radius + the distance
+	const float maxrange = 1.42*radius + distance;
 
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible

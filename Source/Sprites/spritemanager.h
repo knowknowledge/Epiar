@@ -23,7 +23,7 @@ class SpriteManager {
 		bool LoadNPCs( string filename );
 		
 		list<Sprite*> *GetSprites();
-		list<Sprite*> *GetSpritesNear(Coordinate c, int r);
+		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
 	private:
         QuadTree *tree;
