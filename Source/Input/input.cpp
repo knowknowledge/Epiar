@@ -14,6 +14,7 @@
 #include "UI/ui.h"
 #include "Utilities/log.h"
 #include "Graphics/video.h"
+#include "Engine/simulation.h"
 
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
