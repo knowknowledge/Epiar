@@ -98,21 +98,14 @@ list<Sprite *> *QuadTree::GetSprites() {
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				list<Sprite*>::iterator i;
 				other = subtrees[t]->GetSprites();
-				for( i = other->begin(); i != other->end(); ++i ) {
-					full->push_back( *i);
-				}
+				full->splice(full->end(), *other );
 				delete other;
 			}
 		}
 		return full;
 	} else { // Leaf
-		list<Sprite*>::iterator i;
-		for( i = objects->begin(); i != objects->end(); ++i ) {
-			full->push_back( *i);
-		}
-		return full;
+		return new list<Sprite*>(*objects);
 	}
 }
 
@@ -133,11 +126,8 @@ list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				list<Sprite*>::iterator i;
 				other = subtrees[t]->GetSpritesNear(point,distance);
-				for( i = other->begin(); i != other->end(); ++i ) {
-					near->push_back( *i);
-				}
+				near->splice(near->end(), *other);
 				delete other;
 			}
 		}

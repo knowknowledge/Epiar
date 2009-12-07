@@ -11,20 +11,24 @@
 #include "Utilities/quadtree.h"
 
 SpriteManager::SpriteManager() {
-    tree = new QuadTree(Coordinate(0,0), 1<<16, 3);
+	spritelist = new list<Sprite*>();
+	tree = new QuadTree(Coordinate(0,0), 65536.0f, 3);
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
 	cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
+	spritelist->push_back(sprite);
 	tree->Insert(sprite);
 	cout<<"ADD COMPLETE\n\n";
 }
 
 bool SpriteManager::Delete( Sprite *sprite ) {
-	return tree->Delete(sprite);
+	spritelist->remove(sprite);
+	return ( tree->Delete(sprite) );
 }
 
 void SpriteManager::Update() {
+	spritelist->sort(compareSpritePtrs);
 	tree->Update();
 	list<Sprite *>* oob = tree->FixOutOfBounds();
 	if(oob->size())
@@ -46,9 +50,8 @@ void SpriteManager::Draw() {
 }
 
 list<Sprite *> *SpriteManager::GetSprites() {
-	list<Sprite*> *sprites = tree->GetSprites();
-	sprites->sort(compareSpritePtrs);
-	return( sprites );
+	//list<Sprite*> *sprites = tree->GetSprites();
+	return( spritelist );
 }
 
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {

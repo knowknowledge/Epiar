@@ -26,7 +26,10 @@ class SpriteManager {
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
 	private:
+		// Use the tree when referring to the sprites at a location.
         QuadTree *tree;
+		// Use the list when referring to all sprites.
+		list<Sprite*> *spritelist;
 };
 
 #endif // __H_SPRITEMANAGER__
