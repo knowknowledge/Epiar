@@ -13,12 +13,21 @@ SpriteManager::SpriteManager() {
 
 }
 
+SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
+
+SpriteManager *SpriteManager::Instance( void ) {
+	if( pInstance == 0 ) { // is this the first call?
+		pInstance = new SpriteManager; // create the sold instance
+	}
+	return( pInstance );
+}
+
 void SpriteManager::Add( Sprite *sprite ) {
 	if( sprite )
 		sprites.push_back( sprite );
 }
 
-bool SpriteManager::Delete( Sprite *sprite ) {
+bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	list<Sprite *>::iterator i = std::find( sprites.begin(), sprites.end(), sprite );
 
 	if(i != sprites.end())
@@ -29,13 +38,24 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 	
 	return( false );
 }
-
+bool SpriteManager::Delete( Sprite *sprite ) {
+	spritesToDelete.push_back(sprite);
+	return true;
+}
 void SpriteManager::Update() {
 	list<Sprite *>::iterator i;
-
+	//update all sprites
 	for( i = sprites.begin(); i != sprites.end(); ++i ) {
 		(*i)->Update();
 	}
+	//Delete all sprites queued to be deleted
+	if (!spritesToDelete.empty()) {
+		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
+			DeleteSprite(*i);
+		}
+		spritesToDelete.clear();
+	}
+
 }
 
 void SpriteManager::Draw() {

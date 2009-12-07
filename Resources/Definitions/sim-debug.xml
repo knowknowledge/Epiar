@@ -6,7 +6,7 @@
 	<planets>Resources/Definitions/planets-default.xml</planets>
 	<models>Resources/Definitions/models-default.xml</models>
 	<engines>Resources/Definitions/engines-default.xml</engines>
-	<weapons></weapons>
+	<weapons>Resources/Definitions/weapons-default.xml</weapons>
 	<armor></armor>
 	<outfits></outfits>
 	<commodities></commodities>

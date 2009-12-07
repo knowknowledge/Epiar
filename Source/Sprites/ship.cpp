@@ -10,6 +10,8 @@
 #include "Sprites/ship.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
+#include "Engine/weapons.h"
+#include "Engine/weapon.h"
 
 Ship::Ship() {
 	model = NULL;
@@ -19,6 +21,17 @@ Ship::Ship() {
 	status.hullEnergyAbsorbed = 0;
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
+	projectileAmmo = 10;
+	fireDelay = 0;
+	/*Debug: Add all weapons to this ships weapons list, later we will only basic and when they are purchasedhi*/
+	Weapons* weapons = Weapons::Instance();
+	//need to copy weapons instead of modifying originals, this is temp
+	for( list<Weapon *>::iterator i = weapons->weapons.begin(); i != weapons->weapons.end(); ++i ) {
+		shipWeapons.push_back(*i);
+		(*i)->setAmmo(10);
+	}
+	cout << "blah" ;
+	selectedWeapon = 0;
 }
 
 bool Ship::SetModel( Model *model ) {
@@ -87,7 +100,9 @@ void Ship::Accelerate( void ) {
 
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
-	
+	if (fireDelay > 0) {
+		fireDelay--;
+	}
 	if( status.isAccelerating == false ) {
 		flareAnimation->Reset();
 	}
@@ -124,6 +139,23 @@ void Ship::Draw( void ) {
 		status.isAccelerating = false;
 	}
 }
+
+void Ship::Fire() {
+	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
+	if (fireDelay < 1 && !shipWeapons.empty()) {
+		currentWeapon->fireWeapon(GetAngle(), GetWorldPosition());
+		fireDelay = currentWeapon->getFireDelay();
+	}
+}
+
+void Ship::ChangeWeapon() {
+	if (selectedWeapon < shipWeapons.size()-1) {
+		selectedWeapon++;
+		return;
+	} 
+	selectedWeapon = 0;
+}
+
 
 Direction Ship::directionTowards(Coordinate target){
 	float theta;

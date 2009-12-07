@@ -155,6 +155,10 @@ void Input::Handle( list<InputEvent> & events ) {
 	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
+	if( keyDown[ SDLK_SPACE ] ) player->Fire();
+	if( keyDown[ SDLK_LSHIFT ] ) player->ChangeWeapon();
+	
+
 	// DEBUG CODE
 	if( keyDown[ 'c' ] ){  // Rotate towards the center of the Universe
 		player->Rotate( player->directionTowards( Coordinate(0,0) ) );

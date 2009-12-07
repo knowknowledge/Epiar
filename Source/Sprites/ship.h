@@ -12,6 +12,7 @@
 
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
+#include "Engine/weapon.h"
 
 enum Direction {_LEFT=-1,_STRAIGHT,_RIGHT};
 #define LUA_NUMBER_TO_DIRECTION(_ln) ((Direction) ((int) (_ln)))
@@ -29,7 +30,8 @@ class Ship : public Sprite {
 		void Rotate( int direction );
 		void Accelerate( void );
 		void Draw( void );
-		
+		void Fire( void );
+		void ChangeWeapon( void );
 		/* Status functions */
 		Direction directionTowards(Coordinate c);
 		Direction directionTowards(float angle);
@@ -42,6 +44,11 @@ class Ship : public Sprite {
 	private:
 		Model *model;
 		Animation *flareAnimation;
+		int projectileAmmo;
+		int fireDelay; //need better way to do this
+		unsigned int selectedWeapon;
+		vector<Weapon *> shipWeapons;
+
 		struct {
 			/* Related to ship's condition */
 			short int hullEnergyAbsorbed; /* hull health - once the hull absorbs to much energy, your ship blows apart, hooray! :) */

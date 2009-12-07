@@ -12,7 +12,8 @@
 
 class SpriteManager {
 	public:
-		SpriteManager();
+		static SpriteManager *Instance();
+
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
@@ -25,9 +26,14 @@ class SpriteManager {
 		void Order();
 
 		const list<Sprite*>& GetSprites();
-
+	
+	protected:
+		SpriteManager();
 	private:
 		list<Sprite *> sprites;
+		list<Sprite *> spritesToDelete;
+		static SpriteManager *pInstance;
+		bool DeleteSprite( Sprite *sprite );
 };
 
 #endif // __H_SPRITEMANAGER__

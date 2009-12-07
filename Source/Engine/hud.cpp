@@ -71,7 +71,7 @@ void Hud::Update( void ) {
 
 }
 
-void Hud::Draw( SpriteManager &sprites ) {
+void Hud::Draw( SpriteManager *sprites ) {
 	Hud::DrawHullIntegrity();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
@@ -125,7 +125,7 @@ void Hud::DrawShieldIntegrity() {
 	im_shieldstat->Draw( 35, 30 );
 }
 
-void Hud::DrawRadarNav( SpriteManager &sprites ) {
+void Hud::DrawRadarNav( SpriteManager *sprites ) {
 	im_radarnav->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw( sprites );
@@ -152,12 +152,12 @@ void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
 }
 
-void Radar::Draw( SpriteManager &sprites ) {
+void Radar::Draw( SpriteManager *sprites ) {
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	const list<Sprite*>& spriteList = sprites.GetSprites();
+	const list<Sprite*>& spriteList = sprites->GetSprites();
 	for( list<Sprite*>::const_iterator iter = spriteList.begin(); iter != spriteList.end(); iter++)
 	{
 		Coordinate blip( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) );

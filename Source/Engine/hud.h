@@ -29,14 +29,14 @@ class Hud {
 		static Hud *Instance();
 
 		static void Update( void );
-		static void Draw( SpriteManager &sprites );
+		static void Draw( SpriteManager *sprites );
 		
 		static void Alert( const char *, ... );
 
 	private:
 		static void DrawHullIntegrity();
 		static void DrawShieldIntegrity();
-		static void DrawRadarNav( SpriteManager &sprites );
+		static void DrawRadarNav( SpriteManager *sprites );
 		static void DrawMessages();
 		static void DrawFPS();
 	
@@ -58,7 +58,7 @@ class Hud {
 class Radar {
 	public:
 		Radar( void );
-		static void Draw( SpriteManager &sprites );
+		static void Draw( SpriteManager *sprites );
 		static void SetVisibility( int visibility );
 	
 	private:
