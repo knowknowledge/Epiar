@@ -37,7 +37,7 @@ Image *Hud::im_hullstr_rightbar = NULL;
 Image *Hud::im_hullstr_bar = NULL;
 Image *Hud::im_shieldstat = NULL;
 Image *Hud::im_radarnav = NULL;
-int Radar::visibility = 4000;
+int Radar::visibility = 1000;
 
 AlertMessage::AlertMessage( string message, Uint32 length )
 {
@@ -157,13 +157,13 @@ void Radar::Draw( SpriteManager &sprites ) {
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	list<Sprite*> *spriteList = sprites.GetSprites();
+	list<Sprite*> *spriteList = sprites.GetSpritesNear(Player::Instance()->GetWorldPosition(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
 		Coordinate blip( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) );
 		Sprite *sprite = *iter;
 		
-		if( sprite->GetDrawOrder() == DRAW_ORDER_PLAYER ) continue;
+		//if( sprite->GetDrawOrder() == DRAW_ORDER_PLAYER ) continue;
 		
 		// Calculate the blip coordinate for this sprite
 		Coordinate wpos = sprite->GetWorldPosition();

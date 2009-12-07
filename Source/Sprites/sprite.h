@@ -59,7 +59,7 @@ class Sprite {
 			return image;
 		}
 		short int GetRadarSize( void ) { return radarSize; }
-		Color GetRadarColor( void ) { return radarColor; }
+		virtual Color GetRadarColor( void ) { return radarColor; }
 		
 		virtual int GetDrawOrder( void ) = 0;
 		
