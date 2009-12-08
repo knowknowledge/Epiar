@@ -126,7 +126,7 @@ class Vector{
 	//when Vector is thrown as an exception.
 	//inputs: s -- a description of the exception
 	Vector(const char *s){
-		what=_strdup(s);
+		what=strdup(s);
 		i=0; j=0;
 	}//end constructor
 

@@ -30,7 +30,6 @@ Ship::Ship() {
 		shipWeapons.push_back(*i);
 		(*i)->setAmmo(10);
 	}
-	cout << "blah" ;
 	selectedWeapon = 0;
 }
 
