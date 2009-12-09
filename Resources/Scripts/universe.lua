@@ -131,21 +131,20 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
-function hitEveryOne()
-	ships = Epiar.ships()
-	for s =1, #ships do
-		ship = ships[s]
-		Ship.Damage(ship,1)
-		pct = Ship.GetHull(ship)
-		-- io.write(string.format("Ship %d is at %f%% Hull\n",s,pct))
-		if pct <= 0 then
-			Ship.Explode(cur_ship)
-		else
-			Ship.SetRadarColor(cur_ship,255 *pct,0 ,0)
-		end
+function hitClosestToPlayer()
+	pos_x, pos_y = Ship.GetPosition(Epiar.player())
+	ship = Epiar.ships( pos_x, pos_y, 100 )[1]
+	if nil == ship then return end
+	Ship.Damage(ship,1)
+	pct = Ship.GetHull(ship)
+	io.write(string.format("Ship #%d (a %s) is at %f%% Hull\n",Ship.GetID(ship),Ship.GetModelName(ship), pct))
+	if pct <= 0 then
+		Ship.Explode(ship)
+	else
+		Ship.SetRadarColor(ship,255 *pct,0 ,0)
 	end
 end
---registerPostStep(hitEveryOne)
+registerPostStep(hitClosestToPlayer)
 
 function buy(model)
 	io.write("Player just bought "..model.."\n")
@@ -200,4 +199,4 @@ end
 
 dofile "Resources/Scripts/basics.lua"
 dofile "Resources/Scripts/tag.lua"
-dofile "Resources/Scripts/swarm.lua"
+--dofile "Resources/Scripts/swarm.lua"

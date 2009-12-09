@@ -21,6 +21,7 @@ Player *Player::Instance( void ) {
 }
 
 Player::Player() {
+	this->SetRadarColor( Color::Get(0xFF,0xD7,0) );
 
 }
 

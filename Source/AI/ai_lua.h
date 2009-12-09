@@ -33,6 +33,7 @@ class AI_Lua{
 		static int ShipSetModel(lua_State* L);
 
 		// Current Ship State
+		static int ShipGetID(lua_State* L);
 		static int ShipGetAngle(lua_State* L);
 		static int ShipGetPosition(lua_State* L);
 		static int ShipGetMomentumAngle(lua_State* L);

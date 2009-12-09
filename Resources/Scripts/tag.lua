@@ -24,23 +24,24 @@ end
 it.findClosest = function()
 	ships = Epiar.ships()
 	ships[0] = Epiar.player()
+
+	if nil == ships[it.ship] then return end
+
 	it.target=-1
 	it.target_dist= 100000
 	it.target_x,target_y= 10000,10000
 	it.x,it.y = Ship.GetPosition(ships[it.ship])
 
 	-- Find the closest ship to whomever is IT
-	for other=0, #ships do 
-		if other ~= it.ship then
-			other_x,other_y = Ship.GetPosition(ships[other])
-			dist = distfrom(other_x,other_y,it.x,it.y)
-			if dist < it.target_dist then
-				it.target = other
-				it.target_dist= dist
-				it.target_x,it.target_y = other_x,other_y
-			end
-		end
-	end
+	closeShips = Epiar.ships( it.x, it.y, 1000)
+	if 0 == #closeShips then return end
+	-- for i,ship in ipairs(closeShips) do
+	-- 	io.write(string.format("Ship %d is '%s'\n",i,Ship.GetModelName(ship) ))
+	-- end
+
+	it.target = Ship.GetID( closeShips[1])
+	it.target_x,it.target_y = Ship.GetPosition(closeShips[1])
+	it.target_dist= distfrom(it.target_x,it.target_y, it.x,it.y)
 	-- io.write(string.format("Closest Ship to (%d,%d): Ship #%d is at (%d,%d) %d clicks away.\n", it.x,it.y, it.target,it.target_x,it.target_y,it.target_dist))
 end
 it.tag = function(target)
@@ -74,6 +75,9 @@ end
 it.UpdateIT = function()
 	ships = Epiar.ships()
 	ships[0] = Epiar.player()
+
+	if nil == ships[it.ship] then return end
+
 	-- Set the Who's It? Dashboard to the correct Image
 	UI.setPicture(it.pic, Ship.GetModelName(ships[it.ship]) )
 	UI.rotatePicture(it.pic, Ship.GetAngle(ships[it.ship]) )

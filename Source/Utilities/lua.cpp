@@ -231,18 +231,28 @@ int Lua::getModelNames(lua_State *L){
 }
 
 int Lua::getSprites(lua_State *L, int type){
-	list<Sprite *> filtered;
-	list<Sprite *> sprites = my_sprites->GetSprites();
+	int n = lua_gettop(L);  // Number of arguments
+
+	list<Sprite *> *sprites = NULL;
+	if( n==3 ){
+		double x = luaL_checknumber (L, 1);
+		double y = luaL_checknumber (L, 2);
+		double r = luaL_checknumber (L, 3);
+		sprites = my_sprites->GetSpritesNear(Coordinate(x,y),r);
+	} else {
+		sprites = my_sprites->GetSprites();
+	}
 	
-	// Collect only the ships
+	// Collect only the Sprites of this type
 	list<Sprite *>::iterator i;
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+	list<Sprite *> filtered;
+	for( i = sprites->begin(); i != sprites->end(); ++i ) {
 		if( (*i)->GetDrawOrder() == type){
 			filtered.push_back( (*i) );
 		}
 	}
 
-	// Populate a Lua table with ships
+	// Populate a Lua table with Sprites
     lua_createtable(L, filtered.size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
