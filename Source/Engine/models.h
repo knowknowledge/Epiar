@@ -38,9 +38,9 @@ class Model {
 					Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
 				}
 			} else PPA_MATCHES( "thrustOffset" ) {
-				thrustOffset = atoi( value.c_str() );
+				thrustOffset = (short)atoi( value.c_str() );
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
-				maxEnergyAbsorption = atoi( value.c_str() );
+				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
 			return true;
 		}

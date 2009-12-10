@@ -58,9 +58,8 @@ class Sprite {
 		Image *GetImage( void ) {
 			return image;
 		}
-		short int GetRadarSize( void ) { return radarSize; }
+		int GetRadarSize( void ) { return radarSize; }
 		virtual Color GetRadarColor( void ) { return radarColor; }
-		
 		virtual int GetDrawOrder( void ) = 0;
 		
 	private:
@@ -74,6 +73,7 @@ class Sprite {
 		float angle;
 		int radarSize;
 		Color radarColor;
+		
 };
 
 bool compareSpritePtrs(Sprite* a, Sprite* b);

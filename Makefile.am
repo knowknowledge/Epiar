@@ -4,9 +4,9 @@ bin_PROGRAMS = Epiar
 
 Epiar_SOURCES = Source/main.cpp Source/AI/ai.cpp Source/AI/ai_lua.cpp Source/Input/input.cpp Source/Engine/alliances.cpp \
                 Source/Engine/engines.cpp Source/Engine/hud.cpp Source/Engine/models.cpp \
-                Source/Engine/simulation.cpp Source/Engine/starfield.cpp \
+                Source/Engine/simulation.cpp Source/Engine/starfield.cpp Source/Engine/weapon.cpp Source/Engine/weapons.cpp \
                 Source/Sprites/planets.cpp Source/Sprites/player.cpp Source/Sprites/ship.cpp \
-                Source/Sprites/sprite.cpp Source/Sprites/spritemanager.cpp \
+                Source/Sprites/sprite.cpp Source/Sprites/spritemanager.cpp Source/Sprites/projectile.cpp \
                 Source/Utilities/camera.cpp Source/Utilities/cmath.cpp Source/Utilities/coordinate.cpp \
                 Source/Utilities/hashtbl.cpp Source/Utilities/log.cpp \
                 Source/Utilities/timer.cpp Source/Utilities/trig.cpp Source/Utilities/vector.cpp \

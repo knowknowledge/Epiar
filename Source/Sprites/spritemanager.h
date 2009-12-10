@@ -13,7 +13,8 @@
 
 class SpriteManager {
 	public:
-		SpriteManager();
+		static SpriteManager *Instance();
+
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
@@ -25,11 +26,16 @@ class SpriteManager {
 		list<Sprite*> *GetSprites();
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
+	protected:
+		SpriteManager();
 	private:
 		// Use the tree when referring to the sprites at a location.
         QuadTree *tree;
 		// Use the list when referring to all sprites.
 		list<Sprite*> *spritelist;
+		list<Sprite *> spritesToDelete;
+		static SpriteManager *pInstance;
+		bool DeleteSprite( Sprite *sprite );
 };
 
 #endif // __H_SPRITEMANAGER__

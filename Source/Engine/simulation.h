@@ -14,6 +14,7 @@
 #include "Engine/engines.h"
 #include "Engine/models.h"
 #include "Sprites/planets.h"
+#include "Engine/weapons.h"
 
 class Simulation {
 	public:
@@ -33,11 +34,12 @@ class Simulation {
 		bool Parse( void );
 	
 		string filename;
-		string planetsFilename, modelsFilename, enginesFilename, alliancesFilename;
+		string planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename;
 		
 		Planets *planets;
 		Engines *engines;
 		Models *models;
+		Weapons *weapons;
 		Alliances *alliances;
 		
 		string playerDefaultModel;
