@@ -131,21 +131,6 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
-function hitClosestToPlayer()
-	pos_x, pos_y = Ship.GetPosition(Epiar.player())
-	ship = Epiar.ships( pos_x, pos_y, 100 )[1]
-	if nil == ship then return end
-	Ship.Damage(ship,1)
-	pct = Ship.GetHull(ship)
-	io.write(string.format("Ship #%d (a %s) is at %f%% Hull\n",Ship.GetID(ship),Ship.GetModelName(ship), pct))
-	if pct <= 0 then
-		Ship.Explode(ship)
-	else
-		Ship.SetRadarColor(ship,255 *pct,0 ,0)
-	end
-end
-registerPostStep(hitClosestToPlayer)
-
 function buy(model)
 	io.write("Player just bought "..model.."\n")
 	Ship.SetModel(Epiar.player(),model)

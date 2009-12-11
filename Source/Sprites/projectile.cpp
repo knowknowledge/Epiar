@@ -9,6 +9,7 @@
 #include "Sprites/projectile.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
+#include "Sprites/ship.h"
 
 Projectile::Projectile(float angleToFire, Coordinate worldPosition, Image* img, int lifetime, int velocity)
 {
@@ -19,7 +20,7 @@ Projectile::Projectile(float angleToFire, Coordinate worldPosition, Image* img, 
 
 	SetWorldPosition( worldPosition );
 	SetAngle(angleToFire);
-	SetRadarColor (Color::Get(255,0,0));
+	SetRadarColor (Color::Get(0x99,0x99,0x99));
 
 	SetImage(img);
 
@@ -41,11 +42,24 @@ Projectile::~Projectile(void)
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	ttl--;
+	SpriteManager *sprites = SpriteManager::Instance();
+	int numImpacts = 0;
 	
-	if (ttl < 1){
-		SpriteManager *sprites = SpriteManager::Instance();
+	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 50 );
+	if( impacts->size() > 1) {
+		list<Sprite *>::iterator i;
+		for( i = impacts->begin(); i != impacts->end(); ++i ) {
+			if( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
+//			 || ( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER )
+			 ) {
+				((Ship*)(*i))->Damage( 200 );
+				numImpacts++;
+			}
+		}
+	}
+	if (numImpacts || (ttl < 1)) {
+		if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
 		sprites->Delete( (Sprite*)this );
-		
 	}
 }
 

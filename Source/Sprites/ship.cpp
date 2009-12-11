@@ -12,6 +12,7 @@
 #include "Utilities/trig.h"
 #include "Engine/weapons.h"
 #include "Engine/weapon.h"
+#include "Sprites/spritemanager.h"
 
 Ship::Ship() {
 	model = NULL;
@@ -28,7 +29,7 @@ Ship::Ship() {
 	//need to copy weapons instead of modifying originals, this is temp
 	for( list<Weapon *>::iterator i = weapons->weapons.begin(); i != weapons->weapons.end(); ++i ) {
 		shipWeapons.push_back(*i);
-		(*i)->setAmmo(10);
+		(*i)->setAmmo(1000);
 	}
 	selectedWeapon = 0;
 }
@@ -111,8 +112,19 @@ void Ship::Update( void ) {
 	if (fireDelay > 0) {
 		fireDelay--;
 	}
+	
 	if( status.isAccelerating == false ) {
 		flareAnimation->Reset();
+	}
+
+	// Shiw the hits taken as part of the radar color
+	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
+	
+	// Ship has taken as much damage as possible...
+	// It Explodes!
+	if( status.hullEnergyAbsorbed >=  (float)model->getMaxEnergyAbsorption() ) {
+		SpriteManager *sprites = SpriteManager::Instance();
+		sprites->Delete( (Sprite*)this );
 	}
 }
 
