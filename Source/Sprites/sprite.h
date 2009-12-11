@@ -19,6 +19,7 @@
 #define DRAW_ORDER_PLANET  0
 #define DRAW_ORDER_SHIP    1
 #define DRAW_ORDER_PLAYER  2
+#define DRAW_ORDER_WEAPON  3
 
 class Sprite {
 	public:

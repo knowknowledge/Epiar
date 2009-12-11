@@ -14,13 +14,12 @@
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
 
-class Weapon {//: public Sprite {
+class Weapon {
 	public:
 		Weapon(void);
 		~Weapon(void);
 
 		bool parserCB( string sectionName, string subName, string value );
-		virtual int GetDrawOrder( void );
 		void _dbg_PrintInfo( void );
 		void fireWeapon(float angleToFire, Coordinate worldPosition);
 		int getFireDelay(void) {return fireDelay;}
@@ -29,7 +28,7 @@ class Weapon {//: public Sprite {
 
 		string name; //weapons name
 		int weaponType; //(energy, explosive, laser, etc)
-		string modelName;
+		Image *image;
 		int payload; //intesity of explosion
 	    int velocity; //speed of travel
 		int acceleration; //speed of acceleration
@@ -39,8 +38,6 @@ class Weapon {//: public Sprite {
 		int fireDelay; //delay between being able to fire agian in ticks
 	    int lifetime; //ticks until weapon is destroyed
 		//tracking factor
-	   	Model *model;
-		Animation *flareAnimation;
 		float direction;
 		bool isAccelerating; 
 };

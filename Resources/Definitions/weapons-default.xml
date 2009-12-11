@@ -6,7 +6,7 @@
 	<weapon>
 		<name>Missle</name>
 		<weaponType>0</weaponType>
-		<modelName>Escape Pod</modelName>
+		<imageName>Resources/Graphics/podv.png</imageName>
 		<payload>10</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
@@ -18,7 +18,7 @@
 	<weapon>
 		<name>Slow Missle</name>
 		<weaponType>0</weaponType>
-		<modelName>Escape Pod</modelName>
+		<imageName>Resources/Graphics/podv.png</imageName>
 		<payload>10</payload>
 		<velocity>5</velocity>
 		<acceleration>2</acceleration>
