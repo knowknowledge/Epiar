@@ -9,6 +9,7 @@
 #define __H_SPRITEMANAGER__
 
 #include "Sprites/sprite.h"
+#include "Utilities/quadtree.h"
 
 class SpriteManager {
 	public:
@@ -22,15 +23,16 @@ class SpriteManager {
 
 		bool LoadNPCs( string filename );
 		
-		// Reorders sprite list to ensure correct drawing order
-		void Order();
+		list<Sprite*> *GetSprites();
+		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
-		const list<Sprite*>& GetSprites();
-	
 	protected:
 		SpriteManager();
 	private:
-		list<Sprite *> sprites;
+		// Use the tree when referring to the sprites at a location.
+        QuadTree *tree;
+		// Use the list when referring to all sprites.
+		list<Sprite*> *spritelist;
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
 		bool DeleteSprite( Sprite *sprite );

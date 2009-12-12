@@ -215,39 +215,37 @@ static void afont_gl_render_char( afont *a, char c )
 
 void afont_gl_render_text( afontgl *ag, const char *text )
 {
-  int i;
-  float color[4];
-  float biaszero;
-  char *buf;
+	float color[4] = { 0.0f };
+	float biaszero = 0.0f;
+	char *buf = NULL;
+	int buflength = 0; //track buffer length
 
-  /* Set the scale and bias values appropriately */
-  if(ag->type == AFONT_GL_8BIT) {
-    glGetFloatv(GL_CURRENT_COLOR, color);
-    glPushAttrib(GL_PIXEL_MODE_BIT);
+	/* Set the scale and bias values appropriately */
+	if(ag->type == AFONT_GL_8BIT) {
+		glGetFloatv( GL_CURRENT_COLOR, color );
+		glPushAttrib( GL_PIXEL_MODE_BIT );
 
-    biaszero = 0.0;
+		glPixelTransferf( GL_RED_SCALE, biaszero );
+		glPixelTransferf( GL_GREEN_SCALE, biaszero );
+		glPixelTransferf( GL_BLUE_SCALE, biaszero );
+		glPixelTransferf( GL_ALPHA_SCALE, color[3] );
+		glPixelTransferf( GL_RED_BIAS, color[0] );
+		glPixelTransferf( GL_GREEN_BIAS, color[1] );
+		glPixelTransferf( GL_BLUE_BIAS, color[2] );
+		glPixelTransferf( GL_ALPHA_BIAS, biaszero );
+	}
 
-    glPixelTransferf(GL_RED_SCALE, biaszero);
-    glPixelTransferf(GL_GREEN_SCALE, biaszero);
-    glPixelTransferf(GL_BLUE_SCALE, biaszero);
-    glPixelTransferf(GL_ALPHA_SCALE, color[3]);
-    glPixelTransferf(GL_RED_BIAS, color[0]);
-    glPixelTransferf(GL_GREEN_BIAS, color[1]);
-    glPixelTransferf(GL_BLUE_BIAS, color[2]);
-    glPixelTransferf(GL_ALPHA_BIAS, biaszero);
-  }
+	buf = strdup( text );
+	for( buflength = 0; text[ buflength ]; buflength++ ) {
+		buf[ buflength ] -= ag->base;
+	}
 
-  buf = strdup(text);
-  for(i = 0; text[i]; i++) {
-    buf[i] -= ag->base;
-  }
-  glListBase(ag->baselist);
-  glCallLists(strlen(text), GL_UNSIGNED_BYTE, buf);
-  free(buf);
+	glListBase( ag->baselist );
+	glCallLists( buflength, GL_UNSIGNED_BYTE, buf );
+	free( buf );
 
-  /* Reset the scale and bias values */
-  if(ag->type == AFONT_GL_8BIT)
-    glPopAttrib();
-  
-  return;
+	/* Reset the scale and bias values */
+	if(ag->type == AFONT_GL_8BIT)
+		glPopAttrib();
+	return;
 }

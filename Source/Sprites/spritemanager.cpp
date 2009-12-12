@@ -8,9 +8,11 @@
 #include "includes.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/quadtree.h"
 
 SpriteManager::SpriteManager() {
-
+	spritelist = new list<Sprite*>();
+	tree = new QuadTree(Coordinate(0,0), 65536.0f, 3);
 }
 
 SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
@@ -23,93 +25,60 @@ SpriteManager *SpriteManager::Instance( void ) {
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
-	if( sprite )
-		sprites.push_back( sprite );
+	cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
+	spritelist->push_back(sprite);
+	tree->Insert(sprite);
+	cout<<"ADD COMPLETE\n\n";
 }
 
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
-	list<Sprite *>::iterator i = std::find( sprites.begin(), sprites.end(), sprite );
-
-	if(i != sprites.end())
-	{
-		i = sprites.erase( i );
-		return( true );
-	}
-	
-	return( false );
+	spritelist->remove(sprite);
+	return ( tree->Delete(sprite) );
 }
+
 bool SpriteManager::Delete( Sprite *sprite ) {
 	spritesToDelete.push_back(sprite);
 	return true;
 }
 void SpriteManager::Update() {
-	list<Sprite *>::iterator i;
-	//update all sprites
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
-		(*i)->Update();
-	}
+	spritelist->sort(compareSpritePtrs);
+	tree->Update();
+	list<Sprite *>* oob = tree->FixOutOfBounds();
+	if(oob->size())
+		Log::Error("%d ships went out of bounds",oob->size());
+	delete oob;
+
 	//Delete all sprites queued to be deleted
+	list<Sprite *>::iterator i;
 	if (!spritesToDelete.empty()) {
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);
 		}
 		spritesToDelete.clear();
 	}
-
 }
 
 void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
+	// TODO Have the drawing based directly on the screen dimensions
+	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f);
+	//cout<<onscreen->size()<<" sprites are in range.\n";
 
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+	onscreen->sort(compareSpritePtrs);
+
+	for( i = onscreen->begin(); i != onscreen->end(); ++i ) {
 		(*i)->Draw();
 	}
 }
 
-// Reorders sprite list to ensure correct drawing order
-void SpriteManager::Order() {
-	list<Sprite *>::iterator i;
-	list<int> layerIDs;
-	list<Sprite *> planets;
-	list<Sprite *> ships;
-	list<Sprite *> newSprites;
-
-	// break our master list into its type lists
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
-		int order = (*i)->GetDrawOrder();
-		
-		switch( order ) {
-			case DRAW_ORDER_PLANET:
-				planets.push_back( (*i) );
-				break;
-			case DRAW_ORDER_SHIP:
-				ships.push_back( (*i) );
-				break;
-			default:
-				break;
-		}
-	}
-	
-	// insert the various type lists in the correct order
-	// planets
-	for( i = planets.begin(); i != planets.end(); ++i ) {
-		newSprites.push_back( (*i) );
-	}
-
-	// ships
-	for( i = ships.begin(); i != ships.end(); ++i ) {
-		newSprites.push_back( (*i) );
-	}
-	
-	// the player
-	Sprite *player = Player::Instance()->GetSprite();
-	newSprites.push_back( player );
-	
-	sprites = newSprites;
+list<Sprite *> *SpriteManager::GetSprites() {
+	//list<Sprite*> *sprites = tree->GetSprites();
+	return( spritelist );
 }
 
-const list<Sprite *>& SpriteManager::GetSprites() {
+list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
+	list<Sprite*> *sprites = tree->GetSpritesNear(c,r);
+	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );
 }
-
 

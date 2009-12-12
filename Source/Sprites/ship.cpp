@@ -12,6 +12,7 @@
 #include "Utilities/trig.h"
 #include "Engine/weapons.h"
 #include "Engine/weapon.h"
+#include "Sprites/spritemanager.h"
 
 Ship::Ship() {
 	model = NULL;
@@ -28,7 +29,7 @@ Ship::Ship() {
 	//need to copy weapons instead of modifying originals, this is temp
 	for( list<Weapon *>::iterator i = weapons->weapons.begin(); i != weapons->weapons.end(); ++i ) {
 		shipWeapons.push_back(*i);
-		(*i)->setAmmo(10);
+		(*i)->setAmmo(1000);
 	}
 	selectedWeapon = 0;
 }
@@ -58,24 +59,28 @@ string Ship::GetModelName() {
 	}
 }
 
-void Ship::Rotate( int direction ) {
-	float rotPerSecond, timerDelta;
+void Ship::Rotate( float direction ) {
+	float rotPerSecond, timerDelta, maxturning;
 	float angle = GetAngle();
 	
 	if( !model ) {
 		Log::Warning( "Attempt to rotate sprite with no model." );
-		
 		return;
 	}
-	
+
+	// Compute the maximum amount that the ship can turn
 	rotPerSecond = model->GetRotationsPerSecond();
 	timerDelta = Timer::GetDelta();
-	
-	if( direction == _LEFT ) {
-		angle += static_cast<float>((rotPerSecond * timerDelta) * 360.);
-	}
-    if( direction == _RIGHT){
-		angle -= static_cast<float>((rotPerSecond * timerDelta) * 360.);
+	maxturning = static_cast<float>((rotPerSecond * timerDelta) * 360.);
+
+	// Cap the ship rotation
+	if (fabs(direction) > maxturning){ 
+		if (direction > 0 )
+			angle += maxturning;
+		else
+			angle -= maxturning;
+	} else {
+		angle += direction;
 	}
 	
 	// Normalize
@@ -97,13 +102,29 @@ void Ship::Accelerate( void ) {
 	status.isAccelerating = true;
 }
 
+
+void Ship::Damage(short int damage) {
+	status.hullEnergyAbsorbed += damage;
+}
+
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	if (fireDelay > 0) {
 		fireDelay--;
 	}
+	
 	if( status.isAccelerating == false ) {
 		flareAnimation->Reset();
+	}
+
+	// Shiw the hits taken as part of the radar color
+	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
+	
+	// Ship has taken as much damage as possible...
+	// It Explodes!
+	if( status.hullEnergyAbsorbed >=  (float)model->getMaxEnergyAbsorption() ) {
+		SpriteManager *sprites = SpriteManager::Instance();
+		sprites->Delete( (Sprite*)this );
 	}
 }
 
@@ -156,7 +177,7 @@ void Ship::ChangeWeapon() {
 }
 
 
-Direction Ship::directionTowards(Coordinate target){
+float Ship::directionTowards(Coordinate target){
 	float theta;
 	//Trig *trig = Trig::Instance();
 	Coordinate position = target - GetWorldPosition();
@@ -167,22 +188,15 @@ Direction Ship::directionTowards(Coordinate target){
 	return this->directionTowards(theta);
 }
 
-Direction Ship::directionTowards(float angle){
-	float aim;
-	// aim must be of the correct domain (0,360)
-	angle = normalizeAngle(angle);
-	aim = angle - this->GetAngle();
-	aim = normalizeAngle(aim);
-	
-	//Log::Message("Aim %f",aim);
-	// return the correct direction
-	if	  ( aim < 180 ) return _LEFT ;
-	else if ( aim > 180 ) return _RIGHT; 
-	return _STRAIGHT;
+// Returns the best direction to turn in order to aim in a certain direction
+float Ship::directionTowards(float angle){
+	return normalizeAngle(angle - this->GetAngle());
 }
 
 // Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%)
 float Ship::getHullIntegrityPct() {
 	assert( model );
-	return( ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption() );
+	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
+	//Log::Message("Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
+	return(remaining);
 }

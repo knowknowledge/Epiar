@@ -19,6 +19,7 @@
 #define DRAW_ORDER_PLANET  0
 #define DRAW_ORDER_SHIP    1
 #define DRAW_ORDER_PLAYER  2
+#define DRAW_ORDER_WEAPON  3
 
 class Sprite {
 	public:
@@ -31,6 +32,8 @@ class Sprite {
 		virtual void Update( void );
 		virtual void Draw( void );
 		
+		int GetID( void ) { return id; }
+
 		float GetAngle( void ) {
 			return( angle );
 		}
@@ -57,10 +60,12 @@ class Sprite {
 			return image;
 		}
 		int GetRadarSize( void ) { return radarSize; }
-		Color GetRadarColor( void ) { return radarColor; }
+		virtual Color GetRadarColor( void ) { return radarColor; }
 		virtual int GetDrawOrder( void ) = 0;
 		
 	private:
+		static int sprite_ids;
+		int id;
 		Coordinate worldPosition;
 		Coordinate momentum;
 		Coordinate acceleration;
@@ -70,6 +75,23 @@ class Sprite {
 		int radarSize;
 		Color radarColor;
 		
+};
+
+bool compareSpritePtrs(Sprite* a, Sprite* b);
+
+// Creates a binary comparison object that can be passed to stl sort.
+// Sprites will be sorted by distance from the point in ascending order.
+struct compareSpriteDistFromPoint
+	: public std::binary_function<Sprite*, Sprite*, bool>
+{
+	compareSpriteDistFromPoint(const Coordinate& c) : point(c) {}
+
+	bool operator() (Sprite* a, Sprite* b) {
+		return (point - a->GetWorldPosition()).GetMagnitude()
+		     < (point - b->GetWorldPosition()).GetMagnitude() ;
+	}
+
+	Coordinate point;
 };
 
 #endif // __h_sprite__

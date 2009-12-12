@@ -12,6 +12,7 @@
 
 #include "Graphics/image.h"
 #include "includes.h"
+#include <map>
 #include <zlib.h>
 
 class XMLFile {
@@ -25,6 +26,7 @@ class XMLFile {
 		
 	private:
 		xmlDocPtr xmlPtr;
+		map<string,string> values;
 		string filename;
 };
 

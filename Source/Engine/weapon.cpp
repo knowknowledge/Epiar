@@ -27,8 +27,8 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "weaponType" ) {
 		if (atoi( value.c_str()) != 0)
 			weaponType = atoi( value.c_str() );
-	} else PPA_MATCHES( "modelName" ) {
-		modelName = value;
+	} else PPA_MATCHES( "imageName" ) {
+		image = new Image(value);
 	} else PPA_MATCHES( "payload" ) {
 		if (atoi( value.c_str()) != 0)
 			payload = atoi( value.c_str() );
@@ -55,10 +55,6 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
-int Weapon::GetDrawOrder( void ) {
-	// todo create draw order for weapons
-	return( DRAW_ORDER_SHIP );
-}
 
 void Weapon::_dbg_PrintInfo( void ) {
 	cout << "Weapon: " << name << endl;
@@ -69,8 +65,8 @@ void Weapon::fireWeapon(float angleToFire, Coordinate worldPosition) {
 	//if (weaponType == WEAPON_PROJECTILE) {
 	if (ammo > 0) {
 		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(angleToFire,worldPosition, modelName, lifetime, velocity);
-		sprites->Add( projectile->GetSprite() );
+		Projectile *projectile = new Projectile(angleToFire,worldPosition, image, lifetime, velocity);
+		sprites->Add( (Sprite*)projectile );
 		ammo--;
 		cout << "ammo: " << ammo << endl;
 	}

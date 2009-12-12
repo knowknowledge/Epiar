@@ -11,7 +11,7 @@
 
 #include "AI/ai_lua.h"
 
-void AI_Lua::RegisterAI(lua_State *luaVM){
+void AI_Lua::RegisterAI(lua_State *L){
 	// These are the Ship Functions we're supporting in Lua
 	static const luaL_Reg shipFunctions[] = {
 		// Creation
@@ -20,7 +20,11 @@ void AI_Lua::RegisterAI(lua_State *luaVM){
 		{"Accelerate", &AI_Lua::ShipAccelerate},
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
+		{"Damage", &AI_Lua::ShipDamage},
+		{"Explode", &AI_Lua::ShipExplode},
+		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
+		{"GetID", &AI_Lua::ShipGetID},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
@@ -31,40 +35,41 @@ void AI_Lua::RegisterAI(lua_State *luaVM){
 		{"GetHull", &AI_Lua::ShipGetHull},
 		{NULL, NULL}
 	};
-	luaL_newmetatable(luaVM, EPIAR_SHIP);
-	luaL_openlib(luaVM, EPIAR_SHIP, shipFunctions,0);  
+	luaL_newmetatable(L, EPIAR_SHIP);
+	luaL_openlib(L, EPIAR_SHIP, shipFunctions,0);  
 }
 
-AI **AI_Lua::pushShip(lua_State *luaVM){
-	AI **s = (AI **)lua_newuserdata(luaVM, sizeof(AI*));
-    *s = new AI();
-    luaL_getmetatable(luaVM, EPIAR_SHIP);
-    lua_setmetatable(luaVM, -2);
+AI **AI_Lua::pushShip(lua_State *L){
+	AI **s = (AI **)lua_newuserdata(L, sizeof(AI*));
+    *s = NULL;
+    luaL_getmetatable(L, EPIAR_SHIP);
+    lua_setmetatable(L, -2);
     return s;
 }
 
-AI **AI_Lua::checkShip(lua_State *luaVM, int index){
+AI **AI_Lua::checkShip(lua_State *L, int index){
   AI **ai;
-  luaL_checktype(luaVM, index, LUA_TUSERDATA);
-  ai = (AI**)luaL_checkudata(luaVM, index, EPIAR_SHIP);
-  if (ai == NULL) luaL_typerror(luaVM, index, EPIAR_SHIP);
+  luaL_checktype(L, index, LUA_TUSERDATA);
+  ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
+  if (ai == NULL) luaL_typerror(L, index, EPIAR_SHIP);
   return ai;
 }
 
-int AI_Lua::newShip(lua_State *luaVM){
-	int n = lua_gettop(luaVM);  // Number of arguments
+int AI_Lua::newShip(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
 	if (n != 5)
-		return luaL_error(luaVM, "Got %d arguments expected 5 (class, x, y, model, script)", n);
+		return luaL_error(L, "Got %d arguments expected 5 (class, x, y, model, script)", n);
 
-	double x = luaL_checknumber (luaVM, 2);
-	double y = luaL_checknumber (luaVM, 3);
-	string modelname = luaL_checkstring (luaVM, 4);
-	string scriptname = luaL_checkstring (luaVM, 5);
+	double x = luaL_checknumber (L, 2);
+	double y = luaL_checknumber (L, 3);
+	string modelname = luaL_checkstring (L, 4);
+	string scriptname = luaL_checkstring (L, 5);
 
 	Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
-	AI **s = pushShip(luaVM);
+	AI **s = pushShip(L);
+	*s = new AI();
 	(*s)->SetWorldPosition( Coordinate(x, y) );
 	(*s)->SetModel( Models::Instance()->GetModel(modelname) );
 	(*s)->SetScript( scriptname );
@@ -95,7 +100,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 
 	if (n == 2) {
 		AI** ai = checkShip(L,1);
-		Direction dir = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
+		float dir = static_cast<float>( luaL_checknumber(L, 2) );
         (*ai)->Rotate(dir);
 	}
 	else
@@ -116,6 +121,55 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n); 
 	}
 	return 0;
+}
+int AI_Lua::ShipDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		int damage = (int) luaL_checknumber (L, 2);
+		(*ai)->Damage( damage );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipExplode(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
+		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipSetModel(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		string modelname = luaL_checkstring (L, 2);
+		(*ai)->SetModel( Models::Instance()->GetModel(modelname) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, modelname)", n); 
+	}
+	return 0;
+
+}
+
+int AI_Lua::ShipGetID(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		lua_pushinteger(L, (*ai)->GetID() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
 }
 
 int AI_Lua::ShipGetAngle(lua_State* L){
@@ -175,13 +229,13 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) { // Angle
 		AI** ai = checkShip(L,1);
-		float angle = static_cast<float> (LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2)));
+		float angle = static_cast<float>( luaL_checknumber(L, 2) );
 		lua_pushnumber(L, (double) (*ai)->directionTowards(angle) );
 	}
 	else if(n==3){ // Coordinate
 		AI** ai = checkShip(L,1);
-		double x = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 2));
-		double y = LUA_NUMBER_TO_DIRECTION(luaL_checknumber(L, 3));
+		double x = static_cast<float>( luaL_checknumber(L, 2) );
+		double y = static_cast<float>( luaL_checknumber(L, 3) );
 		lua_pushnumber(L, (double) (*ai)->directionTowards(Coordinate(x,y)) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -204,9 +258,9 @@ int AI_Lua::ShipGetHull(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
-		lua_pushnumber(L, (int) (*ai)->getHullIntegrityPct() );
+		lua_pushnumber(L, (double) (*ai)->getHullIntegrityPct() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+		luaL_error(L, "Got %d arguments expected 2 (self)", n);
 	}
 	return 1;
 }

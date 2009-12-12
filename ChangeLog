@@ -1,3 +1,15 @@
+Sunday, November 22, 2009
+	Matt Zweig:
+		* Added Ship damage and removal.
+		* Fixed window-child relative origin.
+		* Created basic Shipyard.
+		* Small optimizations to normalizeAngle, DrawTiled and XML-Get.
+
+Sunday, November 21, 2009
+	Matt Zweig:
+		* Moved Lua code to Resources directory.
+		* Split Lua functionality into seperate Scenarios.
+
 Sunday, November 15, 2009
 	Matt Zweig:
 		* Added single-window close.

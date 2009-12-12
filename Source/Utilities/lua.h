@@ -39,12 +39,12 @@ class Lua {
 		static int pause(lua_State *L);
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
-		static int getPlayer(lua_State *luaVM);
-		static int shakeCamera(lua_State *luaVM);
-		static int getModelNames(lua_State *luaVM);
-		static int getSprites(lua_State *luaVM, int type);
-		static int getShips(lua_State *luaVM);
-		static int getPlanets(lua_State *luaVM);
+		static int getPlayer(lua_State *L);
+		static int shakeCamera(lua_State *L);
+		static int getModelNames(lua_State *L);
+		static int getSprites(lua_State *L, int type);
+		static int getShips(lua_State *L);
+		static int getPlanets(lua_State *L);
 	private:
 		static vector<string> buffer;
 
@@ -53,7 +53,7 @@ class Lua {
 
 		// Internal variables
 		static SpriteManager* my_sprites;
-		static lua_State *luaVM;
+		static lua_State *L;
 		static bool luaInitialized;
 };
 

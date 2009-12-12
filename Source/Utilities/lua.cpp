@@ -23,7 +23,7 @@
 #include "Utilities/camera.h" 
 
 bool Lua::luaInitialized = false;
-lua_State *Lua::luaVM = NULL;
+lua_State *Lua::L = NULL;
 SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
 
@@ -37,10 +37,10 @@ bool Lua::Load( string filename ) {
 
 	// Start the lua script
 	
-	if( luaL_dofile(luaVM,filename.c_str()) ){
+	if( luaL_dofile(L,filename.c_str()) ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
-		Log::Error("%s", lua_tostring(luaVM, -1));
-		cout << lua_tostring(luaVM, -1) << endl;
+		Log::Error("%s", lua_tostring(L, -1));
+		cout << lua_tostring(L, -1) << endl;
 	} else {
 		Log::Message("Loaded the universe");
 	}
@@ -51,10 +51,10 @@ bool Lua::Load( string filename ) {
 
 bool Lua::Update(){
     // Tell the Lua State to update itself
-    lua_getglobal(luaVM, "Update");
-    if( lua_pcall(luaVM,0,0,0) != 0 ){
+    lua_getglobal(L, "Update");
+    if( lua_pcall(L,0,0,0) != 0 ){
 		Log::Error("Could not call lua function Update");
-	    Log::Error("%s", lua_tostring(luaVM, -1));
+	    Log::Error("%s", lua_tostring(L, -1));
         return (false);
     }
 	return (true);
@@ -73,10 +73,10 @@ bool Lua::Run( string line ) {
 		}
 	}
 
-	error = luaL_loadbuffer(luaVM, line.c_str(), line.length(), "line") || lua_pcall(luaVM, 0, 1, 0);
+	error = luaL_loadbuffer(L, line.c_str(), line.length(), "line") || lua_pcall(L, 0, 1, 0);
 	if( error ) {
-		Console::InsertResult(lua_tostring(luaVM, -1));
-		lua_pop(luaVM, 1);  /* pop error message from the stack */
+		Console::InsertResult(lua_tostring(L, -1));
+		lua_pop(L, 1);  /* pop error message from the stack */
 	}
 
 	return( false );
@@ -119,14 +119,14 @@ bool Lua::Init() {
 		return( false );
 	}
 	
-	luaVM = lua_open();
+	L = lua_open();
 
-	if( !luaVM ) {
+	if( !L ) {
 		Log::Warning( "Could not initialize Lua VM." );
 		return( false );
 	}
 
-	luaL_openlibs( luaVM );
+	luaL_openlibs( L );
 
 	RegisterFunctions();
 	
@@ -137,7 +137,7 @@ bool Lua::Init() {
 
 bool Lua::Close() {
 	if( luaInitialized ) {
-		lua_close( luaVM );
+		lua_close( L );
 	} else {
 		Log::Warning( "Cannot deinitialize Lua. It is either not initialized or a script is still loaded." );
 		return( false );
@@ -161,13 +161,13 @@ void Lua::RegisterFunctions() {
 		{"planets", &Lua::getPlanets},
 		{NULL, NULL}
 	};
-	luaL_register(luaVM,"Epiar",EngineFunctions);
+	luaL_register(L,"Epiar",EngineFunctions);
 
 
 	// Register these functions to their own lua namespaces
-	AI_Lua::RegisterAI(luaVM);
-	UI_Lua::RegisterUI(luaVM);
-	Planets_Lua::RegisterPlanets(luaVM);
+	AI_Lua::RegisterAI(L);
+	UI_Lua::RegisterUI(L);
+	Planets_Lua::RegisterPlanets(L);
 }
 
 int Lua::console_echo(lua_State *L) {
@@ -181,12 +181,12 @@ int Lua::console_echo(lua_State *L) {
 	return 0;
 }
 
-int Lua::pause(lua_State *luaVM){
+int Lua::pause(lua_State *L){
 	Simulation::pause();
 	return 0;
 }
 
-int Lua::unpause(lua_State *luaVM){
+int Lua::unpause(lua_State *L){
 	Simulation::unpause();
 	return 0;
 }
@@ -196,8 +196,8 @@ int Lua::ispaused(lua_State *L){
 	return 1;
 }
 
-int Lua::getPlayer(lua_State *luaVM){
-	Player **player = (Player**)AI_Lua::pushShip(luaVM);
+int Lua::getPlayer(lua_State *L){
+	Player **player = (Player**)AI_Lua::pushShip(L);
 	*player = Player::Instance();
 	return 1;
 }
@@ -231,18 +231,28 @@ int Lua::getModelNames(lua_State *L){
 }
 
 int Lua::getSprites(lua_State *L, int type){
-	list<Sprite *> filtered;
-	list<Sprite *> sprites = my_sprites->GetSprites();
+	int n = lua_gettop(L);  // Number of arguments
+
+	list<Sprite *> *sprites = NULL;
+	if( n==3 ){
+		double x = luaL_checknumber (L, 1);
+		double y = luaL_checknumber (L, 2);
+		double r = luaL_checknumber (L, 3);
+		sprites = my_sprites->GetSpritesNear(Coordinate(x,y),r);
+	} else {
+		sprites = my_sprites->GetSprites();
+	}
 	
-	// Collect only the ships
+	// Collect only the Sprites of this type
 	list<Sprite *>::iterator i;
-	for( i = sprites.begin(); i != sprites.end(); ++i ) {
+	list<Sprite *> filtered;
+	for( i = sprites->begin(); i != sprites->end(); ++i ) {
 		if( (*i)->GetDrawOrder() == type){
 			filtered.push_back( (*i) );
 		}
 	}
 
-	// Populate a Lua table with ships
+	// Populate a Lua table with Sprites
     lua_createtable(L, filtered.size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
@@ -253,14 +263,14 @@ int Lua::getSprites(lua_State *L, int type){
         switch(type){
             case DRAW_ORDER_PLAYER:
             case DRAW_ORDER_SHIP:
-                s = (Sprite **)AI_Lua::pushShip(luaVM);
+                s = (Sprite **)AI_Lua::pushShip(L);
                 break;
             case DRAW_ORDER_PLANET:
-                s = (Sprite **)Planets_Lua::pushPlanet(luaVM);
+                s = (Sprite **)Planets_Lua::pushPlanet(L);
                 break;
             default:
                 Log::Error("Unexpected Sprite Type '%d'",type);
-                s = (Sprite **)lua_newuserdata(luaVM, sizeof(Sprite*));
+                s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
                 break;
         }
     

@@ -26,7 +26,7 @@ class Model {
 			} else PPA_MATCHES( "image" ) {
 				image.Load( value );
 			} else PPA_MATCHES( "mass" ) {
-				mass = (short)atoi( value.c_str() );
+				mass = atof( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
 				rotPerSecond = static_cast<float>(atof( value.c_str() ));
 			} else PPA_MATCHES( "engine" ) {
@@ -42,12 +42,14 @@ class Model {
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
 				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
-			
 			return true;
 		}
 		
 		void _dbg_PrintInfo( void ) {
-		
+			if( mass <= 0.001 ){
+				// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
+				Log::Error("Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
+			}
 		}
 		
 		string GetName( void ) const {
@@ -88,7 +90,7 @@ class Model {
 		string name;
 		Image image;
 		Engine *engine;
-		short int mass;
+		float mass;
 		short int thrustOffset; // engine flare animation offset
 		float rotPerSecond;
 		short int maxEnergyAbsorption; 
