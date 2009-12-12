@@ -53,7 +53,7 @@ void Projectile::Update( void ) {
 			if( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
 //			 || ( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER )
 			 ) {
-				((Ship*)(*i))->Damage( 200 );
+				((Ship*)(*i))->Damage( 20 );
 				numImpacts++;
 			}
 		}
