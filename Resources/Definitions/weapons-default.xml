@@ -13,7 +13,7 @@
 		<ammoType>1</ammoType>
 		<ammoConsumption>1</ammoConsumption>
 		<fireDelay>10</fireDelay>
-		<lifetime>50</lifetime>
+		<lifetime>3000</lifetime> <!-- Milliseconds of Life -->
 	</weapon>
 	<weapon>
 		<name>Slow Missle</name>
@@ -25,6 +25,6 @@
 		<ammoType>1</ammoType>
 		<ammoConsumption>1</ammoConsumption>
 		<fireDelay>10</fireDelay>
-		<lifetime>100</lifetime>
+		<lifetime>3000</lifetime>
 	</weapon>
 </weapons>
