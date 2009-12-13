@@ -30,6 +30,10 @@ function zigzag(cur_ship,timeleft)
 	elseif timeleft % 10 >=7 then
 		Ship.Rotate(cur_ship, -1)
 	end
+	if timeleft % 10 == 5 then
+		Ship.ChangeWeapon(cur_ship)
+	end
+	Ship.Fire(cur_ship )
 	Ship.Accelerate(cur_ship )
 end
 
@@ -39,11 +43,13 @@ function boundingClosure(distance, ticks)
 		ships = Epiar.ships()
 		-- Move Non-Player ships
 		for s =1, #ships do
-			if AIPlans[s].time < 3 then
-				x,y = Ship.GetPosition(ships[s])
+			cur_ship = ships[s]
+			n = Ship.GetID(cur_ship)
+			if AIPlans[n].time < 3 then
+				x,y = Ship.GetPosition(cur_ship)
 				dist = distfrom(x,y,0,0)
 				if dist > distance then
-					AIPlans[s] = {plan=aimCenter,time=ticks}
+					AIPlans[n] = {plan=aimCenter,time=ticks}
 				end
 			end
 		end

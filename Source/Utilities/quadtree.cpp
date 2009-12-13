@@ -12,6 +12,7 @@
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
 QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
+	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
 	assert(_maxobjects>0);
 	assert(_radius>0.0f);
 	for(int t=0;t<4;t++){
@@ -146,6 +147,7 @@ list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 list<Sprite*> *QuadTree::FixOutOfBounds(){
 	list<Sprite*>::iterator i;
 	list<Sprite*> *other;
+	list<Sprite*> *stillinside = new list<Sprite*>();
 	list<Sprite*> *outofbounds = new list<Sprite*>();
 	if(!isLeaf){ // Node
 		// Collect out of bound sprites from sub-trees
@@ -158,20 +160,26 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		}
 		// Insert any sprites that are inside of this Tree
 		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
-			if( this->Contains((*i)->GetWorldPosition()) ){
-				this->Insert(*i);
-				outofbounds->erase(i);
+			if( this->Contains((*i)->GetWorldPosition()) ) {
+				stillinside->push_back(*i);
 			}
+		}
+		for( i = stillinside->begin(); i != stillinside->end(); ++i ) {
+			this->Insert(*i);
+			outofbounds->remove(*i);
 		}
 	} else { // Leaf
 		// Collect and forget any out of bound sprites from object list
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			if(! this->Contains((*i)->GetWorldPosition()) ){
+			if(! this->Contains((*i)->GetWorldPosition()) ) {
 				outofbounds->push_back( *i );
-				objects->erase(i);
 			}
 		}
+		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
+			objects->remove(*i);
+		}
 	}
+	delete stillinside;
 	ReBallance();
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
@@ -244,6 +252,7 @@ void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
 	list<Sprite*>::iterator i;
 	
+	//if( isLeaf && numObjects>maxobjects && radius>10.0f){
 	if( isLeaf && numObjects>maxobjects ){
 		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;

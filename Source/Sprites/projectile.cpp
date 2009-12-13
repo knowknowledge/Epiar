@@ -10,11 +10,13 @@
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
 #include "Sprites/ship.h"
+#include "Utilities/timer.h"
 
 Projectile::Projectile(float angleToFire, Coordinate worldPosition, Image* img, int lifetime, int velocity)
 {
 	direction = angleToFire;
-	ttl = lifetime;
+	secondsOfLife = lifetime;
+	start = Timer::GetTicks();
 	this->velocity = velocity;
 	isAccelerating = true;
 
@@ -41,10 +43,11 @@ Projectile::~Projectile(void)
 
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
-	ttl--;
 	SpriteManager *sprites = SpriteManager::Instance();
 	int numImpacts = 0;
 	
+	// Temporarily removed until Projectiles can tell who fired them.
+	/*
 	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 50 );
 	if( impacts->size() > 1) {
 		list<Sprite *>::iterator i;
@@ -52,12 +55,13 @@ void Projectile::Update( void ) {
 			if( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
 //			 || ( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER )
 			 ) {
-				((Ship*)(*i))->Damage( 200 );
+				((Ship*)(*i))->Damage( 20 );
 				numImpacts++;
 			}
 		}
 	}
-	if (numImpacts || (ttl < 1)) {
+	*/
+	if (numImpacts || ( Timer::GetTicks() > secondsOfLife + start )) {
 		if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
 		sprites->Delete( (Sprite*)this );
 	}

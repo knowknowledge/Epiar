@@ -22,7 +22,8 @@ public:
 			return( DRAW_ORDER_WEAPON );
 	}
 private:
-	int ttl; //time to live before projectile blows up
+	Uint32 secondsOfLife; //time to live before projectile blows up
+	Uint32 start;
 	float direction;
 	int velocity;
 	bool isAccelerating; 
