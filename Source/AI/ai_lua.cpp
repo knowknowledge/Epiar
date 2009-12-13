@@ -20,8 +20,10 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Accelerate", &AI_Lua::ShipAccelerate},
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
+		{"Fire", &AI_Lua::ShipFire},
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Explode", &AI_Lua::ShipExplode},
+		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
@@ -122,6 +124,18 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 	}
 	return 0;
 }
+
+int AI_Lua::ShipFire(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		(*ai)->Fire();
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
 int AI_Lua::ShipDamage(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -140,6 +154,17 @@ int AI_Lua::ShipExplode(lua_State* L){
 		AI** ai = checkShip(L,1);
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
 		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipChangeWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		(*ai)->ChangeWeapon();
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
 	}

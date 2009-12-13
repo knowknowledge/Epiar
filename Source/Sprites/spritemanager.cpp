@@ -25,10 +25,10 @@ SpriteManager *SpriteManager::Instance( void ) {
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
-	cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
+	//cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
 	spritelist->push_back(sprite);
 	tree->Insert(sprite);
-	cout<<"ADD COMPLETE\n\n";
+	//cout<<"ADD COMPLETE\n\n";
 }
 
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
