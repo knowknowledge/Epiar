@@ -30,6 +30,10 @@ function zigzag(cur_ship,timeleft)
 	elseif timeleft % 10 >=7 then
 		Ship.Rotate(cur_ship, -1)
 	end
+	if timeleft % 10 == 5 then
+		Ship.ChangeWeapon(cur_ship)
+	end
+	Ship.Fire(cur_ship )
 	Ship.Accelerate(cur_ship )
 end
 

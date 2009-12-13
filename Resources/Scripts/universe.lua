@@ -131,6 +131,7 @@ function aimCenter(cur_ship,timeleft)
 		Ship.Rotate(cur_ship,
 			Ship.directionTowards(cur_ship, 0,0) )
 	end
+	Ship.Fire(cur_ship )
 	Ship.Accelerate(cur_ship )
 end
 registerInit(planetTraffic)

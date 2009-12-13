@@ -22,7 +22,7 @@
 		<payload>10</payload>
 		<velocity>5</velocity>
 		<acceleration>2</acceleration>
-		<ammoType>1</ammoType>
+		<ammoType>2</ammoType>
 		<ammoConsumption>1</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>30000</lifetime>
@@ -34,8 +34,8 @@
 		<payload>10</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
-		<ammoType>1</ammoType>
-		<ammoConsumption>1</ammoConsumption>
+		<ammoType>3</ammoType>
+		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>1000</lifetime>
 	</weapon>
@@ -46,8 +46,8 @@
 		<payload>30</payload>
 		<velocity>20</velocity>
 		<acceleration>2</acceleration>
-		<ammoType>1</ammoType>
-		<ammoConsumption>1</ammoConsumption>
+		<ammoType>3</ammoType>
+		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>500</lifetime>
 	</weapon>
@@ -58,8 +58,8 @@
 		<payload>8</payload>
 		<velocity>10</velocity>
 		<acceleration>0</acceleration>
-		<ammoType>1</ammoType>
-		<ammoConsumption>1</ammoConsumption>
+		<ammoType>4</ammoType>
+		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>1000</lifetime>
 	</weapon>

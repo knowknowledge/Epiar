@@ -46,6 +46,8 @@ void Projectile::Update( void ) {
 	SpriteManager *sprites = SpriteManager::Instance();
 	int numImpacts = 0;
 	
+	// Temporarily removed until Projectiles can tell who fired them.
+	/*
 	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 50 );
 	if( impacts->size() > 1) {
 		list<Sprite *>::iterator i;
@@ -58,6 +60,7 @@ void Projectile::Update( void ) {
 			}
 		}
 	}
+	*/
 	if (numImpacts || ( Timer::GetTicks() > secondsOfLife + start )) {
 		if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
 		sprites->Delete( (Sprite*)this );
