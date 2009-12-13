@@ -12,7 +12,7 @@
 		<acceleration>2</acceleration>
 		<ammoType>1</ammoType>
 		<ammoConsumption>1</ammoConsumption>
-		<fireDelay>10</fireDelay>
+		<fireDelay>500</fireDelay>
 		<lifetime>50</lifetime>
 	</weapon>
 	<weapon>
@@ -24,7 +24,7 @@
 		<acceleration>2</acceleration>
 		<ammoType>1</ammoType>
 		<ammoConsumption>1</ammoConsumption>
-		<fireDelay>10</fireDelay>
+		<fireDelay>1000</fireDelay>
 		<lifetime>100</lifetime>
 	</weapon>
 </weapons>

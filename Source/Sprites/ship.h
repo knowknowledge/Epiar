@@ -12,7 +12,7 @@
 
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
-#include "Engine/weapon.h"
+#include "Engine/weaponSystem.h"
 
 class Ship : public Sprite {
 	public:
@@ -43,11 +43,8 @@ class Ship : public Sprite {
 	private:
 		Model *model;
 		Animation *flareAnimation;
-		int projectileAmmo;
-		int fireDelay; //need better way to do this
-		unsigned int selectedWeapon;
-		vector<Weapon *> shipWeapons;
 
+		WeaponSystem *shipWeaponSystem;
 		struct {
 			/* Related to ship's condition */
 			short int hullEnergyAbsorbed; /* hull health - once the hull absorbs to much energy, your ship blows apart, hooray! :) */

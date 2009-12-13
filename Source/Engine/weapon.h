@@ -23,7 +23,6 @@ class Weapon {
 		void _dbg_PrintInfo( void );
 		void fireWeapon(float angleToFire, Coordinate worldPosition);
 		int getFireDelay(void) {return fireDelay;}
-		void setAmmo (int value) {ammo = value;} 
 	private:
 
 		string name; //weapons name
@@ -34,7 +33,6 @@ class Weapon {
 		int acceleration; //speed of acceleration
 		int ammoType; //type of ammo used
 		int ammoConsumption; //ammount of ammo to consume per shot
-		int ammo;
 		int fireDelay; //delay between being able to fire agian in ticks
 	    int lifetime; //ticks until weapon is destroyed
 		//tracking factor

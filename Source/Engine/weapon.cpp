@@ -63,13 +63,10 @@ void Weapon::_dbg_PrintInfo( void ) {
 void Weapon::fireWeapon(float angleToFire, Coordinate worldPosition) {
 	//todo check weapon type and generate correct class based on type
 	//if (weaponType == WEAPON_PROJECTILE) {
-	if (ammo > 0) {
 		SpriteManager *sprites = SpriteManager::Instance();
 		Projectile *projectile = new Projectile(angleToFire,worldPosition, image, lifetime, velocity);
 		sprites->Add( (Sprite*)projectile );
-		ammo--;
-		cout << "ammo: " << ammo << endl;
-	}
+
 	//}
 
 }
