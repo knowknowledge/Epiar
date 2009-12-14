@@ -17,6 +17,7 @@ class WeaponSystem {
 	WeaponSystem(void);
 	~WeaponSystem(void);
 	void addShipWeapon(Weapon *i);
+	void addShipWeapon(string weaponName);
 	void removeShipWeapon(int pos);
 	void addAmmo(int qty);
 	void fireWeapon(float angleToFire, Coordinate worldPosition, int offset);

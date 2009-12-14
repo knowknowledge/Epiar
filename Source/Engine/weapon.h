@@ -21,6 +21,8 @@ class Weapon {
 
 		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
+		string GetName(void) {return name;}
+
 		void fireWeapon(float angleToFire, Coordinate worldPosition);
 		int getFireDelay(void) {return fireDelay;}
 	private:
