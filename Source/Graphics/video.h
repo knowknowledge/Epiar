@@ -58,6 +58,7 @@ class Video {
 		static int GetHalfHeight( void );
 
 		static void DrawPoint( int x, int y, float r, float g, float b );
+		static void DrawPoint( Coordinate c, Color col );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b, float a );
 		static void DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b);
