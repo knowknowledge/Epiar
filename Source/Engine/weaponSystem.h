@@ -11,19 +11,25 @@
 #define WEAPONSYSTEM_H_
 
 #include "Engine/weapon.h"
+#include "Sprites/projectile.h"
 #include <map>
 
 class WeaponSystem {
 	public:
 	WeaponSystem(void);
 	~WeaponSystem(void);
+
+	// Outfitting Functions
 	void addShipWeapon(Weapon *i);
 	void addShipWeapon(string weaponName);
 	void removeShipWeapon(int pos);
 	void addAmmo(int qty);
-	void fireWeapon(float angleToFire, Coordinate worldPosition, int offset);
-	void changeWeaponNext(void);
 
+	// Action Functions
+	Projectile* fireWeapon(float angleToFire, Coordinate worldPosition, int offset);
+	string changeWeaponNext(void);
+
+	// Status Functions
 	Weapon* currentWeapon();
 	int currentAmmo();
 	

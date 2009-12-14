@@ -11,22 +11,24 @@
 #define __H_PROJECTILE__
 
 #include "Sprites/sprite.h"
+#include "Engine/weapons.h"
+
 class Projectile :
 	public Sprite
 {
 public:
-	Projectile(float angleToFire, Coordinate worldPosition, Image* img, int lifetime, int velocity);
+	Projectile(float angleToFire, Coordinate worldPosition, Weapon* weapon);
 	~Projectile(void);
 	void Update( void );
+	void SetOwnerID(int id) { ownerID = id; }
 	int GetDrawOrder( void ) {
 			return( DRAW_ORDER_WEAPON );
 	}
 private:
 	Uint32 secondsOfLife; //time to live before projectile blows up
 	Uint32 start;
-	float direction;
-	int velocity;
-	bool isAccelerating; 
+	int ownerID;
+
 	/*todo Add 
  -graphics:
 	 firing graphic

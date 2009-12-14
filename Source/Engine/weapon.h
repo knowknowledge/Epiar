@@ -21,17 +21,22 @@ class Weapon {
 
 		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
-		string GetName(void) {return name;}
 
-		void fireWeapon(float angleToFire, Coordinate worldPosition);
-		int getFireDelay(void) {return fireDelay;}
-		int getAmmoType() {return ammoType;}
-		int getAmmoConsumption() { return ammoConsumption;}
+		string GetName(void) {return name;}
+		Image *GetImage(void) {return image;}
+		int GetType(void) {return weaponType;}
+		int GetPayload(void) {return payload;}
+		int GetVelocity(void) {return velocity;}
+		int GetAmmoType(void) {return ammoType;}
+		int GetAmmoConsumption(void) { return ammoConsumption;}
+		int GetFireDelay(void) {return fireDelay;}
+		int GetLifetime(void) {return lifetime;}
+
 	private:
 
 		string name; //weapons name
-		int weaponType; //(energy, explosive, laser, etc)
 		Image *image;
+		int weaponType; //(energy, explosive, laser, etc)
 		int payload; //intesity of explosion
 	    int velocity; //speed of travel
 		int acceleration; //speed of acceleration
@@ -39,9 +44,7 @@ class Weapon {
 		int ammoConsumption; //ammount of ammo to consume per shot
 		int fireDelay; //delay between being able to fire agian in ticks
 	    int lifetime; //ticks until weapon is destroyed
-		//tracking factor
-		float direction;
-		bool isAccelerating; 
+		//TODO tracking factor
 };
 
 #endif

@@ -149,7 +149,9 @@ void Ship::Draw( void ) {
 }
 
 void Ship::Fire() {
-	shipWeaponSystem->fireWeapon(GetAngle(), GetWorldPosition(), model->GetImage()->GetHalfHeight());
+	Projectile* projectile = shipWeaponSystem->fireWeapon(GetAngle(), GetWorldPosition(), model->GetImage()->GetHalfHeight());
+	if(projectile)
+		projectile->SetOwnerID( this->GetID() );
 }
 
 void Ship::ChangeWeapon() {

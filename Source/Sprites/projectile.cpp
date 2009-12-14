@@ -11,30 +11,31 @@
 #include "Sprites/spritemanager.h"
 #include "Sprites/ship.h"
 #include "Utilities/timer.h"
+#include "Engine/weapons.h"
 
-Projectile::Projectile(float angleToFire, Coordinate worldPosition, Image* img, int lifetime, int velocity)
+Projectile::Projectile(float angleToFire, Coordinate worldPosition, Weapon* weapon)
 {
-	direction = angleToFire;
-	secondsOfLife = lifetime;
+	// All Projectiles get these
+	ownerID = -1;
 	start = Timer::GetTicks();
-	this->velocity = velocity;
-	isAccelerating = true;
+	SetRadarColor (Color::Get(0x55,0x55,0x55));
 
+	// These are based off of the Ship firing this projectile
 	SetWorldPosition( worldPosition );
 	SetAngle(angleToFire);
-	SetRadarColor (Color::Get(0x99,0x99,0x99));
 
-	SetImage(img);
+	// These are based off of the Weapon
+	secondsOfLife = weapon->GetLifetime();
+	SetImage(weapon->GetImage());
 
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( angleToFire ));
 
-	momentum = Coordinate( trig->GetCos( angle ) * velocity,
-	                         -1 * trig->GetSin( angle ) * velocity );
+	momentum = Coordinate( trig->GetCos( angle ) * weapon->GetVelocity(),
+	                         -1 * trig->GetSin( angle ) * weapon->GetVelocity() );
 	
 	SetMomentum( momentum );
-
 }
 
 Projectile::~Projectile(void)
@@ -46,23 +47,21 @@ void Projectile::Update( void ) {
 	SpriteManager *sprites = SpriteManager::Instance();
 	int numImpacts = 0;
 	
-	// Temporarily removed until Projectiles can tell who fired them.
-	/*
 	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 50 );
 	if( impacts->size() > 1) {
 		list<Sprite *>::iterator i;
 		for( i = impacts->begin(); i != impacts->end(); ++i ) {
-			if( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
-//			 || ( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER )
+			if( ( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
+			    ||( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER ) )
+			  &&( (*i)->GetID() != ownerID )
 			 ) {
 				((Ship*)(*i))->Damage( 20 );
 				numImpacts++;
 			}
 		}
 	}
-	*/
 	if (numImpacts || ( Timer::GetTicks() > secondsOfLife + start )) {
-		if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
+		//if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
 		sprites->Delete( (Sprite*)this );
 	}
 }

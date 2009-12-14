@@ -7,8 +7,10 @@
  * Notes         :
  */
 
+#include "Sprites/spritemanager.h"
 #include "Engine/weaponSystem.h"
 #include "Engine/weapons.h"
+#include "Sprites/projectile.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 
@@ -30,7 +32,7 @@ WeaponSystem::~WeaponSystem(){
 void WeaponSystem::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
 	//Debug: add 100 rounds of ammo for every weapon added
-	ammo.insert ( pair<int,int>(i->getAmmoType(),20) );
+	ammo.insert ( pair<int,int>(i->GetAmmoType(),20) );
 }
 
 void WeaponSystem::addShipWeapon(string weaponName){
@@ -47,30 +49,39 @@ void WeaponSystem::addAmmo(int qty){
 	//projectileAmmo += qty;
 }
 
-void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int offset) {
-	if( selectedWeapon<0 || selectedWeapon > shipWeapons.size() ) return;
+Projectile* WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int offset) {
+	if( selectedWeapon<0 || selectedWeapon > shipWeapons.size() )
+		return (Projectile*)NULL;
+
 	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
 	
-	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && ammo.find(currentWeapon->getAmmoType())->second > 0) {
+	if ( currentWeapon->GetFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && ammo.find(currentWeapon->GetAmmoType())->second > 0) {
 		//Calculate the offset needed by the ship to fire infront of the ship
 		Trig *trig = Trig::Instance();
 		float angle = static_cast<float>(trig->DegToRad( angleToFire ));		
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
+
 		//Fire the weapon
-		currentWeapon->fireWeapon(angleToFire, worldPosition);
+		SpriteManager *sprites = SpriteManager::Instance();
+		Projectile *projectile = new Projectile(angleToFire, worldPosition, currentWeapon);
+		sprites->Add( (Sprite*)projectile );
+
 		//track number of ticks the last fired occured
 		lastFiredAt = Timer::GetTicks();
 		//reduce ammo
-		ammo.find(currentWeapon->getAmmoType())->second = ammo.find(currentWeapon->getAmmoType())->second - currentWeapon->getAmmoConsumption();
+		ammo.find(currentWeapon->GetAmmoType())->second = ammo.find(currentWeapon->GetAmmoType())->second - currentWeapon->GetAmmoConsumption();
+
+		return projectile;
+	} else {
+		return (Projectile*)NULL;
 	}
 }
 
-void WeaponSystem::changeWeaponNext() {
-	if (250 < Timer::GetTicks() - lastWeaponChangeAt  && selectedWeapon < shipWeapons.size()-1) {
-		selectedWeapon++;
-		return;
+string WeaponSystem::changeWeaponNext() {
+	if (250 < Timer::GetTicks() - lastWeaponChangeAt) {
+		selectedWeapon = (selectedWeapon+1)%shipWeapons.size();
 	} 
-	selectedWeapon = 0;
+	return shipWeapons.at(selectedWeapon)->GetName();
 }
 
 Weapon* WeaponSystem::currentWeapon() {
@@ -79,6 +90,6 @@ Weapon* WeaponSystem::currentWeapon() {
 
 int WeaponSystem::currentAmmo() {
 	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
-	return ammo.find(currentWeapon->getAmmoType())->second;
+	return ammo.find(currentWeapon->GetAmmoType())->second;
 }
 
