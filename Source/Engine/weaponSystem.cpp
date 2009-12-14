@@ -13,7 +13,6 @@
 #include "Utilities/trig.h"
 
 WeaponSystem::WeaponSystem() {
-	projectileAmmo = 100;
 	lastFiredAt = 0;
 	lastWeaponChangeAt = 0;
 	/*Debug: Add all weapons to this ship list.*/
@@ -30,11 +29,13 @@ WeaponSystem::~WeaponSystem(){
 
 void WeaponSystem::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
+	//Debug: add 100 rounds of ammo for every weapon added
+	ammo.insert ( pair<int,int>(i->getAmmoType(),20) );
 }
 
 void WeaponSystem::addShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
-	shipWeapons.push_back(weapons->GetWeapon(weaponName));
+	addShipWeapon(weapons->GetWeapon(weaponName));
 }
 
 void WeaponSystem::removeShipWeapon(int pos){
@@ -43,21 +44,25 @@ void WeaponSystem::removeShipWeapon(int pos){
 
 //TODO: better ammo system
 void WeaponSystem::addAmmo(int qty){
-	projectileAmmo += qty;
+	//projectileAmmo += qty;
 }
 
 void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int offset) {
 	if( selectedWeapon<0 || selectedWeapon > shipWeapons.size() ) return;
 	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
-	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && projectileAmmo > 0) {
+	
+	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && ammo.find(currentWeapon->getAmmoType())->second > 0) {
 		//Calculate the offset needed by the ship to fire infront of the ship
 		Trig *trig = Trig::Instance();
 		float angle = static_cast<float>(trig->DegToRad( angleToFire ));		
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 		//Fire the weapon
 		currentWeapon->fireWeapon(angleToFire, worldPosition);
+		//track number of ticks the last fired occured
 		lastFiredAt = Timer::GetTicks();
-		projectileAmmo--;
+		//reduce ammo
+		ammo.find(currentWeapon->getAmmoType())->second = ammo.find(currentWeapon->getAmmoType())->second - 1;
+		
 	}
 }
 
