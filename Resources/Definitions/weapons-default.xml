@@ -4,7 +4,7 @@
 	<version-minor>7</version-minor>
 	<version-macro>0</version-macro>
 	<weapon>
-		<name>Missle</name>
+		<name>Missile</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/missile.png</imageName>
 		<payload>10</payload>
@@ -16,7 +16,7 @@
 		<lifetime>3000</lifetime> <!-- Milliseconds of Life -->
 	</weapon>
 	<weapon>
-		<name>Slow Missle</name>
+		<name>Slow Missile</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/torpedo.png</imageName>
 		<payload>10</payload>

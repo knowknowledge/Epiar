@@ -19,11 +19,14 @@ public:
 	~Weapons(void);
 	static Weapons *Instance();
 	bool Load( string filename );
-	list<Weapon *> weapons;
+
+	Weapon *GetWeapon( string& weaponName );
+	list<string>* GetWeaponNames();
 protected:
 	Weapons(){};
 private:
 	string filename;
+	list<Weapon *> weapons;
 	
 	static Weapons *pInstance;
 };

@@ -10,6 +10,15 @@
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
 
+struct weapon_name_equals
+	: public std::binary_function<Weapon*, string, bool>
+{
+	bool operator()( Weapon* weapon, const string& name ) const
+	{
+		return weapon->GetName() == name;
+	}
+};
+
 Weapons *Weapons::pInstance = 0; // initialize pointer
 
 Weapons *Weapons::Instance( void ) {
@@ -33,4 +42,23 @@ bool Weapons::Load( string filename ) {
 		//(*i)->_dbg_PrintInfo();
 	//}
 	return true;
+}
+
+Weapon * Weapons::GetWeapon( string& weaponName )
+{
+	list<Weapon *>::iterator i = std::find_if( weapons.begin(), weapons.end(), std::bind2nd( weapon_name_equals(), weaponName ));
+	if( i != weapons.end() ) {
+		return( *i );
+	}
+	
+	return( NULL );
+}
+
+list<string>* Weapons::GetWeaponNames()
+{
+	list<string> *names = new list<string>();
+	for( list<Weapon *>::iterator i = weapons.begin(); i != weapons.end(); ++i ) {
+		names->push_back( (*i)->GetName() );
+	}
+	return names;
 }

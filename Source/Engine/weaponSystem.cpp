@@ -15,33 +15,40 @@
 WeaponSystem::WeaponSystem() {
 	lastFiredAt = 0;
 	lastWeaponChangeAt = 0;
-	/*Debug: Add all weapons to this ships weapons list, later we will only basic and when they are purchasedhi*/
-	Weapons* weapons = Weapons::Instance();
-	for( list<Weapon *>::iterator i = weapons->weapons.begin(); i != weapons->weapons.end(); ++i ) {
-		addShipWeapon(*i);
-	}
+	/*Debug: Add all weapons to this ship list.*/
+	addShipWeapon(string("Missile"));
+	addShipWeapon(string("Slow Missile"));
+	addShipWeapon(string("Laser"));
+	addShipWeapon(string("Strong Laser"));
+	addShipWeapon(string("Minigun"));
 	selectedWeapon = 0;
-	
 }
-WeaponSystem::~WeaponSystem(){
 
+WeaponSystem::~WeaponSystem(){
 }
+
 void WeaponSystem::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
 	//Debug: add 100 rounds of ammo for every weapon added
 	ammo.insert ( pair<int,int>(i->getAmmoType(),20) );
 }
 
+void WeaponSystem::addShipWeapon(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	addShipWeapon(weapons->GetWeapon(weaponName));
+}
+
 void WeaponSystem::removeShipWeapon(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
-	
 }
+
 //TODO: better ammo system
 void WeaponSystem::addAmmo(int qty){
 	//projectileAmmo += qty;
 }
 
 void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int offset) {
+	if( selectedWeapon<0 || selectedWeapon > shipWeapons.size() ) return;
 	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
 	
 	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && ammo.find(currentWeapon->getAmmoType())->second > 0) {
