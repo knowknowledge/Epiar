@@ -21,6 +21,7 @@ WeaponSystem::WeaponSystem() {
 	addShipWeapon(string("Laser"));
 	addShipWeapon(string("Strong Laser"));
 	addShipWeapon(string("Minigun"));
+	addAmmo(string("Missile"), 20);
 	selectedWeapon = 0;
 }
 
@@ -30,28 +31,36 @@ WeaponSystem::~WeaponSystem(){
 void WeaponSystem::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
 	//Debug: add 100 rounds of ammo for every weapon added
-	ammo.insert ( pair<int,int>(i->getAmmoType(),20) );
+	ammo.insert ( pair<int,int>(i->getAmmoType(),5) );
 }
 
 void WeaponSystem::addShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
-	addShipWeapon(weapons->GetWeapon(weaponName));
+	addShipWeapon(weapons->GetWeapon(weaponName));	
 }
 
 void WeaponSystem::removeShipWeapon(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 
-//TODO: better ammo system
-void WeaponSystem::addAmmo(int qty){
-	//projectileAmmo += qty;
+void WeaponSystem::addAmmo(string weaponName, int qty){
+	Weapons *weapons = Weapons::Instance();
+	Weapon* currentWeapon = weapons->GetWeapon(weaponName);
+	
+	if (ammo.find(currentWeapon->getAmmoType()) == ammo.end() ) {
+		ammo.insert ( pair<int,int>(currentWeapon->getAmmoType(),qty) );
+	} else {
+		ammo.find(currentWeapon->getAmmoType())->second += qty;
+	}
+	
 }
 
 void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int offset) {
 	if( selectedWeapon<0 || selectedWeapon > shipWeapons.size() ) return;
 	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
 	
-	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  && !shipWeapons.empty() && ammo.find(currentWeapon->getAmmoType())->second > 0) {
+	if ( currentWeapon->getFireDelay() < (int)(Timer::GetTicks() - lastFiredAt)  &&
+	 !shipWeapons.empty() && ammo.find(currentWeapon->getAmmoType())->second > 0) {
 		//Calculate the offset needed by the ship to fire infront of the ship
 		Trig *trig = Trig::Instance();
 		float angle = static_cast<float>(trig->DegToRad( angleToFire ));		
@@ -61,7 +70,7 @@ void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int o
 		//track number of ticks the last fired occured
 		lastFiredAt = Timer::GetTicks();
 		//reduce ammo
-		ammo.find(currentWeapon->getAmmoType())->second = ammo.find(currentWeapon->getAmmoType())->second - currentWeapon->getAmmoConsumption() ;
+		ammo.find(currentWeapon->getAmmoType())->second -=  currentWeapon->getAmmoConsumption();
 		
 	}
 }
