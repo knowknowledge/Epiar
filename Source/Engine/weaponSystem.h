@@ -23,7 +23,7 @@ class WeaponSystem {
 	void addShipWeapon(Weapon *i);
 	void addShipWeapon(string weaponName);
 	void removeShipWeapon(int pos);
-	void addAmmo(int qty);
+	void addAmmo(string weaponName, int qty);
 
 	// Action Functions
 	Projectile* fireWeapon(float angleToFire, Coordinate worldPosition, int offset);
