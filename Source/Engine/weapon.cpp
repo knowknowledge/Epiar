@@ -42,8 +42,7 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 		if (atoi( value.c_str()) != 0)
 			ammoType = atoi( value.c_str() );
 	} else PPA_MATCHES( "ammoConsumption" ) {
-		if (atoi( value.c_str()) != 0)
-			ammoConsumption = atoi( value.c_str() );
+		ammoConsumption = atoi( value.c_str() );
 	} else PPA_MATCHES( "fireDelay" ) {
 		if (atoi( value.c_str()) != 0)
 			fireDelay = atoi( value.c_str() );

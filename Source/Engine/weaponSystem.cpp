@@ -54,13 +54,13 @@ void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int o
 		//track number of ticks the last fired occured
 		lastFiredAt = Timer::GetTicks();
 		//reduce ammo
-		ammo.find(currentWeapon->getAmmoType())->second = ammo.find(currentWeapon->getAmmoType())->second - 1;
+		ammo.find(currentWeapon->getAmmoType())->second = ammo.find(currentWeapon->getAmmoType())->second - currentWeapon->getAmmoConsumption() ;
 		
 	}
 }
 
 void WeaponSystem::changeWeaponNext() {
-	if (200 < Timer::GetTicks() - lastWeaponChangeAt  && selectedWeapon < shipWeapons.size()-1) {
+	if (250 < Timer::GetTicks() - lastWeaponChangeAt  && selectedWeapon < shipWeapons.size()-1) {
 		selectedWeapon++;
 		return;
 	} 

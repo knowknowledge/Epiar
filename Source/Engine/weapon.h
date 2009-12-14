@@ -24,6 +24,7 @@ class Weapon {
 		void fireWeapon(float angleToFire, Coordinate worldPosition);
 		int getFireDelay(void) {return fireDelay;}
 		int getAmmoType() {return ammoType;}
+		int getAmmoConsumption() { return ammoConsumption;}
 	private:
 
 		string name; //weapons name
