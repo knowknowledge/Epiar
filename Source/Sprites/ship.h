@@ -31,10 +31,14 @@ class Ship : public Sprite {
 		void Draw( void );
 		void Fire( void );
 		void ChangeWeapon( void );
+
 		/* Status functions */
 		float directionTowards(Coordinate c);
 		float directionTowards(float angle);
 		float getHullIntegrityPct();
+
+		Weapon* getCurrentWeapon();
+		int getCurrentAmmo();
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );

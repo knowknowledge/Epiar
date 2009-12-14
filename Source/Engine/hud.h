@@ -16,10 +16,10 @@
 
 class AlertMessage {
 	public:
-		AlertMessage( string message, Uint32 length );
-
+		AlertMessage( string message, Uint32 start );
+		bool operator ==(const AlertMessage& other) {return (start == other.start) && (message == other.message);}
 		string message;
-		Uint32 length;
+		Uint32 start;
 };
 
 class Hud {
@@ -52,7 +52,7 @@ class Hud {
 		/* Radar and navigation */
 		static Image *im_radarnav;
 
-		static vector<AlertMessage> AlertMessages;
+		static list<AlertMessage> AlertMessages;
 };
 
 class Radar {

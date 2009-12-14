@@ -23,6 +23,9 @@ class WeaponSystem {
 	void addAmmo(int qty);
 	void fireWeapon(float angleToFire, Coordinate worldPosition, int offset);
 	void changeWeaponNext(void);
+
+	Weapon* currentWeapon();
+	int currentAmmo();
 	
 	private:
 	multimap <int,int> ammo; //contains the quantity of each ammo type on the ship

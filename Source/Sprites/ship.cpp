@@ -180,3 +180,12 @@ float Ship::getHullIntegrityPct() {
 	//Log::Message("Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
 	return(remaining);
 }
+
+Weapon* Ship::getCurrentWeapon(){
+	return shipWeaponSystem->currentWeapon();
+}
+
+int Ship::getCurrentAmmo(){
+	return shipWeaponSystem->currentAmmo();
+}
+

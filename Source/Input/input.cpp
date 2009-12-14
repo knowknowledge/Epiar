@@ -15,6 +15,7 @@
 #include "Utilities/log.h"
 #include "Graphics/video.h"
 #include "Engine/simulation.h"
+#include "Engine/hud.h"
 
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
@@ -159,7 +160,10 @@ void Input::Handle( list<InputEvent> & events ) {
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
 	if( keyDown[ SDLK_SPACE ] ) player->Fire();
-	if( keyDown[ SDLK_LSHIFT ] ) player->ChangeWeapon();
+	if( keyDown[ SDLK_LSHIFT ] ){
+		player->ChangeWeapon();
+		Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
+	}
 	
 
 	// DEBUG CODE

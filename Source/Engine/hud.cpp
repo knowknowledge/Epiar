@@ -30,7 +30,7 @@
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
 
-vector<AlertMessage> Hud::AlertMessages;
+list<AlertMessage> Hud::AlertMessages;
 Image *Hud::im_hullstr = NULL;
 Image *Hud::im_hullstr_leftbar = NULL;
 Image *Hud::im_hullstr_rightbar = NULL;
@@ -39,10 +39,14 @@ Image *Hud::im_shieldstat = NULL;
 Image *Hud::im_radarnav = NULL;
 int Radar::visibility = 1000;
 
-AlertMessage::AlertMessage( string message, Uint32 length )
+AlertMessage::AlertMessage( string message, Uint32 start )
 {
 	this->message = message;
-	this->length = length;
+	this->start = start;
+}
+
+bool MessageExpired(const AlertMessage& msg){
+	return (Timer::GetTicks() - msg.start > ALERT_DELAY);
 }
 
 Hud *Hud::pInstance = 0; // initialize pointer
@@ -67,8 +71,17 @@ Hud::Hud( void ) {
 }
 
 void Hud::Update( void ) {
+	int j;
+	list<AlertMessage> toDelete;
+	list<AlertMessage>::iterator i;
+	for( i= AlertMessages.begin(), j=1; i != AlertMessages.end(); ++i,++j ){
+		if(MessageExpired(*i))
+			toDelete.push_back(*i);
+	}
+	for( i= toDelete.begin(); i != toDelete.end(); ++i ){
+		AlertMessages.remove(*i);
+	}
 	Console::Update();
-
 }
 
 void Hud::Draw( SpriteManager *sprites ) {
@@ -82,7 +95,14 @@ void Hud::Draw( SpriteManager *sprites ) {
 
 // Draw HUD messages (eg Welcome to Epiar)
 void Hud::DrawMessages() {
-	Vera10->Render( 15, Video::GetHeight() - 15, "Welcome to Epiar 0.1.0" );
+	int j;
+	int now = Timer::GetTicks();
+	list<AlertMessage>::iterator i;
+	for( i= AlertMessages.begin(), j=1; i != AlertMessages.end(); ++i,++j ){
+		//printf("[%d] %s\n", j, (*i).message.c_str() );
+		if(now - (*i).start < ALERT_DELAY)
+			Vera10->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
+	}
 }
 
 // Draw the current framerate (calculated in simulation.cpp)
@@ -90,7 +110,7 @@ void Hud::DrawFPS() {
 	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
 	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
-	Vera10->Render( 30, Video::GetHeight() - 30, (const char *)frameRate );
+	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 }
 
 void Hud::DrawHullIntegrity() {
@@ -142,7 +162,7 @@ void Hud::Alert( const char *message, ... )
 
 	va_end( args );
 
-	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() + ALERT_DELAY ) );
+	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
 
 Radar::Radar( void ) {
