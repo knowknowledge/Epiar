@@ -31,7 +31,7 @@
 		<name>Laser</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_green.png</imageName>
-		<payload>10</payload>
+		<payload>1</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>3</ammoType>
@@ -43,7 +43,7 @@
 		<name>Strong Laser</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_blue.png</imageName>
-		<payload>30</payload>
+		<payload>3</payload>
 		<velocity>20</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>4</ammoType>
@@ -55,7 +55,7 @@
 		<name>Minigun</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_grey.png</imageName>
-		<payload>8</payload>
+		<payload>1</payload>
 		<velocity>10</velocity>
 		<acceleration>0</acceleration>
 		<ammoType>5</ammoType>

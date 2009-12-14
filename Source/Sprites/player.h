@@ -22,6 +22,8 @@ class Player : public Ship {
 		Player( const Player & );
 		Player& operator= (const Player&);
 
+		void Update( void );
+
 		Color GetRadarColor( void ) { return Color::Get(0xFF,0xD7,0); }
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_PLAYER );
