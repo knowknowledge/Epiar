@@ -199,11 +199,15 @@ void Radar::Draw( SpriteManager *sprites ) {
 			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 			
 			
-			Video::DrawCircle(
-				blip,
-				(radarSize>=1) ?radarSize: 1,
-				1,
-				sprite->GetRadarColor() );
+			if( radarSize>=1 ){
+				Video::DrawCircle(
+					blip,
+					radarSize,
+					1,
+					sprite->GetRadarColor() );
+			} else {
+				Video::DrawPoint( blip, sprite->GetRadarColor() );
+			}
 		}
 	}
 }

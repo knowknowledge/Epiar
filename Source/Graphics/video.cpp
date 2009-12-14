@@ -177,6 +177,10 @@ void Video::DrawPoint( int x, int y, float r, float g, float b ) {
 	glRecti( x, y, x + 1, y + 1 );
 }
 
+void Video::DrawPoint( Coordinate c, Color col ) {
+	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
+}
+
 // draws a rectangle
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
