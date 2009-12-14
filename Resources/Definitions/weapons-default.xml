@@ -46,7 +46,7 @@
 		<payload>30</payload>
 		<velocity>20</velocity>
 		<acceleration>2</acceleration>
-		<ammoType>3</ammoType>
+		<ammoType>4</ammoType>
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>500</lifetime>
@@ -58,7 +58,7 @@
 		<payload>8</payload>
 		<velocity>10</velocity>
 		<acceleration>0</acceleration>
-		<ammoType>4</ammoType>
+		<ammoType>5</ammoType>
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>10</fireDelay>
 		<lifetime>1000</lifetime>

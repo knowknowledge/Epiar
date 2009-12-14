@@ -11,6 +11,7 @@
 #define WEAPONSYSTEM_H_
 
 #include "Engine/weapon.h"
+#include <map>
 
 class WeaponSystem {
 	public:
@@ -23,10 +24,11 @@ class WeaponSystem {
 	void changeWeaponNext(void);
 	
 	private:
+	multimap <int,int> ammo; //contains the quantity of each ammo type on the ship
+	
 	unsigned int lastWeaponChangeAt; //number of where last weapon change occcured
 	unsigned int lastFiredAt; //number of ticks where last fire event occured
 	vector<Weapon *> shipWeapons;
-	int projectileAmmo;
 	unsigned int selectedWeapon;
 };
 
