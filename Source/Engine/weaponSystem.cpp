@@ -66,7 +66,7 @@ void WeaponSystem::fireWeapon(float angleToFire, Coordinate worldPosition, int o
 }
 
 void WeaponSystem::changeWeaponNext() {
-	if (200 < Timer::GetTicks() - lastWeaponChangeAt  && selectedWeapon < shipWeapons.size()-1) {
+	if (250 < Timer::GetTicks() - lastWeaponChangeAt  && selectedWeapon < shipWeapons.size()-1) {
 		selectedWeapon++;
 		return;
 	} 
