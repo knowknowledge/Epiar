@@ -137,7 +137,7 @@ void Ship::Draw( void ) {
 		float tx, ty;
 		
 		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
-						model->GetThrustOffset())),
+						(flareAnimation->GetHalfWidth() + model->GetThrustOffset()) )),
 				static_cast<float>(position.GetScreenY()),
 				static_cast<float>(position.GetScreenX()),
 				static_cast<float>(position.GetScreenY()), &tx, &ty,
