@@ -36,7 +36,7 @@
 		<acceleration>2</acceleration>
 		<ammoType>3</ammoType>
 		<ammoConsumption>0</ammoConsumption>
-		<fireDelay>10</fireDelay>
+		<fireDelay>200</fireDelay>
 		<lifetime>1000</lifetime>
 	</weapon>
 	<weapon>
@@ -48,7 +48,7 @@
 		<acceleration>2</acceleration>
 		<ammoType>4</ammoType>
 		<ammoConsumption>0</ammoConsumption>
-		<fireDelay>10</fireDelay>
+		<fireDelay>200</fireDelay>
 		<lifetime>500</lifetime>
 	</weapon>
 	<weapon>
@@ -60,7 +60,7 @@
 		<acceleration>0</acceleration>
 		<ammoType>5</ammoType>
 		<ammoConsumption>0</ammoConsumption>
-		<fireDelay>10</fireDelay>
+		<fireDelay>70</fireDelay>
 		<lifetime>1000</lifetime>
 	</weapon>
 </weapons>
