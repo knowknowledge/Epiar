@@ -17,13 +17,6 @@
 WeaponSystem::WeaponSystem() {
 	lastFiredAt = 0;
 	lastWeaponChangeAt = 0;
-	/*Debug: Add all weapons to this ship list.*/
-	addShipWeapon(string("Missile"));
-	addShipWeapon(string("Slow Missile"));
-	addShipWeapon(string("Laser"));
-	addShipWeapon(string("Strong Laser"));
-	addShipWeapon(string("Minigun"));
-	addAmmo(string("Missile"), 20);
 	selectedWeapon = 0;
 }
 

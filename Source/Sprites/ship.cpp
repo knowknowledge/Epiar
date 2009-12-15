@@ -23,6 +23,14 @@ Ship::Ship() {
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
 	shipWeaponSystem = new WeaponSystem;
+
+	/*Debug: Add all weapons to this ship list.*/
+	shipWeaponSystem->addShipWeapon(string("Laser"));
+	shipWeaponSystem->addShipWeapon(string("Strong Laser"));
+	shipWeaponSystem->addShipWeapon(string("Minigun"));
+	shipWeaponSystem->addShipWeapon(string("Missile"));
+	shipWeaponSystem->addShipWeapon(string("Slow Missile"));
+	shipWeaponSystem->addAmmo(string("Missile"), 20);
 }
 
 bool Ship::SetModel( Model *model ) {

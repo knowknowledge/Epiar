@@ -17,9 +17,9 @@
 
 // With the draw order, higher numbers are drawn later (on top)
 #define DRAW_ORDER_PLANET  0
-#define DRAW_ORDER_SHIP    1
-#define DRAW_ORDER_PLAYER  2
-#define DRAW_ORDER_WEAPON  3
+#define DRAW_ORDER_WEAPON  1
+#define DRAW_ORDER_SHIP    2
+#define DRAW_ORDER_PLAYER  3
 
 class Sprite {
 	public:
