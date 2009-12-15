@@ -151,6 +151,7 @@ void Input::Handle( list<InputEvent> & events ) {
 	if ( Simulation::isPaused() ) return;
 
 	Player *player = Player::Instance();
+	if(player->getHullIntegrityPct() <= 0.0f) return;
 
 	if( keyDown[ SDLK_UP ] ) player->Accelerate();
 	// TODO It shouldn't be possible to rotate in both directions at once
