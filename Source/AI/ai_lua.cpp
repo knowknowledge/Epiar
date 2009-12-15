@@ -67,7 +67,7 @@ int AI_Lua::newShip(lua_State *L){
 	string modelname = luaL_checkstring (L, 4);
 	string scriptname = luaL_checkstring (L, 5);
 
-	Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
+	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
 	AI **s = pushShip(L);

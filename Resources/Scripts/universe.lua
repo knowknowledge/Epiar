@@ -184,6 +184,7 @@ function store()
 		col =col+1
 	end
 end
+registerInit(store)
 
 --------------------------------------------------------------------------------
 -- Load Scenarios
