@@ -110,10 +110,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
-list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
-	list<Sprite*> *other;
-	list<Sprite*> *nearby = new list<Sprite*>();
-
+void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
 	const float maxrange = 1.42*radius + distance;
@@ -121,18 +118,15 @@ list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
 	if( (point-center).GetMagnitude() > maxrange){
-		return nearby;
+		return;
 	}
 
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				other = subtrees[t]->GetSpritesNear(point,distance);
-				nearby->splice(nearby->end(), *other);
-				delete other;
+				subtrees[t]->GetSpritesNear(point,distance,nearby);
 			}
 		}
-		return nearby;
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
@@ -140,9 +134,7 @@ list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 				nearby->push_back( *i);
 			}
 		}
-		return nearby;
 	}
-	
 }
 
 list<Sprite*> *QuadTree::FixOutOfBounds(){

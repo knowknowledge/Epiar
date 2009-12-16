@@ -61,7 +61,8 @@ void SpriteManager::Update() {
 void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	// TODO Have the drawing based directly on the screen dimensions
-	list<Sprite *>* onscreen = tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f);
+	list<Sprite*> *onscreen = new list<Sprite*>();
+	tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f, onscreen);
 	//cout<<onscreen->size()<<" sprites are in range.\n";
 
 	onscreen->sort(compareSpritePtrs);
@@ -77,7 +78,8 @@ list<Sprite *> *SpriteManager::GetSprites() {
 }
 
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
-	list<Sprite*> *sprites = tree->GetSpritesNear(c,r);
+	list<Sprite*> *sprites = new list<Sprite*>();
+	tree->GetSpritesNear(c,r,sprites);
 	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );
 }
