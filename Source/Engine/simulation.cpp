@@ -116,11 +116,13 @@ bool Simulation::Run( void ) {
 			sprites->Update();
 			camera->Update();
 			Hud::Update();
-			UI::Run(); // runs only a few loops
-			
-			// Keep this last (I think)
-			Timer::Update();
 		}
+
+		// Runs only a few loops (even when paused)
+		UI::Run(); 
+		
+		// Keep this last (I think)
+		Timer::Update();
 
 		// Erase cycle
 		Video::Erase();
