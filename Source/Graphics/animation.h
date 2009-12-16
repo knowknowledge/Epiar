@@ -20,6 +20,7 @@ class Animation {
 		bool Load( string& filename );
 		bool Draw( int x, int y, float ang );
 		void SetLooping( bool looping ) { this->looping = looping; };
+		bool GetLooping( void ) { return looping; };
 		void Reset( void );
 		int GetHalfWidth( void ) { return w / 2; };
 		int GetHalfHeight( void ) { return h / 2; };

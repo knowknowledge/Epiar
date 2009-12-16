@@ -20,6 +20,7 @@
 #define DRAW_ORDER_WEAPON  1
 #define DRAW_ORDER_SHIP    2
 #define DRAW_ORDER_PLAYER  3
+#define DRAW_ORDER_EFFECT  4
 
 class Sprite {
 	public:

@@ -9,6 +9,7 @@
 
 #include "Utilities/lua.h"
 
+#include "Sprites/effects.h"
 #include "AI/ai_lua.h"
 
 void AI_Lua::RegisterAI(lua_State *L){
@@ -153,6 +154,8 @@ int AI_Lua::ShipExplode(lua_State* L){
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
+		Lua::GetSpriteList()->Add(
+			new Effect((*ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
