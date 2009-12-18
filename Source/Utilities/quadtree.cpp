@@ -23,6 +23,7 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	this->center = _center;
 	this->maxobjects = _maxobjects;
 	this->isLeaf = true;
+	this->objectcount = 0;
 }
 
 QuadTree::~QuadTree(){
@@ -33,6 +34,8 @@ QuadTree::~QuadTree(){
 }
 
 unsigned int QuadTree::Count(){
+	return objectcount;
+	/*
 	if(isLeaf){
 		return objects->size();
 	} else {
@@ -43,6 +46,7 @@ unsigned int QuadTree::Count(){
 		}
 		return total;
 	}
+	*/
 }
 
 bool QuadTree::Contains(Coordinate point){
@@ -61,6 +65,7 @@ void QuadTree::Insert(Sprite *obj){
 		// An over Full Leaf should become a Node
 		ReBallance();
 	}
+	objectcount++;
 }
 
 bool QuadTree::Delete(Sprite* obj){
@@ -76,6 +81,7 @@ bool QuadTree::Delete(Sprite* obj){
 			return( false ); // That branch is empty, nothing to delete.
 		if( dest->Delete(obj) ){
 			ReBallance();
+			objectcount--;
 			return( true ); // Found that object.
 		} else {
 			return( false ); // Didn't find that object.
@@ -86,6 +92,7 @@ bool QuadTree::Delete(Sprite* obj){
 		{
 			i = objects->erase( i );
 			// Note that leaves don't ReBallance on delete.
+			objectcount--;
 			return( true );
 		} else {
 			return( false );
@@ -173,6 +180,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		}
 	}
 	delete stillinside;
+	objectcount-= outofbounds->size();
 	ReBallance();
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;

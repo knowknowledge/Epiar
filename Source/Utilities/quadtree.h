@@ -46,6 +46,7 @@ class QuadTree {
 		Coordinate center;
 		float radius;
 		unsigned int maxobjects;
+		unsigned int objectcount;
 		bool isLeaf;
 };
 
