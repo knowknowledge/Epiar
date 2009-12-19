@@ -25,6 +25,12 @@ LIBS="$LIBS $XML_LIBS"
 dnl Check for SDL
 SDL_VERSION=1.2.10
 
+LIBS="$LIBS -lphysfs"
+CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
+
+LIBS="$LIBS -lftgl -lfreetype -I/opt/local/include/freetype2"
+CFLAGS="$CFLAGS -I/opt/local/include/freetype2"
+
 case "$target" in
 	*-*-linux* | *-*-cygwin* | *-*-mingw32*)
 		AM_PATH_SDL($SDL_VERSION, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))

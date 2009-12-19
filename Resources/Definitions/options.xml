@@ -22,5 +22,6 @@
 	</momentum-caps>
 	<development>
 		<override-tgz>1</override-tgz>
+		<font-engine>AFont</font-engine> <!-- AFont or FreeType -->
 	</development>
 </options>
