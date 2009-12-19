@@ -11,7 +11,9 @@
 #include "Graphics/afont/afont_gl.h"
 #include "includes.h"
 #include "Utilities/log.h"
+#ifdef USE_FREETYPE
 #include <FTGL/ftgl.h>
+#endif //USE_FREETYPE
 #include "Graphics/video.h"
 
 Font::Font() {
@@ -76,6 +78,7 @@ void AFont::RenderCentered( int x, int y, const char *text ) {
 	Render( x - (w / 2), y - (h / 2) , text ); // -1 because it just kinda looks better
 }
 
+#ifdef USE_FREETYPE
 // FreeFont
 
 FreeFont::FreeFont( string filename ) {
@@ -129,3 +132,4 @@ void FreeFont::RenderCentered( int x, int y, const char *text ) {
 	glPopMatrix(); // restore the previous matrix
 }
 
+#endif //USE_FREETYPE

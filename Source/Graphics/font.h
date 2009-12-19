@@ -11,11 +11,15 @@
 #define H_FONT
 
 #include "includes.h"
+#ifdef USE_FREETYPE
 #include <FTGL/ftgl.h>
-#include "Graphics/afont/afont_gl.h"
-
 // Font Rendering technique to use
 typedef FTTextureFont FONTRENDERTYPE;
+#else
+	#warning FreeType Disabled
+#endif //USE_FREETYPE
+#include "Graphics/afont/afont_gl.h"
+
 
 class Font {
  public:
@@ -50,6 +54,7 @@ class AFont: public Font {
 	afontgl* font;
 };
 
+#ifdef USE_FREETYPE
 // Uses the FreeType and FTGL libraries
 class FreeFont: public Font {
  public:
@@ -62,5 +67,6 @@ class FreeFont: public Font {
  private:
 	FONTRENDERTYPE* font;
 };
+#endif //USE_FREETYPE
 
 #endif // H_FONT

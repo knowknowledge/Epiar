@@ -21,4 +21,4 @@ ia. Mac OS X Notes
 ------------------
 	To meet all needed requirements above, installation of the Apple XCode package is needed. This is available from apple.com. XCode will install GNU gcc, automake, autoconf, aclocal and other needed tools. Libxml2 is also provided on OS X (note: OS X 10.5 and above, though 10.4 should work and compilation on 10.3 is likely possible with some work).
 	In addition to XCode, you must also obtain the three SDL "frameworks" from libsdl.org. Download the SDL, SDL_image, and SDL_mixer OS X frameworks and place them either in /Library/Frameworks or ~/Library/Frameworks. That should complete OS X setup. Proceed with the ./autogen.sh step above to build Epiar.
-
+	Epiar can render fonts in one of two ways: FreeType or our own AFont implementation.  To build using the FreeType, use "./configure --enable-freetype".  This requires that you have FreeType and FTGL installed on your computer.  I suggest MacPorts "sudo port install freetype" and "sudo port install ftgl".  Other installation methods have not been tested but should work if the install paths are added to the configure.in file.

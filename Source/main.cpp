@@ -57,6 +57,7 @@ int main( int argc, char **argv ) {
 		Vera10      = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
 		Visitor10   = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
 		VeraMono10  = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
+#ifdef USE_FREETYPE
 	} else if( fontEngine == "FreeType") {
 		Log::Message("Using Font Engine: FreeType");
 		//******** FreeType Rendering ********
@@ -65,8 +66,9 @@ int main( int argc, char **argv ) {
 		Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 		Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 		VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+#endif // USE_FREETYPE
 	} else {
-		Log::Error("Unknown Font Engine: %s", fontEngine.c_str() );
+		Log::Error("Unknown Font Engine: '%s'", fontEngine.c_str() );
 		return( -1 );
 	}
 
