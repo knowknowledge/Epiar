@@ -15,8 +15,6 @@
 #include "Graphics/video.h"
 
 Font::Font() {
-	filename = NULL;
-
 	r = 1.;
 	g = 1.;
 	b = 1.;
@@ -30,31 +28,28 @@ void Font::SetColor( float r, float g, float b ) {
 
 // AFONT
 
-AFont::AFont( const char *filename ) {
+AFont::AFont( string filename ) {
 	SetFont( filename );
 }
 
 AFont::~AFont() {
 	afont_gl_free( (afontgl*)font );
 	delete (afontgl*)this->font;
-	Log::Message( "Font '%s' freed.", filename );
-	free( filename );
+	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
-bool AFont::SetFont( const char *filename ) {
-	printf( "loading font '%s'...\n", filename );
-	font = afont_gl_load( filename );
+bool AFont::SetFont( string filename ) {
+	fontname = filename;
+	font = afont_gl_load( fontname.c_str() );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", filename );
+		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
-	this->filename = strdup( filename );
-
 	afont_size_text( ((afontgl*)font)->orig, "A", &(this->width), &(this->height), &(this->base));
 
-	Log::Message( "Font '%s' loaded.\n", filename );
+	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }
@@ -83,30 +78,27 @@ void AFont::RenderCentered( int x, int y, const char *text ) {
 
 // FreeFont
 
-FreeFont::FreeFont( const char *filename ) {
+FreeFont::FreeFont( string filename ) {
 	SetFont( filename );
 }
 
 FreeFont::~FreeFont() {
 	delete (FONTRENDERTYPE*)this->font;
-	Log::Message( "Font '%s' freed.", filename );
-	free( filename );
+	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
-bool FreeFont::SetFont( const char *filename ) {
-	printf( "loading font '%s'...\n", filename );
-	this->font = new FONTRENDERTYPE(filename);
+bool FreeFont::SetFont( string filename ) {
+	fontname = filename;
+	this->font = new FONTRENDERTYPE( fontname.c_str() );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", filename );
+		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
-	this->filename = strdup( filename );
-
 	font->FaceSize(12);
 
-	Log::Message( "Font '%s' loaded.\n", filename );
+	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }

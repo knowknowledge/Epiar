@@ -53,17 +53,18 @@ int main( int argc, char **argv ) {
 	if( fontEngine == "AFont") {
 		Log::Message("Using Font Engine: AFONT");
 		//******** AFont Rendering ********
-		Vera8 = (Font*)new AFont( "Resources/Fonts/Vera-8.af" );
-		Vera10 = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
-		Visitor10 = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
-		VeraMono10 = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
-	} else if( fontEngine == "FreeType ") {
+		Vera8       = (Font*)new AFont( "Resources/Fonts/Vera-8.af" );
+		Vera10      = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
+		Visitor10   = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
+		VeraMono10  = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
+	} else if( fontEngine == "FreeType") {
 		Log::Message("Using Font Engine: FreeType");
 		//******** FreeType Rendering ********
-		Vera8 = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-		Vera10 = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-		Visitor10 = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-		VeraMono10 = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+		//TODO: find gpl-compatible ttf versions of these fonts
+		Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+		Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+		Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+		VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 	} else {
 		Log::Error("Unknown Font Engine: %s", fontEngine.c_str() );
 		return( -1 );

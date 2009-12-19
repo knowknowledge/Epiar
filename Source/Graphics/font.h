@@ -21,14 +21,14 @@ class Font {
  public:
 	Font();
 
-	virtual bool SetFont( const char *filename ) = 0;
+	virtual bool SetFont( string filename ) = 0;
 	virtual void Render( int x, int y, const char *text ) = 0;
 	virtual void RenderCentered( int x, int y, const char *text ) = 0;
 	void SetColor( float r, float g, float b );
 
 
  private:
-	char *filename; // filename of the loaded font
+	string fontname; // filename of the loaded font
 	float r, g, b; // color of text
 	int height,width,base;
 
@@ -40,9 +40,9 @@ class Font {
 class AFont: public Font {
  public:
 	AFont() { font=NULL; }
-	AFont( const char *filename );
+	AFont( string filename );
 	~AFont();
-	bool SetFont( const char *filename );
+	bool SetFont( string filename );
 	void Render( int x, int y, const char *text );
 	void RenderCentered( int x, int y, const char *text );
 
@@ -54,9 +54,9 @@ class AFont: public Font {
 class FreeFont: public Font {
  public:
 	FreeFont() { font=NULL; }
-	FreeFont( const char *filename );
+	FreeFont( string filename );
 	~FreeFont();
-	bool SetFont( const char *filename );
+	bool SetFont( string filename );
 	void Render( int x, int y, const char *text );
 	void RenderCentered( int x, int y, const char *text );
  private:
