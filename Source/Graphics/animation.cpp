@@ -9,8 +9,20 @@
 
 #include "Graphics/animation.h"
 #include "Utilities/log.h"
+#include "Utilities/resource.h"
+
 
 #define ANI_VERSION 1
+
+Animation* Animation::Get( string filename ) {
+	Animation* value;
+	value = (Animation*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Animation(filename);
+		Resource::Store((Resource*)value);
+	}
+	return value;
+}
 
 Animation::Animation() {
 	frames = NULL;
@@ -20,6 +32,8 @@ Animation::Animation() {
 }
 
 Animation::Animation( string& filename ) {
+	SetPath(filename);
+	Log::Message("New Animation from '%s'", filename.c_str() );
 	frames = NULL;
 	startTime = 0;
 	looping = false;
@@ -36,10 +50,10 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 
-	//Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
+	Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
 
 	fread( 	&byte, sizeof( byte ), 1, fp );
-	//cout << "\tVersion: " << (int)byte << endl;
+	cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
 		Log::Error( "Incorrect ani version" );
 		fclose( fp );
@@ -53,7 +67,7 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 	numFrames = byte;
-	//cout << "\tNum Frames: " << numFrames << endl;
+	cout << "\tNum Frames: " << numFrames << endl;
 	// Allocate space for frames
 	frames = new Image[byte];
 
@@ -66,7 +80,7 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 	delay = byte;
-	//cout << "\tDelay: " << delay << endl;
+	cout << "\tDelay: " << delay << endl;
 
 	for( int i = 0; i < numFrames; i++ ) {
 		long pos;
@@ -96,7 +110,7 @@ bool Animation::Load( string& filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	//Log::Message( "Animation loading done." );
+	Log::Message( "Animation loading done." );
 
 	return( true );
 }

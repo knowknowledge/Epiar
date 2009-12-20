@@ -11,12 +11,14 @@
 #define __h_animation__
 
 #include "Graphics/image.h"
+#include "Utilities/resource.h"
 #include "includes.h"
 
-class Animation {
+class Animation : public Resource{
 	public:
 		Animation();
 		Animation( string& filename );
+		static Animation* Get(string filename);
 		bool Load( string& filename );
 		bool Draw( int x, int y, float ang );
 		void SetLooping( bool looping ) { this->looping = looping; };

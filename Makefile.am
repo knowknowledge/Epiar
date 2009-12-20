@@ -14,7 +14,8 @@ Epiar_SOURCES = Source/main.cpp Source/AI/ai.cpp Source/AI/ai_lua.cpp Source/Inp
                 Source/Graphics/afont/afont_gl.cpp Source/Graphics/animation.cpp Source/Graphics/font.cpp Source/Graphics/image.cpp \
                 Source/Graphics/video.cpp Source/Utilities/archive.cpp Source/Utilities/lua.cpp Source/Utilities/xml.cpp \
                 Source/Utilities/file.cpp Source/UI/ui_button.cpp Source/UI/ui_label.cpp Source/UI/ui_picture.cpp Source/Utilities/debug.cpp \
-                Source/Engine/console.cpp Source/Engine/quadrant.cpp Source/UI/ui_textbox.cpp Source/Utilities/quadtree.cpp Source/Sprites/effects.cpp
+                Source/Engine/console.cpp Source/Engine/quadrant.cpp Source/UI/ui_textbox.cpp Source/Utilities/quadtree.cpp Source/Sprites/effects.cpp \
+                Source/Utilities/resource.cpp
 
 Epiar_LDADD = Source/Lua/src/liblua.a
 

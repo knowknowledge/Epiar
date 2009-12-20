@@ -137,6 +137,7 @@ void Image::Draw( int x, int y, float angle ) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
+	assert(image);
 	if( !image ) {
 		Log::Warning( "Trying to draw without loading an image first." );
 		return;

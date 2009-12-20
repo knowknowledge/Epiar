@@ -125,10 +125,7 @@ void Ship::Update( void ) {
 }
 
 bool Ship::SetFlareAnimation( string filename ) {
-	if( flareAnimation )
-		delete flareAnimation;
-		
-	flareAnimation = new Animation( filename );
+	flareAnimation = Animation::Get( filename );
 	
 	return true;
 }
