@@ -26,7 +26,7 @@ class Model {
 			} else PPA_MATCHES( "image" ) {
 				image.Load( value );
 			} else PPA_MATCHES( "mass" ) {
-				mass = atof( value.c_str() );
+				mass = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
 				rotPerSecond = static_cast<float>(atof( value.c_str() ));
 			} else PPA_MATCHES( "engine" ) {
