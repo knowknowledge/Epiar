@@ -42,7 +42,7 @@
 #include <GL/glu.h>
 #endif
 
-
+#include <config.h>
 
 // Local includes
 #include "defines.h"

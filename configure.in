@@ -17,10 +17,38 @@ AC_PROG_CXX
 AC_PROG_CC
 AC_PROG_RANLIB
 
+dnl Epiar Builds with freetype by default
+AC_ARG_ENABLE(freetype, [  --disable-freetype      Build without the FreeType Library ], [], [])
+
+echo "FreeType: '$enable_freetype'"
+AS_IF(
+	[test "_$enable_freetype" = "_yes"], dnl Turn Off by Default
+	dnl[test "_$enable_freetype" != "_no"], dnl Turn On by Default
+	[
+		echo "Build using the FreeType Library"
+		AC_DEFINE(USE_FREETYPE,["yes"],["Build using the FreeType Library"])
+		dnl TODO Should Check for the availability of FreeType & FTGL somehow
+		dnl Include FreeType
+		LIBS="$LIBS -lfreetype"
+		dnl Include FTGL
+		LIBS="$LIBS -lftgl"
+
+		case "$target" in *-*-linux*)
+			CFLAGS="$CFLAGS -I/usr/include/freetype2"
+		esac
+		case "$target" in *-apple-darwin*)
+			CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
+		esac
+	])
+
 dnl Check for libxml2
 AM_PATH_XML2(2.4.0, , AC_MSG_ERROR(Cannot find XML2: Is xml2-config in path?))
 CFLAGS="$CFLAGS $XML_CPPFLAGS"
 LIBS="$LIBS $XML_LIBS"
+
+dnl Check for PhysicsFS
+dnl LIBS="$LIBS -lphysfs"
+dnl CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
 
 dnl Check for SDL
 SDL_VERSION=1.2.10
