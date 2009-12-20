@@ -39,12 +39,13 @@ class Ship : public Sprite {
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
 		}
+		
+		WeaponSystem *shipWeaponSystem;
 
 	private:
 		Model *model;
 		Animation *flareAnimation;
 
-		WeaponSystem *shipWeaponSystem;
 		struct {
 			/* Related to ship's condition */
 			short int hullEnergyAbsorbed; /* hull health - once the hull absorbs to much energy, your ship blows apart, hooray! :) */

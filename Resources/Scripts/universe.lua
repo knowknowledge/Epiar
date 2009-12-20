@@ -83,6 +83,12 @@ end
 -- Create some Random Ships around a Planet
 function CreateShips(number_of_ships, X, Y)
 	shiptypes = Epiar.models()
+	a = {}
+	a[1] = "Missile"
+	a[2] = "Slow Missile"
+	a[3] = "Strong Laser"
+	a[4] = "Minigun"
+	
 	-- Generate Ships
 	for s =1,number_of_ships do
 		cur_ship = Ship:new(
@@ -93,6 +99,11 @@ function CreateShips(number_of_ships, X, Y)
 				)
 		Ship.SetRadarColor(cur_ship,0,255,0)
 		AIPlans[ Ship.GetID(cur_ship) ] = newPlan()
+		
+		--Randomly assign a weapon to everyone
+		i = math.random(4)
+		Ship.AddWeapon( cur_ship, a[i] )
+		Ship.AddAmmo(cur_ship, a[i],100 )
 	end
 end
 

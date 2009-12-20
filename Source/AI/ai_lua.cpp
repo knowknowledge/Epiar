@@ -24,6 +24,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Explode", &AI_Lua::ShipExplode},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
+		{"AddWeapon", &AI_Lua::ShipAddWeapon},
+		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
@@ -160,6 +162,18 @@ int AI_Lua::ShipExplode(lua_State* L){
 	return 0;
 }
 
+int AI_Lua::ShipAddWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		string weaponName = luaL_checkstring (L, 2);
+		(*ai)->shipWeaponSystem->addShipWeapon(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n); 
+	}
+	return 0;
+}	
+
 int AI_Lua::ShipChangeWeapon(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -170,6 +184,19 @@ int AI_Lua::ShipChangeWeapon(lua_State* L){
 	}
 	return 0;
 }
+
+int AI_Lua::ShipAddAmmo(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 3) {
+		AI** ai = checkShip(L,1);
+		string weaponName = luaL_checkstring (L, 2);
+		int qty = (int) luaL_checknumber (L, 3);
+		(*ai)->shipWeaponSystem->addAmmo(weaponName,qty);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n); 
+	}
+	return 0;
+}	
 
 int AI_Lua::ShipSetModel(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
