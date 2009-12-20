@@ -14,34 +14,35 @@
 
 #define ANI_VERSION 1
 
-Animation* Animation::Get( string filename ) {
-	Animation* value;
-	value = (Animation*)Resource::Get(filename);
+Ani* Ani::Get( string filename ) {
+	Ani* value;
+	value = (Ani*)Resource::Get(filename);
 	if( value == NULL ) {
-		value = new Animation(filename);
+		value = new Ani(filename);
 		Resource::Store((Resource*)value);
 	}
 	return value;
 }
 
-Animation::Animation() {
+Ani::Ani() {
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
 }
 
-Animation::Animation( string& filename ) {
-	SetPath(filename);
+Ani::Ani( string& filename ) {
 	Log::Message("New Animation from '%s'", filename.c_str() );
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
+	SetPath(filename);
 	Load( filename );
 }
 
-bool Animation::Load( string& filename ) {
+
+bool Ani::Load( string& filename ) {
 	char byte;
 	FILE *fp = NULL;
 
@@ -50,10 +51,10 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 
-	Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
+	//Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
 
 	fread( 	&byte, sizeof( byte ), 1, fp );
-	cout << "\tVersion: " << (int)byte << endl;
+	//cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
 		Log::Error( "Incorrect ani version" );
 		fclose( fp );
@@ -67,7 +68,7 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 	numFrames = byte;
-	cout << "\tNum Frames: " << numFrames << endl;
+	//cout << "\tNum Frames: " << numFrames << endl;
 	// Allocate space for frames
 	frames = new Image[byte];
 
@@ -80,7 +81,7 @@ bool Animation::Load( string& filename ) {
 		return( false );
 	}
 	delay = byte;
-	cout << "\tDelay: " << delay << endl;
+	//cout << "\tDelay: " << delay << endl;
 
 	for( int i = 0; i < numFrames; i++ ) {
 		long pos;
@@ -110,9 +111,20 @@ bool Animation::Load( string& filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	Log::Message( "Animation loading done." );
+	//Log::Message( "Animation loading done." );
 
 	return( true );
+}
+
+Animation::Animation() {
+	startTime = 0;
+	looping = false;
+}
+
+Animation::Animation( string& filename ) {
+	startTime = 0;
+	looping = false;
+	ani = Ani::Get( filename );
 }
 
 // Returns true while animation is still playing - false when animation is over
@@ -122,22 +134,22 @@ bool Animation::Draw( int x, int y, float ang ) {
 	bool finished = false;
 
 	if( startTime ) {
-		int fnum = (SDL_GetTicks() - startTime) / delay;
+		int fnum = (SDL_GetTicks() - startTime) / ani->delay;
 
-		if( fnum > numFrames - 1 ) {
+		if( fnum > ani->numFrames - 1 ) {
 			if( looping ) {
 				fnum = 0;
 				startTime = SDL_GetTicks();
 			} else {
-				fnum = numFrames - 1;
+				fnum = ani->numFrames - 1;
 				finished = true;
 			}
 		}
 
-		frame = &frames[fnum];
+		frame = &(ani->frames)[fnum];
 	} else {
 		startTime = SDL_GetTicks();
-		frame = &frames[0];
+		frame = &(ani->frames)[0];
 	}
 
 	frame->DrawCentered( x, y, ang );

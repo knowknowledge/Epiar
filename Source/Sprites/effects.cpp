@@ -16,7 +16,7 @@
 
 Effect::Effect(Coordinate pos, string filename, bool looping) {
 	SetWorldPosition(pos);
-	visual = Animation::Get(filename);
+	visual = new Animation(filename);
 	visual->SetLooping(looping);
 }
 
