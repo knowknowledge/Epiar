@@ -17,6 +17,9 @@
 WeaponSystem::WeaponSystem() {
 	lastFiredAt = 0;
 	lastWeaponChangeAt = 0;
+	/*Debug: Add weapons to this ship list.*/
+	addShipWeapon(string("Laser"));
+	addAmmo(string("Laser"), 5);
 	selectedWeapon = 0;
 }
 
@@ -25,8 +28,6 @@ WeaponSystem::~WeaponSystem(){
 
 void WeaponSystem::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
-	//Debug: add 100 rounds of ammo for every weapon added
-	ammo.insert ( pair<int,int>(i->GetAmmoType(),5) );
 }
 
 void WeaponSystem::addShipWeapon(string weaponName){
