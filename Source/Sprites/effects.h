@@ -7,6 +7,9 @@
  * Notes         :
  */
 
+#ifndef __H_EFFECT__
+#define __H_EFFECT__
+
 #include "Graphics/animation.h"
 #include "Sprites/sprite.h"
 #include "Graphics/image.h"
@@ -23,3 +26,5 @@ class Effect : public Sprite {
 	private:
 		Animation *visual;
 };
+
+#endif // __H_EFFECT__

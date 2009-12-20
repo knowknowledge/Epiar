@@ -7,9 +7,6 @@
  * Notes         :
  */
 
-#ifndef __H_EFFECT__
-#define __H_EFFECT__
-
 #include "Graphics/animation.h"
 #include "Graphics/image.h"
 #include "Sprites/spritemanager.h"
@@ -35,5 +32,3 @@ void Effect::Draw( void ) {
 	if(finished && !visual->GetLooping() )
 		sprites->Delete( (Sprite*)this );
 }
-
-#endif // __H_EFFECT__
