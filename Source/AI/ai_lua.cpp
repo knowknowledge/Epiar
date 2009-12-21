@@ -170,7 +170,7 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 	if (n == 2) {
 		AI** ai = checkShip(L,1);
 		string weaponName = luaL_checkstring (L, 2);
-		(*ai)->shipWeaponSystem->addShipWeapon(weaponName);
+		(*ai)->addShipWeapon(weaponName);
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n); 
 	}
@@ -194,7 +194,7 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 		AI** ai = checkShip(L,1);
 		string weaponName = luaL_checkstring (L, 2);
 		int qty = (int) luaL_checknumber (L, 3);
-		(*ai)->shipWeaponSystem->addAmmo(weaponName,qty);
+		(*ai)->addAmmo(weaponName,qty);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n); 
 	}

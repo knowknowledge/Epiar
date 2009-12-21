@@ -10,7 +10,6 @@
 #include "Sprites/ship.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
-#include "Engine/weaponSystem.h"
 #include "Sprites/spritemanager.h"
 
 
@@ -20,17 +19,24 @@ Ship::Ship() {
 	
 	/* Initalize ship's condition */
 	status.hullEnergyAbsorbed = 0;
+	status.lastWeaponChangeAt = 0;
+	status.lastFiredAt = 0;
+	status.selectedWeapon = 0;
+
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
-	shipWeaponSystem = new WeaponSystem;
 
 	/*Debug: Add all weapons to this ship list.*/
-	shipWeaponSystem->addShipWeapon(string("Laser"));
-	shipWeaponSystem->addShipWeapon(string("Strong Laser"));
-	shipWeaponSystem->addShipWeapon(string("Minigun"));
-	shipWeaponSystem->addShipWeapon(string("Missile"));
-	shipWeaponSystem->addShipWeapon(string("Slow Missile"));
-	shipWeaponSystem->addAmmo(string("Missile"), 20);
+	addShipWeapon(string("Laser"));
+	addShipWeapon(string("Strong Laser"));
+	addShipWeapon(string("Minigun"));
+	addShipWeapon(string("Missile"));
+	addShipWeapon(string("Slow Missile"));
+	addAmmo(string("Laser"), 20);
+	addAmmo(string("Strong Laser"), 20);
+	addAmmo(string("Minigun"), 20);
+	addAmmo(string("Missile"), 20);
+	addAmmo(string("Slow Missile"), 20);
 }
 
 bool Ship::SetModel( Model *model ) {
@@ -157,15 +163,75 @@ void Ship::Draw( void ) {
 }
 
 void Ship::Fire() {
-	Projectile* projectile = shipWeaponSystem->fireWeapon(GetAngle(), GetWorldPosition(), model->GetImage()->GetHalfHeight());
-	if(projectile)
+	// Check  that some weapon is attached
+	if ( shipWeapons.empty() ) {
+		Log::Message("No Weapons attached...")
+		return;
+	}
+
+	// Check that we are always selecting a real weapon
+	assert( (status.selectedWeapon>=0 && status.selectedWeapon < shipWeapons.size() ) );
+
+	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
+	// Check that the weapon has cooled down;
+	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
+		Log::Message("Weapon has not cooled down!")
+		return;
+	}
+	// Check that there is sufficient ammo
+	else if( ammo.find(currentWeapon->GetAmmoType())->second < currentWeapon->GetAmmoConsumption() ) { 
+		Log::Message("Weapon #%d the '%s' System is out of Ammo!",status.selectedWeapon, currentWeapon->GetName().c_str() );
+		return;
+	} else {
+		//Calculate the offset needed by the ship to fire infront of the ship
+		Trig *trig = Trig::Instance();
+		float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
+		Coordinate worldPosition  = GetWorldPosition();
+		int offset = model->GetImage()->GetHalfHeight();
+		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
+
+		//Fire the weapon
+		SpriteManager *sprites = SpriteManager::Instance();
+		Projectile *projectile = new Projectile(GetAngle(), worldPosition, currentWeapon);
 		projectile->SetOwnerID( this->GetID() );
+		sprites->Add( (Sprite*)projectile );
+
+		//track number of ticks the last fired occured
+		status.lastFiredAt = Timer::GetTicks();
+		//reduce ammo
+		ammo.find(currentWeapon->GetAmmoType())->second -=  currentWeapon->GetAmmoConsumption();
+	}
 }
 
+void Ship::addShipWeapon(Weapon *i){
+	shipWeapons.push_back(i);
+}
+
+void Ship::addShipWeapon(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	addShipWeapon(weapons->GetWeapon(weaponName));	
+}
 void Ship::ChangeWeapon() {
-	shipWeaponSystem->changeWeaponNext();
+	if (250 < Timer::GetTicks() - status.lastWeaponChangeAt) {
+		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
+	} 
 }
 
+void Ship::removeShipWeapon(int pos){
+	shipWeapons.erase(shipWeapons.begin()+pos);
+}
+
+void Ship::addAmmo(string weaponName, int qty){
+	Weapons *weapons = Weapons::Instance();
+	Weapon* currentWeapon = weapons->GetWeapon(weaponName);
+	
+	if (ammo.find(currentWeapon->GetAmmoType()) == ammo.end() ) {
+		ammo.insert ( pair<int,int>(currentWeapon->GetAmmoType(),qty) );
+	} else {
+		ammo.find(currentWeapon->GetAmmoType())->second += qty;
+	}
+	
+}
 
 float Ship::directionTowards(Coordinate target){
 	float theta;
@@ -191,11 +257,11 @@ float Ship::getHullIntegrityPct() {
 	return(remaining);
 }
 
-Weapon* Ship::getCurrentWeapon(){
-	return shipWeaponSystem->currentWeapon();
+Weapon* Ship::getCurrentWeapon() {
+	return shipWeapons.at(status.selectedWeapon);
 }
 
-int Ship::getCurrentAmmo(){
-	return shipWeaponSystem->currentAmmo();
+int Ship::getCurrentAmmo() {
+	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
+	return ammo.find(currentWeapon->GetAmmoType())->second;
 }
-
