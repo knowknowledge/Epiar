@@ -47,8 +47,8 @@ CFLAGS="$CFLAGS $XML_CPPFLAGS"
 LIBS="$LIBS $XML_LIBS"
 
 dnl Check for PhysicsFS
-dnl LIBS="$LIBS -lphysfs"
-dnl CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
+LIBS="$LIBS -lphysfs"
+CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
 
 dnl Check for SDL
 SDL_VERSION=1.2.10
