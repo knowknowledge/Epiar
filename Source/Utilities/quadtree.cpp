@@ -8,6 +8,7 @@
  */
 
 #include "Utilities/quadtree.h"
+#include "Graphics/video.h"
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
@@ -204,6 +205,12 @@ void QuadTree::Update(){
 }
 
 void QuadTree::Draw(){
+	float scale = 8000;
+	float r = scale* radius / 65536.0f;
+	float x = (scale* center.GetX() / 65536.0f) + Video::GetHalfWidth()  -r;
+	float y = (scale* center.GetY() / 65536.0f) + Video::GetHalfHeight() -r;
+	Video::DrawRect( x,y, 2*r, 2*r, 0,255,0, .1);
+
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])) subtrees[t]->Draw();
@@ -211,7 +218,11 @@ void QuadTree::Draw(){
 	} else { // Leaf
 		list<Sprite *>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			(*i)->Draw();
+			Coordinate pos = (*i)->GetWorldPosition();
+			int posx = (scale* (float)pos.GetX() / 65536.0f) + (float)Video::GetHalfWidth();
+			int posy = (scale* (float)pos.GetY() / 65536.0f) + (float)Video::GetHalfHeight();
+			Color col = (*i)->GetRadarColor();
+			Video::DrawCircle( posx, posy, (*i)->GetRadarSize()/17,2, col.r,col.g,col.b );
 		}
 	}
 }
