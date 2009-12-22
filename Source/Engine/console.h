@@ -1,11 +1,10 @@
-/*
- * Filename      : console.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Saturday, February 21, 2009
- * Purpose       : 
- * Notes         :
+/**\file			console.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Saturday, February 21, 2009
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Handles the Heads-Up-Display
+ * \details
  */
-
 #ifndef __h_console__
 #define __h_console__
 

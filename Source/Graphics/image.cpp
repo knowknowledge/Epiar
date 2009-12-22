@@ -1,17 +1,23 @@
-/*
- * Filename      : image.cpp
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 31, 2009
- * Purpose       : Image loading and display
- * Notes         : See this note section in image.h for an important clarification about the handling
- *                 of non-power of two image sizes and the difference between virtual/effective dimensions
- *                 and real dimensions.
+/**\file			image.cpp
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 31, 2009
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Image loading and display
+ * \details
+ * See this note section in image.h for an important clarification about the handling
+ * of non-power of two image sizes and the difference between virtual/effective dimensions
+ * and real dimensions.
  */
 
+#include "includes.h"
 #include "Graphics/image.h"
 #include "Graphics/video.h"
+#include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
+
+/**\class Image
+ * \brief Image handling. */
 
 Image::Image() {
 	// Initialize variables
@@ -21,7 +27,7 @@ Image::Image() {
 }
 
 // Create instance by loading image from file
-Image::Image( string filename ) {
+Image::Image( const string& filename ) {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
@@ -39,31 +45,25 @@ Image::~Image() {
 }
 
 // Load image from file
-bool Image::Load( string filename ) {
+bool Image::Load( const string& filename ) {
 	SDL_Surface *s = NULL;
+	File file = File( filename );
+	char* buffer = file.Read();
+	int bytesread = file.GetLength();
 
-	if( ( s = IMG_Load( filename.c_str() ) ) == NULL ) {
-		Log::Warning( "Failed to load %s", filename.c_str() );
-		return( false );
+	if ( buffer == NULL )
+		return NULL;
+
+	int retval = Load( buffer, bytesread );
+	delete [] buffer;
+	if ( retval ){
+		return true;
 	}
-
-	// virtual/effective w/h is whatever the original file intended (eg ignoring canvas expansion)
-	w = s->w;
-	h = s->h;
-
-	if( ConvertToTexture( s ) == false ) {
-		Log::Warning( "Failed to load %s", filename.c_str() );
-		SDL_FreeSurface( s );
-		return( false );
-	}
-
-	// do not free s! convert to texture does that
-
-	return( true );
+	return NULL;
 }
 
 // Load image from buffer
-bool Image::Load( unsigned char *buf, int bufSize ) {
+bool Image::Load( char *buf, int bufSize ) {
 	SDL_RWops *rw;
 	SDL_Surface *s = NULL;
 
@@ -74,7 +74,6 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 	}
 
 	s = IMG_Load_RW( rw, 0 );
-	SDL_FreeRW( rw );
 
 	if( !s ) {
 		Log::Warning( "Image loading failed. Could not load image from RWops" );
@@ -90,44 +89,6 @@ bool Image::Load( unsigned char *buf, int bufSize ) {
 		return( false );
 	}
 
-	// do not free s! convert to texture does that
-
-	return( true );
-}
-
-// Load image from FILE *. fp must be valid (open)
-bool Image::Load( FILE *fp, int size ) {
-	SDL_RWops *rw = NULL;
-	SDL_Surface *s = NULL;
-
-	if( !fp ) {
-		Log::Warning( "Image loading failed. Invalid FILE pointer" );
-		return( false );
-	}
-
-	rw = SDL_RWFromFP( fp, size );
-	if( !rw ) {
-		Log::Warning( "Image loading failed. Could not create RWops" );
-		return( false );
-	}
-
-	s = IMG_Load_RW( rw, 0 );
-	SDL_FreeRW( rw );
-	if( !s ) {
-		Log::Warning( "Image loading failed. Could not load image from RWops: %s", IMG_GetError() );
-		return( false );
-	}
-
-	w = s->w;
-	h = s->h;
-
-	if( ConvertToTexture( s ) == false ) {
-		Log::Warning( "Failed to load image from buffer" );
-		SDL_FreeSurface( s );
-		return( false );
-	}
-
-	// do not free s! convert to texture does that
 
 	return( true );
 }
@@ -258,11 +219,8 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	switch (s->format->BitsPerPixel) {
 		case 32:
 			img_format = GL_RGBA;
-#ifndef _MSC_VER
-			// Microsoft's GL doesn't define GL_BGRA
 			if(s->format->Bmask != 0x00ff0000)
 				img_format = GL_BGRA;
-#endif
 			img_type = GL_UNSIGNED_BYTE;
 			internal_format = GL_RGBA8;
 			break;

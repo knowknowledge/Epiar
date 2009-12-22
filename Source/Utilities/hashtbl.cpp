@@ -1,18 +1,14 @@
-/*
- * Filename      : hashtbl.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, June 9, 2006
- * Last Modified : Friday, June 9, 2006
- * Purpose       : Implementation of a quadratic probing hash table
- * Notes         : Mark Allen Weiss' quadratic probing hash table was used
- *                 as a reference.
- *
- *
- *
+/**\file			hashtbl.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Friday, June 9, 2006
+ * \date			Modified: Friday, June 9, 2006
+ * \brief			Implementation of a quadratic probing hash table
+ * \details
+ * Mark Allen Weiss' quadratic probing hash table was used as a reference.
  */
 
-#include "hashtbl.h"
 #include "includes.h"
+#include "hashtbl.h"
 
 // This algorithm could be more efficient.
 bool isPrime( int n ) {

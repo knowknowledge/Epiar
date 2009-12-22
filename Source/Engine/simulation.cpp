@@ -1,28 +1,31 @@
-/*
- * Filename      : simulation.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : July 2006
- * Last Modified : Tuesday, June 23, 2009
- * Purpose       : Contains the main game loop
- * Notes         :
+/**\filename		simulation.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: July 2006
+ * \date			Modified: Tuesday, June 23, 2009
+ * \brief			Contains the main game loop
+ * \details
  */
 
-#include "common.h" 
+#include "includes.h"
+#include "common.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Engine/alliances.h"
 #include "Engine/starfield.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
 #include "Utilities/camera.h"
+#include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 #include "Utilities/lua.h"
 #include "AI/ai.h"
+
+/**\class Simulation
+ * \brief Handles main game loop. */
 
 float Simulation::currentFPS = 0.;
 bool Simulation::paused = false;
@@ -164,16 +167,20 @@ bool Simulation::Parse( void ) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
-	
-	doc = xmlParseFile( filename.c_str() );
-	
+
+	File xmlfile = File( filename.c_str() );
+	long filelen = xmlfile.GetLength();
+	char *buffer = xmlfile.Read();
+	doc = xmlParseMemory( buffer, static_cast<int>(filelen) );
+	delete [] buffer;
+
 	if( doc == NULL ) {
 		Log::Warning( "Could not load '%s' simulation file.", filename.c_str() );
 		return false;
 	}
-	
+
 	cur = xmlDocGetRootElement( doc );
-	
+
 	if( cur == NULL ) {
 		Log::Warning( "'%s' file appears to be empty.", filename.c_str() );
 		xmlFreeDoc( doc );
@@ -270,3 +277,4 @@ bool Simulation::Parse( void ) {
 
 	return true;
 }
+

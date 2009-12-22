@@ -1,14 +1,16 @@
-/*
- * Filename      : player.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Wednesday, July 5, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : Main player-specific functions and handle
- * Notes         :
+/**\file			player.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Wednesday, July 5, 2006
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief			Main player-specific functions and handle
+ * \details
  */
 
 #include "includes.h"
 #include "Sprites/player.h"
+
+/**\class Player
+ * \brief Main player-specific functions and handle. */
 
 Player *Player::pInstance = 0;
 

@@ -1,10 +1,10 @@
-/*
- * Filename      : string_convert.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
- * Purpose       : Converts a std::string into the template type (such as an int)
- * Notes         : Code learnt at http://www.parashift.com/c++-faq-lite/misc-technical-issues.html#faq-39.2
+/**\file			string_convert.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, April 21, 2008
+ * \date			Modified: Monday, April 21, 2008
+ * \brief			Converts a std::string into the template type (such as an int)
+ * \details
+ * Code learnt at http://www.parashift.com/c++-faq-lite/misc-technical-issues.html#faq-39.2
  */
 
 #ifndef __H_STRING_CONVERT__

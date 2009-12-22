@@ -1,31 +1,37 @@
-/*
- * Filename      : file.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
- * Purpose       : Filesystem abstraction
- * Notes         : This is needed to implement transparent loading from the FS or from the .tgz file, or other future areas
- *               : This class should be used like FILE pointers. Specifically, you shouldn't leave a File object in existence for
- *               : very long as the entire file is loaded into memory!
- */
+/**\file			file.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, April 21, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Low level interface for file access.
+ * \details
+ * Use filesystem for higher level access.*/
 
 #ifndef __H_FILE__
 #define __H_FILE__
 
 #include "includes.h"
+#include <physfs.h>
 
 class File {
 	public:
-		File();
-		File( string filename );
+		File( void );
+		File( const string& filename );
 		~File();
-		bool Open( string filename );
+		bool OpenRead( const string& filename );
+		bool OpenWrite( const string& filename );
+		bool Read( long numBytes, char *buffer );
+		char *Read( void );
+		bool Write( char *buffer, const long bufsize );
+		long Tell( void );
+		bool Seek( long pos );
+		long GetLength( void );
+		int SetBuffer( int bufSize );
 		bool Close();
-		void *Read( long *bytesRead, int len ); // reads 'len' bytes into a buffer. Callee must free the buffer!
-		
+
 	private:
-		unsigned char *contents; // the entire contents of the file
-		long contentsSize; // size of file read in & size of the contents buffer
+		PHYSFS_file *fp;		/** File pointer.  */
+		long contentSize;		/** Number of bytes in the file. */
+		string validName;		/** Name of the file referenced (exists).*/
 };
 
 #endif // __H_XML__

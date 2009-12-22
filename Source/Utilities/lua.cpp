@@ -1,12 +1,13 @@
-/*
- * Filename      : lua.cpp
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 5, 2008
- * Last Modified : Monday, November 16 2009
- * Purpose       : Provides abilities to load, store, and run Lua scripts
- * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
+/**\file			lua.cpp
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 5, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Provides abilities to load, store, and run Lua scripts
+ * \details
+ * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
+#include "includes.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -22,6 +23,10 @@
 #include "Sprites/sprite.h"
 #include "Utilities/camera.h" 
 #include "Input/input.h"
+#include "Utilities/file.h"
+
+/**\class Lua
+ * \brief Lua subsystem. */
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
@@ -29,7 +34,7 @@ SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
 map<char, string> Lua::keyMappings;
 
-bool Lua::Load( string filename ) {
+bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
 			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
@@ -38,17 +43,24 @@ bool Lua::Load( string filename ) {
 	}
 
 	// Start the lua script
-	
-	if( luaL_dofile(L,filename.c_str()) ){
+	File luaFile = File( filename );
+	char *buffer = luaFile.Read();
+	if ( buffer == NULL ){
+		Log::Error("Error reading Lua file: %s", filename.c_str());
+		return false;
+	}
+	long bufsize = luaFile.GetLength();
+	int loadRet = luaL_loadbuffer(L, buffer, bufsize, filename.c_str());
+	int execRet = lua_pcall(L, 0, 0, 0);
+	if( loadRet || execRet ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(L, -1));
 		cout << lua_tostring(L, -1) << endl;
-	} else {
-		Log::Message("Loaded the universe");
+		return false;
 	}
-	
+	Log::Message("Loaded the universe");
 
-	return( false );
+	return( true );
 }
 
 bool Lua::Update(){

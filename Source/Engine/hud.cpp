@@ -1,18 +1,17 @@
-/*
- * Filename      : hud.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, July 23, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : Handles the Heads-Up-Display
- * Notes         :
+/**\file			hud.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created  : Sunday, July 23, 2006
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Handles the Heads-Up-Display
+ * \detailsNotes
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Engine/console.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "Sprites/player.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
@@ -30,7 +29,10 @@
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
 
+/**\class Hud
+ * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
+
 Image *Hud::im_hullstr = NULL;
 Image *Hud::im_hullstr_leftbar = NULL;
 Image *Hud::im_hullstr_rightbar = NULL;

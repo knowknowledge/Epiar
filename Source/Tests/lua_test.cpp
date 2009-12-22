@@ -1,6 +1,6 @@
+#include "includes.h"
 #include "common.h"
 #include "Debug/lua_test.h"
-#include "includes.h"
 #include "Utilities/lua.h"
 
 void lua_test(void) {

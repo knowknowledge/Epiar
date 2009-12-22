@@ -1,12 +1,12 @@
-/*
- * Filename      : font.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			font.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "Graphics/font.h"
 #include "Graphics/afont/afont_gl.h"
 #include "includes.h"
@@ -15,6 +15,9 @@
 #include <FTGL/ftgl.h>
 #endif //USE_FREETYPE
 #include "Graphics/video.h"
+
+/**\class Font
+ * \brief Font class takes care of initializing fonts. */
 
 Font::Font() {
 	r = 1.;

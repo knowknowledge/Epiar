@@ -1,12 +1,11 @@
-/*
- * Filename      : AI/ai.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, May 20, 2007
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : AI for all sprites using Lua
- * Notes         :
+/**\file			ai.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
- 
+
 #ifndef AI_H_
 #define AI_H_
 

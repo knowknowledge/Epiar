@@ -1,14 +1,13 @@
-/*
- * Filename      : input.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			input.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Sunday, June 4, 2006
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
-#include "Engine/console.h"
 #include "includes.h"
+#include "Engine/console.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
 #include "UI/ui.h"
@@ -28,6 +27,9 @@ ostream& operator<<(ostream &out, const InputEvent&e) {
 	}
 	return out;
 }
+
+/**\class Input
+ * \brief Input handling. */
 
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );

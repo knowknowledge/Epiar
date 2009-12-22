@@ -1,14 +1,16 @@
-/*
- * Filename      : debug.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Saturday, Ocotober 4, 2008
- * Last Modified : Saturday, October 4, 2008
- * Purpose       : 
- * Notes         :
+/**\file			debug.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Saturday, Ocotober 4, 2008
+ * \date			Modified: Saturday, October 4, 2008
+ * \brief
+ * \details
  */
 
 #include "includes.h"
 #include "Utilities/debug.h"
+
+/**\class Debug
+ * \brief helps with debugging. */
 
 bool Debug::active = false;
 

@@ -1,10 +1,9 @@
-/*
- * Filename      : simulation.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\filename		simulation.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: July 2006
+ * \date			Modified: Tuesday, June 23, 2009
+ * \brief			Contains the main game loop
+ * \details
  */
 
 #ifndef __H_SIMULATION__

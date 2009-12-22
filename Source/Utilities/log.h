@@ -1,10 +1,9 @@
-/*
- * Filename      : log.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : Header for logging facilities
- * Notes         :
+/**\file			log.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Sunday, June 4, 2006
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Main logging facilities for the codebase
+ * \details
  */
 
 #ifndef __H_LOG__
@@ -22,17 +21,17 @@ class Log {
 		// __FUNCTION__ is supported by many compilers, including microsoft
 		// if we don't know the compiler, assume we don't have it and revert to __FILE__
 #ifdef __GNUC__
-		#define Message( ... ) realLog( _logMessage, __PRETTY_FUNCTION__, __VA_ARGS__ );
-		#define Warning( ... ) realLog( _logWarning, __PRETTY_FUNCTION__, __VA_ARGS__ );
-		#define Error( ... )   realLog( _logError, __PRETTY_FUNCTION__, __VA_ARGS__ );
+		#define Message( ... ) realLog( _logMessage, __PRETTY_FUNCTION__, __VA_ARGS__ )
+		#define Warning( ... ) realLog( _logWarning, __PRETTY_FUNCTION__, __VA_ARGS__ )
+		#define Error( ... )   realLog( _logError, __PRETTY_FUNCTION__, __VA_ARGS__ )
 #elif defined(_MSC_VER)
-		#define Message( ... ) realLog( _logMessage, __FUNCTION__, __VA_ARGS__ );
-		#define Warning( ... ) realLog( _logWarning, __FUNCTION__, __VA_ARGS__ );
-		#define Error( ... )   realLog( _logError, __FUNCTION__, __VA_ARGS__ );
+		#define Message( ... ) realLog( _logMessage, __FUNCTION__, __VA_ARGS__ )
+		#define Warning( ... ) realLog( _logWarning, __FUNCTION__, __VA_ARGS__ )
+		#define Error( ... )   realLog( _logError, __FUNCTION__, __VA_ARGS__ )
 #else
-		#define Message( ... ) realLog( _logMessage, __FILE__ __LINE__, __VA_ARGS__ );
-		#define Warning( ... ) realLog( _logWarning, __FILE__ __LINE__, __VA_ARGS__ );
-		#define Error( ... )   realLog( _logError, __FILE__ __LINE__, __VA_ARGS__ );
+		#define Message( ... ) realLog( _logMessage, __FILE__ __LINE__, __VA_ARGS__ )
+		#define Warning( ... ) realLog( _logWarning, __FILE__ __LINE__, __VA_ARGS__ )
+		#define Error( ... )   realLog( _logError, __FILE__ __LINE__, __VA_ARGS__ )
 #endif 
 
 		static void Initalize( void );

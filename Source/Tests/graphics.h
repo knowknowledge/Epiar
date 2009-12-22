@@ -1,10 +1,11 @@
-/*
- * Filename      : graphics.h
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 31, 2009
- * Purpose       : Graphics demo & debugging
- * Notes         : 
+/**\file			graphics.h
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 31, 2009
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Graphics demo & debugging
+ * \details
  */
+
 
 #ifndef __H_DEBUG_GRAPHICS__
 #define __H_DEBUG_GRAPHICS__

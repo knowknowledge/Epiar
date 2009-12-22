@@ -1,11 +1,11 @@
-/*
- * Filename      : ship.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, July 7, 2006
- * Last Modified : Friday, November 14, 2009
- * Purpose       : Header for ship class, child of sprite class, Sprite
- * Notes         :
+/**\file			ship.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Friday, November 14, 2009
+ * \brief
+ * \details
  */
+
 
 #ifndef __H_SHIP__
 #define __H_SHIP__

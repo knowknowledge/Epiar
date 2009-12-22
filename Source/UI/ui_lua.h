@@ -1,11 +1,11 @@
-/*
- * Filename      : UI/ui_lua.h
- * Author(s)     : Matt Zweig (thezweig@gmail.com)
- * Date Created  : Thursday, October 29, 2009
- * Last Modified : Friday, November 14, 2009
- * Purpose       : Lua bridge for UI objects
- * Notes         :
+/**\file			ui_lua.h
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Thursday, October 29, 2009
+ * \date			Modified: Friday, November 14, 2009
+ * \brief			Lua bridge for UI objects
+ * \details
  */
+
 
 #ifndef __H_UI_LUA
 #define __H_UI_LUA

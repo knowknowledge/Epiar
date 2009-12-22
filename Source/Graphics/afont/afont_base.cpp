@@ -2,12 +2,10 @@
 
 /* See the file LICENSE for copyright and license information */
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
+#include "includes.h"
 #include "afont.h"
+#include "Utilities/file.h"
 
 #ifndef SYS_IS_BRAINDEAD
 #include <netinet/in.h>
@@ -36,33 +34,31 @@ static int afont_ntohl( int n )
 afont *afont_load( const char *path )
 {
   afont *a;
-  FILE *fp;
+  File file(path);
 
-  fp = fopen(path, "rb");
-  a = afont_load_fp(fp);
-  fclose(fp);
+  a = afont_load_fp(file);
 
   return a;
 }
 
-afont *afont_load_fp( FILE *fp )
+afont *afont_load_fp( File& file )
 {
   afont *a;
 
   unsigned int tmpi;
-  unsigned char tmps[AFONT_HEADER_SIZE];
+  char tmps[AFONT_HEADER_SIZE];
   int i;
 
   int total_size;
   char *gip;
 
-  fread(tmps, AFONT_HEADER_SIZE, 1, fp);
+  file.Read( AFONT_HEADER_SIZE, tmps );
   if(strncmp((const char *)tmps, AFONT_HEADER, AFONT_HEADER_SIZE))
     return NULL;
 
   a = (afont *)malloc(sizeof(afont));
   
-  fread(&tmpi, 4, 1, fp);
+  file.Read( sizeof(unsigned int), (char *)&tmpi );
   tmpi = (int)ntohl(tmpi);
   switch(tmpi) {
     case 0x00:
@@ -75,11 +71,11 @@ afont *afont_load_fp( FILE *fp )
       free(a);
       return NULL;
   }
-      
-  fread(&tmpi, 4, 1, fp);
+
+  file.Read( sizeof(unsigned int), (char *)&tmpi );
   a->nchars = (int)ntohl(tmpi);
 
-  fread(&tmpi, 4, 1, fp);
+  file.Read( sizeof(unsigned int), (char *)&tmpi );
   a->base = (int)ntohl(tmpi);
 
   a->glyph_info = (_afont_glyph *)malloc(sizeof(struct _afont_glyph) * a->nchars);
@@ -89,25 +85,25 @@ afont *afont_load_fp( FILE *fp )
 
   total_size = 0;
   for(i = 0; i < a->nchars; i++) {
-    fread(&tmpi, 4, 1, fp);
+	file.Read( sizeof(unsigned int), (char *)&tmpi );
     a->glyph_info[i].bmpx = (int)ntohl(tmpi);
     
     if(a->glyph_info[i].bmpx > a->bbox_x)
       a->bbox_x = a->glyph_info[i].bmpx;
 
-    fread(&tmpi, 4, 1, fp);
+	file.Read( sizeof(unsigned int), (char *)&tmpi );
     a->glyph_info[i].bmpy = (int)ntohl(tmpi);
 
     if(a->glyph_info[i].bmpy > a->bbox_y)
       a->bbox_y = a->glyph_info[i].bmpy;
 
-    fread(&tmpi, 4, 1, fp);
+	file.Read( sizeof(unsigned int), (char *)&tmpi );
     a->glyph_info[i].bitmap_left = (int)ntohl(tmpi);
 
-    fread(&tmpi, 4, 1, fp);
+	file.Read( sizeof(unsigned int), (char *)&tmpi );
     a->glyph_info[i].bitmap_top = (int)ntohl(tmpi);
 
-    fread(&tmpi, 4, 1, fp);
+	file.Read( sizeof(unsigned int), (char *)&tmpi );
     a->glyph_info[i].advance = (int)ntohl(tmpi);
 
     if(a->type == AFONT_1BIT)
@@ -120,7 +116,7 @@ afont *afont_load_fp( FILE *fp )
   a->glyphimg = (char *)malloc(total_size);
 
   /* Read all the glyph images */
-  fread(a->glyphimg, total_size, 1, fp);
+  file.Read(total_size, a->glyphimg);
 
   for(i = 0, gip = a->glyphimg; i < a->nchars; i++) {
     a->glyph_info[i].bmp = gip;

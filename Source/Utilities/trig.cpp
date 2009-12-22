@@ -1,15 +1,17 @@
-/*
- * Filename      : trig.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			trig.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
 #include "includes.h"
 #include <math.h> // not in includes.h because of conflicts with Log
 #include "Utilities/trig.h"
+
+/**\class Trig
+ * \brief Trigonometry handling. */
 
 Trig *Trig::pInstance = 0;
 

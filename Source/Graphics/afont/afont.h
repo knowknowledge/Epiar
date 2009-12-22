@@ -6,6 +6,7 @@
 #define _afont_h
 
 #include <stdio.h>
+#include "Utilities/file.h"
 
 #define AFONT_VERSION "0.7"
 
@@ -61,7 +62,7 @@ struct afont {
 
 afont *afont_load( const char *path );
   /* Load a font from a file */
-afont *afont_load_fp( FILE *fp );
+afont *afont_load_fp( File& file );
   /* Load a font, given a stream that points to the beginning of a afont
    * file. */
 void afont_free( afont *a );

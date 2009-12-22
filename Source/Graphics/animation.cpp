@@ -1,18 +1,22 @@
-/*
- * Filename      : animation.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			animation.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "Graphics/animation.h"
+#include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/resource.h"
 
 
 #define ANI_VERSION 1
+
+/**\class Ani
+ * \brief Animations */
 
 Ani* Ani::Get( string filename ) {
 	Ani* value;
@@ -44,27 +48,21 @@ Ani::Ani( string& filename ) {
 
 bool Ani::Load( string& filename ) {
 	char byte;
-	FILE *fp = NULL;
+	const char *cName = filename.c_str();
+	File file = File( cName );
 
-	if( ( fp = fopen( filename.c_str(), "rb" ) ) == NULL ) {
-		Log::Error( "Could not load %s", filename.c_str() );
-		return( false );
-	}
+	//Log::Message( "Loading animation '%s' ...\n", cName );
 
-	//Log::Message( "Loading animation '%s' ...\n", filename.c_str() );
-
-	fread( 	&byte, sizeof( byte ), 1, fp );
+	file.Read( 1, &byte );
 	//cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
 		Log::Error( "Incorrect ani version" );
-		fclose( fp );
 		return( false );
 	}
 
-	fread( &byte, sizeof( byte ), 1, fp );
+	file.Read( 1, &byte );
 	if( byte <= 0 ) {
 		Log::Error( "Cannot have zero or less frames" );
-		fclose( fp );
 		return( false );
 	}
 	numFrames = byte;
@@ -72,10 +70,9 @@ bool Ani::Load( string& filename ) {
 	// Allocate space for frames
 	frames = new Image[byte];
 
-	fread( &byte, sizeof( byte ), 1, fp );
+	file.Read( 1, &byte );
 	if( byte <= 0 ) {
 		Log::Error( "Cannot have zero or less for a delay" );
-		fclose( fp );
 		delete [] frames;
 		frames = NULL;
 		return( false );
@@ -87,26 +84,24 @@ bool Ani::Load( string& filename ) {
 		long pos;
 		int fs;
 
-		fread( &fs, sizeof( fs ), 1, fp );
+		file.Read( sizeof(int), (char *) &fs );
 
-		pos = ftell( fp );
-		
+		pos = file.Tell();
+
 		// On OS X 10.6 with SDL_image 1.2.8, the load from fp is broken, so we load it into a buffer ourselves and SDL_image
 		// loads from that correctly. It's an extra step on our part, but performance/functionally they're identical. Hopefully
 		// this gets fixed in a future SDL_image
-		unsigned char *buf = (unsigned char *)malloc(sizeof(unsigned char) * fs);
-		fread(buf, sizeof(unsigned char), fs, fp);
-		
+		char *buf = new char [fs];
+		file.Read( fs, buf );
+
 		//frames[i].Load( fp, (int)fs );
 		frames[i].Load( buf, fs );
 
-		free(buf);
+		delete [] buf;
 		buf = NULL;
-		
-		fseek( fp, pos + fs, SEEK_SET );
-	}
 
-	fclose( fp );
+		file.Seek( pos + fs );
+	}
 
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
@@ -115,6 +110,9 @@ bool Ani::Load( string& filename ) {
 
 	return( true );
 }
+
+/**\class Animation
+ * \brief Animations */
 
 Animation::Animation() {
 	startTime = 0;

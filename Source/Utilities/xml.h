@@ -1,16 +1,16 @@
-/*
- * Filename      : xml.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
- * Purpose       : Interface for working with XML files
- * Notes         :
+/**\file		xml.h
+ * \author		Chris Thielen (chris@luethy.net)
+ * \date		Created: Monday, April 21, 2008
+ * \date		Modified: Saturday, November 21, 2009
+ * \brief       Interface with XML files
+ * \details
+ *
  */
+
 
 #ifndef __H_XML__
 #define __H_XML__
 
-#include "Graphics/image.h"
 #include "includes.h"
 #include <map>
 #include <zlib.h>
@@ -18,12 +18,12 @@
 class XMLFile {
 	public:
 		XMLFile();
-		XMLFile( string filename );
+		XMLFile( const string& filename );
 		~XMLFile();
-		bool Open( string filename );
+		bool Open( const string& filename );
 		bool Close();
-		string Get( string path ); // cast/convert this to whatever return value you need
-		
+		string Get( const string& path ); // cast/convert this to whatever return value you need
+
 	private:
 		xmlDocPtr xmlPtr;
 		map<string,string> values;
