@@ -25,18 +25,6 @@ Ship::Ship() {
 
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
-
-	/*Debug: Add all weapons to this ship list.*/
-	addShipWeapon(string("Laser"));
-	addShipWeapon(string("Strong Laser"));
-	addShipWeapon(string("Minigun"));
-	addShipWeapon(string("Missile"));
-	addShipWeapon(string("Slow Missile"));
-	addAmmo(string("Laser"), 20);
-	addAmmo(string("Strong Laser"), 20);
-	addAmmo(string("Minigun"), 20);
-	addAmmo(string("Missile"), 20);
-	addAmmo(string("Slow Missile"), 20);
 }
 
 bool Ship::SetModel( Model *model ) {
@@ -165,7 +153,7 @@ void Ship::Draw( void ) {
 void Ship::Fire() {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
-		Log::Message("No Weapons attached...")
+		//Log::Message("No Weapons attached to ship #%d",GetID());
 		return;
 	}
 
@@ -175,7 +163,7 @@ void Ship::Fire() {
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	// Check that the weapon has cooled down;
 	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
-		Log::Message("Weapon has not cooled down!")
+		//Log::Message("Weapon has not cooled down!")
 		return;
 	}
 	// Check that there is sufficient ammo
@@ -211,10 +199,13 @@ void Ship::addShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	addShipWeapon(weapons->GetWeapon(weaponName));	
 }
-void Ship::ChangeWeapon() {
-	if (250 < Timer::GetTicks() - status.lastWeaponChangeAt) {
+
+bool Ship::ChangeWeapon() {
+	if (shipWeapons.size() && (250 < Timer::GetTicks() - status.lastWeaponChangeAt)){
 		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
-	} 
+		return true;
+	}
+	return false;
 }
 
 void Ship::removeShipWeapon(int pos){
@@ -258,10 +249,12 @@ float Ship::getHullIntegrityPct() {
 }
 
 Weapon* Ship::getCurrentWeapon() {
+	if(shipWeapons.size()==0) return (Weapon*)NULL;
 	return shipWeapons.at(status.selectedWeapon);
 }
 
 int Ship::getCurrentAmmo() {
+	if(shipWeapons.size()==0) return 0;
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	return ammo.find(currentWeapon->GetAmmoType())->second;
 }

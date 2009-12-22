@@ -60,6 +60,9 @@ class InputEvent {
 		int mx, my; // mouse coords
 };
 
+
+ostream& operator<<(ostream &out, const InputEvent&e);
+
 // TODO: make this a static class
 class Input {
 	public:

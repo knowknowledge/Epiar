@@ -16,6 +16,18 @@
 #include "Graphics/video.h"
 #include "Engine/simulation.h"
 #include "Engine/hud.h"
+#include "Utilities/lua.h"
+
+ostream& operator<<(ostream &out, const InputEvent&e) {
+	static const char _mouseMeanings[3] = {'M','U','D'};
+	static const char _keyMeanings[4] = {'^','V','P','T'};
+	if ( e.type==KEY ) {
+		out << "KEY("<<e.key<<' '<<_keyMeanings[int(e.kstate)]<<")";
+	} else { // Mouse
+		out <<"MOUSE("<<e.mx<<','<<e.my<<' '<<_mouseMeanings[int(e.mstate)]<<")";
+	}
+	return out;
+}
 
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
@@ -64,7 +76,8 @@ bool Input::Update( void ) {
 	
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
-	Console::Input( events );
+	Console::HandleInput( events );
+	Lua::HandleInput( events );
 	Handle( events ); // default handler. player motion is handled here
 
 	events.clear();
@@ -161,9 +174,13 @@ void Input::Handle( list<InputEvent> & events ) {
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
 	if( keyDown[ SDLK_SPACE ] ) player->Fire();
-	if( keyDown[ SDLK_LSHIFT ] ){
-		player->ChangeWeapon();
-		Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
+
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+		if(i->type==KEY && i->kstate == KEYUP && i->key==SDLK_LSHIFT) {
+			if( player->ChangeWeapon() )
+				Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
+			break;
+		}
 	}
 	
 

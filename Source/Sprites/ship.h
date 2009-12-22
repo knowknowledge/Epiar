@@ -32,7 +32,7 @@ class Ship : public Sprite {
 
 		void Draw( void );
 		void Fire( void );
-		void ChangeWeapon( void );
+		bool ChangeWeapon( void );
 
 		// Outfitting Functions
 		void addShipWeapon(Weapon *i);

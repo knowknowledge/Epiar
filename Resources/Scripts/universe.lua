@@ -53,6 +53,18 @@ end
 --------------------------------------------------------------------------------
 -- Basic Utilities
 
+function togglePause()
+	io.write("Toggling...\n")
+	if 1 == Epiar.ispaused() then
+		io.write("Un Pause\n")
+		Epiar.unpause()
+	else
+		io.write("Pause\n")
+		Epiar.pause()
+	end
+end
+Epiar.RegisterKey('p',"togglePause()")
+
 -- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
@@ -154,8 +166,10 @@ function buy(model)
 	return 1
 end
 
+
 function store()
 	Epiar.pause()
+	if storefront ~=nil then return end
 
 	-- The Store layout parameters
 	width = 820
@@ -186,7 +200,7 @@ function store()
 			pos_x+(box-button_w)/2,
 			pos_y,
 			button_w,button_h, models[m],
-			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront); "))
+			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront);storefront=nil "))
 		UI.add(storefront, UI:newPicture(
 			pos_x,
 			pos_y + button_h,
@@ -195,7 +209,13 @@ function store()
 		col =col+1
 	end
 end
-registerInit(store)
+--registerInit(store)
+Epiar.RegisterKey('s',"store()")
+
+Ship.AddWeapon( Epiar.player(), "Minigun" )
+Ship.AddWeapon( Epiar.player(), "Missile" )
+Ship.AddAmmo( Epiar.player(), "Missile",100 )
+
 
 --------------------------------------------------------------------------------
 -- Load Scenarios

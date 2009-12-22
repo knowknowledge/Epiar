@@ -17,7 +17,7 @@ class Console {
 	public:
 		static void Initialize();
 
-		static void Input( list<InputEvent> & events );
+		static void HandleInput( list<InputEvent> & events );
 		static void Draw();
 		static void Update();
 
