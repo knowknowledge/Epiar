@@ -91,15 +91,12 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
-	float top = OPTION( float, "options/momentum-caps/top" );
-	float right = OPTION( float, "options/momentum-caps/right" );
-	float bottom = OPTION( float, "options/momentum-caps/bottom" );
-	float left = OPTION( float, "options/momentum-caps/left" );
+	float speed = model->GetMaxSpeed();
 
 	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
 
-	momentum.EnforceBoundaries(top,right, bottom, left);
+	momentum.EnforceBoundaries(speed,speed,speed,speed);
 	
 	SetMomentum( momentum );
 	

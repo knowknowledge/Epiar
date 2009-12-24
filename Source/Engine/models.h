@@ -38,6 +38,8 @@ class Model {
 				}
 			} else PPA_MATCHES( "thrustOffset" ) {
 				thrustOffset = (short)atoi( value.c_str() );
+			} else PPA_MATCHES( "maxSpeed" ) {
+				maxSpeed = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
 				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
@@ -57,6 +59,10 @@ class Model {
 		
 		float GetRotationsPerSecond( void ) {
 			return rotPerSecond;
+		}
+
+		float GetMaxSpeed( void ) {
+			return maxSpeed;
 		}
 		
 		float GetAcceleration( void ) {
@@ -92,6 +98,7 @@ class Model {
 		float mass;
 		short int thrustOffset; // engine flare animation offset
 		float rotPerSecond;
+		float maxSpeed;
 		short int maxEnergyAbsorption; 
 };
 
