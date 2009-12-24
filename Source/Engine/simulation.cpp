@@ -95,7 +95,6 @@ bool Simulation::Run( void ) {
 	planets->RegisterAll( sprites );
 
 	// Start the Lua Universe
-	Lua::SetSpriteList( sprites );
 	Lua::Load("Resources/Scripts/universe.lua");
 	
 	// Start the Lua Scenarios
