@@ -175,7 +175,28 @@ void Input::Handle( list<InputEvent> & events ) {
 	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
-	if( keyDown[ SDLK_SPACE ] ) player->Fire();
+	if( keyDown[ SDLK_SPACE ] ) {
+		FireStatus result = player->Fire();
+		/*
+		Weapon* currentWeapon = player->getCurrentWeapon();
+		switch(result) {
+			case FireSuccess:
+				break;
+			case FireNoWeapons:
+				Log::Message("No Weapons attached to this ship.");
+				break;
+			case FireNotReady:
+				Log::Message("The '%s' has not cooled down!", currentWeapon->GetName().c_str() );
+				break;
+			case FireNoAmmo:
+				Log::Message("The '%s' System is out of Ammo!", currentWeapon->GetName().c_str() );
+				break;
+			default:
+				assert(0);
+				break;
+		}
+		*/
+	}
 
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
 		if(i->type==KEY && i->kstate == KEYUP && i->key==SDLK_LSHIFT) {

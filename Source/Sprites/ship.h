@@ -31,7 +31,7 @@ class Ship : public Sprite {
 		void Damage( short int damage );
 
 		void Draw( void );
-		void Fire( void );
+		FireStatus Fire( void );
 		bool ChangeWeapon( void );
 
 		// Outfitting Functions

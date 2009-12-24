@@ -158,11 +158,10 @@ void Ship::Draw( void ) {
 	}
 }
 
-void Ship::Fire() {
+FireStatus Ship::Fire() {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
-		//Log::Message("No Weapons attached to ship #%d",GetID());
-		return;
+		return FireNoWeapons;
 	}
 
 	// Check that we are always selecting a real weapon
@@ -171,13 +170,11 @@ void Ship::Fire() {
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	// Check that the weapon has cooled down;
 	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
-		//Log::Message("Weapon has not cooled down!")
-		return;
+		return FireNotReady;
 	}
 	// Check that there is sufficient ammo
 	else if( ammo.find(currentWeapon->GetAmmoType())->second < currentWeapon->GetAmmoConsumption() ) { 
-		Log::Message("Weapon #%d the '%s' System is out of Ammo!",status.selectedWeapon, currentWeapon->GetName().c_str() );
-		return;
+		return FireNoAmmo;
 	} else {
 		//Calculate the offset needed by the ship to fire infront of the ship
 		Trig *trig = Trig::Instance();
@@ -196,7 +193,10 @@ void Ship::Fire() {
 		status.lastFiredAt = Timer::GetTicks();
 		//reduce ammo
 		ammo.find(currentWeapon->GetAmmoType())->second -=  currentWeapon->GetAmmoConsumption();
+
+		return FireSuccess;
 	}
+	
 }
 
 void Ship::addShipWeapon(Weapon *i){

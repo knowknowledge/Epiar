@@ -134,7 +134,9 @@ int AI_Lua::ShipFire(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
-		(*ai)->Fire();
+		FireStatus result = (*ai)->Fire();
+		lua_pushinteger(L, (int)(result) );
+		return 1;
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
 	}

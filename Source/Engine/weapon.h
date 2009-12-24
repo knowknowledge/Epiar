@@ -14,6 +14,8 @@
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
 
+enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo};
+
 class Weapon {
 	public:
 		Weapon(void);
