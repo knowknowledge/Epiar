@@ -19,6 +19,7 @@ AC_PROG_RANLIB
 
 dnl Epiar Builds with freetype by default
 AC_ARG_ENABLE(freetype, [  --disable-freetype      Build without the FreeType Library ], [], [])
+AC_ARG_ENABLE(physicsfs, [  --disable-physicsfs    Build without PhysicsFS ], [], [])
 
 echo "FreeType: '$enable_freetype'"
 AS_IF(
@@ -47,8 +48,21 @@ CFLAGS="$CFLAGS $XML_CPPFLAGS"
 LIBS="$LIBS $XML_LIBS"
 
 dnl Check for PhysicsFS
-LIBS="$LIBS -lphysfs"
-CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
+echo "PhysicsFS: '$enable_physicsfs'"
+AS_IF(
+	[test "_$enable_physicsfs" = "_yes"], dnl Turn Off by Default
+	dnl[test "_$enable_physicsfs" != "_no"], dnl Turn On by Default
+	[
+		echo "Build using PhysicsFS"
+		AC_DEFINE(USE_FREETYPE,["yes"],["Build using PhysicsFS"])
+		LIBS="$LIBS -lphysfs"
+		case "$target" in *-*-linux*)
+			CFLAGS="$CFLAGS -I/usr/include/"
+		esac
+		case "$target" in *-apple-darwin*)
+			CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
+		esac
+	])
 
 dnl Check for SDL
 SDL_VERSION=1.2.10

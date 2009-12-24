@@ -32,7 +32,10 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 int main( int argc, char **argv ) {
 	Log::Initalize();
 	// Use ".dat" extension for data files
+#ifdef USE_PHYSICSFS
 	Filesystem::Init( argv[0], "dat" );
+#endif
+
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
@@ -82,7 +85,9 @@ int main( int argc, char **argv ) {
 	// free the configuration file data
 	delete optionsfile;
 	
+#ifdef USE_PHYSICSFS
 	Filesystem::DeInit();
+#endif
 	Log::Close();
 
 	return( 0 );
