@@ -13,7 +13,7 @@
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
 
-Projectile::Projectile(float angleToFire, Coordinate worldPosition, Weapon* weapon)
+Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon)
 {
 	// All Projectiles get these
 	ownerID = -1;
@@ -32,8 +32,9 @@ Projectile::Projectile(float angleToFire, Coordinate worldPosition, Weapon* weap
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( angleToFire ));
 
-	momentum = Coordinate( trig->GetCos( angle ) * weapon->GetVelocity(),
-	                         -1 * trig->GetSin( angle ) * weapon->GetVelocity() );
+	momentum = firedMomentum +
+	           Coordinate( trig->GetCos( angle ) * weapon->GetVelocity(),
+	                      -trig->GetSin( angle ) * weapon->GetVelocity() );
 	
 	SetMomentum( momentum );
 }

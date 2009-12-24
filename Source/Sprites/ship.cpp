@@ -7,10 +7,12 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Sprites/ship.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/xml.h"
 
 
 /**\class Ship
@@ -89,9 +91,15 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
+	float top = OPTION( float, "options/momentum-caps/top" );
+	float right = OPTION( float, "options/momentum-caps/right" );
+	float bottom = OPTION( float, "options/momentum-caps/bottom" );
+	float left = OPTION( float, "options/momentum-caps/left" );
 
 	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
+
+	momentum.EnforceBoundaries(top,right, bottom, left);
 	
 	SetMomentum( momentum );
 	
@@ -183,7 +191,7 @@ void Ship::Fire() {
 
 		//Fire the weapon
 		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(GetAngle(), worldPosition, currentWeapon);
+		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);
 		projectile->SetOwnerID( this->GetID() );
 		sprites->Add( (Sprite*)projectile );
 

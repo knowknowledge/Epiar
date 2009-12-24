@@ -182,7 +182,7 @@ void Radar::Draw( SpriteManager *sprites ) {
 	list<Sprite*> *spriteList = sprites->GetSpritesNear(Player::Instance()->GetWorldPosition(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
-		Coordinate blip( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) );
+		Coordinate blip;
 		Sprite *sprite = *iter;
 		
 		//if( sprite->GetDrawOrder() == DRAW_ORDER_PLAYER ) continue;
@@ -191,7 +191,7 @@ void Radar::Draw( SpriteManager *sprites ) {
 		Coordinate wpos = sprite->GetWorldPosition();
 		WorldToBlip( wpos, blip );
 		
-		if( blip.ViolatesBoundary() == false ) {
+		if( blip.ViolatesBoundary( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) ) == false ) {
 			/* blip is on the radar */
 			
 			/* Convert to screen coords */
