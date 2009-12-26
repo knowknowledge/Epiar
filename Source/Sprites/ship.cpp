@@ -1,18 +1,22 @@
-/*
- * Filename      : ship.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Friday, November 14, 2009
- * Purpose       : 
- * Notes         :
+/**\file			ship.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Friday, November 14, 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
+#include "common.h"
 #include "Sprites/ship.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
-#include "Engine/weapons.h"
-#include "Engine/weapon.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/xml.h"
+
+
+/**\class Ship
+ * \brief Ship handling. */
 
 Ship::Ship() {
 	model = NULL;
@@ -20,6 +24,7 @@ Ship::Ship() {
 	
 	/* Initalize ship's condition */
 	status.hullEnergyAbsorbed = 0;
+
 	projectileAmmo = 10;
 	fireDelay = 0;
 	
@@ -96,9 +101,12 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
+	float speed = model->GetMaxSpeed();
 
 	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
+
+	momentum.EnforceBoundaries(speed,speed,speed,speed);
 	
 	SetMomentum( momentum );
 	
@@ -112,9 +120,6 @@ void Ship::Damage(short int damage) {
 
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
-	if (fireDelay > 0) {
-		fireDelay--;
-	}
 	
 	if( status.isAccelerating == false ) {
 		flareAnimation->Reset();
@@ -134,7 +139,7 @@ void Ship::Update( void ) {
 bool Ship::SetFlareAnimation( string filename ) {
 	if( flareAnimation )
 		delete flareAnimation;
-		
+	
 	flareAnimation = new Animation( filename );
 	
 	return true;
@@ -152,7 +157,7 @@ void Ship::Draw( void ) {
 		float tx, ty;
 		
 		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
-						model->GetThrustOffset())),
+						(flareAnimation->GetHalfWidth() + model->GetThrustOffset()) )),
 				static_cast<float>(position.GetScreenY()),
 				static_cast<float>(position.GetScreenX()),
 				static_cast<float>(position.GetScreenY()), &tx, &ty,
@@ -163,22 +168,79 @@ void Ship::Draw( void ) {
 	}
 }
 
-void Ship::Fire() {
-	Weapon* currentWeapon = shipWeapons.at(selectedWeapon);
-	if (fireDelay < 1 && !shipWeapons.empty()) {
-		currentWeapon->fireWeapon(GetAngle(), GetWorldPosition());
-		fireDelay = currentWeapon->getFireDelay();
+FireStatus Ship::Fire() {
+	// Check  that some weapon is attached
+	if ( shipWeapons.empty() ) {
+		return FireNoWeapons;
 	}
+
+	// Check that we are always selecting a real weapon
+	assert( (status.selectedWeapon>=0 && status.selectedWeapon < shipWeapons.size() ) );
+
+	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
+	// Check that the weapon has cooled down;
+	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
+		return FireNotReady;
+	}
+	// Check that there is sufficient ammo
+	else if( ammo.find(currentWeapon->GetAmmoType())->second < currentWeapon->GetAmmoConsumption() ) { 
+		return FireNoAmmo;
+	} else {
+		//Calculate the offset needed by the ship to fire infront of the ship
+		Trig *trig = Trig::Instance();
+		float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
+		Coordinate worldPosition  = GetWorldPosition();
+		int offset = model->GetImage()->GetHalfHeight();
+		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
+
+		//Fire the weapon
+		SpriteManager *sprites = SpriteManager::Instance();
+		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);
+		projectile->SetOwnerID( this->GetID() );
+		sprites->Add( (Sprite*)projectile );
+
+		//track number of ticks the last fired occured
+		status.lastFiredAt = Timer::GetTicks();
+		//reduce ammo
+		ammo.find(currentWeapon->GetAmmoType())->second -=  currentWeapon->GetAmmoConsumption();
+
+		return FireSuccess;
+	}
+	
 }
 
-void Ship::ChangeWeapon() {
-	if (selectedWeapon < shipWeapons.size()-1) {
-		selectedWeapon++;
-		return;
-	} 
-	selectedWeapon = 0;
+void Ship::addShipWeapon(Weapon *i){
+	shipWeapons.push_back(i);
 }
 
+void Ship::addShipWeapon(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	addShipWeapon(weapons->GetWeapon(weaponName));	
+}
+
+bool Ship::ChangeWeapon() {
+	if (shipWeapons.size() && (250 < Timer::GetTicks() - status.lastWeaponChangeAt)){
+		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
+		return true;
+	}
+	return false;
+}
+
+void Ship::removeShipWeapon(int pos){
+	shipWeapons.erase(shipWeapons.begin()+pos);
+}
+
+void Ship::addAmmo(string weaponName, int qty){
+	Weapons *weapons = Weapons::Instance();
+	Weapon* currentWeapon = weapons->GetWeapon(weaponName);
+	
+	if (ammo.find(currentWeapon->GetAmmoType()) == ammo.end() ) {
+		ammo.insert ( pair<int,int>(currentWeapon->GetAmmoType(),qty) );
+	} else {
+		ammo.find(currentWeapon->GetAmmoType())->second += qty;
+	}
+	
+}
 
 float Ship::directionTowards(Coordinate target){
 	float theta;
@@ -202,4 +264,15 @@ float Ship::getHullIntegrityPct() {
 	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
 	//Log::Message("Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
 	return(remaining);
+}
+
+Weapon* Ship::getCurrentWeapon() {
+	if(shipWeapons.size()==0) return (Weapon*)NULL;
+	return shipWeapons.at(status.selectedWeapon);
+}
+
+int Ship::getCurrentAmmo() {
+	if(shipWeapons.size()==0) return 0;
+	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
+	return ammo.find(currentWeapon->GetAmmoType())->second;
 }

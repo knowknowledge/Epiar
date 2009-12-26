@@ -1,11 +1,11 @@
-/*
- * Filename      : planets.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Monday, November 16 2009
- * Purpose       : 
- * Notes         :
+/**\file			planets.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Monday, November 16 2009
+ * \brief
+ * \details
  */
+
 
 #ifndef __h_planets__
 #define __h_planets__

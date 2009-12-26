@@ -1,11 +1,11 @@
-/*
- * Filename      : video.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			video.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
+
 
 #ifndef __H_VIDEO__
 #define __H_VIDEO__
@@ -58,6 +58,7 @@ class Video {
 		static int GetHalfHeight( void );
 
 		static void DrawPoint( int x, int y, float r, float g, float b );
+		static void DrawPoint( Coordinate c, Color col );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b, float a );
 		static void DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b);
@@ -77,3 +78,4 @@ class Video {
 };
 
 #endif // __H_VIDEO__
+

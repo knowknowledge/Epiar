@@ -1,30 +1,28 @@
-/*
- * Filename      : sprite.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			sprite.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Sprites/sprite.h"
 #include "Utilities/log.h"
-#include "Utilities/xml.h"
+
 
 int Sprite::sprite_ids = 0;
+
+/**\class Sprite
+ * \brief Sprite handling. */
 
 Sprite::Sprite() {
 	id = sprite_ids++;
 
 	// Momentum caps
-	float top = OPTION( float, "options/momentum-caps/top" );
-	float right = OPTION( float, "options/momentum-caps/right" );
-	float bottom = OPTION( float, "options/momentum-caps/bottom" );
-	float left = OPTION( float, "options/momentum-caps/left" );
 
 	angle = 0.;
-	momentum.SetBoundaries( top, right, bottom, left ); // game defaults
 	
 	image = NULL;
 	

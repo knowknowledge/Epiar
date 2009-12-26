@@ -1,20 +1,35 @@
-/*
- * Filename      : input.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			input.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Sunday, June 4, 2006
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
-#include "Engine/console.h"
 #include "includes.h"
+#include "Engine/console.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
 #include "UI/ui.h"
 #include "Utilities/log.h"
 #include "Graphics/video.h"
 #include "Engine/simulation.h"
+#include "Engine/hud.h"
+#include "Utilities/lua.h"
+
+ostream& operator<<(ostream &out, const InputEvent&e) {
+	static const char _mouseMeanings[3] = {'M','U','D'};
+	static const char _keyMeanings[4] = {'^','V','P','T'};
+	if ( e.type==KEY ) {
+		out << "KEY("<<e.key<<' '<<_keyMeanings[int(e.kstate)]<<")";
+	} else { // Mouse
+		out <<"MOUSE("<<e.mx<<','<<e.my<<' '<<_mouseMeanings[int(e.mstate)]<<")";
+	}
+	return out;
+}
+
+/**\class Input
+ * \brief Input handling. */
 
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
@@ -63,7 +78,8 @@ bool Input::Update( void ) {
 	
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
-	Console::Input( events );
+	Console::HandleInput( events );
+	Lua::HandleInput( events );
 	Handle( events ); // default handler. player motion is handled here
 
 	events.clear();
@@ -150,6 +166,7 @@ void Input::Handle( list<InputEvent> & events ) {
 	if ( Simulation::isPaused() ) return;
 
 	Player *player = Player::Instance();
+	if(player->getHullIntegrityPct() <= 0.0f) return;
 
 	if( keyDown[ SDLK_UP ] ) player->Accelerate();
 	// TODO It shouldn't be possible to rotate in both directions at once
@@ -158,8 +175,36 @@ void Input::Handle( list<InputEvent> & events ) {
 	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
-	if( keyDown[ SDLK_SPACE ] ) player->Fire();
-	if( keyDown[ SDLK_LSHIFT ] ) player->ChangeWeapon();
+	if( keyDown[ SDLK_SPACE ] ) {
+		FireStatus result = player->Fire();
+		/*
+		Weapon* currentWeapon = player->getCurrentWeapon();
+		switch(result) {
+			case FireSuccess:
+				break;
+			case FireNoWeapons:
+				Log::Message("No Weapons attached to this ship.");
+				break;
+			case FireNotReady:
+				Log::Message("The '%s' has not cooled down!", currentWeapon->GetName().c_str() );
+				break;
+			case FireNoAmmo:
+				Log::Message("The '%s' System is out of Ammo!", currentWeapon->GetName().c_str() );
+				break;
+			default:
+				assert(0);
+				break;
+		}
+		*/
+	}
+
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+		if(i->type==KEY && i->kstate == KEYUP && i->key==SDLK_LSHIFT) {
+			if( player->ChangeWeapon() )
+				Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
+			break;
+		}
+	}
 	
 
 	// DEBUG CODE

@@ -1,15 +1,17 @@
-/*
- * Filename      : log.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Last Modified : Saturdayy, January 5, 2008
- * Purpose       : Main logging facilities for the codebase
- * Notes         :
+/**\file			log.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Sunday, June 4, 2006
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Main logging facilities for the codebase
+ * \details
  */
 
-#include "common.h"
 #include "includes.h"
+#include "common.h"
 #include "Utilities/log.h"
+
+/**\class Log
+ * \brief Main logging facilities for the code base. */
 
 FILE *Log::fp = NULL;
 

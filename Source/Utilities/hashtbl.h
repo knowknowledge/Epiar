@@ -1,11 +1,10 @@
-/*
- * Filename      : hashtbl.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, June 9, 2006
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : Implementation of a quadratic probing hash table
- * Notes         : Mark Allen Weiss' quadratic probing hash table was used
- *                 as a reference.
+/**\file			hashtbl.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Friday, June 9, 2006
+ * \date			Modified: Friday, June 9, 2006
+ * \brief			Implementation of a quadratic probing hash table
+ * \details
+ * Mark Allen Weiss' quadratic probing hash table was used as a reference.
  */
 
 #ifndef __H_HASH_TABLE__

@@ -1,13 +1,11 @@
-/*
- * Filename      : ai_lua.h
- * Author(s)     : Matt Zweig (thezweig@gmail.com)
- * Date Created  : Thursday, October 29, 2009
- * Last Modified : Monday, November 16 2009
- * Purpose       : Lua Bridge for AI objects
- * Notes         :
+/**\file			ai_lua.h
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Thursday, October 29, 2009
+ * \date			Modified: Monday, November 16 2009
+ * \brief			Lua Bridge for AI objects
+ * \details
  */
 
- 
 #ifndef __H_AI_LUA_
 #define __H_AI_LUA_
 
@@ -28,8 +26,12 @@ class AI_Lua{
 		static int ShipAccelerate(lua_State* L);
 		static int ShipRotate(lua_State* L);
 		static int ShipRadarColor(lua_State* L);
+		static int ShipFire(lua_State* L);
 		static int ShipDamage(lua_State* L);
 		static int ShipExplode(lua_State* L);
+		static int ShipAddWeapon(lua_State* L);
+		static int ShipChangeWeapon(lua_State* L);
+		static int ShipAddAmmo(lua_State* L);
 		static int ShipSetModel(lua_State* L);
 
 		// Current Ship State

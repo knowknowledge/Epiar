@@ -10,29 +10,33 @@
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
 #include "Sprites/ship.h"
+#include "Utilities/timer.h"
+#include "Engine/weapons.h"
 
-Projectile::Projectile(float angleToFire, Coordinate worldPosition, Image* img, int lifetime, int velocity)
+Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon)
 {
-	direction = angleToFire;
-	ttl = lifetime;
-	this->velocity = velocity;
-	isAccelerating = true;
+	// All Projectiles get these
+	ownerID = -1;
+	start = Timer::GetTicks();
+	SetRadarColor (Color::Get(0x55,0x55,0x55));
 
+	// These are based off of the Ship firing this projectile
 	SetWorldPosition( worldPosition );
 	SetAngle(angleToFire);
-	SetRadarColor (Color::Get(0x99,0x99,0x99));
 
-	SetImage(img);
+	// These are based off of the Weapon
+	secondsOfLife = weapon->GetLifetime();
+	SetImage(weapon->GetImage());
 
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( angleToFire ));
 
-	momentum = Coordinate( trig->GetCos( angle ) * velocity,
-	                         -1 * trig->GetSin( angle ) * velocity );
+	momentum = firedMomentum +
+	           Coordinate( trig->GetCos( angle ) * weapon->GetVelocity(),
+	                      -trig->GetSin( angle ) * weapon->GetVelocity() );
 	
 	SetMomentum( momentum );
-
 }
 
 Projectile::~Projectile(void)
@@ -41,7 +45,6 @@ Projectile::~Projectile(void)
 
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
-	ttl--;
 	SpriteManager *sprites = SpriteManager::Instance();
 	int numImpacts = 0;
 	
@@ -49,16 +52,17 @@ void Projectile::Update( void ) {
 	if( impacts->size() > 1) {
 		list<Sprite *>::iterator i;
 		for( i = impacts->begin(); i != impacts->end(); ++i ) {
-			if( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
-//			 || ( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER )
+			if( ( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
+			    ||( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER ) )
+			  &&( (*i)->GetID() != ownerID )
 			 ) {
-				((Ship*)(*i))->Damage( 200 );
+				((Ship*)(*i))->Damage( 20 );
 				numImpacts++;
 			}
 		}
 	}
-	if (numImpacts || (ttl < 1)) {
-		if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
+	if (numImpacts || ( Timer::GetTicks() > secondsOfLife + start )) {
+		//if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
 		sprites->Delete( (Sprite*)this );
 	}
 }

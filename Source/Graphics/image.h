@@ -1,18 +1,19 @@
-/*
- * Filename      : image.h
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 31, 2009
- * Purpose       : Image loading and display
- * Notes         : You don't have to worry about OpenGL's power of 2 image dimension requirements.
- *                 This class will scale for you while still displaying correctly.
- *                 When editing this class, there are a number of curious variables and conventions to
- *                 pay attention to. The real width/height of the image (rw, rh) is rarely used - it is
- *                 the true width and height of the image according to OpenGL. However, as we often expand
- *                 images whose dimensions weren't a power of two, but must be for proper OpenGL texture
- *                 size requirements, we may internally expand the dimensions of the image (thus the rw,rh grow)
- *                 but the w/h is still effectively (at least as far as we care on the outside) whatever non-
- *                 power of two dimensions, and these effective, "fake" dimensions are called it's _virtual_
- *                 dimensions, or virtual width/height, stored in w, h.
+/**\file			image.h
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 31, 2009
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Image loading and display
+ * \details
+ * You don't have to worry about OpenGL's power of 2 image dimension requirements.
+ * This class will scale for you while still displaying correctly.
+ * When editing this class, there are a number of curious variables and conventions to
+ * pay attention to. The real width/height of the image (rw, rh) is rarely used - it is
+ * the true width and height of the image according to OpenGL. However, as we often expand
+ * images whose dimensions weren't a power of two, but must be for proper OpenGL texture
+ * size requirements, we may internally expand the dimensions of the image (thus the rw,rh grow)
+ * but the w/h is still effectively (at least as far as we care on the outside) whatever non-
+ * power of two dimensions, and these effective, "fake" dimensions are called it's _virtual_
+ * dimensions, or virtual width/height, stored in w, h.
  */
 
 #ifndef __H_IMAGE__
@@ -24,15 +25,13 @@ class Image {
 	public:
 		Image();
 		// Create instance by loading image from file
-		Image( string filename );
+		Image( const string& filename );
 		~Image();
 
 		// Load image from file
-		bool Load( string filename );
+		bool Load( const string& filename );
 		// Load image from buffer
-		bool Load( unsigned char *buf, int bufSize );
-		// Load image from FILE *
-		bool Load( FILE *fp, int size );
+		bool Load( char *buf, int bufSize );
 
 		// Get information about image dimensions (always the virtual/effective size)
 		int GetWidth( void ) { return w; };

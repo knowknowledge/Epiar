@@ -10,4 +10,11 @@
 		<foldDrive>0</foldDrive>
 		<flareAnimation>Resources/Animations/thrust.ani</flareAnimation>
 	</engine>
+	<engine>
+		<name>Ion Engines</name>
+		<forceOutput>20</forceOutput>
+		<msrp>2000</msrp>
+		<foldDrive>1</foldDrive>
+		<flareAnimation>Resources/Animations/thrust2.ani</flareAnimation>
+	</engine>
 </engines>

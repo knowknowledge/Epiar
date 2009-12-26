@@ -1,10 +1,9 @@
-/*
- * Filename      : sprite.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			sprite.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
 #ifndef __h_sprite__
@@ -17,9 +16,10 @@
 
 // With the draw order, higher numbers are drawn later (on top)
 #define DRAW_ORDER_PLANET  0
-#define DRAW_ORDER_SHIP    1
-#define DRAW_ORDER_PLAYER  2
-#define DRAW_ORDER_WEAPON  3
+#define DRAW_ORDER_WEAPON  1
+#define DRAW_ORDER_SHIP    2
+#define DRAW_ORDER_PLAYER  3
+#define DRAW_ORDER_EFFECT  4
 
 class Sprite {
 	public:

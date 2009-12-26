@@ -7,10 +7,8 @@
  * Notes         :
  */
 #include "Engine/weapon.h"
-#include "Sprites/projectile.h"
 #include "Utilities/trig.h"
 #include "Engine/models.h"
-#include "Sprites/spritemanager.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
@@ -42,8 +40,7 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 		if (atoi( value.c_str()) != 0)
 			ammoType = atoi( value.c_str() );
 	} else PPA_MATCHES( "ammoConsumption" ) {
-		if (atoi( value.c_str()) != 0)
-			ammoConsumption = atoi( value.c_str() );
+		ammoConsumption = atoi( value.c_str() );
 	} else PPA_MATCHES( "fireDelay" ) {
 		if (atoi( value.c_str()) != 0)
 			fireDelay = atoi( value.c_str() );
@@ -58,18 +55,4 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 
 void Weapon::_dbg_PrintInfo( void ) {
 	cout << "Weapon: " << name << endl;
-}
-
-void Weapon::fireWeapon(float angleToFire, Coordinate worldPosition) {
-	//todo check weapon type and generate correct class based on type
-	//if (weaponType == WEAPON_PROJECTILE) {
-	if (ammo > 0) {
-		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(angleToFire,worldPosition, image, lifetime, velocity);
-		sprites->Add( (Sprite*)projectile );
-		ammo--;
-		cout << "ammo: " << ammo << endl;
-	}
-	//}
-
 }

@@ -322,6 +322,14 @@
 				RelativePath="..\..\Engine\weapons.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\Engine\weaponSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Engine\weaponSystem.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Graphics"
@@ -716,6 +724,14 @@
 			</File>
 			<File
 				RelativePath="..\..\Utilities\parser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Utilities\quadtree.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Utilities\quadtree.h"
 				>
 			</File>
 			<File

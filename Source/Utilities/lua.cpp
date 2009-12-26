@@ -1,12 +1,13 @@
-/*
- * Filename      : lua.cpp
- * Author(s)     : Chris Thielen (chris@epiar.net)
- * Date Created  : Saturday, January 5, 2008
- * Last Modified : Monday, November 16 2009
- * Purpose       : Provides abilities to load, store, and run Lua scripts
- * Notes         : To be used in conjunction with various other subsystems, A.I., GUI, etc.
+/**\file			lua.cpp
+ * \author			Chris Thielen (chris@epiar.net)
+ * \date			Created: Saturday, January 5, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Provides abilities to load, store, and run Lua scripts
+ * \details
+ * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
+#include "includes.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -21,13 +22,19 @@
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Utilities/camera.h" 
+#include "Input/input.h"
+#include "Utilities/file.h"
+
+/**\class Lua
+ * \brief Lua subsystem. */
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
 SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
+map<char, string> Lua::keyMappings;
 
-bool Lua::Load( string filename ) {
+bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
 			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
@@ -36,17 +43,24 @@ bool Lua::Load( string filename ) {
 	}
 
 	// Start the lua script
-	
-	if( luaL_dofile(L,filename.c_str()) ){
+	File luaFile = File( filename );
+	char *buffer = luaFile.Read();
+	if ( buffer == NULL ){
+		Log::Error("Error reading Lua file: %s", filename.c_str());
+		return false;
+	}
+	long bufsize = luaFile.GetLength();
+	int loadRet = luaL_loadbuffer(L, buffer, bufsize, filename.c_str());
+	int execRet = lua_pcall(L, 0, 0, 0);
+	if( loadRet || execRet ){
 		Log::Error("Could not run lua file '%s'",filename.c_str());
 		Log::Error("%s", lua_tostring(L, -1));
 		cout << lua_tostring(L, -1) << endl;
-	} else {
-		Log::Message("Loaded the universe");
+		return false;
 	}
-	
+	Log::Message("Loaded the universe");
 
-	return( false );
+	return( true );
 }
 
 bool Lua::Update(){
@@ -80,6 +94,21 @@ bool Lua::Run( string line ) {
 	}
 
 	return( false );
+}
+
+void Lua::HandleInput( list<InputEvent> & events ) {
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+		if(i->type==KEY && i->kstate == KEYUP ) {
+			map<char,string>::iterator val = keyMappings.find( i->key );
+			if( val != keyMappings.end() ){
+				Run( val->second );
+			}
+		}
+	}
+}
+
+void Lua::RegisterKeyInput( char key, string command ) {
+	keyMappings.insert(make_pair(key, command));
 }
 
 // returns the output from the last lua script and deletes it from internal buffer
@@ -159,6 +188,7 @@ void Lua::RegisterFunctions() {
 		{"models", &Lua::getModelNames},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
+		{"RegisterKey", &Lua::RegisterKey},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -182,7 +212,7 @@ int Lua::console_echo(lua_State *L) {
 }
 
 int Lua::pause(lua_State *L){
-	Simulation::pause();
+		Simulation::pause();
 	return 0;
 }
 
@@ -289,4 +319,16 @@ int Lua::getShips(lua_State *L){
 
 int Lua::getPlanets(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_PLANET);
+}
+
+int Lua::RegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 2) {
+		char key = (char)(luaL_checkstring(L,1)[0]);
+		string command = (string)luaL_checkstring(L,2);
+		RegisterKeyInput(key,command);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (Key, Command)", n); 
+	}
+	return 0;
 }

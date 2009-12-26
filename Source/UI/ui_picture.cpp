@@ -1,18 +1,20 @@
-/*
- * Filename      : ui_picture.h
- * Author(s)     : Matt Zweig
- * Date Created  : Tuesday, November 2, 2009
- * Last Modified : Friday, November 14, 2009
- * Purpose       : Widget for displaying Images
- * Notes         : 
+/**\file			ui_picture.cpp
+ * \author			Matt Zweig
+ * \date			Created: Tuesday, November 2, 2009
+ * \date			Modified: Friday, November 14, 2009
+ * \brief			Widget for displaying Images
+ * \details
  */
 
+#include "includes.h"
 #include "Graphics/video.h"
 #include "Graphics/image.h"
 #include "UI/ui.h"
 #include "UI/ui_picture.h"
 #include "Utilities/log.h"
 
+/**\class Picture
+ * \brief UI picture. */
 
 void Picture::Default( int x, int y, int w, int h ){
 	SetX( x );

@@ -31,10 +31,16 @@ tags
 .vimrc
 
 ### Epiar Binaries
-Epiar
+Epiar*.exe*
+epiar*.pdb
+epiar*.ilk
 .deps
 *.o
 *.a
+
+### Doxygen Files
+Doxygen/html
+Doxygen/latex
 
 ### Epiar Log Files
 Epiar-Log*.xml

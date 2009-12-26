@@ -2,17 +2,9 @@
 
 /* See the file LICENSE for copyright and license information */
 
-#ifdef _MSC_VER
-// The Microsoft GL header files require windows.h to be included first.
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include "includes.h"
 #include "afont_gl.h"
+#include "Utilities/file.h"
 
 static void afont_gl_make_bitmaps( afont *a );
   /* Convert the bitmaps loaded by afont_load into a format that can be used
@@ -39,12 +31,12 @@ afontgl *afont_gl_load( const char *path )
   return ag;
 }
 
-afontgl *afont_gl_load_fp( FILE *fp )
+afontgl *afont_gl_load_fp( File& file )
 {
   afont *a;
   afontgl *ag;
 
-  a = afont_load_fp(fp);
+  a = afont_load_fp( file );
   ag = afont_gl_convert(a);
   ag->orig = a;
 

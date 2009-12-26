@@ -1,17 +1,19 @@
-/*
- * Filename      : video.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			video.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
+
+/**\class Video
+ * \brief Video handling. */
 
 Video *Video::pInstance = 0; // initialize pointer
 int Video::w = 0;
@@ -177,6 +179,10 @@ void Video::DrawPoint( int x, int y, float r, float g, float b ) {
 	glRecti( x, y, x + 1, y + 1 );
 }
 
+void Video::DrawPoint( Coordinate c, Color col ) {
+	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
+}
+
 // draws a rectangle
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
@@ -239,3 +245,4 @@ int Video::GetHalfWidth( void ) {
 int Video::GetHalfHeight( void ) {
 	return( h2 );
 }
+

@@ -1,123 +1,270 @@
-/*
- * Filename      : file.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Monday, April 21, 2008
- * Last Modified : Monday, April 21, 2008
- * Purpose       : Abstract interface for transparent file usage
- * Notes         : See file.h for more notes
- */
+/**\file			file.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Monday, April 21, 2008
+ * \date			Modified: Saturday, November 21, 2009
+ * \brief			Low level interface for file access.
+ * \details
+ * Use filesystem for higher level access.*/
 
-#include "common.h"
+#include "includes.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
-#include "Utilities/xml.h"
 
-File::File() {
-	contents = NULL;
+#ifndef USE_PHYSICSFS
+#define PHYSFS_getLastError() "FAILED!"
+#endif
+
+
+/** \class File
+ * Low level file access abstraction through PhysicsFS. */
+
+/**Creates empty file instance.*/
+File::File( void ):
+fp(NULL), contentSize(0),validName("") {
 }
 
-File::File( string filename ) {
-	contents = NULL;
-	
-	Open( filename );
+/**Creates file instance linked to filename. \sa Open.*/
+File::File( const string& filename):
+fp(NULL), contentSize(0), validName("") {
+	OpenRead( filename );
 }
 
-bool File::Open( string filename ) {
-	if( DEBUG ) {
-		// We will check to see if the file exists in the filesystem.
-		// If it does not, we will check for it in the .tgz file
-		FILE *fp = NULL;
-		
-		fp = fopen( filename.c_str(), "rb" );
-		if( !fp ) {
-			// File did not exist in filesystem
-			//cout << "file is not on filesystem" << endl;
-		} else {
-			// Read in the entire file into our private File::contents buffer
-			long filesize = 0;
-			
-			//cout << "error: " << strerror(errno) << endl;
-			
-			// Determine the size of the file
-			fseek( fp, 0, SEEK_END );
-			//cout << "error: " << strerror(errno) << endl;
-			filesize = ftell( fp );
-			//cout << "error: " << strerror(errno) << endl;
-			fseek( fp, 0, SEEK_SET );
-			//cout << "error: " << strerror(errno) << endl;
-			
-			//cout << "file is " << filesize << " bytes" << endl;
-			
-			// Allocate a buffer big enough to hold the file
-			assert( contents == NULL );
-			contents = (unsigned char *)malloc( sizeof(unsigned char) * filesize );
-			if( !contents ) {
-				// Failed to allocate
-				Log::Error( "Failed to allocate buffer" );
-				fclose( fp );
-				return( false );
-			}
-						
-			// Read the entire file into the buffer
-			if( (signed)fread( contents, 1, filesize, fp ) != filesize ) {
-				Log::Error( "Failed to read entire file in one call." );
-			}
-			
-			contentsSize = filesize;
-			
-			fclose( fp );
-			
-			//cout << "finished. file is " << filesize << " bytes" << endl;
-			
-			return( true );
+/**Opens a file for reading
+ * \param filename The filename path.
+ * \return true if successful, false otherwise.*/
+bool File::OpenRead( const string& filename ) {
+	if ( fp != NULL )
+		this->Close();
+
+	const char *cName;
+
+	cName = filename.c_str();
+
+	// Check for file existence
+#ifdef USE_PHYSICSFS
+	if ( !PHYSFS_exists( cName ) ){
+		Log::Error("File does not exist: %s.", cName);
+		return false;
+	}
+#else
+	struct stat fileStatus;
+	int stat_ret = stat(cName, &fileStatus );
+	if ( stat_ret != 0 ) {
+		printf("Stat for %s: [%d]\n",cName,stat_ret);
+		switch( !stat_ret ) {
+			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
+			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
+			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;
+			case ELOOP:         Log::Error("Too many sym-links: %s.", cName); break;
 		}
+		return false;
+	}
+#endif
+
+#ifdef USE_PHYSICSFS
+	fp = PHYSFS_openRead( cName );
+#else
+	fp = fopen(cName,"r");
+#endif
+	if( fp == NULL ){
+		Log::Error("Could not open file: %s.\n%s", cName,
+			PHYSFS_getLastError());
+		return false ;
 	}
 	
-	// Note the lack of an 'else' here. We do not want to look at the file system, else look in .tgz, we look in both.
-	// If the override-tgz is enabled, we look in the filesystem, else we ignore it. If the filesystem failed to find
-	// the file, we simply continue by looking into the .tgz. Only if both of these fail does this function fail
-	assert( epiardata );
-	
-	long bufSize = 0;
-	contents = epiardata->LoadBuffer( filename, &bufSize );
-	if( !contents ) {
-		Log::Error("Could not load file from .tgz file.");
-		return( false );
-	}
-	contentsSize = bufSize;
-	
-	//cout << "loaded file from .tgz, it is " << contentsSize << " bytes" << endl;
-	
-	return( true );
+#ifdef USE_PHYSICSFS
+	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
+#else
+	contentSize = fileStatus.st_size;
+#endif
+	validName.assign( filename );
+	return true ;
 }
 
+/**Opens a file for writing
+ * \param filename The filename path
+ * \return true if successful, false otherwise.*/
+bool File::OpenWrite( const string& filename ) {
+	if ( fp != NULL )
+		this->Close();
+
+	const char *cName;
+	cName = filename.c_str();
+#ifdef USE_PHYSICSFS
+	this->fp = PHYSFS_openWrite( cName );
+#else
+	this->fp = fopen( cName, "w");
+#endif
+	if( fp == NULL ){
+		Log::Error("Could not open file for writing: %s.\n%s",cName,
+				PHYSFS_getLastError());
+		return false;
+	}
+	validName.assign( filename );
+	return true;
+}
+
+/**Reads a specified number of bytes.
+ * \param numBytes Number of bytes to read.
+ * \param buffer Buffer to read bytes into.
+ * \return true if successful, false otherwise.*/
+bool File::Read( long numBytes, char *buffer ){
+	if ( fp == NULL )
+		return false;
+
+	long bytesRead = static_cast<long>(
+#ifdef USE_PHYSICSFS
+		PHYSFS_read( fp, buffer, 1, numBytes )
+#else
+		fread(buffer, 1, numBytes, fp )
+#endif
+		);
+	if ( bytesRead == numBytes ){
+		return true;
+	} else {
+		Log::Error("%s: Unable to read specified number of bytes. %s",
+			validName.c_str(), PHYSFS_getLastError());
+		return false;
+	}
+}
+
+/**Reads the whole file into a buffer. Buffer will be automatically allocated
+ * for you, but you must explicitly free it by using "delete [] buffer"
+ * \return Pointer to buffer, NULL otherwise.*/
+char *File::Read( void ){
+	if ( fp == NULL )
+		return NULL;
+
+	// Seek to beginning
+	Seek( 0 );
+	char *fBuffer = new char[static_cast<Uint32>(contentSize)];
+	long bytesRead = static_cast<long>(
+#ifdef USE_PHYSICSFS
+		PHYSFS_read( this->fp, fBuffer, 1, contentSize )
+#else
+		fread(fBuffer,1,contentSize,fp)
+#endif
+		);
+	if( bytesRead == contentSize){
+		return fBuffer;
+	} else {
+		delete [] fBuffer;
+		Log::Error("%s: Unable to read file into memory. %s",
+			validName.c_str(), PHYSFS_getLastError());
+		return NULL;
+	}
+}
+
+/**Writes buffer to file.
+ * \param buffer The buffer to write
+ * \param bufsize The size of the buffer in bytes
+ * \return true if successful, false otherwise. */
+bool File::Write( char *buffer, const long bufsize ){
+	if ( fp == NULL )
+		return false;
+#ifdef USE_PHYSICSFS
+	PHYSFS_sint64 bytesWritten = PHYSFS_write(this->fp, buffer, bufsize, 1);
+#else
+	long bytesWritten = fwrite(buffer,1,bufsize,fp);
+#endif
+	if ( bytesWritten != bufsize){
+		Log::Error("%s: Unable to write to file. %s",this->validName.c_str(),
+			PHYSFS_getLastError());
+		return false;
+	}
+	return true;
+}
+
+/**Gets the current offset from the beginning of the file.
+ * \return Offset in bytes from the beginning of the file.*/
+long File::Tell( void ){
+	long offset;
+	offset = static_cast<long>(
+#ifdef USE_PHYSICSFS
+		PHYSFS_tell( fp )
+#else
+		ftell(fp)
+#endif
+		);
+	if ( offset == -1 ){
+		Log::Error("%s: Error using file tell. %s",
+			validName.c_str(), PHYSFS_getLastError());
+	}
+	return offset;
+}
+
+/**Seek to new position in the file.
+ * \param pos Position in bytes form the beginning of the file.
+ * \return true if successful, false otherwise.*/
+bool File::Seek( long pos ){
+	if ( fp == NULL )
+		return false;
+#ifdef USE_PHYSICSFS
+	int retval;
+	retval = PHYSFS_seek( fp,
+		static_cast<PHYSFS_uint64>( pos ));
+	if ( retval == 0 ){
+		Log::Error("%s: Error using file seek [%d]. %s",
+		                validName.c_str(), pos, PHYSFS_getLastError());
+		return false;
+	}
+#else
+	const char *cName;
+	cName = validName.c_str();
+	fseek(fp, pos, SEEK_SET);
+#endif
+	return true;
+}
+
+/**Gets the total length in bytes of the file.
+ * \return Total length of the file in bytes.*/
+long File::GetLength( void ){
+	return contentSize;
+}
+
+/**Sets the internal buffer for read/write operations.
+ * \return Nonzero on success */
+int File::SetBuffer( int bufSize ){
+#ifdef USE_PHYSICSFS
+	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
+		Log::Error("Could not create internal buffer for file: %s.\n%s",
+				validName.c_str(),PHYSFS_getLastError());
+		PHYSFS_close( fp );
+		return 0;
+	}
+	return 1;
+#else
+	return 0; // No idea how this works??? ~ Matt Zweig
+#endif
+}
+
+/**Destroys file instance. \sa Close.*/
 File::~File() {
 	Close();
 }
 
+/**Closes the file handle and frees associated buffer.
+ * \return true if successful, false otherwise*/
 bool File::Close() {
-	if( contents ) {
-		free( contents );
-		contentsSize = 0;
+	if ( validName.compare( "" ) == 0 )
+		return NULL;
+
+	if ( fp == NULL )
+		return false;
+
+#ifdef USE_PHYSICSFS
+	int retval = PHYSFS_close( fp );
+	if ( retval == 0 )
+#else
+	int retval = fclose( fp );
+	if ( retval != 0 )
+#endif
+	{
+		Log::Error("%s: Unable to close file handle.%s",
+			validName.c_str(), PHYSFS_getLastError());
+		return false;
 	}
-	
-	return( true );
+	contentSize = 0;
+	return true;
 }
 
-// reads 'len' bytes into a buffer. Callee must free the buffer! if len = 0 or isn't passed, the entire file is returned
-void *File::Read( long *bytesRead, int len = 0 ) {
-	if( len == 0 ) {
-		u_byte *buf = NULL;
-		
-		buf = (u_byte *)malloc( sizeof(u_byte) * contentsSize );
-		memcpy( buf, contents, contentsSize );
-		
-		*bytesRead = contentsSize;
-		
-		return( buf );
-	} else {
-		Log::Warning("Feature not fully implemented. You may only set len=0, reading the entire file at once.");
-	}
-	
-	return( NULL );
-}

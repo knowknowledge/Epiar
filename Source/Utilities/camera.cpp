@@ -1,19 +1,21 @@
-/*
- * Filename      : camera.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			camera.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Saturday, January 5, 2008
+ * \brief
+ * \details
  */
 
-#include "Graphics/video.h"
 #include "includes.h"
+#include "Graphics/video.h"
 #include "Utilities/camera.h"
 #include "Utilities/log.h"
 #include "Utilities/trig.h"
 #include "Sprites/player.h"
 #include "Utilities/coordinate.h"
+
+/**\class Camera
+ * \brief Camera handling. */
 
 Camera *Camera::pInstance = 0; // initialize pointer
 

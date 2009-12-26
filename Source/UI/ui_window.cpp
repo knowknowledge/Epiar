@@ -1,19 +1,20 @@
-/*
- * Filename      : ui_window.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui_window.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/**\class Window
+ * \brief Window handling. */
 
 Window::Window( int x, int y, int w, int h, string caption ) {
 	SetX( x );

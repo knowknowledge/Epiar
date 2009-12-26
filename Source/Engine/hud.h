@@ -1,10 +1,9 @@
-/*
- * Filename      : hud.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			hud.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created  : Sunday, July 23, 2006
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief			Handles the Heads-Up-Display
+ * \detailsNotes
  */
 
 #ifndef __h_hud__
@@ -16,10 +15,10 @@
 
 class AlertMessage {
 	public:
-		AlertMessage( string message, Uint32 length );
-
+		AlertMessage( string message, Uint32 start );
+		bool operator ==(const AlertMessage& other) {return (start == other.start) && (message == other.message);}
 		string message;
-		Uint32 length;
+		Uint32 start;
 };
 
 class Hud {
@@ -52,7 +51,7 @@ class Hud {
 		/* Radar and navigation */
 		static Image *im_radarnav;
 
-		static vector<AlertMessage> AlertMessages;
+		static list<AlertMessage> AlertMessages;
 };
 
 class Radar {

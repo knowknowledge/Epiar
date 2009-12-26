@@ -4,27 +4,63 @@
 	<version-minor>7</version-minor>
 	<version-macro>0</version-macro>
 	<weapon>
-		<name>Missle</name>
+		<name>Missile</name>
 		<weaponType>0</weaponType>
-		<imageName>Resources/Graphics/podv.png</imageName>
+		<imageName>Resources/Graphics/missile.png</imageName>
 		<payload>10</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>1</ammoType>
 		<ammoConsumption>1</ammoConsumption>
-		<fireDelay>10</fireDelay>
-		<lifetime>50</lifetime>
+		<fireDelay>500</fireDelay>
+		<lifetime>3000</lifetime> <!-- Milliseconds of Life -->
 	</weapon>
 	<weapon>
-		<name>Slow Missle</name>
+		<name>Slow Missile</name>
 		<weaponType>0</weaponType>
-		<imageName>Resources/Graphics/podv.png</imageName>
+		<imageName>Resources/Graphics/torpedo.png</imageName>
 		<payload>10</payload>
 		<velocity>5</velocity>
 		<acceleration>2</acceleration>
-		<ammoType>1</ammoType>
+		<ammoType>2</ammoType>
 		<ammoConsumption>1</ammoConsumption>
-		<fireDelay>10</fireDelay>
-		<lifetime>100</lifetime>
+		<fireDelay>1000</fireDelay>
+		<lifetime>30000</lifetime>
+	</weapon>
+	<weapon>
+		<name>Laser</name>
+		<weaponType>0</weaponType>
+		<imageName>Resources/Graphics/laser_green.png</imageName>
+		<payload>1</payload>
+		<velocity>10</velocity>
+		<acceleration>2</acceleration>
+		<ammoType>3</ammoType>
+		<ammoConsumption>0</ammoConsumption>
+		<fireDelay>200</fireDelay>
+		<lifetime>1000</lifetime>
+	</weapon>
+	<weapon>
+		<name>Strong Laser</name>
+		<weaponType>0</weaponType>
+		<imageName>Resources/Graphics/laser_blue.png</imageName>
+		<payload>3</payload>
+		<velocity>20</velocity>
+		<acceleration>2</acceleration>
+		<ammoType>4</ammoType>
+		<ammoConsumption>0</ammoConsumption>
+		<fireDelay>200</fireDelay>
+		<lifetime>500</lifetime>
+	</weapon>
+	<weapon>
+		<name>Minigun</name>
+		<weaponType>0</weaponType>
+		<imageName>Resources/Graphics/laser_grey.png</imageName>
+		<payload>1</payload>
+		<velocity>10</velocity>
+		<acceleration>0</acceleration>
+		<ammoType>5</ammoType>
+		<ammoConsumption>0</ammoConsumption>
+		<fireDelay>70</fireDelay>
+		<lifetime>1000</lifetime>
 	</weapon>
 </weapons>

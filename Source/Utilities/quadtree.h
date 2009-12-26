@@ -28,7 +28,7 @@ class QuadTree {
 		bool Delete(Sprite* obj);
 
 		list<Sprite*> *GetSprites();
-		list<Sprite*> *GetSpritesNear(Coordinate point, float distance);
+		void GetSpritesNear(Coordinate point, float distance, list<Sprite*> *returnList);
 		list<Sprite*> *FixOutOfBounds();
 
 		void Update();
@@ -46,6 +46,7 @@ class QuadTree {
 		Coordinate center;
 		float radius;
 		unsigned int maxobjects;
+		unsigned int objectcount;
 		bool isLeaf;
 };
 

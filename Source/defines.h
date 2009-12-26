@@ -1,3 +1,12 @@
+/**\file		defines.h
+ * \author		Chris Thielen
+ * \author		and others
+ * \date		Saturday, November 21, 2009
+ * \date		Saturday, November 21, 2009
+ * \brief		Defines some common symbols
+ * \details
+ */
+
 #ifndef DEFINES_H_
 #define DEFINES_H_
 

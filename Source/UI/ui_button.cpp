@@ -1,20 +1,22 @@
-/*
- * Filename      : ui_button.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Friday, April 25, 2008
- * Last Modified : Friday, April 25, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui_button.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Friday, April 25, 2008
+ * \date			Modified: Friday, April 25, 2008
+ * \brief
+ * \details
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
+
+/**\class Button
+ * \brief UI button. */
 
 void Button::init( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor

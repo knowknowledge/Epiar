@@ -1,3 +1,12 @@
+/**\file		includes.h
+ * \author		Chris Thielen
+ * \author		and others
+ * \date		Saturday, November 21, 2009
+ * \date		Saturday, November 21, 2009
+ * \brief		Contains common system libraries.
+ * \details
+ */
+
 #ifndef __H_INCLUDES__
 #define __H_INCLUDES__
 
@@ -40,9 +49,10 @@
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include "GL/glext.h"
 #endif
 
-
+#include <config.h>
 
 // Local includes
 #include "defines.h"

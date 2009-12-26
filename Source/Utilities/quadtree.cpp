@@ -8,6 +8,7 @@
  */
 
 #include "Utilities/quadtree.h"
+#include "Graphics/video.h"
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
@@ -23,6 +24,7 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	this->center = _center;
 	this->maxobjects = _maxobjects;
 	this->isLeaf = true;
+	this->objectcount = 0;
 }
 
 QuadTree::~QuadTree(){
@@ -33,6 +35,8 @@ QuadTree::~QuadTree(){
 }
 
 unsigned int QuadTree::Count(){
+	return objectcount;
+	/*
 	if(isLeaf){
 		return objects->size();
 	} else {
@@ -43,6 +47,7 @@ unsigned int QuadTree::Count(){
 		}
 		return total;
 	}
+	*/
 }
 
 bool QuadTree::Contains(Coordinate point){
@@ -61,6 +66,7 @@ void QuadTree::Insert(Sprite *obj){
 		// An over Full Leaf should become a Node
 		ReBallance();
 	}
+	objectcount++;
 }
 
 bool QuadTree::Delete(Sprite* obj){
@@ -76,6 +82,7 @@ bool QuadTree::Delete(Sprite* obj){
 			return( false ); // That branch is empty, nothing to delete.
 		if( dest->Delete(obj) ){
 			ReBallance();
+			objectcount--;
 			return( true ); // Found that object.
 		} else {
 			return( false ); // Didn't find that object.
@@ -86,6 +93,7 @@ bool QuadTree::Delete(Sprite* obj){
 		{
 			i = objects->erase( i );
 			// Note that leaves don't ReBallance on delete.
+			objectcount--;
 			return( true );
 		} else {
 			return( false );
@@ -110,10 +118,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
-list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
-	list<Sprite*> *other;
-	list<Sprite*> *near = new list<Sprite*>();
-
+void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
 	const float maxrange = 1.42*radius + distance;
@@ -121,26 +126,22 @@ list<Sprite*> *QuadTree::GetSpritesNear(Coordinate point, float distance){
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
 	if( (point-center).GetMagnitude() > maxrange){
-		return near;
+		return;
 	}
 
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				other = subtrees[t]->GetSpritesNear(point,distance);
-				near->splice(near->end(), *other);
-				delete other;
+				subtrees[t]->GetSpritesNear(point,distance,nearby);
 			}
 		}
-		return near;
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
 			if( (point - (*i)->GetWorldPosition()).GetMagnitude() < distance ) {
-				near->push_back( *i);
+				nearby->push_back( *i);
 			}
 		}
-		return near;
 	}
 }
 
@@ -180,6 +181,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		}
 	}
 	delete stillinside;
+	objectcount-= outofbounds->size();
 	ReBallance();
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
@@ -203,6 +205,12 @@ void QuadTree::Update(){
 }
 
 void QuadTree::Draw(){
+	float scale = 8000;
+	float r = scale* radius / 65536.0f;
+	float x = (scale* center.GetX() / 65536.0f) + Video::GetHalfWidth()  -r;
+	float y = (scale* center.GetY() / 65536.0f) + Video::GetHalfHeight() -r;
+	Video::DrawRect( x,y, 2*r, 2*r, 0,255,0, .1);
+
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])) subtrees[t]->Draw();
@@ -210,7 +218,11 @@ void QuadTree::Draw(){
 	} else { // Leaf
 		list<Sprite *>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			(*i)->Draw();
+			Coordinate pos = (*i)->GetWorldPosition();
+			int posx = (scale* (float)pos.GetX() / 65536.0f) + (float)Video::GetHalfWidth();
+			int posy = (scale* (float)pos.GetY() / 65536.0f) + (float)Video::GetHalfHeight();
+			Color col = (*i)->GetRadarColor();
+			Video::DrawCircle( posx, posy, (*i)->GetRadarSize()/17,2, col.r,col.g,col.b );
 		}
 	}
 }

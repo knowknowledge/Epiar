@@ -1,10 +1,9 @@
-/*
- * Filename      : ui.h
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			ui.h
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
 #ifndef __H_UI__

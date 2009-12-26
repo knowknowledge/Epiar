@@ -1,27 +1,29 @@
-/*
- * Filename      : main.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Purpose       : Main entry point of Epiar codebase
- * Notes         :
+/**\file		main.cpp
+ * \author		Chris Thielen (chris@luethy.net)
+ * \author		and others.
+ * \date		Created:	Sunday, June 4, 2006
+ * \date		Modified:	Thursday, November 19, 2009
+ * \brief		Main entry point of Epiar codebase
+ * \details
+ *	This file performs two functions:
+ *		- Runs the Epiar simulation.
+ *		- Parse command line arguments.
  */
 
+#include "includes.h"
 #include "common.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
-#include "includes.h"
 #include "UI/ui.h"
-#include "Utilities/archive.h"
+#include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
 // parse command line switches
 int parseArgs( int argc, char **argv );
 
-// main data file, used throughout the tree (extern in common.h)
-Archive *epiardata = NULL;
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
@@ -29,9 +31,10 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 
 int main( int argc, char **argv ) {
 	Log::Initalize();
-
-	// load the main data files (used throughout the tree)
-	epiardata = new Archive( "data.tgz" );
+	// Use ".dat" extension for data files
+#ifdef USE_PHYSICSFS
+	Filesystem::Init( argv[0], "dat" );
+#endif
 
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
@@ -48,11 +51,22 @@ int main( int argc, char **argv ) {
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 
-	// load the main font used through the tree
-	Vera8 = new Font( "Resources/Fonts/Vera-8.af" );
-	Vera10 = new Font( "Resources/Fonts/Vera-10.af" );
-	Visitor10 = new Font( "Resources/Fonts/Visitor1-10.af" );
-	VeraMono10 = new Font( "Resources/Fonts/VeraMono-10.af" );
+#ifdef USE_FREETYPE // (FREETYPE IS OFF BY DEFAULT)
+	Log::Message("Using Font Engine: FreeType");
+	//******** FreeType Rendering ********
+	//TODO: find gpl-compatible ttf versions of the normal fonts
+	Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+#else
+	Log::Message("Using Font Engine: AFONT");
+	//******** AFont Rendering ********
+	Vera8       = (Font*)new AFont( "Resources/Fonts/Vera-8.af" );
+	Vera10      = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
+	Visitor10   = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
+	VeraMono10  = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
+#endif // USE_FREETYPE
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
@@ -68,11 +82,12 @@ int main( int argc, char **argv ) {
 	delete Vera10;
 	delete Visitor10;
 	delete VeraMono10;
-	// free the main data files
-	delete epiardata;
 	// free the configuration file data
 	delete optionsfile;
 	
+#ifdef USE_PHYSICSFS
+	Filesystem::DeInit();
+#endif
 	Log::Close();
 
 	return( 0 );

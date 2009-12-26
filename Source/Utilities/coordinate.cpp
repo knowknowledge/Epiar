@@ -1,10 +1,9 @@
-/*
- * Filename      : coordinate.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Unknown (2006?)
- * Last Modified : Saturday, January 5, 2008
- * Purpose       : 
- * Notes         :
+/**\file			coordinate.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Unknown (2006?)
+ * \date			Modified: Sunday, November 22, 2009
+ * \brief
+ * \details
  */
 
 #include "includes.h"
@@ -12,23 +11,16 @@
 #include "Utilities/coordinate.h"
 #include "Utilities/trig.h"
 
+/**\class Coordinate
+ * \brief Coordinates. */
+
 Coordinate::Coordinate() {
 	m_x = m_y = 0;
-	boundary.top = boundary.right = boundary.bottom = boundary.left = 0.;
 }
 
 Coordinate::Coordinate( double x, double y ) {
 	m_x = x;
 	m_y = y;
-	boundary.top = boundary.right = boundary.bottom = boundary.left = 0.;
-}
-
-Coordinate::Coordinate( double top, double right, double bottom, double left ) {
-	Coordinate();
-	boundary.top = top;
-	boundary.right = right;
-	boundary.bottom = bottom;
-	boundary.left = left;
 }
 
 Coordinate::~Coordinate () {
@@ -113,46 +105,35 @@ ostream& operator<<(ostream &out, const Coordinate &c) {
 	return out;
 }
 
-// Sets bounadry caps on coordinates - used for momentum capping as well
-// Must be positive
-// Warning, boundaries are not enforced in subtraction and addition, but
-// are enforced on += and -=
-void Coordinate::SetBoundaries( double top, double right, double bottom, double left ) {
-	boundary.top = top;
-	boundary.right = right;
-	boundary.bottom = bottom;
-	boundary.left = left;
-}
-
 // Ensures coordinates are within boundaries, if set
-void Coordinate::EnforceBoundaries( void ) {
-	if( boundary.top != 0. ) {
+void Coordinate::EnforceBoundaries( double top, double right, double bottom, double left ) {
+	if( top != 0. ) {
 		if( m_y > 0. ) {
-			if( m_y > boundary.top ) m_y = boundary.top;
+			if( m_y > top ) m_y = top;
 		}
 	}
-	if( boundary.right != 0. ) {
+	if( right != 0. ) {
 		if( m_x > 0. ) {
-			if( m_x > boundary.right ) m_x = boundary.right;
+			if( m_x > right ) m_x = right;
 		}
 	}
-	if( boundary.bottom != 0. ) {
+	if( bottom != 0. ) {
 		if( m_y < 0. ) {
-			if( (-1 * m_y) > boundary.bottom ) m_y = -1 * boundary.bottom;
+			if( (-1 * m_y) > bottom ) m_y = -1 * bottom;
 		}
 	}
-	if( boundary.left != 0. ) {
+	if( left != 0. ) {
 		if( m_x < 0. ) {
-			if( (-1 * m_x) > boundary.left ) m_x = -1 * boundary.left;
+			if( (-1 * m_x) > left ) m_x = -1 * left;
 		}
 	}	
 }
 
-bool Coordinate::ViolatesBoundary() {
-	if( m_x < boundary.left ) return( true );
-	if( m_x > boundary.right ) return( true );
-	if( m_y < boundary.top ) return( true );
-	if( m_y > boundary.bottom ) return( true );
+bool Coordinate::ViolatesBoundary( double top, double right, double bottom, double left ) {
+	if( m_x < left ) return( true );
+	if( m_x > right ) return( true );
+	if( m_y < top ) return( true );
+	if( m_y > bottom ) return( true );
 	
 	return( false );
 }
