@@ -1,5 +1,5 @@
 PACKAGE=epiar
-VERSION=0.7.0
+VERSION=0.2.0
 
 dnl Init
 AC_INIT(README)

@@ -29,7 +29,7 @@ Sprite::Sprite() {
 	image = NULL;
 	
 	radarSize = 1;
-	radarColor = Color::Get(0.7f,0.7f,0.7f);
+	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
 }
 
 Coordinate Sprite::GetWorldPosition( void ) {
@@ -43,7 +43,8 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 void Sprite::Update( void ) {
 	// Apply their momentum to change their coordinates
 	worldPosition += momentum;
-	//update acceleration
+	
+	// update acceleration
 	acceleration = lastMomentum - momentum; 
 	lastMomentum = momentum;
 }

@@ -10,16 +10,16 @@ it.setup = function()
     it.label = UI:newLabel(90,80,"You're It",1)
 
     -- Create Tag Windows
-    menuWin = UI:newWindow( 900,200,110,250,"Menu",
-        UI:newButton(0,0,100,30,"Pause","pauseMessage('You hit the pause button')"),
-        UI:newButton(0,40,100,30,"Store","store()"),
-        UI:newButton(0,80,100,30,"IT","it.tag(0)"),
-        UI:newButton(0,120,100,30,"NOT IT","it.tag(math.random(#(Epiar.ships())))")
-        )
-    tagWin = UI:newWindow( 840,500,180,130,"Who's IT?",
-        it.pic,
-        it.label
-        )
+    --menuWin = UI:newWindow( 900,200,110,250,"Menu",
+        --UI:newButton(0,0,50,30,"Pause","pauseMessage('You hit the pause button')"),
+        --UI:newButton(0,40,100,30,"Store","store()"),
+        --UI:newButton(0,80,100,30,"IT","it.tag(0)"),
+        --UI:newButton(0,120,100,30,"NOT IT","it.tag(math.random(#(Epiar.ships())))")
+        --)
+    --tagWin = UI:newWindow( 840,500,180,130,"Who's IT?",
+        --it.pic,
+        --it.label
+        --)
 end
 it.findClosest = function()
 	ships = Epiar.ships()
@@ -57,12 +57,12 @@ it.tag = function(target)
 	Ship.SetRadarColor(ships[it.ship],0,255,0)
 	
 	--shake the camera
-	if it.ship == 0 then
-		other_x,other_y = Ship.GetPosition(ships[target])
-		Epiar.shakeCamera(100, 3, other_x,other_y)
-	elseif target == 0 then
-		Epiar.shakeCamera(100, 3, it.x,it.y)
-	end
+	--if it.ship == 0 then
+	--	other_x,other_y = Ship.GetPosition(ships[target])
+	--	Epiar.shakeCamera(100, 3, other_x,other_y)
+	--elseif target == 0 then
+	--	Epiar.shakeCamera(100, 3, it.x,it.y)
+	--end
 
 	-- The new it doesn't become active for 100 ticks
 	it.ship=target
