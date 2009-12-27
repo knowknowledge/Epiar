@@ -20,10 +20,10 @@
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
-	if ( e.type==KEY ) {
-		out << "KEY("<<e.key<<' '<<_keyMeanings[int(e.kstate)]<<")";
+	if ( e.type == KEY ) {
+		out << "KEY(" << e.key << ' ' << _keyMeanings[int( e.kstate )] << ")";
 	} else { // Mouse
-		out <<"MOUSE("<<e.mx<<','<<e.my<<' '<<_mouseMeanings[int(e.mstate)]<<")";
+		out << "MOUSE(" << e.mx<< ',' << e.my << ' ' << _mouseMeanings[int( e.mstate )] << ")";
 	}
 	return out;
 }
