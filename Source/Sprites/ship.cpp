@@ -24,22 +24,12 @@ Ship::Ship() {
 	
 	/* Initalize ship's condition */
 	status.hullEnergyAbsorbed = 0;
+	status.lastWeaponChangeAt = 0;
+	status.lastFiredAt = 0;
+	status.selectedWeapon = 0;
 
-	projectileAmmo = 10;
-	fireDelay = 0;
-	
-	SetRadarColor( Color::Get( 0, 255, 0 ) );
-	SetAngle( float( rand() % 360 ) );
-	
-	/* Debug: Add all weapons to this ships weapons list, later we will only basic and when they are purchasedhi */
-	Weapons* weapons = Weapons::Instance();
-	
-	// need to copy weapons instead of modifying originals, this is temp
-	for( list<Weapon *>::iterator i = weapons->weapons.begin(); i != weapons->weapons.end(); ++i ) {
-		shipWeapons.push_back(*i);
-		(*i)->setAmmo(1000);
-	}
-	selectedWeapon = 0;
+	SetRadarColor(Color::Get(255,0,0));
+	SetAngle( float( rand() %360 ) );
 }
 
 bool Ship::SetModel( Model *model ) {
@@ -125,8 +115,8 @@ void Ship::Update( void ) {
 		flareAnimation->Reset();
 	}
 
-	// Show the hits taken as part of the radar color THIS SHOULD BE AN UPGRADE
-	//SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
+	// Shiw the hits taken as part of the radar color
+	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
