@@ -38,6 +38,7 @@ epiar*.ilk
 .deps
 *.o
 *.a
+Epiar
 
 ### Doxygen Files
 Doxygen/html
