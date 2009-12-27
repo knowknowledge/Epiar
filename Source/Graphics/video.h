@@ -36,6 +36,15 @@ class Color {
 	}
 };
 
+class Rectangle {
+	public:
+		float x, y, w, h;
+		
+		Rectangle() { x = y = w = h = 0.0f; }
+		Rectangle( float x, float y, float w, float h ) { this->x = x; this->y = y; this->w = w; this->h = h; }
+		Rectangle( int x, int y, int w, int h ) { this->x = (float)x; this->y = (float)y; this->w = (float)w; this->h = (float)h; }
+};
+
 class Video {
  	public:
 		~Video();
