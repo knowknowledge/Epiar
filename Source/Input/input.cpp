@@ -28,9 +28,6 @@ ostream& operator<<(ostream &out, const InputEvent&e) {
 	return out;
 }
 
-/**\class Input
- * \brief Input handling. */
-
 Input::Input() {
 	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
 }
@@ -208,8 +205,13 @@ void Input::Handle( list<InputEvent> & events ) {
 	
 
 	// DEBUG CODE
-	if( keyDown[ 'c' ] ){  // Rotate towards the center of the Universe
+	if( keyDown[ 'c' ] ) {  // Rotate towards the center of the Universe
 		player->Rotate( player->directionTowards( Coordinate(0,0) ) );
+	}
+	
+	// GUI Debug code
+	if( keyDown['g'] ) {
+		ui_demo();
 	}
 }
 

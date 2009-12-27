@@ -202,32 +202,14 @@ void UI::ResetInput() {
 }
 
 void ui_demo( bool in_loop ) {
-	bool quit = false;
-	Input inputs;
+	static bool ran_once = false;
+
+	if(ran_once) return;
+	
+	ran_once = true; // don't make more than one window
 
 	Window *wnd = new Window( 200, 100, 400, 300, "UI Demo" );
 	UI::Add( wnd );
 	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
-
-	// main game loop
-	while( !quit && in_loop ) {
-		// Do this first, so that the frame capping works correctly
-		Timer::Update();
-
-		quit = inputs.Update();
-		
-		// Erase cycle
-		Video::Erase();
-		
-		// Update cycle
-		UI::Run(); // runs only a few loops
-		
-		// Draw cycle
-		UI::Draw();
-		Video::Update();
-		
-		// Don't kill the CPU (play nice)
-		Timer::Delay();
-	}
 }
 

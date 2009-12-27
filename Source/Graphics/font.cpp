@@ -115,24 +115,18 @@ void FreeFont::Render( int x, int y, const char *text ) {
 	glScalef(1, -1, 1); 
 	
 	FTPoint pt = FTPoint( x, -y, 1);
-	((FONTRENDERTYPE*)font)->Render(text,-1,pt);
+	( ( FONTRENDERTYPE * ) font )->Render( text, -1, pt );
 	glPopMatrix(); // restore the previous matrix
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
 void FreeFont::RenderCentered( int x, int y, const char *text ) {
-	glColor4f( r, g, b, 1. );
-	glPushMatrix(); // to save the current matrix
-	glScalef(1, -1, 1); 
-
 	float llx, lly, llz;
     float urx, ury, urz;
 
-	((FONTRENDERTYPE*)font)->BBox(text, llx, lly, llz, urx, ury, urz);
+	( ( FONTRENDERTYPE * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 
-	FTPoint pt = FTPoint( x + (llx - urx)/2, -(y - (lly-ury)/2), 1);
-	((FONTRENDERTYPE*)font)->Render(text,-1,pt);
-	glPopMatrix(); // restore the previous matrix
+	Render( x + ( llx - urx) / 2, y - (lly - ury) / 2, text );
 }
 
 #endif //USE_FREETYPE

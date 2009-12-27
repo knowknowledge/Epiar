@@ -68,6 +68,8 @@ void Button::Draw( int relx, int rely ) {
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
+	
+	Video::DrawRect( x, y, w, h, 1., 1., 1. );
 
 	// draw the button (loaded image is simply scaled)
 	bitmap_current->Draw( x, y );
@@ -79,12 +81,10 @@ void Button::Draw( int relx, int rely ) {
 
 void Button::Focus( int x, int y ) {
 	bitmap_current = bitmap_pressed;
-	//cout << "button focus: " << label << endl;
 }
 
 void Button::Unfocus( void ) {
 	bitmap_current = bitmap_normal;
-	//cout << "button unfocus: " << label << endl;
 }
 
 void Button::MouseDown( int wx, int wy ) {

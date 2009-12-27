@@ -25,14 +25,14 @@ class Window : public Widget {
 		void Focus( int x, int y );
 		void Unfocus( void );
 
-		Widget *DetermineMouseFocus( int x, int y );
+		//Widget *DetermineMouseFocus( int x, int y );
 
 		//void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 		string GetName( void ) {return string("Window_"+caption);}
 
 	private:
 		int w, h;
-		int inner_top,inner_left,inner_right,inner_low;
+		//int inner_top,inner_left,inner_right,inner_low;
 		string caption;
 		Image *bitmaps[9];
 };
