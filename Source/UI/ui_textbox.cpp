@@ -30,12 +30,10 @@ void Textbox::Initialize( int x, int y, int w, int rows, string text, string lab
 	this->text = text;
 	this->label = label;
 	
-	// Load the bitmaps needed for drawing
-	//textbox = new Image( "Resources/Graphics/ui_textbox.png" );
-	//textbox->Resize( w, h );
-
-	this->clickCallBack = NULL;
-	this->lua_callback = "";
+	hasKeyboardFocus = false;
+	
+	clickCallBack = NULL;
+	lua_callback = "";
 }
 
 Textbox::Textbox( int x, int y, int w, int rows ) {
@@ -60,23 +58,28 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 
 Textbox::~Textbox() {
 	Log::Message( "Deleting Textbox: '%s'.", (char *)text.c_str() );
-	//delete textbox;
 }
 
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
+	Rectangle bbox; // bounding box of the drawn text
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
 
 	// draw the button (loaded image is simply scaled)
-	//textbox->Draw( x, y );
 	Video::DrawRect( x, y, w, h, 0.4, 0.4, 0.4 );
 	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15, 0.15, 0.15 );
 
 	// draw the text
 	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered( x, y, (char *)text.c_str() );
+	bbox = Vera10->Render( x + 4, y + 12, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
+	                                                              // be updated later to actually reflect font size
+	
+	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
+	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) ) {
+		Video::DrawRect( x + 4 + bbox.w, y + 3, 1, h - 6, .8, .8, .8 );
+	}
 }
 
 void Textbox::MouseDown( int wx, int wy ) {
@@ -93,8 +96,18 @@ void Textbox::MouseDown( int wx, int wy ) {
 
 void Textbox::FocusKeyboard( void ) {
 	cout << "textbox keyboard focus!" << endl;
+	
+	hasKeyboardFocus = true;
 }
 
 void Textbox::UnfocusKeyboard( void ) {
 	cout << "textbox keyboard unfocus!" << endl;
+
+	hasKeyboardFocus = false;
+}
+
+void Textbox::KeyPress( SDLKey key ) {
+	text.append( SDL_GetKeyName( key ) );
+	
+	cout << "text is now:" << text << endl;
 }

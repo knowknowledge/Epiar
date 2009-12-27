@@ -117,6 +117,15 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	
 		switch( i->type ) {
 		case KEY:
+		
+			switch(i->type) {
+				case KEYUP:
+					if( keyboardFocus ) keyboardFocus->KeyPress( i->key );
+					break;
+				
+				default:
+					break;
+			}
 
 			break;
 		case MOUSE:
@@ -168,13 +177,12 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				}
 				// mouse down also changes keyboard focus (e.g. clicked on a new text field)
 				if( keyboardFocus != focusedWidget ) {
-					if( keyboardFocus )
-						keyboardFocus->UnfocusKeyboard();
+					if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
 					
 					keyboardFocus = focusedWidget;
 					
 					if( keyboardFocus ) {
-						//keyboardFocus->Focus();
+						keyboardFocus->FocusKeyboard();
 					}
 				}
 				

@@ -28,11 +28,13 @@ class Textbox : public Widget {
 		void UnfocusKeyboard( void );
 	
 		void MouseDown( int wx, int wy );
+		
+		void KeyPress( SDLKey key );
 	private:
 		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
 		int w, h;
 		string text, label;
-		//Image *textbox;
+		bool hasKeyboardFocus;
 
 		string lua_callback;
 		void (*clickCallBack)();
