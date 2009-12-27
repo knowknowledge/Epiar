@@ -129,7 +129,7 @@ Rectangle FreeFont::Render( int x, int y, const char *text ) {
 	( ( FONTRENDERTYPE * ) font )->Render( text, -1, pt );
 	glPopMatrix(); // restore the previous matrix
 	
-	return Rectangle( (float)x, (float)y, llx - urx, lly - ury );
+	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
@@ -141,7 +141,7 @@ Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
 
 	Render( x + ( llx - urx) / 2, y - (lly - ury) / 2, text );
 
-	return Rectangle( (float)x, (float)y, llx - urx, lly - ury );
+	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
 #endif //USE_FREETYPE
