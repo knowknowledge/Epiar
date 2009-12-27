@@ -25,8 +25,6 @@ class Picture: public Widget {
 		void Set( string filename );
 
 		// Widget functions
-		void Focus( int x, int y ) {};
-		void Unfocus( void ) {};
 		// TODO: When Image::resize works, just return w and h
 		int GetWidth( void ) {return (bitmap)?bitmap->GetWidth():w;} 
 		int GetHeight( void ) {return (bitmap)?bitmap->GetHeight():h;} 

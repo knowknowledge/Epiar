@@ -17,6 +17,7 @@ config.guess
 config.h
 config.h.in
 config.sub
+config.h.in~
 
 ### KDE development files
 Doxyfile

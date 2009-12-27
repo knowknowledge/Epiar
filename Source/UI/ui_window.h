@@ -22,8 +22,8 @@ class Window : public Widget {
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 	
-		void Focus( int x, int y );
-		void Unfocus( void );
+		void FocusMouse( int x, int y );
+		void UnfocusMouse( void );
 
 		//Widget *DetermineMouseFocus( int x, int y );
 

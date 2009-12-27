@@ -89,14 +89,14 @@ void Window::Draw( int relx, int rely ) {
 	Widget::Draw();
 }
 
-void Window::Focus( int x, int y ) {
+void Window::FocusMouse( int x, int y ) {
 	//cout << "window has focus" << endl;
-	Widget::Focus( x, y );
+	Widget::FocusMouse( x, y );
 }
 
-void Window::Unfocus( void ) {
+void Window::UnfocusMouse( void ) {
 	//cout << "window lost focus" << endl;
-	Widget::Unfocus();
+	Widget::UnfocusMouse();
 }
 
 // wx & wy are coords of mouse down, relative to widget's upper left (0,0)

@@ -79,11 +79,11 @@ void Button::Draw( int relx, int rely ) {
 	Vera10->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
 }
 
-void Button::Focus( int x, int y ) {
+void Button::FocusMouse( int x, int y ) {
 	bitmap_current = bitmap_pressed;
 }
 
-void Button::Unfocus( void ) {
+void Button::UnfocusMouse( void ) {
 	bitmap_current = bitmap_normal;
 }
 

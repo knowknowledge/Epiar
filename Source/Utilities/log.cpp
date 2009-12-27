@@ -14,9 +14,9 @@
  * \brief Main logging facilities for the code base. */
 
 FILE *Log::fp = NULL;
+bool Log::logToFile = false;
 
-void Log::Initalize( void ) {
-#ifdef DEBUG
+void Log::EnableFileLogging( void ) {
 	time_t rawtime;
 	char logFilename[128] = {0};
 	char *timestamp = NULL;
@@ -41,27 +41,22 @@ void Log::Initalize( void ) {
 		// Write the xml header
 		fprintf(fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"	);
 		fprintf(fp, "<debugSession time=\"%s\" />\n", timestamp );
-	}
-#endif /* DEBUG */
+	}	
 }
 
 void Log::Close( void ) {
-#ifdef DEBUG
 	if( fp ) {
 		fprintf(fp, "</debugSession>\n");
 		fclose( fp );
 	}
-#endif /* DEBUG */
 }
 
 void Log::realLog( int type, const char *func, const char *message, ... ) {
 	va_list args;
 	time_t rawtime;
-	char *timestamp;
+	char *timestamp = NULL;
 	static char logBuffer[ 4096 ] = {0};
 	char logType[8] = {0};
-
-	if( !fp ) return;
 
 	time( &rawtime );
 
@@ -81,8 +76,10 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 			break;
 	}
 
-	fprintf(fp, "<log>\n");
-	fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func, logType, timestamp );
+	if( fp ) {
+		fprintf(fp, "<log>\n");
+		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func, logType, timestamp );
+	}
 
 #ifdef DEBUG
 	printf( "%s (%s) - ", func, logType );
@@ -96,12 +93,12 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
-	fprintf( fp, "%s\n", logBuffer );
+	if( fp ) fprintf( fp, "%s\n", logBuffer );
 #ifdef DEBUG
 	printf( "%s\n", logBuffer );
 #endif
 
-	fprintf( fp, "</message>\n</log>\n" );
+	if( fp ) fprintf( fp, "</message>\n</log>\n" );
 
 	return;
 }

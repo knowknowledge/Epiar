@@ -55,7 +55,7 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 	return( NULL );
 }
 
-void Widget::Focus( int x, int y ) {
+void Widget::FocusMouse( int x, int y ) {
 	// update drag coordinates in case this is draggable
 	dragX = x;
 	dragY = y;
@@ -64,7 +64,7 @@ void Widget::Focus( int x, int y ) {
 	
 	Widget *mouseFocus = DetermineMouseFocus( x, y );
 	
-	if(mouseFocus) mouseFocus->Focus( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+	if(mouseFocus) mouseFocus->FocusMouse( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
 }
 
 void Widget::MouseDown( int x, int y ) {
@@ -79,10 +79,10 @@ void Widget::MouseDown( int x, int y ) {
 }
 
 // when a widget loses focus, so do all of its children
-void Widget::Unfocus( void ) {
+void Widget::UnfocusMouse( void ) {
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
-		(*i)->Unfocus();
+		(*i)->UnfocusMouse();
 	}
 }

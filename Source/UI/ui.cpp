@@ -20,7 +20,7 @@
  * \brief UI. */
 
 list<Widget *> UI::children;
-Widget *UI::mouseFocus, *UI::keyboardFocus; // remembers which widgets last had these focuses
+Widget *UI::mouseFocus, *UI::keyboardFocus; // remembers which widgets last had focus
 
 UI::UI() {
 	ResetInput();
@@ -94,7 +94,6 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 			if( y > wy ) {
 				if( x < (wx + w ) ) {
 					if( y < (wy + h ) ) {
-						//cout << "mouse focus is on a widget" << endl;
 						return (*i);
 					}
 				}
@@ -102,7 +101,6 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 		}
 	}
 	
-	//cout << "mouse cannot focus on any widget" << endl;
 	return( NULL );
 }
 
@@ -137,9 +135,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					dx = mouseFocus->GetDragX();
 					dy = mouseFocus->GetDragY();
 
-					//cout << "mouse motion, dx dy is " << dx << ", " << dy << endl;
-					//cout << "mouse focus will set x y to " << x - dx << ", " << y - dy << endl;
-
 					mouseFocus->SetX( x - dx );
 					mouseFocus->SetY( y - dy );
 					
@@ -150,26 +145,36 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				// release focus if needed
 				if( mouseFocus ) {
 					// let the focused widget know it's no longer focused
-					mouseFocus->Unfocus();
+					mouseFocus->UnfocusMouse();
 					mouseFocus = NULL;
 
 					eventWasHandled = true;
 				}
 				break;
 			case MOUSEDOWN:
-				Widget *mouseFocusWidget = DetermineMouseFocus( x, y );
+				Widget *focusedWidget = DetermineMouseFocus( x, y );
 				
-				// did they click a different widget than the one already in mouse focus?
-				if( mouseFocus != mouseFocusWidget ) {
-					// A new widget now has mouse focus
+				// did they click a different widget than the one already in focus?
+				if( mouseFocus != focusedWidget ) {
+					// A new widget now has focus
 					if( mouseFocus )
-						mouseFocus->Unfocus();
+						mouseFocus->UnfocusMouse();
 					
-					mouseFocus = mouseFocusWidget;
+					mouseFocus = focusedWidget;
 					
 					if( mouseFocus ) {
-						mouseFocus->Focus( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
-						//cout << "setting mouse focus point to " << x - mouseFocus->GetX() << ", " << y - mouseFocus->GetY() << endl;
+						mouseFocus->FocusMouse( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+					}
+				}
+				// mouse down also changes keyboard focus (e.g. clicked on a new text field)
+				if( keyboardFocus != focusedWidget ) {
+					if( keyboardFocus )
+						keyboardFocus->UnfocusKeyboard();
+					
+					keyboardFocus = focusedWidget;
+					
+					if( keyboardFocus ) {
+						//keyboardFocus->Focus();
 					}
 				}
 				
@@ -201,6 +206,10 @@ void UI::ResetInput() {
 	Video::DisableMouse();
 }
 
+void UI::RegisterKeyboardFocus( Widget *widget ) {
+	keyboardFocus = widget;
+}
+
 void ui_demo( bool in_loop ) {
 	static bool ran_once = false;
 
@@ -208,8 +217,9 @@ void ui_demo( bool in_loop ) {
 	
 	ran_once = true; // don't make more than one window
 
-	Window *wnd = new Window( 200, 100, 400, 300, "UI Demo" );
+	Window *wnd = new Window( 200, 100, 400, 300, "User Interface Demo" );
 	UI::Add( wnd );
 	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
+	wnd->AddChild( new Textbox( 50, 50, 100, 1 ) );
 }
 

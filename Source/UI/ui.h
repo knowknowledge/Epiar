@@ -33,11 +33,12 @@ class UI {
 		static void HandleInput( list<InputEvent> & events );
 		static void ResetInput(void);
 		
+		static void RegisterKeyboardFocus( Widget *widget );
 		static Widget *DetermineMouseFocus( int x, int y );
 		
 	private:
 		static list<Widget *> children;
-		static Widget *mouseFocus, *keyboardFocus; // remembers which widgets last had these focuses
+		static Widget *mouseFocus, *keyboardFocus; // remembers which widgets last had focus
 };
 
 // temporary function to test/develop the UI
