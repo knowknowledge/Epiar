@@ -46,7 +46,6 @@ it.tag = function(target)
 	AIPlans[it.shipID].plan=aimAwayFromIT
 	Ship.SetRadarColor(it.ship,0,255,0)
 	
-<<<<<<< HEAD
 	--shake the camera
 	--if it.ship == 0 then
 	--	other_x,other_y = Ship.GetPosition(ships[target])
@@ -55,8 +54,6 @@ it.tag = function(target)
 	--	Epiar.shakeCamera(100, 3, it.x,it.y)
 	--end
 
-=======
->>>>>>> a0ee036c95b995b49b49c84efee0f96d0eb41586
 	-- The new it doesn't become active for 100 ticks
 	it.ship=target
 	it.shipID = Ship.GetID(target)
