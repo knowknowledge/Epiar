@@ -77,7 +77,7 @@ bool Lua::Update(){
 
 bool Lua::Run( string line ) {
 	int error = 0;
-	Log::Message("Running '%s'", (char *)line.c_str() );
+	//Log::Message("Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
 		if( Init() == false ) {

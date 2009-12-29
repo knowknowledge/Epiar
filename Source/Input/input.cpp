@@ -74,12 +74,21 @@ bool Input::Update( void ) {
 				break;
 		}
 	}
+
+	for(int k=0;k<SDLK_LAST;k++) {
+		if(heldKeys[k])
+			events.push_back( InputEvent( KEY, KEYPRESSED, k ) );
+	}
 	
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
 	HandleLuaCallBacks( events );
-	HandlePlayerInput( events ); // default handler. player motion is handled here
+
+	// GUI Debug code
+	if( heldKeys['g'] ) {
+		ui_demo();
+	}
 
 	events.clear();
 	
@@ -161,62 +170,6 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 	return quitSignal;
 }
 
-void Input::HandlePlayerInput( list<InputEvent> & events ) {
-	if ( Simulation::isPaused() ) return;
-
-	Player *player = Player::Instance();
-	if(player->getHullIntegrityPct() <= 0.0f) return;
-
-	if( heldKeys[ SDLK_UP ] ) player->Accelerate();
-	// TODO It shouldn't be possible to rotate in both directions at once
-	if( heldKeys[ SDLK_LEFT ] ) player->Rotate( 30.0 );
-	if( heldKeys[ SDLK_RIGHT ] ) player->Rotate( -30.0 );
-	if( heldKeys[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
-		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
-	}
-	if( heldKeys[ SDLK_SPACE ] ) {
-		FireStatus result = player->Fire();
-		/*
-		Weapon* currentWeapon = player->getCurrentWeapon();
-		switch(result) {
-			case FireSuccess:
-				break;
-			case FireNoWeapons:
-				Log::Message("No Weapons attached to this ship.");
-				break;
-			case FireNotReady:
-				Log::Message("The '%s' has not cooled down!", currentWeapon->GetName().c_str() );
-				break;
-			case FireNoAmmo:
-				Log::Message("The '%s' System is out of Ammo!", currentWeapon->GetName().c_str() );
-				break;
-			default:
-				assert(0);
-				break;
-		}
-		*/
-	}
-
-	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if(i->type==KEY && i->kstate == KEYUP && i->key==SDLK_LSHIFT) {
-			if( player->ChangeWeapon() )
-				Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
-			break;
-		}
-	}
-	
-
-	// DEBUG CODE
-	if( heldKeys[ 'c' ] ) {  // Rotate towards the center of the Universe
-		player->Rotate( player->directionTowards( Coordinate(0,0) ) );
-	}
-	
-	// GUI Debug code
-	if( heldKeys['g'] ) {
-		ui_demo();
-	}
-}
-
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 	char *word = SDL_GetKeyName(key);
 	char letter = 0;
@@ -288,7 +241,7 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 
 void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		// cout << *i << endl; // DEBUG code to check whic events are actually being generated
+		//cout << *i << endl; // DEBUG code to check which events are actually being generated
 		map<InputEvent,string>::iterator val = eventMappings.find( *i );
 		if( val != eventMappings.end() ){
 			Lua::Run( val->second );
@@ -304,7 +257,8 @@ void Input::RegisterCallBack( InputEvent event, string command ) {
 int Input::RegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if(n == 3) {
-		char triggerKey = (char)(luaL_checkstring(L,1)[0]);
+		//char triggerKey1 = (char)(luaL_checkstring(L,1)[0]);
+		int triggerKey = (int)(luaL_checkint(L,1));
 		keyState triggerState = (keyState)(luaL_checkint(L,2));
 		string command = (string)luaL_checkstring(L,3);
 		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);

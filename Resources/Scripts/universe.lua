@@ -3,6 +3,9 @@
 
 -- Keyboard States:
 KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
+SDLK_BACKSPACE, SDLK_ESCAPE = 9, 27
+SDLK_RSHIFT, SDLK_LSHIFT = 47, 48
+SDLK_UP, SDLK_DOWN, SDLK_RIGHT, SDLK_LEFT = 17, 18, 19, 20
 
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
@@ -67,10 +70,6 @@ function togglePause()
 		Epiar.pause()
 	end
 end
-Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
--- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
--- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
--- focus, the UI will pass the typed event down the chain and pause should reach it eventually
 
 -- Pause the Game with a given message
 function pauseMessage(message)
@@ -217,7 +216,22 @@ function store()
 	end
 end
 --registerInit(store)
-Epiar.RegisterKey('s',KEYTYPED,"store()")
+Epiar.RegisterKey(115,KEYTYPED,"store()")
+
+Epiar.RegisterKey(112,KEYTYPED,"togglePause()")
+-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
+-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
+-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
+
+-- Register the player functions
+Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "Ship.Accelerate(Epiar.player())" )
+Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "Ship.Rotate(Epiar.player(),30)" )
+Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "Ship.Rotate(Epiar.player(),-30)" )
+Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Ship.GetMomentumAngle(Epiar.player()) + 180 ))" )
+Epiar.RegisterKey(99, KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Epiar.player(), 0,0))" )
+Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
+Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
+Epiar.RegisterKey(32, KEYPRESSED, "Ship.Fire(Epiar.player())" )
 
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )
