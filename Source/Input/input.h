@@ -74,7 +74,7 @@ class Input {
 		void _UpdateHandleMouseDown( SDL_Event *event );
 		void _UpdateHandleMouseUp( SDL_Event *event );
 		void _UpdateHandleMouseMotion( SDL_Event *event );
-		void Handle( list<InputEvent> & events );
+		void HandlePlayerInput( list<InputEvent> & events );
 		void PushTypeEvent( list<InputEvent> & events, SDLKey key );
 
 		bool keyDown[SDLK_LAST]; // set to true as long as a key is held down

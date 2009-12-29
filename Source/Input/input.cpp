@@ -77,7 +77,7 @@ bool Input::Update( void ) {
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
 	Lua::HandleInput( events );
-	Handle( events ); // default handler. player motion is handled here
+	HandlePlayerInput( events ); // default handler. player motion is handled here
 
 	events.clear();
 	
@@ -159,7 +159,7 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 	return quitSignal;
 }
 
-void Input::Handle( list<InputEvent> & events ) {
+void Input::HandlePlayerInput( list<InputEvent> & events ) {
 	if ( Simulation::isPaused() ) return;
 
 	Player *player = Player::Instance();
