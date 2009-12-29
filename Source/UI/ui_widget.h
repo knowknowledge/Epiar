@@ -41,7 +41,7 @@ class Widget {
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 		
-		virtual void KeyPress( SDLKey key );
+		virtual bool KeyPress( SDLKey key );
 	
 	private:
 		int x, y;

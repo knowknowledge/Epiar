@@ -29,7 +29,7 @@ class Textbox : public Widget {
 	
 		void MouseDown( int wx, int wy );
 		
-		void KeyPress( SDLKey key );
+		bool KeyPress( SDLKey key );
 	private:
 		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
 		int w, h;

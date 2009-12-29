@@ -118,9 +118,18 @@ void UI::HandleInput( list<InputEvent> & events ) {
 		switch( i->type ) {
 		case KEY:
 		
-			switch(i->type) {
-				case KEYUP:
-					if( keyboardFocus ) keyboardFocus->KeyPress( i->key );
+			switch(i->kstate) {
+				case KEYTYPED:
+					if( keyboardFocus ) { 
+						bool handled = keyboardFocus->KeyPress( i->key );
+						
+						// if the input was handled, we need to remove it from the queue so no other
+						// subsystem sees it and acts on it
+						if( handled ) {
+							events.erase(i);
+							i = events.begin();
+						}
+					}
 					break;
 				
 				default:

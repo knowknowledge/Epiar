@@ -106,8 +106,23 @@ void Textbox::UnfocusKeyboard( void ) {
 	hasKeyboardFocus = false;
 }
 
-void Textbox::KeyPress( SDLKey key ) {
-	text.append( SDL_GetKeyName( key ) );
+bool Textbox::KeyPress( SDLKey key ) {
+	string keyname = SDL_GetKeyName( key );
+	stringstream key_ss;
+	string key_s;
 	
-	cout << "text is now:" << text << endl;
+	key_ss << (char)key;
+	key_ss >> key_s;
+	
+	if(keyname == "backspace") {
+		int len = text.length() - 1;
+		if(len < 0) len = 0;
+		text.erase( len );
+	} else if(keyname == "space") {
+		text.append( " " );
+	} else {
+		text.append( key_s );
+	}
+	
+	return true;
 }

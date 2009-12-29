@@ -89,7 +89,8 @@ void Widget::UnfocusKeyboard( void ) {
 	}
 }
 
-void Widget::KeyPress( SDLKey key ) {
-	cout << "Widget keypress" << endl;
-	if( keyboardFocus ) keyboardFocus->KeyPress( key );
+bool Widget::KeyPress( SDLKey key ) {
+	if( keyboardFocus ) return keyboardFocus->KeyPress( key );
+	
+	return false;
 }
