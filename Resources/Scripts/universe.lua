@@ -1,5 +1,9 @@
 -- Use this script for a solar system
 
+
+-- Keyboard States:
+KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
+
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 
@@ -63,7 +67,7 @@ function togglePause()
 		Epiar.pause()
 	end
 end
---Epiar.RegisterKey('p',"togglePause()")
+Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 -- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
 -- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
 -- focus, the UI will pass the typed event down the chain and pause should reach it eventually
@@ -213,7 +217,7 @@ function store()
 	end
 end
 --registerInit(store)
---Epiar.RegisterKey('s',"store()")
+Epiar.RegisterKey('s',KEYTYPED,"store()")
 
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )

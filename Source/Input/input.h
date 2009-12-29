@@ -42,6 +42,19 @@ class InputEvent {
 			return( true );
 		}
 
+		friend bool operator <(const InputEvent& e1, const InputEvent& e2 ) {
+			if( e1.type != e2.type ) return( e1.type < e2.type );
+			if( e1.type == KEY ) {
+				if( e1.key != e2.key ) return( e1.key < e2.key );
+				if( e1.kstate != e2.kstate ) return( e1.kstate < e2.kstate );
+			} else {
+				if( e1.mstate != e2.mstate ) return( e1.mstate < e2.mstate  );
+				if( e1.mx != e2.mx ) return( e1.mx < e2.mx );
+				if( e1.my != e2.my ) return(e1.my < e2.my );
+			}
+			return false;
+		}
+
 		InputEvent( eventType type, keyState kstate, SDLKey key ) {
 			this->type = type;
 			this->key = key;
@@ -76,7 +89,7 @@ class Input {
 		bool Update( void );
 
 		static void HandleLuaCallBacks( list<InputEvent> & events );
-		static void RegisterKeyInput( char key, string command );
+		static void RegisterCallBack( InputEvent key, string command );
 		static int RegisterKey(lua_State *L);
 	
 	private:
@@ -88,9 +101,9 @@ class Input {
 		void HandlePlayerInput( list<InputEvent> & events );
 		void PushTypeEvent( list<InputEvent> & events, SDLKey key );
 
-		bool keyDown[SDLK_LAST]; // set to true as long as a key is held down
+		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems
-		static map<char,string> keyMappings; // Lua callbacks mapped to a key
+		static map<InputEvent,string> eventMappings; // Lua callbacks mapped to a key
 };
 
 #endif // __h_input__

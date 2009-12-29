@@ -17,7 +17,7 @@
 #include "Engine/hud.h"
 #include "Utilities/lua.h"
 
-map<char, string> Input::keyMappings;
+map<InputEvent, string> Input::eventMappings;
 
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
@@ -31,7 +31,7 @@ ostream& operator<<(ostream &out, const InputEvent&e) {
 }
 
 Input::Input() {
-	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
+	memset( heldKeys, 0, sizeof( bool ) * SDLK_LAST );
 }
 
 bool Input::Update( void ) {
@@ -136,7 +136,7 @@ bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 			events.push_front( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
 			// typed events go here because SDL will repeat KEYDOWN events for us at the set SDL repeat rate
 			PushTypeEvent( events, event->key.keysym.sym );
-			keyDown[ event->key.keysym.sym ] = 1;
+			heldKeys[ event->key.keysym.sym ] = 1;
 			break;
 	}
 
@@ -154,7 +154,7 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 			break;
 		default:
 			events.push_front( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
-			keyDown[ event->key.keysym.sym ] = 0;
+			heldKeys[ event->key.keysym.sym ] = 0;
 			break;
 	}
 
@@ -167,14 +167,14 @@ void Input::HandlePlayerInput( list<InputEvent> & events ) {
 	Player *player = Player::Instance();
 	if(player->getHullIntegrityPct() <= 0.0f) return;
 
-	if( keyDown[ SDLK_UP ] ) player->Accelerate();
+	if( heldKeys[ SDLK_UP ] ) player->Accelerate();
 	// TODO It shouldn't be possible to rotate in both directions at once
-	if( keyDown[ SDLK_LEFT ] ) player->Rotate( 30.0 );
-	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( -30.0 );
-	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
+	if( heldKeys[ SDLK_LEFT ] ) player->Rotate( 30.0 );
+	if( heldKeys[ SDLK_RIGHT ] ) player->Rotate( -30.0 );
+	if( heldKeys[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
 		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
 	}
-	if( keyDown[ SDLK_SPACE ] ) {
+	if( heldKeys[ SDLK_SPACE ] ) {
 		FireStatus result = player->Fire();
 		/*
 		Weapon* currentWeapon = player->getCurrentWeapon();
@@ -207,12 +207,12 @@ void Input::HandlePlayerInput( list<InputEvent> & events ) {
 	
 
 	// DEBUG CODE
-	if( keyDown[ 'c' ] ) {  // Rotate towards the center of the Universe
+	if( heldKeys[ 'c' ] ) {  // Rotate towards the center of the Universe
 		player->Rotate( player->directionTowards( Coordinate(0,0) ) );
 	}
 	
 	// GUI Debug code
-	if( keyDown['g'] ) {
+	if( heldKeys['g'] ) {
 		ui_demo();
 	}
 }
@@ -230,12 +230,12 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 
 	if(key >= SDLK_a && key <= SDLK_z) {
 		letter = word[0];
-		if(keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT]) {
+		if(heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT]) {
 			letter -= 32;
 		}
 	} else if(key == SDLK_SPACE) {
 		letter = ' ';
-	} else if(key >= SDLK_0 && key <= SDLK_9 && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if(key >= SDLK_0 && key <= SDLK_9 && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		switch(key) {
 			case SDLK_0:
 				letter = ')';
@@ -269,15 +269,15 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 			break;
 			default: break; // will never happen, here to avoid compiler warnings
 		}
-	} else if((key == SDLK_QUOTE) && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if((key == SDLK_QUOTE) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = '"';
 	} else if(key == SDLK_RETURN) {
 		letter = '\n';
-	} else if((key == SDLK_SEMICOLON) && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if((key == SDLK_SEMICOLON) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = ':';
 	} else if(key == SDLK_BACKSPACE) {
 		letter = '\b';
-	} else if(key == SDLK_EQUALS && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if(key == SDLK_EQUALS && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = '+';
 	} else {
 		letter = word[0];
@@ -288,27 +288,28 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 
 void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if( i->type == KEY && i->kstate == KEYUP ) {
-			map<char,string>::iterator val = keyMappings.find( i->key );
-			if( val != keyMappings.end() ){
-				Lua::Run( val->second );
-			}
+		// cout << *i << endl; // DEBUG code to check whic events are actually being generated
+		map<InputEvent,string>::iterator val = eventMappings.find( *i );
+		if( val != eventMappings.end() ){
+			Lua::Run( val->second );
 		}
 	}
 }
 
-void Input::RegisterKeyInput( char key, string command ) {
-	keyMappings.insert(make_pair(key, command));
+void Input::RegisterCallBack( InputEvent event, string command ) {
+	cout<<"Registering: "<<event<<" as "<<command<<endl;
+	eventMappings.insert(make_pair(event, command));
 }
 
 int Input::RegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if(n == 2) {
-		char key = (char)(luaL_checkstring(L,1)[0]);
-		string command = (string)luaL_checkstring(L,2);
-		RegisterKeyInput(key,command);
+	if(n == 3) {
+		char triggerKey = (char)(luaL_checkstring(L,1)[0]);
+		keyState triggerState = (keyState)(luaL_checkint(L,2));
+		string command = (string)luaL_checkstring(L,3);
+		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (Key, Command)", n); 
+		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n); 
 	}
 	return 0;
 }
