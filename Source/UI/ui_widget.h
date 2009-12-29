@@ -32,11 +32,15 @@ class Widget {
 		
 		virtual int GetWidth( void ) = 0;
 		virtual int GetHeight( void ) = 0;
+
+		virtual string GetName( void ) {return string("GenericWidget");}
 	
-		virtual Widget *DetermineMouseFocus( int x, int y );
+		virtual bool Contains( int relx, int rely );
+		virtual Widget *DetermineMouseFocus( int relx, int rely );
 		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 	
 	private:
+		
 		int x, y;
 		int dragX, dragY; // if dragging, this is the offset from (x,y) to the point of click for the drag
 		list<Widget *> children;

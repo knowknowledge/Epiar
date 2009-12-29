@@ -23,6 +23,14 @@ Player *Player::Instance( void ) {
 }
 
 Player::Player() {
+	this->SetRadarColor( Color::Get(0xFF,0xD7,0) );
 
+}
+
+void Player::Update( void ) {
+	Ship::Update();
+	if( getHullIntegrityPct() <= 0) {
+		Log::Message( "You have been destroyed..." );
+	}
 }
 

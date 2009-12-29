@@ -12,6 +12,9 @@
 
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
+#include "Engine/weapon.h"
+#include "Sprites/projectile.h"
+#include <map>
 
 class Ship : public Sprite {
 	public:
@@ -28,26 +31,45 @@ class Ship : public Sprite {
 		void Damage( short int damage );
 
 		void Draw( void );
-		
+		FireStatus Fire( void );
+		bool ChangeWeapon( void );
+
+		// Outfitting Functions
+		void addShipWeapon(Weapon *i);
+		void addShipWeapon(string weaponName);
+		void removeShipWeapon(int pos);
+		void addAmmo(string weaponName, int qty);
+
 		/* Status functions */
 		float directionTowards(Coordinate c);
 		float directionTowards(float angle);
 		float getHullIntegrityPct();
+		Weapon* getCurrentWeapon();
+		int getCurrentAmmo();
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
 		}
-
+		
 	private:
 		Model *model;
 		Animation *flareAnimation;
+
 		struct {
 			/* Related to ship's condition */
 			short int hullEnergyAbsorbed; /* hull health - once the hull absorbs to much energy, your ship blows apart, hooray! :) */
+			unsigned int lastWeaponChangeAt; //number of where last weapon change occcured
+			unsigned int lastFiredAt; //number of ticks where last fire event occured
+			unsigned int selectedWeapon;
 			
 			/* Flags */
 			bool isAccelerating; // cleared by update, set by accelerate (so it's always updated twice a loop)
 		} status;
+
+		// Weapon Systems
+		multimap <int,int> ammo; //contains the quantity of each ammo type on the ship
+		vector<Weapon *> shipWeapons;
+		
 };
 
 #endif // __H_SHIP__

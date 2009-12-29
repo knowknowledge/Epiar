@@ -37,17 +37,33 @@ function Start()
 end
 
 function Update()
-    for i,pre_func in ipairs(PreSteps) do
-        pre_func()
-    end
-    MoveShips()
-    for i,post_func in ipairs(PostSteps) do
-        post_func()
-    end
+	if #PreSteps >0 then
+		for i,pre_func in ipairs(PreSteps) do
+			pre_func()
+		end
+	end
+	MoveShips()
+	if #PostSteps >0 then
+		for i,post_func in ipairs(PostSteps) do
+			post_func()
+		end
+	end
 end
 
 --------------------------------------------------------------------------------
 -- Basic Utilities
+
+function togglePause()
+	io.write("Toggling...\n")
+	if 1 == Epiar.ispaused() then
+		io.write("Un Pause\n")
+		Epiar.unpause()
+	else
+		io.write("Pause\n")
+		Epiar.pause()
+	end
+end
+Epiar.RegisterKey('p',"togglePause()")
 
 -- Pause the Game with a given message
 function pauseMessage(message)
@@ -79,6 +95,12 @@ end
 -- Create some Random Ships around a Planet
 function CreateShips(number_of_ships, X, Y)
 	shiptypes = Epiar.models()
+	a = {}
+	a[1] = "Missile"
+	a[2] = "Slow Missile"
+	a[3] = "Strong Laser"
+	a[4] = "Minigun"
+	
 	-- Generate Ships
 	for s =1,number_of_ships do
 		cur_ship = Ship:new(
@@ -88,7 +110,12 @@ function CreateShips(number_of_ships, X, Y)
 				"chase"                 -- Ship Script
 				)
 		Ship.SetRadarColor(cur_ship,0,255,0)
-		table.insert(AIPlans, newPlan() )
+		AIPlans[ Ship.GetID(cur_ship) ] = newPlan()
+		
+		--Randomly assign a weapon to everyone
+		i = math.random(4)
+		Ship.AddWeapon( cur_ship, a[i] )
+		Ship.AddAmmo(cur_ship, a[i],100 )
 	end
 end
 
@@ -98,11 +125,12 @@ function MoveShips()
 	-- Move Non-Player ships
 	for s =1, #ships do
 		cur_ship = ships[s]
-		AIPlans[s].plan( cur_ship, AIPlans[s].time )
-		AIPlans[s].time = AIPlans[s].time -1
+		n = Ship.GetID(cur_ship)
+		AIPlans[n].plan( cur_ship, AIPlans[n].time )
+		AIPlans[n].time = AIPlans[n].time -1
 		-- When the current plan is complete, pick a new plan
-		if AIPlans[s].time == 0 then 
-			AIPlans[s] = newPlan()
+		if AIPlans[n].time == 0 then
+			AIPlans[n] = newPlan()
 		end
 	end
 end
@@ -126,26 +154,11 @@ function aimCenter(cur_ship,timeleft)
 		Ship.Rotate(cur_ship,
 			Ship.directionTowards(cur_ship, 0,0) )
 	end
+	Ship.Fire(cur_ship )
 	Ship.Accelerate(cur_ship )
 end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
-
-function hitEveryOne()
-	ships = Epiar.ships()
-	for s =1, #ships do
-		ship = ships[s]
-		Ship.Damage(ship,1)
-		pct = Ship.GetHull(ship)
-		-- io.write(string.format("Ship %d is at %f%% Hull\n",s,pct))
-		if pct <= 0 then
-			Ship.Explode(cur_ship)
-		else
-			Ship.SetRadarColor(cur_ship,255 *pct,0 ,0)
-		end
-	end
-end
---registerPostStep(hitEveryOne)
 
 function buy(model)
 	io.write("Player just bought "..model.."\n")
@@ -153,29 +166,60 @@ function buy(model)
 	return 1
 end
 
+
 function store()
 	Epiar.pause()
+	if storefront ~=nil then return end
+
+	-- The Store layout parameters
 	width = 820
 	height = 500
 	pad = 10
-	box = 130
+	box = 120
+	button_h = 30
+	button_w = 100
+	row,col = 1,1	
+	getPos = function(c,r)
+		pos_x = pad*(col)+box*(col-1)
+		pos_y = pad*(row)+box*(row-1)
+		return pos_x,pos_y
+	end
+
+	-- Layout the Store in a grid
 	storefront = UI:newWindow( 30,30,width,height,"Ship Yard")
 	models = Epiar.models()
-	row,col = 1,1	
 	for m =1,#models do
-		UI.add(storefront, UI:newButton(pad*(col)+box*(col-1), pad*(row)+box*(row-1), 100,30, models[m], " Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront); ")) --
-		UI.add(storefront, UI:newPicture(pad*(col+2)+box*(col-1),30+(pad)*(row+2)+box*(row-1),box,box,models[m]))
-		col =col+1
+		pos_x,pos_y = getPos(col,row)
 		-- When there isn't enough room, wrap to the next row.
-		if pad*(col+2)+box*(col-1) >= width then 
+		if  pos_x+box >= width then 
 			col=1; row=row+1
+			pos_x,pos_y = getPos(col,row)
 		end
+
+		UI.add(storefront, UI:newButton(
+			pos_x+(box-button_w)/2,
+			pos_y,
+			button_w,button_h, models[m],
+			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront);storefront=nil "))
+		UI.add(storefront, UI:newPicture(
+			pos_x,
+			pos_y + button_h,
+			box,box-button_h,models[m]))
+
+		col =col+1
 	end
 end
+--registerInit(store)
+Epiar.RegisterKey('s',"store()")
+
+Ship.AddWeapon( Epiar.player(), "Minigun" )
+Ship.AddWeapon( Epiar.player(), "Missile" )
+Ship.AddAmmo( Epiar.player(), "Missile",100 )
+
 
 --------------------------------------------------------------------------------
 -- Load Scenarios
 
 dofile "Resources/Scripts/basics.lua"
-dofile "Resources/Scripts/tag.lua"
+--dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"

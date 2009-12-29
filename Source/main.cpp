@@ -32,7 +32,10 @@ Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 int main( int argc, char **argv ) {
 	Log::Initalize();
 	// Use ".dat" extension for data files
+#ifdef USE_PHYSICSFS
 	Filesystem::Init( argv[0], "dat" );
+#endif
+
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
@@ -48,11 +51,22 @@ int main( int argc, char **argv ) {
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 
-	// load the main font used through the tree
-	Vera8 = new Font( "Resources/Fonts/Vera-8.af" );
-	Vera10 = new Font( "Resources/Fonts/Vera-10.af" );
-	Visitor10 = new Font( "Resources/Fonts/Visitor1-10.af" );
-	VeraMono10 = new Font( "Resources/Fonts/VeraMono-10.af" );
+#ifdef USE_FREETYPE // (FREETYPE IS OFF BY DEFAULT)
+	Log::Message("Using Font Engine: FreeType");
+	//******** FreeType Rendering ********
+	//TODO: find gpl-compatible ttf versions of the normal fonts
+	Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+#else
+	Log::Message("Using Font Engine: AFONT");
+	//******** AFont Rendering ********
+	Vera8       = (Font*)new AFont( "Resources/Fonts/Vera-8.af" );
+	Vera10      = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
+	Visitor10   = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
+	VeraMono10  = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
+#endif // USE_FREETYPE
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
@@ -71,7 +85,9 @@ int main( int argc, char **argv ) {
 	// free the configuration file data
 	delete optionsfile;
 	
+#ifdef USE_PHYSICSFS
 	Filesystem::DeInit();
+#endif
 	Log::Close();
 
 	return( 0 );

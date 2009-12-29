@@ -7,7 +7,7 @@
 	<models>Resources/Definitions/models-default.xml</models>
 	<engines>Resources/Definitions/engines-default.xml</engines>
 	<alliances>Resources/Definitions/alliances-default.xml</alliances>
-	<weapons></weapons>
+	<weapons>Resources/Definitions/weapons-default.xml</weapons>
 	<armor></armor>
 	<outfits></outfits>
 	<commodities></commodities>

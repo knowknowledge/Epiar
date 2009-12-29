@@ -40,11 +40,11 @@ class Trig {
 		double tanTable[360];
 };
 
-// Turns an arbitrary angle into an angle between -180 and 180 degrees
+// Turns an arbitrary angle into the smallest equivalent angle
 inline float normalizeAngle(float angle){
-	float result = fmod(angle,540.0f);
-	if(result>=180.0f)result-=360.0f;
-	return result;
+	angle -= floor(angle / 360.0f) * 360.0f; // Normalize to 0 to 360
+	if(angle>180.0f) return angle -360.0f; // Normalize to -180 to 180
+	return angle;
 }
 
 #endif // __h_trig__

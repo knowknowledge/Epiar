@@ -34,6 +34,7 @@ Simulation::Simulation( void ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
+	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	currentFPS = 0.;
 }
@@ -42,6 +43,7 @@ Simulation::Simulation( string filename ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
+	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	currentFPS = 0.;
 
@@ -78,30 +80,27 @@ bool Simulation::Run( void ) {
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	// Create a spritelist
-	SpriteManager sprites;
+	SpriteManager *sprites = SpriteManager::Instance();
 
 	Player *player = Player::Instance();
 
 	// Set player model based on simulation xml file settings
 	player->SetModel( models->GetModel( playerDefaultModel ) );
-	sprites.Add( player->GetSprite() );
+	sprites->Add( player->GetSprite() );
 
 	// Focus the camera on the sprite
 	camera->Focus( player->GetSprite() );
 
 	// Add the planets
-	planets->RegisterAll( &sprites );
+	planets->RegisterAll( sprites );
 
 	// Start the Lua Universe
-	Lua::SetSpriteList( &sprites );
+	Lua::SetSpriteList( sprites );
 	Lua::Load("Resources/Scripts/universe.lua");
-
+	
 	// Start the Lua Scenarios
 	Lua::Run("Start()");
 
-	// Ensure correct drawing order
-	sprites.Order();
-	
 	// Create the hud
 	Hud::Hud();
 
@@ -117,21 +116,23 @@ bool Simulation::Run( void ) {
 			// Update cycle
 			starfield.Update();
 			camera->Update();
-			sprites.Update();
+			sprites->Update();
 			camera->Update();
 			Hud::Update();
-			UI::Run(); // runs only a few loops
-			
-			// Keep this last (I think)
-			Timer::Update();
 		}
+
+		// Runs only a few loops (even when paused)
+		UI::Run(); 
+		
+		// Keep this last (I think)
+		Timer::Update();
 
 		// Erase cycle
 		Video::Erase();
 		
 		// Draw cycle
 		starfield.Draw();
-		sprites.Draw();
+		sprites->Draw();
 		Hud::Draw( sprites );
 		UI::Draw();
 		Video::Update();
@@ -230,6 +231,12 @@ bool Simulation::Parse( void ) {
 				xmlFree( key );
 				Log::Message( "Engines filename is %s.", enginesFilename.c_str() );
 			}
+			if( !strcmp( sectionName, "weapons" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				weaponsFilename = (char *)key;
+				xmlFree( key );
+				Log::Message( "Weapons filename is %s.", weaponsFilename.c_str() );
+			}
 			if( !strcmp( sectionName, "alliances" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				alliancesFilename = (char *)key;
@@ -260,6 +267,9 @@ bool Simulation::Parse( void ) {
 	}
 	if( models->Load( modelsFilename ) != true ) {
 		Log::Error( "There was an error loading the models from '%s'.", modelsFilename.c_str() );
+	}
+	if( weapons->Load( weaponsFilename ) != true ) {
+		Log::Error( "There was an error loading the weapons from '%s'.", weaponsFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
 		Log::Error( "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );

@@ -10,33 +10,48 @@
 #include "Graphics/animation.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
+#include "Utilities/resource.h"
+
 
 #define ANI_VERSION 1
 
-/**\class Animation
+/**\class Ani
  * \brief Animations */
 
-Animation::Animation() {
+Ani* Ani::Get( string filename ) {
+	Ani* value;
+	value = (Ani*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Ani(filename);
+		Resource::Store((Resource*)value);
+	}
+	return value;
+}
+
+Ani::Ani() {
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
 }
 
-Animation::Animation( string& filename ) {
+Ani::Ani( string& filename ) {
+	Log::Message("New Animation from '%s'", filename.c_str() );
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
+	SetPath(filename);
 	Load( filename );
 }
 
-bool Animation::Load( string& filename ) {
+
+bool Ani::Load( string& filename ) {
 	char byte;
 	const char *cName = filename.c_str();
 	File file = File( cName );
 
-	Log::Message( "Loading animation '%s' ...\n", cName );
+	//Log::Message( "Loading animation '%s' ...\n", cName );
 
 	file.Read( 1, &byte );
 	//cout << "\tVersion: " << (int)byte << endl;
@@ -91,9 +106,23 @@ bool Animation::Load( string& filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	Log::Message( "Animation loading done." );
+	//Log::Message( "Animation loading done." );
 
 	return( true );
+}
+
+/**\class Animation
+ * \brief Animations */
+
+Animation::Animation() {
+	startTime = 0;
+	looping = false;
+}
+
+Animation::Animation( string& filename ) {
+	startTime = 0;
+	looping = false;
+	ani = Ani::Get( filename );
 }
 
 // Returns true while animation is still playing - false when animation is over
@@ -103,22 +132,22 @@ bool Animation::Draw( int x, int y, float ang ) {
 	bool finished = false;
 
 	if( startTime ) {
-		int fnum = (SDL_GetTicks() - startTime) / delay;
+		int fnum = (SDL_GetTicks() - startTime) / ani->delay;
 
-		if( fnum > numFrames - 1 ) {
+		if( fnum > ani->numFrames - 1 ) {
 			if( looping ) {
 				fnum = 0;
 				startTime = SDL_GetTicks();
 			} else {
-				fnum = numFrames - 1;
+				fnum = ani->numFrames - 1;
 				finished = true;
 			}
 		}
 
-		frame = &frames[fnum];
+		frame = &(ani->frames)[fnum];
 	} else {
 		startTime = SDL_GetTicks();
-		frame = &frames[0];
+		frame = &(ani->frames)[0];
 	}
 
 	frame->DrawCentered( x, y, ang );

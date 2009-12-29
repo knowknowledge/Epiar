@@ -10,30 +10,25 @@
 #ifndef __H_PROJECTILE__
 #define __H_PROJECTILE__
 
-#include "Engine/models.h"
 #include "Sprites/sprite.h"
+#include "Engine/weapons.h"
+
 class Projectile :
 	public Sprite
 {
 public:
-	Projectile(float angleToFire, Coordinate worldPosition, string modelName, int lifetime, int velocity);
+	Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon);
 	~Projectile(void);
-	bool SetModel( Model *model );
-	bool SetFlareAnimation( string filename );
-	Sprite *GetSprite();
-	string GetModelName();
 	void Update( void );
-	void Draw( void );
+	void SetOwnerID(int id) { ownerID = id; }
 	int GetDrawOrder( void ) {
-			return( 2 );
+			return( DRAW_ORDER_WEAPON );
 	}
 private:
-	int ttl; //time to live before projectile blows up
-	Model *model;
-	Animation *flareAnimation;
-	float direction;
-	int velocity;
-	bool isAccelerating; 
+	Uint32 secondsOfLife; //time to live before projectile blows up
+	Uint32 start;
+	int ownerID;
+
 	/*todo Add 
  -graphics:
 	 firing graphic

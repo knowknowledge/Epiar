@@ -18,6 +18,10 @@ config.h
 config.h.in
 config.sub
 
+### KDE development files
+Doxyfile
+*.kdevelop
+
 ### Lua binaries
 Source/Lua/src/lua
 Source/Lua/src/luac

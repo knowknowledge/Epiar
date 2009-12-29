@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "Utilities/lua.h"
+#include "Sprites/effects.h"
 #include "AI/ai_lua.h"
 
 /**\class AI_Lua
@@ -22,10 +23,15 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Accelerate", &AI_Lua::ShipAccelerate},
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
+		{"Fire", &AI_Lua::ShipFire},
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Explode", &AI_Lua::ShipExplode},
+		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
+		{"AddWeapon", &AI_Lua::ShipAddWeapon},
+		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
+		{"GetID", &AI_Lua::ShipGetID},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
@@ -42,7 +48,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 AI **AI_Lua::pushShip(lua_State *L){
 	AI **s = (AI **)lua_newuserdata(L, sizeof(AI*));
-    *s = new AI();
+    *s = NULL;
     luaL_getmetatable(L, EPIAR_SHIP);
     lua_setmetatable(L, -2);
     return s;
@@ -66,10 +72,11 @@ int AI_Lua::newShip(lua_State *L){
 	string modelname = luaL_checkstring (L, 4);
 	string scriptname = luaL_checkstring (L, 5);
 
-	Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
+	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
 	AI **s = pushShip(L);
+	*s = new AI();
 	(*s)->SetWorldPosition( Coordinate(x, y) );
 	(*s)->SetModel( Models::Instance()->GetModel(modelname) );
 	(*s)->SetScript( scriptname );
@@ -122,6 +129,20 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 	}
 	return 0;
 }
+
+int AI_Lua::ShipFire(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		FireStatus result = (*ai)->Fire();
+		lua_pushinteger(L, (int)(result) );
+		return 1;
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
 int AI_Lua::ShipDamage(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -139,12 +160,50 @@ int AI_Lua::ShipExplode(lua_State* L){
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
+		Lua::GetSpriteList()->Add(
+			new Effect((*ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
 	}
 	return 0;
 }
+
+int AI_Lua::ShipAddWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		string weaponName = luaL_checkstring (L, 2);
+		(*ai)->addShipWeapon(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n); 
+	}
+	return 0;
+}	
+
+int AI_Lua::ShipChangeWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		(*ai)->ChangeWeapon();
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipAddAmmo(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 3) {
+		AI** ai = checkShip(L,1);
+		string weaponName = luaL_checkstring (L, 2);
+		int qty = (int) luaL_checknumber (L, 3);
+		(*ai)->addAmmo(weaponName,qty);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n); 
+	}
+	return 0;
+}	
 
 int AI_Lua::ShipSetModel(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -157,6 +216,19 @@ int AI_Lua::ShipSetModel(lua_State* L){
 	}
 	return 0;
 
+}
+
+int AI_Lua::ShipGetID(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		lua_pushinteger(L, (*ai)->GetID() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
 }
 
 int AI_Lua::ShipGetAngle(lua_State* L){

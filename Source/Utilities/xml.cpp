@@ -88,7 +88,7 @@ string XMLFile::Get( const string& path ) {
 	cur = xmlDocGetRootElement( xmlPtr );
 
 	if( cur == NULL ) {
-		Log::Warning( "XML file (%s) appears to be empty.",filename );
+		Log::Warning( "XML file (%s) appears to be empty.",filename.c_str() );
 		values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 		return( string() );
 	}

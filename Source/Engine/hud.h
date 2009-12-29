@@ -15,10 +15,10 @@
 
 class AlertMessage {
 	public:
-		AlertMessage( string message, Uint32 length );
-
+		AlertMessage( string message, Uint32 start );
+		bool operator ==(const AlertMessage& other) {return (start == other.start) && (message == other.message);}
 		string message;
-		Uint32 length;
+		Uint32 start;
 };
 
 class Hud {
@@ -28,14 +28,14 @@ class Hud {
 		static Hud *Instance();
 
 		static void Update( void );
-		static void Draw( SpriteManager &sprites );
+		static void Draw( SpriteManager *sprites );
 		
 		static void Alert( const char *, ... );
 
 	private:
 		static void DrawHullIntegrity();
 		static void DrawShieldIntegrity();
-		static void DrawRadarNav( SpriteManager &sprites );
+		static void DrawRadarNav( SpriteManager *sprites );
 		static void DrawMessages();
 		static void DrawFPS();
 	
@@ -51,13 +51,13 @@ class Hud {
 		/* Radar and navigation */
 		static Image *im_radarnav;
 
-		static vector<AlertMessage> AlertMessages;
+		static list<AlertMessage> AlertMessages;
 };
 
 class Radar {
 	public:
 		Radar( void );
-		static void Draw( SpriteManager &sprites );
+		static void Draw( SpriteManager *sprites );
 		static void SetVisibility( int visibility );
 	
 	private:

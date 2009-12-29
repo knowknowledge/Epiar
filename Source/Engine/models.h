@@ -25,7 +25,7 @@ class Model {
 			} else PPA_MATCHES( "image" ) {
 				image.Load( value );
 			} else PPA_MATCHES( "mass" ) {
-				mass = atof( value.c_str() );
+				mass = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
 				rotPerSecond = static_cast<float>(atof( value.c_str() ));
 			} else PPA_MATCHES( "engine" ) {
@@ -37,9 +37,11 @@ class Model {
 					Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
 				}
 			} else PPA_MATCHES( "thrustOffset" ) {
-				thrustOffset = atoi( value.c_str() );
+				thrustOffset = (short)atoi( value.c_str() );
+			} else PPA_MATCHES( "maxSpeed" ) {
+				maxSpeed = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
-				maxEnergyAbsorption = atoi( value.c_str() );
+				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
 			return true;
 		}
@@ -57,6 +59,10 @@ class Model {
 		
 		float GetRotationsPerSecond( void ) {
 			return rotPerSecond;
+		}
+
+		float GetMaxSpeed( void ) {
+			return maxSpeed;
 		}
 		
 		float GetAcceleration( void ) {
@@ -92,6 +98,7 @@ class Model {
 		float mass;
 		short int thrustOffset; // engine flare animation offset
 		float rotPerSecond;
+		float maxSpeed;
 		short int maxEnergyAbsorption; 
 };
 

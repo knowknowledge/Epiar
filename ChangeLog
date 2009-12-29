@@ -1,3 +1,33 @@
+Saturday, December 19, 2009
+	Matt Zweig:
+		* Adds Optional FreeType+FTGL support
+
+Wednesday, December 9, 2009
+	Matt Zweig:
+		* Merged Weapons and QuadTree into the Epiar mainline.
+		* Added projectile collisions.
+
+Monday, December 7, 2009
+	Matt Zweig:
+		* Created a Animation tool.
+
+Sunday, December 5, 2009
+	Shawn Reynolds:
+		* Created basic weapons, firing, and switching.
+
+	Matt Zweig:
+		* Added QuadTree culling to the Radar
+
+Saturday, December 5, 2009
+	Moss Jones:
+		* Fixed Player actions while paused.
+
+Mnday, November 30, 2009
+	Matt Zweig:
+		* Implemented a Quadtree for storing and retrieving Sprites based off
+		of locality.
+		* Prevents unnecessary drawing by culling Sprites using the QuadTree.
+
 Sunday, November 22, 2009
 	Matt Zweig:
 		* Added Ship damage and removal.

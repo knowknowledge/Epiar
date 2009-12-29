@@ -27,7 +27,7 @@ void Console::Initialize() {
 	Console::initialized = true;
 }
 
-void Console::Input( list<InputEvent> & events ) {
+void Console::HandleInput( list<InputEvent> & events ) {
 	if(Console::initialized == false) Console::Initialize();
 
 	// look for the bcakquote (`) key to toggle the console

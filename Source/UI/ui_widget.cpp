@@ -32,29 +32,23 @@ void Widget::Update( void ) {
 
 }
 
+bool Widget::Contains(int relx, int rely) {
+	bool insideLeftBorder = ( x < relx );
+	bool insideRightBorder = ( relx < x+this->GetWidth() );
+	bool insideTopBorder = 	( y < rely );  // Remember that the origin (0,0) is in the UPPER left, not lower left
+	bool insideBottomBorder = ( rely < y+this->GetHeight() );
+	return insideLeftBorder && insideRightBorder && insideTopBorder && insideBottomBorder;
+}
+
 // returns a widget if there is a child widget of this widget that was clicked on
-Widget *Widget::DetermineMouseFocus( int x, int y ) {
+Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::iterator i;
 
 	//cout << "widget determine mouse focus at " << x << ", " << y << endl;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
-		int wx, wy, w, h;
-		
-		wx = (*i)->GetX();
-		wy = (*i)->GetY();
-		w = (*i)->GetWidth();
-		h = (*i)->GetHeight();
-		
-		if( x > wx ) {
-			if( y > wy ) {
-				if( x < (wx + w ) ) {
-					if( y < (wy + h ) ) {
-						return (*i);
-					}
-				}
-			}
-		}
+		if( (*i)->Contains(relx,rely) )
+			return (*i);
 	}
 
 	return( NULL );
@@ -76,10 +70,10 @@ void Widget::MouseDown( int x, int y ) {
 	//cout << "mouse down event on widget, relative at " << x << ", " << y << endl;
 	Widget *down_on = DetermineMouseFocus( x, y );
 	if(down_on) {
-		//cout << "mouse down on child of widget" << endl;
+		//cout << "mouse down on child "<< down_on->GetName() <<" of "<<GetName() << endl;
 		down_on->MouseDown( x, y );
 	} else {
-		//cout << "mouse NOT down on child of widget" << endl;
+		//cout << "mouse NOT down on child of "<<GetName() << endl;
 	}
 }
 

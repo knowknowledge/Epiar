@@ -27,9 +27,12 @@ class Picture: public Widget {
 		// Widget functions
 		void Focus( int x, int y ) {};
 		void Unfocus( void ) {};
-		int GetWidth( void ) {return w;}
-		int GetHeight( void ) {return h;}
+		// TODO: When Image::resize works, just return w and h
+		int GetWidth( void ) {return (bitmap)?bitmap->GetWidth():w;} 
+		int GetHeight( void ) {return (bitmap)?bitmap->GetHeight():h;} 
 		void MouseDown( int wx, int wy ) {};
+
+		string GetName( void ) {return string("Picture");}
 	private:
 		int w, h;
 		double rotation;
