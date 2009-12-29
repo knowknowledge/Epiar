@@ -98,7 +98,7 @@ bool Lua::Run( string line ) {
 
 void Lua::HandleInput( list<InputEvent> & events ) {
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if(i->type==KEY && i->kstate == KEYUP ) {
+		if( i->type == KEY && i->kstate == KEYUP ) {
 			map<char,string>::iterator val = keyMappings.find( i->key );
 			if( val != keyMappings.end() ){
 				Run( val->second );

@@ -63,7 +63,10 @@ function togglePause()
 		Epiar.pause()
 	end
 end
-Epiar.RegisterKey('p',"togglePause()")
+--Epiar.RegisterKey('p',"togglePause()")
+-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
+-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
+-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
 
 -- Pause the Game with a given message
 function pauseMessage(message)
@@ -210,7 +213,7 @@ function store()
 	end
 end
 --registerInit(store)
-Epiar.RegisterKey('s',"store()")
+--Epiar.RegisterKey('s',"store()")
 
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )

@@ -280,7 +280,7 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 	} else {
 		letter = word[0];
 	}
-
+	
 	events.push_front( InputEvent( KEY, KEYTYPED, letter ) );
 }
 

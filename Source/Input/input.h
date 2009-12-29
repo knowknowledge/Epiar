@@ -14,6 +14,12 @@
 // Stores information about an input event.
 // We use this to build up a list of events and allow multiple sub-input systems
 // to dispatch the events at their discretion.
+
+// KEYUP and KEYDOWN are the physical events. KEYPRESSED refers to a key simply being down
+// and should fire off every input loop that the key is down (this may not be programmed yet).
+// KEYTYPED refers to a key being typed, which is fired off the moment the key is pressed down
+// and then, after a delay, fired off at an even interal for a key repeat rate (e.g. holding
+// down a key in your editor would produce a series of KEYTYPED events)
 typedef enum {KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED} keyState;
 typedef enum {MOUSEMOTION, MOUSEUP, MOUSEDOWN } mouseState;
 typedef enum {KEY, MOUSE} eventType;
