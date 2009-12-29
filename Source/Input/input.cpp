@@ -17,6 +17,8 @@
 #include "Engine/hud.h"
 #include "Utilities/lua.h"
 
+map<char, string> Input::keyMappings;
+
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
@@ -76,7 +78,7 @@ bool Input::Update( void ) {
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
-	Lua::HandleInput( events );
+	HandleLuaCallBacks( events );
 	HandlePlayerInput( events ); // default handler. player motion is handled here
 
 	events.clear();
@@ -284,3 +286,29 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 	events.push_front( InputEvent( KEY, KEYTYPED, letter ) );
 }
 
+void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+		if( i->type == KEY && i->kstate == KEYUP ) {
+			map<char,string>::iterator val = keyMappings.find( i->key );
+			if( val != keyMappings.end() ){
+				Lua::Run( val->second );
+			}
+		}
+	}
+}
+
+void Input::RegisterKeyInput( char key, string command ) {
+	keyMappings.insert(make_pair(key, command));
+}
+
+int Input::RegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 2) {
+		char key = (char)(luaL_checkstring(L,1)[0]);
+		string command = (string)luaL_checkstring(L,2);
+		RegisterKeyInput(key,command);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (Key, Command)", n); 
+	}
+	return 0;
+}

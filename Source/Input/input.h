@@ -10,6 +10,7 @@
 #define __h_input__
 
 #include "includes.h"
+#include "Utilities/lua.h"
 
 // Stores information about an input event.
 // We use this to build up a list of events and allow multiple sub-input systems
@@ -73,6 +74,10 @@ class Input {
 	public:
 		Input();
 		bool Update( void );
+
+		static void HandleLuaCallBacks( list<InputEvent> & events );
+		static void RegisterKeyInput( char key, string command );
+		static int RegisterKey(lua_State *L);
 	
 	private:
 		bool _UpdateHandleKeyDown( SDL_Event *event );
@@ -85,6 +90,7 @@ class Input {
 
 		bool keyDown[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems
+		static map<char,string> keyMappings; // Lua callbacks mapped to a key
 };
 
 #endif // __h_input__

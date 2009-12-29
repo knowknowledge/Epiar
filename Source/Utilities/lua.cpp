@@ -32,7 +32,6 @@ bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
 SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
-map<char, string> Lua::keyMappings;
 
 bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
@@ -96,20 +95,6 @@ bool Lua::Run( string line ) {
 	return( false );
 }
 
-void Lua::HandleInput( list<InputEvent> & events ) {
-	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if( i->type == KEY && i->kstate == KEYUP ) {
-			map<char,string>::iterator val = keyMappings.find( i->key );
-			if( val != keyMappings.end() ){
-				Run( val->second );
-			}
-		}
-	}
-}
-
-void Lua::RegisterKeyInput( char key, string command ) {
-	keyMappings.insert(make_pair(key, command));
-}
 
 // returns the output from the last lua script and deletes it from internal buffer
 vector<string> Lua::GetOutput() {
@@ -188,7 +173,8 @@ void Lua::RegisterFunctions() {
 		{"models", &Lua::getModelNames},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
-		{"RegisterKey", &Lua::RegisterKey},
+		// gT
+		{"RegisterKey", &Input::RegisterKey},  
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -321,14 +307,3 @@ int Lua::getPlanets(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_PLANET);
 }
 
-int Lua::RegisterKey(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if(n == 2) {
-		char key = (char)(luaL_checkstring(L,1)[0]);
-		string command = (string)luaL_checkstring(L,2);
-		RegisterKeyInput(key,command);
-	} else {
-		luaL_error(L, "Got %d arguments expected 2 (Key, Command)", n); 
-	}
-	return 0;
-}
