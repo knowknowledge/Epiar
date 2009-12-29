@@ -238,5 +238,6 @@ void ui_demo( bool in_loop ) {
 	UI::Add( wnd );
 	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
 	wnd->AddChild( new Textbox( 50, 50, 100, 1 ) );
+	wnd->AddChild( new Checkbox( 50, 100, 0, "Toggle This" ) );
 }
 

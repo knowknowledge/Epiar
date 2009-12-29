@@ -19,6 +19,7 @@
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_textbox.h"
+#include "ui_checkbox.h"
 
 class UI {
 	public:

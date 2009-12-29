@@ -73,12 +73,12 @@ void Textbox::Draw( int relx, int rely ) {
 
 	// draw the text
 	Vera10->SetColor( 1., 1., 1. );
-	bbox = Vera10->Render( x + 4, y + 12, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
+	bbox = Vera10->Render( x + 4, y + 13, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
 	                                                              // be updated later to actually reflect font size
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) ) {
-		Video::DrawRect( x + 4 + bbox.w, y + 3, 1, h - 6, .8, .8, .8 );
+		Video::DrawRect( x + 6 + bbox.w, y + 3, 1, h - 6, .8, .8, .8 );
 	}
 }
 

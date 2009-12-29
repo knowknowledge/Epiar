@@ -18,7 +18,7 @@
 /**\class Button
  * \brief UI button. */
 
-void Button::init( int x, int y, int w, int h, string label ) {
+void Button::Initialize( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
 	// This cuts down on code duplication so it can be called by multiple constructors.
 	SetX( x );
@@ -43,17 +43,17 @@ void Button::init( int x, int y, int w, int h, string label ) {
 Button::Button( int x, int y, int w, int h, string label ) {
 	// Is this default constructor even useful?
 	// Why would there ever be a button without a callback?
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->clickCallBack = debugClick;// TODO: set this to NULL
 }
 
 Button::Button( int x, int y, int w, int h, string label, void (*function)(void)) {
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->clickCallBack = function;
 }
 
 Button::Button( int x, int y, int w, int h, string label, string lua_code) {
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->lua_callback = lua_code;
 }
 
