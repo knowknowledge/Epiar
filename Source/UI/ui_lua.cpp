@@ -30,6 +30,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 
 		// Widget Getters
 		{"IsChecked", &UI_Lua::IsChecked},
+		{"GetText", &UI_Lua::GetText},
 
 		// Widget Setters
 		// Windowing Layout
@@ -39,6 +40,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
 		// Label Modification
+		{"setLabel", &UI_Lua::setLabel},
 		{"setText", &UI_Lua::setText},
 		// Checkbox Modification
 		{"setChecked", &UI_Lua::setChecked},
@@ -250,6 +252,18 @@ int UI_Lua::setText(lua_State *L){
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
 
+	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	string text = luaL_checkstring(L, 2);
+	(*box)->SetText(text);
+
+	return 1;
+}
+
+int UI_Lua::setLabel(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
+
 	Label **label= (Label**)lua_touserdata(L,1);
 	string text = luaL_checkstring(L, 2);
 	(*label)->setText(text);
@@ -279,3 +293,15 @@ int UI_Lua::setChecked(lua_State *L){
 
 	return 0;
 }
+
+int UI_Lua::GetText(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	lua_pushstring(L, (*box)->GetText().c_str() );
+
+	return 1;
+}
+

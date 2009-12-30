@@ -26,6 +26,9 @@ class Textbox : public Widget {
 		
 		void FocusKeyboard( void );
 		void UnfocusKeyboard( void );
+
+		string GetText() { return text; }
+		void SetText(string s) { text = s; }
 	
 		void MouseDown( int wx, int wy );
 		

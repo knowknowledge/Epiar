@@ -221,8 +221,11 @@ function ui_demo()
 
 	-- Create the widgets
 	demo_win = UI:newWindow( 200, 100, 400, 300, "User Interface Demo")
-	demo_text = UI:newTextbox( 50, 50, 100, 1)
+	demo_text1 = UI:newTextbox( 50, 50, 100, 1)
+	demo_text2 = UI:newTextbox( 250, 50, 100, 1)
 	demo_check = UI:newCheckbox(50, 100, 0, "Toggle This")
+
+	-- Modify the Widgets
 	demo_trigger = function ()
 		if 1==UI.IsChecked(demo_check) then
 			io.write('\nchecked!\n')
@@ -232,10 +235,18 @@ function ui_demo()
 		UI:close(demo_win)
 		demo_win = nil;
 	end
+	demo_swap = function()
+		s1 = UI.GetText(demo_text1)
+		s2 = UI.GetText(demo_text2)
+		UI.setText(demo_text1,s2)
+		UI.setText(demo_text2,s1)
+	end
 
 	-- Attach the widgets to the window
-	UI.add(demo_win, demo_text)
+	UI.add(demo_win, demo_text1)
+	UI.add(demo_win, demo_text2)
 	UI.add(demo_win, demo_check)
+	UI.add(demo_win, UI:newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
 	UI.add(demo_win, UI:newButton( 152, 262-45, 96, 25, "TOGGLE", "UI.setChecked(demo_check, not UI.IsChecked(demo_check) )"))
 	UI.add(demo_win, UI:newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
 end
