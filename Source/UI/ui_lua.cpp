@@ -26,6 +26,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
+		{"newCheckbox", &UI_Lua::newCheckbox},
 		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
@@ -111,16 +112,17 @@ int UI_Lua::newButton(lua_State *L){
 
 int UI_Lua::newTextbox(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if ( n != 6 )
-		return luaL_error(L, "Got %d arguments expected 6 (class, x, y, w, h, text)", n);
+	if ( n < 5  )
+		return luaL_error(L, "Got %d arguments expected 4, 5, or 6 (class, x, y, w, h, [text], [code])", n);
 
 	int x = int(luaL_checknumber (L, 2));
 	int y = int(luaL_checknumber (L, 3));
 	int w = int(luaL_checknumber (L, 4));
 	int h = int(luaL_checknumber (L, 5));
-	string text = luaL_checkstring (L, 6);
 	string code = "";
-	if(n==7) code = luaL_checkstring (L, 7);
+	string text = "";
+	if(n>=6) string text = luaL_checkstring (L, 6);
+	if(n>=7) code = luaL_checkstring (L, 7);
 
 	// Allocate memory for a pointer to object
 	Textbox **textbox = (Textbox**)lua_newuserdata(L, sizeof(Textbox*));
@@ -179,6 +181,23 @@ int UI_Lua::newPicture(lua_State *L){
 	//       Lua will have to do that for us.
 	//       This may be a bad idea (memory leaks from bad lua scripts)
 
+	return 1;
+}
+
+int UI_Lua::newCheckbox(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 5){
+		int x = int(luaL_checknumber (L, 2));
+		int y = int(luaL_checknumber (L, 3));
+		bool checked = bool(luaL_checknumber(L, 4));
+		string labeltext = luaL_checkstring (L, 5);
+		
+		Checkbox **checkbox = (Checkbox**)lua_newuserdata(L, sizeof(Checkbox*));
+		*checkbox = new Checkbox(x, y, checked, labeltext);
+	} else {
+		return luaL_error(L, "Got %d arguments expected 5 (class, x, y, chekced, labeltext)", n);
+	}
+	
 	return 1;
 }
 

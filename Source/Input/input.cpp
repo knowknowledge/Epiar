@@ -85,11 +85,6 @@ bool Input::Update( void ) {
 	Console::HandleInput( events );
 	HandleLuaCallBacks( events );
 
-	// GUI Debug code
-	if( heldKeys['g'] ) {
-		ui_demo();
-	}
-
 	events.clear();
 	
 	// this could be false - returning quitSignal doesn't imply quitting
