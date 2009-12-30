@@ -252,8 +252,12 @@ void Input::RegisterCallBack( InputEvent event, string command ) {
 int Input::RegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if(n == 3) {
-		//char triggerKey1 = (char)(luaL_checkstring(L,1)[0]);
-		int triggerKey = (int)(luaL_checkint(L,1));
+		int triggerKey;
+		if( lua_isnumber(L,1) ) {
+			triggerKey = (int)(luaL_checkint(L,1));
+		} else {
+			triggerKey = (int)(luaL_checkstring(L,1)[0]);
+		}
 		keyState triggerState = (keyState)(luaL_checkint(L,2));
 		string command = (string)luaL_checkstring(L,3);
 		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);

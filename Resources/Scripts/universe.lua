@@ -253,10 +253,10 @@ end
 
 
 --registerInit(store)
-Epiar.RegisterKey(string.byte('s'),KEYTYPED,"store()")
+Epiar.RegisterKey('s',KEYTYPED,"store()")
 
-Epiar.RegisterKey(string.byte('p'),KEYTYPED,"togglePause()")
-Epiar.RegisterKey(string.byte('g'),KEYTYPED,"ui_demo()")
+Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
+Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 -- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
 -- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
 -- focus, the UI will pass the typed event down the chain and pause should reach it eventually
@@ -266,10 +266,10 @@ Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "Ship.Accelerate(Epiar.player())" )
 Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "Ship.Rotate(Epiar.player(),30)" )
 Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "Ship.Rotate(Epiar.player(),-30)" )
 Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Ship.GetMomentumAngle(Epiar.player()) + 180 ))" )
-Epiar.RegisterKey(string.byte('c'), KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Epiar.player(), 0,0))" )
+Epiar.RegisterKey('c', KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Epiar.player(), 0,0))" )
 Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
 Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
-Epiar.RegisterKey(string.byte(' '), KEYPRESSED, "Ship.Fire(Epiar.player())" )
+Epiar.RegisterKey(' ', KEYPRESSED, "Ship.Fire(Epiar.player())" )
 
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )
