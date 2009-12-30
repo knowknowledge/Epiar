@@ -26,6 +26,9 @@ class Checkbox : public Widget {
 
 		void FocusMouse( int x, int y );
 		void UnfocusMouse( void );
+
+		bool IsChecked() {return checked;}
+		void Set(bool val) {checked = val;}
 	
 		void MouseDown( int wx, int wy );
 		virtual string GetName( void ) { return string("Checkbox_" + label ); }

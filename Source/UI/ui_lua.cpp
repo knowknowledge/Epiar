@@ -27,6 +27,11 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
 		{"newCheckbox", &UI_Lua::newCheckbox},
+
+		// Widget Getters
+		{"IsChecked", &UI_Lua::IsChecked},
+
+		// Widget Setters
 		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
@@ -35,6 +40,8 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"setPicture", &UI_Lua::setPicture},
 		// Label Modification
 		{"setText", &UI_Lua::setText},
+		// Checkbox Modification
+		{"setChecked", &UI_Lua::setChecked},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_UI);
@@ -248,4 +255,27 @@ int UI_Lua::setText(lua_State *L){
 	(*label)->setText(text);
 
 	return 1;
+}
+
+int UI_Lua::IsChecked(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
+	lua_pushboolean(L, (int) (*box)->IsChecked() );
+
+	return 1;
+}
+
+int UI_Lua::setChecked(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, value)", n);
+
+	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
+	bool checked = (bool)lua_toboolean(L, 2);
+	(*box)->Set(checked);
+
+	return 0;
 }
