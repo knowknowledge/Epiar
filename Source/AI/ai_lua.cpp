@@ -82,7 +82,7 @@ int AI_Lua::newShip(lua_State *L){
 	(*s)->SetScript( scriptname );
 
 	// Add this ship to the SpriteManager
-	Lua::GetSpriteList()->Add((Sprite*)(*s));
+	SpriteManager::Instance()->Add((Sprite*)(*s));
 
 	return 1;
 }
@@ -160,9 +160,9 @@ int AI_Lua::ShipExplode(lua_State* L){
 	if (n == 1) {
 		AI** ai = checkShip(L,1);
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
-		Lua::GetSpriteList()->Add(
+		SpriteManager::Instance()->Add(
 			new Effect((*ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
-		Lua::GetSpriteList()->Delete((Sprite*)(*ai));
+		SpriteManager::Instance()->Delete((Sprite*)(*ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
 	}

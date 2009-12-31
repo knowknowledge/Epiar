@@ -30,7 +30,6 @@
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
-SpriteManager *Lua::my_sprites= NULL;
 vector<string> Lua::buffer;
 map<char, string> Lua::keyMappings;
 
@@ -118,28 +117,6 @@ vector<string> Lua::GetOutput() {
 	buffer.clear();
 
 	return( ret );
-}
-
-bool Lua::SetSpriteList(SpriteManager* the_sprites){
-	if( ! luaInitialized ) {
-		if( Init() == false ) {
-			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
-			return( false );
-		}
-	}
-	
-	my_sprites = the_sprites;
-	return( true );
-}
-
-SpriteManager* Lua::GetSpriteList(){
-	if( ! luaInitialized ) {
-		if( Init() == false ) {
-			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
-			return( false );
-		}
-	}
-	return my_sprites;
 }
 
 bool Lua::Init() {
@@ -268,9 +245,9 @@ int Lua::getSprites(lua_State *L, int type){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
 		double r = luaL_checknumber (L, 3);
-		sprites = my_sprites->GetSpritesNear(Coordinate(x,y),r);
+		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),r);
 	} else {
-		sprites = my_sprites->GetSprites();
+		sprites = SpriteManager::Instance()->GetSprites();
 	}
 	
 	// Collect only the Sprites of this type

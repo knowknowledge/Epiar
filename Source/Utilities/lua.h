@@ -36,8 +36,6 @@ class Lua {
 		static void RegisterKeyInput( char key, string command );
 
 		static void RegisterFunctions();
-		static bool SetSpriteList(SpriteManager* the_sprites);
-		static SpriteManager* GetSpriteList();
 
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
@@ -58,7 +56,6 @@ class Lua {
 		static bool Close();
 
 		// Internal variables
-		static SpriteManager* my_sprites;
 		static lua_State *L;
 		static bool luaInitialized;
 		static map<char,string> keyMappings;
