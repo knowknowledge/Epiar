@@ -18,15 +18,15 @@ typedef FTTextureFont FONTRENDERTYPE;
 	#warning FreeType Disabled
 #endif //USE_FREETYPE
 #include "Graphics/afont/afont_gl.h"
-
+#include "Graphics/video.h"
 
 class Font {
  public:
 	Font();
 
 	virtual bool SetFont( string filename ) = 0;
-	virtual void Render( int x, int y, const char *text ) = 0;
-	virtual void RenderCentered( int x, int y, const char *text ) = 0;
+	virtual Rectangle Render( int x, int y, const char *text ) = 0;
+	virtual Rectangle RenderCentered( int x, int y, const char *text ) = 0;
 	void SetColor( float r, float g, float b );
 
 
@@ -46,8 +46,8 @@ class AFont: public Font {
 	AFont( string filename );
 	~AFont();
 	bool SetFont( string filename );
-	void Render( int x, int y, const char *text );
-	void RenderCentered( int x, int y, const char *text );
+	Rectangle Render( int x, int y, const char *text );
+	Rectangle RenderCentered( int x, int y, const char *text );
 
  private:
 	afontgl* font;
@@ -61,8 +61,8 @@ class FreeFont: public Font {
 	FreeFont( string filename );
 	~FreeFont();
 	bool SetFont( string filename );
-	void Render( int x, int y, const char *text );
-	void RenderCentered( int x, int y, const char *text );
+	Rectangle Render( int x, int y, const char *text );
+	Rectangle RenderCentered( int x, int y, const char *text );
  private:
 	FONTRENDERTYPE* font;
 };

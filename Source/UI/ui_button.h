@@ -24,13 +24,13 @@ class Button : public Widget {
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 		
-		void Focus( int x, int y );
-		void Unfocus( void );
+		void FocusMouse( int x, int y );
+		void UnfocusMouse( void );
 	
 		void MouseDown( int wx, int wy );
 		virtual string GetName( void ) {return string("Button_"+label);}
 	private:
-		void init( int x, int y, int w, int h, string label);
+		void Initialize( int x, int y, int w, int h, string label);
 		int w, h;
 		string label;
 		Image *bitmap_current, *bitmap_normal, *bitmap_pressed;

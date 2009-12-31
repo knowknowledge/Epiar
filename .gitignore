@@ -17,6 +17,7 @@ config.guess
 config.h
 config.h.in
 config.sub
+config.h.in~
 
 ### KDE development files
 Doxyfile
@@ -37,6 +38,7 @@ epiar*.ilk
 .deps
 *.o
 *.a
+Epiar
 
 ### Doxygen Files
 Doxygen/html

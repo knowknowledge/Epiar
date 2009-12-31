@@ -26,6 +26,13 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
+		{"newCheckbox", &UI_Lua::newCheckbox},
+
+		// Widget Getters
+		{"IsChecked", &UI_Lua::IsChecked},
+		{"GetText", &UI_Lua::GetText},
+
+		// Widget Setters
 		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
@@ -33,7 +40,10 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
 		// Label Modification
+		{"setLabel", &UI_Lua::setLabel},
 		{"setText", &UI_Lua::setText},
+		// Checkbox Modification
+		{"setChecked", &UI_Lua::setChecked},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_UI);
@@ -111,16 +121,17 @@ int UI_Lua::newButton(lua_State *L){
 
 int UI_Lua::newTextbox(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if ( n != 6 )
-		return luaL_error(L, "Got %d arguments expected 6 (class, x, y, w, h, text)", n);
+	if ( n < 5  )
+		return luaL_error(L, "Got %d arguments expected 4, 5, or 6 (class, x, y, w, h, [text], [code])", n);
 
 	int x = int(luaL_checknumber (L, 2));
 	int y = int(luaL_checknumber (L, 3));
 	int w = int(luaL_checknumber (L, 4));
 	int h = int(luaL_checknumber (L, 5));
-	string text = luaL_checkstring (L, 6);
 	string code = "";
-	if(n==7) code = luaL_checkstring (L, 7);
+	string text = "";
+	if(n>=6) string text = luaL_checkstring (L, 6);
+	if(n>=7) code = luaL_checkstring (L, 7);
 
 	// Allocate memory for a pointer to object
 	Textbox **textbox = (Textbox**)lua_newuserdata(L, sizeof(Textbox*));
@@ -182,6 +193,23 @@ int UI_Lua::newPicture(lua_State *L){
 	return 1;
 }
 
+int UI_Lua::newCheckbox(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 5){
+		int x = int(luaL_checknumber (L, 2));
+		int y = int(luaL_checknumber (L, 3));
+		bool checked = bool(luaL_checknumber(L, 4));
+		string labeltext = luaL_checkstring (L, 5);
+		
+		Checkbox **checkbox = (Checkbox**)lua_newuserdata(L, sizeof(Checkbox*));
+		*checkbox = new Checkbox(x, y, checked, labeltext);
+	} else {
+		return luaL_error(L, "Got %d arguments expected 5 (class, x, y, chekced, labeltext)", n);
+	}
+	
+	return 1;
+}
+
 int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2){
@@ -224,9 +252,56 @@ int UI_Lua::setText(lua_State *L){
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
 
+	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	string text = luaL_checkstring(L, 2);
+	(*box)->SetText(text);
+
+	return 1;
+}
+
+int UI_Lua::setLabel(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
+
 	Label **label= (Label**)lua_touserdata(L,1);
 	string text = luaL_checkstring(L, 2);
 	(*label)->setText(text);
 
 	return 1;
 }
+
+int UI_Lua::IsChecked(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
+	lua_pushboolean(L, (int) (*box)->IsChecked() );
+
+	return 1;
+}
+
+int UI_Lua::setChecked(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, value)", n);
+
+	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
+	bool checked = (bool)lua_toboolean(L, 2);
+	(*box)->Set(checked);
+
+	return 0;
+}
+
+int UI_Lua::GetText(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	lua_pushstring(L, (*box)->GetText().c_str() );
+
+	return 1;
+}
+

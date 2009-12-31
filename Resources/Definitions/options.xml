@@ -15,10 +15,10 @@
 		<starfield-density>750</starfield-density>
 	</simulation>
 	<momentum-caps>
-		<top>5.0</top>
-		<right>5.0</right>
-		<bottom>5.0</bottom>
-		<left>5.0</left>
+		<top>6.5</top>
+		<right>6.5</right>
+		<bottom>6.5</bottom>
+		<left>6.5</left>
 	</momentum-caps>
 	<development>
 		<override-tgz>1</override-tgz>

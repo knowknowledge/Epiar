@@ -1,5 +1,12 @@
 -- Use this script for a solar system
 
+
+-- Keyboard States:
+KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
+SDLK_BACKSPACE, SDLK_ESCAPE = 9, 27
+SDLK_RSHIFT, SDLK_LSHIFT = 47, 48
+SDLK_UP, SDLK_DOWN, SDLK_RIGHT, SDLK_LEFT = 17, 18, 19, 20
+
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 
@@ -63,7 +70,6 @@ function togglePause()
 		Epiar.pause()
 	end
 end
-Epiar.RegisterKey('p',"togglePause()")
 
 -- Pause the Game with a given message
 function pauseMessage(message)
@@ -209,8 +215,61 @@ function store()
 		col =col+1
 	end
 end
+
+function ui_demo()
+	if demo_win ~= nil then return end
+
+	-- Create the widgets
+	demo_win = UI:newWindow( 200, 100, 400, 300, "User Interface Demo")
+	demo_text1 = UI:newTextbox( 50, 50, 100, 1)
+	demo_text2 = UI:newTextbox( 250, 50, 100, 1)
+	demo_check = UI:newCheckbox(50, 100, 0, "Toggle This")
+
+	-- Modify the Widgets
+	demo_trigger = function ()
+		if 1==UI.IsChecked(demo_check) then
+			io.write('\nchecked!\n')
+		else
+			io.write('\nnot checked!\n')
+		end
+		UI:close(demo_win)
+		demo_win = nil;
+	end
+	demo_swap = function()
+		s1 = UI.GetText(demo_text1)
+		s2 = UI.GetText(demo_text2)
+		UI.setText(demo_text1,s2)
+		UI.setText(demo_text2,s1)
+	end
+
+	-- Attach the widgets to the window
+	UI.add(demo_win, demo_text1)
+	UI.add(demo_win, demo_text2)
+	UI.add(demo_win, demo_check)
+	UI.add(demo_win, UI:newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
+	UI.add(demo_win, UI:newButton( 152, 262-45, 96, 25, "TOGGLE", "UI.setChecked(demo_check, not UI.IsChecked(demo_check) )"))
+	UI.add(demo_win, UI:newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
+end
+
+
 --registerInit(store)
-Epiar.RegisterKey('s',"store()")
+Epiar.RegisterKey('s',KEYTYPED,"store()")
+
+Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
+Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
+-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
+-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
+-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
+
+-- Register the player functions
+Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "Ship.Accelerate(Epiar.player())" )
+Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "Ship.Rotate(Epiar.player(),30)" )
+Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "Ship.Rotate(Epiar.player(),-30)" )
+Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Ship.GetMomentumAngle(Epiar.player()) + 180 ))" )
+Epiar.RegisterKey('c', KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Epiar.player(), 0,0))" )
+Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
+Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
+Epiar.RegisterKey(' ', KEYPRESSED, "Ship.Fire(Epiar.player())" )
 
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )

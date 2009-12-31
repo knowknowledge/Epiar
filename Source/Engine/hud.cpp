@@ -39,7 +39,7 @@ Image *Hud::im_hullstr_rightbar = NULL;
 Image *Hud::im_hullstr_bar = NULL;
 Image *Hud::im_shieldstat = NULL;
 Image *Hud::im_radarnav = NULL;
-int Radar::visibility = 1000;
+int Radar::visibility = 7000;
 
 AlertMessage::AlertMessage( string message, Uint32 start )
 {
@@ -201,12 +201,8 @@ void Radar::Draw( SpriteManager *sprites ) {
 			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 			
 			
-			if( radarSize>=1 ){
-				Video::DrawCircle(
-					blip,
-					radarSize,
-					1,
-					sprite->GetRadarColor() );
+			if( radarSize >= 1 ) {
+				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 			} else {
 				Video::DrawPoint( blip, sprite->GetRadarColor() );
 			}
