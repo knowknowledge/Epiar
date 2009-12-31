@@ -80,9 +80,9 @@ void UI::Draw( void ) {
 // Uses the child list and (x,y) to determine over which widget (x,y) is
 // If widgets overlap, the one first added will have priority per behavior of STL list template
 Widget *UI::DetermineMouseFocus( int x, int y ) {
-	list<Widget *>::iterator i;
+	list<Widget *>::reverse_iterator i;
 
-	for( i = children.begin(); i != children.end(); ++i ) {
+	for( i = children.rbegin(); i != children.rend(); ++i ) {
 		int wx, wy, w, h;
 		
 		wx = (*i)->GetX();
