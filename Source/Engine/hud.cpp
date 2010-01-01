@@ -32,6 +32,7 @@
 /**\class Hud
  * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
+list<StatusBar*> Hud::Bars;
 
 int Radar::visibility = 7000;
 
@@ -43,6 +44,46 @@ AlertMessage::AlertMessage( string message, Uint32 start )
 
 bool MessageExpired(const AlertMessage& msg){
 	return (Timer::GetTicks() - msg.start > ALERT_DELAY);
+}
+
+void StatusBar::Draw(int x, int y) {
+	int widthRemaining = this->width;
+	Image *BorderLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
+	Image *BorderMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
+	Image *BorderRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
+
+	// Draw the Border
+	BorderLeft->Draw(x,y);
+	x += BorderLeft->GetWidth();
+	BorderMiddle->DrawTiled(x,y,width, BorderMiddle->GetHeight());
+	BorderRight->Draw(x+width,y);
+
+	// Draw the Title
+	if( title != "") {
+		Rectangle recTitle = Vera10->Render( x, y+13, title.c_str() );
+		widthRemaining -= recTitle.w;
+		x += recTitle.w + 5;
+	}
+
+	// Draw Name
+	if( name != "") {
+		Rectangle recName = Vera10->Render( x, y+13, name.c_str() );
+		widthRemaining -= recName.w;
+		x += recName.w;
+	}
+
+	// Draw the Bar
+	if ( (int)(ratio*widthRemaining) > 0 ) {
+		Image *BarLeft = Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" );
+		Image *BarMiddle = Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
+		Image *BarRight = Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
+
+		int bar_y = y + BorderLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
+		BarLeft->Draw( x, bar_y );
+		x += BarLeft->GetWidth();
+		BarMiddle->DrawTiled( x, bar_y,widthRemaining*ratio, BarMiddle->GetHeight() );
+		BarRight->Draw( x + widthRemaining*ratio, bar_y );
+	}
 }
 
 Hud *Hud::pInstance = 0; // initialize pointer
@@ -65,6 +106,15 @@ Hud::Hud( void ) {
 	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" );
 	/* Load radar and navigation images */
 	Image::Get( "Resources/Graphics/hud_radarnav.png" );
+
+	/* Load InfoBar and StatusBar images */
+	Image::Get( "Resources/Graphics/hud_bar_left.png" );
+	Image::Get( "Resources/Graphics/hud_bar_middle.png" );
+	Image::Get( "Resources/Graphics/hud_bar_right.png" );
+
+	Bars.push_back( new StatusBar("SYSTEM:",100,"Centauri") );
+	Bars.push_back( new StatusBar("HULL:",100,.9) );
+	Bars.push_back( new StatusBar("SHIELDS:",100,.8) );
 }
 
 void Hud::Update( void ) {
@@ -82,12 +132,17 @@ void Hud::Update( void ) {
 }
 
 void Hud::Draw( SpriteManager *sprites ) {
-	Hud::DrawHullIntegrity();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
 	Hud::DrawMessages();
 	Console::Draw();
 	Hud::DrawFPS();
+
+	int j;
+	list<StatusBar*>::iterator i;
+	for( i= Bars.begin(), j=0; i != Bars.end(); ++i,++j ){
+		(*i)->Draw(5,75 + j*20);
+	}
 }
 
 // Draw HUD messages (eg Welcome to Epiar)
@@ -110,36 +165,8 @@ void Hud::DrawFPS() {
 	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 }
 
-void Hud::DrawHullIntegrity() {
-	short int pen_x = HULL_INTEGRITY_X;
-	short int pen_y = HULL_INTEGRITY_Y;
-	
-	/* Draw the backing */
-	Image::Get( "Resources/Graphics/hud_hullstr.png" )->Draw( pen_x, pen_y );
-	/* Draw the left side of the bar */
-	pen_x += 40;
-	pen_y += 5;
-	Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" )->Draw( pen_x, pen_y );
-	
-	/* Calculate how long the bar shouuld be based on player's hull health */
-	Player *player = Player::Instance();
-	
-	short int bar_len = (short int)(player->getHullIntegrityPct() * (float)HULL_INTEGRITY_BAR);
-	
-	pen_x += 3;
-	for( int i = 0; i < bar_len; i++ ) {
-		Image::Get( "Resources/Graphics/hud_hullstr_bar.png" )->Draw( pen_x + i, pen_y );
-	}
-	
-	/* Draw the right side of the bar (43 is where the left bar ends,
-	 * plus bar_len, the length of the middle part of the bar, which decreases
-	 * with the player's health */
-	pen_x += bar_len;
-	Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" )->Draw( pen_x, pen_y );
-}
-
 void Hud::DrawShieldIntegrity() {
-	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 30 );
+	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
 
 void Hud::DrawRadarNav( SpriteManager *sprites ) {
@@ -160,6 +187,14 @@ void Hud::Alert( const char *message, ... )
 	va_end( args );
 
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
+}
+
+void Hud::Add( StatusBar* bar ) {
+	Bars.push_back(bar);
+}
+
+void Hud::Delete( StatusBar* bar ) {
+	Bars.remove(bar);
 }
 
 Radar::Radar( void ) {

@@ -21,6 +21,23 @@ class AlertMessage {
 		Uint32 start;
 };
 
+class StatusBar {
+	public:
+		StatusBar(string _title, int _width, string _name ) : title(_title), width(_width), name(_name), ratio(0){}
+		StatusBar(string _title, int _width, float _ratio ) : title(_title), width(_width), ratio(_ratio), name("") {}
+		void Draw(int x, int y);
+		static Image *im_infobar_left, *im_infobar_right, *im_infobar_middle;
+		void SetName( string n ) { name = n; }
+		string GetName() { return name; }
+		void SetRatio(float _ratio ) { ratio = _ratio; }
+		float GetRatio() { return ratio; }
+	protected:
+		string title;
+		int width;
+		string name; // TODO: the name 'name' is bad
+		float ratio;
+};
+
 class Hud {
 	public:
 		Hud( void );
@@ -31,9 +48,12 @@ class Hud {
 		static void Draw( SpriteManager *sprites );
 		
 		static void Alert( const char *, ... );
+		
+		static void Add( StatusBar* bar );
+		static void Delete( StatusBar* bar );
+
 
 	private:
-		static void DrawHullIntegrity();
 		static void DrawShieldIntegrity();
 		static void DrawRadarNav( SpriteManager *sprites );
 		static void DrawMessages();
@@ -42,6 +62,8 @@ class Hud {
 		static Hud *pInstance;
 		
 		static list<AlertMessage> AlertMessages;
+
+		static list<StatusBar*> Bars;
 };
 
 class Radar {
@@ -49,6 +71,7 @@ class Radar {
 		Radar( void );
 		static void Draw( SpriteManager *sprites );
 		static void SetVisibility( int visibility );
+		static int GetVisibility() { return visibility;}
 	
 	private:
 		static void WorldToBlip( Coordinate &w, Coordinate &b );
