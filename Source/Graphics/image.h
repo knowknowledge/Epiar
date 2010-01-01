@@ -20,13 +20,16 @@
 #define __H_IMAGE__
 
 #include "includes.h"
+#include "Utilities/resource.h"
 
-class Image {
+class Image : public Resource {
 	public:
 		Image();
 		// Create instance by loading image from file
 		Image( const string& filename );
 		~Image();
+
+		static Image* Get(string filename);
 
 		// Load image from file
 		bool Load( const string& filename );

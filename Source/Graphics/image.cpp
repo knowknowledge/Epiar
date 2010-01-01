@@ -44,6 +44,17 @@ Image::~Image() {
 	}
 }
 
+// Lazy fetch an Image
+Image* Image::Get( string filename ) {
+	Image* value;
+	value = (Image*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Image(filename);
+		Resource::Store((Resource*)value);
+	}
+	return value;
+}
+
 // Load image from file
 bool Image::Load( const string& filename ) {
 	SDL_Surface *s = NULL;
@@ -57,6 +68,7 @@ bool Image::Load( const string& filename ) {
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
 	if ( retval ){
+		SetPath(filename);
 		return true;
 	}
 	return NULL;
