@@ -41,16 +41,6 @@ class Hud {
 	
 		static Hud *pInstance;
 		
-		/* Hull integrity images */
-		/* Image backing */
-		static Image *im_hullstr;
-		/* Strength bar (in three pieces, left, middle (repeated over x), right */
-		static Image *im_hullstr_leftbar, *im_hullstr_rightbar, *im_hullstr_bar;
-		/* Shield integrity status */
-		static Image *im_shieldstat;
-		/* Radar and navigation */
-		static Image *im_radarnav;
-
 		static list<AlertMessage> AlertMessages;
 };
 

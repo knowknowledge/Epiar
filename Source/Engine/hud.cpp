@@ -33,12 +33,6 @@
  * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
 
-Image *Hud::im_hullstr = NULL;
-Image *Hud::im_hullstr_leftbar = NULL;
-Image *Hud::im_hullstr_rightbar = NULL;
-Image *Hud::im_hullstr_bar = NULL;
-Image *Hud::im_shieldstat = NULL;
-Image *Hud::im_radarnav = NULL;
 int Radar::visibility = 7000;
 
 AlertMessage::AlertMessage( string message, Uint32 start )
@@ -61,15 +55,16 @@ Hud *Hud::Instance( void ) {
 }
 
 Hud::Hud( void ) {
+	// Preload all HUD images.
 	/* Load hull strength images */
-	im_hullstr = new Image( "Resources/Graphics/hud_hullstr.png" );
-	im_hullstr_leftbar = new Image( "Resources/Graphics/hud_hullstr_leftbar.png" );
-	im_hullstr_rightbar = new Image( "Resources/Graphics/hud_hullstr_rightbar.png" );
-	im_hullstr_bar = new Image( "Resources/Graphics/hud_hullstr_bar.png" );
+	Image::Get( "Resources/Graphics/hud_hullstr.png" );
+	Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" );
+	Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
+	Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
 	/* Load shield integrity images */
-	im_shieldstat = new Image( "Resources/Graphics/hud_shieldintegrity.png" );
+	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" );
 	/* Load radar and navigation images */
-	im_radarnav = new Image( "Resources/Graphics/hud_radarnav.png" );
+	Image::Get( "Resources/Graphics/hud_radarnav.png" );
 }
 
 void Hud::Update( void ) {
@@ -120,11 +115,11 @@ void Hud::DrawHullIntegrity() {
 	short int pen_y = HULL_INTEGRITY_Y;
 	
 	/* Draw the backing */
-	im_hullstr->Draw( pen_x, pen_y );
+	Image::Get( "Resources/Graphics/hud_hullstr.png" )->Draw( pen_x, pen_y );
 	/* Draw the left side of the bar */
 	pen_x += 40;
 	pen_y += 5;
-	im_hullstr_leftbar->Draw( pen_x, pen_y );
+	Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" )->Draw( pen_x, pen_y );
 	
 	/* Calculate how long the bar shouuld be based on player's hull health */
 	Player *player = Player::Instance();
@@ -133,22 +128,22 @@ void Hud::DrawHullIntegrity() {
 	
 	pen_x += 3;
 	for( int i = 0; i < bar_len; i++ ) {
-		im_hullstr_bar->Draw( pen_x + i, pen_y );
+		Image::Get( "Resources/Graphics/hud_hullstr_bar.png" )->Draw( pen_x + i, pen_y );
 	}
 	
 	/* Draw the right side of the bar (43 is where the left bar ends,
 	 * plus bar_len, the length of the middle part of the bar, which decreases
 	 * with the player's health */
 	pen_x += bar_len;
-	im_hullstr_rightbar->Draw( pen_x, pen_y );
+	Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" )->Draw( pen_x, pen_y );
 }
 
 void Hud::DrawShieldIntegrity() {
-	im_shieldstat->Draw( 35, 30 );
+	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 30 );
 }
 
 void Hud::DrawRadarNav( SpriteManager *sprites ) {
-	im_radarnav->Draw( Video::GetWidth() - 129, 5 );
+	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw( sprites );
 }
