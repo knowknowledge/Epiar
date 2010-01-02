@@ -12,6 +12,9 @@
 #include "Graphics/image.h"
 #include "includes.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/lua.h"
+
+#define EPIAR_HUD "HUD"
 
 class AlertMessage {
 	public:
@@ -49,9 +52,14 @@ class Hud {
 		
 		static void Alert( const char *, ... );
 		
-		static void Add( StatusBar* bar );
-		static void Delete( StatusBar* bar );
+		static void AddStatus( StatusBar* bar );
+		static void DeleteStatus( StatusBar* bar );
 
+		// Lua functionality
+		static void RegisterHud(lua_State *L);
+		static int newStatus(lua_State *L);
+		static int setStatus(lua_State *L);
+		static int closeStatus(lua_State *L);
 
 	private:
 		static void DrawShieldIntegrity();

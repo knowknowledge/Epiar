@@ -25,6 +25,8 @@
 #include "Input/input.h"
 #include "Utilities/file.h"
 
+#include "Engine/hud.h"
+
 /**\class Lua
  * \brief Lua subsystem. */
 
@@ -161,6 +163,7 @@ void Lua::RegisterFunctions() {
 	AI_Lua::RegisterAI(L);
 	UI_Lua::RegisterUI(L);
 	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
 }
 
 int Lua::console_echo(lua_State *L) {

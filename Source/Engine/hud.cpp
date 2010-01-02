@@ -111,10 +111,6 @@ Hud::Hud( void ) {
 	Image::Get( "Resources/Graphics/hud_bar_left.png" );
 	Image::Get( "Resources/Graphics/hud_bar_middle.png" );
 	Image::Get( "Resources/Graphics/hud_bar_right.png" );
-
-	Bars.push_back( new StatusBar("SYSTEM:",100,"Centauri") );
-	Bars.push_back( new StatusBar("HULL:",100,.9) );
-	Bars.push_back( new StatusBar("SHIELDS:",100,.8) );
 }
 
 void Hud::Update( void ) {
@@ -189,13 +185,79 @@ void Hud::Alert( const char *message, ... )
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
 
-void Hud::Add( StatusBar* bar ) {
+void Hud::AddStatus( StatusBar* bar ) {
 	Bars.push_back(bar);
 }
 
-void Hud::Delete( StatusBar* bar ) {
+void Hud::DeleteStatus( StatusBar* bar ) {
 	Bars.remove(bar);
 }
+
+
+void Hud::RegisterHud(lua_State *L) {
+	static const luaL_Reg uiFunctions[] = {
+		{"newStatus", &Hud::newStatus},
+		{"setStatus", &Hud::setStatus},
+		{"closeStatus", &Hud::closeStatus},
+		{NULL, NULL}
+	};
+	luaL_newmetatable(L, EPIAR_HUD);
+	luaL_openlib(L, EPIAR_HUD, uiFunctions,0);  
+}
+
+int Hud::newStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 4)
+		return luaL_error(L, "Got %d arguments expected 4 (class, title, width, [name | ratio])", n);
+
+	// Allocate memory for a pointer to object
+	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar*));
+
+	// Create the Status Bar
+	string title = (string)luaL_checkstring(L,2);
+	int width = (int)(luaL_checkint(L,3));
+	if( lua_isnumber(L,4) ) {
+		float ratio = (float)(luaL_checknumber(L,4));
+		*bar= new StatusBar(title,width,ratio);
+	} else {
+		string name = (string)(luaL_checkstring(L,4));
+		*bar= new StatusBar(title,width,name);
+	}
+
+	// Add the Bar to the Hud
+	AddStatus(*bar);
+	
+	return 1;
+}
+
+int Hud::setStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
+	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+
+	if( lua_isnumber(L,2) ) {
+		float ratio = (float)(luaL_checknumber(L,2));
+		(*bar)->SetRatio(ratio);
+	} else {
+		string name = (string)(luaL_checkstring(L,2));
+		(*bar)->SetName(name);
+	}
+
+	return 0;
+}
+
+int Hud::closeStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+	DeleteStatus(*bar);
+	return 0;
+}
+
+/**\class Radar
+ * \brief Hud Element that displays nearby objects. */
 
 Radar::Radar( void ) {
 }
