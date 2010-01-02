@@ -37,6 +37,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &AI_Lua::ShipGetMomentumSpeed},
 		{"directionTowards", &AI_Lua::ShipGetDirectionTowards},
+		{"GetCurrentWeapon", &AI_Lua::ShipGetCurrentWeapon},
+		{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetHull", &AI_Lua::ShipGetHull},
@@ -302,14 +304,34 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	return 1;
 }
 
+int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI** ai = checkShip(L,1);
+	Weapon* cur = (*ai)->getCurrentWeapon();
+	lua_pushfstring(L, cur->GetName().c_str() );
+	return 1;
+}
+
+int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI** ai = checkShip(L,1);
+	lua_pushnumber(L, (*ai)->getCurrentAmmo() );
+	return 1;
+}
+
 int AI_Lua::ShipGetModelName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n == 1) {
-		AI** ai = checkShip(L,1);
-		lua_pushfstring(L, ((*ai)->GetModelName()).c_str() );
-	} else {
+	if (n != 1)
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
-	}
+
+	AI** ai = checkShip(L,1);
+	lua_pushfstring(L, ((*ai)->GetModelName()).c_str() );
 	return 1;
 }
 

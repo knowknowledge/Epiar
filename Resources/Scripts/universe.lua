@@ -276,10 +276,13 @@ Ship.AddWeapon( Epiar.player(), "Missile" )
 Ship.AddAmmo( Epiar.player(), "Missile",100 )
 
 hull = HUD:newStatus("HULL:",100,1.0)
-updateHull = function ()
+io.write( Ship.GetCurrentWeapon(Epiar.player()) .."\n" )
+weapon = HUD:newStatus("Weapon:",100,Ship.GetCurrentWeapon(Epiar.player()) .." ".. Ship.GetCurrentAmmo(Epiar.player()) )
+updateHUD = function ()
 	HUD.setStatus(hull,Ship.GetHull(Epiar.player()))
+	HUD.setStatus(weapon,Ship.GetCurrentWeapon(Epiar.player()) .." ".. Ship.GetCurrentAmmo(Epiar.player()) )
 end
-registerPostStep(updateHull)
+registerPostStep(updateHUD)
 
 --------------------------------------------------------------------------------
 -- Load Scenarios

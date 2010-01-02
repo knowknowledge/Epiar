@@ -41,6 +41,8 @@ class AI_Lua{
 		static int ShipGetMomentumAngle(lua_State* L);
 		static int ShipGetMomentumSpeed(lua_State* L);
 		static int ShipGetDirectionTowards(lua_State* L); // Accepts either Angles or Coordinates
+		static int ShipGetCurrentWeapon(lua_State* L);
+		static int ShipGetCurrentAmmo(lua_State* L);
 
 		// Ship Properties
 		static int ShipGetModelName(lua_State* L);
