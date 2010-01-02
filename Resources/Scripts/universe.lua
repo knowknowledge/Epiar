@@ -271,6 +271,12 @@ Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
 Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
 Epiar.RegisterKey(' ', KEYPRESSED, "Ship.Fire(Epiar.player())" )
 
+for k =1,9 do
+	kn = string.byte(k)
+	ks = string.format("%d",k*1000)
+	Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
+end
+
 Ship.AddWeapon( Epiar.player(), "Minigun" )
 Ship.AddWeapon( Epiar.player(), "Missile" )
 Ship.AddAmmo( Epiar.player(), "Missile",100 )
@@ -282,11 +288,6 @@ updateHUD = function ()
 	HUD.setStatus(weapon,Ship.GetCurrentWeapon(Epiar.player()) .." ".. Ship.GetCurrentAmmo(Epiar.player()) )
 end
 registerPostStep(updateHUD)
-
--- DEBUG CODE: There is an easier way of doing this, but I want to show that getSprite works.
-playerID = Ship.GetID( Epiar.player() )
-playerShip = Epiar.getSprite(playerID)
-io.write( "The player is flying a ".. Ship.GetModelName(playerShip) .."\n" )
 
 --------------------------------------------------------------------------------
 -- Load Scenarios

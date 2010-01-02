@@ -97,21 +97,6 @@ Hud *Hud::Instance( void ) {
 }
 
 Hud::Hud( void ) {
-	// Preload all HUD images.
-	/* Load hull strength images */
-	Image::Get( "Resources/Graphics/hud_hullstr.png" );
-	Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" );
-	Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
-	Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
-	/* Load shield integrity images */
-	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" );
-	/* Load radar and navigation images */
-	Image::Get( "Resources/Graphics/hud_radarnav.png" );
-
-	/* Load StatusBar images */
-	Image::Get( "Resources/Graphics/hud_bar_left.png" );
-	Image::Get( "Resources/Graphics/hud_bar_middle.png" );
-	Image::Get( "Resources/Graphics/hud_bar_right.png" );
 }
 
 void Hud::Update( void ) {
@@ -197,6 +182,7 @@ void Hud::DeleteStatus( StatusBar* bar ) {
 
 void Hud::RegisterHud(lua_State *L) {
 	static const luaL_Reg uiFunctions[] = {
+		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
 		{"setStatus", &Hud::setStatus},
 		{"closeStatus", &Hud::closeStatus},
@@ -204,6 +190,15 @@ void Hud::RegisterHud(lua_State *L) {
 	};
 	luaL_newmetatable(L, EPIAR_HUD);
 	luaL_openlib(L, EPIAR_HUD, uiFunctions,0);  
+}
+
+int Hud::setVisibity(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (visibility)", n);
+	int visibility = (int)(luaL_checkint(L,1));
+	Radar::SetVisibility(visibility);
+	return 0;
 }
 
 int Hud::newStatus(lua_State *L) {

@@ -57,6 +57,7 @@ class Hud {
 
 		// Lua functionality
 		static void RegisterHud(lua_State *L);
+		static int setVisibity(lua_State *L);
 		static int newStatus(lua_State *L);
 		static int setStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
