@@ -150,6 +150,7 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"models", &Lua::getModelNames},
+		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		// gT
@@ -224,6 +225,34 @@ int Lua::getModelNames(lua_State *L){
     }
 	delete names;
     return 1;
+}
+
+int Lua::getSpriteByID(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (SpriteID)", n);
+
+	// Get the Sprite using the ID
+	int id = (int)(luaL_checkint(L,1));
+    Sprite **s;
+	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+
+	// Push Sprite
+	switch( sprite->GetDrawOrder() ){
+		case DRAW_ORDER_PLAYER:
+		case DRAW_ORDER_SHIP:
+			s = (Sprite **)AI_Lua::pushShip(L);
+			break;
+		case DRAW_ORDER_PLANET:
+			s = (Sprite **)Planets_Lua::pushPlanet(L);
+			break;
+		default:
+			Log::Error("Unexpected Sprite Type '%d'", sprite->GetDrawOrder() );
+			s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
+			break;
+	}
+	*s = sprite;
+	return 1;
 }
 
 int Lua::getSprites(lua_State *L, int type){
