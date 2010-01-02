@@ -47,15 +47,24 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 	return true;
 }
 void SpriteManager::Update() {
+	list<Sprite *>::iterator i;
+
 	spritelist->sort(compareSpritePtrs);
 	tree->Update();
 	list<Sprite *>* oob = tree->FixOutOfBounds();
-	if(oob->size())
-		Log::Error("%d ships went out of bounds",oob->size());
+	if(oob->size()){
+		// Gracefully handle Out of Bounds Sprites
+		for( i = oob->begin(); i != oob->end(); ++i ) {
+			Log::Error("\tSprite #%d went out of bounds at (%lf,%lf)",
+					(*i)->GetID(),
+					(*i)->GetWorldPosition().GetX(),
+					(*i)->GetWorldPosition().GetY() );
+			Delete(*i);
+		}
+	}
 	delete oob;
 
 	//Delete all sprites queued to be deleted
-	list<Sprite *>::iterator i;
 	if (!spritesToDelete.empty()) {
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);
