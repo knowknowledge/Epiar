@@ -81,8 +81,9 @@ void StatusBar::Draw(int x, int y) {
 		int bar_y = y + BorderLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
 		BarLeft->Draw( x, bar_y );
 		x += BarLeft->GetWidth();
-		BarMiddle->DrawTiled( x, bar_y,widthRemaining*ratio, BarMiddle->GetHeight() );
-		BarRight->Draw( x + widthRemaining*ratio, bar_y );
+		int bar_w = widthRemaining - BarLeft->GetWidth() - BarRight->GetWidth();
+		BarMiddle->DrawTiled( x, bar_y,bar_w*ratio, BarMiddle->GetHeight() );
+		BarRight->Draw( x + bar_w*ratio, bar_y );
 	}
 }
 
@@ -107,7 +108,7 @@ Hud::Hud( void ) {
 	/* Load radar and navigation images */
 	Image::Get( "Resources/Graphics/hud_radarnav.png" );
 
-	/* Load InfoBar and StatusBar images */
+	/* Load StatusBar images */
 	Image::Get( "Resources/Graphics/hud_bar_left.png" );
 	Image::Get( "Resources/Graphics/hud_bar_middle.png" );
 	Image::Get( "Resources/Graphics/hud_bar_right.png" );
