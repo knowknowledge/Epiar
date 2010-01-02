@@ -24,6 +24,7 @@ class SpriteManager {
 
 		bool LoadNPCs( string filename );
 		
+		Sprite *GetSpriteByID(int id);
 		list<Sprite*> *GetSprites();
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
@@ -34,6 +35,9 @@ class SpriteManager {
         QuadTree *tree;
 		// Use the list when referring to all sprites.
 		list<Sprite*> *spritelist;
+		// Use the map when referring to sprites by their unique ID.
+		map<int,Sprite*> *spritelookup;
+		
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
 		bool DeleteSprite( Sprite *sprite );
