@@ -181,15 +181,28 @@ void Hud::DeleteStatus( StatusBar* bar ) {
 
 
 void Hud::RegisterHud(lua_State *L) {
-	static const luaL_Reg uiFunctions[] = {
+
+	static const luaL_Reg hudFunctions[] = {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
+		{NULL, NULL}
+	};
+
+	static const luaL_Reg hudMethods[] = {
 		{"setStatus", &Hud::setStatus},
 		{"closeStatus", &Hud::closeStatus},
 		{NULL, NULL}
 	};
+
 	luaL_newmetatable(L, EPIAR_HUD);
-	luaL_openlib(L, EPIAR_HUD, uiFunctions,0);  
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_openlib(L, NULL, hudMethods, 0);
+
+	luaL_openlib(L, EPIAR_HUD, hudFunctions, 0);
 }
 
 int Hud::setVisibity(lua_State *L) {
@@ -203,21 +216,23 @@ int Hud::setVisibity(lua_State *L) {
 
 int Hud::newStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 4)
-		return luaL_error(L, "Got %d arguments expected 4 (class, title, width, [name | ratio])", n);
+	if (n != 3)
+		return luaL_error(L, "Got %d arguments expected 4 (title, width, [name | ratio])", n);
 
 	// Allocate memory for a pointer to object
-	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar*));
+	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar**));
+    luaL_getmetatable(L, EPIAR_HUD);
+    lua_setmetatable(L, -2);
 
 	// Create the Status Bar
-	string title = (string)luaL_checkstring(L,2);
-	int width = (int)(luaL_checkint(L,3));
-	if( lua_isnumber(L,4) ) {
-		float ratio = (float)(luaL_checknumber(L,4));
-		*bar= new StatusBar(title,width,ratio);
+	string title = (string)luaL_checkstring(L,1);
+	int width = (int)(luaL_checkint(L,2));
+	if( lua_isnumber(L,3) ) {
+		float ratio = (float)(luaL_checknumber(L,3));
+		*bar= new StatusBar(title,width,"",ratio);
 	} else {
-		string name = (string)(luaL_checkstring(L,4));
-		*bar= new StatusBar(title,width,name);
+		string name = (string)(luaL_checkstring(L,3));
+		*bar= new StatusBar(title,width,name,0.0f);
 	}
 
 	// Add the Bar to the Hud

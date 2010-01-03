@@ -280,11 +280,11 @@ PLAYER:AddWeapon( "Minigun" )
 PLAYER:AddWeapon( "Missile" )
 PLAYER:AddAmmo( "Missile",100 )
 
-hull = HUD:newStatus("HULL:",100,1.0)
-weapon = HUD:newStatus("Weapon:",100,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
+hull = HUD.newStatus("HULL:",100,1.0)
+weapon = HUD.newStatus("Weapon:",100,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
 updateHUD = function ()
-	HUD.setStatus(hull,PLAYER:GetHull())
-	HUD.setStatus(weapon,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
+	hull:setStatus(PLAYER:GetHull())
+	weapon:setStatus(PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
 end
 registerPostStep(updateHUD)
 

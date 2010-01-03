@@ -14,6 +14,7 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/lua.h"
 
+#define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
 
 class AlertMessage {
@@ -26,8 +27,7 @@ class AlertMessage {
 
 class StatusBar {
 	public:
-		StatusBar(string _title, int _width, string _name ) : title(_title), width(_width), name(_name), ratio(0){}
-		StatusBar(string _title, int _width, float _ratio ) : title(_title), width(_width), ratio(_ratio), name("") {}
+		StatusBar(string _title, int _width, string _name, float _ratio ) : title(_title), width(_width), name(_name), ratio(_ratio){}
 		void Draw(int x, int y);
 		static Image *im_infobar_left, *im_infobar_right, *im_infobar_middle;
 		void SetName( string n ) { name = n; }
