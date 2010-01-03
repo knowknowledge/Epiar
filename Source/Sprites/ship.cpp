@@ -266,3 +266,16 @@ int Ship::getCurrentAmmo() {
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	return ammo.find(currentWeapon->GetAmmoType())->second;
 }
+
+map<Weapon*,int> Ship::getWeaponsAndAmmo() {
+	map<Weapon*,int> weaponPack;
+	Weapon* thisWeapon;
+	int thisAmmo;
+	for(unsigned int i=0; i<shipWeapons.size(); i++){
+		thisWeapon = this->shipWeapons[i];
+		thisAmmo = this->ammo.find(thisWeapon->GetAmmoType())->second;
+		weaponPack.insert( make_pair(thisWeapon,thisAmmo) );
+	}
+	return weaponPack;
+}
+

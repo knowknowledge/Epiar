@@ -52,6 +52,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetHull", &AI_Lua::ShipGetHull},
+		{"GetWeapons", &AI_Lua::ShipGetWeapons},
 
 		{NULL, NULL}
 	};
@@ -320,6 +321,27 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 		lua_pushnumber(L, (double) (*ai)->directionTowards(Coordinate(x,y)) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}
+
+int AI_Lua::ShipGetWeapons(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI** ai = checkShip(L,1);
+
+	map<Weapon*,int> weaponPack = (*ai)->getWeaponsAndAmmo();
+	map<Weapon*,int>::iterator it = weaponPack.begin();
+
+    lua_createtable(L, weaponPack.size(), 0);
+    int newTable = lua_gettop(L);
+	while( it!=weaponPack.end() ) {
+		lua_pushfstring(L, ((*it).first)->GetName().c_str() ); // KEY
+		lua_pushinteger(L, (*it).second ); // Value
+		lua_settable(L,newTable);
+		++it;
 	}
 	return 1;
 }

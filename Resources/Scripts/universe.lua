@@ -276,15 +276,31 @@ for k =1,9 do
 	Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
 end
 
+PLAYER:AddWeapon( "Laser" )
+PLAYER:AddWeapon( "Strong Laser" )
+PLAYER:AddWeapon( "Slow Missile" )
+PLAYER:AddAmmo( "Slow Missile",10 )
 PLAYER:AddWeapon( "Minigun" )
 PLAYER:AddWeapon( "Missile" )
 PLAYER:AddAmmo( "Missile",100 )
 
 hull = HUD.newStatus("HULL:",100,1.0)
-weapon = HUD.newStatus("Weapon:",100,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
+weapons = {}
+weaponsAndAmmo = PLAYER:GetWeapons()
+for weapon,ammo in pairs(weaponsAndAmmo) do
+	if 0==ammo then ammo="---" end
+	weapons[weapon] = HUD.newStatus(weapon..":",130,"[ ".. ammo .." ]" )
+end
+
 updateHUD = function ()
 	hull:setStatus(PLAYER:GetHull())
-	weapon:setStatus(PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
+	weaponsAndAmmo = PLAYER:GetWeapons()
+	cur_weapon = PLAYER:GetCurrentWeapon()
+	for weapon,ammo in pairs(weaponsAndAmmo) do
+		if cur_weapon == weapon then star=" ARMED" else star="" end
+		if 0==ammo then ammo="---" end
+		weapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+	end
 end
 registerPostStep(updateHUD)
 
@@ -295,6 +311,7 @@ dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
 
+abcd = {"A","B","C"}
 
 -- Run Start now that everything is loaded
 Start()
