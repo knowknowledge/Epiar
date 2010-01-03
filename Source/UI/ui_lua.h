@@ -25,6 +25,7 @@ extern "C" {
 #include "ui_window.h"
 #include "ui_button.h"
 
+#define EPIAR_UI_TABLE "Epiar.UI"
 #define EPIAR_UI "UI"
 
 class UI_Lua {

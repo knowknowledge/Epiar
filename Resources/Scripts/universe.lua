@@ -75,9 +75,9 @@ end
 -- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
-	pauseWin= UI:newWindow( 400,100,320,150,"Paused",
-		UI:newLabel(160,40,message,1),
-		UI:newButton(110,80,100,30,"Unpause","Epiar.unpause();UI:close(pauseWin)")
+	pauseWin= UI.newWindow( 400,100,320,150,"Paused",
+		UI.newLabel(160,40,message,1),
+		UI.newButton(110,80,100,30,"Unpause","Epiar.unpause();pauseWin:close()")
 		)
 	Epiar.pause()
 end
@@ -192,7 +192,7 @@ function store()
 	end
 
 	-- Layout the Store in a grid
-	storefront = UI:newWindow( 30,30,width,height,"Ship Yard")
+	storefront = UI.newWindow( 30,30,width,height,"Ship Yard")
 	models = Epiar.models()
 	for m =1,#models do
 		pos_x,pos_y = getPos(col,row)
@@ -202,12 +202,12 @@ function store()
 			pos_x,pos_y = getPos(col,row)
 		end
 
-		UI.add(storefront, UI:newButton(
+		storefront:add(UI.newButton(
 			pos_x+(box-button_w)/2,
 			pos_y,
 			button_w,button_h, models[m],
-			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront);storefront=nil "))
-		UI.add(storefront, UI:newPicture(
+			" Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "))
+		storefront:add(UI.newPicture(
 			pos_x,
 			pos_y + button_h,
 			box,box-button_h,models[m]))
@@ -220,35 +220,35 @@ function ui_demo()
 	if demo_win ~= nil then return end
 
 	-- Create the widgets
-	demo_win = UI:newWindow( 200, 100, 400, 300, "User Interface Demo")
-	demo_text1 = UI:newTextbox( 50, 50, 100, 1)
-	demo_text2 = UI:newTextbox( 250, 50, 100, 1)
-	demo_check = UI:newCheckbox(50, 100, 0, "Toggle This")
+	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
+	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
+	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
+	demo_check = UI.newCheckbox(50, 100, 0, "Toggle This")
 
 	-- Modify the Widgets
 	demo_trigger = function ()
-		if 1==UI.IsChecked(demo_check) then
+		if 1==demo_check:IsChecked() then
 			io.write('\nchecked!\n')
 		else
 			io.write('\nnot checked!\n')
 		end
-		UI:close(demo_win)
+		demo_win:close()
 		demo_win = nil;
 	end
 	demo_swap = function()
-		s1 = UI.GetText(demo_text1)
-		s2 = UI.GetText(demo_text2)
-		UI.setText(demo_text1,s2)
-		UI.setText(demo_text2,s1)
+		s1 = demo_text1:GetText()
+		s2 = demo_text2:GetText()
+		demo_text1:setText(s2)
+		demo_text2:setText(s1)
 	end
 
 	-- Attach the widgets to the window
-	UI.add(demo_win, demo_text1)
-	UI.add(demo_win, demo_text2)
-	UI.add(demo_win, demo_check)
-	UI.add(demo_win, UI:newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
-	UI.add(demo_win, UI:newButton( 152, 262-45, 96, 25, "TOGGLE", "UI.setChecked(demo_check, not UI.IsChecked(demo_check) )"))
-	UI.add(demo_win, UI:newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
+	demo_win:add(demo_text1)
+	demo_win:add(demo_text2)
+	demo_win:add(demo_check)
+	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
+	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
+	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
 end
 
 
