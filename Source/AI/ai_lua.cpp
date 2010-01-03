@@ -15,12 +15,22 @@
  * \brief Lua bridge for AI.*/
 
 void AI_Lua::RegisterAI(lua_State *L){
-	// These are the Ship Functions we're supporting in Lua
+
+	// This is the Function for creating Ships
+	// Call this like:
+	// some_ship = Epiar.Ship.new()
 	static const luaL_Reg shipFunctions[] = {
-		// Creation
 		{"new", &AI_Lua::newShip},
+		{NULL, NULL}
+	};
+
+	// These are the Ship we're supporting in Lua
+	// Call these like:
+	// some_ship:Accelerate()
+	static const luaL_Reg shipMethods[] = {
 		// Actions
 		{"Accelerate", &AI_Lua::ShipAccelerate},
+
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
 		{"Fire", &AI_Lua::ShipFire},
@@ -42,10 +52,20 @@ void AI_Lua::RegisterAI(lua_State *L){
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetHull", &AI_Lua::ShipGetHull},
+
 		{NULL, NULL}
 	};
+
 	luaL_newmetatable(L, EPIAR_SHIP);
-	luaL_openlib(L, EPIAR_SHIP, shipFunctions,0);  
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_openlib(L, NULL, shipMethods, 0);
+
+	luaL_openlib(L, EPIAR_SHIP, shipFunctions, 0);
+
 }
 
 AI **AI_Lua::pushShip(lua_State *L){
@@ -57,22 +77,21 @@ AI **AI_Lua::pushShip(lua_State *L){
 }
 
 AI **AI_Lua::checkShip(lua_State *L, int index){
-  AI **ai;
-  luaL_checktype(L, index, LUA_TUSERDATA);
-  ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
-  if (ai == NULL) luaL_typerror(L, index, EPIAR_SHIP);
+  AI **ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
+  //luaL_argcheck(L, ai != NULL, index, "`EPIA_SHIP' expected");
+  //if (ai == NULL) luaL_typerror(L, index, EPIAR_SHIP);
   return ai;
 }
 
 int AI_Lua::newShip(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 5)
-		return luaL_error(L, "Got %d arguments expected 5 (class, x, y, model, script)", n);
+	if (n != 4)
+		return luaL_error(L, "Got %d arguments expected 4 (x, y, model, script)", n);
 
-	double x = luaL_checknumber (L, 2);
-	double y = luaL_checknumber (L, 3);
-	string modelname = luaL_checkstring (L, 4);
-	string scriptname = luaL_checkstring (L, 5);
+	double x = luaL_checknumber (L, 1);
+	double y = luaL_checknumber (L, 2);
+	string modelname = luaL_checkstring (L, 3);
+	string scriptname = luaL_checkstring (L, 4);
 
 	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
@@ -95,7 +114,8 @@ int AI_Lua::ShipAccelerate(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
-		AI** ai= checkShip(L,1);
+		AI** ai= (AI**)lua_touserdata(L, 1);
+		luaL_argcheck(L, ai != NULL, 1, "`array' expected");
         (*ai)->Accelerate();
 	}
 	else

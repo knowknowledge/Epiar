@@ -12,6 +12,7 @@
 #include "AI/ai.h"
 #include "Utilities/lua.h"
 
+#define EPIAR_SHIP_TABLE "Epiar.Ship"
 #define EPIAR_SHIP "Ship"
 
 class AI_Lua{

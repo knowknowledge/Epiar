@@ -7,6 +7,7 @@ SDLK_BACKSPACE, SDLK_ESCAPE = 9, 27
 SDLK_RSHIFT, SDLK_LSHIFT = 47, 48
 SDLK_UP, SDLK_DOWN, SDLK_RIGHT, SDLK_LEFT = 17, 18, 19, 20
 
+PLAYER = Epiar.player()
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 
@@ -109,19 +110,19 @@ function CreateShips(number_of_ships, X, Y)
 	
 	-- Generate Ships
 	for s =1,number_of_ships do
-		cur_ship = Ship:new(
+		cur_ship = Ship.new(
 				math.random(1000)-500+X, -- X
 				math.random(1000)-500+Y, -- Y
 				shiptypes[math.random(#shiptypes)],
 				"chase"                 -- Ship Script
 				)
-		Ship.SetRadarColor(cur_ship,0,255,0)
-		AIPlans[ Ship.GetID(cur_ship) ] = newPlan()
+		cur_ship:SetRadarColor(0,255,0)
+		AIPlans[ cur_ship:GetID() ] = newPlan()
 		
 		--Randomly assign a weapon to everyone
 		i = math.random(4)
-		Ship.AddWeapon( cur_ship, a[i] )
-		Ship.AddAmmo(cur_ship, a[i],100 )
+		cur_ship:AddWeapon( a[i] )
+		cur_ship:AddAmmo( a[i],100 )
 	end
 end
 
@@ -131,7 +132,7 @@ function MoveShips()
 	-- Move Non-Player ships
 	for s =1, #ships do
 		cur_ship = ships[s]
-		n = Ship.GetID(cur_ship)
+		n = cur_ship:GetID()
 		AIPlans[n].plan( cur_ship, AIPlans[n].time )
 		AIPlans[n].time = AIPlans[n].time -1
 		-- When the current plan is complete, pick a new plan
@@ -157,18 +158,17 @@ end
 function aimCenter(cur_ship,timeleft)
 	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
-		Ship.Rotate(cur_ship,
-			Ship.directionTowards(cur_ship, 0,0) )
+		cur_ship:Rotate( cur_ship:directionTowards(0,0) )
 	end
-	Ship.Fire(cur_ship )
-	Ship.Accelerate(cur_ship )
+	cur_ship:Fire()
+	cur_ship:Accelerate()
 end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buy(model)
 	io.write("Player just bought "..model.."\n")
-	Ship.SetModel(Epiar.player(),model)
+	PLAYER:SetModel(model)
 	return 1
 end
 
@@ -254,7 +254,6 @@ end
 
 --registerInit(store)
 Epiar.RegisterKey('s',KEYTYPED,"store()")
-
 Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 -- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
@@ -262,14 +261,14 @@ Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 -- focus, the UI will pass the typed event down the chain and pause should reach it eventually
 
 -- Register the player functions
-Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "Ship.Accelerate(Epiar.player())" )
-Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "Ship.Rotate(Epiar.player(),30)" )
-Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "Ship.Rotate(Epiar.player(),-30)" )
-Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Ship.GetMomentumAngle(Epiar.player()) + 180 ))" )
-Epiar.RegisterKey('c', KEYPRESSED, "Ship.Rotate(Epiar.player(),Ship.directionTowards(Epiar.player(), 0,0))" )
-Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
-Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "Ship.ChangeWeapon(Epiar.player())" )
-Epiar.RegisterKey(' ', KEYPRESSED, "Ship.Fire(Epiar.player())" )
+Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "PLAYER:Accelerate()" )
+Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "PLAYER:Rotate(30)" )
+Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "PLAYER:Rotate(-30)" )
+Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))" )
+Epiar.RegisterKey('c', KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(0,0))" )
+Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
+Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
+Epiar.RegisterKey(' ', KEYPRESSED, "PLAYER:Fire()" )
 
 for k =1,9 do
 	kn = string.byte(k)
@@ -277,15 +276,15 @@ for k =1,9 do
 	Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
 end
 
-Ship.AddWeapon( Epiar.player(), "Minigun" )
-Ship.AddWeapon( Epiar.player(), "Missile" )
-Ship.AddAmmo( Epiar.player(), "Missile",100 )
+PLAYER:AddWeapon( "Minigun" )
+PLAYER:AddWeapon( "Missile" )
+PLAYER:AddAmmo( "Missile",100 )
 
 hull = HUD:newStatus("HULL:",100,1.0)
-weapon = HUD:newStatus("Weapon:",100,Ship.GetCurrentWeapon(Epiar.player()) .." ".. Ship.GetCurrentAmmo(Epiar.player()) )
+weapon = HUD:newStatus("Weapon:",100,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
 updateHUD = function ()
-	HUD.setStatus(hull,Ship.GetHull(Epiar.player()))
-	HUD.setStatus(weapon,Ship.GetCurrentWeapon(Epiar.player()) .." ".. Ship.GetCurrentAmmo(Epiar.player()) )
+	HUD.setStatus(hull,PLAYER:GetHull())
+	HUD.setStatus(weapon,PLAYER:GetCurrentWeapon() .." ".. PLAYER:GetCurrentAmmo() )
 end
 registerPostStep(updateHUD)
 
