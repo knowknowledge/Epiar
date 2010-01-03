@@ -42,24 +42,19 @@ bool Lua::Load( const string& filename ) {
 		}
 	}
 
-	// Start the lua script
-	File luaFile = File( filename );
-	char *buffer = luaFile.Read();
-	if ( buffer == NULL ){
-		Log::Error("Error reading Lua file: %s", filename.c_str());
+	// Load the lua script
+	if( 0 != luaL_loadfile(L, filename.c_str()) ) {
+		Log::Error("Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
-	long bufsize = luaFile.GetLength();
-	int loadRet = luaL_loadbuffer(L, buffer, bufsize, filename.c_str());
-	int execRet = lua_pcall(L, 0, 0, 0);
-	if( loadRet || execRet ){
-		Log::Error("Could not run lua file '%s'",filename.c_str());
-		Log::Error("%s", lua_tostring(L, -1));
-		cout << lua_tostring(L, -1) << endl;
-		return false;
-	}
-	Log::Message("Loaded the universe");
 
+	// Execute the lua script
+	if( 0 != lua_pcall(L, 0, 0, 0) ) {
+		Log::Error("Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		return false;
+	}
+
+	Log::Message("Loaded Lua Script '%s'",filename.c_str());
 	return( true );
 }
 
@@ -77,7 +72,6 @@ bool Lua::Update(){
 
 
 bool Lua::Run( string line ) {
-	int error = 0;
 	//Log::Message("Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
@@ -87,9 +81,8 @@ bool Lua::Run( string line ) {
 		}
 	}
 
-	error = luaL_loadbuffer(L, line.c_str(), line.length(), "line") || lua_pcall(L, 0, 1, 0);
-	if( error ) {
-		Console::InsertResult(lua_tostring(L, -1));
+	if( luaL_dostring(L,line.c_str()) ) {
+		Log::Error("Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);  /* pop error message from the stack */
 	}
 
@@ -153,7 +146,6 @@ void Lua::RegisterFunctions() {
 		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
-		// gT
 		{"RegisterKey", &Input::RegisterKey},  
 		{NULL, NULL}
 	};

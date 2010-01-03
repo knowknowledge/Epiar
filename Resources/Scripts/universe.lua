@@ -294,3 +294,7 @@ registerPostStep(updateHUD)
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
+
+
+-- Run Start now that everything is loaded
+Start()
