@@ -6,6 +6,8 @@
  * Purpose       : 
  * Notes         :
  */
+
+#include "includes.h"
 #include "Engine/weapons.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"

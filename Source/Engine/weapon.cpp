@@ -6,6 +6,8 @@
  * Purpose       : 
  * Notes         :
  */
+
+#include "includes.h"
 #include "Engine/weapon.h"
 #include "Utilities/trig.h"
 #include "Engine/models.h"

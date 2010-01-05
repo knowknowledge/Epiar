@@ -52,8 +52,6 @@
 #include "GL/glext.h"
 #endif
 
-#include <config.h>
-
 // Local includes
 #include "defines.h"
 #include "version.h"

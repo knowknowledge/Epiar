@@ -7,12 +7,12 @@
  * Notes         :
  */
 
+#include "includes.h"
 #include "Graphics/animation.h"
 #include "Graphics/image.h"
 #include "Sprites/spritemanager.h"
 #include "Sprites/sprite.h"
 #include "Sprites/effects.h"
-#include "includes.h"
 
 Effect::Effect(Coordinate pos, string filename, bool looping) {
 	SetWorldPosition(pos);

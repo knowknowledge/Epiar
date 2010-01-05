@@ -6,9 +6,9 @@
  * \details
  */
 
+#include "includes.h"
 #ifdef USE_PHYSICSFS
 
-#include "includes.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 

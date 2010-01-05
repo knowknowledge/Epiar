@@ -6,6 +6,8 @@
  * Purpose       : Projectile class, child of sprite class, Sprite
  * Notes         :
  */
+
+#include "includes.h"
 #include "Sprites/projectile.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"

@@ -55,7 +55,7 @@ bool File::OpenRead( const string& filename ) {
 			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
 			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
 			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;
-			case ELOOP:         Log::Error("Too many sym-links: %s.", cName); break;
+			default:			Log::Error("Unknown error occurred: %s.", cName);
 		}
 		return false;
 	}

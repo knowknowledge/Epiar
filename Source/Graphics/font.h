@@ -14,8 +14,6 @@
 #include <FTGL/ftgl.h>
 // Font Rendering technique to use
 typedef FTTextureFont FONTRENDERTYPE;
-#else
-	#warning FreeType Disabled
 #endif //USE_FREETYPE
 #include "Graphics/afont/afont_gl.h"
 
