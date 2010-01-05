@@ -46,6 +46,7 @@ class Ship : public Sprite {
 		float getHullIntegrityPct();
 		Weapon* getCurrentWeapon();
 		int getCurrentAmmo();
+		map<Weapon*,int> getWeaponsAndAmmo();
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
@@ -69,7 +70,6 @@ class Ship : public Sprite {
 		// Weapon Systems
 		multimap <int,int> ammo; //contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons;
-		
 };
 
 #endif // __H_SHIP__

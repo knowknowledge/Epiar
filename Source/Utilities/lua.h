@@ -32,8 +32,6 @@ class Lua {
 		static bool Update();
 		static vector<string> GetOutput();
 
-		static void HandleInput( list<InputEvent> & events );
-		static void RegisterKeyInput( char key, string command );
 
 		static void RegisterFunctions();
 
@@ -44,11 +42,11 @@ class Lua {
 		static int getPlayer(lua_State *L);
 		static int shakeCamera(lua_State *L);
 		static int getModelNames(lua_State *L);
+		static int getSpriteByID(lua_State *L);
 		static int getSprites(lua_State *L, int type);
 		static int getShips(lua_State *L);
 		static int getPlanets(lua_State *L);
 
-		static int RegisterKey(lua_State *L);
 	private:
 		static vector<string> buffer;
 
@@ -58,7 +56,6 @@ class Lua {
 		// Internal variables
 		static lua_State *L;
 		static bool luaInitialized;
-		static map<char,string> keyMappings;
 };
 
 #endif // __H_LUA__

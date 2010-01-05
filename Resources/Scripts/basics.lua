@@ -4,69 +4,65 @@
 function aimCenter(cur_ship,timeleft)
 	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
-		Ship.Rotate(cur_ship,
-			Ship.directionTowards(cur_ship, 0,0) )
+		cur_ship:Rotate( cur_ship:directionTowards(0,0) )
 	end
-	Ship.Accelerate(cur_ship )
+	cur_ship:Accelerate()
 end
 
 function chaseClosure(targetShip)
 	function plan(cur_ship,timeleft)
-		x,y = Ship.GetPosition( targetShip )
-		Ship.Rotate(cur_ship,
-			Ship.directionTowards(cur_ship, x, y) )
-		Ship.Accelerate(cur_ship )
+		x,y = targetShip:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
+		cur_ship:Accelerate()
 	end
 	return plan 
 end
 
 function fleeClosure(targetShip)
 	function plan(cur_ship,timeleft)
-		x,y = Ship.GetPosition( targetShip )
-		Ship.Rotate(cur_ship,
-			-Ship.directionTowards(cur_ship, x, y) )
-		Ship.Accelerate(cur_ship )
+		x,y = targetShip:GetPosition()
+		cur_ship:Rotate( -cur_ship:directionTowards(x, y) )
+		cur_ship:Accelerate()
 	end
 	return plan 
 end
 
 function fleePoint(x,y)
 	function flee(cur_ship,timeleft)
-		Ship.Rotate(cur_ship,
-			-Ship.directionTowards(cur_ship, x, y) )
-		Ship.Accelerate(cur_ship )
+		cur_ship:Rotate( -cur_ship:directionTowards(x, y) )
+		cur_ship:Accelerate()
 	end
 	return plan
 end
 
-chasePlayer = chaseClosure( Epiar.player() )
-chasePlayer = fleeClosure( Epiar.player() )
+chasePlayer = chaseClosure( PLAYER )
+chasePlayer = fleeClosure( PLAYER )
 
 -- Zig, Then Zag
 function zigzag(cur_ship,timeleft)
 	-- Change direction rapidly
 	if timeleft % 10 <=3 then
-		Ship.Rotate(cur_ship, 1)
+		cur_ship:Rotate(1)
 	elseif timeleft % 10 >=7 then
-		Ship.Rotate(cur_ship, -1)
+		cur_ship:Rotate(-1)
 	end
 	if timeleft % 10 == 5 then
-		Ship.ChangeWeapon(cur_ship)
+		cur_ship:ChangeWeapon()
 	end
-	Ship.Fire(cur_ship )
-	Ship.Accelerate(cur_ship )
+	cur_ship:Fire()
+	cur_ship:Accelerate()
 end
 
 function evacuate(cur_ship, timeleft)
-	x,y = Ship.GetPosition(cur_ship)
+	x,y = cur_ship:GetPosition()
 	for s =1,number_of_ships do
-		cur_ship = Ship:new(
+		cur_ship = Ship.new(
 				math.random(1000)-500+X, -- X
 				math.random(1000)-500+Y, -- Y
 				shiptypes[math.random(#shiptypes)],
 				"chase"                 -- Ship Script
 				)
-		AIPlans[ Ship.GetID(cur_ship) ] = newPlan()
+		AIPlans[ cur_ship:GetID() ] = newPlan()
 	end
 end
 
@@ -76,20 +72,19 @@ function evacuateCheck(percent)
 		-- Move Non-Player ships
 		for s =1, #ships do
 			cur_ship = ships[s]
-			n = Ship.GetID(cur_ship)
-			--io.write("Ship["..n.."] ("..Ship.GetModelName(cur_ship)..")"..Ship.GetHull(cur_ship).."\n")
-			if (Ship.GetHull(cur_ship) < percent) and (Ship.GetModelName(cur_ship) ~= "Escape Pod" )then
+			n = cur_ship:GetID()
+			if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
 				io.write("Escape!\n")
-				x,y = Ship.GetPosition(cur_ship)
-				Ship.Explode(cur_ship)
+				x,y = cur_ship:GetPosition()
+				cur_ship:Explode()
 				for pod = 1,10 do
-					cur_ship = Ship:new(
+					cur_ship = Ship.new(
 							math.random(10)-5+x, -- X
 							math.random(10)-5+y, -- Y
 							"Escape Pod",
 							"Escaping"                 -- Ship Script
 							)
-					AIPlans[ Ship.GetID(cur_ship) ] = {plan=fleePoint(x,y),time=100}
+					AIPlans[ cur_ship:GetID() ] = {plan=fleePoint(x,y),time=100}
 				end
 			end
 		end
@@ -118,9 +113,9 @@ function boundingClosure(distance, ticks)
 		-- Move Non-Player ships
 		for s =1, #ships do
 			cur_ship = ships[s]
-			n = Ship.GetID(cur_ship)
+			n =  cur_ship:GetID()
 			if AIPlans[n].time < 3 then
-				x,y = Ship.GetPosition(cur_ship)
+				x,y = cur_ship:GetPosition()
 				dist = distfrom(x,y,0,0)
 				if dist > distance then
 					AIPlans[n] = {plan=aimCenter,time=ticks}

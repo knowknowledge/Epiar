@@ -25,13 +25,14 @@
 #include "Input/input.h"
 #include "Utilities/file.h"
 
+#include "Engine/hud.h"
+
 /**\class Lua
  * \brief Lua subsystem. */
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
 vector<string> Lua::buffer;
-map<char, string> Lua::keyMappings;
 
 bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
@@ -41,24 +42,19 @@ bool Lua::Load( const string& filename ) {
 		}
 	}
 
-	// Start the lua script
-	File luaFile = File( filename );
-	char *buffer = luaFile.Read();
-	if ( buffer == NULL ){
-		Log::Error("Error reading Lua file: %s", filename.c_str());
+	// Load the lua script
+	if( 0 != luaL_loadfile(L, filename.c_str()) ) {
+		Log::Error("Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
-	long bufsize = luaFile.GetLength();
-	int loadRet = luaL_loadbuffer(L, buffer, bufsize, filename.c_str());
-	int execRet = lua_pcall(L, 0, 0, 0);
-	if( loadRet || execRet ){
-		Log::Error("Could not run lua file '%s'",filename.c_str());
-		Log::Error("%s", lua_tostring(L, -1));
-		cout << lua_tostring(L, -1) << endl;
-		return false;
-	}
-	Log::Message("Loaded the universe");
 
+	// Execute the lua script
+	if( 0 != lua_pcall(L, 0, 0, 0) ) {
+		Log::Error("Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		return false;
+	}
+
+	Log::Message("Loaded Lua Script '%s'",filename.c_str());
 	return( true );
 }
 
@@ -76,8 +72,7 @@ bool Lua::Update(){
 
 
 bool Lua::Run( string line ) {
-	int error = 0;
-	Log::Message("Running '%s'", (char *)line.c_str() );
+	//Log::Message("Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
@@ -86,29 +81,14 @@ bool Lua::Run( string line ) {
 		}
 	}
 
-	error = luaL_loadbuffer(L, line.c_str(), line.length(), "line") || lua_pcall(L, 0, 1, 0);
-	if( error ) {
-		Console::InsertResult(lua_tostring(L, -1));
+	if( luaL_dostring(L,line.c_str()) ) {
+		Log::Error("Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);  /* pop error message from the stack */
 	}
 
 	return( false );
 }
 
-void Lua::HandleInput( list<InputEvent> & events ) {
-	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if(i->type==KEY && i->kstate == KEYUP ) {
-			map<char,string>::iterator val = keyMappings.find( i->key );
-			if( val != keyMappings.end() ){
-				Run( val->second );
-			}
-		}
-	}
-}
-
-void Lua::RegisterKeyInput( char key, string command ) {
-	keyMappings.insert(make_pair(key, command));
-}
 
 // returns the output from the last lua script and deletes it from internal buffer
 vector<string> Lua::GetOutput() {
@@ -163,9 +143,10 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"models", &Lua::getModelNames},
+		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
-		{"RegisterKey", &Lua::RegisterKey},
+		{"RegisterKey", &Input::RegisterKey},  
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -175,6 +156,7 @@ void Lua::RegisterFunctions() {
 	AI_Lua::RegisterAI(L);
 	UI_Lua::RegisterUI(L);
 	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
 }
 
 int Lua::console_echo(lua_State *L) {
@@ -235,6 +217,34 @@ int Lua::getModelNames(lua_State *L){
     }
 	delete names;
     return 1;
+}
+
+int Lua::getSpriteByID(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (SpriteID)", n);
+
+	// Get the Sprite using the ID
+	int id = (int)(luaL_checkint(L,1));
+    Sprite **s;
+	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+
+	// Push Sprite
+	switch( sprite->GetDrawOrder() ){
+		case DRAW_ORDER_PLAYER:
+		case DRAW_ORDER_SHIP:
+			s = (Sprite **)AI_Lua::pushShip(L);
+			break;
+		case DRAW_ORDER_PLANET:
+			s = (Sprite **)Planets_Lua::pushPlanet(L);
+			break;
+		default:
+			Log::Error("Unexpected Sprite Type '%d'", sprite->GetDrawOrder() );
+			s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
+			break;
+	}
+	*s = sprite;
+	return 1;
 }
 
 int Lua::getSprites(lua_State *L, int type){
@@ -298,14 +308,3 @@ int Lua::getPlanets(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_PLANET);
 }
 
-int Lua::RegisterKey(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if(n == 2) {
-		char key = (char)(luaL_checkstring(L,1)[0]);
-		string command = (string)luaL_checkstring(L,2);
-		RegisterKeyInput(key,command);
-	} else {
-		luaL_error(L, "Got %d arguments expected 2 (Key, Command)", n); 
-	}
-	return 0;
-}

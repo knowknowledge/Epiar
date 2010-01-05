@@ -5,7 +5,7 @@
 	<version-macro>0</version-macro>
 	<engine>
 		<name>Altaire Corp. NM66 Sublight Thrusters</name>
-		<forceOutput>3</forceOutput>
+		<forceOutput>5</forceOutput>
 		<msrp>500</msrp>
 		<foldDrive>0</foldDrive>
 		<flareAnimation>Resources/Animations/thrust.ani</flareAnimation>

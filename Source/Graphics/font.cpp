@@ -59,18 +59,22 @@ bool AFont::SetFont( string filename ) {
 	return( true );
 }
 
-void AFont::Render( int x, int y, const char *text ) {
+Rectangle AFont::Render( int x, int y, const char *text ) {
 	glEnable( GL_TEXTURE_2D );
 	glEnable(GL_BLEND);
 
 	glColor4f( r, g, b, 1. );
 	glRasterPos2i( x, y + height); // + height so that the top corner is at (x,y) like everything else.
 
-	afont_gl_render_text( (afontgl*)font, text );
+	int w, h, base;
+	afont_size_text( ((afontgl *)font)->orig, text, &w, &h, &base );
+	afont_gl_render_text( (afontgl *)font, text );
+	
+	return Rectangle( x, y, w, h );
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
-void AFont::RenderCentered( int x, int y, const char *text ) {
+Rectangle AFont::RenderCentered( int x, int y, const char *text ) {
 	glColor4f( r, g, b, 1. );
 
 	int w, h, base;
@@ -79,6 +83,8 @@ void AFont::RenderCentered( int x, int y, const char *text ) {
 	afont_size_text( ((afontgl*)font)->orig, text, &w, &h, &base );
 
 	Render( x - (w / 2), y - (h / 2) , text ); // -1 because it just kinda looks better
+	
+	return Rectangle( x, y, w, h );
 }
 
 #ifdef USE_FREETYPE
@@ -109,30 +115,33 @@ bool FreeFont::SetFont( string filename ) {
 	return( true );
 }
 
-void FreeFont::Render( int x, int y, const char *text ) {
+Rectangle FreeFont::Render( int x, int y, const char *text ) {
+	float llx, lly, llz;
+    float urx, ury, urz;
+
 	glColor4f( r, g, b, 1. );
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1); 
 	
+	( ( FONTRENDERTYPE * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
+	
 	FTPoint pt = FTPoint( x, -y, 1);
-	((FONTRENDERTYPE*)font)->Render(text,-1,pt);
+	( ( FONTRENDERTYPE * ) font )->Render( text, -1, pt );
 	glPopMatrix(); // restore the previous matrix
+	
+	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
-void FreeFont::RenderCentered( int x, int y, const char *text ) {
-	glColor4f( r, g, b, 1. );
-	glPushMatrix(); // to save the current matrix
-	glScalef(1, -1, 1); 
-
+Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
     float urx, ury, urz;
 
-	((FONTRENDERTYPE*)font)->BBox(text, llx, lly, llz, urx, ury, urz);
+	( ( FONTRENDERTYPE * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 
-	FTPoint pt = FTPoint( x + (llx - urx)/2, -(y - (lly-ury)/2), 1);
-	((FONTRENDERTYPE*)font)->Render(text,-1,pt);
-	glPopMatrix(); // restore the previous matrix
+	Render( x + ( llx - urx) / 2, y - (lly - ury) / 2, text );
+
+	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
 #endif //USE_FREETYPE

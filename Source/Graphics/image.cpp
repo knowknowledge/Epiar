@@ -44,6 +44,17 @@ Image::~Image() {
 	}
 }
 
+// Lazy fetch an Image
+Image* Image::Get( string filename ) {
+	Image* value;
+	value = (Image*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Image(filename);
+		Resource::Store((Resource*)value);
+	}
+	return value;
+}
+
 // Load image from file
 bool Image::Load( const string& filename ) {
 	SDL_Surface *s = NULL;
@@ -57,6 +68,7 @@ bool Image::Load( const string& filename ) {
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
 	if ( retval ){
+		SetPath(filename);
 		return true;
 	}
 	return NULL;
@@ -135,7 +147,7 @@ void Image::Draw( int x, int y, float angle ) {
 		lry = static_cast<float>(y);
 	}
 
-	// draw it
+	// draw!
 	glColor3f(1, 1, 1);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -143,12 +155,17 @@ void Image::Draw( int x, int y, float angle ) {
 	glBindTexture( GL_TEXTURE_2D, image );
 
 	glPushMatrix();
+	
+	// the deltas are the differences needed in width, e.g. a resize_ratio_w of 1.1 would produce a value
+	// equal to the original width of the image but adding 10%. 0.9 would then be 10% smaller, etc.
+	float resize_w_delta = (w * resize_ratio_w) - w;
+	float resize_h_delta = (h * resize_ratio_h) - h;
 
 	glBegin( GL_QUADS );
 	glTexCoord2f( 0., 0. ); glVertex2f( llx, lly );
-	glTexCoord2f( scale_w, 0. ); glVertex2f( lrx * resize_ratio_w, lry );
-	glTexCoord2f( scale_w, scale_h ); glVertex2f( urx * resize_ratio_w, ury * resize_ratio_h );
-	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly * resize_ratio_h );
+	glTexCoord2f( scale_w, 0. ); glVertex2f( lrx + resize_w_delta, lry );
+	glTexCoord2f( scale_w, scale_h ); glVertex2f( urx + resize_w_delta, ury + resize_h_delta );
+	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly + resize_h_delta );
 	glEnd();
 
 	glPopMatrix();
@@ -345,8 +362,6 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 
 // resizes the image by stretching the GL quad at draw time
 void Image::Resize( int w, int h ) {
-	//resize_ratio_w = (float)w / (float)this->w;
-	//resize_ratio_h = (float)h / (float)this->h;
-	
-	//cout << "setting resize_ratio_W to " << resize_ratio_w << endl;
+	resize_ratio_w = (float)w / (float)this->w;
+	resize_ratio_h = (float)h / (float)this->h;
 }

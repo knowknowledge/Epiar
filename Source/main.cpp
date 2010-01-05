@@ -30,7 +30,6 @@ XMLFile *optionsfile = NULL;
 Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
 
 int main( int argc, char **argv ) {
-	Log::Initalize();
 	// Use ".dat" extension for data files
 #ifdef USE_PHYSICSFS
 	Filesystem::Init( argv[0], "dat" );
@@ -106,11 +105,12 @@ int parseArgs( int argc, char **argv ) {
 		
 		if( parm == "help" ) {
 			// remember to keep this list updated when new parms are added
-			printf("\n\t--help          - Displays this message");
-			printf("\n\t--version       - Displays program version");
-			printf("\n\t--ui-demo       - Runs a debug/display demo of the UI");
+			printf("\n\t--help           - Displays this message");
+			printf("\n\t--version        - Displays program version");
+			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
+			printf("\n\t--enable-logging - Turn on XML-based logging");
 			//printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
-			printf("\n\t--lua-test      - Tests the Lua scripting functionality");
+			printf("\n\t--lua-test       - Tests the Lua scripting functionality");
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "version" ) {
@@ -127,6 +127,8 @@ int parseArgs( int argc, char **argv ) {
 		} else if( parm == "lua-test" ) {
 			//lua_test(); // temporary function
 			return( -1 );
+		} else if( parm == "enable-logging" ) {
+			Log::EnableFileLogging();
 		}
 	}
 	

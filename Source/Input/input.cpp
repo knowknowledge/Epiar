@@ -17,22 +17,21 @@
 #include "Engine/hud.h"
 #include "Utilities/lua.h"
 
+map<InputEvent, string> Input::eventMappings;
+
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
-	if ( e.type==KEY ) {
-		out << "KEY("<<e.key<<' '<<_keyMeanings[int(e.kstate)]<<")";
+	if ( e.type == KEY ) {
+		out << "KEY(" << e.key << ' ' << _keyMeanings[int( e.kstate )] << ")";
 	} else { // Mouse
-		out <<"MOUSE("<<e.mx<<','<<e.my<<' '<<_mouseMeanings[int(e.mstate)]<<")";
+		out << "MOUSE(" << e.mx<< ',' << e.my << ' ' << _mouseMeanings[int( e.mstate )] << ")";
 	}
 	return out;
 }
 
-/**\class Input
- * \brief Input handling. */
-
 Input::Input() {
-	memset( keyDown, 0, sizeof( bool ) * SDLK_LAST );
+	memset( heldKeys, 0, sizeof( bool ) * SDLK_LAST );
 }
 
 bool Input::Update( void ) {
@@ -75,12 +74,16 @@ bool Input::Update( void ) {
 				break;
 		}
 	}
+
+	for(int k=0;k<SDLK_LAST;k++) {
+		if(heldKeys[k])
+			events.push_back( InputEvent( KEY, KEYPRESSED, k ) );
+	}
 	
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
-	Lua::HandleInput( events );
-	Handle( events ); // default handler. player motion is handled here
+	HandleLuaCallBacks( events );
 
 	events.clear();
 	
@@ -137,7 +140,7 @@ bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 			events.push_front( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
 			// typed events go here because SDL will repeat KEYDOWN events for us at the set SDL repeat rate
 			PushTypeEvent( events, event->key.keysym.sym );
-			keyDown[ event->key.keysym.sym ] = 1;
+			heldKeys[ event->key.keysym.sym ] = 1;
 			break;
 	}
 
@@ -155,62 +158,11 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 			break;
 		default:
 			events.push_front( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
-			keyDown[ event->key.keysym.sym ] = 0;
+			heldKeys[ event->key.keysym.sym ] = 0;
 			break;
 	}
 
 	return quitSignal;
-}
-
-void Input::Handle( list<InputEvent> & events ) {
-	if ( Simulation::isPaused() ) return;
-
-	Player *player = Player::Instance();
-	if(player->getHullIntegrityPct() <= 0.0f) return;
-
-	if( keyDown[ SDLK_UP ] ) player->Accelerate();
-	// TODO It shouldn't be possible to rotate in both directions at once
-	if( keyDown[ SDLK_LEFT ] ) player->Rotate( 30.0 );
-	if( keyDown[ SDLK_RIGHT ] ) player->Rotate( -30.0 );
-	if( keyDown[ SDLK_DOWN ] ){ // Rotate in the opposite direction as you're moving
-		player->Rotate( player->directionTowards( player->GetMomentum().GetAngle() + 180 ) );
-	}
-	if( keyDown[ SDLK_SPACE ] ) {
-		FireStatus result = player->Fire();
-		/*
-		Weapon* currentWeapon = player->getCurrentWeapon();
-		switch(result) {
-			case FireSuccess:
-				break;
-			case FireNoWeapons:
-				Log::Message("No Weapons attached to this ship.");
-				break;
-			case FireNotReady:
-				Log::Message("The '%s' has not cooled down!", currentWeapon->GetName().c_str() );
-				break;
-			case FireNoAmmo:
-				Log::Message("The '%s' System is out of Ammo!", currentWeapon->GetName().c_str() );
-				break;
-			default:
-				assert(0);
-				break;
-		}
-		*/
-	}
-
-	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		if(i->type==KEY && i->kstate == KEYUP && i->key==SDLK_LSHIFT) {
-			if( player->ChangeWeapon() )
-				Hud::Alert( "Changed to the %s systems. %d shots left.", player->getCurrentWeapon()->GetName().c_str(), player->getCurrentAmmo() );
-			break;
-		}
-	}
-	
-
-	// DEBUG CODE
-	if( keyDown[ 'c' ] ){  // Rotate towards the center of the Universe
-		player->Rotate( player->directionTowards( Coordinate(0,0) ) );
-	}
 }
 
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
@@ -226,12 +178,12 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 
 	if(key >= SDLK_a && key <= SDLK_z) {
 		letter = word[0];
-		if(keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT]) {
+		if(heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT]) {
 			letter -= 32;
 		}
 	} else if(key == SDLK_SPACE) {
 		letter = ' ';
-	} else if(key >= SDLK_0 && key <= SDLK_9 && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if(key >= SDLK_0 && key <= SDLK_9 && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		switch(key) {
 			case SDLK_0:
 				letter = ')';
@@ -265,20 +217,52 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 			break;
 			default: break; // will never happen, here to avoid compiler warnings
 		}
-	} else if((key == SDLK_QUOTE) && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if((key == SDLK_QUOTE) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = '"';
 	} else if(key == SDLK_RETURN) {
 		letter = '\n';
-	} else if((key == SDLK_SEMICOLON) && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if((key == SDLK_SEMICOLON) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = ':';
 	} else if(key == SDLK_BACKSPACE) {
 		letter = '\b';
-	} else if(key == SDLK_EQUALS && (keyDown[SDLK_LSHIFT] || keyDown[SDLK_RSHIFT])) {
+	} else if(key == SDLK_EQUALS && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = '+';
 	} else {
 		letter = word[0];
 	}
-
+	
 	events.push_front( InputEvent( KEY, KEYTYPED, letter ) );
 }
 
+void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
+	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+		//cout << *i << endl; // DEBUG code to check which events are actually being generated
+		map<InputEvent,string>::iterator val = eventMappings.find( *i );
+		if( val != eventMappings.end() ){
+			Lua::Run( val->second );
+		}
+	}
+}
+
+void Input::RegisterCallBack( InputEvent event, string command ) {
+	cout<<"Registering: "<<event<<" as "<<command<<endl;
+	eventMappings.insert(make_pair(event, command));
+}
+
+int Input::RegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 3) {
+		int triggerKey;
+		if( lua_isnumber(L,1) ) {
+			triggerKey = (int)(luaL_checkint(L,1));
+		} else {
+			triggerKey = (int)(luaL_checkstring(L,1)[0]);
+		}
+		keyState triggerState = (keyState)(luaL_checkint(L,2));
+		string command = (string)luaL_checkstring(L,3);
+		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n); 
+	}
+	return 0;
+}

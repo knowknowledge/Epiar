@@ -12,17 +12,17 @@ swarm.reset = function()
 end
 swarm.findAverage = function()
 	ships = Epiar.ships()
-	ships[0] = Epiar.player()
+	ships[0] = PLAYER
 	swarm.reset()
 	-- Average the statistics of each ship
 	for s =1,#ships do
 		cur_ship = ships[s]
-		x,y = Ship.GetPosition(cur_ship)
+		x,y = cur_ship:GetPosition()
 		swarm.avg_x = swarm.avg_x + x
 		swarm.avg_y = swarm.avg_y + y
-		swarm.avg_angle = swarm.avg_angle + Ship.GetAngle(cur_ship)
-		swarm.avg_vector= swarm.avg_vector+ Ship.GetMomentumAngle(cur_ship)
-		swarm.avg_speed = swarm.avg_speed + Ship.GetMomentumSpeed(cur_ship)
+		swarm.avg_angle = swarm.avg_angle + cur_ship:GetAngle()
+		swarm.avg_vector= swarm.avg_vector+ cur_ship:GetMomentumAngle()
+		swarm.avg_speed = swarm.avg_speed + cur_ship:GetMomentumSpeed()
 	end
 	-- Normalize
 	swarm.avg_x = swarm.avg_x / #ships
@@ -35,17 +35,15 @@ end
 function aimSwarmCenter(cur_ship,timeleft)
 	-- direction towards the center of the swarm
 	if timeleft %2 == 0 then
-		Ship.Rotate(cur_ship, 
-			Ship.directionTowards(cur_ship, swarm.avg_x, swarm.avg_y) )
+		cur_ship:Rotate( cur_ship:directionTowards(swarm.avg_x, swarm.avg_y) )
 	end
-	Ship.Accelerate(cur_ship )
+	cur_ship:Accelerate()
 end
 
 function aimSwarmDirection(cur_ship,timeleft)
 	-- rotate to the same direction as the swarm
-	Ship.Rotate(cur_ship,
-		Ship.directionTowards(cur_ship, swarm.avg_angle) )
-	Ship.Accelerate(cur_ship )
+	cur_ship:Rotate( cur_ship:directionTowards(swarm.avg_angle) )
+	cur_ship:Accelerate()
 end
 
 -- Register Swarm 

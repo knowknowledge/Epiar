@@ -32,14 +32,9 @@
 /**\class Hud
  * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
+list<StatusBar*> Hud::Bars;
 
-Image *Hud::im_hullstr = NULL;
-Image *Hud::im_hullstr_leftbar = NULL;
-Image *Hud::im_hullstr_rightbar = NULL;
-Image *Hud::im_hullstr_bar = NULL;
-Image *Hud::im_shieldstat = NULL;
-Image *Hud::im_radarnav = NULL;
-int Radar::visibility = 1000;
+int Radar::visibility = 7000;
 
 AlertMessage::AlertMessage( string message, Uint32 start )
 {
@@ -49,6 +44,47 @@ AlertMessage::AlertMessage( string message, Uint32 start )
 
 bool MessageExpired(const AlertMessage& msg){
 	return (Timer::GetTicks() - msg.start > ALERT_DELAY);
+}
+
+void StatusBar::Draw(int x, int y) {
+	int widthRemaining = this->width;
+	Image *BorderLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
+	Image *BorderMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
+	Image *BorderRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
+
+	// Draw the Border
+	BorderLeft->Draw(x,y);
+	x += BorderLeft->GetWidth();
+	BorderMiddle->DrawTiled(x,y,width, BorderMiddle->GetHeight());
+	BorderRight->Draw(x+width,y);
+
+	// Draw the Title
+	if( title != "") {
+		Rectangle recTitle = Vera10->Render( x, y+13, title.c_str() );
+		widthRemaining -= recTitle.w;
+		x += recTitle.w + 5;
+	}
+
+	// Draw Name
+	if( name != "") {
+		Rectangle recName = Vera10->Render( x, y+13, name.c_str() );
+		widthRemaining -= recName.w;
+		x += recName.w;
+	}
+
+	// Draw the Bar
+	if ( (int)(ratio*widthRemaining) > 0 ) {
+		Image *BarLeft = Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" );
+		Image *BarMiddle = Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
+		Image *BarRight = Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
+
+		int bar_y = y + BorderLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
+		BarLeft->Draw( x, bar_y );
+		x += BarLeft->GetWidth();
+		int bar_w = widthRemaining - BarLeft->GetWidth() - BarRight->GetWidth();
+		BarMiddle->DrawTiled( x, bar_y,bar_w*ratio, BarMiddle->GetHeight() );
+		BarRight->Draw( x + bar_w*ratio, bar_y );
+	}
 }
 
 Hud *Hud::pInstance = 0; // initialize pointer
@@ -61,15 +97,6 @@ Hud *Hud::Instance( void ) {
 }
 
 Hud::Hud( void ) {
-	/* Load hull strength images */
-	im_hullstr = new Image( "Resources/Graphics/hud_hullstr.png" );
-	im_hullstr_leftbar = new Image( "Resources/Graphics/hud_hullstr_leftbar.png" );
-	im_hullstr_rightbar = new Image( "Resources/Graphics/hud_hullstr_rightbar.png" );
-	im_hullstr_bar = new Image( "Resources/Graphics/hud_hullstr_bar.png" );
-	/* Load shield integrity images */
-	im_shieldstat = new Image( "Resources/Graphics/hud_shieldintegrity.png" );
-	/* Load radar and navigation images */
-	im_radarnav = new Image( "Resources/Graphics/hud_radarnav.png" );
 }
 
 void Hud::Update( void ) {
@@ -87,12 +114,17 @@ void Hud::Update( void ) {
 }
 
 void Hud::Draw( SpriteManager *sprites ) {
-	Hud::DrawHullIntegrity();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav( sprites );
 	Hud::DrawMessages();
 	Console::Draw();
 	Hud::DrawFPS();
+
+	int j;
+	list<StatusBar*>::iterator i;
+	for( i= Bars.begin(), j=0; i != Bars.end(); ++i,++j ){
+		(*i)->Draw(5,75 + j*20);
+	}
 }
 
 // Draw HUD messages (eg Welcome to Epiar)
@@ -115,40 +147,12 @@ void Hud::DrawFPS() {
 	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 }
 
-void Hud::DrawHullIntegrity() {
-	short int pen_x = HULL_INTEGRITY_X;
-	short int pen_y = HULL_INTEGRITY_Y;
-	
-	/* Draw the backing */
-	im_hullstr->Draw( pen_x, pen_y );
-	/* Draw the left side of the bar */
-	pen_x += 40;
-	pen_y += 5;
-	im_hullstr_leftbar->Draw( pen_x, pen_y );
-	
-	/* Calculate how long the bar shouuld be based on player's hull health */
-	Player *player = Player::Instance();
-	
-	short int bar_len = (short int)(player->getHullIntegrityPct() * (float)HULL_INTEGRITY_BAR);
-	
-	pen_x += 3;
-	for( int i = 0; i < bar_len; i++ ) {
-		im_hullstr_bar->Draw( pen_x + i, pen_y );
-	}
-	
-	/* Draw the right side of the bar (43 is where the left bar ends,
-	 * plus bar_len, the length of the middle part of the bar, which decreases
-	 * with the player's health */
-	pen_x += bar_len;
-	im_hullstr_rightbar->Draw( pen_x, pen_y );
-}
-
 void Hud::DrawShieldIntegrity() {
-	im_shieldstat->Draw( 35, 30 );
+	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
 
 void Hud::DrawRadarNav( SpriteManager *sprites ) {
-	im_radarnav->Draw( Video::GetWidth() - 129, 5 );
+	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw( sprites );
 }
@@ -166,6 +170,105 @@ void Hud::Alert( const char *message, ... )
 
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
+
+void Hud::AddStatus( StatusBar* bar ) {
+	Bars.push_back(bar);
+}
+
+void Hud::DeleteStatus( StatusBar* bar ) {
+	Bars.remove(bar);
+}
+
+
+void Hud::RegisterHud(lua_State *L) {
+
+	static const luaL_Reg hudFunctions[] = {
+		{"setVisibity", &Hud::setVisibity},
+		{"newStatus", &Hud::newStatus},
+		{NULL, NULL}
+	};
+
+	static const luaL_Reg hudMethods[] = {
+		{"setStatus", &Hud::setStatus},
+		{"closeStatus", &Hud::closeStatus},
+		{NULL, NULL}
+	};
+
+	luaL_newmetatable(L, EPIAR_HUD);
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_openlib(L, NULL, hudMethods, 0);
+
+	luaL_openlib(L, EPIAR_HUD, hudFunctions, 0);
+}
+
+int Hud::setVisibity(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (visibility)", n);
+	int visibility = (int)(luaL_checkint(L,1));
+	Radar::SetVisibility(visibility);
+	return 0;
+}
+
+int Hud::newStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 3)
+		return luaL_error(L, "Got %d arguments expected 4 (title, width, [name | ratio])", n);
+
+	// Allocate memory for a pointer to object
+	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar**));
+    luaL_getmetatable(L, EPIAR_HUD);
+    lua_setmetatable(L, -2);
+
+	// Create the Status Bar
+	string title = (string)luaL_checkstring(L,1);
+	int width = (int)(luaL_checkint(L,2));
+	if( lua_isnumber(L,3) ) {
+		float ratio = (float)(luaL_checknumber(L,3));
+		*bar= new StatusBar(title,width,"",ratio);
+	} else {
+		string name = (string)(luaL_checkstring(L,3));
+		*bar= new StatusBar(title,width,name,0.0f);
+	}
+
+	// Add the Bar to the Hud
+	AddStatus(*bar);
+	
+	return 1;
+}
+
+int Hud::setStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
+	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+
+	if( lua_isnumber(L,2) ) {
+		float ratio = (float)(luaL_checknumber(L,2));
+		(*bar)->SetRatio(ratio);
+	} else {
+		string name = (string)(luaL_checkstring(L,2));
+		(*bar)->SetName(name);
+	}
+
+	return 0;
+}
+
+int Hud::closeStatus(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+	DeleteStatus(*bar);
+	return 0;
+}
+
+/**\class Radar
+ * \brief Hud Element that displays nearby objects. */
 
 Radar::Radar( void ) {
 }
@@ -201,12 +304,8 @@ void Radar::Draw( SpriteManager *sprites ) {
 			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 			
 			
-			if( radarSize>=1 ){
-				Video::DrawCircle(
-					blip,
-					radarSize,
-					1,
-					sprite->GetRadarColor() );
+			if( radarSize >= 1 ) {
+				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 			} else {
 				Video::DrawPoint( blip, sprite->GetRadarColor() );
 			}

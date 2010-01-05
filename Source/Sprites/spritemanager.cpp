@@ -15,6 +15,7 @@
 
 SpriteManager::SpriteManager() {
 	spritelist = new list<Sprite*>();
+	spritelookup = new map<int,Sprite*>();
 	tree = new QuadTree(Coordinate(0,0), 65536.0f, 3);
 }
 
@@ -30,12 +31,14 @@ SpriteManager *SpriteManager::Instance( void ) {
 void SpriteManager::Add( Sprite *sprite ) {
 	//cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
 	spritelist->push_back(sprite);
+	spritelookup->insert(make_pair(sprite->GetID(),sprite));
 	tree->Insert(sprite);
 	//cout<<"ADD COMPLETE\n\n";
 }
 
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	spritelist->remove(sprite);
+	spritelookup->erase( sprite->GetID() );
 	return ( tree->Delete(sprite) );
 }
 
@@ -44,15 +47,24 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 	return true;
 }
 void SpriteManager::Update() {
+	list<Sprite *>::iterator i;
+
 	spritelist->sort(compareSpritePtrs);
 	tree->Update();
 	list<Sprite *>* oob = tree->FixOutOfBounds();
-	if(oob->size())
-		Log::Error("%d ships went out of bounds",oob->size());
+	if(oob->size()){
+		// Gracefully handle Out of Bounds Sprites
+		for( i = oob->begin(); i != oob->end(); ++i ) {
+			Log::Error("\tSprite #%d went out of bounds at (%lf,%lf)",
+					(*i)->GetID(),
+					(*i)->GetWorldPosition().GetX(),
+					(*i)->GetWorldPosition().GetY() );
+			Delete(*i);
+		}
+	}
 	delete oob;
 
 	//Delete all sprites queued to be deleted
-	list<Sprite *>::iterator i;
 	if (!spritesToDelete.empty()) {
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);
@@ -78,6 +90,14 @@ void SpriteManager::Draw() {
 list<Sprite *> *SpriteManager::GetSprites() {
 	//list<Sprite*> *sprites = tree->GetSprites();
 	return( spritelist );
+}
+
+Sprite *SpriteManager::GetSpriteByID(int id) {
+	map<int,Sprite*>::iterator val = spritelookup->find( id );
+	if( val != spritelookup->end() ){
+		return val->second;
+	}
+	return NULL;
 }
 
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {

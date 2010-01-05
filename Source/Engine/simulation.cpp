@@ -95,10 +95,11 @@ bool Simulation::Run( void ) {
 	planets->RegisterAll( sprites );
 
 	// Start the Lua Universe
-	Lua::Load("Resources/Scripts/universe.lua");
-	
-	// Start the Lua Scenarios
-	Lua::Run("Start()");
+	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
+	{
+		Log::Error("Fatal error starting Lua.");
+		quit = true;
+	}
 
 	// Create the hud
 	Hud::Hud();

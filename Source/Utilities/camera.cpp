@@ -106,6 +106,9 @@ void Camera::Update( void ) {
 		//use the inverase of the acceleration to reduce camer back to center
 		Coordinate cameraCatchup = Coordinate( -cameraLag.GetX()*0.003,-cameraLag.GetY()*0.003 );
 		cameraLag += cameraCatchup;
+		// until the camera lag is cleaned up and only applies during rapid accel, it's just going
+		// to be turned off
+		cameraLag = 0;
 		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
 			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
 

@@ -1,5 +1,13 @@
 -- Use this script for a solar system
 
+
+-- Keyboard States:
+KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
+SDLK_BACKSPACE, SDLK_ESCAPE = 9, 27
+SDLK_RSHIFT, SDLK_LSHIFT = 47, 48
+SDLK_UP, SDLK_DOWN, SDLK_RIGHT, SDLK_LEFT = 17, 18, 19, 20
+
+PLAYER = Epiar.player()
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 
@@ -63,14 +71,13 @@ function togglePause()
 		Epiar.pause()
 	end
 end
-Epiar.RegisterKey('p',"togglePause()")
 
 -- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
-	pauseWin= UI:newWindow( 400,100,320,150,"Paused",
-		UI:newLabel(160,40,message,1),
-		UI:newButton(110,80,100,30,"Unpause","Epiar.unpause();UI:close(pauseWin)")
+	pauseWin= UI.newWindow( 400,100,320,150,"Paused",
+		UI.newLabel(160,40,message,1),
+		UI.newButton(110,80,100,30,"Unpause","Epiar.unpause();pauseWin:close()")
 		)
 	Epiar.pause()
 end
@@ -103,19 +110,19 @@ function CreateShips(number_of_ships, X, Y)
 	
 	-- Generate Ships
 	for s =1,number_of_ships do
-		cur_ship = Ship:new(
+		cur_ship = Ship.new(
 				math.random(1000)-500+X, -- X
 				math.random(1000)-500+Y, -- Y
 				shiptypes[math.random(#shiptypes)],
 				"chase"                 -- Ship Script
 				)
-		Ship.SetRadarColor(cur_ship,0,255,0)
-		AIPlans[ Ship.GetID(cur_ship) ] = newPlan()
+		cur_ship:SetRadarColor(0,255,0)
+		AIPlans[ cur_ship:GetID() ] = newPlan()
 		
 		--Randomly assign a weapon to everyone
 		i = math.random(4)
-		Ship.AddWeapon( cur_ship, a[i] )
-		Ship.AddAmmo(cur_ship, a[i],100 )
+		cur_ship:AddWeapon( a[i] )
+		cur_ship:AddAmmo( a[i],100 )
 	end
 end
 
@@ -125,7 +132,7 @@ function MoveShips()
 	-- Move Non-Player ships
 	for s =1, #ships do
 		cur_ship = ships[s]
-		n = Ship.GetID(cur_ship)
+		n = cur_ship:GetID()
 		AIPlans[n].plan( cur_ship, AIPlans[n].time )
 		AIPlans[n].time = AIPlans[n].time -1
 		-- When the current plan is complete, pick a new plan
@@ -151,18 +158,17 @@ end
 function aimCenter(cur_ship,timeleft)
 	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
-		Ship.Rotate(cur_ship,
-			Ship.directionTowards(cur_ship, 0,0) )
+		cur_ship:Rotate( cur_ship:directionTowards(0,0) )
 	end
-	Ship.Fire(cur_ship )
-	Ship.Accelerate(cur_ship )
+	cur_ship:Fire()
+	cur_ship:Accelerate()
 end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buy(model)
 	io.write("Player just bought "..model.."\n")
-	Ship.SetModel(Epiar.player(),model)
+	PLAYER:SetModel(model)
 	return 1
 end
 
@@ -186,7 +192,7 @@ function store()
 	end
 
 	-- Layout the Store in a grid
-	storefront = UI:newWindow( 30,30,width,height,"Ship Yard")
+	storefront = UI.newWindow( 30,30,width,height,"Ship Yard")
 	models = Epiar.models()
 	for m =1,#models do
 		pos_x,pos_y = getPos(col,row)
@@ -196,12 +202,12 @@ function store()
 			pos_x,pos_y = getPos(col,row)
 		end
 
-		UI.add(storefront, UI:newButton(
+		storefront:add(UI.newButton(
 			pos_x+(box-button_w)/2,
 			pos_y,
 			button_w,button_h, models[m],
-			" Epiar.unpause(); buy(\""..models[m].."\"); UI:close(storefront);storefront=nil "))
-		UI.add(storefront, UI:newPicture(
+			" Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "))
+		storefront:add(UI.newPicture(
 			pos_x,
 			pos_y + button_h,
 			box,box-button_h,models[m]))
@@ -209,13 +215,94 @@ function store()
 		col =col+1
 	end
 end
+
+function ui_demo()
+	if demo_win ~= nil then return end
+
+	-- Create the widgets
+	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
+	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
+	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
+	demo_check = UI.newCheckbox(50, 100, 0, "Toggle This")
+
+	-- Modify the Widgets
+	demo_trigger = function ()
+		if 1==demo_check:IsChecked() then
+			io.write('\nchecked!\n')
+		else
+			io.write('\nnot checked!\n')
+		end
+		demo_win:close()
+		demo_win = nil;
+	end
+	demo_swap = function()
+		s1 = demo_text1:GetText()
+		s2 = demo_text2:GetText()
+		demo_text1:setText(s2)
+		demo_text2:setText(s1)
+	end
+
+	-- Attach the widgets to the window
+	demo_win:add(demo_text1)
+	demo_win:add(demo_text2)
+	demo_win:add(demo_check)
+	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
+	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
+	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
+end
+
+
 --registerInit(store)
-Epiar.RegisterKey('s',"store()")
+Epiar.RegisterKey('s',KEYTYPED,"store()")
+Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
+Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
+-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
+-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
+-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
 
-Ship.AddWeapon( Epiar.player(), "Minigun" )
-Ship.AddWeapon( Epiar.player(), "Missile" )
-Ship.AddAmmo( Epiar.player(), "Missile",100 )
+-- Register the player functions
+Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "PLAYER:Accelerate()" )
+Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "PLAYER:Rotate(30)" )
+Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "PLAYER:Rotate(-30)" )
+Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))" )
+Epiar.RegisterKey('c', KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(0,0))" )
+Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
+Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
+Epiar.RegisterKey(' ', KEYPRESSED, "PLAYER:Fire()" )
 
+for k =1,9 do
+	kn = string.byte(k)
+	ks = string.format("%d",k*1000)
+	Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
+end
+
+PLAYER:AddWeapon( "Laser" )
+PLAYER:AddWeapon( "Strong Laser" )
+PLAYER:AddWeapon( "Slow Missile" )
+PLAYER:AddAmmo( "Slow Missile",10 )
+PLAYER:AddWeapon( "Minigun" )
+PLAYER:AddWeapon( "Missile" )
+PLAYER:AddAmmo( "Missile",100 )
+
+hull = HUD.newStatus("HULL:",100,1.0)
+weapons = {}
+weaponsAndAmmo = PLAYER:GetWeapons()
+for weapon,ammo in pairs(weaponsAndAmmo) do
+	if 0==ammo then ammo="---" end
+	weapons[weapon] = HUD.newStatus(weapon..":",130,"[ ".. ammo .." ]" )
+end
+
+updateHUD = function ()
+	hull:setStatus(PLAYER:GetHull())
+	weaponsAndAmmo = PLAYER:GetWeapons()
+	cur_weapon = PLAYER:GetCurrentWeapon()
+	for weapon,ammo in pairs(weaponsAndAmmo) do
+		if cur_weapon == weapon then star=" ARMED" else star="" end
+		if 0==ammo then ammo="---" end
+		weapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+	end
+end
+registerPostStep(updateHUD)
 
 --------------------------------------------------------------------------------
 -- Load Scenarios
@@ -223,3 +310,8 @@ Ship.AddAmmo( Epiar.player(), "Missile",100 )
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
+
+abcd = {"A","B","C"}
+
+-- Run Start now that everything is loaded
+Start()

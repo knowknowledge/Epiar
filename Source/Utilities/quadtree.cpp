@@ -13,10 +13,12 @@
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
+#define MIN_QUAD_SIZE 10.0f
+
 QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
 	assert(_maxobjects>0);
-	assert(_radius>0.0f);
+	assert(_radius>MIN_QUAD_SIZE/2);
 	for(int t=0;t<4;t++){
 		subtrees[t] = NULL;
 	}
@@ -265,8 +267,7 @@ void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
 	list<Sprite*>::iterator i;
 	
-	//if( isLeaf && numObjects>maxobjects && radius>10.0f){
-	if( isLeaf && numObjects>maxobjects ){
+	if( isLeaf && numObjects>maxobjects && radius>MIN_QUAD_SIZE){
 		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;
 
