@@ -8,12 +8,9 @@
 
 #include "includes.h"
 #include "Graphics/font.h"
-#include "Graphics/afont/afont_gl.h"
 #include "includes.h"
 #include "Utilities/log.h"
-#ifdef USE_FREETYPE
 #include <FTGL/ftgl.h>
-#endif //USE_FREETYPE
 #include "Graphics/video.h"
 
 /**\class Font
@@ -31,63 +28,6 @@ void Font::SetColor( float r, float g, float b ) {
 	this->b = b;
 }
 
-// AFONT
-
-AFont::AFont( string filename ) {
-	SetFont( filename );
-}
-
-AFont::~AFont() {
-	afont_gl_free( (afontgl*)font );
-	delete (afontgl*)this->font;
-	Log::Message( "Font '%s' freed.", fontname.c_str() );
-}
-
-bool AFont::SetFont( string filename ) {
-	fontname = filename;
-	font = afont_gl_load( fontname.c_str() );
-
-	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
-		return( false );
-	}
-
-	afont_size_text( ((afontgl*)font)->orig, "A", &(this->width), &(this->height), &(this->base));
-
-	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
-
-	return( true );
-}
-
-Rectangle AFont::Render( int x, int y, const char *text ) {
-	glEnable( GL_TEXTURE_2D );
-	glEnable(GL_BLEND);
-
-	glColor4f( r, g, b, 1. );
-	glRasterPos2i( x, y + height); // + height so that the top corner is at (x,y) like everything else.
-
-	int w, h, base;
-	afont_size_text( ((afontgl *)font)->orig, text, &w, &h, &base );
-	afont_gl_render_text( (afontgl *)font, text );
-	
-	return Rectangle( x, y, w, h );
-}
-
-// Renders text centered squarely on (x,y), taking the bounding box into account
-Rectangle AFont::RenderCentered( int x, int y, const char *text ) {
-	glColor4f( r, g, b, 1. );
-
-	int w, h, base;
-
-	// determine size of text
-	afont_size_text( ((afontgl*)font)->orig, text, &w, &h, &base );
-
-	Render( x - (w / 2), y - (h / 2) , text ); // -1 because it just kinda looks better
-	
-	return Rectangle( x, y, w, h );
-}
-
-#ifdef USE_FREETYPE
 // FreeFont
 
 FreeFont::FreeFont( string filename ) {
@@ -144,4 +84,3 @@ Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
 	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
-#endif //USE_FREETYPE

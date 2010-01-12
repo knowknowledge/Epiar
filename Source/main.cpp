@@ -50,7 +50,6 @@ int main( int argc, char **argv ) {
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 
-#ifdef USE_FREETYPE // (FREETYPE IS OFF BY DEFAULT)
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
 	//TODO: find gpl-compatible ttf versions of the normal fonts
@@ -58,14 +57,6 @@ int main( int argc, char **argv ) {
 	Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-#else
-	Log::Message("Using Font Engine: AFONT");
-	//******** AFont Rendering ********
-	Vera8       = (Font*)new AFont( "Resources/Fonts/Vera-8.af" );
-	Vera10      = (Font*)new AFont( "Resources/Fonts/Vera-10.af" );
-	Visitor10   = (Font*)new AFont( "Resources/Fonts/Visitor1-10.af" );
-	VeraMono10  = (Font*)new AFont( "Resources/Fonts/VeraMono-10.af" );
-#endif // USE_FREETYPE
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
