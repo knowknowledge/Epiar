@@ -13,9 +13,6 @@
 #include <FTGL/ftgl.h>
 #include "Graphics/video.h"
 
-// Font Rendering technique to use
-typedef FTTextureFont FONTRENDERTYPE;
-
 class Font {
  public:
 	Font();
@@ -46,7 +43,7 @@ class FreeFont: public Font {
 	Rectangle Render( int x, int y, const char *text );
 	Rectangle RenderCentered( int x, int y, const char *text );
  private:
-	FONTRENDERTYPE* font;
+	FTTextureFont* font;
 };
 
 #endif // H_FONT

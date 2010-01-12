@@ -35,13 +35,13 @@ FreeFont::FreeFont( string filename ) {
 }
 
 FreeFont::~FreeFont() {
-	delete (FONTRENDERTYPE*)this->font;
+	delete (FTTextureFont*)this->font;
 	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
 bool FreeFont::SetFont( string filename ) {
 	fontname = filename;
-	this->font = new FONTRENDERTYPE( fontname.c_str() );
+	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
 		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
@@ -63,10 +63,10 @@ Rectangle FreeFont::Render( int x, int y, const char *text ) {
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1); 
 	
-	( ( FONTRENDERTYPE * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
+	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 	
 	FTPoint pt = FTPoint( x, -y, 1);
-	( ( FONTRENDERTYPE * ) font )->Render( text, -1, pt );
+	( ( FTTextureFont * ) font )->Render( text, -1, pt );
 	glPopMatrix(); // restore the previous matrix
 	
 	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
@@ -77,7 +77,7 @@ Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
     float urx, ury, urz;
 
-	( ( FONTRENDERTYPE * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
+	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 
 	Render( x + ( llx - urx) / 2, y - (lly - ury) / 2, text );
 
