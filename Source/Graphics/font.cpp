@@ -12,6 +12,7 @@
 #include "Utilities/log.h"
 #include <FTGL/ftgl.h>
 #include "Graphics/video.h"
+#include "Utilities/file.h"
 
 /**\class Font
  * \brief Font class takes care of initializing fonts. */
@@ -31,6 +32,7 @@ void Font::SetColor( float r, float g, float b ) {
 // FreeFont
 
 FreeFont::FreeFont( string filename ) {
+	font=NULL;
 	SetFont( filename );
 }
 
@@ -40,6 +42,17 @@ FreeFont::~FreeFont() {
 }
 
 bool FreeFont::SetFont( string filename ) {
+	File fontFile;
+	if( fontFile.OpenRead( filename.c_str() ) == false) {
+		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
+		return( false );
+	}
+
+	if( this->font != NULL) {
+		Log::Error( "Deleting the old font '%s'.\n", fontname.c_str() );
+		delete this->font;
+	}
+
 	fontname = filename;
 	this->font = new FTTextureFont( fontname.c_str() );
 

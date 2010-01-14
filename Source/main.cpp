@@ -55,8 +55,8 @@ int main( int argc, char **argv ) {
 	//TODO: find gpl-compatible ttf versions of the normal fonts
 	Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
 	Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
+	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
