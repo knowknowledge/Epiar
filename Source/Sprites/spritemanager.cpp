@@ -10,13 +10,14 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
 
+#define QUADRANTSIZE 4096.0f
+
 /**\class SpriteManager
  * \brief Mangers sprites. */
 
 SpriteManager::SpriteManager() {
 	spritelist = new list<Sprite*>();
 	spritelookup = new map<int,Sprite*>();
-	tree = new QuadTree(Coordinate(0,0), 65536.0f, 3);
 }
 
 SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
@@ -29,17 +30,15 @@ SpriteManager *SpriteManager::Instance( void ) {
 }
 
 void SpriteManager::Add( Sprite *sprite ) {
-	//cout<<"Adding Sprite at "<<(sprite->GetWorldPosition()).GetX()<<","<<(sprite->GetWorldPosition()).GetY()<<endl;
 	spritelist->push_back(sprite);
 	spritelookup->insert(make_pair(sprite->GetID(),sprite));
-	tree->Insert(sprite);
-	//cout<<"ADD COMPLETE\n\n";
+	GetQuadrant( sprite->GetWorldPosition() )->Insert( sprite );
 }
 
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	spritelist->remove(sprite);
 	spritelookup->erase( sprite->GetID() );
-	return ( tree->Delete(sprite) );
+	return ( GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite ) );
 }
 
 bool SpriteManager::Delete( Sprite *sprite ) {
@@ -47,22 +46,22 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 	return true;
 }
 void SpriteManager::Update() {
-	list<Sprite *>::iterator i;
-
-	spritelist->sort(compareSpritePtrs);
-	tree->Update();
-	list<Sprite *>* oob = tree->FixOutOfBounds();
-	if(oob->size()){
-		// Gracefully handle Out of Bounds Sprites
-		for( i = oob->begin(); i != oob->end(); ++i ) {
-			Log::Error("\tSprite #%d went out of bounds at (%lf,%lf)",
-					(*i)->GetID(),
-					(*i)->GetWorldPosition().GetX(),
-					(*i)->GetWorldPosition().GetY() );
-			Delete(*i);
-		}
+	// Update the sprites inside each quadrant
+	// TODO: Update only the sprites that are in nearby Quadrants
+	map<Coordinate,QuadTree*>::iterator iter;
+	list<Sprite *> all_oob;
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
+		iter->second->Update();
+		list<Sprite *>* oob = iter->second->FixOutOfBounds();
+		all_oob.splice(all_oob.end(), *oob );
+		delete oob;
 	}
-	delete oob;
+
+	// Move sprites to adjacent Quadrants as they cross boundaries
+	list<Sprite *>::iterator i;
+	for( i = all_oob.begin(); i != all_oob.end(); ++i ) {
+		GetQuadrant( (*i)->GetWorldPosition() )->Insert( *i );
+	}
 
 	//Delete all sprites queued to be deleted
 	if (!spritesToDelete.empty()) {
@@ -71,14 +70,30 @@ void SpriteManager::Update() {
 		}
 		spritesToDelete.clear();
 	}
+
+	// Delete QuadTrees that are empty
+	// TODO: Delete QuadTrees that are far away from 
+	list<QuadTree*> emptyTrees;
+	// Collect empty trees
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) { 
+		if ( iter->second->Count() == 0 ) {
+			emptyTrees.push_back(iter->second);
+		}
+	}
+	// Delete empty trees
+	list<QuadTree*>::iterator emptyIter;
+	for ( emptyIter = emptyTrees.begin(); emptyIter != emptyTrees.end(); ++emptyIter) {
+			//cout<<"Deleting the empty tree at "<<(*emptyIter)->GetCenter()<<endl;
+			delete (*emptyIter);
+			trees.erase((*emptyIter)->GetCenter());
+	}
 }
 
 void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	// TODO Have the drawing based directly on the screen dimensions
 	list<Sprite*> *onscreen = new list<Sprite*>();
-	tree->GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f, onscreen);
-	//cout<<onscreen->size()<<" sprites are in range.\n";
+	onscreen = GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f);
 
 	onscreen->sort(compareSpritePtrs);
 
@@ -88,7 +103,6 @@ void SpriteManager::Draw() {
 }
 
 list<Sprite *> *SpriteManager::GetSprites() {
-	//list<Sprite*> *sprites = tree->GetSprites();
 	return( spritelist );
 }
 
@@ -101,9 +115,41 @@ Sprite *SpriteManager::GetSpriteByID(int id) {
 }
 
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
+	map<Coordinate,QuadTree*>::iterator iter;
 	list<Sprite*> *sprites = new list<Sprite*>();
-	tree->GetSpritesNear(c,r,sprites);
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
+		list<Sprite *>* nearby = new list<Sprite*>;
+		iter->second->GetSpritesNear(c,r,nearby);
+		sprites->splice(sprites->end(), *nearby);
+	}
 	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );
 }
 
+QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
+	// Check in the known Quadrantg
+	map<Coordinate,QuadTree*>::iterator iter;
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
+		if( (iter->second)->Contains( point ) ) {
+			return iter->second;
+		}
+	}
+
+	// Figure out where the new Tree should go.
+	// Quadrants are tiled adjacent to the central Quadrant centered at (0,0).
+	double cx, cy;
+	cx = float(floor( (point.GetX()+QUADRANTSIZE)/(QUADRANTSIZE*2.0f)) * QUADRANTSIZE*2.f);
+	cy = float(floor( (point.GetY()+QUADRANTSIZE)/(QUADRANTSIZE*2.0f)) * QUADRANTSIZE*2.f);
+	Coordinate treeCenter(cx,cy);
+
+	// Create the new Tree and attach it to the universe
+	QuadTree *newTree = new QuadTree(treeCenter, QUADRANTSIZE, 3);
+	assert(treeCenter == newTree->GetCenter() );
+	assert(newTree->Contains(point));
+	trees.insert(make_pair(treeCenter, newTree));
+
+	// Debug
+	//cout<<"A Tree at "<<treeCenter<<" was created to contain "<<point<<". "<<trees.size()<<" Quadrants exist now."<<endl;
+
+	return newTree;
+}

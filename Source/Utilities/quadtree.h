@@ -23,6 +23,7 @@ class QuadTree {
 
 		unsigned int Count();
 		bool Contains(Coordinate point);
+		const Coordinate GetCenter() {return center;}
 
 		void Insert(Sprite* obj);
 		bool Delete(Sprite* obj);

@@ -31,6 +31,7 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 }
 
 QuadTree::~QuadTree(){
+	delete objects;
 	// Delete the Subtrees (Node)
 	for(int t=0;t<4;t++){
 		if(NULL != (subtrees[t])) delete subtrees[t];
