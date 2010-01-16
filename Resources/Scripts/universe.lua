@@ -284,6 +284,22 @@ PLAYER:AddWeapon( "Minigun" )
 PLAYER:AddWeapon( "Missile" )
 PLAYER:AddAmmo( "Missile",100 )
 
+
+function coordinateToQuadrant(x,y)
+	qsize = 4096
+	function c2q(z)
+		return math.floor( (z+qsize)/(2*qsize))
+	end
+	return c2q(x),c2q(y)
+end
+
+-- Location Status Bars
+x,y = PLAYER:GetPosition()
+qx,qy = coordinateToQuadrant(x,y)
+pos = HUD.newStatus("Coordinate:",100,string.format("( %f , %f )",x,y))
+quad = HUD.newStatus("Quadrant:",100,string.format("( %d , %d )",qx,qy))
+
+-- Weapon and Armor Status Bars
 hull = HUD.newStatus("HULL:",100,1.0)
 weapons = {}
 weaponsAndAmmo = PLAYER:GetWeapons()
@@ -293,6 +309,13 @@ for weapon,ammo in pairs(weaponsAndAmmo) do
 end
 
 updateHUD = function ()
+	-- Update Positions
+    x,y = PLAYER:GetPosition()
+	qx,qy = coordinateToQuadrant(x,y)
+	pos:setStatus(string.format("( %f , %f )",x,y))
+	quad:setStatus(string.format("( %d , %d )",qx,qy))
+
+	-- Update Weapons and Armor
 	hull:setStatus(PLAYER:GetHull())
 	weaponsAndAmmo = PLAYER:GetWeapons()
 	cur_weapon = PLAYER:GetCurrentWeapon()
