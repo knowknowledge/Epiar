@@ -126,21 +126,25 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	return( sprites );
 }
 
-QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
-	// Check in the known Quadrantg
-	map<Coordinate,QuadTree*>::iterator iter;
-	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
-		if( (iter->second)->Contains( point ) ) {
-			return iter->second;
-		}
-	}
 
+Coordinate SpriteManager::GetQuadrantCenter(Coordinate point){
 	// Figure out where the new Tree should go.
 	// Quadrants are tiled adjacent to the central Quadrant centered at (0,0).
 	double cx, cy;
 	cx = float(floor( (point.GetX()+QUADRANTSIZE)/(QUADRANTSIZE*2.0f)) * QUADRANTSIZE*2.f);
 	cy = float(floor( (point.GetY()+QUADRANTSIZE)/(QUADRANTSIZE*2.0f)) * QUADRANTSIZE*2.f);
-	Coordinate treeCenter(cx,cy);
+	return Coordinate(cx,cy);
+}
+
+QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
+	Coordinate treeCenter = GetQuadrantCenter(point);
+
+	// Check in the known Quadrant
+	map<Coordinate,QuadTree*>::iterator iter;
+	iter = trees.find( treeCenter );
+	if( iter != trees.end() ) {
+		return iter->second;
+	}
 
 	// Create the new Tree and attach it to the universe
 	QuadTree *newTree = new QuadTree(treeCenter, QUADRANTSIZE, 3);

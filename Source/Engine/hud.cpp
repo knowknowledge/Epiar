@@ -145,6 +145,12 @@ void Hud::DrawFPS() {
 	memset(frameRate, 0, sizeof(char) * 10);
 	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
 	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
+
+	sprintf((char *)frameRate, "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
+	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
+
+	sprintf((char *)frameRate, "%d Sprites", SpriteManager::Instance()->GetNumSprites());
+	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
 }
 
 void Hud::DrawShieldIntegrity() {

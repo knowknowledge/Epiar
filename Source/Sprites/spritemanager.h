@@ -29,6 +29,10 @@ class SpriteManager {
 		list<Sprite*> *GetSprites();
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
+		Coordinate GetQuadrantCenter( Coordinate point );
+		int GetNumQuadrants() { return trees.size(); }
+		int GetNumSprites() { return spritelist->size(); }
+
 	protected:
 		SpriteManager();
 	private:
