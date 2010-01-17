@@ -162,6 +162,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 				delete other;
 			}
 		}
+		objectcount-= outofbounds->size();
 		// Insert any sprites that are inside of this Tree
 		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
 			if( this->Contains((*i)->GetWorldPosition()) ) {
@@ -182,9 +183,9 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
 			objects->remove(*i);
 		}
+		objectcount-= outofbounds->size();
 	}
 	delete stillinside;
-	objectcount-= outofbounds->size();
 	ReBallance();
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
