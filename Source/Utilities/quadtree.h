@@ -22,8 +22,10 @@ class QuadTree {
 		~QuadTree();
 
 		unsigned int Count();
-		bool Contains(Coordinate point);
 		const Coordinate GetCenter() {return center;}
+
+		bool Contains(Coordinate point);
+		inline bool PossiblyNear(Coordinate, float distance);
 
 		void Insert(Sprite* obj);
 		bool Delete(Sprite* obj);
@@ -50,5 +52,15 @@ class QuadTree {
 		unsigned int objectcount;
 		bool isLeaf;
 };
+
+inline bool QuadTree::PossiblyNear(Coordinate point, float distance) {
+	// The Maximum range is when the center and point are on a 45 degree angle.
+	//   Root-2 of the radius + the distance
+	// If the distance to the point is greater than the max range,
+	//   then no collisions are possible
+	// Math should be done in square-space to save time.
+	const float maxrange = 1.42f*radius + distance;
+	return( (point-center).GetMagnitudeSquared() <= maxrange*maxrange );
+}
 
 #endif // __h_quadtree__

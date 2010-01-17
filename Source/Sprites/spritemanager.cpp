@@ -117,10 +117,17 @@ Sprite *SpriteManager::GetSpriteByID(int id) {
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	map<Coordinate,QuadTree*>::iterator iter;
 	list<Sprite*> *sprites = new list<Sprite*>();
-	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
-		list<Sprite *>* nearby = new list<Sprite*>;
-		iter->second->GetSpritesNear(c,r,nearby);
-		sprites->splice(sprites->end(), *nearby);
+	Coordinate mainCenter = GetQuadrantCenter(c);
+	for(float qx = mainCenter.GetX()-QUADRANTSIZE; qx!=mainCenter.GetX()+2*QUADRANTSIZE; qx+=QUADRANTSIZE) {
+		for(float qy = mainCenter.GetY()-QUADRANTSIZE; qy!=mainCenter.GetY()+2*QUADRANTSIZE; qy+=QUADRANTSIZE) {
+			iter = trees.find(Coordinate(qx,qy));
+			if(iter != trees.end() && iter->second->PossiblyNear(c,r)){
+				list<Sprite *>* nearby = new list<Sprite*>;
+				iter->second->GetSpritesNear(c,r,nearby);
+				sprites->splice(sprites->end(), *nearby);
+				delete nearby;
+			}
+		}
 	}
 	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );

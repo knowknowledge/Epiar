@@ -34,6 +34,9 @@ class Coordinate {
 
 		float GetAngle();
 		float GetMagnitude();
+		inline float GetMagnitudeSquared() {
+			return static_cast<float>(m_y*m_y + m_x*m_x );
+		}
 	
 		// Make an SDL Rectangle from coordinates
 		// Use width/height of 0
