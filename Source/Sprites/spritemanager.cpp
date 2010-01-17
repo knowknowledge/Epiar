@@ -136,6 +136,17 @@ Coordinate SpriteManager::GetQuadrantCenter(Coordinate point){
 	return Coordinate(cx,cy);
 }
 
+int SpriteManager::GetNumSprites() {
+	int total = 0;
+	map<Coordinate,QuadTree*>::iterator iter;
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) { 
+		total += iter->second->Count();
+	}
+	assert( total == spritelist->size() );
+	assert( total == spritelookup->size() );
+	return total;
+}
+
 QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
 	Coordinate treeCenter = GetQuadrantCenter(point);
 

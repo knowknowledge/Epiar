@@ -31,7 +31,7 @@ class SpriteManager {
 
 		Coordinate GetQuadrantCenter( Coordinate point );
 		int GetNumQuadrants() { return trees.size(); }
-		int GetNumSprites() { return spritelist->size(); }
+		int GetNumSprites();
 
 	protected:
 		SpriteManager();
