@@ -167,7 +167,7 @@ registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buy(model)
-	io.write("Player just bought "..model.."\n")
+	HUD.newAlert("Enjoy your new "..model..".")
 	PLAYER:SetModel(model)
 	return 1
 end

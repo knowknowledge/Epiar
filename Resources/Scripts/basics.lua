@@ -74,7 +74,7 @@ function evacuateCheck(percent)
 			cur_ship = ships[s]
 			n = cur_ship:GetID()
 			if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
-				io.write("Escape!\n")
+				HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
 				x,y = cur_ship:GetPosition()
 				cur_ship:Explode()
 				for pod = 1,10 do
@@ -97,7 +97,7 @@ function moreTraffic(tickcycle)
 	function traffic()
 		ticks = ticks -1
 		if ticks == 0 then
-			io.write("More Traffic!")
+			HUD.newAlert("More ships are launching.")
 			planetTraffic()
 			ticks = tickcycle
 		end

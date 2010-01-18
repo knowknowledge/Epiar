@@ -205,6 +205,7 @@ void Hud::RegisterHud(lua_State *L) {
 	static const luaL_Reg hudFunctions[] = {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
+		{"newAlert", &Hud::newAlert},
 		{NULL, NULL}
 	};
 
@@ -231,6 +232,15 @@ int Hud::setVisibity(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (visibility)", n);
 	int visibility = (int)(luaL_checkint(L,1));
 	Radar::SetVisibility(visibility);
+	return 0;
+}
+
+int Hud::newAlert(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (message)", n);
+	const char* msg = luaL_checkstring(L,1);
+	Alert(msg);
 	return 0;
 }
 
