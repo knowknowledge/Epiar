@@ -142,7 +142,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			if( (point - (*i)->GetWorldPosition()).GetMagnitudeSquared() < distance*distance ) {
+			if( (point - (*i)->GetWorldPosition()).GetMagnitudeSquared() < distance*distance + (*i)->GetRadarSize()*(*i)->GetRadarSize() ) {
 				nearby->push_back( *i);
 			}
 		}
