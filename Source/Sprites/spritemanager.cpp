@@ -117,18 +117,37 @@ Sprite *SpriteManager::GetSpriteByID(int id) {
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	map<Coordinate,QuadTree*>::iterator iter;
 	list<Sprite*> *sprites = new list<Sprite*>();
-	Coordinate mainCenter = GetQuadrantCenter(c);
-	for(float qx = mainCenter.GetX()-QUADRANTSIZE; qx!=mainCenter.GetX()+2*QUADRANTSIZE; qx+=QUADRANTSIZE) {
-		for(float qy = mainCenter.GetY()-QUADRANTSIZE; qy!=mainCenter.GetY()+2*QUADRANTSIZE; qy+=QUADRANTSIZE) {
-			iter = trees.find(Coordinate(qx,qy));
-			if(iter != trees.end() && iter->second->PossiblyNear(c,r)){
-				list<Sprite *>* nearby = new list<Sprite*>;
-				iter->second->GetSpritesNear(c,r,nearby);
-				sprites->splice(sprites->end(), *nearby);
-				delete nearby;
-			}
+
+	// The possibleQuadrants are those trees adjacent and within a radius r
+	// Gather more trees when r is greater than the size of a quadrant
+	set<Coordinate> possibleQuadrants;
+	possibleQuadrants.insert( GetQuadrantCenter(c));
+	float R = r;
+	do{
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(-R,-0)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(-0,+R)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(+0,-R)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(+R,+0)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(-R,-R)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(-R,+R)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(+R,-R)));
+		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(+R,+R)));
+		R/=2;
+	} while(R>QUADRANTSIZE);
+
+	// Search the possible quadrants
+	set<Coordinate>::iterator it;
+	for(it = possibleQuadrants.begin(); it != possibleQuadrants.end(); ++it) {
+		iter = trees.find(*it);
+		if(iter != trees.end() && iter->second->PossiblyNear(c,r)){
+			list<Sprite *>* nearby = new list<Sprite*>;
+			iter->second->GetSpritesNear(c,r,nearby);
+			sprites->splice(sprites->end(), *nearby);
+			delete nearby;
 		}
 	}
+
+	// Sort sprites by their distance from the coordinate c
 	sprites->sort(compareSpriteDistFromPoint(c));
 	return( sprites );
 }
