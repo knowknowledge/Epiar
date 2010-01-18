@@ -284,12 +284,12 @@ PLAYER:AddWeapon( "Minigun" )
 PLAYER:AddWeapon( "Missile" )
 PLAYER:AddAmmo( "Missile",100 )
 
-hull = HUD.newStatus("HULL:",100,1.0)
+hull = HUD.newStatus("HULL:",100,0,1.0)
 weapons = {}
 weaponsAndAmmo = PLAYER:GetWeapons()
 for weapon,ammo in pairs(weaponsAndAmmo) do
 	if 0==ammo then ammo="---" end
-	weapons[weapon] = HUD.newStatus(weapon..":",130,"[ ".. ammo .." ]" )
+	weapons[weapon] = HUD.newStatus(weapon..":",130,1,"[ ".. ammo .." ]")
 end
 
 updateHUD = function ()
