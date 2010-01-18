@@ -167,47 +167,46 @@ function buy(model)
 end
 
 
-function store()
-	Epiar.pause()
-	if storefront ~=nil then return end
-
-	-- The Store layout parameters
-	width = 820
-	height = 500
+function createTable(x,y,w,h,title,piclist,buttonlist)
 	pad = 10
 	box = 120
 	button_h = 30
 	button_w = 100
-	row,col = 1,1	
+	row,col = 1,1
 	getPos = function(c,r)
 		pos_x = pad*(col)+box*(col-1)
 		pos_y = pad*(row)+box*(row-1)
 		return pos_x,pos_y
 	end
 
-	-- Layout the Store in a grid
-	storefront = UI.newWindow( 30,30,width,height,"Ship Yard")
-	models = Epiar.models()
-	for m =1,#models do
+	-- Lay out the buttons with pictures beneath them
+	win = UI.newWindow( 30,30,w,h,title)
+	for i=1,#piclist do
 		pos_x,pos_y = getPos(col,row)
 		-- When there isn't enough room, wrap to the next row.
-		if  pos_x+box >= width then 
+		if  pos_x+box >= w then
 			col=1; row=row+1
 			pos_x,pos_y = getPos(col,row)
 		end
 
-		storefront:add(UI.newButton(
-			pos_x+(box-button_w)/2,
-			pos_y,
-			button_w,button_h, models[m],
-			" Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "))
-		storefront:add(UI.newPicture(
-			pos_x,
-			pos_y + button_h,
-			box,box-button_h,models[m]))
+		win:add(UI.newButton( pos_x+(box-button_w)/2, pos_y, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
+		win:add(UI.newPicture( pos_x, pos_y + button_h, box,box-button_h,piclist[i]))
 
 		col =col+1
 	end
+	return win
+end
+
+function store()
+	Epiar.pause()
+	if storefront ~=nil then return end
+
+	local models = Epiar.models()
+	local buylist = {}
+	for m =1,#models do
+		buylist[m] = {models[m], " Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "}
+	end
+	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
 
 function ui_demo()
