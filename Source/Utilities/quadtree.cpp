@@ -129,7 +129,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
-	if( (point-center).GetMagnitude() > maxrange){
+	if( (point-center).GetMagnitudeSquared() > maxrange*maxrange){
 		return;
 	}
 
@@ -142,7 +142,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			if( (point - (*i)->GetWorldPosition()).GetMagnitude() < distance ) {
+			if( (point - (*i)->GetWorldPosition()).GetMagnitudeSquared() < distance*distance ) {
 				nearby->push_back( *i);
 			}
 		}

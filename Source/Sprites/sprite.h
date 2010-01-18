@@ -87,8 +87,8 @@ struct compareSpriteDistFromPoint
 	compareSpriteDistFromPoint(const Coordinate& c) : point(c) {}
 
 	bool operator() (Sprite* a, Sprite* b) {
-		return (point - a->GetWorldPosition()).GetMagnitude()
-		     < (point - b->GetWorldPosition()).GetMagnitude() ;
+		return (point - a->GetWorldPosition()).GetMagnitudeSquared()
+		     < (point - b->GetWorldPosition()).GetMagnitudeSquared() ;
 	}
 
 	Coordinate point;
