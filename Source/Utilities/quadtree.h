@@ -39,13 +39,12 @@ class QuadTree {
 
 		void Update();
 		void Draw(Coordinate root);
+		void ReBallance();
 
 	private:
 		QuadPosition SubTreeThatContains(Coordinate point);
 		void CreateSubTree(QuadPosition pos);
 		void InsertSubTree(Sprite* obj);
-
-		void ReBallance();
 
 		QuadTree* subtrees[4];
 		list<Sprite*> *objects;
@@ -53,7 +52,15 @@ class QuadTree {
 		float radius;
 		unsigned int maxobjects;
 		unsigned int objectcount;
-		bool isLeaf;
+		union{
+			// Unnamed struct so that these flags can be accessed directly
+			struct{
+				Uint32 isLeaf:1;
+				Uint32 isDirty:1;
+				Uint32 extra:30;
+			};
+			Uint32 flags;
+		};
 };
 
 inline bool QuadTree::PossiblyNear(Coordinate point, float distance) {

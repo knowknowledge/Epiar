@@ -86,6 +86,10 @@ void SpriteManager::Update() {
 			delete (*emptyIter);
 			trees.erase((*emptyIter)->GetCenter());
 	}
+
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
+		iter->second->ReBallance();
+	}
 }
 
 void SpriteManager::Draw() {

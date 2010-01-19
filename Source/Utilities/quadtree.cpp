@@ -25,8 +25,9 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	this->radius = _radius;
 	this->center = _center;
 	this->maxobjects = _maxobjects;
-	this->isLeaf = true;
 	this->objectcount = 0;
+	this->isLeaf = true;
+	this->isDirty = false;
 }
 
 QuadTree::~QuadTree(){
@@ -67,7 +68,7 @@ void QuadTree::Insert(Sprite *obj){
 	} else { // Leaf
 		objects->push_back(obj);
 		// An over Full Leaf should become a Node
-		ReBallance();
+		isDirty=true;
 	}
 	objectcount++;
 }
@@ -84,7 +85,7 @@ bool QuadTree::Delete(Sprite* obj){
 		if(dest==NULL)
 			return( false ); // That branch is empty, nothing to delete.
 		if( dest->Delete(obj) ){
-			ReBallance();
+			isDirty=true;
 			objectcount--;
 			return( true ); // Found that object.
 		} else {
@@ -163,6 +164,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 			}
 		}
 		objectcount-= outofbounds->size();
+		if(outofbounds->size()) isDirty=true;
 		// Insert any sprites that are inside of this Tree
 		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
 			if( this->Contains((*i)->GetWorldPosition()) ) {
@@ -186,7 +188,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		objectcount-= outofbounds->size();
 	}
 	delete stillinside;
-	ReBallance();
+	if(outofbounds->size()) isDirty=true;
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
 }
@@ -270,7 +272,7 @@ void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
 	list<Sprite*>::iterator i;
 	
-	if( isLeaf && numObjects>maxobjects && radius>MIN_QUAD_SIZE){
+	if( isDirty && isLeaf && numObjects>maxobjects && radius>MIN_QUAD_SIZE){
 		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;
 
@@ -281,7 +283,7 @@ void QuadTree::ReBallance(){
 		}
 		assert(!isLeaf); // Still a Node
 		this->objects->clear();
-	} else if(!isLeaf && numObjects<=maxobjects ){
+	} else if(isDirty && !isLeaf && numObjects<=maxobjects ){
 		assert(0 == objects->size()); // The Leaf list should be empty
 		//cout << "NODE at "<<center<<" is becoming a LEAF.\n";
 		isLeaf = true;
@@ -298,5 +300,17 @@ void QuadTree::ReBallance(){
 		}
 		assert(isLeaf); // Still a Leaf
 	}
+	// ReBallance the subtrees
+	for(int t=0;t<4;t++){
+		if(NULL != (subtrees[t])){
+			if(subtrees[t]->Count()==0){
+				delete subtrees[t];
+				subtrees[t] = NULL;
+			} else {
+				subtrees[t]->ReBallance();
+			}
+		}
+	}
+	isDirty=false;
 	assert(numObjects == this->Count()); // ReBallancing should never change the total number of elements
 }
