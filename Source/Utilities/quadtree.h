@@ -13,6 +13,9 @@
 #include "includes.h"
 #include "Sprites/sprite.h"
 
+#define MIN_QUAD_SIZE 10.0f
+#define QUADRANTSIZE 4096.0f
+
 enum QuadPosition{ UPPER_LEFT, UPPER_RIGHT,
                    LOWER_LEFT, LOWER_RIGHT };
 
@@ -35,7 +38,7 @@ class QuadTree {
 		list<Sprite*> *FixOutOfBounds();
 
 		void Update();
-		void Draw();
+		void Draw(Coordinate root);
 
 	private:
 		QuadPosition SubTreeThatContains(Coordinate point);

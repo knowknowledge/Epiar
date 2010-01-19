@@ -13,7 +13,6 @@
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
-#define MIN_QUAD_SIZE 10.0f
 
 QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
@@ -209,25 +208,27 @@ void QuadTree::Update(){
 	}
 }
 
-void QuadTree::Draw(){
-	float scale = 8000;
-	float r = scale* radius / 65536.0f;
-	float x = (scale* center.GetX() / 65536.0f) + Video::GetHalfWidth()  -r;
-	float y = (scale* center.GetY() / 65536.0f) + Video::GetHalfHeight() -r;
+void QuadTree::Draw(Coordinate root){
+	// The QuadTree is scaled so that it always fits on the screen.
+	float scale = (Video::GetHalfHeight() > Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) -5;
+	float r = scale* radius / QUADRANTSIZE;
+	float x = (scale* (center-root).GetX() / QUADRANTSIZE) + Video::GetHalfWidth()  -r;
+	float y = (scale* (center-root).GetY() / QUADRANTSIZE) + Video::GetHalfHeight() -r;
 	Video::DrawRect( x,y, 2*r, 2*r, 0,255,0, .1);
 
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
-			if(NULL != (subtrees[t])) subtrees[t]->Draw();
+			if(NULL != (subtrees[t])) subtrees[t]->Draw(root);
 		}
 	} else { // Leaf
 		list<Sprite *>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			Coordinate pos = (*i)->GetWorldPosition();
-			int posx = (scale* (float)pos.GetX() / 65536.0f) + (float)Video::GetHalfWidth();
-			int posy = (scale* (float)pos.GetY() / 65536.0f) + (float)Video::GetHalfHeight();
+			Coordinate pos = (*i)->GetWorldPosition() - root;
+			int posx = (scale* (float)pos.GetX() / QUADRANTSIZE) + (float)Video::GetHalfWidth();
+			int posy = (scale* (float)pos.GetY() / QUADRANTSIZE) + (float)Video::GetHalfHeight();
 			Color col = (*i)->GetRadarColor();
-			Video::DrawCircle( posx, posy, (*i)->GetRadarSize()/17,2, col.r,col.g,col.b );
+			// The 17 is here because it looks nice.  I can't explain why.
+			Video::DrawCircle( posx, posy, 17*(*i)->GetRadarSize()/scale,2, col.r,col.g,col.b );
 		}
 	}
 }

@@ -10,7 +10,6 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
 
-#define QUADRANTSIZE 4096.0f
 
 /**\class SpriteManager
  * \brief Mangers sprites. */
@@ -90,10 +89,12 @@ void SpriteManager::Update() {
 }
 
 void SpriteManager::Draw() {
+	GetQuadrant( Player::Instance()->GetWorldPosition() )->Draw( GetQuadrantCenter( Player::Instance()->GetWorldPosition() ) );
+
 	list<Sprite *>::iterator i;
-	// TODO Have the drawing based directly on the screen dimensions
 	list<Sprite*> *onscreen = new list<Sprite*>();
-	onscreen = GetSpritesNear( Player::Instance()->GetWorldPosition(), 1000.0f);
+	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *1.42f;
+	onscreen = GetSpritesNear( Player::Instance()->GetWorldPosition(), r);
 
 	onscreen->sort(compareSpritePtrs);
 
