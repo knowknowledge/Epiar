@@ -14,9 +14,8 @@
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
 
-QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
+QuadTree::QuadTree(Coordinate _center, float _radius){
 	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
-	assert(_maxobjects>0);
 	assert(_radius>MIN_QUAD_SIZE/2);
 	for(int t=0;t<4;t++){
 		subtrees[t] = NULL;
@@ -24,7 +23,6 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	this->objects = new list<Sprite*>();
 	this->radius = _radius;
 	this->center = _center;
-	this->maxobjects = _maxobjects;
 	this->objectcount = 0;
 	this->isLeaf = true;
 	this->isDirty = false;
@@ -256,7 +254,7 @@ void QuadTree::CreateSubTree(QuadPosition pos){
 		default: assert(0);
 	}
 	assert(subtrees[pos]==NULL);
-	subtrees[pos] = new QuadTree(center+offset,half,maxobjects);
+	subtrees[pos] = new QuadTree(center+offset,half);
 	assert(subtrees[pos]!=NULL);
 }
 
@@ -272,7 +270,7 @@ void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
 	list<Sprite*>::iterator i;
 	
-	if( isDirty && isLeaf && numObjects>maxobjects && radius>MIN_QUAD_SIZE){
+	if( isDirty && isLeaf && numObjects>QUADMAXOBJECTS && radius>MIN_QUAD_SIZE){
 		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;
 
@@ -283,7 +281,7 @@ void QuadTree::ReBallance(){
 		}
 		assert(!isLeaf); // Still a Node
 		this->objects->clear();
-	} else if(isDirty && !isLeaf && numObjects<=maxobjects ){
+	} else if(isDirty && !isLeaf && numObjects<=QUADMAXOBJECTS ){
 		assert(0 == objects->size()); // The Leaf list should be empty
 		//cout << "NODE at "<<center<<" is becoming a LEAF.\n";
 		isLeaf = true;

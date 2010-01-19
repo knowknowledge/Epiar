@@ -15,13 +15,14 @@
 
 #define MIN_QUAD_SIZE 10.0f
 #define QUADRANTSIZE 4096.0f
+#define QUADMAXOBJECTS 3
 
 enum QuadPosition{ UPPER_LEFT, UPPER_RIGHT,
                    LOWER_LEFT, LOWER_RIGHT };
 
 class QuadTree {
 	public:
-		QuadTree(Coordinate center, float radius, unsigned int maxobjects);
+		QuadTree(Coordinate center, float radius);
 		~QuadTree();
 
 		unsigned int Count();
@@ -50,7 +51,6 @@ class QuadTree {
 		list<Sprite*> *objects;
 		Coordinate center;
 		float radius;
-		unsigned int maxobjects;
 		unsigned int objectcount;
 		union{
 			// Unnamed struct so that these flags can be accessed directly

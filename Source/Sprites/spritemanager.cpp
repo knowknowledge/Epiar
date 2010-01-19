@@ -189,7 +189,7 @@ QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
 	}
 
 	// Create the new Tree and attach it to the universe
-	QuadTree *newTree = new QuadTree(treeCenter, QUADRANTSIZE, 3);
+	QuadTree *newTree = new QuadTree(treeCenter, QUADRANTSIZE);
 	assert(treeCenter == newTree->GetCenter() );
 	assert(newTree->Contains(point));
 	trees.insert(make_pair(treeCenter, newTree));
