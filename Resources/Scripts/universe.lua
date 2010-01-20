@@ -1,12 +1,6 @@
 -- Use this script for a solar system
 
 
--- Keyboard States:
-KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
-SDLK_BACKSPACE, SDLK_ESCAPE = 9, 27
-SDLK_RSHIFT, SDLK_LSHIFT = 47, 48
-SDLK_UP, SDLK_DOWN, SDLK_RIGHT, SDLK_LEFT = 17, 18, 19, 20
-
 PLAYER = Epiar.player()
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
@@ -167,53 +161,52 @@ registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buy(model)
-	io.write("Player just bought "..model.."\n")
+	HUD.newAlert("Enjoy your new "..model..".")
 	PLAYER:SetModel(model)
 	return 1
 end
 
 
-function store()
-	Epiar.pause()
-	if storefront ~=nil then return end
-
-	-- The Store layout parameters
-	width = 820
-	height = 500
+function createTable(x,y,w,h,title,piclist,buttonlist)
 	pad = 10
 	box = 120
 	button_h = 30
 	button_w = 100
-	row,col = 1,1	
+	row,col = 1,1
 	getPos = function(c,r)
 		pos_x = pad*(col)+box*(col-1)
 		pos_y = pad*(row)+box*(row-1)
 		return pos_x,pos_y
 	end
 
-	-- Layout the Store in a grid
-	storefront = UI.newWindow( 30,30,width,height,"Ship Yard")
-	models = Epiar.models()
-	for m =1,#models do
+	-- Lay out the buttons with pictures beneath them
+	win = UI.newWindow( 30,30,w,h,title)
+	for i=1,#piclist do
 		pos_x,pos_y = getPos(col,row)
 		-- When there isn't enough room, wrap to the next row.
-		if  pos_x+box >= width then 
+		if  pos_x+box >= w then
 			col=1; row=row+1
 			pos_x,pos_y = getPos(col,row)
 		end
 
-		storefront:add(UI.newButton(
-			pos_x+(box-button_w)/2,
-			pos_y,
-			button_w,button_h, models[m],
-			" Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "))
-		storefront:add(UI.newPicture(
-			pos_x,
-			pos_y + button_h,
-			box,box-button_h,models[m]))
+		win:add(UI.newButton( pos_x+(box-button_w)/2, pos_y, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
+		win:add(UI.newPicture( pos_x, pos_y + button_h, box,box-button_h,piclist[i]))
 
 		col =col+1
 	end
+	return win
+end
+
+function store()
+	Epiar.pause()
+	if storefront ~=nil then return end
+
+	local models = Epiar.models()
+	local buylist = {}
+	for m =1,#models do
+		buylist[m] = {models[m], " Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "}
+	end
+	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
 
 function ui_demo()
@@ -252,89 +245,13 @@ function ui_demo()
 end
 
 
---registerInit(store)
-Epiar.RegisterKey('s',KEYTYPED,"store()")
-Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
-Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
--- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
--- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
--- focus, the UI will pass the typed event down the chain and pause should reach it eventually
-
--- Register the player functions
-Epiar.RegisterKey(SDLK_UP, KEYPRESSED, "PLAYER:Accelerate()" )
-Epiar.RegisterKey(SDLK_LEFT, KEYPRESSED, "PLAYER:Rotate(30)" )
-Epiar.RegisterKey(SDLK_RIGHT, KEYPRESSED, "PLAYER:Rotate(-30)" )
-Epiar.RegisterKey(SDLK_DOWN, KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))" )
-Epiar.RegisterKey('c', KEYPRESSED, "PLAYER:Rotate(PLAYER:directionTowards(0,0))" )
-Epiar.RegisterKey(SDLK_RSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
-Epiar.RegisterKey(SDLK_LSHIFT, KEYPRESSED, "PLAYER:ChangeWeapon()" )
-Epiar.RegisterKey(' ', KEYPRESSED, "PLAYER:Fire()" )
-
-for k =1,9 do
-	kn = string.byte(k)
-	ks = string.format("%d",k*1000)
-	Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
-end
-
-PLAYER:AddWeapon( "Laser" )
-PLAYER:AddWeapon( "Strong Laser" )
-PLAYER:AddWeapon( "Slow Missile" )
-PLAYER:AddAmmo( "Slow Missile",10 )
-PLAYER:AddWeapon( "Minigun" )
-PLAYER:AddWeapon( "Missile" )
-PLAYER:AddAmmo( "Missile",100 )
-
-
-function coordinateToQuadrant(x,y)
-	qsize = 4096
-	function c2q(z)
-		return math.floor( (z+qsize)/(2*qsize))
-	end
-	return c2q(x),c2q(y)
-end
-
--- Location Status Bars
-x,y = PLAYER:GetPosition()
-qx,qy = coordinateToQuadrant(x,y)
-pos = HUD.newStatus("Coordinate:",100,string.format("( %f , %f )",x,y))
-quad = HUD.newStatus("Quadrant:",100,string.format("( %d , %d )",qx,qy))
-
--- Weapon and Armor Status Bars
-hull = HUD.newStatus("HULL:",100,1.0)
-weapons = {}
-weaponsAndAmmo = PLAYER:GetWeapons()
-for weapon,ammo in pairs(weaponsAndAmmo) do
-	if 0==ammo then ammo="---" end
-	weapons[weapon] = HUD.newStatus(weapon..":",130,"[ ".. ammo .." ]" )
-end
-
-updateHUD = function ()
-	-- Update Positions
-    x,y = PLAYER:GetPosition()
-	qx,qy = coordinateToQuadrant(x,y)
-	pos:setStatus(string.format("( %f , %f )",x,y))
-	quad:setStatus(string.format("( %d , %d )",qx,qy))
-
-	-- Update Weapons and Armor
-	hull:setStatus(PLAYER:GetHull())
-	weaponsAndAmmo = PLAYER:GetWeapons()
-	cur_weapon = PLAYER:GetCurrentWeapon()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		if cur_weapon == weapon then star=" ARMED" else star="" end
-		if 0==ammo then ammo="---" end
-		weapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
-	end
-end
-registerPostStep(updateHUD)
-
 --------------------------------------------------------------------------------
 -- Load Scenarios
 
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
 dofile "Resources/Scripts/swarm.lua"
-
-abcd = {"A","B","C"}
+dofile "Resources/Scripts/player.lua"
 
 -- Run Start now that everything is loaded
 Start()

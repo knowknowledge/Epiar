@@ -52,6 +52,10 @@ void StatusBar::Draw(int x, int y) {
 	Image *BorderMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
 	Image *BorderRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
 
+	if(pos==UPPER_RIGHT||pos==LOWER_RIGHT){
+		x = Video::GetWidth() - BorderLeft->GetWidth() - width - BorderRight->GetWidth();
+	}
+
 	// Draw the Border
 	BorderLeft->Draw(x,y);
 	x += BorderLeft->GetWidth();
@@ -119,12 +123,7 @@ void Hud::Draw( SpriteManager *sprites ) {
 	Hud::DrawMessages();
 	Console::Draw();
 	Hud::DrawFPS();
-
-	int j;
-	list<StatusBar*>::iterator i;
-	for( i= Bars.begin(), j=0; i != Bars.end(); ++i,++j ){
-		(*i)->Draw(5,75 + j*20);
-	}
+	Hud::DrawStatusBars();
 }
 
 // Draw HUD messages (eg Welcome to Epiar)
@@ -153,6 +152,27 @@ void Hud::DrawFPS() {
 	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
 }
 
+void::Hud::DrawStatusBars() {
+	// Initialize the starting Coordinates
+	int barHeight = Image::Get( "Resources/Graphics/hud_bar_left.png" )->GetHeight()+5;
+	Coordinate startCoords[4];
+	startCoords[UPPER_LEFT]  = Coordinate(5,Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->GetHeight()+5);
+	startCoords[UPPER_RIGHT] = Coordinate(5,Image::Get( "Resources/Graphics/hud_radarnav.png" )->GetHeight()+5);
+	startCoords[LOWER_LEFT]  = Coordinate(5,Video::GetHeight()-barHeight);
+	startCoords[LOWER_RIGHT] = Coordinate(5,Video::GetHeight()-barHeight);
+	Coordinate offsetCoords[4]= {
+		Coordinate(0,barHeight), Coordinate(0,barHeight),
+		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
+
+	// 
+	list<StatusBar*>::iterator i;
+	for( i= Bars.begin(); i != Bars.end(); ++i ){
+		int pos = (*i)->GetPosition();
+		(*i)->Draw(startCoords[pos].GetX(),startCoords[pos].GetY());
+		startCoords[pos] += offsetCoords[pos];
+	}
+}
+
 void Hud::DrawShieldIntegrity() {
 	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
@@ -177,7 +197,7 @@ void Hud::Alert( const char *message, ... )
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
 
-void Hud::AddStatus( StatusBar* bar ) {
+void Hud::AddStatus( StatusBar* bar) {
 	Bars.push_back(bar);
 }
 
@@ -191,6 +211,7 @@ void Hud::RegisterHud(lua_State *L) {
 	static const luaL_Reg hudFunctions[] = {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
+		{"newAlert", &Hud::newAlert},
 		{NULL, NULL}
 	};
 
@@ -220,10 +241,19 @@ int Hud::setVisibity(lua_State *L) {
 	return 0;
 }
 
+int Hud::newAlert(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (message)", n);
+	const char* msg = luaL_checkstring(L,1);
+	Alert(msg);
+	return 0;
+}
+
 int Hud::newStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 3)
-		return luaL_error(L, "Got %d arguments expected 4 (title, width, [name | ratio])", n);
+	if (n != 4)
+		return luaL_error(L, "Got %d arguments expected 4 (title, width, postition, [name | ratio] )", n);
 
 	// Allocate memory for a pointer to object
 	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar**));
@@ -233,12 +263,16 @@ int Hud::newStatus(lua_State *L) {
 	// Create the Status Bar
 	string title = (string)luaL_checkstring(L,1);
 	int width = (int)(luaL_checkint(L,2));
-	if( lua_isnumber(L,3) ) {
-		float ratio = (float)(luaL_checknumber(L,3));
-		*bar= new StatusBar(title,width,"",ratio);
+	QuadPosition pos = (QuadPosition)(luaL_checkint(L,3));
+	if(pos<0||pos>3){
+		return luaL_error(L, "Invalid Position %d. Valid Options are: UPPER_LEFT=0, UPPER_RIGHT=1, LOWER_LEFT=2, LOWER_RIGHT=3", pos);
+	}
+	if( lua_isnumber(L,4) ) {
+		float ratio = (float)(luaL_checknumber(L,4));
+		*bar= new StatusBar(title,width,pos,"",ratio);
 	} else {
-		string name = (string)(luaL_checkstring(L,3));
-		*bar= new StatusBar(title,width,name,0.0f);
+		string name = (string)(luaL_checkstring(L,4));
+		*bar= new StatusBar(title,width,pos,name,0.0f);
 	}
 
 	// Add the Bar to the Hud
