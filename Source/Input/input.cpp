@@ -249,6 +249,11 @@ void Input::RegisterCallBack( InputEvent event, string command ) {
 	eventMappings.insert(make_pair(event, command));
 }
 
+void Input::UnRegisterCallBack( InputEvent event ) {
+	cout<<"Un-Registering: "<<event<<endl;
+	eventMappings.erase(event);
+}
+
 int Input::RegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if(n == 3) {
@@ -263,6 +268,23 @@ int Input::RegisterKey(lua_State *L) {
 		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n); 
+	}
+	return 0;
+}
+
+int Input::UnRegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 2) {
+		int triggerKey;
+		if( lua_isnumber(L,1) ) {
+			triggerKey = (int)(luaL_checkint(L,1));
+		} else {
+			triggerKey = (int)(luaL_checkstring(L,1)[0]);
+		}
+		keyState triggerState = (keyState)(luaL_checkint(L,2));
+		UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n); 
 	}
 	return 0;
 }

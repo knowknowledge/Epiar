@@ -90,7 +90,9 @@ class Input {
 
 		static void HandleLuaCallBacks( list<InputEvent> & events );
 		static void RegisterCallBack( InputEvent key, string command );
+		static void UnRegisterCallBack( InputEvent key );
 		static int RegisterKey(lua_State *L);
+		static int UnRegisterKey(lua_State *L);
 	
 	private:
 		bool _UpdateHandleKeyDown( SDL_Event *event );

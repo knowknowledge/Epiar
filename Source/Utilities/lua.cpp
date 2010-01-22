@@ -147,6 +147,7 @@ void Lua::RegisterFunctions() {
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		{"RegisterKey", &Input::RegisterKey},  
+		{"UnRegisterKey", &Input::UnRegisterKey},  
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
