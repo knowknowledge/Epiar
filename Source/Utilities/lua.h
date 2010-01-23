@@ -29,7 +29,8 @@ class Lua {
 	public:
 		static bool Load( const string& filename );
 		static bool Run( string line );
-		static bool Update();
+		static bool Call(const char *func, const char *sig="", ...);
+
 		static vector<string> GetOutput();
 
 

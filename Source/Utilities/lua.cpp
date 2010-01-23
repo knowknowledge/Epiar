@@ -58,19 +58,9 @@ bool Lua::Load( const string& filename ) {
 	return( true );
 }
 
-bool Lua::Update(){
-    // Tell the Lua State to update itself
-    lua_getglobal(L, "Update");
-    if( lua_pcall(L,0,0,0) != 0 ){
-		Log::Error("Could not call lua function Update");
-	    Log::Error("%s", lua_tostring(L, -1));
-        return (false);
-    }
-	return (true);
-}
 
 
-
+// If the function is known at compile time, use 'Call' instead of 'Run'
 bool Lua::Run( string line ) {
 	//Log::Message("Running '%s'", (char *)line.c_str() );
 
@@ -89,6 +79,80 @@ bool Lua::Run( string line ) {
 	return( false );
 }
 
+// This function is from the Lua PIL
+// http://www.lua.org/pil/25.3.html
+// It was originally named "call_va"
+bool Lua::Call(const char *func, const char *sig, ...) {
+	va_list vl;
+	int narg, nres;  /* number of arguments and results */
+
+	va_start(vl, sig);
+	lua_getglobal(L, func);  /* get function */
+
+	/* push arguments */
+	narg = 0;
+	while (*sig) {  /* push arguments */
+		switch (*sig++) {
+
+			case 'd':  /* double argument */
+				lua_pushnumber(L, va_arg(vl, double));
+				break;
+
+			case 'i':  /* int argument */
+				lua_pushnumber(L, va_arg(vl, int));
+				break;
+
+			case 's':  /* string argument */
+				lua_pushstring(L, va_arg(vl, char *));
+				break;
+
+			case '>':
+				goto endwhile;
+
+			default:
+				luaL_error(L, "invalid option (%c)", *(sig - 1));
+		}
+		narg++;
+		luaL_checkstack(L, 1, "too many arguments");
+	} endwhile:
+
+	/* do the call */
+	nres = strlen(sig);  /* number of expected results */
+	if (lua_pcall(L, narg, nres, 0) != 0)  /* do the call */
+		luaL_error(L, "error running function `%s': %s",
+				func, lua_tostring(L, -1));
+
+	/* retrieve results */
+	nres = -nres;  /* stack index of first result */
+	while (*sig) {  /* get results */
+		switch (*sig++) {
+
+			case 'd':  /* double result */
+				if (!lua_isnumber(L, nres))
+					luaL_error(L, "wrong result type");
+				*va_arg(vl, double *) = lua_tonumber(L, nres);
+				break;
+
+			case 'i':  /* int result */
+				if (!lua_isnumber(L, nres))
+					luaL_error(L, "wrong result type");
+				*va_arg(vl, int *) = (int)lua_tonumber(L, nres);
+				break;
+
+			case 's':  /* string result */
+				if (!lua_isstring(L, nres))
+					luaL_error(L, "wrong result type");
+				*va_arg(vl, const char **) = lua_tostring(L, nres);
+				break;
+
+			default:
+				luaL_error(L, "invalid option (%c)", *(sig - 1));
+		}
+		nres++;
+	}
+	va_end(vl);
+	return true;
+}
 
 // returns the output from the last lua script and deletes it from internal buffer
 vector<string> Lua::GetOutput() {
