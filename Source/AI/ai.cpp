@@ -10,6 +10,7 @@
 #include "AI/ai.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/lua.h"
 
 /**\class AI
  * \brief AI controls the non-player shipts.*/
@@ -20,7 +21,8 @@ AI::AI() {
 
 void AI::Update(){
 	// Decide
-	
+	Lua::Call("MoveShip","i>",this->GetID() );
+
 	// Now act like a normal ship
 	this->Ship::Update();
 }

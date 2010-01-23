@@ -44,7 +44,6 @@ function Update()
 			pre_func()
 		end
 	end
-	MoveShips()
 	if #PostSteps >0 then
 		for i,post_func in ipairs(PostSteps) do
 			post_func()
@@ -93,39 +92,51 @@ function newPlan()
 	return theNewPlan
 end
 
--- Create some Random Ships around a Planet
-function CreateShips(number_of_ships, X, Y)
+SHIPS={}
+
+function createShip(X,Y,model)
+	cur_ship = Ship.new(X,Y,model,"blank")
+	cur_ship:SetRadarColor(0,255,0)
+	SHIPS[ cur_ship:GetID() ] = cur_ship
+	return cur_ship
+end
+
+function createRandomShip(X,Y,Range)
 	shiptypes = Epiar.models()
+	X = X + math.random(Range)-Range/2
+	Y = Y + math.random(Range)-Range/2
+	model = shiptypes[math.random(#shiptypes)]
+	s = createShip(X,Y,model)
+	attachRandomWeapon(s)
+	AIPlans[ cur_ship:GetID() ] = newPlan()
+	return s
+end
+
+function attachRandomWeapon(cur_ship)
 	a = {}
 	a[1] = "Missile"
 	a[2] = "Slow Missile"
 	a[3] = "Strong Laser"
 	a[4] = "Minigun"
+	--Randomly assign a weapon to everyone
+	i = math.random(4)
+	cur_ship:AddWeapon( a[i] )
+	cur_ship:AddAmmo( a[i],100 )
+end
 	
+-- Create some Random Ships around a Planet
+function CreateShips(number_of_ships, X, Y)
 	-- Generate Ships
 	for s =1,number_of_ships do
-		cur_ship = Ship.new(
-				math.random(1000)-500+X, -- X
-				math.random(1000)-500+Y, -- Y
-				shiptypes[math.random(#shiptypes)],
-				"chase"                 -- Ship Script
-				)
-		cur_ship:SetRadarColor(0,255,0)
-		AIPlans[ cur_ship:GetID() ] = newPlan()
-		
-		--Randomly assign a weapon to everyone
-		i = math.random(4)
-		cur_ship:AddWeapon( a[i] )
-		cur_ship:AddAmmo( a[i],100 )
+		createRandomShip(X,Y,1000)
 	end
 end
 
+
+
 -- Execute the current plan of each AI
-function MoveShips()
-	ships = Epiar.ships()
-	-- Move Non-Player ships
-	for s =1, #ships do
-		cur_ship = ships[s]
+function MoveShip(id)
+		cur_ship = SHIPS[id]
 		n = cur_ship:GetID()
 		AIPlans[n].plan( cur_ship, AIPlans[n].time )
 		AIPlans[n].time = AIPlans[n].time -1
@@ -133,7 +144,16 @@ function MoveShips()
 		if AIPlans[n].time == 0 then
 			AIPlans[n] = newPlan()
 		end
-	end
+		percent = 0.10
+		if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
+			HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
+			x,y = cur_ship:GetPosition()
+			cur_ship:Explode()
+			for pod = 1,10 do
+				cur_ship = createShip(x,y,"Escape Pod")
+				AIPlans[ cur_ship:GetID() ] = {plan=fleePoint(x,y),time=100}
+			end
+		end
 end
 
 --------------------------------------------------------------------------------
@@ -143,7 +163,7 @@ end
 function planetTraffic()
     planets = Epiar.planets()
     for p=1,#planets do
-        traffic = Planet.Traffic(planets[p])
+        traffic = 1* Planet.Traffic(planets[p])
         x,y = Planet.Position(planets[p])
         CreateShips(traffic,x,y)
     end
