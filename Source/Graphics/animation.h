@@ -30,7 +30,8 @@ class Animation {
 	public:
 		Animation();
 		Animation( string& filename );
-		bool Draw( int x, int y, float ang );
+		bool Update( void );
+		void Draw( int x, int y, float ang );
 		void SetLooping( bool looping ) { this->looping = looping; };
 		bool GetLooping( void ) { return looping; };
 		void Reset( void );
@@ -41,6 +42,7 @@ class Animation {
 		Ani *ani;
 		Uint32 startTime;
 		bool looping;
+		int fnum;
 };
 
 #endif // __h_animation__

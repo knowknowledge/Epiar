@@ -115,11 +115,13 @@ bool Ani::Load( string& filename ) {
  * \brief Animations */
 
 Animation::Animation() {
+	fnum=0;
 	startTime = 0;
 	looping = false;
 }
 
 Animation::Animation( string& filename ) {
+	fnum=0;
 	startTime = 0;
 	looping = false;
 	ani = Ani::Get( filename );
@@ -127,16 +129,16 @@ Animation::Animation( string& filename ) {
 
 // Returns true while animation is still playing - false when animation is over
 // Note: if looping is turned on, the animation will always return true
-bool Animation::Draw( int x, int y, float ang ) {
+bool Animation::Update() {
 	Image *frame = NULL;
 	bool finished = false;
 
 	if( startTime ) {
-		int fnum = (SDL_GetTicks() - startTime) / ani->delay;
+		fnum = (SDL_GetTicks() - startTime) / ani->delay;
 
 		if( fnum > ani->numFrames - 1 ) {
 			if( looping ) {
-				fnum = 0;
+				fnum= 0;
 				startTime = SDL_GetTicks();
 			} else {
 				fnum = ani->numFrames - 1;
@@ -144,19 +146,22 @@ bool Animation::Draw( int x, int y, float ang ) {
 			}
 		}
 
-		frame = &(ani->frames)[fnum];
 	} else {
 		startTime = SDL_GetTicks();
 		frame = &(ani->frames)[0];
 	}
-
-	frame->DrawCentered( x, y, ang );
-
-	return( finished );
+	return finished;
 }
+
+void Animation::Draw( int x, int y, float ang ) {
+	Image* frame = &(ani->frames)[fnum];
+	frame->DrawCentered( x, y, ang );
+}
+
 
 // Resets animation data back to the first frame
 void Animation::Reset( void ) {
+	fnum=0;
 	startTime = 0;
 }
 

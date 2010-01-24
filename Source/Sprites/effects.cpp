@@ -21,14 +21,12 @@ Effect::Effect(Coordinate pos, string filename, bool looping) {
 }
 
 void Effect::Update( void ) {
-
+	if( visual->Update() == true ) {
+		SpriteManager::Instance()->Delete( (Sprite*)this );
+	}
 }
 
 void Effect::Draw( void ) {
-	bool finished;
-	SpriteManager *sprites = SpriteManager::Instance();
 	Coordinate pos = GetWorldPosition();
-	finished = visual->Draw( pos.GetScreenX(), pos.GetScreenY(), 0.0);
-	if(finished && !visual->GetLooping() )
-		sprites->Delete( (Sprite*)this );
+	visual->Draw( pos.GetScreenX(), pos.GetScreenY(), 0.0);
 }

@@ -114,6 +114,7 @@ void Ship::Update( void ) {
 	if( status.isAccelerating == false ) {
 		flareAnimation->Reset();
 	}
+	flareAnimation->Update();
 
 	// Shiw the hits taken as part of the radar color
 	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
