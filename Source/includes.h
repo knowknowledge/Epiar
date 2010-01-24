@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <set>
 #include <time.h>
 #include <assert.h>
 #include <queue>

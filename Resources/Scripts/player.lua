@@ -124,18 +124,40 @@ function addWeapons()
 end
 registerInit(addWeapons)
 
+function coordinateToQuadrant(x,y)
+	qsize = 4096
+	function c2q(z)
+		return math.floor( (z+qsize)/(2*qsize))
+	end
+	return c2q(x),c2q(y)
+end
+
 function createHUD()
+	-- Location Status Bars
+	x,y = PLAYER:GetPosition()
+	qx,qy = coordinateToQuadrant(x,y)
+	pos = HUD.newStatus("Coordinate:",130,1,string.format("( %d , %d )",x,y))
+	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
+
+	-- Weapon and Armor Status Bars
 	hull = HUD.newStatus("HULL:",100,0,1.0)
 	weapons = {}
 	weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if 0==ammo then ammo="---" end
-		weapons[weapon] = HUD.newStatus(weapon..":",130,1,"[ ".. ammo .." ]")
+		weapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. ammo .." ]")
 	end
 end
 registerInit(createHUD)
 
 updateHUD = function ()
+	-- Update Positions
+    x,y = PLAYER:GetPosition()
+	qx,qy = coordinateToQuadrant(x,y)
+	pos:setStatus(string.format("( %d , %d )",x,y))
+	quad:setStatus(string.format("( %d , %d )",qx,qy))
+
+	-- Update Weapons and Armor
 	hull:setStatus(PLAYER:GetHull())
 	weaponsAndAmmo = PLAYER:GetWeapons()
 	cur_weapon = PLAYER:GetCurrentWeapon()

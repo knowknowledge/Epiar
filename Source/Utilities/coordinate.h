@@ -34,6 +34,9 @@ class Coordinate {
 
 		float GetAngle();
 		float GetMagnitude();
+		inline float GetMagnitudeSquared() {
+			return static_cast<float>(m_y*m_y + m_x*m_x );
+		}
 	
 		// Make an SDL Rectangle from coordinates
 		// Use width/height of 0
@@ -55,6 +58,16 @@ class Coordinate {
 	
 			return( false );
 		}//end opterator==
+
+		const bool operator==(const Coordinate other) const {
+			return ( m_x == other.m_x ) && ( m_x == other.m_x );
+		}//end opterator==
+
+		const bool operator<(const Coordinate other) const {
+			if( m_x == other.m_x )
+				return( m_y < other.m_y );
+			return( m_x < other.m_x );
+		}//end opterator<
 	
 		Coordinate operator+=(Coordinate a){
 			m_x += a.m_x;

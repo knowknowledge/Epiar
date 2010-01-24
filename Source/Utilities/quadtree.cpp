@@ -13,11 +13,9 @@
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
-#define MIN_QUAD_SIZE 10.0f
 
-QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
+QuadTree::QuadTree(Coordinate _center, float _radius){
 	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
-	assert(_maxobjects>0);
 	assert(_radius>MIN_QUAD_SIZE/2);
 	for(int t=0;t<4;t++){
 		subtrees[t] = NULL;
@@ -25,12 +23,13 @@ QuadTree::QuadTree(Coordinate _center, float _radius, unsigned int _maxobjects){
 	this->objects = new list<Sprite*>();
 	this->radius = _radius;
 	this->center = _center;
-	this->maxobjects = _maxobjects;
-	this->isLeaf = true;
 	this->objectcount = 0;
+	this->isLeaf = true;
+	this->isDirty = false;
 }
 
 QuadTree::~QuadTree(){
+	delete objects;
 	// Delete the Subtrees (Node)
 	for(int t=0;t<4;t++){
 		if(NULL != (subtrees[t])) delete subtrees[t];
@@ -67,7 +66,7 @@ void QuadTree::Insert(Sprite *obj){
 	} else { // Leaf
 		objects->push_back(obj);
 		// An over Full Leaf should become a Node
-		ReBallance();
+		isDirty=true;
 	}
 	objectcount++;
 }
@@ -84,7 +83,7 @@ bool QuadTree::Delete(Sprite* obj){
 		if(dest==NULL)
 			return( false ); // That branch is empty, nothing to delete.
 		if( dest->Delete(obj) ){
-			ReBallance();
+			isDirty=true;
 			objectcount--;
 			return( true ); // Found that object.
 		} else {
@@ -128,7 +127,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
-	if( (point-center).GetMagnitude() > maxrange){
+	if( (point-center).GetMagnitudeSquared() > maxrange*maxrange){
 		return;
 	}
 
@@ -141,7 +140,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			if( (point - (*i)->GetWorldPosition()).GetMagnitude() < distance ) {
+			if( (point - (*i)->GetWorldPosition()).GetMagnitudeSquared() < distance*distance + (*i)->GetRadarSize()*(*i)->GetRadarSize() ) {
 				nearby->push_back( *i);
 			}
 		}
@@ -163,6 +162,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 			}
 		}
 		objectcount-= outofbounds->size();
+		if(outofbounds->size()) isDirty=true;
 		// Insert any sprites that are inside of this Tree
 		for( i = outofbounds->begin(); i != outofbounds->end(); ++i ) {
 			if( this->Contains((*i)->GetWorldPosition()) ) {
@@ -186,7 +186,7 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 		objectcount-= outofbounds->size();
 	}
 	delete stillinside;
-	ReBallance();
+	if(outofbounds->size()) isDirty=true;
 	// Return any sprites that couldn't be re-inserted
 	return outofbounds;
 }
@@ -208,25 +208,27 @@ void QuadTree::Update(){
 	}
 }
 
-void QuadTree::Draw(){
-	float scale = 8000;
-	float r = scale* radius / 65536.0f;
-	float x = (scale* center.GetX() / 65536.0f) + Video::GetHalfWidth()  -r;
-	float y = (scale* center.GetY() / 65536.0f) + Video::GetHalfHeight() -r;
+void QuadTree::Draw(Coordinate root){
+	// The QuadTree is scaled so that it always fits on the screen.
+	float scale = (Video::GetHalfHeight() > Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) -5;
+	float r = scale* radius / QUADRANTSIZE;
+	float x = (scale* (center-root).GetX() / QUADRANTSIZE) + Video::GetHalfWidth()  -r;
+	float y = (scale* (center-root).GetY() / QUADRANTSIZE) + Video::GetHalfHeight() -r;
 	Video::DrawRect( x,y, 2*r, 2*r, 0,255,0, .1);
 
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
-			if(NULL != (subtrees[t])) subtrees[t]->Draw();
+			if(NULL != (subtrees[t])) subtrees[t]->Draw(root);
 		}
 	} else { // Leaf
 		list<Sprite *>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			Coordinate pos = (*i)->GetWorldPosition();
-			int posx = (scale* (float)pos.GetX() / 65536.0f) + (float)Video::GetHalfWidth();
-			int posy = (scale* (float)pos.GetY() / 65536.0f) + (float)Video::GetHalfHeight();
+			Coordinate pos = (*i)->GetWorldPosition() - root;
+			int posx = (scale* (float)pos.GetX() / QUADRANTSIZE) + (float)Video::GetHalfWidth();
+			int posy = (scale* (float)pos.GetY() / QUADRANTSIZE) + (float)Video::GetHalfHeight();
 			Color col = (*i)->GetRadarColor();
-			Video::DrawCircle( posx, posy, (*i)->GetRadarSize()/17,2, col.r,col.g,col.b );
+			// The 17 is here because it looks nice.  I can't explain why.
+			Video::DrawCircle( posx, posy, 17*(*i)->GetRadarSize()/scale,2, col.r,col.g,col.b );
 		}
 	}
 }
@@ -252,7 +254,7 @@ void QuadTree::CreateSubTree(QuadPosition pos){
 		default: assert(0);
 	}
 	assert(subtrees[pos]==NULL);
-	subtrees[pos] = new QuadTree(center+offset,half,maxobjects);
+	subtrees[pos] = new QuadTree(center+offset,half);
 	assert(subtrees[pos]!=NULL);
 }
 
@@ -268,7 +270,7 @@ void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
 	list<Sprite*>::iterator i;
 	
-	if( isLeaf && numObjects>maxobjects && radius>MIN_QUAD_SIZE){
+	if( isDirty && isLeaf && numObjects>QUADMAXOBJECTS && radius>MIN_QUAD_SIZE){
 		//cout << "LEAF at "<<center<<" is becoming a NODE.\n";
 		isLeaf = false;
 
@@ -279,7 +281,7 @@ void QuadTree::ReBallance(){
 		}
 		assert(!isLeaf); // Still a Node
 		this->objects->clear();
-	} else if(!isLeaf && numObjects<=maxobjects ){
+	} else if(isDirty && !isLeaf && numObjects<=QUADMAXOBJECTS ){
 		assert(0 == objects->size()); // The Leaf list should be empty
 		//cout << "NODE at "<<center<<" is becoming a LEAF.\n";
 		isLeaf = true;
@@ -296,5 +298,17 @@ void QuadTree::ReBallance(){
 		}
 		assert(isLeaf); // Still a Leaf
 	}
+	// ReBallance the subtrees
+	for(int t=0;t<4;t++){
+		if(NULL != (subtrees[t])){
+			if(subtrees[t]->Count()==0){
+				delete subtrees[t];
+				subtrees[t] = NULL;
+			} else {
+				subtrees[t]->ReBallance();
+			}
+		}
+	}
+	isDirty=false;
 	assert(numObjects == this->Count()); // ReBallancing should never change the total number of elements
 }

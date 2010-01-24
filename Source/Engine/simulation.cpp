@@ -112,7 +112,7 @@ bool Simulation::Run( void ) {
 		quit = inputs.Update();
 		
 		if( !paused ) {
-			Lua::Update();
+			Lua::Call("Update");
 			// Update cycle
 			starfield.Update();
 			camera->Update();

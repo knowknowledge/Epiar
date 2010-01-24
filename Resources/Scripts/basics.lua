@@ -53,45 +53,6 @@ function zigzag(cur_ship,timeleft)
 	cur_ship:Accelerate()
 end
 
-function evacuate(cur_ship, timeleft)
-	x,y = cur_ship:GetPosition()
-	for s =1,number_of_ships do
-		cur_ship = Ship.new(
-				math.random(1000)-500+X, -- X
-				math.random(1000)-500+Y, -- Y
-				shiptypes[math.random(#shiptypes)],
-				"chase"                 -- Ship Script
-				)
-		AIPlans[ cur_ship:GetID() ] = newPlan()
-	end
-end
-
-function evacuateCheck(percent)
-	function evacuate()
-		ships = Epiar.ships()
-		-- Move Non-Player ships
-		for s =1, #ships do
-			cur_ship = ships[s]
-			n = cur_ship:GetID()
-			if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
-				HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
-				x,y = cur_ship:GetPosition()
-				cur_ship:Explode()
-				for pod = 1,10 do
-					cur_ship = Ship.new(
-							math.random(10)-5+x, -- X
-							math.random(10)-5+y, -- Y
-							"Escape Pod",
-							"Escaping"                 -- Ship Script
-							)
-					AIPlans[ cur_ship:GetID() ] = {plan=fleePoint(x,y),time=100}
-				end
-			end
-		end
-	end
-	return evacuate
-end
-
 function moreTraffic(tickcycle)
 	ticks = tickcycle
 	function traffic()
@@ -129,7 +90,6 @@ end
 -- Register the Basics
 registerPlan(zigzag)
 registerPlan(chasePlayer)
-registerPostStep(evacuateCheck(.10))
 registerPostStep(boundingClosure(2000,300))
 registerPostStep(moreTraffic(1000))
 

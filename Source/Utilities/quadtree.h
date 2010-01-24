@@ -13,16 +13,23 @@
 #include "includes.h"
 #include "Sprites/sprite.h"
 
+#define MIN_QUAD_SIZE 10.0f
+#define QUADRANTSIZE 4096.0f
+#define QUADMAXOBJECTS 3
+
 enum QuadPosition{ UPPER_LEFT, UPPER_RIGHT,
                    LOWER_LEFT, LOWER_RIGHT };
 
 class QuadTree {
 	public:
-		QuadTree(Coordinate center, float radius, unsigned int maxobjects);
+		QuadTree(Coordinate center, float radius);
 		~QuadTree();
 
 		unsigned int Count();
+		const Coordinate GetCenter() {return center;}
+
 		bool Contains(Coordinate point);
+		inline bool PossiblyNear(Coordinate, float distance);
 
 		void Insert(Sprite* obj);
 		bool Delete(Sprite* obj);
@@ -32,22 +39,38 @@ class QuadTree {
 		list<Sprite*> *FixOutOfBounds();
 
 		void Update();
-		void Draw();
+		void Draw(Coordinate root);
+		void ReBallance();
 
 	private:
 		QuadPosition SubTreeThatContains(Coordinate point);
 		void CreateSubTree(QuadPosition pos);
 		void InsertSubTree(Sprite* obj);
 
-		void ReBallance();
-
 		QuadTree* subtrees[4];
 		list<Sprite*> *objects;
 		Coordinate center;
 		float radius;
-		unsigned int maxobjects;
 		unsigned int objectcount;
-		bool isLeaf;
+		union{
+			// Unnamed struct so that these flags can be accessed directly
+			struct{
+				Uint32 isLeaf:1;
+				Uint32 isDirty:1;
+				Uint32 extra:30;
+			};
+			Uint32 flags;
+		};
 };
+
+inline bool QuadTree::PossiblyNear(Coordinate point, float distance) {
+	// The Maximum range is when the center and point are on a 45 degree angle.
+	//   Root-2 of the radius + the distance
+	// If the distance to the point is greater than the max range,
+	//   then no collisions are possible
+	// Math should be done in square-space to save time.
+	const float maxrange = 1.42f*radius + distance;
+	return( (point-center).GetMagnitudeSquared() <= maxrange*maxrange );
+}
 
 #endif // __h_quadtree__

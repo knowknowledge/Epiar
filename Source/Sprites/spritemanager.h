@@ -12,6 +12,7 @@
 #include "Sprites/sprite.h"
 #include "Utilities/quadtree.h"
 
+
 class SpriteManager {
 	public:
 		static SpriteManager *Instance();
@@ -28,11 +29,15 @@ class SpriteManager {
 		list<Sprite*> *GetSprites();
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
+		Coordinate GetQuadrantCenter( Coordinate point );
+		int GetNumQuadrants() { return trees.size(); }
+		int GetNumSprites();
+
 	protected:
 		SpriteManager();
 	private:
 		// Use the tree when referring to the sprites at a location.
-        QuadTree *tree;
+        map<Coordinate,QuadTree*> trees;
 		// Use the list when referring to all sprites.
 		list<Sprite*> *spritelist;
 		// Use the map when referring to sprites by their unique ID.
@@ -41,6 +46,7 @@ class SpriteManager {
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
 		bool DeleteSprite( Sprite *sprite );
+		QuadTree* GetQuadrant( Coordinate point );
 };
 
 #endif // __H_SPRITEMANAGER__

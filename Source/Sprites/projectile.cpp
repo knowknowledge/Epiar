@@ -50,7 +50,7 @@ void Projectile::Update( void ) {
 	SpriteManager *sprites = SpriteManager::Instance();
 	int numImpacts = 0;
 	
-	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 50 );
+	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 5 );
 	if( impacts->size() > 1) {
 		list<Sprite *>::iterator i;
 		for( i = impacts->begin(); i != impacts->end(); ++i ) {
