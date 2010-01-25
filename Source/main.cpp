@@ -54,7 +54,7 @@ int main( int argc, char **argv ) {
 	//******** FreeType Rendering ********
 	//TODO: find gpl-compatible ttf versions of the normal fonts
 	Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-	Vera10      = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	Vera10      = (Font*)new FreeFont( "Resources/Fonts/visitor2.ttf" );
 	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
 	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
 
