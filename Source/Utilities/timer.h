@@ -9,27 +9,26 @@
 #ifndef __h_timer__
 #define __h_timer__
 
+#define LOGIC_FPS 50.0
+
 #include "includes.h"
 
 class Timer {
 	public:
-		static Timer *Instance();
-		static void Update( void );
+		static void Initialize( void );
+		static int Update( void );
 		static void Delay( void );
 		static Uint32 GetTicks( void );
 		
 		static float GetDelta( void );
 	
-	protected:
-		Timer();
-  		Timer( const Timer & );
-  		Timer& operator= (const Timer&);
-  	
   	private:
-  		static Timer *pInstance;
   		static Uint32 lastLoopLength;
   		static Uint32 lastLoopTick;
 		static Uint32 ticksPerFrame;
+		static int frame;
+		static double virtualTime;
+		static float logicFPS;
 };
 
 #endif // __h_timer__
