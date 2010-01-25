@@ -60,6 +60,7 @@ void Timer::Delay( void ) {
 }
 
 float Timer::GetDelta( void ) {
-	return( static_cast<float>(lastLoopLength / 1000. ));
+	return 1. / Timer::logicFPS;
+	//return( static_cast<float>(lastLoopLength / 1000. ));
 }
 
