@@ -10,8 +10,8 @@ Epiar_SOURCES = Source/main.cpp Source/AI/ai.cpp Source/AI/ai_lua.cpp Source/Inp
                 Source/Utilities/camera.cpp Source/Utilities/cmath.cpp Source/Utilities/coordinate.cpp \
                 Source/Utilities/hashtbl.cpp Source/Utilities/filesystem.cpp Source/Utilities/log.cpp \
                 Source/Utilities/timer.cpp Source/Utilities/trig.cpp Source/Utilities/vector.cpp \
-                Source/UI/ui_widget.cpp Source/UI/ui_window.cpp Source/UI/ui_lua.cpp Source/UI/ui.cpp Source/Graphics/afont/afont_base.cpp \
-                Source/Graphics/afont/afont_gl.cpp Source/Graphics/animation.cpp Source/Graphics/font.cpp Source/Graphics/image.cpp \
+                Source/UI/ui_widget.cpp Source/UI/ui_window.cpp Source/UI/ui_lua.cpp Source/UI/ui.cpp \
+                Source/Graphics/animation.cpp Source/Graphics/font.cpp Source/Graphics/image.cpp \
                 Source/Graphics/video.cpp Source/Utilities/lua.cpp Source/Utilities/xml.cpp \
                 Source/Utilities/file.cpp Source/UI/ui_button.cpp Source/UI/ui_label.cpp Source/UI/ui_picture.cpp Source/Utilities/debug.cpp \
                 Source/Engine/console.cpp Source/Engine/quadrant.cpp Source/UI/ui_textbox.cpp Source/Utilities/quadtree.cpp Source/Sprites/effects.cpp \
