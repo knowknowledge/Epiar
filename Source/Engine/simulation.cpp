@@ -135,7 +135,7 @@ bool Simulation::Run( void ) {
 		// Draw cycle
 		starfield.Draw();
 		sprites->Draw();
-		Hud::Draw( sprites );
+		Hud::Draw();
 		UI::Draw();
 		Video::Update();
 		

@@ -11,7 +11,6 @@
 
 #include "Graphics/image.h"
 #include "includes.h"
-#include "Sprites/spritemanager.h"
 #include "Utilities/lua.h"
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"
@@ -50,7 +49,7 @@ class Hud {
 		static Hud *Instance();
 
 		static void Update( void );
-		static void Draw( SpriteManager *sprites );
+		static void Draw( void );
 		
 		static void Alert( const char *, ... );
 		
@@ -67,7 +66,7 @@ class Hud {
 
 	private:
 		static void DrawShieldIntegrity();
-		static void DrawRadarNav( SpriteManager *sprites );
+		static void DrawRadarNav( void );
 		static void DrawMessages();
 		static void DrawFPS();
 		static void DrawStatusBars();
@@ -82,7 +81,7 @@ class Hud {
 class Radar {
 	public:
 		Radar( void );
-		static void Draw( SpriteManager *sprites );
+		static void Draw( void );
 		static void SetVisibility( int visibility );
 		static int GetVisibility() { return visibility;}
 	

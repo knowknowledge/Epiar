@@ -13,6 +13,7 @@
 #include "Engine/simulation.h"
 #include "Graphics/video.h"
 #include "Sprites/player.h"
+#include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 
@@ -118,9 +119,9 @@ void Hud::Update( void ) {
 	Console::Update();
 }
 
-void Hud::Draw( SpriteManager *sprites ) {
+void Hud::Draw( void ) {
 	Hud::DrawShieldIntegrity();
-	Hud::DrawRadarNav( sprites );
+	Hud::DrawRadarNav();
 	Hud::DrawMessages();
 	Console::Draw();
 	Hud::DrawFPS();
@@ -186,10 +187,10 @@ void Hud::DrawShieldIntegrity() {
 	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
 
-void Hud::DrawRadarNav( SpriteManager *sprites ) {
+void Hud::DrawRadarNav( void ) {
 	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	
-	Radar::Draw( sprites );
+	Radar::Draw();
 }
 
 void Hud::Alert( const char *message, ... )
@@ -326,12 +327,12 @@ void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
 }
 
-void Radar::Draw( SpriteManager *sprites ) {
+void Radar::Draw( void ) {
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	list<Sprite*> *spriteList = sprites->GetSpritesNear(Player::Instance()->GetWorldPosition(), (float)visibility);
+	list<Sprite*> *spriteList = SpriteManager::Instance()->GetSpritesNear(Player::Instance()->GetWorldPosition(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
 		Coordinate blip;
