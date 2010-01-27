@@ -24,7 +24,6 @@ extern "C" {
 
 #include "includes.h"
 #include "Sprites/sprite.h"
-#include "Sprites/spritemanager.h"
 #include "Utilities/coordinate.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
@@ -93,8 +92,6 @@ class Planets {
 		
 		bool Load( string filename );
 		
-		void RegisterAll( SpriteManager *sprites );
-
 	protected:
 		Planets() {};
 		Planets( const Planets & );

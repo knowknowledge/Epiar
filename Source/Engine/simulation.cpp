@@ -91,9 +91,6 @@ bool Simulation::Run( void ) {
 	// Focus the camera on the sprite
 	camera->Focus( player->GetSprite() );
 
-	// Add the planets
-	planets->RegisterAll( sprites );
-
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
 	{

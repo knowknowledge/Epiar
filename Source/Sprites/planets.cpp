@@ -10,6 +10,7 @@
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+#include "Sprites/spritemanager.h"
 
 /**\class Planets
  * \brief Planets. */
@@ -26,28 +27,16 @@ Planets *Planets::Instance( void ) {
 bool Planets::Load( string filename ) {
 	Parser<cPlanet> parser;
 	
+	SpriteManager* sprites = SpriteManager::Instance();
 	planets = parser.Parse( filename, "planets", "planet" );
 
 	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
 		(*i)->_dbg_PrintInfo();
+		sprites->Add( (*i) );
 	}
 
 	return true;
 }
-
-// Adds all planets in the manager (this, Planets) to the spritelist
-void Planets::RegisterAll( SpriteManager *sprites ) {
-	if( !sprites ) {
-		Log::Warning( "Invalid spritelist passed to planets manager." );
-		
-		return;
-	}
-
-	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		sprites->Add( (*i) );
-	}	
-}
-
 
 void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
