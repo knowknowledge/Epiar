@@ -58,7 +58,6 @@ function moreTraffic(tickcycle)
 	function traffic()
 		ticks = ticks -1
 		if ticks == 0 then
-			HUD.newAlert("More ships are launching.")
 			planetTraffic()
 			ticks = tickcycle
 		end
@@ -90,6 +89,6 @@ end
 -- Register the Basics
 registerPlan(zigzag)
 registerPlan(chasePlayer)
-registerPostStep(boundingClosure(2000,300))
+--registerPostStep(boundingClosure(2000,300))
 registerPostStep(moreTraffic(1000))
 

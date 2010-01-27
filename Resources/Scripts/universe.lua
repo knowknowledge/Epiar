@@ -163,9 +163,13 @@ end
 function planetTraffic()
     planets = Epiar.planets()
     for p=1,#planets do
-        traffic = 1* Planet.Traffic(planets[p])
-        x,y = Planet.Position(planets[p])
-        CreateShips(traffic,x,y)
+        expectedTraffic = 1* planets[p]:Traffic()
+        x,y = planets[p]:Position()
+		currentTraffic = #(Epiar.ships(x,y,2000))
+		if currentTraffic < expectedTraffic then
+			HUD.newAlert((expectedTraffic-currentTraffic).." ships launched from ".. planets[p]:Name())
+			CreateShips(expectedTraffic-currentTraffic,x,y)
+		end
     end
 end
 
