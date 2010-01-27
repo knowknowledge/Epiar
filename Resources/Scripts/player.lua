@@ -87,11 +87,27 @@ function keyhelp()
 	end
 end
 
+function targetClosestShip()
+	x,y = PLAYER:GetPosition()
+	nearby = Epiar.ships(x,y,2000)
+	HUD.newAlert("Selecting the closest Ship: "..nearby[1]:GetID().." a "..nearby[1]:GetModelName().."\n")
+	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
+end
+
+function targetClosestPlanet()
+	x,y = PLAYER:GetPosition()
+	nearby = Epiar.planets(x,y,2000)
+	HUD.newAlert("Selecting the closest Planet: "..nearby[1]:Name().."\n")
+	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
+end
+
 function createWindows()
 	Epiar.RegisterKey('s',KEYTYPED,"store()")
 	Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 	Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 	Epiar.RegisterKey('k', KEYTYPED, "chooseKeys()" )
+	Epiar.RegisterKey('t', KEYTYPED, "targetClosestShip()" )
+	Epiar.RegisterKey('l', KEYTYPED, "targetClosestPlanet()" )
 	-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
 	-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
 	-- focus, the UI will pass the typed event down the chain and pause should reach it eventually

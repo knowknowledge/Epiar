@@ -109,6 +109,7 @@ class Planets_Lua {
 		static cPlanet **checkPlanet(lua_State *L, int index);
 
 		static int GetName(lua_State* L);
+		static int GetID(lua_State* L);
 		static int GetPosition(lua_State* L);
 		static int GetAlliance(lua_State* L);
 		static int GetTraffic(lua_State* L);

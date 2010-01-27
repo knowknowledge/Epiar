@@ -35,6 +35,7 @@
  * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
 list<StatusBar*> Hud::Bars;
+int Hud::targetID = -1;
 
 int Radar::visibility = 7000;
 
@@ -120,6 +121,7 @@ void Hud::Update( void ) {
 }
 
 void Hud::Draw( void ) {
+	Hud::DrawTarget();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav();
 	Hud::DrawMessages();
@@ -193,6 +195,18 @@ void Hud::DrawRadarNav( void ) {
 	Radar::Draw();
 }
 
+void Hud::DrawTarget( void ) {
+	Sprite* target = SpriteManager::Instance()->GetSpriteByID( targetID );
+	if(target != NULL) {
+		int x = target->GetWorldPosition().GetScreenX();
+		int y = target->GetWorldPosition().GetScreenY();
+		int r = target->GetRadarSize();
+		Color c = target->GetRadarColor();
+	
+		Video::DrawTarget(x,y,r,r,5,c.r,c.g,c.b);
+	}
+}
+
 void Hud::Alert( const char *message, ... )
 {
 	va_list args;
@@ -222,6 +236,8 @@ void Hud::RegisterHud(lua_State *L) {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
 		{"newAlert", &Hud::newAlert},
+		{"getTarget", &Hud::getTarget},
+		{"setTarget", &Hud::setTarget},
 		{NULL, NULL}
 	};
 
@@ -314,6 +330,19 @@ int Hud::closeStatus(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
 	DeleteStatus(*bar);
+	return 0;
+}
+
+int Hud::getTarget(lua_State *L) {
+	lua_pushinteger(L, targetID );
+	return 1;
+}
+
+int Hud::setTarget(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
+	targetID = luaL_checkint(L,1);
 	return 0;
 }
 

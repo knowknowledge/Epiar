@@ -63,6 +63,8 @@ class Hud {
 		static int newStatus(lua_State *L);
 		static int setStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
+		static int getTarget(lua_State *L);
+		static int setTarget(lua_State *L);
 
 	private:
 		static void DrawShieldIntegrity();
@@ -70,12 +72,14 @@ class Hud {
 		static void DrawMessages();
 		static void DrawFPS();
 		static void DrawStatusBars();
+		static void DrawTarget();
 	
 		static Hud *pInstance;
 		
 		static list<AlertMessage> AlertMessages;
 
 		static list<StatusBar*> Bars;
+		static int targetID;
 };
 
 class Radar {
