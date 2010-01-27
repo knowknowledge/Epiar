@@ -230,6 +230,25 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 	glEnd();
 }
 
+void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b ) {
+	// d is for 'depth' and is the number of crosshair pixels
+	glColor3f(r,g,b);
+	glBegin(GL_LINES);
+		// Upper Left Corner
+		glVertex2d(x-w/2,y-h/2); glVertex2d(x-w/2,y-h/2+d);
+		glVertex2d(x-w/2,y-h/2); glVertex2d(x-w/2+d,y-h/2);
+		// Upper Right Corner
+		glVertex2d(x+w/2,y-h/2); glVertex2d(x+w/2,y-h/2+d);
+		glVertex2d(x+w/2,y-h/2); glVertex2d(x+w/2-d,y-h/2);
+		// Lower Left Corner
+		glVertex2d(x-w/2,y+h/2); glVertex2d(x-w/2,y+h/2-d);
+		glVertex2d(x-w/2,y+h/2); glVertex2d(x-w/2+d,y+h/2);
+		// Lower Right Corner
+		glVertex2d(x+w/2,y+h/2); glVertex2d(x+w/2,y+h/2-d);
+		glVertex2d(x+w/2,y+h/2); glVertex2d(x+w/2-d,y+h/2);
+	glEnd();
+}
+
 void Video::EnableMouse( void ) {
 	SDL_ShowCursor( 1 );
 }

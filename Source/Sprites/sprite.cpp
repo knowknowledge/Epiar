@@ -56,6 +56,7 @@ void Sprite::Draw( void ) {
 	
 	if( image ) {
 		image->DrawCentered( wx, wy, angle );
+		Video::DrawTarget(wx,wy,radarSize,radarSize,5,radarColor.r,radarColor.g,radarColor.b);
 	} else {
 		Log::Warning( "Attempt to draw a sprite before an image was assigned." );
 	}

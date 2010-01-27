@@ -74,6 +74,7 @@ class Video {
 		static void DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b);
 		static void DrawCircle( Coordinate c, int radius, float line_width, Color col);
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b);
+		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b );
 
  	protected:
  		Video();
