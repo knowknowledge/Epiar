@@ -20,12 +20,12 @@ class Font {
 			virtual bool SetFont( string filename ) = 0;
 			virtual Rectangle Render( int x, int y, const char *text ) = 0;
 			virtual Rectangle RenderCentered( int x, int y, const char *text ) = 0;
-			void SetColor( float r, float g, float b );
+			void SetColor( float r, float g, float b, float a=1.0f );
 
 
 		private:
 			string fontname; // filename of the loaded font
-			float r, g, b; // color of text
+			float r, g, b, a; // color of text
 			int height,width,base;
 
 			friend class AFont;

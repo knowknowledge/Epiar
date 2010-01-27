@@ -103,7 +103,10 @@ bool Simulation::Run( void ) {
 	// Create the hud
 	Hud::Hud();
 
-	Hud::Alert( "Captain, we don't have the power! Pow = %d", 3 );
+	// Message appear in reverse order, so this is upside down
+	Hud::Alert("-----------------------------------");
+	Hud::Alert("Please Report all bugs to epiar.net");
+	Hud::Alert("Epiar is currently under development.");
 
 	fpsTS = Timer::GetTicks();
 	// main game loop

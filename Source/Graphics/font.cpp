@@ -21,12 +21,14 @@ Font::Font() {
 	r = 1.;
 	g = 1.;
 	b = 1.;
+	a = 1.;
 }
 
-void Font::SetColor( float r, float g, float b ) {
+void Font::SetColor( float r, float g, float b, float a ) {
 	this->r = r;
 	this->g = g;
 	this->b = b;
+	this->a = a;
 }
 
 // FreeFont
@@ -72,7 +74,7 @@ Rectangle FreeFont::Render( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
 
-	glColor4f( r, g, b, 1. );
+	glColor4f( r, g, b, a );
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1); 
 	

@@ -16,7 +16,8 @@
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 
-#define ALERT_DELAY 3500
+#define ALERT_FADE 2500
+#define ALERT_DROP 3500
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
 /* Location on screen of hull integrity bar (x,y) coord is top-left */
@@ -43,7 +44,7 @@ AlertMessage::AlertMessage( string message, Uint32 start )
 }
 
 bool MessageExpired(const AlertMessage& msg){
-	return (Timer::GetTicks() - msg.start > ALERT_DELAY);
+	return (Timer::GetTicks() - msg.start > ALERT_DROP);
 }
 
 void StatusBar::Draw(int x, int y) {
@@ -131,10 +132,16 @@ void Hud::DrawMessages() {
 	int j;
 	int now = Timer::GetTicks();
 	list<AlertMessage>::iterator i;
+	int age;
 	for( i= AlertMessages.begin(), j=1; i != AlertMessages.end(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
-		if(now - (*i).start < ALERT_DELAY)
-			Vera10->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
+		age = now - (*i).start;
+		if(age > ALERT_FADE){
+			Vera10->SetColor(1.f,1.f,1.f, 1.f - float((age-ALERT_FADE))/float(ALERT_DROP-ALERT_FADE) );
+		} else {
+			Vera10->SetColor(1.f,1.f,1.f,1.f);
+		}
+		Vera10->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
 	}
 }
 
@@ -142,6 +149,7 @@ void Hud::DrawMessages() {
 void Hud::DrawFPS() {
 	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
+	Vera10->SetColor(1.f,1.f,1.f,1.f);
 	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
 	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 
@@ -164,6 +172,7 @@ void::Hud::DrawStatusBars() {
 		Coordinate(0,barHeight), Coordinate(0,barHeight),
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
 
+	Vera10->SetColor(1.f,1.f,1.f,1.f);
 	// 
 	list<StatusBar*>::iterator i;
 	for( i= Bars.begin(); i != Bars.end(); ++i ){
