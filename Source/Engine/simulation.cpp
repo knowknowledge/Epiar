@@ -72,6 +72,8 @@ bool Simulation::Run( void ) {
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 
+	Timer::Update(); // Start the Timer
+
 	// Grab the camera and give it coordinates
 	Camera *camera = Camera::Instance();
 	camera->Focus(0, 0);
