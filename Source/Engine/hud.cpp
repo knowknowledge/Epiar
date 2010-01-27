@@ -19,6 +19,7 @@
 
 #define ALERT_FADE 2500
 #define ALERT_DROP 3500
+#define TARGET_ZOOM_TIME 500
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
 /* Location on screen of hull integrity bar (x,y) coord is top-left */
@@ -36,6 +37,7 @@
 list<AlertMessage> Hud::AlertMessages;
 list<StatusBar*> Hud::Bars;
 int Hud::targetID = -1;
+int Hud::timeTargeted = 0;
 
 int Radar::visibility = 7000;
 
@@ -202,6 +204,10 @@ void Hud::DrawTarget( void ) {
 		int y = target->GetWorldPosition().GetScreenY();
 		int r = target->GetRadarSize();
 		Color c = target->GetRadarColor();
+
+		if( Timer::GetTicks() - timeTargeted < TARGET_ZOOM_TIME ) {
+			r += Video::GetHalfHeight() - Video::GetHalfHeight()*(Timer::GetTicks()-timeTargeted)/TARGET_ZOOM_TIME;
+		}
 	
 		Video::DrawTarget(x,y,r,r,5,c.r,c.g,c.b);
 	}
@@ -343,6 +349,7 @@ int Hud::setTarget(lua_State *L) {
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
 	targetID = luaL_checkint(L,1);
+	timeTargeted = Timer::GetTicks();
 	return 0;
 }
 

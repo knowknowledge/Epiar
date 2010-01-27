@@ -80,6 +80,7 @@ class Hud {
 
 		static list<StatusBar*> Bars;
 		static int targetID;
+		static int timeTargeted;
 };
 
 class Radar {
