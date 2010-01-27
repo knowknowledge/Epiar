@@ -37,7 +37,7 @@ class SpriteManager {
 		SpriteManager();
 	private:
 		// Use the tree when referring to the sprites at a location.
-        map<Coordinate,QuadTree*> trees;
+		map<Coordinate,QuadTree*> trees;
 		// Use the list when referring to all sprites.
 		list<Sprite*> *spritelist;
 		// Use the map when referring to sprites by their unique ID.

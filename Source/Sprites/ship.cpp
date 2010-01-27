@@ -82,7 +82,7 @@ void Ship::Rotate( float direction ) {
 	}
 	
 	// Normalize
-    angle = normalizeAngle(angle);
+	angle = normalizeAngle(angle);
 	
 	SetAngle( angle );
 }

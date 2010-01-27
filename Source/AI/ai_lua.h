@@ -19,8 +19,8 @@ class AI_Lua{
 	public:
 		// Functions to communicate with Lua
 		static void RegisterAI(lua_State *L);
-        static AI **pushShip(lua_State *L);
-        static AI **checkShip(lua_State *L, int index);
+		static AI **pushShip(lua_State *L);
+		static AI **checkShip(lua_State *L, int index);
 		static int newShip(lua_State *L);
 
 		// Actions

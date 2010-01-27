@@ -108,9 +108,9 @@ class Planets {
 class Planets_Lua {
 	public:
 		static void RegisterPlanets(lua_State *L);
-        static cPlanet **pushPlanet(lua_State *L);
-        static cPlanet **checkPlanet(lua_State *L, int index);
-		
+		static cPlanet **pushPlanet(lua_State *L);
+		static cPlanet **checkPlanet(lua_State *L, int index);
+
 		static int GetName(lua_State* L);
 		static int GetPosition(lua_State* L);
 		static int GetAlliance(lua_State* L);

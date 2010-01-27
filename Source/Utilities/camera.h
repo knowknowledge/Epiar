@@ -44,20 +44,20 @@ class Camera {
 
 	protected:
 		Camera();
-  		Camera( const Camera & );
-  		Camera& operator= (const Camera&);
+		Camera( const Camera & );
+		Camera& operator= (const Camera&);
 
- 	private:
-  		static Camera *pInstance;
+	private:
+		static Camera *pInstance;
 		int cameraShakeDur;
 		int cameraShakeXOffset;
 		int cameraShakeYOffset;
 		int cameraShakeXDec;
 		int cameraShakeYDec;
 		Sprite *focusSprite; // focused on sprite - always favored, use NULL to set camera to static locations
-  		double x, y; // point where camera is looking
-  		double dx, dy; // the difference in the current and last camera position
-  					// (this is used by Starfield)
+		double x, y; // point where camera is looking
+		double dx, dy; // the difference in the current and last camera position
+		               // (this is used by Starfield)
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
 		void UpdateShake();

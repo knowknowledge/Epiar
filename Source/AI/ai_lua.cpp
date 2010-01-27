@@ -71,17 +71,17 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 AI **AI_Lua::pushShip(lua_State *L){
 	AI **s = (AI **)lua_newuserdata(L, sizeof(AI*));
-    *s = NULL;
-    luaL_getmetatable(L, EPIAR_SHIP);
-    lua_setmetatable(L, -2);
-    return s;
+	*s = NULL;
+	luaL_getmetatable(L, EPIAR_SHIP);
+	lua_setmetatable(L, -2);
+	return s;
 }
 
 AI **AI_Lua::checkShip(lua_State *L, int index){
-  AI **ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
-  //luaL_argcheck(L, ai != NULL, index, "`EPIA_SHIP' expected");
-  //if (ai == NULL) luaL_typerror(L, index, EPIAR_SHIP);
-  return ai;
+	AI **ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
+	//luaL_argcheck(L, ai != NULL, index, "`EPIA_SHIP' expected");
+	//if (ai == NULL) luaL_typerror(L, index, EPIAR_SHIP);
+	return ai;
 }
 
 int AI_Lua::newShip(lua_State *L){
@@ -117,7 +117,7 @@ int AI_Lua::ShipAccelerate(lua_State* L){
 	if (n == 1) {
 		AI** ai= (AI**)lua_touserdata(L, 1);
 		luaL_argcheck(L, ai != NULL, 1, "`array' expected");
-        (*ai)->Accelerate();
+		(*ai)->Accelerate();
 	}
 	else
 		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
@@ -131,7 +131,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 	if (n == 2) {
 		AI** ai = checkShip(L,1);
 		float dir = static_cast<float>( luaL_checknumber(L, 2) );
-        (*ai)->Rotate(dir);
+		(*ai)->Rotate(dir);
 	}
 	else
 		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
@@ -335,8 +335,8 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 	map<Weapon*,int> weaponPack = (*ai)->getWeaponsAndAmmo();
 	map<Weapon*,int>::iterator it = weaponPack.begin();
 
-    lua_createtable(L, weaponPack.size(), 0);
-    int newTable = lua_gettop(L);
+	lua_createtable(L, weaponPack.size(), 0);
+	int newTable = lua_gettop(L);
 	while( it!=weaponPack.end() ) {
 		lua_pushfstring(L, ((*it).first)->GetName().c_str() ); // KEY
 		lua_pushinteger(L, (*it).second ); // Value

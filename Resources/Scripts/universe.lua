@@ -7,7 +7,7 @@ PLAYER = Epiar.player()
 
 Init = {}
 function registerInit(step)
-    table.insert(Init,step)
+	table.insert(Init,step)
 end
 
 --------------------------------------------------------------------------------
@@ -15,7 +15,7 @@ end
 
 Plans = {}
 function registerPlan(plan)
-    table.insert(Plans,plan)
+	table.insert(Plans,plan)
 end
 AIPlans = {}
 
@@ -25,17 +25,17 @@ AIPlans = {}
 PreSteps = {}
 PostSteps = {}
 function registerPreStep(step)
-    table.insert(PreSteps,step)
+	table.insert(PreSteps,step)
 end
 function registerPostStep(step)
-    table.insert(PostSteps,step)
+	table.insert(PostSteps,step)
 end
 
 function Start()
 	io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
-    for i,func in ipairs(Init) do
-        func()
-    end
+	for i,func in ipairs(Init) do
+		func()
+	end
 end
 
 function Update()
@@ -88,7 +88,7 @@ function newPlan()
 	theNewPlan = {}
 	planNum = math.random(#Plans)
 	theNewPlan.time = math.random(30)
-    theNewPlan.plan = Plans[ planNum ]
+	theNewPlan.plan = Plans[ planNum ]
 	return theNewPlan
 end
 
@@ -161,16 +161,16 @@ end
 
 -- Create Some ships around the planets
 function planetTraffic()
-    planets = Epiar.planets()
-    for p=1,#planets do
-        expectedTraffic = 1* planets[p]:Traffic()
-        x,y = planets[p]:Position()
+	planets = Epiar.planets()
+	for p=1,#planets do
+		expectedTraffic = 1* planets[p]:Traffic()
+		x,y = planets[p]:Position()
 		currentTraffic = #(Epiar.ships(x,y,2000))
 		if currentTraffic < expectedTraffic then
 			HUD.newAlert((expectedTraffic-currentTraffic).." ships launched from ".. planets[p]:Name())
 			CreateShips(expectedTraffic-currentTraffic,x,y)
 		end
-    end
+	end
 end
 
 function aimCenter(cur_ship,timeleft)

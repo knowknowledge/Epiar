@@ -14,36 +14,36 @@
 #include "Graphics/video.h"
 
 class Font {
- public:
-	Font();
+		public:
+			Font();
 
-	virtual bool SetFont( string filename ) = 0;
-	virtual Rectangle Render( int x, int y, const char *text ) = 0;
-	virtual Rectangle RenderCentered( int x, int y, const char *text ) = 0;
-	void SetColor( float r, float g, float b );
+			virtual bool SetFont( string filename ) = 0;
+			virtual Rectangle Render( int x, int y, const char *text ) = 0;
+			virtual Rectangle RenderCentered( int x, int y, const char *text ) = 0;
+			void SetColor( float r, float g, float b );
 
 
- private:
-	string fontname; // filename of the loaded font
-	float r, g, b; // color of text
-	int height,width,base;
+		private:
+			string fontname; // filename of the loaded font
+			float r, g, b; // color of text
+			int height,width,base;
 
-	friend class AFont;
-	friend class FreeFont;
+			friend class AFont;
+			friend class FreeFont;
 };
 
 
 // Uses the FreeType and FTGL libraries
 class FreeFont: public Font {
- public:
-	FreeFont() { font=NULL; }
-	FreeFont( string filename );
-	~FreeFont();
-	bool SetFont( string filename );
-	Rectangle Render( int x, int y, const char *text );
-	Rectangle RenderCentered( int x, int y, const char *text );
- private:
-	FTTextureFont* font;
+		public:
+			FreeFont() { font=NULL; }
+			FreeFont( string filename );
+			~FreeFont();
+			bool SetFont( string filename );
+			Rectangle Render( int x, int y, const char *text );
+			Rectangle RenderCentered( int x, int y, const char *text );
+		private:
+			FTTextureFont* font;
 };
 
 #endif // H_FONT

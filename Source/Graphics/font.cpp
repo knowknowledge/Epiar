@@ -70,7 +70,7 @@ bool FreeFont::SetFont( string filename ) {
 
 Rectangle FreeFont::Render( int x, int y, const char *text ) {
 	float llx, lly, llz;
-    float urx, ury, urz;
+	float urx, ury, urz;
 
 	glColor4f( r, g, b, 1. );
 	glPushMatrix(); // to save the current matrix
@@ -88,7 +88,7 @@ Rectangle FreeFont::Render( int x, int y, const char *text ) {
 // Renders text centered squarely on (x,y), taking the bounding box into account
 Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
-    float urx, ury, urz;
+	float urx, ury, urz;
 
 	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 

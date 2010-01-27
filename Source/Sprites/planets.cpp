@@ -78,18 +78,18 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 
 cPlanet **Planets_Lua::pushPlanet(lua_State *L){
 	cPlanet **s = (cPlanet **)lua_newuserdata(L, sizeof(cPlanet*));
-    *s = new cPlanet();
-    luaL_getmetatable(L, EPIAR_PLANET);
-    lua_setmetatable(L, -2);
-    return s;
+	*s = new cPlanet();
+	luaL_getmetatable(L, EPIAR_PLANET);
+	lua_setmetatable(L, -2);
+	return s;
 }
 
 cPlanet **Planets_Lua::checkPlanet(lua_State *L, int index){
-  cPlanet **p;
-  luaL_checktype(L, index, LUA_TUSERDATA);
-  p = (cPlanet**)luaL_checkudata(L, index, EPIAR_PLANET);
-  if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
-  return p;
+	cPlanet **p;
+	luaL_checktype(L, index, LUA_TUSERDATA);
+	p = (cPlanet**)luaL_checkudata(L, index, EPIAR_PLANET);
+	if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
+	return p;
 }
 
 int Planets_Lua::GetName(lua_State* L){

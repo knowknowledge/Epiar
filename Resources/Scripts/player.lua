@@ -152,7 +152,7 @@ registerInit(createHUD)
 
 updateHUD = function ()
 	-- Update Positions
-    x,y = PLAYER:GetPosition()
+	x,y = PLAYER:GetPosition()
 	qx,qy = coordinateToQuadrant(x,y)
 	pos:setStatus(string.format("( %d , %d )",x,y))
 	quad:setStatus(string.format("( %d , %d )",qx,qy))
