@@ -51,6 +51,12 @@ void Planets::RegisterAll( SpriteManager *sprites ) {
 
 void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
+		// Normally we would put a "new" function here.
+		// Lua may not ever need to create planets though.
+		{NULL, NULL}
+	};
+
+	static const luaL_Reg PlanetMethods[] = {
 		{"Name", &Planets_Lua::GetName},
 		{"Position", &Planets_Lua::GetPosition},
 		{"Alliance", &Planets_Lua::GetAlliance},
@@ -60,6 +66,12 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_openlib(L, NULL, PlanetMethods,0);
 	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);  
 }
 
