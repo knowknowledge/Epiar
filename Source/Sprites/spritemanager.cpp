@@ -93,7 +93,8 @@ void SpriteManager::Update() {
 }
 
 void SpriteManager::Draw() {
-	GetQuadrant( Player::Instance()->GetWorldPosition() )->Draw( GetQuadrantCenter( Player::Instance()->GetWorldPosition() ) );
+	// UnComment this line When debugging the QuadTree
+	//GetQuadrant( Player::Instance()->GetWorldPosition() )->Draw( GetQuadrantCenter( Player::Instance()->GetWorldPosition() ) );
 
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen = new list<Sprite*>();
