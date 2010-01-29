@@ -47,11 +47,12 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 void SpriteManager::Update() {
 	// Update the sprites inside each quadrant
 	// TODO: Update only the sprites that are in nearby Quadrants
-	map<Coordinate,QuadTree*>::iterator iter;
 	list<Sprite *> all_oob;
-	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
-		iter->second->Update();
-		list<Sprite *>* oob = iter->second->FixOutOfBounds();
+	list<QuadTree*> nearby = GetQuadrantsNear( Player::Instance()->GetWorldPosition(), QUADRANTSIZE*4 );
+	list<QuadTree*>::iterator iter;
+	for ( iter = nearby.begin(); iter != nearby.end(); ++iter ) {
+		(*iter)->Update();
+		list<Sprite *>* oob = (*iter)->FixOutOfBounds();
 		all_oob.splice(all_oob.end(), *oob );
 		delete oob;
 	}
@@ -70,6 +71,15 @@ void SpriteManager::Update() {
 		spritesToDelete.clear();
 	}
 
+	for ( iter = nearby.begin(); iter != nearby.end(); ++iter ) {
+		(*iter)->ReBallance();
+	}
+
+	DeleteEmptyQuadrants();
+}
+
+void SpriteManager::DeleteEmptyQuadrants() {
+	map<Coordinate,QuadTree*>::iterator iter;
 	// Delete QuadTrees that are empty
 	// TODO: Delete QuadTrees that are far away from 
 	list<QuadTree*> emptyTrees;
@@ -87,9 +97,6 @@ void SpriteManager::Update() {
 			trees.erase((*emptyIter)->GetCenter());
 	}
 
-	for ( iter = trees.begin(); iter != trees.end(); ++iter ) {
-		iter->second->ReBallance();
-	}
 }
 
 void SpriteManager::Draw() {
@@ -120,12 +127,11 @@ Sprite *SpriteManager::GetSpriteByID(int id) {
 	return NULL;
 }
 
-list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
-	map<Coordinate,QuadTree*>::iterator iter;
-	list<Sprite*> *sprites = new list<Sprite*>();
-
+list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	// The possibleQuadrants are those trees adjacent and within a radius r
 	// Gather more trees when r is greater than the size of a quadrant
+	map<Coordinate,QuadTree*>::iterator iter;
+	list<QuadTree*> nearbyQuadrants;
 	set<Coordinate> possibleQuadrants;
 	possibleQuadrants.insert( GetQuadrantCenter(c));
 	float R = r;
@@ -140,17 +146,27 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(+R,+R)));
 		R/=2;
 	} while(R>QUADRANTSIZE);
-
-	// Search the possible quadrants
 	set<Coordinate>::iterator it;
 	for(it = possibleQuadrants.begin(); it != possibleQuadrants.end(); ++it) {
 		iter = trees.find(*it);
 		if(iter != trees.end() && iter->second->PossiblyNear(c,r)){
+			nearbyQuadrants.push_back(iter->second);
+		}
+	}
+	return nearbyQuadrants;
+}
+
+list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
+	list<Sprite*> *sprites = new list<Sprite*>();
+	
+	// Search the possible quadrants
+	list<QuadTree*> nearbyQuadrants = GetQuadrantsNear(c,r);
+	list<QuadTree*>::iterator it;
+	for(it = nearbyQuadrants.begin(); it != nearbyQuadrants.end(); ++it) {
 			list<Sprite *>* nearby = new list<Sprite*>;
-			iter->second->GetSpritesNear(c,r,nearby);
+			(*it)->GetSpritesNear(c,r,nearby);
 			sprites->splice(sprites->end(), *nearby);
 			delete nearby;
-		}
 	}
 
 	// Sort sprites by their distance from the coordinate c

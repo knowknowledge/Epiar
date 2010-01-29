@@ -46,7 +46,9 @@ class SpriteManager {
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
 		bool DeleteSprite( Sprite *sprite );
+		void DeleteEmptyQuadrants( void );
 		QuadTree* GetQuadrant( Coordinate point );
+		list<QuadTree*> GetQuadrantsNear( Coordinate c, float r);
 };
 
 #endif // __H_SPRITEMANAGER__
