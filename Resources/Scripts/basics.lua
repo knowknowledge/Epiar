@@ -11,9 +11,13 @@ end
 
 function chaseClosure(targetShip)
 	function plan(cur_ship,timeleft)
+		myx,myy = cur_ship:GetPosition()
 		x,y = targetShip:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		cur_ship:Accelerate()
+		if distfrom(myx,myy,x,y)<200 then
+			cur_ship:Fire()
+		end
 	end
 	return plan 
 end
@@ -35,8 +39,47 @@ function fleePoint(x,y)
 	return plan
 end
 
+function nearestPlanet(cur_ship,timeleft)
+	planets = Epiar.planets()
+	myx,myy = cur_ship:GetPosition()
+	if #planets then
+		x,y = planets[1]:Position()
+		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
+		if distfrom(myx,myy,x,y)>200 then
+			cur_ship:Accelerate()
+		end
+	else
+		cur_ship:Rotate( cur_ship:directionTowards(0, 0) )
+		cur_ship:Accelerate()
+	end
+end
+
+function stop(cur_ship,timeleft)
+	if cur_ship:GetMomentumSpeed() > 1 then
+		cur_ship:Rotate( - cur_ship:directionTowards( cur_ship:GetMomentumAngle() ) )
+	end
+	if math.abs( cur_ship:GetMomentumAngle() - cur_ship:GetAngle() ) < 10 then
+		cur_ship:Accelerate()
+	end
+end
+
+function nearestShip(cur_ship,timeleft)
+	ships= Epiar.ships()
+	if #ships then
+		myx,myy = cur_ship:GetPosition()
+		x,y = ships[1]:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
+		if distfrom(myx,myy,x,y)<200 then
+			cur_ship:Fire()
+		end
+	else
+		cur_ship:Rotate( cur_ship:directionTowards(0, 0) )
+	end
+	cur_ship:Accelerate()
+end
+
 chasePlayer = chaseClosure( PLAYER )
-chasePlayer = fleeClosure( PLAYER )
+fleePlayer = fleeClosure( PLAYER )
 
 -- Zig, Then Zag
 function zigzag(cur_ship,timeleft)
@@ -49,7 +92,6 @@ function zigzag(cur_ship,timeleft)
 	if timeleft % 10 == 5 then
 		cur_ship:ChangeWeapon()
 	end
-	cur_ship:Fire()
 	cur_ship:Accelerate()
 end
 
@@ -87,8 +129,13 @@ function boundingClosure(distance, ticks)
 end
 
 -- Register the Basics
+registerPlan(nearestShip)
+registerPlan(stop)
+registerPlan(aimCenter)
 registerPlan(zigzag)
 registerPlan(chasePlayer)
+registerPlan(fleePlayer)
+registerPlan(nearestPlanet)
 --registerPostStep(boundingClosure(2000,300))
 registerPostStep(moreTraffic(1000))
 

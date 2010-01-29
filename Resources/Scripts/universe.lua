@@ -87,7 +87,7 @@ end
 function newPlan()
 	theNewPlan = {}
 	planNum = math.random(#Plans)
-	theNewPlan.time = math.random(30)
+	theNewPlan.time = math.random(1000)
 	theNewPlan.plan = Plans[ planNum ]
 	return theNewPlan
 end
