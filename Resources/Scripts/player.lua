@@ -36,6 +36,8 @@ commands = {
 	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'t', "Target Ship", "targetClosestShip()",KEYTYPED},
 	{'l', "Target Planet", "targetClosestPlanet()",KEYTYPED},
+	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
+	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
 	{'SPACE', "Fire", "PLAYER:Fire()",KEYPRESSED}
 }
 
@@ -58,7 +60,7 @@ function chooseKeys()
 		keywin:add(labels[i])
 	end
 	if keyhelpwin ~=nil then return end
-	keywin:add(UI.newButton(w/2-120/2, h-38, 120, 30, "Save Changes", "processKeyWin(commands); Epiar.unpause(); keywin:close(); keywin=nil; keyhelpwin:close(); keyhelpwin=nil;"))
+	keywin:add(UI.newButton(w/2-120/2, h-38, 120, 30, "Save Changes", "processKeyWin(commands)"))
 	keywin:add(UI.newButton(10, h-38, 30, 30, "?", "keyhelp()"))
 end
 
@@ -71,6 +73,13 @@ function processKeyWin(commands)
 			HUD.newAlert(string.format("Registered '%s' to %s", keyval, commands[i][2]))
 			commands[i][1] = keyinput[i]:GetText()
 		end
+	end
+	Epiar.unpause()
+	keywin:close()
+	keywin=nil
+	if keyhelpwin then
+		keyhelpwin:close()
+		keyhelpwin=nil
 	end
 end
 

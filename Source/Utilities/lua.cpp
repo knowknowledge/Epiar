@@ -206,6 +206,7 @@ void Lua::RegisterFunctions() {
 		{"ispaused", &Lua::ispaused},
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
+		{"focusCamera", &Lua::focusCamera},
 		{"models", &Lua::getModelNames},
 		{"weapons", &Lua::getWeaponNames},
 		{"getSprite", &Lua::getSpriteByID},
@@ -263,6 +264,18 @@ int Lua::shakeCamera(lua_State *L){
 		Camera *pInstance = Camera::Instance();
 		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
 						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
+	}
+	return 0;
+}
+
+int Lua::focusCamera(lua_State *L){
+	if (lua_gettop(L) == 1) {
+		int id = (int)(luaL_checkint(L,1));
+		Camera *pInstance = Camera::Instance();
+		SpriteManager *sprites= SpriteManager::Instance();
+		Sprite* target = sprites->GetSpriteByID(id);
+		if(target!=NULL)
+			pInstance->Focus( target );
 	}
 	return 0;
 }

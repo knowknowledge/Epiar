@@ -9,6 +9,7 @@
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
+#include "Utilities/camera.h"
 
 
 /**\class SpriteManager
@@ -37,6 +38,9 @@ void SpriteManager::Add( Sprite *sprite ) {
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	spritelist->remove(sprite);
 	spritelookup->erase( sprite->GetID() );
+	if( sprite==Camera::Instance()->GetFocus() ) {
+		Camera::Instance()->Focus(NULL);
+	}
 	return ( GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite ) );
 }
 
@@ -106,7 +110,7 @@ void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen = new list<Sprite*>();
 	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *1.42f;
-	onscreen = GetSpritesNear( Player::Instance()->GetWorldPosition(), r);
+	onscreen = GetSpritesNear( Camera::Instance()->GetFocus()->GetWorldPosition(), r);
 
 	onscreen->sort(compareSpritePtrs);
 

@@ -41,6 +41,7 @@ class Lua {
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *L);
+		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
 		static int getModelNames(lua_State *L);
 		static int getWeaponNames(lua_State *L);
