@@ -113,7 +113,7 @@ function targetClosestPlanet()
 	if #nearby==0 then return end
 	HUD.newAlert("Selecting the closest Planet: "..nearby[1]:Name().."\n")
 	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
-	TargetName:setStatus(nearby[1]:GetModelName() )
+	TargetName:setStatus(nearby[1]:Name() )
 end
 
 function createWindows()
