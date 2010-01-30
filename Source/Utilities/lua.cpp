@@ -207,6 +207,7 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"models", &Lua::getModelNames},
+		{"weapons", &Lua::getWeaponNames},
 		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
@@ -266,10 +267,23 @@ int Lua::shakeCamera(lua_State *L){
 	return 0;
 }
 
+int Lua::getWeaponNames(lua_State *L){
+	Weapons *weapons= Weapons::Instance();
+	list<string> *names = weapons->GetWeaponNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
 int Lua::getModelNames(lua_State *L){
 	Models *models = Models::Instance();
 	list<string> *names = models->GetModelNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
 
+void Lua::pushNames(lua_State *L, list<string> *names){
     lua_createtable(L, names->size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
@@ -280,8 +294,6 @@ int Lua::getModelNames(lua_State *L){
         ++iter;
         ++index;
     }
-	delete names;
-    return 1;
 }
 
 int Lua::getSpriteByID(lua_State *L){

@@ -27,14 +27,16 @@ end
 commands = {
 	-- Each command should be a table
 	-- { KEY, TITLE, SCRIPT }
-	{'UP', "Accelerate", "PLAYER:Accelerate()"},
-	{'LEFT', "Turn Left", "PLAYER:Rotate(30)"},
-	{'RIGHT', "Turn Right", "PLAYER:Rotate(-30)"},
-	{'DOWN', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))"},
-	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))"},
-	{'TAB', "Change Weapon 1", "PLAYER:ChangeWeapon()"},
-	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()"},
-	{'SPACE', "Fire", "PLAYER:Fire()"}
+	{'UP', "Accelerate", "PLAYER:Accelerate()",KEYPRESSED},
+	{'LEFT', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
+	{'RIGHT', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
+	{'DOWN', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
+	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
+	{'TAB', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
+	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
+	{'t', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'l', "Target Planet", "targetClosestPlanet()",KEYTYPED},
+	{'SPACE', "Fire", "PLAYER:Fire()",KEYPRESSED}
 }
 
 function chooseKeys()
@@ -64,8 +66,8 @@ function processKeyWin(commands)
 	for i=1,#commands do
 		keyval = keyinput[i]:GetText()
 		if keyval ~= commands[i][1] then
-			Epiar.UnRegisterKey(sdlkey(commands[i][1]), KEYPRESSED)
-			Epiar.RegisterKey(sdlkey(keyval), KEYPRESSED, commands[i][3])
+			Epiar.UnRegisterKey(sdlkey(commands[i][1]), commands[i][4])
+			Epiar.RegisterKey(sdlkey(keyval), commands[i][4], commands[i][3])
 			HUD.newAlert(string.format("Registered '%s' to %s", keyval, commands[i][2]))
 			commands[i][1] = keyinput[i]:GetText()
 		end
@@ -90,15 +92,19 @@ end
 function targetClosestShip()
 	x,y = PLAYER:GetPosition()
 	nearby = Epiar.ships(x,y,2000)
+	if #nearby==0 then return end
 	HUD.newAlert("Selecting the closest Ship: "..nearby[1]:GetID().." a "..nearby[1]:GetModelName().."\n")
 	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
+	TargetName:setStatus(nearby[1]:GetModelName() )
 end
 
 function targetClosestPlanet()
 	x,y = PLAYER:GetPosition()
 	nearby = Epiar.planets(x,y,2000)
+	if #nearby==0 then return end
 	HUD.newAlert("Selecting the closest Planet: "..nearby[1]:Name().."\n")
 	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
+	TargetName:setStatus(nearby[1]:GetModelName() )
 end
 
 function createWindows()
@@ -106,8 +112,6 @@ function createWindows()
 	Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 	Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 	Epiar.RegisterKey('k', KEYTYPED, "chooseKeys()" )
-	Epiar.RegisterKey('t', KEYTYPED, "targetClosestShip()" )
-	Epiar.RegisterKey('l', KEYTYPED, "targetClosestPlanet()" )
 	-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
 	-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
 	-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
@@ -130,13 +134,11 @@ end
 registerInit(createNavigation)
 
 function addWeapons()
-	PLAYER:AddWeapon( "Minigun" )
-	PLAYER:AddWeapon( "Laser" )
-	PLAYER:AddWeapon( "Strong Laser" )
-	PLAYER:AddWeapon( "Slow Missile" )
-	PLAYER:AddAmmo( "Slow Missile",10 )
-	PLAYER:AddWeapon( "Missile" )
-	PLAYER:AddAmmo( "Missile",100 )
+	weapons = Epiar.weapons()
+	for i=1,#weapons do
+		PLAYER:AddWeapon( weapons[i] )
+		PLAYER:AddAmmo( weapons[i], 100)
+	end
 end
 registerInit(addWeapons)
 
@@ -156,13 +158,16 @@ function createHUD()
 	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
 
 	-- Weapon and Armor Status Bars
-	hull = HUD.newStatus("HULL:",100,0,1.0)
-	weapons = {}
+	myhull = HUD.newStatus("HULL:",100,0,1.0)
+	myweapons = {}
 	weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if 0==ammo then ammo="---" end
-		weapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. ammo .." ]")
+		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. ammo .." ]")
 	end
+
+	-- DEBUG Bars
+	TargetName = HUD.newStatus("Target:",130,1,"")
 end
 registerInit(createHUD)
 
@@ -174,13 +179,13 @@ updateHUD = function ()
 	quad:setStatus(string.format("( %d , %d )",qx,qy))
 
 	-- Update Weapons and Armor
-	hull:setStatus(PLAYER:GetHull())
+	myhull:setStatus(PLAYER:GetHull())
 	weaponsAndAmmo = PLAYER:GetWeapons()
 	cur_weapon = PLAYER:GetCurrentWeapon()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if cur_weapon == weapon then star=" ARMED" else star="" end
 		if 0==ammo then ammo="---" end
-		weapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+		myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
 	end
 end
 registerPostStep(updateHUD)

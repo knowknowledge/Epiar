@@ -113,15 +113,11 @@ function createRandomShip(X,Y,Range)
 end
 
 function attachRandomWeapon(cur_ship)
-	a = {}
-	a[1] = "Missile"
-	a[2] = "Slow Missile"
-	a[3] = "Strong Laser"
-	a[4] = "Minigun"
+	weapons = Epiar.weapons()
 	--Randomly assign a weapon to everyone
-	i = math.random(4)
-	cur_ship:AddWeapon( a[i] )
-	cur_ship:AddAmmo( a[i],100 )
+	i = math.random(#weapons)
+	cur_ship:AddWeapon( weapons[i] )
+	cur_ship:AddAmmo( weapons[i],100 )
 end
 	
 -- Create some Random Ships around a Planet
