@@ -64,6 +64,14 @@ void Camera::Focus( Sprite *sprite ) {
 	focusSprite = sprite;
 }
 
+Coordinate Camera::GetFocusCoordinate() {
+	if(focusSprite) {
+		return focusSprite->GetWorldPosition();
+	} else {
+		return Coordinate(x,y);
+	}
+}
+
 // Converts world to screen coordinates
 void Camera::Translate( Coordinate &world, Coordinate &screen ) {
 	int tx, ty;

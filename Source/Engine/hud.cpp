@@ -369,7 +369,7 @@ void Radar::Draw( void ) {
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 
-	list<Sprite*> *spriteList = SpriteManager::Instance()->GetSpritesNear(Camera::Instance()->GetFocus()->GetWorldPosition(), (float)visibility);
+	list<Sprite*> *spriteList = SpriteManager::Instance()->GetSpritesNear(Camera::Instance()->GetFocusCoordinate(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
 		Coordinate blip;
@@ -401,7 +401,7 @@ void Radar::Draw( void ) {
 }
 
 void Radar::WorldToBlip( Coordinate &w, Coordinate &b ) {
-	Coordinate focus = Camera::Instance()->GetFocus()->GetWorldPosition();
+	Coordinate focus = Camera::Instance()->GetFocusCoordinate();
 	
 	b.SetX( ( ( w.GetX() - focus.GetX() ) / float(visibility) ) * ( RADAR_WIDTH / 2.0 ) );
 	b.SetY( ( ( w.GetY() - focus.GetY() ) / float(visibility) ) * ( RADAR_HEIGHT / 2.0 ) );

@@ -26,6 +26,7 @@ class Camera {
 		// gives the most recent change in camera coordinates
 		void GetDelta( double *dx, double *dy );
 		Sprite* GetFocus() {return focusSprite;}
+		Coordinate GetFocusCoordinate();
 
 		void Update( void );
 	
