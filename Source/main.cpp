@@ -27,7 +27,7 @@ int parseArgs( int argc, char **argv );
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
-Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
+Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 
 int main( int argc, char **argv ) {
 	// Use ".dat" extension for data files
@@ -52,11 +52,10 @@ int main( int argc, char **argv ) {
 
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
-	//TODO: find gpl-compatible ttf versions of the normal fonts
-	Vera8       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-	Vera10      = (Font*)new FreeFont( "Resources/Fonts/visitor2.ttf" );
-	Visitor10   = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
-	VeraMono10  = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
+	SansSerif       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	BitType         = (Font*)new FreeFont( "Resources/Fonts/visitor2.ttf" );
+	Serif           = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
+	Mono            = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
@@ -68,10 +67,10 @@ int main( int argc, char **argv ) {
 	Log::Message( "Epiar shutting down." );
 	
 	// free the main font files
-	delete Vera8;
-	delete Vera10;
-	delete Visitor10;
-	delete VeraMono10;
+	delete SansSerif;
+	delete BitType;
+	delete Serif;
+	delete Mono;
 	// free the configuration file data
 	delete optionsfile;
 	

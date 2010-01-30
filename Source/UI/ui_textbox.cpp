@@ -72,8 +72,8 @@ void Textbox::Draw( int relx, int rely ) {
 	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15, 0.15, 0.15 );
 
 	// draw the text
-	Vera10->SetColor( 1., 1., 1. );
-	bbox = Vera10->Render( x + 4, y + 13, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
+	Mono->SetColor( 1., 1., 1. );
+	bbox = Mono->Render( x + 4, y + 13, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
 	                                                              // be updated later to actually reflect font size
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))

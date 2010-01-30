@@ -41,8 +41,8 @@ void Checkbox::Draw( int relx, int rely ) {
 	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, 0.4, 0.4, 0.4 );
 
 	// draw the label
-	//Vera10->SetColor( 1., 1., 1. );
-	//Vera10->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
+	//SansSerif->SetColor( 1., 1., 1. );
+	//SansSerif->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
 }
 
 void Checkbox::FocusMouse( int x, int y ) {

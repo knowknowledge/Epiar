@@ -70,14 +70,14 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Title
 	if( title != "") {
-		Rectangle recTitle = Vera10->Render( x, y+13, title.c_str() );
+		Rectangle recTitle = BitType->Render( x, y+13, title.c_str() );
 		widthRemaining -= recTitle.w;
 		x += recTitle.w + 5;
 	}
 
 	// Draw Name
 	if( name != "") {
-		Rectangle recName = Vera10->Render( x, y+13, name.c_str() );
+		Rectangle recName = BitType->Render( x, y+13, name.c_str() );
 		widthRemaining -= recName.w;
 		x += recName.w;
 	}
@@ -143,11 +143,11 @@ void Hud::DrawMessages() {
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > ALERT_FADE){
-			Vera10->SetColor(1.f,1.f,1.f, 1.f - float((age-ALERT_FADE))/float(ALERT_DROP-ALERT_FADE) );
+			BitType->SetColor(1.f,1.f,1.f, 1.f - float((age-ALERT_FADE))/float(ALERT_DROP-ALERT_FADE) );
 		} else {
-			Vera10->SetColor(1.f,1.f,1.f,1.f);
+			BitType->SetColor(1.f,1.f,1.f,1.f);
 		}
-		Vera10->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
+		BitType->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
 	}
 }
 
@@ -155,15 +155,15 @@ void Hud::DrawMessages() {
 void Hud::DrawFPS() {
 	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
-	Vera10->SetColor(1.f,1.f,1.f,1.f);
+	BitType->SetColor(1.f,1.f,1.f,1.f);
 	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
-	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 
 	sprintf((char *)frameRate, "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
-	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
 
 	sprintf((char *)frameRate, "%d Sprites", SpriteManager::Instance()->GetNumSprites());
-	Vera10->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
 }
 
 void::Hud::DrawStatusBars() {
@@ -178,7 +178,7 @@ void::Hud::DrawStatusBars() {
 		Coordinate(0,barHeight), Coordinate(0,barHeight),
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
 
-	Vera10->SetColor(1.f,1.f,1.f,1.f);
+	BitType->SetColor(1.f,1.f,1.f,1.f);
 	// 
 	list<StatusBar*>::iterator i;
 	for( i= Bars.begin(); i != Bars.end(); ++i ){

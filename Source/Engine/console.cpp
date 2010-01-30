@@ -91,7 +91,7 @@ void Console::Draw() {
 
 		int pos = 8;
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
-			VeraMono10->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
+			Mono->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
 			pos--;
 			if(pos < 0) break;
 		}

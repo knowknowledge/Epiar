@@ -83,8 +83,8 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[7]->Draw( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight() );
 
 	// Draw the window title
-	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
+	SansSerif->SetColor( 1., 1., 1. );
+	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
 
 	Widget::Draw();
 }

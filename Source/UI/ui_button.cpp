@@ -75,8 +75,8 @@ void Button::Draw( int relx, int rely ) {
 	bitmap_current->Draw( x, y );
 
 	// draw the label
-	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
+	SansSerif->SetColor( 1., 1., 1. );
+	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
 }
 
 void Button::FocusMouse( int x, int y ) {
