@@ -32,9 +32,9 @@ commands = {
 	{'RIGHT', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
 	{'DOWN', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
 	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
-	{'TAB', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
-	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
-	{'t', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'RSHIFT', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYPRESSED},
+	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYPRESSED},
+	{'TAB', "Target Ship", "targetClosestShip()",KEYTYPED},
 	{'l', "Target Planet", "targetClosestPlanet()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
@@ -131,7 +131,7 @@ registerInit(createWindows)
 function createNavigation()
 	for i=1,#commands do
 		keyval, name, code = commands[i][1],commands[i][2],commands[i][3]
-		Epiar.RegisterKey(sdlkey(keyval), KEYPRESSED, code)
+		Epiar.RegisterKey(sdlkey(keyval), commands[i][4], code)
 	end
 
 	for k =1,9 do
@@ -177,6 +177,7 @@ function createHUD()
 
 	-- DEBUG Bars
 	TargetName = HUD.newStatus("Target:",130,1,"")
+	TargetHULL = HUD.newStatus("Target:",130,1,0)
 end
 registerInit(createHUD)
 
@@ -195,6 +196,9 @@ updateHUD = function ()
 		if cur_weapon == weapon then star=" ARMED" else star="" end
 		if 0==ammo then ammo="---" end
 		myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+	end
+	if SHIPS[HUD.getTarget()]~=nil then
+		TargetHULL:setStatus( SHIPS[HUD.getTarget()]:GetHull() )
 	end
 end
 registerPostStep(updateHUD)

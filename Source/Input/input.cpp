@@ -219,6 +219,8 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 		}
 	} else if((key == SDLK_QUOTE) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
 		letter = '"';
+	} else if(key == SDLK_TAB) {
+		letter = '\t';
 	} else if(key == SDLK_RETURN) {
 		letter = '\n';
 	} else if((key == SDLK_SEMICOLON) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
