@@ -189,7 +189,7 @@ Coordinate SpriteManager::GetQuadrantCenter(Coordinate point){
 }
 
 int SpriteManager::GetNumSprites() {
-	int total = 0;
+	unsigned int total = 0;
 	map<Coordinate,QuadTree*>::iterator iter;
 	for ( iter = trees.begin(); iter != trees.end(); ++iter ) { 
 		total += iter->second->Count();
