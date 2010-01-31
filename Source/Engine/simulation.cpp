@@ -77,6 +77,8 @@ bool Simulation::Run( void ) {
 	// Grab the camera and give it coordinates
 	Camera *camera = Camera::Instance();
 	camera->Focus(0, 0);
+	
+	Timer::Initialize();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
@@ -113,21 +115,21 @@ bool Simulation::Run( void ) {
 	while( !quit ) {
 		quit = inputs.Update();
 		
+		int logicLoops = Timer::Update();
 		if( !paused ) {
-			Lua::Call("Update");
-			// Update cycle
-			starfield.Update();
-			camera->Update();
-			sprites->Update();
-			camera->Update();
-			Hud::Update();
+			while(logicLoops--) {
+				Lua::Call("Update");
+				// Update cycle
+				starfield.Update();
+				camera->Update();
+				sprites->Update();
+				camera->Update();
+				Hud::Update();
+			}
 		}
 
 		// Runs only a few loops (even when paused)
 		UI::Run(); 
-		
-		// Keep this last (I think)
-		Timer::Update();
 
 		// Erase cycle
 		Video::Erase();
