@@ -19,6 +19,9 @@ AI::AI() {
 	
 }
 
+/**Updates the AI controlled ship by first calling the Lua function
+ * and then calling Ship::Update()
+ */
 void AI::Update(){
 	// Decide
 	Lua::Call("MoveShip","i>",this->GetID() );
@@ -27,6 +30,8 @@ void AI::Update(){
 	this->Ship::Update();
 }
 
+/**Sets the Lua script to be used for this AI
+ */
 void AI::SetScript( string& script )
 {
 	my_script = script;

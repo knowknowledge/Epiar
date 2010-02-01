@@ -14,6 +14,8 @@
 /**\class AI_Lua
  * \brief Lua bridge for AI.*/
 
+/**Registers functions callable by Lua scripts for the AI.
+ */
 void AI_Lua::RegisterAI(lua_State *L){
 
 	// This is the Function for creating Ships
@@ -73,6 +75,9 @@ void AI_Lua::RegisterAI(lua_State *L){
 	Ani::Get("Resources/Animations/explosion1.ani");
 }
 
+/**Allocates Ship in Lua.
+ * \sa newShip
+ */
 AI **AI_Lua::pushShip(lua_State *L){
 	AI **s = (AI **)lua_newuserdata(L, sizeof(AI*));
 	*s = NULL;
@@ -81,6 +86,8 @@ AI **AI_Lua::pushShip(lua_State *L){
 	return s;
 }
 
+/**Validates Ship in Lua.
+ */
 AI **AI_Lua::checkShip(lua_State *L, int index){
 	AI **ai = (AI**)luaL_checkudata(L, index, EPIAR_SHIP);
 	//luaL_argcheck(L, ai != NULL, index, "`EPIA_SHIP' expected");
@@ -88,6 +95,8 @@ AI **AI_Lua::checkShip(lua_State *L, int index){
 	return ai;
 }
 
+/**Spawns a new AI ship for Lua.
+ */
 int AI_Lua::newShip(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 4)
@@ -115,6 +124,9 @@ int AI_Lua::newShip(lua_State *L){
 
 // Ship Functions
 
+/**Lua callable function to accelerate the ship.
+ * \sa Ship::Accelerate()
+ */
 int AI_Lua::ShipAccelerate(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -129,6 +141,9 @@ int AI_Lua::ShipAccelerate(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to rotate the ship.
+ * \sa Ship::Rotate(float)
+ */
 int AI_Lua::ShipRotate(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -143,6 +158,9 @@ int AI_Lua::ShipRotate(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to set ship's radar color.
+ * \sa Ship::SetRadarColor
+ */
 int AI_Lua::ShipRadarColor(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 4) {
@@ -157,6 +175,9 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to fire ship's weapons.
+ * \sa Ship::Fire()
+ */
 int AI_Lua::ShipFire(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -170,6 +191,9 @@ int AI_Lua::ShipFire(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to add damage to ship.
+ * \sa Ship::Damage(int)
+ */
 int AI_Lua::ShipDamage(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -182,6 +206,9 @@ int AI_Lua::ShipDamage(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to explode the ship.
+ * \sa Effect
+ */
 int AI_Lua::ShipExplode(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -196,6 +223,9 @@ int AI_Lua::ShipExplode(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to add weapon to ship.
+ * \sa Ship::addShipWeapon(string)
+ */
 int AI_Lua::ShipAddWeapon(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -208,6 +238,9 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 	return 0;
 }	
 
+/**Lua callable function to change a ship's weapon.
+ * \sa Ship::ChangeWeapon()
+ */
 int AI_Lua::ShipChangeWeapon(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -219,6 +252,9 @@ int AI_Lua::ShipChangeWeapon(lua_State* L){
 	return 0;
 }
 
+/**Lua callable function to add ammo to a ship's weapon.
+ * \sa Ship::addAmmo
+ */
 int AI_Lua::ShipAddAmmo(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 3) {
@@ -232,6 +268,9 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 	return 0;
 }	
 
+/**Lua callable function to set the ship model.
+ * \sa Ship::SetModel
+ */
 int AI_Lua::ShipSetModel(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -245,6 +284,9 @@ int AI_Lua::ShipSetModel(lua_State* L){
 
 }
 
+/**Lua callable function to get the ship's ID
+ * \sa Ship:GetID()
+ */
 int AI_Lua::ShipGetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -258,6 +300,9 @@ int AI_Lua::ShipGetID(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's angle.
+ * \sa Ship::GetAngle()
+ */
 int AI_Lua::ShipGetAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -271,6 +316,9 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's position.
+ * \sa Ship::GetWorldPosition()
+ */
 int AI_Lua::ShipGetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -285,6 +333,10 @@ int AI_Lua::ShipGetPosition(lua_State* L){
 	return 2;
 }
 
+/**Lua callable function to get the ship's momentum angle.
+ * \sa Ship::GetMomentum()
+ * \sa Coordinate::GetAngle()
+ */
 int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -298,6 +350,10 @@ int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's momentum speed.
+ * \sa Ship::GetMomentum()
+ * \sa Coordinate::GetMagnitude()
+ */
 int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -311,6 +367,9 @@ int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's direction towards target.
+ * \sa Ship::directionTowards
+ */
 int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) { // Angle
@@ -329,6 +388,9 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's weapons.
+ * \sa Ship::getWeaponsAndAmmo()
+ */
 int AI_Lua::ShipGetWeapons(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -350,6 +412,9 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the current weapon.
+ * \sa Ship::getCurrentWeapon()
+ */
 int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -361,6 +426,9 @@ int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the current ammo.
+ * \sa Ship::getCurrentAmmo()
+ */
 int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -371,6 +439,9 @@ int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the ship's model name.
+ * \sa Ship::GetModelName()
+ */
 int AI_Lua::ShipGetModelName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -381,6 +452,9 @@ int AI_Lua::ShipGetModelName(lua_State* L){
 	return 1;
 }
 
+/**Lua callable function to get the hull status (in %).
+ * \sa Ship::getHullIntegrityPct
+ */
 int AI_Lua::ShipGetHull(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
