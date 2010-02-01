@@ -108,6 +108,12 @@ void Ship::Damage(short int damage) {
 	status.hullEnergyAbsorbed += damage;
 }
 
+void Ship::Repair(short int damage) {
+	status.hullEnergyAbsorbed -= damage;
+	if( status.hullEnergyAbsorbed<0 )
+		status.hullEnergyAbsorbed=0;
+}
+
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	

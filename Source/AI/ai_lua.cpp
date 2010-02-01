@@ -35,6 +35,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
 		{"Fire", &AI_Lua::ShipFire},
 		{"Damage", &AI_Lua::ShipDamage},
+		{"Repair", &AI_Lua::ShipRepair},
 		{"Explode", &AI_Lua::ShipExplode},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
@@ -176,6 +177,18 @@ int AI_Lua::ShipDamage(lua_State* L){
 		AI** ai = checkShip(L,1);
 		int damage = (int) luaL_checknumber (L, 2);
 		(*ai)->Damage( damage );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipRepair(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI** ai = checkShip(L,1);
+		int damage = luaL_checkint (L, 2);
+		(*ai)->Repair( damage );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
 	}

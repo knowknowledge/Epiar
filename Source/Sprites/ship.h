@@ -29,6 +29,7 @@ class Ship : public Sprite {
 		void Rotate( float direction );
 		void Accelerate( void );
 		void Damage( short int damage );
+		void Repair( short int damage );
 
 		void Draw( void );
 		FireStatus Fire( void );
