@@ -224,7 +224,7 @@ function store()
 	local models = Epiar.models()
 	local buylist = {}
 	for m =1,#models do
-		buylist[m] = {models[m], " Epiar.unpause(); buy(\""..models[m].."\"); storefront:close();storefront=nil "}
+		buylist[m] = {models[m], "buy(\""..models[m].."\"); storefront:close();storefront=nil "}
 	end
 	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
