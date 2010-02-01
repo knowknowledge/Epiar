@@ -28,7 +28,6 @@ class Font {
 			float r, g, b, a; // color of text
 			int height,width,base;
 
-			friend class AFont;
 			friend class FreeFont;
 };
 

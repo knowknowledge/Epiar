@@ -51,7 +51,7 @@ bool File::OpenRead( const string& filename ) {
 	int stat_ret = stat(cName, &fileStatus );
 	if ( stat_ret != 0 ) {
 		printf("Stat for %s: [%d]\n",cName,stat_ret);
-		switch( !stat_ret ) {
+		switch( stat_ret ) {
 			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
 			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
 			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;

@@ -29,6 +29,16 @@ XMLFile *optionsfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 
+/**Main runtime.
+ * \return 0 always
+ * \details
+ * This function does the following:
+ *  - Load options
+ *  - Load fonts
+ *  - Calls parseArgs to parse command line
+ *  - Runs the Simulation routine
+ *  - Calls any cleanup code
+ */
 int main( int argc, char **argv ) {
 	// Use ".dat" extension for data files
 #ifdef USE_PHYSICSFS
@@ -82,8 +92,12 @@ int main( int argc, char **argv ) {
 	return( 0 );
 }
 
-// parse command line switches. returns -1 if a switch indicates the game should not be run, e.g. --help
-// NOTE: cmd line args override settings in options.xml (found in data.tgz) for just this run of the program
+/**Parse command line switches.
+ * \return -1 if a switch indicates the game should not be run, e.g. --help
+ * \details
+ * Cmd line args override settings in options.xml (found in data.tgz) 
+ * for just this run of the program.
+ */
 int parseArgs( int argc, char **argv ) {
 	for( int i = 1; i < argc; i++ ) {
 		// remove any leading - or --
