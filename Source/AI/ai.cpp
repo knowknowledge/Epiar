@@ -19,7 +19,7 @@ AI::AI() {
 	
 }
 
-/**Updates the AI controlled ship by first calling the Lua function
+/**\brief Updates the AI controlled ship by first calling the Lua function
  * and then calling Ship::Update()
  */
 void AI::Update(){
@@ -30,7 +30,7 @@ void AI::Update(){
 	this->Ship::Update();
 }
 
-/**Sets the Lua script to be used for this AI
+/**\brief Sets the Lua script to be used for this AI
  */
 void AI::SetScript( string& script )
 {

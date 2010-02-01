@@ -18,6 +18,8 @@
 /**\class Ship
  * \brief Ship handling. */
 
+/**\brief Ship constructor that initializes default values.
+ */
 Ship::Ship() {
 	model = NULL;
 	flareAnimation = NULL;
@@ -32,6 +34,11 @@ Ship::Ship() {
 	SetAngle( float( rand() %360 ) );
 }
 
+/**\brief Sets the ship model.
+ * \param Model Ship model to use
+ * \return true if successful
+ * \sa Model
+ */
 bool Ship::SetModel( Model *model ) {
 	if( model ) {
 		this->model = model;
@@ -45,10 +52,18 @@ bool Ship::SetModel( Model *model ) {
 	return( false );
 }
 
+/**\brief Returns the sprite associated with the ship.
+ * \return Pointer to a Sprite object.
+ * \sa Sprite
+ */
 Sprite *Ship::GetSprite() {
 	return( (Sprite *)this );
 }
 
+/**\brief Returns the model name.
+ * \return string containing model name
+ * \sa Model::Getname()
+ */
 string Ship::GetModelName() {
 	if (model){
 		return model->GetName();
@@ -57,6 +72,10 @@ string Ship::GetModelName() {
 	}
 }
 
+/**\brief Rotates the ship in the given direction (relative angle).
+ * \param direction Relative angle to rotate by
+ * \sa Model::GetRotationsperSecond()
+ */
 void Ship::Rotate( float direction ) {
 	float rotPerSecond, timerDelta, maxturning;
 	float angle = GetAngle();
@@ -87,6 +106,9 @@ void Ship::Rotate( float direction ) {
 	SetAngle( angle );
 }
 
+/**\brief Accelerates the ship.
+ * \sa Model::GetAcceleration
+ */
 void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
@@ -104,10 +126,14 @@ void Ship::Accelerate( void ) {
 }
 
 
+/**\brief Adds damage to hull.
+ */
 void Ship::Damage(short int damage) {
 	status.hullEnergyAbsorbed += damage;
 }
 
+/**\brief Update function on every frame.
+ */
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	
@@ -127,6 +153,9 @@ void Ship::Update( void ) {
 	}
 }
 
+/**\brief Set's the engine flare animation.
+ * \param filename A string to a new file
+ */
 bool Ship::SetFlareAnimation( string filename ) {
 	if( flareAnimation )
 		delete flareAnimation;
@@ -136,6 +165,9 @@ bool Ship::SetFlareAnimation( string filename ) {
 	return true;
 }
 
+/**\brief Draw function.
+ * \sa Sprite::Draw()
+ */
 void Ship::Draw( void ) {
 	Trig *trig = Trig::Instance();
 	
@@ -159,6 +191,9 @@ void Ship::Draw( void ) {
 	}
 }
 
+/**\brief Fire's ship current weapon.
+ * \return FireStatus
+ */
 FireStatus Ship::Fire() {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
@@ -200,15 +235,26 @@ FireStatus Ship::Fire() {
 	
 }
 
+/**\brief Adds a new weapon to the ship.
+ * \param i Pointer to Weapon instance
+ * \sa Weapon
+ */
 void Ship::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
 }
 
+/**\brief Adds a new weapon to the ship by name.
+ * \param weaponName Name of the Weapon
+ * \sa Weapon
+ */
 void Ship::addShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	addShipWeapon(weapons->GetWeapon(weaponName));	
 }
 
+/**\brief Changes the ship's weapon.
+ * \return true if successful.
+ */
 bool Ship::ChangeWeapon() {
 	if (shipWeapons.size() && (250 < Timer::GetTicks() - status.lastWeaponChangeAt)){
 		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
@@ -217,10 +263,17 @@ bool Ship::ChangeWeapon() {
 	return false;
 }
 
+/**\brief Removes a weapon from the ship.
+ * \param pos Index of the weapon
+ */
 void Ship::removeShipWeapon(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 
+/**\brief Adds ammo to the ship.
+ * \param weaponName String naming the weapon
+ * \param qty Quantity to add
+ */
 void Ship::addAmmo(string weaponName, int qty){
 	Weapons *weapons = Weapons::Instance();
 	Weapon* currentWeapon = weapons->GetWeapon(weaponName);
@@ -233,6 +286,11 @@ void Ship::addAmmo(string weaponName, int qty){
 	
 }
 
+/**\brief Get angle to rotate towards target.
+ * \param target Coordinate of target
+ * \return angle towards target
+ * \sa directionTowards(float)
+ */
 float Ship::directionTowards(Coordinate target){
 	float theta;
 	//Trig *trig = Trig::Instance();
@@ -244,12 +302,17 @@ float Ship::directionTowards(Coordinate target){
 	return this->directionTowards(theta);
 }
 
-// Returns the best direction to turn in order to aim in a certain direction
+/**\brief Returns the best direction to turn in order to aim in a certain direction.
+ * \param angle Angle of target
+ * \return angle towards target
+ */
 float Ship::directionTowards(float angle){
 	return normalizeAngle(angle - this->GetAngle());
 }
 
-// Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%)
+/**\brief Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%).
+ * \return Hull remaining
+ */
 float Ship::getHullIntegrityPct() {
 	assert( model );
 	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
@@ -257,17 +320,26 @@ float Ship::getHullIntegrityPct() {
 	return(remaining);
 }
 
+/**\brief Gets the current weapon.
+ * \return Pointer to Weapon object.
+ */
 Weapon* Ship::getCurrentWeapon() {
 	if(shipWeapons.size()==0) return (Weapon*)NULL;
 	return shipWeapons.at(status.selectedWeapon);
 }
 
+/**\brief Gets the current ammo left.
+ * \return Integer count of ammo
+ */
 int Ship::getCurrentAmmo() {
 	if(shipWeapons.size()==0) return 0;
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	return ammo.find(currentWeapon->GetAmmoType())->second;
 }
 
+/**\brief Gets a std::map of the current weapon system.
+ * \return std:map with pointer to weapon as the key, ammo quantity as the data
+ */
 map<Weapon*,int> Ship::getWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
 	Weapon* thisWeapon;
