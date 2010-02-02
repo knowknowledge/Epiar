@@ -30,6 +30,8 @@
 float Simulation::currentFPS = 0.;
 bool Simulation::paused = false;
 
+/**\brief Loads an empty Simulation.
+ */
 Simulation::Simulation( void ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
@@ -39,6 +41,8 @@ Simulation::Simulation( void ) {
 	currentFPS = 0.;
 }
 
+/**\brief Loads a simulation based on the XML file.
+ */
 Simulation::Simulation( string filename ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
@@ -52,19 +56,31 @@ Simulation::Simulation( string filename ) {
 	Parse();
 }
 
+/**\brief Loads the XML file.
+ * \param filename Name of the file
+ * \return true if success
+ */
 bool Simulation::Load( string filename ) {
 	this->filename = filename;
 	
 	return Parse();
 }
 
+/**\brief Pauses the simulation
+ */
 void Simulation::pause(){
 	paused = true;
 }
+
+/**\brief Unpauses the simulation
+ */
 void Simulation::unpause(){
 	paused = false;
 }
 
+/**\brief Main game loop
+ * \return true
+ */
 bool Simulation::Run( void ) {
 	bool quit = false;
 	Input inputs;
@@ -163,10 +179,15 @@ bool Simulation::Run( void ) {
 	return true;
 }
 
+/**\brief Returns the current frames per second
+ */
 float Simulation::GetFPS() {
 	return Simulation::currentFPS;
 }
 
+/**\brief Parses an XML simulation file
+ * \return true if successful
+ */
 bool Simulation::Parse( void ) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;

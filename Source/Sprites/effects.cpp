@@ -1,10 +1,9 @@
-/*
- * Filename      : effect.cpp
- * Author(s)     : Matt Zweig
- * Date Created  : Tuesday, December 15, 2009
- * Last Modified : Tuesday, December 15, 2009
- * Purpose       : Sprite SubClass for Animated backgrounds
- * Notes         :
+/**\file			effect.cpp
+ * \author			Matt Zweig
+ * \date			Created: Tuesday, December 15, 2009
+ * \date			Modified: Tuesday, December 15, 2009
+ * \brief			Sprite SubClass for Animated backgrounds
+ * \details
  */
 
 #include "includes.h"

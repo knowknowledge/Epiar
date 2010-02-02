@@ -1,10 +1,9 @@
-/*
- * Filename      : resource.cpp
- * Author(s)     : Matt Zweig
- * Date Created  : Saturday, December 19, 2009
- * Last Modified : Saturday, December 19, 2009
- * Purpose       : 
- * Notes         :
+/**\file			resource.cpp
+ * \author			Matt Zweig
+ * \date			Created: Saturday, December 19, 2009
+ * \date			Modified: Saturday, December 19, 2009
+ * \brief
+ * \details
  */
 
 #include <map>

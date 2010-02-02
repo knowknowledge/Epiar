@@ -1,10 +1,9 @@
-/*
- * Filename      : quadtree.cpp
- * Author(s)     : Matt Zweig (thezweig@gmail.com)
- * Date Created  : Tuesday, November 24 2009
- * Last Modified : Tuesday, November 24 2009
- * Purpose       : 
- * Notes         :
+/**\file			quadtree.cpp
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Tuesday, November 24 2009
+ * \date			Modified: Tuesday, November 24 2009
+ * \brief
+ * \details
  */
 
 #include "includes.h"

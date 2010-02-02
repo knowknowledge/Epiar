@@ -1,10 +1,9 @@
-/*
- * Filename      : projectile.cpp
- * Author(s)     : Shawn Reynolds (eb0s@yahoo.com)
- * Date Created  : Friday, November 21, 2009
- * Last Modified : Friday, November 21, 2009
- * Purpose       : Projectile class, child of sprite class, Sprite
- * Notes         :
+/**\file			projectile.cpp
+ * \author			Shawn Reynolds (eb0s@yahoo.com)
+ * \date			Created: Friday, November 21, 2009
+ * \date			Modified: Friday, November 21, 2009
+ * \brief			Projectile class, child of sprite class, Sprite
+ * \details
  */
 
 #include "includes.h"

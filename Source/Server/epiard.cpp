@@ -1,10 +1,9 @@
-/*
- * Filename      : main.cpp
- * Author(s)     : Chris Thielen (chris@luethy.net)
- * Date Created  : Sunday, June 4, 2006
- * Last Modified : Wednesday, January 9, 2008
- * Purpose       : Main entry point of epiard (server) codebase
- * Notes         :
+/**\file			main.cpp
+ * \author			Chris Thielen (chris@luethy.net)
+ * \date			Created: Sunday, June 4, 2006
+ * \date			Modified: Wednesday, January 9, 2008
+ * \brief			Main entry point of epiard (server) codebase
+ * \details
  */
 
 #include "includes.h"

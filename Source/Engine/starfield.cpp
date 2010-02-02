@@ -14,6 +14,9 @@
 /**\class Starfield
  * \brief Controls the starfield. */
 
+/**\brief Initializes the starfield.
+ * \param num Number of stars to initialize
+ */
 Starfield::Starfield( int num ) {
 	int i;
 	
@@ -36,10 +39,14 @@ Starfield::Starfield( int num ) {
 	this->num = num;
 }
 
+/**\brief Destroys Starfield
+ */
 Starfield::~Starfield( void ) {
 	free( stars );
 }
 
+/**\brief Draws the Starfield
+ */
 void Starfield::Draw( void ) {
 	int i;
 
@@ -48,6 +55,8 @@ void Starfield::Draw( void ) {
 	}
 }
 
+/**\brief Updates the Starfield
+ */
 void Starfield::Update( void ) {
 	int i;
 	double dx, dy;
@@ -77,6 +86,8 @@ void Starfield::Update( void ) {
 	}
 }
 
+/**\brief Draws the stars
+ */
 void Starfield::drawStar(float x, float y, float  brightness) 
 {	
 	float drawBrightness;  

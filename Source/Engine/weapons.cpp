@@ -1,10 +1,9 @@
-/*
- * Filename      : weapons.cpp
- * Author(s)     : Shawn Reynolds (eb0s@yahoo.com)
- * Date Created  : Friday, November 21, 2009
- * Last Modified : Friday, November 21, 2009
- * Purpose       : 
- * Notes         :
+/**\file			weapons.cpp
+ * \author			Shawn Reynolds (eb0s@yahoo.com)
+ * \date			Created: Friday, November 21, 2009
+ * \date			Modified: Friday, November 21, 2009
+ * \brief
+ * \details
  */
 
 #include "includes.h"
@@ -23,6 +22,9 @@ struct weapon_name_equals
 
 Weapons *Weapons::pInstance = 0; // initialize pointer
 
+/**\brief Gets or returns Weapons instance
+ * \return Pointer to a Weapons object
+ */
 Weapons *Weapons::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Weapons; // create the sold instance
@@ -30,11 +32,16 @@ Weapons *Weapons::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Empty destructor
+ */
 Weapons::~Weapons(void)
 {
 }
 
-
+/**\brief Loads XML Weapons file and parses it
+ * \param filename String containing file name
+ * \return true always
+ */
 bool Weapons::Load( string filename ) {
 	Parser<Weapon> parser;
 
@@ -46,6 +53,9 @@ bool Weapons::Load( string filename ) {
 	return true;
 }
 
+/**\brief Returns Weapon based on its name
+ * \param weaponName string of the weapon name
+ */
 Weapon * Weapons::GetWeapon( string& weaponName )
 {
 	list<Weapon *>::iterator i = std::find_if( weapons.begin(), weapons.end(), std::bind2nd( weapon_name_equals(), weaponName ));
@@ -56,6 +66,9 @@ Weapon * Weapons::GetWeapon( string& weaponName )
 	return( NULL );
 }
 
+/**\brief Gets a list of the weapon names.
+ * \return std::list of strings containing weapon names
+ */
 list<string>* Weapons::GetWeaponNames()
 {
 	list<string> *names = new list<string>();

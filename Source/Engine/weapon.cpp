@@ -1,10 +1,9 @@
-/*
- * Filename      : weapons.cpp
- * Author(s)     : Shawn Reynolds (eb0s@yahoo.com)
- * Date Created  : Friday, November 21, 2009
- * Last Modified : Friday, November 21, 2009
- * Purpose       : 
- * Notes         :
+/**\file			weapons.cpp
+ * \author			Shawn Reynolds (eb0s@yahoo.com)
+ * \date			Created: Friday, November 21, 2009
+ * \date			Modified: Friday, November 21, 2009
+ * \brief
+ * \details
  */
 
 #include "includes.h"
@@ -14,13 +13,19 @@
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
+/**\brief Empty constructor
+ */
 Weapon::Weapon(void)
 {
 }
+/**\brief Empty destructor
+ */
 Weapon::~Weapon(void)
 {
 }
 
+/**\brief Parses weapon information
+ */
 bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
