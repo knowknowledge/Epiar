@@ -33,25 +33,42 @@
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
 
-/**\class Hud
- * \brief Heads-Up-Display. */
 list<AlertMessage> Hud::AlertMessages;
 list<StatusBar*> Hud::Bars;
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
-
 int Radar::visibility = 7000;
 
+/**\class AlertMessage
+ * \brief Alert/Info messages
+ */
+
+/**\brief Adds an alert to the queue.
+ * \param message std:string containing the message
+ * \param start Starting time (for expiration)
+ */
 AlertMessage::AlertMessage( string message, Uint32 start )
 {
 	this->message = message;
 	this->start = start;
 }
 
+/**\brief Checks to see if message expired.
+ * \param msg Pointer to an AlertMessage object
+ * \return true if expired
+ */
 bool MessageExpired(const AlertMessage& msg){
 	return (Timer::GetTicks() - msg.start > ALERT_DROP);
 }
 
+/**\class StatusBar
+ * \brief Status bar
+ */
+
+/**\brief Draws the StatusBar
+ * \param x x-coordinate
+ * \param y y-coordinate
+ */
 void StatusBar::Draw(int x, int y) {
 	int widthRemaining = this->width;
 	Image *BorderLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
@@ -99,6 +116,11 @@ void StatusBar::Draw(int x, int y) {
 
 Hud *Hud::pInstance = 0; // initialize pointer
 
+/**\class Hud
+ * \brief Heads-Up-Display. */
+
+/**\brief Gets or initializes the current instance.
+ */
 Hud *Hud::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Hud; // create the sold instance
@@ -106,9 +128,13 @@ Hud *Hud::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Empty constructor
+ */
 Hud::Hud( void ) {
 }
 
+/**\brief Updates the HUD
+ */
 void Hud::Update( void ) {
 	int j;
 	list<AlertMessage> toDelete;
@@ -133,7 +159,8 @@ void Hud::Draw( void ) {
 	Hud::DrawStatusBars();
 }
 
-// Draw HUD messages (eg Welcome to Epiar)
+/**\brief Draw HUD messages (eg Welcome to Epiar).
+ */
 void Hud::DrawMessages() {
 	int j;
 	int now = Timer::GetTicks();
@@ -151,7 +178,8 @@ void Hud::DrawMessages() {
 	}
 }
 
-// Draw the current framerate (calculated in simulation.cpp)
+/**\brief Draw the current framerate (calculated in simulation.cpp).
+ */
 void Hud::DrawFPS() {
 	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
@@ -166,6 +194,8 @@ void Hud::DrawFPS() {
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
 }
 
+/**\brief Draws the status bar.
+ */
 void::Hud::DrawStatusBars() {
 	// Initialize the starting Coordinates
 	int barHeight = Image::Get( "Resources/Graphics/hud_bar_left.png" )->GetHeight()+5;
@@ -188,16 +218,22 @@ void::Hud::DrawStatusBars() {
 	}
 }
 
+/**\brief Draw the shield bar.
+ */
 void Hud::DrawShieldIntegrity() {
 	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
 
+/**\brief Draw the radar.
+ */
 void Hud::DrawRadarNav( void ) {
 	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	
 	Radar::Draw();
 }
 
+/**\brief Draws the target.
+ */
 void Hud::DrawTarget( void ) {
 	Sprite* target = SpriteManager::Instance()->GetSpriteByID( targetID );
 	if(target != NULL) {
@@ -214,6 +250,9 @@ void Hud::DrawTarget( void ) {
 	}
 }
 
+/**\brief Adds a new AlertMessage.
+ * \param message C string to message
+ */
 void Hud::Alert( const char *message, ... )
 {
 	va_list args;
@@ -228,15 +267,21 @@ void Hud::Alert( const char *message, ... )
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
 
+/**\brief Adds a new StatusBar.
+ * \param bar Pointer to a new StatusBar
+ */
 void Hud::AddStatus( StatusBar* bar) {
 	Bars.push_back(bar);
 }
 
+/**\brief Deletes a StatusBar.
+ */
 void Hud::DeleteStatus( StatusBar* bar ) {
 	Bars.remove(bar);
 }
 
-
+/**\brief Register Lua functions for HUD related updates.
+ */
 void Hud::RegisterHud(lua_State *L) {
 
 	static const luaL_Reg hudFunctions[] = {
@@ -265,6 +310,8 @@ void Hud::RegisterHud(lua_State *L) {
 	luaL_openlib(L, EPIAR_HUD, hudFunctions, 0);
 }
 
+/**\brief Set's the visibility of the target (Lua callable)
+ */
 int Hud::setVisibity(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -274,6 +321,8 @@ int Hud::setVisibity(lua_State *L) {
 	return 0;
 }
 
+/**\brief Creates a new Alert (Lua callable).
+ */
 int Hud::newAlert(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -283,6 +332,8 @@ int Hud::newAlert(lua_State *L) {
 	return 0;
 }
 
+/**\brief Creates a new Status (Lua callable).
+ */
 int Hud::newStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 4)
@@ -314,6 +365,8 @@ int Hud::newStatus(lua_State *L) {
 	return 1;
 }
 
+/**\brief Set's the status (Lua callable)
+ */
 int Hud::setStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -331,6 +384,8 @@ int Hud::setStatus(lua_State *L) {
 	return 0;
 }
 
+/**\brief Closes the status (Lua callable).
+ */
 int Hud::closeStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -340,11 +395,15 @@ int Hud::closeStatus(lua_State *L) {
 	return 0;
 }
 
+/**\brief Returns the target (Lua callable).
+ */
 int Hud::getTarget(lua_State *L) {
 	lua_pushinteger(L, targetID );
 	return 1;
 }
 
+/**\brief Set's the target (Lua callable).
+ */
 int Hud::setTarget(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -357,13 +416,20 @@ int Hud::setTarget(lua_State *L) {
 /**\class Radar
  * \brief Hud Element that displays nearby objects. */
 
+/**\brief Empty constructor.
+ */
 Radar::Radar( void ) {
 }
 
+/**\brief Sets the visibility.
+ * \param visibility true or false
+ */
 void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
 }
 
+/**\brief Draws the radar.
+ */
 void Radar::Draw( void ) {
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
@@ -400,6 +466,10 @@ void Radar::Draw( void ) {
 	}
 }
 
+/**\brief Gets the radar position based on world coordinate
+ * \param w Pointer to world coordinate
+ * \retval b Pointer to radar coordinate
+ */
 void Radar::WorldToBlip( Coordinate &w, Coordinate &b ) {
 	Coordinate focus = Camera::Instance()->GetFocusCoordinate();
 	

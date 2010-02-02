@@ -21,12 +21,17 @@ vector<string> Console::Buffer;
 bool Console::enabled = false;
 bool Console::initialized = false;
 
+/**\brief Initialize Console instance.
+ */
 void Console::Initialize() {
 	Console::Buffer.push_back("Console initialized.");
 	Console::Buffer.push_back("> _");
 	Console::initialized = true;
 }
 
+/**\brief Handles a list of Input events.
+ * \param events A list of events
+ */
 void Console::HandleInput( list<InputEvent> & events ) {
 	if(Console::initialized == false) Console::Initialize();
 
@@ -82,6 +87,8 @@ void Console::HandleInput( list<InputEvent> & events ) {
 	}
 }
 
+/**\brief Draws the current console.
+ */
 void Console::Draw() {
 	if( enabled ) {
 		// draw bg
@@ -98,13 +105,17 @@ void Console::Draw() {
 	}
 }
 
+/**\brief Console update function.
+ */
 void Console::Update() {
 	if( enabled ) {
 		
 	}
 }
 
-// used by lua functions, eg echo
+
+/**\brief Used by lua functions, eg echo.
+ */
 void Console::InsertResult(string result) {
 	// get the prompt off the buffer
 	//string back = Console::Buffer.back();
