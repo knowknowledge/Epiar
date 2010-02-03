@@ -132,6 +132,14 @@ void Ship::Damage(short int damage) {
 	status.hullEnergyAbsorbed += damage;
 }
 
+/**\brief Repairs the ship.
+ */
+void Ship::Repair(short int damage) {
+	status.hullEnergyAbsorbed -= damage;
+	if( status.hullEnergyAbsorbed<0 )
+		status.hullEnergyAbsorbed=0;
+}
+
 /**\brief Update function on every frame.
  */
 void Ship::Update( void ) {

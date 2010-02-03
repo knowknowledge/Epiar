@@ -35,7 +35,7 @@ commands = {
 	{'RSHIFT', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYPRESSED},
 	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYPRESSED},
 	{'TAB', "Target Ship", "targetClosestShip()",KEYTYPED},
-	{'l', "Target Planet", "targetClosestPlanet()",KEYTYPED},
+	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
 	{'SPACE', "Fire", "PLAYER:Fire()",KEYPRESSED}
@@ -102,22 +102,58 @@ function targetClosestShip()
 	x,y = PLAYER:GetPosition()
 	nearby = Epiar.ships(x,y,2000)
 	if #nearby==0 then return end
-	HUD.newAlert("Selecting the closest Ship: "..nearby[1]:GetID().." a "..nearby[1]:GetModelName().."\n")
+	HUD.newAlert("Targeting "..nearby[1]:GetModelName().." #"..nearby[1]:GetID())
 	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
 	TargetName:setStatus(nearby[1]:GetModelName() )
 end
 
-function targetClosestPlanet()
+function attemptLanding()
+	if landingWin ~= nil then return end
 	x,y = PLAYER:GetPosition()
-	nearby = Epiar.planets(x,y,2000)
+	nearby = Epiar.planets(x,y,1000)
 	if #nearby==0 then return end
-	HUD.newAlert("Selecting the closest Planet: "..nearby[1]:Name().."\n")
-	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
+	px,py = nearby[1]:Position()
+	distance = distfrom( px,py, x,y)
+	message=""
+	if HUD.getTarget() ~= nearby[1]:GetID() then -- Add this text before the first message.
+		message = string.format("This is %s Landing Control. ",nearby[1]:Name())
+	end
+	
+	-- Check if the ship is close enough and moving slowly enough to land on the planet.
+	HUD.setTarget(nearby[1]:GetID())
 	TargetName:setStatus(nearby[1]:Name() )
+	-- TODO make this distance check based off of the planet size.
+	if distance > 200 then
+		if message~="" then
+			message=message.."Begin your approach."
+		else
+			message="Continue your approach."
+		end
+		HUD.newAlert(message)
+	else
+		velocity = PLAYER:GetMomentumSpeed()
+		if velocity > 2 then
+			HUD.newAlert(message.."Please slow your approach.")
+		else
+			HUD.newAlert(string.format("Welcome to %s.",nearby[1]:Name()))
+			landOnPlanet( nearby[1]:GetID() )
+		end
+	end
+end
+
+function landOnPlanet(id)
+	-- Create the Planet Landing Screen
+	if landingWin ~= nil then return end
+	Epiar.pause()
+	planet = Epiar.getSprite(id)
+	
+	landingWin = UI.newWindow( 200,100,400,300, string.format("%s Landing Screen",planet:Name()))
+	landingWin:add(UI.newButton( 40,40,100,30,"Store","store()" ))
+	landingWin:add(UI.newButton( 40,100,100,30,"Repair","PLAYER:Repair(10000)" ))
+	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 function createWindows()
-	Epiar.RegisterKey('s',KEYTYPED,"store()")
 	Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 	Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
 	Epiar.RegisterKey('k', KEYTYPED, "chooseKeys()" )

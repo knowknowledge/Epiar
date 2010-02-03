@@ -1,3 +1,15 @@
+Friday, January 29, 2010
+	Matt Zweig:
+		* Adds Camera Focus on Non-player Sprites.
+
+Wednesday, January 27, 2010
+	Matt Zweig:
+		* Added a basic Targeter.  Just targets the closest ship or planet for now.
+
+Tuesday, January 26, 2010
+	Matt Zweig:
+		* Adds Fadeout for Alerts.
+
 Sunday, January 24, 2010
 	Chris Thielen:
 		* Implemented virtual timer. Timer code is still in flux and interpolation needs to be implemented.
@@ -5,6 +17,14 @@ Sunday, January 24, 2010
 Friday, December 25, 2009
 	Chris Thielen:
 		* Fixed Image::Resize()
+
+Thursday, December 31, 2009
+	Matt Zweig:
+		* Created HUD StatusBars for displaying text and guages.
+
+Tuesday, December 22, 2009
+	Matt Zweig:
+		* Adds Optional FreeType+FTGL support
 
 Saturday, December 19, 2009
 	Matt Zweig:
