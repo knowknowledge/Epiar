@@ -62,14 +62,14 @@ Textbox::~Textbox() {
 
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
-	Rectangle bbox; // bounding box of the drawn text
+	Rect bbox; // bounding box of the drawn text
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
 
 	// draw the button (loaded image is simply scaled)
-	Video::DrawRect( x, y, w, h, 0.4, 0.4, 0.4 );
-	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15, 0.15, 0.15 );
+	Video::DrawRect( x, y, w, h, 0.4f, 0.4f, 0.4f );
+	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15f, 0.15f, 0.15f );
 
 	// draw the text
 	Mono->SetColor( 1., 1., 1. );
@@ -78,7 +78,7 @@ void Textbox::Draw( int relx, int rely ) {
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) ) {
-		Video::DrawRect( x + 6 + bbox.w, y + 3, 1, h - 6, .8, .8, .8 );
+		Video::DrawRect( x + 6 + static_cast<int>(bbox.w), y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
 }
 

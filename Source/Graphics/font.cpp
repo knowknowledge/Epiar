@@ -70,7 +70,7 @@ bool FreeFont::SetFont( string filename ) {
 	return( true );
 }
 
-Rectangle FreeFont::Render( int x, int y, const char *text ) {
+Rect FreeFont::Render( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
 
@@ -84,18 +84,18 @@ Rectangle FreeFont::Render( int x, int y, const char *text ) {
 	( ( FTTextureFont * ) font )->Render( text, -1, pt );
 	glPopMatrix(); // restore the previous matrix
 	
-	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
+	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
 // Renders text centered squarely on (x,y), taking the bounding box into account
-Rectangle FreeFont::RenderCentered( int x, int y, const char *text ) {
+Rect FreeFont::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
 
 	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 
-	Render( x + ( llx - urx) / 2, y - (lly - ury) / 2, text );
+	Render( x + static_cast<int>( llx - urx) / 2, y - static_cast<int>(lly - ury) / 2, text );
 
-	return Rectangle( (float)x, (float)y, -(llx - urx), lly - ury );
+	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 

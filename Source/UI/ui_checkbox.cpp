@@ -35,10 +35,10 @@ void Checkbox::Draw( int relx, int rely ) {
 	x = GetX() + relx;
 	y = GetY() + rely;
 	
-	Video::DrawRect( x, y, CHECKBOX_W, CHECKBOX_H, 0.4, 0.4, 0.4 );
-	Video::DrawRect( x + 1, y + 1, CHECKBOX_W - 2, CHECKBOX_H - 2, 0.15, 0.15, 0.15 );
+	Video::DrawRect( x, y, CHECKBOX_W, CHECKBOX_H, 0.4f, 0.4f, 0.4f );
+	Video::DrawRect( x + 1, y + 1, CHECKBOX_W - 2, CHECKBOX_H - 2, 0.15f, 0.15f, 0.15f );
 
-	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, 0.4, 0.4, 0.4 );
+	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, 0.4f, 0.4f, 0.4f );
 
 	// draw the label
 	//SansSerif->SetColor( 1., 1., 1. );

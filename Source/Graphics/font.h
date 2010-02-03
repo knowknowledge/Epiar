@@ -18,8 +18,8 @@ class Font {
 			Font();
 
 			virtual bool SetFont( string filename ) = 0;
-			virtual Rectangle Render( int x, int y, const char *text ) = 0;
-			virtual Rectangle RenderCentered( int x, int y, const char *text ) = 0;
+			virtual Rect Render( int x, int y, const char *text ) = 0;
+			virtual Rect RenderCentered( int x, int y, const char *text ) = 0;
 			void SetColor( float r, float g, float b, float a=1.0f );
 
 
@@ -39,8 +39,8 @@ class FreeFont: public Font {
 			FreeFont( string filename );
 			~FreeFont();
 			bool SetFont( string filename );
-			Rectangle Render( int x, int y, const char *text );
-			Rectangle RenderCentered( int x, int y, const char *text );
+			Rect Render( int x, int y, const char *text );
+			Rect RenderCentered( int x, int y, const char *text );
 		private:
 			FTTextureFont* font;
 };

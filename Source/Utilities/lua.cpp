@@ -345,7 +345,7 @@ int Lua::getSprites(lua_State *L, int type){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
 		double r = luaL_checknumber (L, 3);
-		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),r);
+		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r));
 	} else {
 		sprites = SpriteManager::Instance()->GetSprites();
 	}

@@ -87,16 +87,16 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Title
 	if( title != "") {
-		Rectangle recTitle = BitType->Render( x, y+13, title.c_str() );
-		widthRemaining -= recTitle.w;
-		x += recTitle.w + 5;
+		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
+		widthRemaining -= static_cast<int>(recTitle.w);
+		x += static_cast<int>(recTitle.w) + 5;
 	}
 
 	// Draw Name
 	if( name != "") {
-		Rectangle recName = BitType->Render( x, y+13, name.c_str() );
-		widthRemaining -= recName.w;
-		x += recName.w;
+		Rect recName = BitType->Render( x, y+13, name.c_str() );
+		widthRemaining -= static_cast<int>(recName.w);
+		x += static_cast<int>(recName.w);
 	}
 
 	// Draw the Bar
@@ -109,8 +109,8 @@ void StatusBar::Draw(int x, int y) {
 		BarLeft->Draw( x, bar_y );
 		x += BarLeft->GetWidth();
 		int bar_w = widthRemaining - BarLeft->GetWidth() - BarRight->GetWidth();
-		BarMiddle->DrawTiled( x, bar_y,bar_w*ratio, BarMiddle->GetHeight() );
-		BarRight->Draw( x + bar_w*ratio, bar_y );
+		BarMiddle->DrawTiled( x, bar_y,static_cast<int>(bar_w*ratio), BarMiddle->GetHeight() );
+		BarRight->Draw( x + static_cast<int>(bar_w*ratio), bar_y );
 	}
 }
 
@@ -213,7 +213,7 @@ void::Hud::DrawStatusBars() {
 	list<StatusBar*>::iterator i;
 	for( i= Bars.begin(); i != Bars.end(); ++i ){
 		int pos = (*i)->GetPosition();
-		(*i)->Draw(startCoords[pos].GetX(),startCoords[pos].GetY());
+		(*i)->Draw(static_cast<int>(startCoords[pos].GetX()),static_cast<int>(startCoords[pos].GetY()));
 		startCoords[pos] += offsetCoords[pos];
 	}
 }

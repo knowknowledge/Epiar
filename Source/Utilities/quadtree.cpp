@@ -122,7 +122,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
-	const float maxrange = 1.42*radius + distance;
+	const float maxrange = 1.42f*radius + distance;
 
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
@@ -209,11 +209,15 @@ void QuadTree::Update(){
 
 void QuadTree::Draw(Coordinate root){
 	// The QuadTree is scaled so that it always fits on the screen.
-	float scale = (Video::GetHalfHeight() > Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) -5;
+	float scale = (Video::GetHalfHeight() > Video::GetHalfWidth() ?
+		static_cast<float>(Video::GetHalfWidth()) : static_cast<float>(Video::GetHalfHeight()) -5);
 	float r = scale* radius / QUADRANTSIZE;
-	float x = (scale* (center-root).GetX() / QUADRANTSIZE) + Video::GetHalfWidth()  -r;
-	float y = (scale* (center-root).GetY() / QUADRANTSIZE) + Video::GetHalfHeight() -r;
-	Video::DrawRect( x,y, 2*r, 2*r, 0,255,0, .1);
+	float x = (scale* static_cast<float>((center-root).GetX()) / QUADRANTSIZE)
+		+ static_cast<float>(Video::GetHalfWidth())  -r;
+	float y = (scale* static_cast<float>((center-root).GetY()) / QUADRANTSIZE)
+		+ static_cast<float>(Video::GetHalfHeight()) -r;
+	Video::DrawRect( static_cast<int>(x),static_cast<int>(y),
+		static_cast<int>(2*r),static_cast<int>(2*r), 0,255.f,0.f, .1f);
 
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
@@ -223,11 +227,11 @@ void QuadTree::Draw(Coordinate root){
 		list<Sprite *>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
 			Coordinate pos = (*i)->GetWorldPosition() - root;
-			int posx = (scale* (float)pos.GetX() / QUADRANTSIZE) + (float)Video::GetHalfWidth();
-			int posy = (scale* (float)pos.GetY() / QUADRANTSIZE) + (float)Video::GetHalfHeight();
+			int posx = static_cast<int>((scale* (float)pos.GetX() / QUADRANTSIZE) + (float)Video::GetHalfWidth());
+			int posy = static_cast<int>((scale* (float)pos.GetY() / QUADRANTSIZE) + (float)Video::GetHalfHeight());
 			Color col = (*i)->GetRadarColor();
 			// The 17 is here because it looks nice.  I can't explain why.
-			Video::DrawCircle( posx, posy, 17*(*i)->GetRadarSize()/scale,2, col.r,col.g,col.b );
+			Video::DrawCircle( posx, posy, 17*static_cast<int>((*i)->GetRadarSize()/scale),2, col.r,col.g,col.b );
 		}
 	}
 }

@@ -183,7 +183,7 @@ int UI_Lua::newLabel(lua_State *L){
 	if(n==3){
 		*label = new Label(x,y,caption);
 	} else if(n==4) {
-		bool centered = bool(luaL_checknumber (L, 4));
+		bool centered = luaL_checknumber (L, 4) != 0.;
 		*label = new Label(x,y,caption,centered);
 	}
 
@@ -225,7 +225,7 @@ int UI_Lua::newCheckbox(lua_State *L) {
 	if (n == 4){
 		int x = int(luaL_checknumber (L, 1));
 		int y = int(luaL_checknumber (L, 2));
-		bool checked = bool(luaL_checknumber(L, 3));
+		bool checked = luaL_checknumber(L, 3) != 0;
 		string labeltext = luaL_checkstring (L, 4);
 		
 		Checkbox **checkbox = (Checkbox**)lua_newuserdata(L, sizeof(Checkbox**));
@@ -317,7 +317,7 @@ int UI_Lua::setChecked(lua_State *L){
 		return luaL_error(L, "Got %d arguments expected 2 (self, value)", n);
 
 	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
-	bool checked = (bool)lua_toboolean(L, 2);
+	bool checked = lua_toboolean(L, 2) != 0;
 	(*box)->Set(checked);
 
 	return 0;

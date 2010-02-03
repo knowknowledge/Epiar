@@ -31,10 +31,10 @@ int Timer::Update( void ) {
 	lastLoopLength = tick - lastLoopTick;
 	lastLoopTick = tick;
 	
-	float dt = lastLoopLength * 0.001;
+	float dt = lastLoopLength * 0.001f;
 	float frames = dt * Timer::logicFPS;
 	
-	int i = floor(virtualTime + frames) - floor(virtualTime);
+	int i = static_cast<int>(floor(virtualTime + frames) - floor(virtualTime));
 	virtualTime += frames;
 	
 	return i;
@@ -60,7 +60,7 @@ void Timer::Delay( void ) {
 }
 
 float Timer::GetDelta( void ) {
-	return 1. / Timer::logicFPS;
+	return 1.f / Timer::logicFPS;
 	//return( static_cast<float>(lastLoopLength / 1000. ));
 }
 
