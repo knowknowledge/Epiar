@@ -17,6 +17,8 @@
 /**\class Font
  * \brief Font class takes care of initializing fonts. */
 
+/**\brief Constructs new font (default color white).
+ */
 Font::Font() {
 	r = 1.;
 	g = 1.;
@@ -24,6 +26,8 @@ Font::Font() {
 	a = 1.;
 }
 
+/**\brief Sets the new color and alpha value.
+ */
 void Font::SetColor( float r, float g, float b, float a ) {
 	this->r = r;
 	this->g = g;
@@ -31,18 +35,27 @@ void Font::SetColor( float r, float g, float b, float a ) {
 	this->a = a;
 }
 
-// FreeFont
+/**\class FreeFont
+ * \brief Implements FTGL font routines.*/
 
+/**\brief Construct new font based on file.
+ * \param filename String containing file.
+ */
 FreeFont::FreeFont( string filename ) {
 	font=NULL;
 	SetFont( filename );
 }
 
+/**\brief Destructor, handles deleting FTGL instance.
+ */
 FreeFont::~FreeFont() {
 	delete (FTTextureFont*)this->font;
 	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
+/**\brief Loads the font (uses FTGL Texture Fonts).
+ * \param filename Path to font file.
+ */
 bool FreeFont::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
@@ -70,6 +83,11 @@ bool FreeFont::SetFont( string filename ) {
 	return( true );
 }
 
+/**\brief Renders a string.
+ * \param x X coordinate
+ * \param y Y coordinate
+ * \param text C style string pointer to text.
+ */
 Rect FreeFont::Render( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
@@ -87,7 +105,11 @@ Rect FreeFont::Render( int x, int y, const char *text ) {
 	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
-// Renders text centered squarely on (x,y), taking the bounding box into account
+/**\brief Renders text centered squarely on (x,y).
+ * \details
+ * Taking the bounding box into account.
+ * \sa FreeFont::Render
+ */
 Rect FreeFont::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
