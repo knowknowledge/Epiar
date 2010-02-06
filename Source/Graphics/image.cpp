@@ -50,7 +50,7 @@ Image* Image::Get( string filename ) {
 	value = (Image*)Resource::Get(filename);
 	if( value == NULL ) {
 		value = new Image(filename);
-		Resource::Store((Resource*)value);
+		Resource::Store(filename,(Resource*)value);
 	}
 	return value;
 }
@@ -68,7 +68,6 @@ bool Image::Load( const string& filename ) {
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
 	if ( retval ){
-		SetPath(filename);
 		return true;
 	}
 	return NULL;

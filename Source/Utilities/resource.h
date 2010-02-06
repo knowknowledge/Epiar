@@ -15,13 +15,10 @@
 
 class Resource{
 	public:
-		Resource(string path="");
-		static void Store(Resource* res);
+		Resource();
+		static void Store(string key, Resource* res);
 		static Resource* Get(string path);
-		void SetPath(string path){ filepath = path; }
-		string GetPath() { return filepath; }
 	private:
-		string filepath;
 		static map<string,Resource*> values;
 };
 
