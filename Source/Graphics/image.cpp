@@ -57,7 +57,6 @@ Image* Image::Get( string filename ) {
 
 // Load image from file
 bool Image::Load( const string& filename ) {
-	SDL_Surface *s = NULL;
 	File file = File( filename );
 	char* buffer = file.Read();
 	int bytesread = file.GetLength();
