@@ -262,12 +262,12 @@ function ui_demo()
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
-	io.write("DEBUG '"..( Epiar.getoption("options/development/override-tgz") ).."'\n")
-	demo_check = UI.newCheckbox(50, 100, ( Epiar.getoption("options/development/override-tgz") ), "Toggle This")
+	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
+	demo_check = UI.newCheckbox(50, 100, ( Epiar.getoption("options/development/debug-quadtree") ), "Toggle This")
 
 	-- Modify the Widgets
 	demo_trigger = function ()
-		Epiar.setoption("options/development/override-tgz", demo_check:IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/debug-quadtree", demo_check:IsChecked() and 1 or 0 )
 		demo_win:close()
 		demo_win = nil;
 	end

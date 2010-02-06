@@ -6,6 +6,7 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
@@ -104,8 +105,8 @@ void SpriteManager::DeleteEmptyQuadrants() {
 }
 
 void SpriteManager::Draw() {
-	// UnComment this line When debugging the QuadTree
-	//GetQuadrant( Player::Instance()->GetWorldPosition() )->Draw( GetQuadrantCenter( Player::Instance()->GetWorldPosition() ) );
+	if( OPTION(int,"options/development/debug-quadtree") )
+		GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
 
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen = new list<Sprite*>();
