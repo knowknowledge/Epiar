@@ -36,4 +36,70 @@
 		<militia>7</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
 	</planet>
+	<planet>
+		<name>Castal</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>7355</x>
+		<y>11050</y>
+		<landable>1</landable>
+		<traffic>2</traffic>
+		<image>Resources/Graphics/planet3.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Destinaria</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>15600</x>
+		<y>-4000</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>Resources/Graphics/planet4.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Exudusous</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>-8325</x>
+		<y>-4350</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>Resources/Graphics/planet5.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Fon`te Ral</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>-8725</x>
+		<y>550</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>Resources/Graphics/planet5.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Fonral</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>-38725</x>
+		<y>23000</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>Resources/Graphics/planet7.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
+	<planet>
+		<name>Galaphrain</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>-52725</x>
+		<y>21300</y>
+		<landable>1</landable>
+		<traffic>3</traffic>
+		<image>Resources/Graphics/planet7.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
 </planets>
