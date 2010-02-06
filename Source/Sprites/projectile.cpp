@@ -14,7 +14,7 @@
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
 
-Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon)
+Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* _weapon)
 {
 	// All Projectiles get these
 	ownerID = -1;
@@ -26,6 +26,7 @@ Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate f
 	SetAngle(angleToFire);
 
 	// These are based off of the Weapon
+	weapon = _weapon;
 	secondsOfLife = weapon->GetLifetime();
 	SetImage(weapon->GetImage());
 
@@ -57,7 +58,7 @@ void Projectile::Update( void ) {
 			    ||( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER ) )
 			  &&( (*i)->GetID() != ownerID )
 			 ) {
-				((Ship*)(*i))->Damage( 20 );
+				((Ship*)(*i))->Damage( weapon->GetPayload() );
 				numImpacts++;
 			}
 		}
