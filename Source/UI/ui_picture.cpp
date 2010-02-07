@@ -57,9 +57,7 @@ void Picture::Draw( int relx, int rely ){
 					bitmap->GetWidth(), bitmap->GetHeight(),
 					1.0,1.0,1.0,0.1 );
 	*/
-	
-	// TODO: When Image::resize works, draw the image to as the size w,h
-	bitmap->DrawCentered( GetX()+relx+w/2, GetY()+rely+h/2, static_cast<float>(rotation));
+	bitmap->DrawFit( GetX()+relx, GetY()+rely, w, h, static_cast<float>(rotation));
 }
 
 void Picture::Set( Image *img ){
