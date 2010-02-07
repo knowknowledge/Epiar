@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Engine/console.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
@@ -16,8 +17,10 @@
 #include "Engine/simulation.h"
 #include "Engine/hud.h"
 #include "Utilities/lua.h"
+#include "Utilities/timer.h"
 
 map<InputEvent, string> Input::eventMappings;
+Uint32 Input::lastMouseMove= 0;
 
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
@@ -86,6 +89,10 @@ bool Input::Update( void ) {
 	Hud::HandleInput( events );
 	HandleLuaCallBacks( events );
 
+	if(Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")){
+		Video::DisableMouse();
+	}
+
 	events.clear();
 	
 	// this could be false - returning quitSignal doesn't imply quitting
@@ -102,6 +109,8 @@ void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 	y = event->motion.y;
 	
 	events.push_front( InputEvent( MOUSE, MOUSEMOTION, x, y ) );
+	Video::EnableMouse();
+	lastMouseMove = Timer::GetTicks();
 }
 
 void Input::_UpdateHandleMouseDown( SDL_Event *event ) {

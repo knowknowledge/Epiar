@@ -106,6 +106,7 @@ class Input {
 		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems
 		static map<InputEvent,string> eventMappings; // Lua callbacks mapped to a key
+		static Uint32 lastMouseMove;
 };
 
 #endif // __h_input__

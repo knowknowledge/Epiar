@@ -20,6 +20,9 @@
 		<bottom>6.5</bottom>
 		<left>6.5</left>
 	</momentum-caps>
+	<timing>
+		<mouse-fade>500</mouse-fade>
+	</timing>
 	<development>
 		<debug-quadtree>0</debug-quadtree>
 		<override-tgz>1</override-tgz>

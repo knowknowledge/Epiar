@@ -219,8 +219,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 void UI::ResetInput() {
 	mouseFocus = NULL;
 	keyboardFocus = NULL;
-	
-	Video::DisableMouse();
 }
 
 void UI::RegisterKeyboardFocus( Widget *widget ) {
