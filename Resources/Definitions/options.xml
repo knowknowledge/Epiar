@@ -22,6 +22,9 @@
 	</momentum-caps>
 	<timing>
 		<mouse-fade>500</mouse-fade>
+		<target-zoom>500</target-zoom>
+		<alert-drop>3500</alert-drop>
+		<alert-fade>2500</alert-fade>
 	</timing>
 	<development>
 		<debug-quadtree>0</debug-quadtree>
