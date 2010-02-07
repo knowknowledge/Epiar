@@ -74,7 +74,7 @@ int Coordinate::GetScreenX() {
 	Camera *camera = Camera::Instance();
 	Coordinate screen;
 	
-	camera->Translate( *this, screen );
+	camera->TranslateWorldToScreen( *this, screen );
 
 	return( (int)screen.GetX() );
 }
@@ -83,7 +83,7 @@ int Coordinate::GetScreenY() {
 	Camera *camera = Camera::Instance();
 	Coordinate screen;
 	
-	camera->Translate( *this, screen );
+	camera->TranslateWorldToScreen( *this, screen );
 	
 	return( (int)screen.GetY() );
 }
