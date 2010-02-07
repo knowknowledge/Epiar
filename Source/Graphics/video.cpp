@@ -21,6 +21,8 @@ int Video::h = 0;
 int Video::w2 = 0;
 int Video::h2 = 0;
 
+/**\brief Creates the singleton or retrieves the current instance.
+ */
 Video *Video::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Video; // create the sold instance
@@ -29,10 +31,14 @@ Video *Video::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Empty constructor.
+ */
 Video::Video( void ) {
 	
 }
 
+/**\brief Initializes the Video display.
+ */
 bool Video::Initialize( void ) {
 	char buf[32] = {0};
 	
@@ -52,6 +58,8 @@ bool Video::Initialize( void ) {
 	return( true );
 }
 
+/**\brief Shuts down the Video display.
+ */
 bool Video::Shutdown( void ) {
 	
 	EnableMouse();
@@ -59,10 +67,14 @@ bool Video::Shutdown( void ) {
 	return( true );
 }
 
+/**\brief Releases the pointer.
+ */
 Video::~Video( void ){
 	pInstance = NULL;
 }
 
+/**\brief Sets the window properties.
+ */
 bool Video::SetWindow( int w, int h, int bpp ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()

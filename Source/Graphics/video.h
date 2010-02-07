@@ -1,4 +1,4 @@
-/**\file			video.cpp
+/**\file			video.h
  * \author			Chris Thielen (chris@luethy.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Saturday, January 5, 2008
