@@ -18,6 +18,9 @@
 /**\class Ani
  * \brief Animations */
 
+/**\brief Gets the resource object.
+ * \param filename string containing the animation
+ */
 Ani* Ani::Get( string filename ) {
 	Ani* value;
 	value = (Ani*)Resource::Get(filename);
@@ -28,6 +31,8 @@ Ani* Ani::Get( string filename ) {
 	return value;
 }
 
+/**\brief The resource object (no file).
+ */
 Ani::Ani() {
 	frames = NULL;
 	delay = 0;
@@ -35,6 +40,10 @@ Ani::Ani() {
 	w = h = 0;
 }
 
+/**\brief The resource object based on the file.
+ * \param filename String pointer to file.
+ * \sa Ani::Load
+ */
 Ani::Ani( string& filename ) {
 	Log::Message("New Animation from '%s'", filename.c_str() );
 	frames = NULL;
@@ -44,7 +53,9 @@ Ani::Ani( string& filename ) {
 	Load( filename );
 }
 
-
+/**\brief Loads the animation file.
+ * \param filename File name of the animation
+ */
 bool Ani::Load( string& filename ) {
 	char byte;
 	const char *cName = filename.c_str();
@@ -111,14 +122,20 @@ bool Ani::Load( string& filename ) {
 }
 
 /**\class Animation
- * \brief Animations */
+ * \brief Animations implementation. */
 
+/**\brief Empty constructor.
+ */
 Animation::Animation() {
 	fnum=0;
 	startTime = 0;
 	looping = false;
 }
 
+/**\brief Constructor (based on file).
+ * \param filename File to load.
+ * \sa Ani::Get
+ */
 Animation::Animation( string& filename ) {
 	fnum=0;
 	startTime = 0;
@@ -126,8 +143,11 @@ Animation::Animation( string& filename ) {
 	ani = Ani::Get( filename );
 }
 
-// Returns true while animation is still playing - false when animation is over
-// Note: if looping is turned on, the animation will always return true
+/**\brief Returns true while animation is still playing.
+ * \details
+ * false when animation is over
+ * Note: if looping is turned on, the animation will always return true.
+ */
 bool Animation::Update() {
 	Image *frame = NULL;
 	bool finished = false;
@@ -152,13 +172,16 @@ bool Animation::Update() {
 	return finished;
 }
 
+/**\brief Draws the animation at given coordinate.
+ */
 void Animation::Draw( int x, int y, float ang ) {
 	Image* frame = &(ani->frames)[fnum];
 	frame->DrawCentered( x, y, ang );
 }
 
 
-// Resets animation data back to the first frame
+/**\brief Resets animation data back to the first frame.
+ */
 void Animation::Reset( void ) {
 	fnum=0;
 	startTime = 0;
