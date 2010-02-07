@@ -180,12 +180,25 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
-function buy(model)
+function buyShip(model)
 	HUD.newAlert("Enjoy your new "..model..".")
 	PLAYER:SetModel(model)
 	return 1
 end
 
+function buyWeapon(weapon)
+	weaponsAndAmmo = PLAYER:GetWeapons()
+	if weaponsAndAmmo[weapon]~=nil then
+		PLAYER:AddAmmo(weapon,100)
+		return 0
+	else
+		HUD.newAlert("Enjoy your new "..weapon.." system.")
+		PLAYER:AddWeapon(weapon)
+		PLAYER:AddAmmo(weapon,100)
+		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
+	end
+	return 1
+end
 
 function createTable(x,y,w,h,title,piclist,buttonlist)
 	pad = 10
@@ -214,19 +227,32 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 
 		col =col+1
 	end
+	win:add(UI.newButton( w-button_w-15, h-button_h-15, button_w,button_h, "Cancel","storefront:close();storefront=nil"))
 	return win
 end
 
-function store()
+function shipyard()
 	Epiar.pause()
 	if storefront ~=nil then return end
 
 	local models = Epiar.models()
 	local buylist = {}
 	for m =1,#models do
-		buylist[m] = {models[m], "buy(\""..models[m].."\"); storefront:close();storefront=nil "}
+		buylist[m] = {models[m], "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
 	end
 	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
+end
+
+function armory()
+	Epiar.pause()
+	if storefront ~=nil then return end
+
+	weapons = Epiar.weapons()
+	local buylist = {}
+	for i =1,#weapons do
+		buylist[i] = {weapons[i], "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}
+	end
+	storefront = createTable(30,30,820,500,"Armory",weapons,buylist)
 end
 
 function ui_demo()
@@ -236,15 +262,12 @@ function ui_demo()
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
-	demo_check = UI.newCheckbox(50, 100, 0, "Toggle This")
+	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
+	demo_check = UI.newCheckbox(50, 100, ( Epiar.getoption("options/development/debug-quadtree") ), "Toggle This")
 
 	-- Modify the Widgets
 	demo_trigger = function ()
-		if 1==demo_check:IsChecked() then
-			io.write('\nchecked!\n')
-		else
-			io.write('\nnot checked!\n')
-		end
+		Epiar.setoption("options/development/debug-quadtree", demo_check:IsChecked() and 1 or 0 )
 		demo_win:close()
 		demo_win = nil;
 	end

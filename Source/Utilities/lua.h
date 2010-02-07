@@ -38,6 +38,9 @@ class Lua {
 
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
+		static int getoption(lua_State *L);
+		static int setoption(lua_State *L);
+
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *L);

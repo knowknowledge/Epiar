@@ -34,6 +34,8 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 			weaponType = atoi( value.c_str() );
 	} else PPA_MATCHES( "imageName" ) {
 		image = new Image(value);
+	} else PPA_MATCHES( "picName" ) {
+		Image::Store(name, Image::Get(value));
 	} else PPA_MATCHES( "payload" ) {
 		if (atoi( value.c_str()) != 0)
 			payload = atoi( value.c_str() );

@@ -7,6 +7,7 @@
  * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
+#include "common.h"
 #include "includes.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
@@ -204,6 +205,8 @@ void Lua::RegisterFunctions() {
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
 		{"ispaused", &Lua::ispaused},
+		{"getoption", &Lua::getoption},
+		{"setoption", &Lua::setoption},
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
@@ -250,6 +253,26 @@ int Lua::unpause(lua_State *L){
 int Lua::ispaused(lua_State *L){
 	lua_pushnumber(L, (int) Simulation::isPaused() );
 	return 1;
+}
+
+int Lua::getoption(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (option)", n);
+	string path = (string)lua_tostring(L, 1);
+	string value = OPTION(string,path);
+	lua_pushstring(L, value.c_str());
+	return 1;
+}
+
+int Lua::setoption(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 1 (option,value)", n);
+	string path = (string)lua_tostring(L, 1);
+	string value = (string)lua_tostring(L, 2);
+	SETOPTION(path,value);
+	return 0;
 }
 
 int Lua::getPlayer(lua_State *L){

@@ -231,7 +231,7 @@ void QuadTree::Draw(Coordinate root){
 			int posy = static_cast<int>((scale* (float)pos.GetY() / QUADRANTSIZE) + (float)Video::GetHalfHeight());
 			Color col = (*i)->GetRadarColor();
 			// The 17 is here because it looks nice.  I can't explain why.
-			Video::DrawCircle( posx, posy, 17*static_cast<int>((*i)->GetRadarSize()/scale),2, col.r,col.g,col.b );
+			Video::DrawCircle( posx, posy, static_cast<int>(17.f*(*i)->GetRadarSize()/scale),2, col.r,col.g,col.b );
 		}
 	}
 }

@@ -28,6 +28,7 @@ private:
 	Uint32 secondsOfLife; //time to live before projectile blows up
 	Uint32 start;
 	int ownerID;
+	Weapon *weapon;
 
 	/*todo Add 
  -graphics:

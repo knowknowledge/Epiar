@@ -33,7 +33,7 @@ Picture::Picture( int x, int y, int w, int h, Image* pic ){
 
 Picture::Picture( int x, int y, int w, int h, string filename ){
 	Default(x,y,w,h);
-	bitmap = new Image(filename);
+	bitmap = Image::Get(filename);
 }
 
 Picture::~Picture(){
@@ -74,5 +74,5 @@ void Picture::Set( string filename ){
 	// Potential Memory Leak
 	// If the previous bitmap was created from new,
 	// then that image is now lost
-	bitmap = new Image(filename);
+	bitmap = Image::Get(filename);
 }

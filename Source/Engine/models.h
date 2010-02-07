@@ -23,7 +23,7 @@ class Model {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "image" ) {
-				image.Load( value );
+				image = (Image*)Image::Get( value );
 			} else PPA_MATCHES( "mass" ) {
 				mass = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
@@ -51,6 +51,7 @@ class Model {
 				// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
 				Log::Error("Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
 			}
+			if(image!=NULL && name!=""){ Image::Store(name,(Resource*)image);}
 		}
 		
 		string GetName( void ) const {
@@ -74,7 +75,7 @@ class Model {
 		}
 		
 		Image *GetImage( void ) {
-			return &image;
+			return image;
 		}
 		
 		string GetFlareAnimation( void ) {
@@ -93,7 +94,7 @@ class Model {
 		
 	private:
 		string name;
-		Image image;
+		Image *image;
 		Engine *engine;
 		float mass;
 		short int thrustOffset; // engine flare animation offset

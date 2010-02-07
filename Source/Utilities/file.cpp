@@ -64,7 +64,7 @@ bool File::OpenRead( const string& filename ) {
 #ifdef USE_PHYSICSFS
 	fp = PHYSFS_openRead( cName );
 #else
-	fp = fopen(cName,"r");
+	fp = fopen(cName,"rb");
 #endif
 	if( fp == NULL ){
 		Log::Error("Could not open file: %s.\n%s", cName,
@@ -93,7 +93,7 @@ bool File::OpenWrite( const string& filename ) {
 #ifdef USE_PHYSICSFS
 	this->fp = PHYSFS_openWrite( cName );
 #else
-	this->fp = fopen( cName, "w");
+	this->fp = fopen( cName, "wb");
 #endif
 	if( fp == NULL ){
 		Log::Error("Could not open file for writing: %s.\n%s",cName,

@@ -437,7 +437,7 @@ int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
 
 	AI** ai = checkShip(L,1);
 	Weapon* cur = (*ai)->getCurrentWeapon();
-	lua_pushfstring(L, cur->GetName().c_str() );
+	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
 	return 1;
 }
 

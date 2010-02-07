@@ -26,7 +26,7 @@ Ani* Ani::Get( string filename ) {
 	value = (Ani*)Resource::Get(filename);
 	if( value == NULL ) {
 		value = new Ani(filename);
-		Resource::Store((Resource*)value);
+		Resource::Store(filename,(Resource*)value);
 	}
 	return value;
 }
@@ -50,7 +50,6 @@ Ani::Ani( string& filename ) {
 	delay = 0;
 	numFrames = 0;
 	w = h = 0;
-	SetPath(filename);
 	Load( filename );
 }
 

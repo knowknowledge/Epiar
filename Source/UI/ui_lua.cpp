@@ -203,15 +203,13 @@ int UI_Lua::newPicture(lua_State *L){
 	int y = int(luaL_checknumber (L, 2));
 	int w = int(luaL_checknumber (L, 3));
 	int h = int(luaL_checknumber (L, 4));
-	string modelname = luaL_checkstring (L, 5);
-
-	Models *models = Models::Instance();
+	string picname = luaL_checkstring (L, 5);
 
 	// Allocate memory for a pointer to object
 	Picture **pic= (Picture**)lua_newuserdata(L, sizeof(Picture**));
     luaL_getmetatable(L, EPIAR_UI);
     lua_setmetatable(L, -2);
-	*pic = new Picture(x,y,w,h, models->GetModel(modelname)->GetImage() );
+	*pic = new Picture(x,y,w,h, picname );
 
 	// Note: We're not putting this Label anywhere!
 	//       Lua will have to do that for us.
@@ -243,11 +241,11 @@ int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2){
 		Picture** pic = (Picture**)lua_touserdata(L,1);
-		string modelname = luaL_checkstring (L, 2);
-		(*pic)->Set( Models::Instance()->GetModel(modelname)->GetImage() );
+		string picname = luaL_checkstring (L, 2);
+		(*pic)->Set( picname );
 	
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (self, ModelName)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
 	}
 	return 0;
 }

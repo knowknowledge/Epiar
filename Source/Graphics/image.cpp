@@ -50,14 +50,13 @@ Image* Image::Get( string filename ) {
 	value = (Image*)Resource::Get(filename);
 	if( value == NULL ) {
 		value = new Image(filename);
-		Resource::Store((Resource*)value);
+		Resource::Store(filename,(Resource*)value);
 	}
 	return value;
 }
 
 // Load image from file
 bool Image::Load( const string& filename ) {
-	SDL_Surface *s = NULL;
 	File file = File( filename );
 	char* buffer = file.Read();
 	int bytesread = file.GetLength();
@@ -68,7 +67,6 @@ bool Image::Load( const string& filename ) {
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
 	if ( retval ){
-		SetPath(filename);
 		return true;
 	}
 	return NULL;

@@ -7,7 +7,8 @@
 		<name>Missile</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/missile.png</imageName>
-		<payload>10</payload>
+		<picName>Resources/Graphics/missile_launcher.png</picName>
+		<payload>300</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>1</ammoType>
@@ -19,7 +20,8 @@
 		<name>Slow Missile</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/torpedo.png</imageName>
-		<payload>10</payload>
+		<picName>Resources/Graphics/torpedo_launcher.png</picName>
+		<payload>200</payload>
 		<velocity>5</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>2</ammoType>
@@ -31,7 +33,8 @@
 		<name>Laser</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_green.png</imageName>
-		<payload>1</payload>
+		<picName>Resources/Graphics/sublight_laser.png</picName>
+		<payload>20</payload>
 		<velocity>10</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>3</ammoType>
@@ -43,7 +46,8 @@
 		<name>Strong Laser</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_blue.png</imageName>
-		<payload>3</payload>
+		<picName>Resources/Graphics/mark2_laser.png</picName>
+		<payload>30</payload>
 		<velocity>20</velocity>
 		<acceleration>2</acceleration>
 		<ammoType>4</ammoType>
@@ -55,7 +59,8 @@
 		<name>Minigun</name>
 		<weaponType>0</weaponType>
 		<imageName>Resources/Graphics/laser_grey.png</imageName>
-		<payload>1</payload>
+		<picName>Resources/Graphics/mark3_laser.png</picName>
+		<payload>2</payload>
 		<velocity>10</velocity>
 		<acceleration>0</acceleration>
 		<ammoType>5</ammoType>

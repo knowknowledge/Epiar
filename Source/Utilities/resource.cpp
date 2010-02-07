@@ -12,12 +12,11 @@
 
 map<string, Resource*> Resource::values;
 
-Resource::Resource(string path) {
-	filepath = path;
+Resource::Resource() {
 }
 
-void Resource::Store(Resource *res) {
-	values.insert(make_pair(res->GetPath(),res));
+void Resource::Store(string key,Resource *res) {
+	values.insert(make_pair(key,res));
 }
 
 Resource* Resource::Get(string path) {

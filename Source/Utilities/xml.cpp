@@ -130,3 +130,9 @@ string XMLFile::Get( const string& path ) {
 	// didn't find it
 	return( string() );
 }
+
+void XMLFile::Set( const string& path, const string& value ) {
+	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
+	values[path] = value;
+	assert( value == Get(path));
+}
