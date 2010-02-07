@@ -159,6 +159,27 @@ void Hud::Draw( void ) {
 	Hud::DrawStatusBars();
 }
 
+
+/**\brief Handles Hud related User Input
+ * \param events User entered Keyboard and mouse clicks
+ */
+void Hud::HandleInput( list<InputEvent> & events ) {
+	list<InputEvent>::iterator i;
+	for(i= events.begin(); i != events.end() ; ++i ) {
+		// Mouse Clicks
+		if( i->type == MOUSE && i->mstate==MOUSEDOWN) {
+			Coordinate screenPos(i->mx, i->my), worldPos;
+			Camera::Instance()->TranslateScreenToWorld( screenPos, worldPos );
+			// Target any clicked Sprite
+			list<Sprite*> *impacts = SpriteManager::Instance()->GetSpritesNear( worldPos, 5 );
+			if( impacts->size() > 0) {
+				Target( (*(impacts->begin()))->GetID());
+			}
+		}
+	}
+}
+
+
 /**\brief Draw HUD messages (eg Welcome to Epiar).
  */
 void Hud::DrawMessages() {
@@ -265,6 +286,15 @@ void Hud::Alert( const char *message, ... )
 	va_end( args );
 
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
+}
+
+
+/**\brief Changes the Hud target
+ * \param id Unique Sprite id number
+ */
+void Hud::Target(int id) {
+	targetID = id;
+	timeTargeted = Timer::GetTicks();
 }
 
 /**\brief Adds a new StatusBar.
@@ -408,8 +438,7 @@ int Hud::setTarget(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
-	targetID = luaL_checkint(L,1);
-	timeTargeted = Timer::GetTicks();
+	Target( luaL_checkint(L,1) );
 	return 0;
 }
 

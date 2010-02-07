@@ -83,6 +83,7 @@ bool Input::Update( void ) {
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
+	Hud::HandleInput( events );
 	HandleLuaCallBacks( events );
 
 	events.clear();
