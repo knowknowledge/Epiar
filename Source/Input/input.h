@@ -60,9 +60,9 @@ class InputEvent {
 			this->key = key;
 			this->kstate = kstate;
 		}
-		InputEvent( eventType type, keyState kstate, char key ) {
+		InputEvent( eventType type, keyState kstate, int key ) {
 			this->type = type;
-			this->key = (SDLKey)key; // CHECKME: we're assuming SDLKey will never be smaller than a char
+			this->key = (SDLKey)key;
 			this->kstate = kstate;
 		}
 		InputEvent( eventType type, mouseState mstate, int mx, int my ) {

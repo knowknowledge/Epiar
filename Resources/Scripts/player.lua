@@ -1,20 +1,57 @@
 -- Use this script for a solar system
 
-
 -- Keyboard States:
 KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
 -- SDL Key Translations
 Key = {}
-Key['UP']=17;
-Key['DOWN']=18;
-Key['RIGHT']=19;
-Key['LEFT']=20;
-Key['ESC']=27;
-Key['RSHIFT']=47;
-Key['LSHIFT']=48;
-Key['SPACE']=32;
-Key['TAB']=9;
--- TODO finish this table...
+Key["backspace"] =8;
+Key["tab"] =9;
+Key["clear"] =12;
+Key["return"] =13;
+Key["pause"] =19;
+Key["escape"] =27;
+Key["space"] =32;
+
+Key["up"] =273;
+Key["down"] =274;
+Key["right"] =275;
+Key["left"] =276;
+Key["insert"] =277;
+Key["home"] =278;
+Key["end"] =279;
+Key["pageup"] =280;
+Key["pagedown"] =281;
+
+-- Should we support the function keys?
+--Key["f1"] =282;
+--Key["f2"] =283;
+--Key["f3"] =284;
+--Key["f4"] =285;
+--Key["f5"] =286;
+--Key["f6"] =287;
+--Key["f7"] =288;
+--Key["f8"] =289;
+--Key["f9"] =290;
+--Key["f10"] =291;
+--Key["f11"] =292;
+--Key["f12"] =293;
+--Key["f13"] =294;
+--Key["f14"] =295;
+--Key["f15"] =296;
+
+Key["numlock"] =300;
+Key["capslock"] =301;
+Key["scrolllock"] =302;
+Key["rshift"] =303;
+Key["lshift"] =304;
+Key["rctrl"] =305;
+Key["lctrl"] =306;
+Key["ralt"] =307;
+Key["lalt"] =308;
+Key["rmeta"] =309;
+Key["lmeta"] =310;
+Key["lsuper"] =311;
+Key["rsuper"] =312;
 
 function sdlkey(k)
 	if Key[k] then
@@ -27,18 +64,18 @@ end
 commands = {
 	-- Each command should be a table
 	-- { KEY, TITLE, SCRIPT }
-	{'UP', "Accelerate", "PLAYER:Accelerate()",KEYPRESSED},
-	{'LEFT', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
-	{'RIGHT', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
-	{'DOWN', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
+	{'up', "Accelerate", "PLAYER:Accelerate()",KEYPRESSED},
+	{'left', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
+	{'right', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
+	{'down', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
 	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
-	{'RSHIFT', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYPRESSED},
-	{'LSHIFT', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYPRESSED},
-	{'TAB', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
+	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
+	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
-	{'SPACE', "Fire", "PLAYER:Fire()",KEYPRESSED}
+	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED}
 }
 
 function chooseKeys()
