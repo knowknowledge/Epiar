@@ -137,11 +137,20 @@ end
 
 function targetClosestShip()
 	x,y = PLAYER:GetPosition()
-	nearby = Epiar.ships(x,y,2000)
+	nearby = Epiar.ships(x,y,4096)
 	if #nearby==0 then return end
-	HUD.newAlert("Targeting "..nearby[1]:GetModelName().." #"..nearby[1]:GetID())
-	HUD.setTarget(nearby[1]:GetID()) -- First ID in the list
-	TargetName:setStatus(nearby[1]:GetModelName() )
+	
+	nextTarget = 1
+	currentTarget = HUD.getTarget()
+	for s =1,#nearby-1 do
+		if nearby[s]:GetID() == currentTarget then
+			nextTarget = s+1
+		end
+	end
+	
+	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
+	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
+	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
 
 function attemptLanding()
