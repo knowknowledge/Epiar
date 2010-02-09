@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "Audio/audio.h"
 #include "Audio/sound.h"
 #include "Utilities/log.h"
 #include "Utilities/resource.h"
@@ -52,12 +53,35 @@ bool Sound::Play( void ){
 	if ( this->sound == NULL )
 		return false;
 
-	if ( Mix_Playing( -1 ) >31 )
-		return false;
-
-	this->channel = Mix_PlayChannel( -1, this->sound, 0 );
+	int freechan = Audio::Instance().GetFreeChannel();
+	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
 	if ( channel == -1 )
 		return false;
 	
 	return true;
+}
+
+/**\brief Plays the sound at a specified coordinate from origin.
+ */
+bool Sound::Play( const Coordinate& offset ){
+	/**\todo Consider tweaking this scaling factor.*/
+	double dist = 1.5*(offset.GetX() + offset.GetY());
+	if ( dist > 255 )
+		return false;			// Sound is out of range
+
+	Uint8 sounddist = static_cast<Uint8>( dist );
+
+	int freechan = Audio::Instance().GetFreeChannel();
+	if( Mix_SetDistance( freechan, sounddist ) == 0 )
+		Log::Error("Set distance failed on channel %d.", freechan );
+	else
+		Log::Message("Distance set to %d on channel %d.", sounddist, freechan );
+
+	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
+
+	if ( channel == -1 )
+		return false;
+	
+	return true;
+
 }

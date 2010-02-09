@@ -19,12 +19,21 @@ class Audio {
 		bool Initialize( void );
 		bool Shutdown( void );
 		bool SetMusicVol ( int volume );
+		const int GetFreeChannel( void );
+		const int PlayChannel( int chan, Mix_Chunk *chunk, int loop );
 
 	private:
 		Audio();
 		Audio(Audio const&){};				// Copy constructor
 		Audio& operator=(Audio const&){};	// Assignment constructor
 		~Audio();
+
+		int audio_rate;						// Samplerate
+		Uint16 audio_format;				// AUDIO_S16
+		int audio_channels;					// Stereo, etc.
+		int audio_buffers;					// Size of buffer
+		int max_chan;						// Total number of channels use
+		list<int> lastplayed;				// Queue of last used channels.
 };
 
 #endif // __H_AUDIO__
