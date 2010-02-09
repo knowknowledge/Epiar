@@ -60,9 +60,9 @@ class InputEvent {
 			this->key = key;
 			this->kstate = kstate;
 		}
-		InputEvent( eventType type, keyState kstate, char key ) {
+		InputEvent( eventType type, keyState kstate, int key ) {
 			this->type = type;
-			this->key = (SDLKey)key; // CHECKME: we're assuming SDLKey will never be smaller than a char
+			this->key = (SDLKey)key;
 			this->kstate = kstate;
 		}
 		InputEvent( eventType type, mouseState mstate, int mx, int my ) {
@@ -106,6 +106,7 @@ class Input {
 		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems
 		static map<InputEvent,string> eventMappings; // Lua callbacks mapped to a key
+		static Uint32 lastMouseMove;
 };
 
 #endif // __h_input__

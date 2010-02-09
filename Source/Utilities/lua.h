@@ -54,6 +54,9 @@ class Lua {
 		static int getPlanets(lua_State *L);
 
 		static void pushNames(lua_State *L, list<string> *names);
+		static void setField(const char* index, int value);
+		static void setField(const char* index, float value);
+		static void setField(const char* index, const char* value);
 
 	private:
 		static vector<string> buffer;

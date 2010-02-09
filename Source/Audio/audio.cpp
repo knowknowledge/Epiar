@@ -30,35 +30,40 @@ Audio& Audio::Instance(){
 /**\brief Audio system initialization.
  */
 bool Audio::Initialize( void ){
-  int audio_rate = 22050;
-  Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
-  int audio_channels = 2;
-  int audio_buffers = 4096;
+	int audio_rate = 22050;
+	Uint16 audio_format = AUDIO_S16; /* 16-bit stereo */
+	int audio_channels = 2;
+	int audio_buffers = 4096;
 
-  SDL_Init(SDL_INIT_AUDIO);
+	SDL_Init(SDL_INIT_AUDIO);
 
-  if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)){
-	  Log::Error("Audio initialization failed!");
-	  return false;
-  }
+	if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)){
+		Log::Error("Audio initialization failed!");
+		return false;
+	}
 
-  // Load MOD and OGG libraries
-  Mix_Init( MIX_INIT_MOD | MIX_INIT_OGG );
-  return true;
+	// Load MOD and OGG libraries
+	Mix_Init( MIX_INIT_MOD | MIX_INIT_OGG );
+
+	// Allocate channels
+	Mix_AllocateChannels(32);
+	return true;
 }
 
 /**\brief Audio system shutdown.
  */
 bool Audio::Shutdown( void ){
-  /* This is the cleaning up part */
-  Mix_CloseAudio();
-  return true;
+	/* This is the cleaning up part */
+	Mix_HaltChannel( -1 );			// Halts all channels
+	Mix_CloseAudio();
+	return true;
 }
 
 /**\brief Set's the music volume (Range from 0 - 128 ).
  */
 bool Audio::SetMusicVol( int volume ){
 	Mix_VolumeMusic( volume );
+	return true;
 }
 
 /**\brief Empty constructor

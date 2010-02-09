@@ -73,7 +73,7 @@ Coordinate Camera::GetFocusCoordinate() {
 }
 
 // Converts world to screen coordinates
-void Camera::Translate( Coordinate &world, Coordinate &screen ) {
+void Camera::TranslateWorldToScreen( Coordinate &world, Coordinate &screen ) {
 	int tx, ty;
 
 	tx = (int)(world.GetX() - x + Video::GetHalfWidth());
@@ -82,6 +82,17 @@ void Camera::Translate( Coordinate &world, Coordinate &screen ) {
 	screen.SetX( tx );
 	screen.SetY( ty );
 }
+
+void Camera::TranslateScreenToWorld( Coordinate &screen, Coordinate &world ) {
+	int tx, ty;
+
+	tx = (int)(screen.GetX() + x - Video::GetHalfWidth());
+	ty = (int)(screen.GetY() + y - Video::GetHalfHeight());
+	
+	world.SetX( tx );
+	world.SetY( ty );
+}
+
 
 // returns the most recent camera position change
 void Camera::GetDelta( double *dx, double *dy ) {

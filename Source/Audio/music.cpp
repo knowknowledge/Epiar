@@ -7,7 +7,6 @@
  */
 
 #include "includes.h"
-#include "Audio/audio.h"
 #include "Audio/music.h"
 #include "Utilities/log.h"
 #include "Utilities/resource.h"
@@ -36,7 +35,8 @@ Song::Song( const string& filename ){
 	this->song = NULL;
 	this->song = Mix_LoadMUS( filename.c_str() );
 	if ( this->song == NULL )
-		Log::Error( "Could not load song file: %s", filename.c_str() );
+		Log::Error( "Could not load song file: %s, Mixer error: %s",
+			filename.c_str(), Mix_GetError());
 }
 
 /**\brief Destructor to free the music file

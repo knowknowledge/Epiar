@@ -7,8 +7,8 @@
  * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
-#include "common.h"
 #include "includes.h"
+#include "common.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -330,6 +330,24 @@ void Lua::pushNames(lua_State *L, list<string> *names){
         ++iter;
         ++index;
     }
+}
+
+void Lua::setField(const char* index, int value) {
+	lua_pushstring(L, index);
+	lua_pushinteger(L, value);
+	lua_settable(L, -3);
+}
+
+void Lua::setField(const char* index, float value) {
+	lua_pushstring(L, index);
+	lua_pushnumber(L, value);
+	lua_settable(L, -3);
+}
+
+void Lua::setField(const char* index, const char* value) {
+	lua_pushstring(L, index);
+	lua_pushstring(L, value);
+	lua_settable(L, -3);
 }
 
 int Lua::getSpriteByID(lua_State *L){

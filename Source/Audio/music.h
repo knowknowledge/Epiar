@@ -16,7 +16,7 @@ class Song {
 	public:
 		static Song *Get( const string& filename );
 		Song( const string& filename );
-		~Song();
+		~Song( void );
 		bool Play( bool loop=true );
 	private:
 		Mix_Music *song;

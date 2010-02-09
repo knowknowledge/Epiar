@@ -30,10 +30,8 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	this->label = label;
 	
 	// Load the bitmaps needed for drawing
-	bitmap_normal = new Image( "Resources/Graphics/ui_button.png" );
-	bitmap_normal->Resize( w, h );
-	bitmap_pressed = new Image( "Resources/Graphics/ui_button_pressed.png" );
-	bitmap_pressed->Resize( w, h );
+	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
+	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
 
 	this->clickCallBack = NULL;
@@ -72,7 +70,7 @@ void Button::Draw( int relx, int rely ) {
 	Video::DrawRect( x, y, w, h, 1., 1., 1. );
 
 	// draw the button (loaded image is simply scaled)
-	bitmap_current->Draw( x, y );
+	bitmap_current->DrawStretch( x, y, w, h );
 
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );

@@ -56,6 +56,23 @@ void Console::HandleInput( list<InputEvent> & events ) {
 					Console::Buffer.pop_back();
 
 					switch(i->key) {
+					// Ignore Modifiers
+					case SDLK_LSHIFT:
+					case SDLK_RSHIFT:
+					case SDLK_RMETA:
+					case SDLK_LMETA:
+					case SDLK_RALT:
+					case SDLK_LALT:
+					case SDLK_RCTRL:
+					case SDLK_LCTRL:
+					case SDLK_RSUPER:
+					case SDLK_LSUPER:
+					// TODO: add cursor movement support
+					case SDLK_LEFT:
+					case SDLK_RIGHT:
+					case SDLK_UP:
+					case SDLK_DOWN:
+						break;
 					case '\n':
 						Console::Buffer.push_back(back);
 						Lua::Run(back.substr(2));

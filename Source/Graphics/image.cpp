@@ -23,7 +23,6 @@ Image::Image() {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
-	resize_ratio_w = resize_ratio_h = 1.;
 }
 
 // Create instance by loading image from file
@@ -31,7 +30,6 @@ Image::Image( const string& filename ) {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
-	resize_ratio_w = resize_ratio_h = 1.;
 
 	Load(filename);
 }
@@ -104,7 +102,7 @@ bool Image::Load( char *buf, int bufSize ) {
 }
 
 // Draw the image (angle is in degrees)
-void Image::Draw( int x, int y, float angle ) {
+void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_ratio_h) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
@@ -178,6 +176,22 @@ void Image::Draw( int x, int y, float angle ) {
 // Draw the image centered on (x,y)
 void Image::DrawCentered( int x, int y, float angle ) {
 	Draw( x - (w / 2), y - (h / 2), angle );
+}
+
+// Draw the image stretched within to a box
+void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
+	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
+	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
+	Draw(x, y, angle, resize_ratio_w, resize_ratio_h);
+}
+
+// Draw the image within a box but not stretched
+void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
+	float resize_ratio_w = (float)box_w / (float)this->w;
+	float resize_ratio_h = (float)box_h / (float)this->h;
+	// Use Minimum of the two ratios
+	float resize_ratio = resize_ratio_w<resize_ratio_h ? resize_ratio_w : resize_ratio_h;
+	Draw(x, y, angle, resize_ratio, resize_ratio);
 }
 
 // Returns the next highest power of two if num is not a power of two
@@ -358,8 +372,3 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	return( expanded );
 }
 
-// resizes the image by stretching the GL quad at draw time
-void Image::Resize( int w, int h ) {
-	resize_ratio_w = (float)w / (float)this->w;
-	resize_ratio_h = (float)h / (float)this->h;
-}
