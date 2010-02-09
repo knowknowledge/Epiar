@@ -227,6 +227,9 @@ FireStatus Ship::Fire() {
 		int offset = model->GetImage()->GetHalfHeight();
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
+		//Play weapon sound
+		currentWeapon->sound->Play();
+
 		//Fire the weapon
 		SpriteManager *sprites = SpriteManager::Instance();
 		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);

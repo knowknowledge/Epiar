@@ -7,8 +7,8 @@
  * To be used in conjunction with various other subsystems, A.I., GUI, etc.
  */
 
-#include "common.h"
 #include "includes.h"
+#include "common.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"

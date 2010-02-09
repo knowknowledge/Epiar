@@ -56,6 +56,8 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "lifetime" ) {
 		if (atoi( value.c_str()) != 0)
 			lifetime = atoi( value.c_str() );
+	} else PPA_MATCHES( "sound" ) {
+			this->sound = Sound::Get( value.insert(0,"Resources/Audio/Weapons/") );
 	}
 	//	SetRadarColor(Color::Get(255, 0, 0));
 	return true;

@@ -15,6 +15,7 @@
 		<ammoConsumption>1</ammoConsumption>
 		<fireDelay>500</fireDelay>
 		<lifetime>3000</lifetime> <!-- Milliseconds of Life -->
+		<sound>36847__EcoDTR__LaserRocket2.ogg</sound>
 	</weapon>
 	<weapon>
 		<name>Slow Missile</name>
@@ -28,6 +29,7 @@
 		<ammoConsumption>1</ammoConsumption>
 		<fireDelay>1000</fireDelay>
 		<lifetime>30000</lifetime>
+		<sound>36847__EcoDTR__LaserRocket2.ogg</sound>
 	</weapon>
 	<weapon>
 		<name>Laser</name>
@@ -41,6 +43,7 @@
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>200</fireDelay>
 		<lifetime>1000</lifetime>
+		<sound>32954__HardPCM__Chip054.wav.ogg</sound>
 	</weapon>
 	<weapon>
 		<name>Strong Laser</name>
@@ -54,6 +57,7 @@
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>200</fireDelay>
 		<lifetime>500</lifetime>
+		<sound>32954__HardPCM__Chip054.wav.ogg</sound>
 	</weapon>
 	<weapon>
 		<name>Minigun</name>
@@ -67,5 +71,6 @@
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>70</fireDelay>
 		<lifetime>1000</lifetime>
+		<sound>32954__HardPCM__Chip054.wav.ogg</sound>
 	</weapon>
 </weapons>
