@@ -64,7 +64,7 @@ bool Sound::Play( void ){
  */
 bool Sound::Play( Coordinate offset ){
 	/**\todo Distance fading: consider tweaking this scaling factor.*/
-	double dist = 0.1 * offset.GetMagnitude();
+	double dist = 0.03 * offset.GetMagnitude();
 	if ( dist > 255 )
 		return false;			// Sound is out of range
 
@@ -84,7 +84,7 @@ bool Sound::Play( Coordinate offset ){
 		Log::Error("Set distance %d failed on channel %d.", sounddist, freechan );
 	else
 		Log::Message("Distance set to %d on channel %d.", sounddist, freechan );
-	if( Mix_SetPanning( freechan, soundpan, 254 - soundpan ) == 0 )
+	if( Mix_SetPanning( freechan, 254 - soundpan, soundpan ) == 0 )
 		Log::Error("Set panning %d failed on channel %d.", soundpan - 127, freechan );
 	else
 		Log::Message("Panning set to %d on channel %d.", soundpan - 127, freechan );
