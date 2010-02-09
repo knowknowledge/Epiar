@@ -24,8 +24,8 @@ class Audio {
 
 	private:
 		Audio();
-		Audio(Audio const&){};				// Copy constructor
-		Audio& operator=(Audio const&){};	// Assignment constructor
+		Audio(Audio const&);				// Copy constructor
+		Audio& operator=(Audio const&);	// Assignment constructor
 		~Audio();
 
 		int audio_rate;						// Samplerate

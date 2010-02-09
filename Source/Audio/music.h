@@ -35,8 +35,8 @@ class Music {
 
 	private:
 		Music();
-		Music(Music const&){};				// Copy constructor
-		Music& operator=(Music const&){};	// Assignment constructor
+		Music(Music const&);				// Copy constructor
+		Music& operator=(Music const&);		// Assignment constructor
 		~Music();
 		list<string> playlist;
 };

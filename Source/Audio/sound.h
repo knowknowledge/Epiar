@@ -17,7 +17,7 @@ class Sound {
 		Sound( const string& filename );
 		~Sound( void );
 		bool Play( void );
-		bool Play( const Coordinate& offset );
+		bool Play( Coordinate offset );
 
 	private:
 		Mix_Chunk *sound;

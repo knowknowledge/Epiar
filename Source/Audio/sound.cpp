@@ -53,8 +53,7 @@ bool Sound::Play( void ){
 	if ( this->sound == NULL )
 		return false;
 
-	int freechan = Audio::Instance().GetFreeChannel();
-	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
+	this->channel = Audio::Instance().PlayChannel( -1, this->sound, 0 );
 	if ( channel == -1 )
 		return false;
 	
@@ -63,19 +62,32 @@ bool Sound::Play( void ){
 
 /**\brief Plays the sound at a specified coordinate from origin.
  */
-bool Sound::Play( const Coordinate& offset ){
-	/**\todo Consider tweaking this scaling factor.*/
-	double dist = 1.5*(offset.GetX() + offset.GetY());
+bool Sound::Play( Coordinate offset ){
+	/**\todo Distance fading: consider tweaking this scaling factor.*/
+	double dist = 0.1 * offset.GetMagnitude();
 	if ( dist > 255 )
 		return false;			// Sound is out of range
 
 	Uint8 sounddist = static_cast<Uint8>( dist );
+	/**\todo Panning: consider tweaking this scaling factor.*/
+	float panx = 0.1*(offset.GetX())+127;
+	Uint8 soundpan = 127;
+	if ( panx < 0 )
+		soundpan = 0;
+	else if ( panx > 254 )
+		soundpan = 254;
+	else
+		soundpan = static_cast<Uint8>( panx );
 
 	int freechan = Audio::Instance().GetFreeChannel();
 	if( Mix_SetDistance( freechan, sounddist ) == 0 )
-		Log::Error("Set distance failed on channel %d.", freechan );
+		Log::Error("Set distance %d failed on channel %d.", sounddist, freechan );
 	else
 		Log::Message("Distance set to %d on channel %d.", sounddist, freechan );
+	if( Mix_SetPanning( freechan, soundpan, 254 - soundpan ) == 0 )
+		Log::Error("Set panning %d failed on channel %d.", soundpan - 127, freechan );
+	else
+		Log::Message("Panning set to %d on channel %d.", soundpan - 127, freechan );
 
 	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
 

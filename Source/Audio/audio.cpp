@@ -45,7 +45,7 @@ bool Audio::Initialize( void ){
 
 	// Allocate channels
 	Mix_AllocateChannels( this->max_chan);
-	assert( this->max_chan == Mix_AllocateChannels( -1 ) );
+	assert( this->max_chan == static_cast<unsigned int>(Mix_AllocateChannels( -1 )) );
 
 	return true;
 }
@@ -71,12 +71,10 @@ bool Audio::SetMusicVol( int volume ){
  */
 const int Audio::GetFreeChannel( void ){
 	/**\todo Optimization: We could consider dynamically allocating.*/
-	unsigned int numchan = Mix_AllocateChannels( -1  );
-	assert( numchan == this->max_chan );
-	for ( unsigned int i = 0; i < numchan; i++ ){
-		if ( Mix_Playing( i ) == 0 )
-			return i;
-	}
+	// Find first available channel
+	int foundchan = Mix_GroupAvailable( -1 );
+	if ( foundchan != -1 )
+		return foundchan;
 
 	// No channels available, halt oldest used one
 	Mix_HaltChannel( this->lastplayed.front() );
@@ -88,8 +86,11 @@ const int Audio::GetFreeChannel( void ){
  */
 const int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 	int chan_used;			// Channel that was used to play a sound
-
-	chan_used = Mix_PlayChannel( chan, chunk, loop );
+	if ( chan == -1 ){
+		chan_used = Mix_PlayChannel(this->GetFreeChannel(), chunk, loop );
+	}else{
+		chan_used = Mix_PlayChannel( chan, chunk, loop );
+	}
 
 	/**\todo This could be optimized.*/
 	this->lastplayed.push_back( chan_used );
