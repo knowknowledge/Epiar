@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Engine/console.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
@@ -16,14 +17,16 @@
 #include "Engine/simulation.h"
 #include "Engine/hud.h"
 #include "Utilities/lua.h"
+#include "Utilities/timer.h"
 
 map<InputEvent, string> Input::eventMappings;
+Uint32 Input::lastMouseMove= 0;
 
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
 	if ( e.type == KEY ) {
-		out << "KEY(" << e.key << ' ' << _keyMeanings[int( e.kstate )] << ")";
+		out << "KEY([" << SDL_GetKeyName(e.key) << "] " << e.key << ' ' << _keyMeanings[int( e.kstate )] << ")";
 	} else { // Mouse
 		out << "MOUSE(" << e.mx<< ',' << e.my << ' ' << _mouseMeanings[int( e.mstate )] << ")";
 	}
@@ -75,6 +78,7 @@ bool Input::Update( void ) {
 		}
 	}
 
+	// Constantly emit InputEvent for held down Keys
 	for(int k=0;k<SDLK_LAST;k++) {
 		if(heldKeys[k])
 			events.push_back( InputEvent( KEY, KEYPRESSED, k ) );
@@ -83,7 +87,12 @@ bool Input::Update( void ) {
 	// the list of sub-input systems that handle events
 	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
 	Console::HandleInput( events );
+	Hud::HandleInput( events );
 	HandleLuaCallBacks( events );
+
+	if(Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")){
+		Video::DisableMouse();
+	}
 
 	events.clear();
 	
@@ -101,6 +110,8 @@ void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 	y = event->motion.y;
 	
 	events.push_front( InputEvent( MOUSE, MOUSEMOTION, x, y ) );
+	Video::EnableMouse();
+	lastMouseMove = Timer::GetTicks();
 }
 
 void Input::_UpdateHandleMouseDown( SDL_Event *event ) {
@@ -166,72 +177,53 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 }
 
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
-	char *word = SDL_GetKeyName(key);
-	char letter = 0;
+	int letter=key;
 
-	if((key == SDLK_LSHIFT) || (key == SDLK_RSHIFT)) return; // we don't care about modifiers here
-	if(key == SDLK_BACKQUOTE) return;
-	if(key == SDLK_LEFT) return;
-	if(key == SDLK_RIGHT) return;
-	if(key == SDLK_UP) return;
-	if(key == SDLK_DOWN) return;
-
-	if(key >= SDLK_a && key <= SDLK_z) {
-		letter = word[0];
-		if(heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT]) {
+	// Convert lower to upper case characters
+	// TODO: This assumes that every Epiar user has an American keyboard.
+	//       I don't know how to do the keyboard independent character translations.
+	if(heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT]) {
+		if(key >= SDLK_a && key <= SDLK_z) {
 			letter -= 32;
+		} else if(key >= SDLK_0 && key <= SDLK_9) {
+			letter = ")!@#$%^&*("[key-SDLK_0];
+		} else {
+			switch(key){
+			case SDLK_QUOTE:
+				letter = '"'; break;
+			case SDLK_SEMICOLON:
+				letter = ';'; break;
+			case SDLK_BACKQUOTE:
+				letter = '~'; break;
+			case SDLK_MINUS:
+				letter = '_'; break;
+			case SDLK_SLASH:
+				letter = '?'; break;
+			case SDLK_COMMA:
+				letter = '<'; break;
+			case SDLK_PERIOD:
+				letter = '>'; break;
+			case SDLK_BACKSLASH:
+				letter = '|'; break;
+			case SDLK_LEFTBRACKET:
+				letter = '{'; break;
+			case SDLK_RIGHTBRACKET:
+				letter = '}'; break;
+			case SDLK_EQUALS:
+				letter = '+'; break;
+			default:
+				break;
+			}
 		}
-	} else if(key == SDLK_SPACE) {
-		letter = ' ';
-	} else if(key >= SDLK_0 && key <= SDLK_9 && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
-		switch(key) {
-			case SDLK_0:
-				letter = ')';
-			break;
-			case SDLK_1:
-				letter = '!';
-			break;
-			case SDLK_2:
-				letter = '@';
-			break;
-			case SDLK_3:
-				letter = '#';
-			break;
-			case SDLK_4:
-				letter = '$';
-			break;
-			case SDLK_5:
-				letter = '%';
-			break;
-			case SDLK_6:
-				letter = '^';
-			break;
-			case SDLK_7:
-				letter = '&';
-			break;
-			case SDLK_8:
-				letter = '*';
-			break;
-			case SDLK_9:
-				letter = '(';
-			break;
-			default: break; // will never happen, here to avoid compiler warnings
-		}
-	} else if((key == SDLK_QUOTE) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
-		letter = '"';
-	} else if(key == SDLK_TAB) {
-		letter = '\t';
-	} else if(key == SDLK_RETURN) {
-		letter = '\n';
-	} else if((key == SDLK_SEMICOLON) && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
-		letter = ':';
-	} else if(key == SDLK_BACKSPACE) {
-		letter = '\b';
-	} else if(key == SDLK_EQUALS && (heldKeys[SDLK_LSHIFT] || heldKeys[SDLK_RSHIFT])) {
-		letter = '+';
-	} else {
-		letter = word[0];
 	}
+
+	// Keypresses that we want to accept, but turn into something different
+	if((key == SDLK_RETURN) || (key == SDLK_KP_ENTER)) {
+		letter='\n';
+	}
+
+	// DEBUG: Name = int = char -> emitted char
+	//cout<<SDL_GetKeyName(key)<<" = "<<key<<" = '"<<char(key)<<"' -> '"<<char(letter)<<"'"<<endl;
 	
 	events.push_front( InputEvent( KEY, KEYTYPED, letter ) );
 }

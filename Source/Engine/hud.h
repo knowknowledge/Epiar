@@ -12,6 +12,7 @@
 #include "Graphics/image.h"
 #include "includes.h"
 #include "Utilities/lua.h"
+#include "Input/input.h"
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
@@ -50,8 +51,11 @@ class Hud {
 
 		static void Update( void );
 		static void Draw( void );
+
+		static void HandleInput( list<InputEvent> & events );
 		
 		static void Alert( const char *, ... );
+		static void Target(int id);
 		
 		static void AddStatus( StatusBar* bar );
 		static void DeleteStatus( StatusBar* bar );

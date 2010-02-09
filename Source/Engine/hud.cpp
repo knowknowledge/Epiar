@@ -18,9 +18,6 @@
 #include "Utilities/timer.h"
 #include "Utilities/camera.h"
 
-#define ALERT_FADE 2500
-#define ALERT_DROP 3500
-#define TARGET_ZOOM_TIME 500
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
 /* Location on screen of hull integrity bar (x,y) coord is top-left */
@@ -58,7 +55,7 @@ AlertMessage::AlertMessage( string message, Uint32 start )
  * \return true if expired
  */
 bool MessageExpired(const AlertMessage& msg){
-	return (Timer::GetTicks() - msg.start > ALERT_DROP);
+	return (Timer::GetTicks() - msg.start > OPTION(Uint32,"options/timing/alert-drop"));
 }
 
 /**\class StatusBar
@@ -159,18 +156,41 @@ void Hud::Draw( void ) {
 	Hud::DrawStatusBars();
 }
 
+
+/**\brief Handles Hud related User Input
+ * \param events User entered Keyboard and mouse clicks
+ */
+void Hud::HandleInput( list<InputEvent> & events ) {
+	list<InputEvent>::iterator i;
+	for(i= events.begin(); i != events.end() ; ++i ) {
+		// Mouse Clicks
+		if( i->type == MOUSE && i->mstate==MOUSEDOWN) {
+			Coordinate screenPos(i->mx, i->my), worldPos;
+			Camera::Instance()->TranslateScreenToWorld( screenPos, worldPos );
+			// Target any clicked Sprite
+			list<Sprite*> *impacts = SpriteManager::Instance()->GetSpritesNear( worldPos, 5 );
+			if( impacts->size() > 0) {
+				Target( (*(impacts->begin()))->GetID());
+			}
+		}
+	}
+}
+
+
 /**\brief Draw HUD messages (eg Welcome to Epiar).
  */
 void Hud::DrawMessages() {
 	int j;
 	int now = Timer::GetTicks();
-	list<AlertMessage>::iterator i;
-	int age;
-	for( i= AlertMessages.begin(), j=1; i != AlertMessages.end(); ++i,++j ){
+	list<AlertMessage>::reverse_iterator i;
+	Uint32 age;
+	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
+	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
+	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
-		if(age > ALERT_FADE){
-			BitType->SetColor(1.f,1.f,1.f, 1.f - float((age-ALERT_FADE))/float(ALERT_DROP-ALERT_FADE) );
+		if(age > alertFade){
+			BitType->SetColor(1.f,1.f,1.f, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
 		} else {
 			BitType->SetColor(1.f,1.f,1.f,1.f);
 		}
@@ -242,8 +262,8 @@ void Hud::DrawTarget( void ) {
 		int r = target->GetRadarSize();
 		Color c = target->GetRadarColor();
 
-		if( Timer::GetTicks() - timeTargeted < TARGET_ZOOM_TIME ) {
-			r += Video::GetHalfHeight() - Video::GetHalfHeight()*(Timer::GetTicks()-timeTargeted)/TARGET_ZOOM_TIME;
+		if( Timer::GetTicks() - timeTargeted < OPTION(Uint32,"options/timing/target-zoom")) {
+			r += Video::GetHalfHeight() - Video::GetHalfHeight()*(Timer::GetTicks()-timeTargeted)/OPTION(Uint32,"options/timing/target-zoom");
 		}
 	
 		Video::DrawTarget(x,y,r,r,5,c.r,c.g,c.b);
@@ -265,6 +285,15 @@ void Hud::Alert( const char *message, ... )
 	va_end( args );
 
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
+}
+
+
+/**\brief Changes the Hud target
+ * \param id Unique Sprite id number
+ */
+void Hud::Target(int id) {
+	targetID = id;
+	timeTargeted = Timer::GetTicks();
 }
 
 /**\brief Adds a new StatusBar.
@@ -408,8 +437,7 @@ int Hud::setTarget(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
-	targetID = luaL_checkint(L,1);
-	timeTargeted = Timer::GetTicks();
+	Target( luaL_checkint(L,1) );
 	return 0;
 }
 

@@ -151,7 +151,7 @@ int UI_Lua::newTextbox(lua_State *L){
 	int h = int(luaL_checknumber (L, 4));
 	string code = "";
 	string text = "";
-	if(n>=5) string text = luaL_checkstring (L, 5);
+	if(n>=5) text = luaL_checkstring (L, 5);
 	if(n>=7) code = luaL_checkstring (L, 7);
 
 	// Allocate memory for a pointer to object

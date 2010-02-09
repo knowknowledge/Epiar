@@ -332,6 +332,24 @@ void Lua::pushNames(lua_State *L, list<string> *names){
     }
 }
 
+void Lua::setField(const char* index, int value) {
+	lua_pushstring(L, index);
+	lua_pushinteger(L, value);
+	lua_settable(L, -3);
+}
+
+void Lua::setField(const char* index, float value) {
+	lua_pushstring(L, index);
+	lua_pushnumber(L, value);
+	lua_settable(L, -3);
+}
+
+void Lua::setField(const char* index, const char* value) {
+	lua_pushstring(L, index);
+	lua_pushstring(L, value);
+	lua_settable(L, -3);
+}
+
 int Lua::getSpriteByID(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )

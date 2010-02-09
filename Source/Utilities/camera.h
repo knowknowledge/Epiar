@@ -22,7 +22,8 @@ class Camera {
 		void Focus( Sprite *sprite );
 
 		// takes world coordinates and translates them into drawing coords
-		void Translate( Coordinate &world, Coordinate &screen );
+		void TranslateWorldToScreen( Coordinate &world, Coordinate &screen );
+		void TranslateScreenToWorld( Coordinate &world, Coordinate &screen );
 		// gives the most recent change in camera coordinates
 		void GetDelta( double *dx, double *dy );
 		Sprite* GetFocus() {return focusSprite;}
