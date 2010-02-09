@@ -22,6 +22,7 @@
 #include "UI/ui_button.h"
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
+#include "Sprites/planets.h"
 #include "Utilities/camera.h" 
 #include "Input/input.h"
 #include "Utilities/file.h"
@@ -217,6 +218,8 @@ void Lua::RegisterFunctions() {
 		{"planets", &Lua::getPlanets},
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
+		{"getModelInfo", &Lua::getModelInfo},
+		{"getPlanetInfo", &Lua::getPlanetInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -437,5 +440,58 @@ int Lua::getShips(lua_State *L){
 
 int Lua::getPlanets(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_PLANET);
+}
+
+int Lua::getModelInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (modelName)", n);
+	string modelName = (string)luaL_checkstring(L,1);
+	Model *model = Models::Instance()->GetModel(modelName);
+
+    lua_newtable(L);
+	setField("Name", model->GetName().c_str());
+	//setField("mass", model->GetMass()); Why isn't there a GetMass function?
+	setField("Thrust", model->GetThrustOffset());
+	setField("Rotation", model->GetRotationsPerSecond());
+	setField("MaxSpeed", model->GetMaxSpeed());
+	setField("MaxHull", model->getMaxEnergyAbsorption());
+	return 1;
+}
+
+int Lua::getPlanetInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (modelName)", n);
+	int id = luaL_checkinteger(L,1);
+	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+	if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
+		return luaL_error(L, "ID #%d does not point to a Planet", id);
+
+	cPlanet* p = (cPlanet*)(sprite);
+
+    lua_newtable(L);
+	setField("Name", p->GetName().c_str());
+	setField("Alliance", p->GetAlliance().c_str());
+	setField("Traffic", p->GetTraffic());
+	setField("Militia", p->GetMilitiaSize());
+	setField("Landable", p->GetLandable());
+	return 1;
+}
+
+int Lua::getWeaponInfo(lua_State *L) {
+	return 0; // TODO
+}
+
+int Lua::setModelInfo(lua_State *L) {
+	return 0; // TODO
+}
+
+int Lua::setPlanetInfo(lua_State *L) {
+	return 0; // TODO
+}
+
+int Lua::setWeaponInfo(lua_State *L) {
+	return 0; // TODO
 }
 
