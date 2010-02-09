@@ -71,9 +71,9 @@ bool Audio::SetMusicVol( int volume ){
  */
 const int Audio::GetFreeChannel( void ){
 	/**\todo Optimization: We could consider dynamically allocating.*/
-	int numchan = Mix_AllocateChannels( -1  );
+	unsigned int numchan = Mix_AllocateChannels( -1  );
 	assert( numchan == this->max_chan );
-	for ( int i = 0; i < numchan; i++ ){
+	for ( unsigned int i = 0; i < numchan; i++ ){
 		if ( Mix_Playing( i ) == 0 )
 			return i;
 	}

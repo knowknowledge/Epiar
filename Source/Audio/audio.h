@@ -32,7 +32,7 @@ class Audio {
 		Uint16 audio_format;				// AUDIO_S16
 		int audio_channels;					// Stereo, etc.
 		int audio_buffers;					// Size of buffer
-		int max_chan;						// Total number of channels use
+		unsigned int max_chan;				// Total number of channels use
 		list<int> lastplayed;				// Queue of last used channels.
 };
 
