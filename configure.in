@@ -29,6 +29,9 @@ LIBS="$LIBS -lftgl"
 case "$target" in *-*-linux*)
 	CFLAGS="$CFLAGS -I/usr/include/freetype2"
 esac
+case "$target" in *-*-freebsd*)
+	CFLAGS="$CFLAGS -I/usr/local/include/freetype2"
+esac
 case "$target" in *-apple-darwin*)
 	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
 esac
@@ -50,6 +53,9 @@ AS_IF(
 		case "$target" in *-*-linux*)
 			CFLAGS="$CFLAGS -I/usr/include/"
 		esac
+		case "$target" in *-*-freebsd*)
+			CFLAGS="$CFLAGS -I/usr/local/include/"
+		esac
 		case "$target" in *-apple-darwin*)
 			CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
 		esac
@@ -59,7 +65,7 @@ dnl Check for SDL
 SDL_VERSION=1.2.10
 
 case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32*)
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
 		AM_PATH_SDL($SDL_VERSION, :, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 		CFLAGS="$CFLAGS $SDL_CFLAGS -DCOMP_GCC"
 		LIBS="$LIBS $SDL_LIBS"
@@ -72,7 +78,7 @@ esac
 
 dnl Check for SDL_image
 case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32*)
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
 	AC_CHECK_LIB(SDL_image, main,,AC_MSG_ERROR([*** SDL_image library not found!]))
 	LIBS="$LIBS -lSDL_image"
 esac
@@ -84,7 +90,7 @@ esac
 
 dnl Check for SDL_mixer
 case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32*)
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
 	AC_CHECK_LIB(SDL_mixer, main,,AC_MSG_ERROR([*** SDL_mixer library not found!]))
 	LIBS="$LIBS -lSDL_mixer"
 esac
@@ -104,7 +110,7 @@ esac
 
 dnl Set Unix specific options
 case "$target" in
-	*-*-linux*)
+	*-*-linux* | *-*-freebsd*)
 		CFLAGS="$CFLAGS -DUNIX -I/usr/include/GL"
 		LIBS="$LIBS -lGL -lGLU -lz"
 		;;
