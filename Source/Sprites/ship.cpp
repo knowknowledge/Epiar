@@ -9,6 +9,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Sprites/ship.h"
+#include "Utilities/camera.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
@@ -123,6 +124,8 @@ void Ship::Accelerate( void ) {
 	SetMomentum( momentum );
 	
 	status.isAccelerating = true;
+	// Play engine sound
+	this->model->PlayEngineThrust(GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 }
 
 
@@ -228,7 +231,8 @@ FireStatus Ship::Fire() {
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
 		//Play weapon sound
-		currentWeapon->sound->Play();
+		currentWeapon->sound->Play(
+				GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
 
 		//Fire the weapon
 		SpriteManager *sprites = SpriteManager::Instance();
