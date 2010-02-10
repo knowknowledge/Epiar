@@ -10,8 +10,9 @@
 #define __H_SOUND__
 
 #include "Utilities/coordinate.h"
+#include "Utilities/resource.h"
 
-class Sound {
+class Sound : public Resource {
 	public:
 		static Sound *Get( const string& filename );
 		Sound( const string& filename );
