@@ -24,6 +24,9 @@ struct model_name_equals
 
 Models *Models::pInstance = 0; // initialize pointer
 
+/**\brief Returns or creates the Model instance.
+ * \return Pointer to the Model instance
+ */
 Models *Models::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Models; // create the sold instance
@@ -31,6 +34,9 @@ Models *Models::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Loads a model from an XML file
+ * \param filename String containing filename
+ */
 bool Models::Load( string& filename )
 {
 	Parser<Model> parser;
@@ -44,6 +50,10 @@ bool Models::Load( string& filename )
 	return true;
 }
 
+/**\brief Returns the specified Model.
+ * \param modelName Name of the model to get.
+ * \return Pointer to the Model
+ */
 Model * Models::GetModel( string& modelName )
 {
 	list<Model *>::iterator i = std::find_if( models.begin(), models.end(), std::bind2nd( model_name_equals(), modelName ));
@@ -54,6 +64,9 @@ Model * Models::GetModel( string& modelName )
 	return( NULL );
 }
 
+/**\brief Returns a list of all the Model names
+ * \return list of Model names.
+ */
 list<string>* Models::GetModelNames()
 {
 	list<string> *names = new list<string>();

@@ -15,6 +15,9 @@
 
 Engines *Engines::pInstance = 0; // initialize pointer
 
+/**\brief Initializes the instance or gets a pointer to it.
+ * \return Pointer to an Engine object
+ */
 Engines *Engines::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Engines; // create the sold instance
@@ -22,6 +25,9 @@ Engines *Engines::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Loads the engine from an XML file.
+ * \return true always
+ */
 bool Engines::Load( string filename ) {
 	Parser<Engine> parser;
 	
@@ -34,6 +40,9 @@ bool Engines::Load( string filename ) {
 	return true;
 }
 
+/**\brief Lookup engine name.
+ * \return Pointer to an Engine object.
+ */
 Engine *Engines::LookUp( string engineName ) {
 	for( list<Engine *>::iterator i = engines.begin(); i != engines.end(); ++i ) {
 		if( (*i)->IsNamed( engineName ) )

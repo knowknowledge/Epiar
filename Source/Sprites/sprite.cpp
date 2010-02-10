@@ -10,25 +10,24 @@
 #include "common.h"
 #include "Sprites/sprite.h"
 #include "Utilities/log.h"
-#include "Utilities/xml.h"
+
+
+int Sprite::sprite_ids = 0;
 
 /**\class Sprite
  * \brief Sprite handling. */
 
 Sprite::Sprite() {
+	id = sprite_ids++;
+
 	// Momentum caps
-	float top = OPTION( float, "options/momentum-caps/top" );
-	float right = OPTION( float, "options/momentum-caps/right" );
-	float bottom = OPTION( float, "options/momentum-caps/bottom" );
-	float left = OPTION( float, "options/momentum-caps/left" );
 
 	angle = 0.;
-	momentum.SetBoundaries( top, right, bottom, left ); // game defaults
 	
 	image = NULL;
 	
 	radarSize = 1;
-	radarColor = Color::Get(0.7f,0.7f,0.7f);
+	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
 }
 
 Coordinate Sprite::GetWorldPosition( void ) {
@@ -42,7 +41,8 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 void Sprite::Update( void ) {
 	// Apply their momentum to change their coordinates
 	worldPosition += momentum;
-	//update acceleration
+	
+	// update acceleration
 	acceleration = lastMomentum - momentum; 
 	lastMomentum = momentum;
 }
@@ -60,3 +60,12 @@ void Sprite::Draw( void ) {
 		Log::Warning( "Attempt to draw a sprite before an image was assigned." );
 	}
 }
+
+bool compareSpritePtrs(Sprite* a, Sprite* b){
+	if(a->GetDrawOrder() != b->GetDrawOrder()) {
+		return a->GetDrawOrder() < b->GetDrawOrder();
+	} else {
+		return a->GetID() < b->GetID();
+	}
+}
+

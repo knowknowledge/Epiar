@@ -23,9 +23,9 @@ class Model {
 			PPA_MATCHES( "name" ) {
 				name = value;
 			} else PPA_MATCHES( "image" ) {
-				image.Load( value );
+				image = (Image*)Image::Get( value );
 			} else PPA_MATCHES( "mass" ) {
-				mass = atoi( value.c_str() );
+				mass = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "rotationsPerSecond" ) {
 				rotPerSecond = static_cast<float>(atof( value.c_str() ));
 			} else PPA_MATCHES( "engine" ) {
@@ -37,16 +37,21 @@ class Model {
 					Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
 				}
 			} else PPA_MATCHES( "thrustOffset" ) {
-				thrustOffset = atoi( value.c_str() );
+				thrustOffset = (short)atoi( value.c_str() );
+			} else PPA_MATCHES( "maxSpeed" ) {
+				maxSpeed = (float)atof( value.c_str() );
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
-				maxEnergyAbsorption = atoi( value.c_str() );
+				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
-			
 			return true;
 		}
 		
 		void _dbg_PrintInfo( void ) {
-		
+			if( mass <= 0.001 ){
+				// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
+				Log::Error("Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
+			}
+			if(image!=NULL && name!=""){ Image::Store(name,(Resource*)image);}
 		}
 		
 		string GetName( void ) const {
@@ -55,6 +60,10 @@ class Model {
 		
 		float GetRotationsPerSecond( void ) {
 			return rotPerSecond;
+		}
+
+		float GetMaxSpeed( void ) {
+			return maxSpeed;
 		}
 		
 		float GetAcceleration( void ) {
@@ -66,7 +75,7 @@ class Model {
 		}
 		
 		Image *GetImage( void ) {
-			return &image;
+			return image;
 		}
 		
 		string GetFlareAnimation( void ) {
@@ -82,14 +91,17 @@ class Model {
 		}
 		
 		short int getMaxEnergyAbsorption() { return maxEnergyAbsorption; }
+
+		void PlayEngineThrust( Coordinate offset ){ this->engine->thrustsound->PlayNoRestart( offset );};
 		
 	private:
 		string name;
-		Image image;
+		Image *image;
 		Engine *engine;
-		short int mass;
+		float mass;
 		short int thrustOffset; // engine flare animation offset
 		float rotPerSecond;
+		float maxSpeed;
 		short int maxEnergyAbsorption; 
 };
 

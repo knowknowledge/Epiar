@@ -17,6 +17,11 @@ config.guess
 config.h
 config.h.in
 config.sub
+config.h.in~
+
+### KDE development files
+Doxyfile
+*.kdevelop
 
 ### Lua binaries
 Source/Lua/src/lua
@@ -33,6 +38,7 @@ epiar*.ilk
 .deps
 *.o
 *.a
+Epiar
 
 ### Doxygen Files
 Doxygen/html
@@ -43,4 +49,4 @@ Epiar-Log*.xml
 
 .DS_Store
 Epiar.tmproj
-
+*.swp

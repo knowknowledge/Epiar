@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/audio.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
@@ -27,12 +28,24 @@ int parseArgs( int argc, char **argv );
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
-Font *Vera8 = NULL, *Vera10 = NULL, *Visitor10 = NULL, *VeraMono10 = NULL;
+Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 
+/**Main runtime.
+ * \return 0 always
+ * \details
+ * This function does the following:
+ *  - Load options
+ *  - Load fonts
+ *  - Calls parseArgs to parse command line
+ *  - Runs the Simulation routine
+ *  - Calls any cleanup code
+ */
 int main( int argc, char **argv ) {
-	Log::Initalize();
 	// Use ".dat" extension for data files
+#ifdef USE_PHYSICSFS
 	Filesystem::Init( argv[0], "dat" );
+#endif
+
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
@@ -47,12 +60,15 @@ int main( int argc, char **argv ) {
 
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+	Audio::Instance().Initialize();
+	Audio::Instance().SetMusicVol ( 68 );
 
-	// load the main font used through the tree
-	Vera8 = new Font( "Resources/Fonts/Vera-8.af" );
-	Vera10 = new Font( "Resources/Fonts/Vera-10.af" );
-	Visitor10 = new Font( "Resources/Fonts/Visitor1-10.af" );
-	VeraMono10 = new Font( "Resources/Fonts/VeraMono-10.af" );
+	Log::Message("Using Font Engine: FreeType");
+	//******** FreeType Rendering ********
+	SansSerif       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
+	BitType         = (Font*)new FreeFont( "Resources/Fonts/visitor2.ttf" );
+	Serif           = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
+	Mono            = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
@@ -60,25 +76,32 @@ int main( int argc, char **argv ) {
 	}
 
 	Video::Shutdown();
-	
+	Audio::Instance().Shutdown();
+
 	Log::Message( "Epiar shutting down." );
 	
 	// free the main font files
-	delete Vera8;
-	delete Vera10;
-	delete Visitor10;
-	delete VeraMono10;
+	delete SansSerif;
+	delete BitType;
+	delete Serif;
+	delete Mono;
 	// free the configuration file data
 	delete optionsfile;
 	
+#ifdef USE_PHYSICSFS
 	Filesystem::DeInit();
+#endif
 	Log::Close();
 
 	return( 0 );
 }
 
-// parse command line switches. returns -1 if a switch indicates the game should not be run, e.g. --help
-// NOTE: cmd line args override settings in options.xml (found in data.tgz) for just this run of the program
+/**Parse command line switches.
+ * \return -1 if a switch indicates the game should not be run, e.g. --help
+ * \details
+ * Cmd line args override settings in options.xml (found in data.tgz) 
+ * for just this run of the program.
+ */
 int parseArgs( int argc, char **argv ) {
 	for( int i = 1; i < argc; i++ ) {
 		// remove any leading - or --
@@ -90,11 +113,12 @@ int parseArgs( int argc, char **argv ) {
 		
 		if( parm == "help" ) {
 			// remember to keep this list updated when new parms are added
-			printf("\n\t--help          - Displays this message");
-			printf("\n\t--version       - Displays program version");
-			printf("\n\t--ui-demo       - Runs a debug/display demo of the UI");
+			printf("\n\t--help           - Displays this message");
+			printf("\n\t--version        - Displays program version");
+			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
+			printf("\n\t--enable-logging - Turn on XML-based logging");
 			//printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
-			printf("\n\t--lua-test      - Tests the Lua scripting functionality");
+			printf("\n\t--lua-test       - Tests the Lua scripting functionality");
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "version" ) {
@@ -111,6 +135,8 @@ int parseArgs( int argc, char **argv ) {
 		} else if( parm == "lua-test" ) {
 			//lua_test(); // temporary function
 			return( -1 );
+		} else if( parm == "enable-logging" ) {
+			Log::EnableFileLogging();
 		}
 	}
 	

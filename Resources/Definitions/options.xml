@@ -13,14 +13,16 @@
 	</video>
 	<simulation>
 		<starfield-density>750</starfield-density>
+		<bgmusic>Resources/Audio/Music/cyberm00n.mod</bgmusic>
 	</simulation>
-	<momentum-caps>
-		<top>5.0</top>
-		<right>5.0</right>
-		<bottom>5.0</bottom>
-		<left>5.0</left>
-	</momentum-caps>
+	<timing>
+		<mouse-fade>500</mouse-fade>
+		<target-zoom>500</target-zoom>
+		<alert-drop>3500</alert-drop>
+		<alert-fade>2500</alert-fade>
+	</timing>
 	<development>
+		<debug-quadtree>0</debug-quadtree>
 		<override-tgz>1</override-tgz>
 	</development>
 </options>

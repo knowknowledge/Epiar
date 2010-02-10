@@ -1,4 +1,4 @@
-/**\file			video.cpp
+/**\file			video.h
  * \author			Chris Thielen (chris@luethy.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Saturday, January 5, 2008
@@ -36,6 +36,15 @@ class Color {
 	}
 };
 
+class Rect {
+	public:
+		float x, y, w, h;
+		
+		Rect() { x = y = w = h = 0.0f; }
+		Rect( float x, float y, float w, float h ) { this->x = x; this->y = y; this->w = w; this->h = h; }
+		Rect( int x, int y, int w, int h ) { this->x = (float)x; this->y = (float)y; this->w = (float)w; this->h = (float)h; }
+};
+
 class Video {
  	public:
 		~Video();
@@ -58,12 +67,14 @@ class Video {
 		static int GetHalfHeight( void );
 
 		static void DrawPoint( int x, int y, float r, float g, float b );
+		static void DrawPoint( Coordinate c, Color col );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b, float a );
 		static void DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b);
 		static void DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b);
 		static void DrawCircle( Coordinate c, int radius, float line_width, Color col);
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b);
+		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b );
 
  	protected:
  		Video();

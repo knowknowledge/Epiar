@@ -1,0 +1,442 @@
+/*
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+*/
+
+body {
+	margin-top: 49px;
+	padding: 0;
+	background: #242424;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #BBBBBB;
+}
+
+h1, h2, h3 {
+	margin: 0;
+	text-transform: lowercase;
+	font-weight: normal;
+	color: #48ACDE;
+}
+
+h1 {
+	letter-spacing: -1px;
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 23px;
+}
+
+p, ul, ol {
+	margin: 0 0 2em 0;
+	text-align: justify;
+	line-height: 26px;
+}
+
+a:link {
+	color: #48ACDE;
+}
+
+a:hover, a:active {
+	text-decoration: none;
+	color: #48ACDE;
+}
+
+a:visited {
+	color: #48ACDE;
+}
+
+img {
+	border: none;
+}
+
+img.left {
+	float: left;
+	margin-right: 15px;
+}
+
+img.right {
+	float: right;
+	margin-left: 15px;
+}
+
+/* Form */
+
+form {
+	margin: 0;
+	padding: 0 0 1em 0;
+}
+
+label {
+	float: left;
+	width: 8em;
+}
+
+fieldset {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+legend {
+	display: none;
+}
+
+input, textarea, select {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	color: #333333;
+	margin-bottom: 0.3em;
+}
+
+input[type=submit] {
+	padding: 0.5em 1em 0.5em 1em;
+	border: none;
+	background: #2388b5;
+	text-transform: lowercase;
+	font-size: 11px;
+	color: #fff;
+}
+
+/* Header */
+
+#header {
+	clear: both;
+	width: 860px;
+	height: 52px;
+	margin: 0 auto;
+	background: url(images/img02.jpg) no-repeat left top;
+}
+
+/* Menu */
+
+#menu {
+	float: left;
+	width: 860px;
+	height: 54px;
+	padding-left: 10px;
+	background: url(images/img01.jpg) no-repeat left top;
+}
+
+#menu ul {
+	margin: 0;
+	padding: 0px 0 0 0px;
+	list-style: none;
+	line-height: normal;
+}
+
+#menu li {
+	display: block;
+	float: left;
+}
+
+#menu a {
+	display: block;
+	float: left;
+	margin-right: 3px;
+	padding: 10px 20px;
+	text-decoration: none;
+	text-transform: lowercase;
+	font: 13px "Trebuchet MS", Arial, Helvetica, sans-serif;
+	color: #FFFFFF;
+}
+
+#menu a:hover { 
+	text-decoration: none; 
+	color: #48ACDE;
+}
+
+#menu .current_page_item a {
+	color: #48ACDE;
+}
+
+/** LOGO */
+
+#banner {
+	width: 620px;
+	height: 240px;
+	margin: 0 auto;
+	padding: 10px 0 0 0;
+	background: #111 url(images/img04.jpg) no-repeat left top;
+}
+
+#logo {
+	width: 820px;
+	height: 60px;
+	margin: 0 auto;
+}
+
+#logo h1, #logo h2 {
+	float: left;
+	margin: 0;
+	padding: 0 0 0 20px;
+	line-height: normal;
+}
+
+#logo h1 { 
+	/*font-family: Georgia, "Times New Roman", Times, serif;*/
+	font-size:36px;
+	/*font-style: italic;*/
+	font-family: Helvetica, Arial, sans;
+	font-style: normal;
+}
+
+#logo h1 a {
+	text-decoration: none;
+	color: #FFFFFF; 
+}
+
+#logo h1 a:hover { text-decoration: underline; }
+
+#logo h2 {
+	padding: 20px 0 0 5px;
+	/*font: italic 13px Georgia, "Times New Roman", Times, serif;*/
+	font: italic 13px Helvetica, Arial;
+	color: ##48ACDE;
+}
+
+#logo p a {
+	text-decoration: none;
+	color: #B6ACA2;
+}
+
+#logo p a:hover { text-decoration: underline; }
+
+
+#wrapper {
+	width: 860px;
+	margin: 0 auto;
+	background: #000000 url(images/img02.jpg) no-repeat left top;
+}
+
+#wrapper-btm {
+	background: url(images/img03.jpg) no-repeat left bottom;
+}
+/* Page */
+
+#page {
+	width: 860px;
+	margin: 0 auto;
+	padding-top: 20px;
+}
+
+/* Content */
+
+#content {
+	float: right;
+	width: 620px;
+}
+
+/* Post */
+
+.post {
+	padding: 15px 15px;
+}
+
+.post .title {
+	margin-bottom: 20px;
+	padding-bottom: 5px;
+}
+
+.title a {
+	text-decoration: none;
+}
+
+.title a:hover {
+	text-decoration: underline;
+}
+
+.post h1 {
+}
+
+.post h2 {
+	height: 32px;
+	padding: 8px 0 0 15px;
+	font-size: 18px;
+	color: #DADADA;
+}
+
+.post .entry {
+	padding: 0 15px;
+}
+
+.post .meta {
+	margin-left: 15px;
+	margin-right: 15px;
+	padding: 15px 0px 30px 0px;
+	border-top: 1px dashed #333333;
+	font-size: 10px;
+}
+
+.post .meta p {
+	margin: 0;
+	line-height: normal;
+	color: #999999;
+}
+
+.post .meta .byline {
+	float: left;
+}
+
+.post .meta .links {
+	float: right;
+}
+
+.post .meta .more {
+	padding: 0 20px 0 18px;
+	background: url(images/img11.gif) no-repeat left center;
+}
+
+.post .meta .comments {
+	padding-left: 22px;
+	background: url(images/img12.gif) no-repeat left center;
+}
+
+.post .meta b {
+	display: none;
+}
+
+/* Sidebar */
+
+#sidebar {
+	float: left;
+	width: 210px;
+	padding-left: 30px;
+}
+
+#sidebar ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#sidebar li {
+	margin-bottom: 40px;
+}
+
+#sidebar li ul {
+}
+
+#sidebar li li {
+	margin: 0;
+}
+
+#sidebar h2 {
+	height: 32px;
+	margin-bottom: 10px;
+	font-size: 18px;
+	color: #DADADA;
+}
+
+/* Search */
+
+#search {
+}
+
+#search h2 {
+	margin-bottom: 20px;
+}
+
+#s {
+	width: 115px;
+	margin-right: 5px;
+	padding: 3px;
+	border: 1px solid #BED99C;
+}
+
+/* Boxes */
+
+.box1 {
+	padding: 20px;
+}
+
+.box2 {
+	color: #BABABA;
+}
+
+.box2 h2 {
+	margin-bottom: 15px;
+	font-size: 16px;
+	color: #FFFFFF;
+}
+
+.box2 ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.box2 a:link, .box2 a:hover, .box2 a:active, .box2 a:visited  {
+	color: #EDEDED;
+}
+
+/* Footer */
+#footer-wrap {
+	width: 860px;
+	height: 64px;
+	margin: 0 auto;
+}
+
+#footer {
+	margin: 0 auto;
+	height: 64px;
+	min-height: 64px;
+	padding: 0;
+	font-size: 10px;
+}
+
+html>body #footer {
+	height: auto;
+}
+
+#footer p {
+}
+
+#legal {
+	clear: both;
+	padding-top: 10px;
+	padding-left: 30px;
+	text-align: center;
+	color: #999999;
+}
+
+#legal a {
+}
+
+table.screenshots {
+	margin-bottom: 1.5em;
+}
+
+table.screenshots td {
+	padding: 0.5em;
+}
+
+/*************** Pagination ***************/
+
+.pagination {
+	text-align: center;
+	padding: 20px 0 5px 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+}
+
+.pagination a {
+	margin: 0 5px 0 0;
+	padding: 3px 6px;
+}
+
+.pagination a.number {
+	border: 1px solid #333;
+}
+
+.pagination a.current {
+	background: #004a95 url('images/bg-button-blue.gif') top left repeat-x !important;
+	border-color: #004994 !important;
+	color: #fff !important;
+}
+				
+.pagination a.current:hover {
+	text-decoration: underline;
+}

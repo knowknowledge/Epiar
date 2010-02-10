@@ -20,13 +20,16 @@
 #define __H_IMAGE__
 
 #include "includes.h"
+#include "Utilities/resource.h"
 
-class Image {
+class Image : public Resource {
 	public:
 		Image();
 		// Create instance by loading image from file
 		Image( const string& filename );
 		~Image();
+
+		static Image* Get(string filename);
 
 		// Load image from file
 		bool Load( const string& filename );
@@ -40,14 +43,15 @@ class Image {
 		int GetHalfHeight( void ) { return h / 2; };
 
 		// Draw the image (angle in degrees)
-		void Draw( int x, int y, float angle = 0. );
+		void Draw( int x, int y, float angle = 0.f, float resize_ratio_w = 1.f, float resize_ratio_h = 1.f);
 		// Draw the image centered on (x,y) (angle in degrees)
 		void DrawCentered( int x, int y, float angle = 0. );
 		// Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
 		void DrawTiled( int x, int y, int w, int h );
-		
-		// resizes the image by stretching the GL quad at draw time
-		void Resize( int w, int h );
+		// Draw the image stretched within to a box
+		void DrawStretch( int x, int y, int w, int h, float angle = 0. );
+		// Draw the image within a box but not stretched
+		void DrawFit( int x, int y, int w, int h, float angle = 0. );
 
 	private:
 		// Converts an SDL surface to an OpenGL texture
@@ -64,7 +68,6 @@ class Image {
 		                        // the larger canvas actually contains the original image (<= 1.0)
 		                        // defaults = 1.0, this factor is always used, so non-expanded images are
 		                        // simply "scaled" at 1.0. THIS HAS NOTHING TO DO WITH RESIZE()
-		float resize_ratio_w, resize_ratio_h; // THIS HAS EVERYTHING TO DO WITH RESIZE() (see above for the humor)
 		GLuint image; // OpenGL pointer to texture
 };
 

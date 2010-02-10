@@ -9,6 +9,7 @@
 #ifndef __h_engines__
 #define __h_engines__
 
+#include "Audio/sound.h"
 #include "Graphics/animation.h"
 #include "includes.h"
 
@@ -28,6 +29,8 @@ class Engine {
 				foldDrive = (atoi( value.c_str() ) != 0);
 			} else PPA_MATCHES( "flareAnimation" ) {
 				flareAnimation = value;
+			} else PPA_MATCHES( "thrustSound" ){
+				this->thrustsound = Sound::Get( value );
 			}
 			
 			return true;
@@ -52,6 +55,8 @@ class Engine {
 			return flareAnimation;
 		}
 		
+		Sound *thrustsound;
+
 	private:
 		string name;
 		float forceOutput;

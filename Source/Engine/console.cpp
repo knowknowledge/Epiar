@@ -21,13 +21,18 @@ vector<string> Console::Buffer;
 bool Console::enabled = false;
 bool Console::initialized = false;
 
+/**\brief Initialize Console instance.
+ */
 void Console::Initialize() {
 	Console::Buffer.push_back("Console initialized.");
 	Console::Buffer.push_back("> _");
 	Console::initialized = true;
 }
 
-void Console::Input( list<InputEvent> & events ) {
+/**\brief Handles a list of Input events.
+ * \param events A list of events
+ */
+void Console::HandleInput( list<InputEvent> & events ) {
 	if(Console::initialized == false) Console::Initialize();
 
 	// look for the bcakquote (`) key to toggle the console
@@ -51,6 +56,23 @@ void Console::Input( list<InputEvent> & events ) {
 					Console::Buffer.pop_back();
 
 					switch(i->key) {
+					// Ignore Modifiers
+					case SDLK_LSHIFT:
+					case SDLK_RSHIFT:
+					case SDLK_RMETA:
+					case SDLK_LMETA:
+					case SDLK_RALT:
+					case SDLK_LALT:
+					case SDLK_RCTRL:
+					case SDLK_LCTRL:
+					case SDLK_RSUPER:
+					case SDLK_LSUPER:
+					// TODO: add cursor movement support
+					case SDLK_LEFT:
+					case SDLK_RIGHT:
+					case SDLK_UP:
+					case SDLK_DOWN:
+						break;
 					case '\n':
 						Console::Buffer.push_back(back);
 						Lua::Run(back.substr(2));
@@ -82,6 +104,8 @@ void Console::Input( list<InputEvent> & events ) {
 	}
 }
 
+/**\brief Draws the current console.
+ */
 void Console::Draw() {
 	if( enabled ) {
 		// draw bg
@@ -91,20 +115,24 @@ void Console::Draw() {
 
 		int pos = 8;
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
-			VeraMono10->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
+			Mono->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
 			pos--;
 			if(pos < 0) break;
 		}
 	}
 }
 
+/**\brief Console update function.
+ */
 void Console::Update() {
 	if( enabled ) {
 		
 	}
 }
 
-// used by lua functions, eg echo
+
+/**\brief Used by lua functions, eg echo.
+ */
 void Console::InsertResult(string result) {
 	// get the prompt off the buffer
 	//string back = Console::Buffer.back();

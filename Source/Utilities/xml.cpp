@@ -88,7 +88,7 @@ string XMLFile::Get( const string& path ) {
 	cur = xmlDocGetRootElement( xmlPtr );
 
 	if( cur == NULL ) {
-		Log::Warning( "XML file (%s) appears to be empty.",filename );
+		Log::Warning( "XML file (%s) appears to be empty.",filename.c_str() );
 		values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 		return( string() );
 	}
@@ -129,4 +129,10 @@ string XMLFile::Get( const string& path ) {
 
 	// didn't find it
 	return( string() );
+}
+
+void XMLFile::Set( const string& path, const string& value ) {
+	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
+	values[path] = value;
+	assert( value == Get(path));
 }

@@ -21,6 +21,8 @@ int Video::h = 0;
 int Video::w2 = 0;
 int Video::h2 = 0;
 
+/**\brief Creates the singleton or retrieves the current instance.
+ */
 Video *Video::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Video; // create the sold instance
@@ -29,10 +31,14 @@ Video *Video::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Empty constructor.
+ */
 Video::Video( void ) {
 	
 }
 
+/**\brief Initializes the Video display.
+ */
 bool Video::Initialize( void ) {
 	char buf[32] = {0};
 	
@@ -46,12 +52,13 @@ bool Video::Initialize( void ) {
 
 	atexit( SDL_Quit );
 	
-	DisableMouse();
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 	
 	return( true );
 }
 
+/**\brief Shuts down the Video display.
+ */
 bool Video::Shutdown( void ) {
 	
 	EnableMouse();
@@ -59,10 +66,14 @@ bool Video::Shutdown( void ) {
 	return( true );
 }
 
+/**\brief Releases the pointer.
+ */
 Video::~Video( void ){
 	pInstance = NULL;
 }
 
+/**\brief Sets the window properties.
+ */
 bool Video::SetWindow( int w, int h, int bpp ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()
@@ -179,6 +190,10 @@ void Video::DrawPoint( int x, int y, float r, float g, float b ) {
 	glRecti( x, y, x + 1, y + 1 );
 }
 
+void Video::DrawPoint( Coordinate c, Color col ) {
+	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
+}
+
 // draws a rectangle
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
@@ -223,6 +238,25 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 	{
 		glVertex2d(radius * cos(ang) + x, radius * sin(ang) + y);
 	}
+	glEnd();
+}
+
+void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b ) {
+	// d is for 'depth' and is the number of crosshair pixels
+	glColor3f(r,g,b);
+	glBegin(GL_LINES);
+		// Upper Left Corner
+		glVertex2d(x-w/2,y-h/2); glVertex2d(x-w/2,y-h/2+d);
+		glVertex2d(x-w/2,y-h/2); glVertex2d(x-w/2+d,y-h/2);
+		// Upper Right Corner
+		glVertex2d(x+w/2,y-h/2); glVertex2d(x+w/2,y-h/2+d);
+		glVertex2d(x+w/2,y-h/2); glVertex2d(x+w/2-d,y-h/2);
+		// Lower Left Corner
+		glVertex2d(x-w/2,y+h/2); glVertex2d(x-w/2,y+h/2-d);
+		glVertex2d(x-w/2,y+h/2); glVertex2d(x-w/2+d,y+h/2);
+		// Lower Right Corner
+		glVertex2d(x+w/2,y+h/2); glVertex2d(x+w/2,y+h/2-d);
+		glVertex2d(x+w/2,y+h/2); glVertex2d(x+w/2-d,y+h/2);
 	glEnd();
 }
 

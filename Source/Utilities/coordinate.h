@@ -17,13 +17,9 @@ class Coordinate {
 	public:
 		Coordinate();
 		Coordinate( double x, double y );
-		Coordinate( double top, double right, double bottom, double left );
 	
-		// Sets bounadry caps on coordinates - used for momentum capping as well
-		// Warning, boundaries are not enforced in subtraction and addition, but
-		// are enforced on += and -=
-		void SetBoundaries( double top, double right, double bottom, double left );
-		bool ViolatesBoundary();
+		bool ViolatesBoundary( double top, double right, double bottom, double left );
+	 	void EnforceBoundaries( double top, double right, double bottom, double left );
 	
 		~Coordinate();
 	
@@ -38,6 +34,9 @@ class Coordinate {
 
 		float GetAngle();
 		float GetMagnitude();
+		inline float GetMagnitudeSquared() {
+			return static_cast<float>(m_y*m_y + m_x*m_x );
+		}
 	
 		// Make an SDL Rectangle from coordinates
 		// Use width/height of 0
@@ -59,31 +58,32 @@ class Coordinate {
 	
 			return( false );
 		}//end opterator==
+
+		const bool operator==(const Coordinate other) const {
+			return ( m_x == other.m_x ) && ( m_x == other.m_x );
+		}//end opterator==
+
+		const bool operator<(const Coordinate other) const {
+			if( m_x == other.m_x )
+				return( m_y < other.m_y );
+			return( m_x < other.m_x );
+		}//end opterator<
 	
 		Coordinate operator+=(Coordinate a){
 			m_x += a.m_x;
 			m_y += a.m_y;
-			
-			EnforceBoundaries();
-
 			return *this;
 		}//end operator+=
 	
 		Coordinate operator-=(Coordinate a){
 			m_x -= a.m_x;
 			m_y -= a.m_y;
-			
-			EnforceBoundaries();
-			
 			return *this;
 		}//end operator-=
 	
 		Coordinate operator*=(Coordinate a) {
 			m_x *= a.m_x;
 			m_y *= a.m_y;
-	
-			EnforceBoundaries();
-	
 			return *this;
 		}// end opterator*=
 	
@@ -98,9 +98,6 @@ class Coordinate {
 		Coordinate operator+=(Vector b) {
 			m_x+=b.ipart();
 			m_y+=b.jpart();
-			
-			EnforceBoundaries();
-			
 			return *this;
 		}
 	
@@ -111,9 +108,6 @@ class Coordinate {
 		Coordinate operator-=(Vector b) {
 			m_x-=b.ipart();
 			m_y-=b.jpart();
-			
-			EnforceBoundaries();
-			
 			return *this;
 		}
 	
@@ -138,22 +132,10 @@ class Coordinate {
 		//			since the last position update.
 	
 		friend void VelocityAdjCoordinate(Coordinate&,Vector, double);
-	
-	
-	//The rest is Matt's problem :-D
-	/////////////////////////////////////////////
-	
 	private:
-	 	// Ensures coordinates are within boundaries, if set
-	 	void EnforceBoundaries( void );
 	 
 		double  m_x;
 		double  m_y;
-		
-		// used to set bounds on coordinates
-		struct {
-			double top, right, bottom, left;
-		} boundary;
 };
 
 #endif // __h_coordinates__

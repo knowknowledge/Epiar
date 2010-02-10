@@ -23,6 +23,7 @@ class XMLFile {
 		bool Open( const string& filename );
 		bool Close();
 		string Get( const string& path ); // cast/convert this to whatever return value you need
+		void Set( const string& path, const string& value ); // cast/convert this to whatever return value you need
 
 	private:
 		xmlDocPtr xmlPtr;

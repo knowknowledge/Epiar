@@ -10,10 +10,13 @@
 #define __H_SPRITEMANAGER__
 
 #include "Sprites/sprite.h"
+#include "Utilities/quadtree.h"
+
 
 class SpriteManager {
 	public:
-		SpriteManager();
+		static SpriteManager *Instance();
+
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
@@ -22,13 +25,30 @@ class SpriteManager {
 
 		bool LoadNPCs( string filename );
 		
-		// Reorders sprite list to ensure correct drawing order
-		void Order();
+		Sprite *GetSpriteByID(int id);
+		list<Sprite*> *GetSprites();
+		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
 
-		const list<Sprite*>& GetSprites();
+		Coordinate GetQuadrantCenter( Coordinate point );
+		int GetNumQuadrants() { return trees.size(); }
+		int GetNumSprites();
 
+	protected:
+		SpriteManager();
 	private:
-		list<Sprite *> sprites;
+		// Use the tree when referring to the sprites at a location.
+		map<Coordinate,QuadTree*> trees;
+		// Use the list when referring to all sprites.
+		list<Sprite*> *spritelist;
+		// Use the map when referring to sprites by their unique ID.
+		map<int,Sprite*> *spritelookup;
+		
+		list<Sprite *> spritesToDelete;
+		static SpriteManager *pInstance;
+		bool DeleteSprite( Sprite *sprite );
+		void DeleteEmptyQuadrants( void );
+		QuadTree* GetQuadrant( Coordinate point );
+		list<QuadTree*> GetQuadrantsNear( Coordinate c, float r);
 };
 
 #endif // __H_SPRITEMANAGER__

@@ -23,28 +23,41 @@ extern "C" {
 #endif
 
 #include "Sprites/spritemanager.h"
+#include "Input/input.h"
 
 class Lua {
 	public:
 		static bool Load( const string& filename );
 		static bool Run( string line );
-		static bool Update();
+		static bool Call(const char *func, const char *sig="", ...);
+
 		static vector<string> GetOutput();
 
+
 		static void RegisterFunctions();
-		static bool SetSpriteList(SpriteManager* the_sprites);
-		static SpriteManager* GetSpriteList();
 
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
+		static int getoption(lua_State *L);
+		static int setoption(lua_State *L);
+
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *L);
+		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
 		static int getModelNames(lua_State *L);
+		static int getWeaponNames(lua_State *L);
+		static int getSpriteByID(lua_State *L);
 		static int getSprites(lua_State *L, int type);
 		static int getShips(lua_State *L);
 		static int getPlanets(lua_State *L);
+
+		static void pushNames(lua_State *L, list<string> *names);
+		static void setField(const char* index, int value);
+		static void setField(const char* index, float value);
+		static void setField(const char* index, const char* value);
+
 	private:
 		static vector<string> buffer;
 
@@ -52,7 +65,6 @@ class Lua {
 		static bool Close();
 
 		// Internal variables
-		static SpriteManager* my_sprites;
 		static lua_State *L;
 		static bool luaInitialized;
 };

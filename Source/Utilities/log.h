@@ -34,11 +34,11 @@ class Log {
 		#define Error( ... )   realLog( _logError, __FILE__ __LINE__, __VA_ARGS__ )
 #endif 
 
-		static void Initalize( void );
-
 		static void realLog( int type, const char *func, const char *message, ... );
 
 		static void Close( void );
+		
+		static void EnableFileLogging( void );
 
 	protected:
 		Log();
@@ -47,6 +47,7 @@ class Log {
 
 	private:
 		static FILE *fp; // pointer to the log
+		static bool logToFile;
 };
 
 #endif // __H_LOG__

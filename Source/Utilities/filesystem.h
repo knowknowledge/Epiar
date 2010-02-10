@@ -9,6 +9,7 @@
 #ifndef __H_FILESYSTEM__
 #define __H_FILESYSTEM__
 
+#ifdef USE_PHYSICSFS
 #include "includes.h"
 #include <physfs.h>
 
@@ -23,5 +24,7 @@ class Filesystem {
 		static void OutputArchivers( void );
 		static int DeInit( void );
 };
+
+#endif
 
 #endif // __H_FILESYSTEM__

@@ -23,7 +23,6 @@ Image::Image() {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
-	resize_ratio_w = resize_ratio_h = 1.;
 }
 
 // Create instance by loading image from file
@@ -31,7 +30,6 @@ Image::Image( const string& filename ) {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
-	resize_ratio_w = resize_ratio_h = 1.;
 
 	Load(filename);
 }
@@ -44,9 +42,19 @@ Image::~Image() {
 	}
 }
 
+// Lazy fetch an Image
+Image* Image::Get( string filename ) {
+	Image* value;
+	value = (Image*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Image(filename);
+		Resource::Store(filename,(Resource*)value);
+	}
+	return value;
+}
+
 // Load image from file
 bool Image::Load( const string& filename ) {
-	SDL_Surface *s = NULL;
 	File file = File( filename );
 	char* buffer = file.Read();
 	int bytesread = file.GetLength();
@@ -94,10 +102,11 @@ bool Image::Load( char *buf, int bufSize ) {
 }
 
 // Draw the image (angle is in degrees)
-void Image::Draw( int x, int y, float angle ) {
+void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_ratio_h) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
+	assert(image);
 	if( !image ) {
 		Log::Warning( "Trying to draw without loading an image first." );
 		return;
@@ -134,7 +143,7 @@ void Image::Draw( int x, int y, float angle ) {
 		lry = static_cast<float>(y);
 	}
 
-	// draw it
+	// draw!
 	glColor3f(1, 1, 1);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -142,12 +151,17 @@ void Image::Draw( int x, int y, float angle ) {
 	glBindTexture( GL_TEXTURE_2D, image );
 
 	glPushMatrix();
+	
+	// the deltas are the differences needed in width, e.g. a resize_ratio_w of 1.1 would produce a value
+	// equal to the original width of the image but adding 10%. 0.9 would then be 10% smaller, etc.
+	float resize_w_delta = (w * resize_ratio_w) - w;
+	float resize_h_delta = (h * resize_ratio_h) - h;
 
 	glBegin( GL_QUADS );
 	glTexCoord2f( 0., 0. ); glVertex2f( llx, lly );
-	glTexCoord2f( scale_w, 0. ); glVertex2f( lrx * resize_ratio_w, lry );
-	glTexCoord2f( scale_w, scale_h ); glVertex2f( urx * resize_ratio_w, ury * resize_ratio_h );
-	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly * resize_ratio_h );
+	glTexCoord2f( scale_w, 0. ); glVertex2f( lrx + resize_w_delta, lry );
+	glTexCoord2f( scale_w, scale_h ); glVertex2f( urx + resize_w_delta, ury + resize_h_delta );
+	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly + resize_h_delta );
 	glEnd();
 
 	glPopMatrix();
@@ -162,6 +176,22 @@ void Image::Draw( int x, int y, float angle ) {
 // Draw the image centered on (x,y)
 void Image::DrawCentered( int x, int y, float angle ) {
 	Draw( x - (w / 2), y - (h / 2), angle );
+}
+
+// Draw the image stretched within to a box
+void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
+	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
+	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
+	Draw(x, y, angle, resize_ratio_w, resize_ratio_h);
+}
+
+// Draw the image within a box but not stretched
+void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
+	float resize_ratio_w = (float)box_w / (float)this->w;
+	float resize_ratio_h = (float)box_h / (float)this->h;
+	// Use Minimum of the two ratios
+	float resize_ratio = resize_ratio_w<resize_ratio_h ? resize_ratio_w : resize_ratio_h;
+	Draw(x, y, angle, resize_ratio, resize_ratio);
 }
 
 // Returns the next highest power of two if num is not a power of two
@@ -289,10 +319,10 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 	for( int j = 0; j < fill_h; j += h) {
 		for( int i = 0; i < fill_w; i += w) {
 			//cout<<"Image "<<j<<","<<i<<endl;
-			glTexCoord2f( 0., 0. ); glVertex2f( x+i, y+j ); // Lower Left
-			glTexCoord2f( scale_w, 0. ); glVertex2f( (x+w+i) , y+j); // Lower Right
-			glTexCoord2f( scale_w, scale_h ); glVertex2f( (x+w+i) , (y+h+j) ); // Upper Right
-			glTexCoord2f( 0., scale_h ); glVertex2f( x+i, (y+h+j) ); // Upper Left
+			glTexCoord2f( 0., 0. ); glVertex2f( static_cast<GLfloat>(x+i), static_cast<GLfloat>(y+j) ); // Lower Left
+			glTexCoord2f( scale_w, 0. ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+j)); // Lower Right
+			glTexCoord2f( scale_w, scale_h ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+h+j) ); // Upper Right
+			glTexCoord2f( 0., scale_h ); glVertex2f( static_cast<GLfloat>(x+i), static_cast<GLfloat>(y+h+j) ); // Upper Left
 		}
 	}
 	glEnd();
@@ -342,10 +372,3 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	return( expanded );
 }
 
-// resizes the image by stretching the GL quad at draw time
-void Image::Resize( int w, int h ) {
-	//resize_ratio_w = (float)w / (float)this->w;
-	//resize_ratio_h = (float)h / (float)this->h;
-	
-	//cout << "setting resize_ratio_W to " << resize_ratio_w << endl;
-}

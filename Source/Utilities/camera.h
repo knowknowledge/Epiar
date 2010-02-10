@@ -22,9 +22,12 @@ class Camera {
 		void Focus( Sprite *sprite );
 
 		// takes world coordinates and translates them into drawing coords
-		void Translate( Coordinate &world, Coordinate &screen );
+		void TranslateWorldToScreen( Coordinate &world, Coordinate &screen );
+		void TranslateScreenToWorld( Coordinate &world, Coordinate &screen );
 		// gives the most recent change in camera coordinates
 		void GetDelta( double *dx, double *dy );
+		Sprite* GetFocus() {return focusSprite;}
+		Coordinate GetFocusCoordinate();
 
 		void Update( void );
 	
@@ -44,20 +47,20 @@ class Camera {
 
 	protected:
 		Camera();
-  		Camera( const Camera & );
-  		Camera& operator= (const Camera&);
+		Camera( const Camera & );
+		Camera& operator= (const Camera&);
 
- 	private:
-  		static Camera *pInstance;
+	private:
+		static Camera *pInstance;
 		int cameraShakeDur;
 		int cameraShakeXOffset;
 		int cameraShakeYOffset;
 		int cameraShakeXDec;
 		int cameraShakeYDec;
 		Sprite *focusSprite; // focused on sprite - always favored, use NULL to set camera to static locations
-  		double x, y; // point where camera is looking
-  		double dx, dy; // the difference in the current and last camera position
-  					// (this is used by Starfield)
+		double x, y; // point where camera is looking
+		double dx, dy; // the difference in the current and last camera position
+		               // (this is used by Starfield)
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
 		void UpdateShake();

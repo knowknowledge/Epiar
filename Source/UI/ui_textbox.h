@@ -14,8 +14,9 @@
 
 class Textbox : public Widget {
 	public:
-		Textbox( int x, int y, int w, int h );
-		Textbox( int x, int y, int w, int h, string text );
+		Textbox( int x, int y, int w, int rows );
+		Textbox( int x, int y, int w, int rows, string text );
+		Textbox( int x, int y, int w, int rows, string text, string label );
 		~Textbox();
 		
 		void Draw( int relx = 0, int rely = 0 );
@@ -23,15 +24,20 @@ class Textbox : public Widget {
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 		
-		void Focus( int x, int y );
-		void Unfocus( void );
+		void FocusKeyboard( void );
+		void UnfocusKeyboard( void );
+
+		string GetText() { return text; }
+		void SetText(string s) { text = s; }
 	
 		void MouseDown( int wx, int wy );
+		
+		bool KeyPress( SDLKey key );
 	private:
-		void init( int x, int y, int w, int h, string text);
+		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
 		int w, h;
-		string text;
-		Image *textbox;
+		string text, label;
+		bool hasKeyboardFocus;
 
 		string lua_callback;
 		void (*clickCallBack)();

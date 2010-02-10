@@ -10,6 +10,7 @@
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+#include "Sprites/spritemanager.h"
 
 /**\class Planets
  * \brief Planets. */
@@ -26,32 +27,27 @@ Planets *Planets::Instance( void ) {
 bool Planets::Load( string filename ) {
 	Parser<cPlanet> parser;
 	
+	SpriteManager* sprites = SpriteManager::Instance();
 	planets = parser.Parse( filename, "planets", "planet" );
 
 	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
 		(*i)->_dbg_PrintInfo();
+		sprites->Add( (*i) );
 	}
 
 	return true;
 }
 
-// Adds all planets in the manager (this, Planets) to the spritelist
-void Planets::RegisterAll( SpriteManager *sprites ) {
-	if( !sprites ) {
-		Log::Warning( "Invalid spritelist passed to planets manager." );
-		
-		return;
-	}
-
-	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		sprites->Add( (*i) );
-	}	
-}
-
-
 void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
+		// Normally we would put a "new" function here.
+		// Lua may not ever need to create planets though.
+		{NULL, NULL}
+	};
+
+	static const luaL_Reg PlanetMethods[] = {
 		{"Name", &Planets_Lua::GetName},
+		{"GetID", &Planets_Lua::GetID},
 		{"Position", &Planets_Lua::GetPosition},
 		{"Alliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
@@ -60,24 +56,30 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
+
+	lua_pushstring(L, "__index");
+	lua_pushvalue(L, -2);  /* pushes the metatable */
+	lua_settable(L, -3);  /* metatable.__index = metatable */
+
+	luaL_openlib(L, NULL, PlanetMethods,0);
 	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);  
 }
 
 
 cPlanet **Planets_Lua::pushPlanet(lua_State *L){
 	cPlanet **s = (cPlanet **)lua_newuserdata(L, sizeof(cPlanet*));
-    *s = new cPlanet();
-    luaL_getmetatable(L, EPIAR_PLANET);
-    lua_setmetatable(L, -2);
-    return s;
+	*s = new cPlanet();
+	luaL_getmetatable(L, EPIAR_PLANET);
+	lua_setmetatable(L, -2);
+	return s;
 }
 
 cPlanet **Planets_Lua::checkPlanet(lua_State *L, int index){
-  cPlanet **p;
-  luaL_checktype(L, index, LUA_TUSERDATA);
-  p = (cPlanet**)luaL_checkudata(L, index, EPIAR_PLANET);
-  if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
-  return p;
+	cPlanet **p;
+	luaL_checktype(L, index, LUA_TUSERDATA);
+	p = (cPlanet**)luaL_checkudata(L, index, EPIAR_PLANET);
+	if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
+	return p;
 }
 
 int Planets_Lua::GetName(lua_State* L){
@@ -87,6 +89,17 @@ int Planets_Lua::GetName(lua_State* L){
 		lua_pushstring(L, (*planet)->GetName().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}
+
+int Planets_Lua::GetID(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		cPlanet** planet= checkPlanet(L,1);
+		lua_pushinteger(L, (*planet)->GetID());
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }

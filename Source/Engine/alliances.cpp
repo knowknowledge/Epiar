@@ -16,6 +16,9 @@
 
 Alliances *Alliances::pInstance = 0; // initialize pointer
 
+/**\brief Initializes a new instance or gets the current instance.
+ * \return Pointer to an Alliance object
+ */
 Alliances *Alliances::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Alliances; // create the sold instance
@@ -23,6 +26,10 @@ Alliances *Alliances::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Parses an Alliance XML file
+ * \return true always
+ * \sa Parser
+ */
 bool Alliances::Load( string& filename )
 {
 	Parser<Alliance> parser;

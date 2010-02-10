@@ -10,33 +10,58 @@
 #include "Graphics/animation.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
+#include "Utilities/resource.h"
+
 
 #define ANI_VERSION 1
 
-/**\class Animation
+/**\class Ani
  * \brief Animations */
 
-Animation::Animation() {
+/**\brief Gets the resource object.
+ * \param filename string containing the animation
+ */
+Ani* Ani::Get( string filename ) {
+	Ani* value;
+	value = (Ani*)Resource::Get(filename);
+	if( value == NULL ) {
+		value = new Ani(filename);
+		Resource::Store(filename,(Resource*)value);
+	}
+	return value;
+}
+
+/**\brief The resource object (no file).
+ */
+Ani::Ani() {
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
 }
 
-Animation::Animation( string& filename ) {
+/**\brief The resource object based on the file.
+ * \param filename String pointer to file.
+ * \sa Ani::Load
+ */
+Ani::Ani( string& filename ) {
+	Log::Message("New Animation from '%s'", filename.c_str() );
 	frames = NULL;
-	startTime = 0;
-	looping = false;
+	delay = 0;
+	numFrames = 0;
 	w = h = 0;
 	Load( filename );
 }
 
-bool Animation::Load( string& filename ) {
+/**\brief Loads the animation file.
+ * \param filename File name of the animation
+ */
+bool Ani::Load( string& filename ) {
 	char byte;
 	const char *cName = filename.c_str();
 	File file = File( cName );
 
-	Log::Message( "Loading animation '%s' ...\n", cName );
+	//Log::Message( "Loading animation '%s' ...\n", cName );
 
 	file.Read( 1, &byte );
 	//cout << "\tVersion: " << (int)byte << endl;
@@ -91,43 +116,74 @@ bool Animation::Load( string& filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	Log::Message( "Animation loading done." );
+	//Log::Message( "Animation loading done." );
 
 	return( true );
 }
 
-// Returns true while animation is still playing - false when animation is over
-// Note: if looping is turned on, the animation will always return true
-bool Animation::Draw( int x, int y, float ang ) {
+/**\class Animation
+ * \brief Animations implementation. */
+
+/**\brief Empty constructor.
+ */
+Animation::Animation() {
+	fnum=0;
+	startTime = 0;
+	looping = false;
+}
+
+/**\brief Constructor (based on file).
+ * \param filename File to load.
+ * \sa Ani::Get
+ */
+Animation::Animation( string& filename ) {
+	fnum=0;
+	startTime = 0;
+	looping = false;
+	ani = Ani::Get( filename );
+}
+
+/**\brief Returns true while animation is still playing.
+ * \details
+ * false when animation is over
+ * Note: if looping is turned on, the animation will always return true.
+ */
+bool Animation::Update() {
 	Image *frame = NULL;
 	bool finished = false;
 
 	if( startTime ) {
-		int fnum = (SDL_GetTicks() - startTime) / delay;
+		fnum = (SDL_GetTicks() - startTime) / ani->delay;
 
-		if( fnum > numFrames - 1 ) {
+		if( fnum > ani->numFrames - 1 ) {
 			if( looping ) {
-				fnum = 0;
+				fnum= 0;
 				startTime = SDL_GetTicks();
 			} else {
-				fnum = numFrames - 1;
+				fnum = ani->numFrames - 1;
 				finished = true;
 			}
 		}
 
-		frame = &frames[fnum];
 	} else {
 		startTime = SDL_GetTicks();
-		frame = &frames[0];
+		frame = &(ani->frames)[0];
 	}
-
-	frame->DrawCentered( x, y, ang );
-
-	return( finished );
+	return finished;
 }
 
-// Resets animation data back to the first frame
+/**\brief Draws the animation at given coordinate.
+ */
+void Animation::Draw( int x, int y, float ang ) {
+	Image* frame = &(ani->frames)[fnum];
+	frame->DrawCentered( x, y, ang );
+}
+
+
+/**\brief Resets animation data back to the first frame.
+ */
 void Animation::Reset( void ) {
+	fnum=0;
 	startTime = 0;
 }
 

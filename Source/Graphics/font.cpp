@@ -8,80 +8,116 @@
 
 #include "includes.h"
 #include "Graphics/font.h"
-#include "Graphics/afont/afont_gl.h"
 #include "includes.h"
 #include "Utilities/log.h"
+#include <FTGL/ftgl.h>
+#include "Graphics/video.h"
+#include "Utilities/file.h"
 
 /**\class Font
  * \brief Font class takes care of initializing fonts. */
 
+/**\brief Constructs new font (default color white).
+ */
 Font::Font() {
-	font = NULL;
-	filename = NULL;
-
 	r = 1.;
 	g = 1.;
 	b = 1.;
+	a = 1.;
 }
 
-Font::Font( const char *filename ) {
-	font = NULL;
-	this->filename = NULL;
+/**\brief Sets the new color and alpha value.
+ */
+void Font::SetColor( float r, float g, float b, float a ) {
+	this->r = r;
+	this->g = g;
+	this->b = b;
+	this->a = a;
+}
 
-	r = 1.;
-	g = 1.;
-	b = 1.;
+/**\class FreeFont
+ * \brief Implements FTGL font routines.*/
 
+/**\brief Construct new font based on file.
+ * \param filename String containing file.
+ */
+FreeFont::FreeFont( string filename ) {
+	font=NULL;
 	SetFont( filename );
 }
 
-Font::~Font() {
-	afont_gl_free( font );
-
-	Log::Message( "Font '%s' freed.", filename );
-
-	free( filename );
+/**\brief Destructor, handles deleting FTGL instance.
+ */
+FreeFont::~FreeFont() {
+	delete (FTTextureFont*)this->font;
+	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
-bool Font::SetFont( const char *filename ) {
-	font = afont_gl_load( filename );
-
-	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", filename );
+/**\brief Loads the font (uses FTGL Texture Fonts).
+ * \param filename Path to font file.
+ */
+bool FreeFont::SetFont( string filename ) {
+	File fontFile;
+	if( fontFile.OpenRead( filename.c_str() ) == false) {
+		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
 		return( false );
 	}
 
-	this->filename = strdup( filename );
+	if( this->font != NULL) {
+		Log::Error( "Deleting the old font '%s'.\n", fontname.c_str() );
+		delete this->font;
+	}
 
-	afont_size_text( font->orig, "A", &(this->width), &(this->height), &(this->base));
+	fontname = filename;
+	this->font = new FTTextureFont( fontname.c_str() );
 
-	Log::Message( "Font '%s' loaded.\n", filename );
+	if( font == NULL ) {
+		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
+		return( false );
+	}
+
+	font->FaceSize(12);
+
+	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }
 
-void Font::Render( int x, int y, const char *text ) {
-	glEnable( GL_TEXTURE_2D );
-	glEnable(GL_BLEND);
+/**\brief Renders a string.
+ * \param x X coordinate
+ * \param y Y coordinate
+ * \param text C style string pointer to text.
+ */
+Rect FreeFont::Render( int x, int y, const char *text ) {
+	float llx, lly, llz;
+	float urx, ury, urz;
 
-	glColor4f( r, g, b, 1. );
-	glRasterPos2i( x, y + height); // + height so that the top corner is at (x,y) like everything else.
-
-	afont_gl_render_text( font, text );
+	glColor4f( r, g, b, a );
+	glPushMatrix(); // to save the current matrix
+	glScalef(1, -1, 1); 
+	
+	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
+	
+	FTPoint pt = FTPoint( x, -y, 1);
+	( ( FTTextureFont * ) font )->Render( text, -1, pt );
+	glPopMatrix(); // restore the previous matrix
+	
+	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
-// Renders text centered squarely on (x,y), taking the bounding box into account
-void Font::RenderCentered( int x, int y, const char *text ) {
-	int w, h, base;
+/**\brief Renders text centered squarely on (x,y).
+ * \details
+ * Taking the bounding box into account.
+ * \sa FreeFont::Render
+ */
+Rect FreeFont::RenderCentered( int x, int y, const char *text ) {
+	float llx, lly, llz;
+	float urx, ury, urz;
 
-	// determine size of text
-	afont_size_text( font->orig, text, &w, &h, &base );
+	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 
-	Render( x - (w / 2), y - (h / 2) , text ); // -1 because it just kinda looks better
+	Render( x + static_cast<int>( llx - urx) / 2, y - static_cast<int>(lly - ury) / 2, text );
+
+	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
-void Font::SetColor( float r, float g, float b ) {
-	this->r = r;
-	this->g = g;
-	this->b = b;
-}

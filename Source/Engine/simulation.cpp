@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/music.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Engine/alliances.h"
@@ -30,18 +31,24 @@
 float Simulation::currentFPS = 0.;
 bool Simulation::paused = false;
 
+/**\brief Loads an empty Simulation.
+ */
 Simulation::Simulation( void ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
+	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	currentFPS = 0.;
 }
 
+/**\brief Loads a simulation based on the XML file.
+ */
 Simulation::Simulation( string filename ) {
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
+	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	currentFPS = 0.;
 
@@ -50,19 +57,31 @@ Simulation::Simulation( string filename ) {
 	Parse();
 }
 
+/**\brief Loads the XML file.
+ * \param filename Name of the file
+ * \return true if success
+ */
 bool Simulation::Load( string filename ) {
 	this->filename = filename;
 	
 	return Parse();
 }
 
+/**\brief Pauses the simulation
+ */
 void Simulation::pause(){
 	paused = true;
 }
+
+/**\brief Unpauses the simulation
+ */
 void Simulation::unpause(){
 	paused = false;
 }
 
+/**\brief Main game loop
+ * \return true
+ */
 bool Simulation::Run( void ) {
 	bool quit = false;
 	Input inputs;
@@ -70,69 +89,77 @@ bool Simulation::Run( void ) {
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 
+	Timer::Update(); // Start the Timer
+
 	// Grab the camera and give it coordinates
 	Camera *camera = Camera::Instance();
 	camera->Focus(0, 0);
+	
+	Timer::Initialize();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	// Create a spritelist
-	SpriteManager sprites;
+	SpriteManager *sprites = SpriteManager::Instance();
 
 	Player *player = Player::Instance();
 
 	// Set player model based on simulation xml file settings
 	player->SetModel( models->GetModel( playerDefaultModel ) );
-	sprites.Add( player->GetSprite() );
+	sprites->Add( player->GetSprite() );
 
 	// Focus the camera on the sprite
 	camera->Focus( player->GetSprite() );
 
-	// Add the planets
-	planets->RegisterAll( &sprites );
-
 	// Start the Lua Universe
-	Lua::SetSpriteList( &sprites );
-	Lua::Load("Resources/Scripts/universe.lua");
+	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
+	{
+		Log::Error("Fatal error starting Lua.");
+		quit = true;
+	}
 
-	// Start the Lua Scenarios
-	Lua::Run("Start()");
-
-	// Ensure correct drawing order
-	sprites.Order();
-	
 	// Create the hud
 	Hud::Hud();
 
-	Hud::Alert( "Captain, we don't have the power! Pow = %d", 3 );
+	// Message appear in reverse order, so this is upside down
+	Hud::Alert("-----------------------------------");
+	Hud::Alert("Please Report all bugs to epiar.net");
+	Hud::Alert("Epiar is currently under development.");
 
 	fpsTS = Timer::GetTicks();
+
+	// Load sample game music
+	Song* bgmusic = Song::Get( OPTION(string,"options/simulation/bgmusic") );
+	bgmusic->Play();
+
 	// main game loop
 	while( !quit ) {
 		quit = inputs.Update();
 		
+		int logicLoops = Timer::Update();
 		if( !paused ) {
-			Lua::Update();
-			// Update cycle
-			starfield.Update();
-			camera->Update();
-			sprites.Update();
-			camera->Update();
-			Hud::Update();
-			UI::Run(); // runs only a few loops
-			
-			// Keep this last (I think)
-			Timer::Update();
+			while(logicLoops--) {
+				Lua::Call("Update");
+				// Update cycle
+				starfield.Update();
+				camera->Update();
+				sprites->Update();
+				camera->Update();
+				Hud::Update();
+			}
 		}
+
+		// Runs only a few loops (even when paused)
+		UI::Run(); 
 
 		// Erase cycle
 		Video::Erase();
 		
 		// Draw cycle
 		starfield.Draw();
-		sprites.Draw();
-		Hud::Draw( sprites );
+		sprites->Draw();
+		Hud::Draw();
 		UI::Draw();
 		Video::Update();
 		
@@ -158,10 +185,15 @@ bool Simulation::Run( void ) {
 	return true;
 }
 
+/**\brief Returns the current frames per second
+ */
 float Simulation::GetFPS() {
 	return Simulation::currentFPS;
 }
 
+/**\brief Parses an XML simulation file
+ * \return true if successful
+ */
 bool Simulation::Parse( void ) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
@@ -230,6 +262,12 @@ bool Simulation::Parse( void ) {
 				xmlFree( key );
 				Log::Message( "Engines filename is %s.", enginesFilename.c_str() );
 			}
+			if( !strcmp( sectionName, "weapons" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				weaponsFilename = (char *)key;
+				xmlFree( key );
+				Log::Message( "Weapons filename is %s.", weaponsFilename.c_str() );
+			}
 			if( !strcmp( sectionName, "alliances" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				alliancesFilename = (char *)key;
@@ -260,6 +298,9 @@ bool Simulation::Parse( void ) {
 	}
 	if( models->Load( modelsFilename ) != true ) {
 		Log::Error( "There was an error loading the models from '%s'.", modelsFilename.c_str() );
+	}
+	if( weapons->Load( weaponsFilename ) != true ) {
+		Log::Error( "There was an error loading the weapons from '%s'.", weaponsFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
 		Log::Error( "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );

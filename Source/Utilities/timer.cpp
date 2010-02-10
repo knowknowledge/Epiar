@@ -13,30 +13,31 @@
 /**\class Timer
  * \brief Timer class. */
 
-Timer *Timer::pInstance = 0; // initialize pointer
 Uint32 Timer::lastLoopLength = 25;
 Uint32 Timer::lastLoopTick = SDL_GetTicks();
 Uint32 Timer::ticksPerFrame = 0;
+float Timer::logicFPS = LOGIC_FPS;
+double Timer::virtualTime = 0;
 
-Timer::Timer( void ) {
-	lastLoopLength = 25;
+void Timer::Initialize( void ) {
+	lastLoopLength = 0;
 	lastLoopTick = SDL_GetTicks();
 	ticksPerFrame = 1000 / OPTION( Uint32, "options/video/fps" );
 }
 
-Timer *Timer::Instance( void ) {
-	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Timer; // create the sold instance
-	}
-	return( pInstance );
-}
-
-void Timer::Update( void ) {
-	Uint32 now = SDL_GetTicks();
+int Timer::Update( void ) {
+	Uint32 tick = SDL_GetTicks();
 	
-	lastLoopLength = now - lastLoopTick;
+	lastLoopLength = tick - lastLoopTick;
+	lastLoopTick = tick;
 	
-	lastLoopTick = now;
+	float dt = lastLoopLength * 0.001f;
+	float frames = dt * Timer::logicFPS;
+	
+	int i = static_cast<int>(floor(virtualTime + frames) - floor(virtualTime));
+	virtualTime += frames;
+	
+	return i;
 }
 
 Uint32 Timer::GetTicks( void )
@@ -45,20 +46,21 @@ Uint32 Timer::GetTicks( void )
 }
 
 void Timer::Delay( void ) {
-	Uint32 ticksElapsed = SDL_GetTicks() - lastLoopTick;
+//#ifdef EPIAR_CAP_FRAME
+//	Uint32 ticksElapsed = SDL_GetTicks() - lastLoopTick;
 // Require a definition to activate frame cap (so we can check performance)
-#ifdef EPIAR_CAP_FRAME
-	if(ticksElapsed < ticksPerFrame)
-	{
-		Uint32 ticksToSleep = ticksPerFrame - ticksElapsed;
-		SDL_Delay(ticksToSleep);
-	}
-#else
-	SDL_Delay(0);
-#endif
+//	if(ticksElapsed < ticksPerFrame)
+//	{
+//		Uint32 ticksToSleep = ticksPerFrame - ticksElapsed;
+//		SDL_Delay(ticksToSleep);
+//	}
+//#else
+	SDL_Delay(10);
+//#endif
 }
 
 float Timer::GetDelta( void ) {
-	return( static_cast<float>(lastLoopLength / 1000. ));
+	return 1.f / Timer::logicFPS;
+	//return( static_cast<float>(lastLoopLength / 1000. ));
 }
 

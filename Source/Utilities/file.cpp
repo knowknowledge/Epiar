@@ -10,6 +10,11 @@
 #include "Utilities/file.h"
 #include "Utilities/log.h"
 
+#ifndef USE_PHYSICSFS
+#define PHYSFS_getLastError() "FAILED!"
+#endif
+
+
 /** \class File
  * Low level file access abstraction through PhysicsFS. */
 
@@ -34,19 +39,44 @@ bool File::OpenRead( const string& filename ) {
 	const char *cName;
 
 	cName = filename.c_str();
+
 	// Check for file existence
+#ifdef USE_PHYSICSFS
 	if ( !PHYSFS_exists( cName ) ){
 		Log::Error("File does not exist: %s.", cName);
 		return false;
 	}
+#else
+	struct stat fileStatus;
+	int stat_ret = stat(cName, &fileStatus );
+	if ( stat_ret != 0 ) {
+		printf("Stat for %s: [%d]\n",cName,stat_ret);
+		switch( stat_ret ) {
+			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
+			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
+			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;
+			default:			Log::Error("Unknown error occurred: %s.", cName);
+		}
+		return false;
+	}
+#endif
 
+#ifdef USE_PHYSICSFS
 	fp = PHYSFS_openRead( cName );
+#else
+	fp = fopen(cName,"rb");
+#endif
 	if( fp == NULL ){
 		Log::Error("Could not open file: %s.\n%s", cName,
 			PHYSFS_getLastError());
 		return false ;
 	}
+	
+#ifdef USE_PHYSICSFS
 	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
+#else
+	contentSize = fileStatus.st_size;
+#endif
 	validName.assign( filename );
 	return true ;
 }
@@ -60,7 +90,11 @@ bool File::OpenWrite( const string& filename ) {
 
 	const char *cName;
 	cName = filename.c_str();
+#ifdef USE_PHYSICSFS
 	this->fp = PHYSFS_openWrite( cName );
+#else
+	this->fp = fopen( cName, "wb");
+#endif
 	if( fp == NULL ){
 		Log::Error("Could not open file for writing: %s.\n%s",cName,
 				PHYSFS_getLastError());
@@ -79,7 +113,12 @@ bool File::Read( long numBytes, char *buffer ){
 		return false;
 
 	long bytesRead = static_cast<long>(
-		PHYSFS_read( fp, buffer, 1, numBytes ));
+#ifdef USE_PHYSICSFS
+		PHYSFS_read( fp, buffer, 1, numBytes )
+#else
+		fread(buffer, 1, numBytes, fp )
+#endif
+		);
 	if ( bytesRead == numBytes ){
 		return true;
 	} else {
@@ -98,9 +137,14 @@ char *File::Read( void ){
 
 	// Seek to beginning
 	Seek( 0 );
-	char *fBuffer = new char[static_cast<PHYSFS_uint32>(contentSize)];
+	char *fBuffer = new char[static_cast<Uint32>(contentSize)];
 	long bytesRead = static_cast<long>(
-		PHYSFS_read( this->fp, fBuffer, 1, contentSize ));
+#ifdef USE_PHYSICSFS
+		PHYSFS_read( this->fp, fBuffer, 1, contentSize )
+#else
+		fread(fBuffer,1,contentSize,fp)
+#endif
+		);
 	if( bytesRead == contentSize){
 		return fBuffer;
 	} else {
@@ -118,10 +162,14 @@ char *File::Read( void ){
 bool File::Write( char *buffer, const long bufsize ){
 	if ( fp == NULL )
 		return false;
+#ifdef USE_PHYSICSFS
 	PHYSFS_sint64 bytesWritten = PHYSFS_write(this->fp, buffer, bufsize, 1);
+#else
+	long bytesWritten = fwrite(buffer,1,bufsize,fp);
+#endif
 	if ( bytesWritten != bufsize){
 		Log::Error("%s: Unable to write to file. %s",this->validName.c_str(),
-				PHYSFS_getLastError());
+			PHYSFS_getLastError());
 		return false;
 	}
 	return true;
@@ -132,7 +180,12 @@ bool File::Write( char *buffer, const long bufsize ){
 long File::Tell( void ){
 	long offset;
 	offset = static_cast<long>(
-		PHYSFS_tell( fp ));
+#ifdef USE_PHYSICSFS
+		PHYSFS_tell( fp )
+#else
+		ftell(fp)
+#endif
+		);
 	if ( offset == -1 ){
 		Log::Error("%s: Error using file tell. %s",
 			validName.c_str(), PHYSFS_getLastError());
@@ -144,14 +197,22 @@ long File::Tell( void ){
  * \param pos Position in bytes form the beginning of the file.
  * \return true if successful, false otherwise.*/
 bool File::Seek( long pos ){
+	if ( fp == NULL )
+		return false;
+#ifdef USE_PHYSICSFS
 	int retval;
 	retval = PHYSFS_seek( fp,
 		static_cast<PHYSFS_uint64>( pos ));
 	if ( retval == 0 ){
-		Log::Error("%s: Error using file seek. %s",
-				validName.c_str(), PHYSFS_getLastError());
+		Log::Error("%s: Error using file seek [%d]. %s",
+		                validName.c_str(), pos, PHYSFS_getLastError());
 		return false;
 	}
+#else
+	const char *cName;
+	cName = validName.c_str();
+	fseek(fp, pos, SEEK_SET);
+#endif
 	return true;
 }
 
@@ -164,6 +225,7 @@ long File::GetLength( void ){
 /**Sets the internal buffer for read/write operations.
  * \return Nonzero on success */
 int File::SetBuffer( int bufSize ){
+#ifdef USE_PHYSICSFS
 	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
 		Log::Error("Could not create internal buffer for file: %s.\n%s",
 				validName.c_str(),PHYSFS_getLastError());
@@ -171,6 +233,9 @@ int File::SetBuffer( int bufSize ){
 		return 0;
 	}
 	return 1;
+#else
+	return 0; // No idea how this works??? ~ Matt Zweig
+#endif
 }
 
 /**Destroys file instance. \sa Close.*/
@@ -187,8 +252,14 @@ bool File::Close() {
 	if ( fp == NULL )
 		return false;
 
+#ifdef USE_PHYSICSFS
 	int retval = PHYSFS_close( fp );
-	if ( retval == 0 ){
+	if ( retval == 0 )
+#else
+	int retval = fclose( fp );
+	if ( retval != 0 )
+#endif
+	{
 		Log::Error("%s: Unable to close file handle.%s",
 			validName.c_str(), PHYSFS_getLastError());
 		return false;
@@ -196,3 +267,4 @@ bool File::Close() {
 	contentSize = 0;
 	return true;
 }
+

@@ -10,26 +10,39 @@
 #define H_FONT
 
 #include "includes.h"
-#include "Graphics/afont/afont_gl.h"
+#include <FTGL/ftgl.h>
+#include "Graphics/video.h"
 
 class Font {
- public:
-	Font();
-	Font( const char *filename );
-	~Font();
+		public:
+			Font();
 
-	bool SetFont( const char *filename );
-	void Render( int x, int y, const char *text );
-	void RenderCentered( int x, int y, const char *text );
-	void SetColor( float r, float g, float b );
+			virtual bool SetFont( string filename ) = 0;
+			virtual Rect Render( int x, int y, const char *text ) = 0;
+			virtual Rect RenderCentered( int x, int y, const char *text ) = 0;
+			void SetColor( float r, float g, float b, float a=1.0f );
 
-	afontgl *font;
 
- private:
-	//afontgl *font; // handle to font
-	char *filename; // filename of the loaded font
-	float r, g, b; // color of text
-	int height,width,base;
+		private:
+			string fontname; // filename of the loaded font
+			float r, g, b, a; // color of text
+			int height,width,base;
+
+			friend class FreeFont;
+};
+
+
+// Uses the FreeType and FTGL libraries
+class FreeFont: public Font {
+		public:
+			FreeFont() { font=NULL; }
+			FreeFont( string filename );
+			~FreeFont();
+			bool SetFont( string filename );
+			Rect Render( int x, int y, const char *text );
+			Rect RenderCentered( int x, int y, const char *text );
+		private:
+			FTTextureFont* font;
 };
 
 #endif // H_FONT

@@ -64,8 +64,16 @@ void Camera::Focus( Sprite *sprite ) {
 	focusSprite = sprite;
 }
 
+Coordinate Camera::GetFocusCoordinate() {
+	if(focusSprite) {
+		return focusSprite->GetWorldPosition();
+	} else {
+		return Coordinate(x,y);
+	}
+}
+
 // Converts world to screen coordinates
-void Camera::Translate( Coordinate &world, Coordinate &screen ) {
+void Camera::TranslateWorldToScreen( Coordinate &world, Coordinate &screen ) {
 	int tx, ty;
 
 	tx = (int)(world.GetX() - x + Video::GetHalfWidth());
@@ -74,6 +82,17 @@ void Camera::Translate( Coordinate &world, Coordinate &screen ) {
 	screen.SetX( tx );
 	screen.SetY( ty );
 }
+
+void Camera::TranslateScreenToWorld( Coordinate &screen, Coordinate &world ) {
+	int tx, ty;
+
+	tx = (int)(screen.GetX() + x - Video::GetHalfWidth());
+	ty = (int)(screen.GetY() + y - Video::GetHalfHeight());
+	
+	world.SetX( tx );
+	world.SetY( ty );
+}
+
 
 // returns the most recent camera position change
 void Camera::GetDelta( double *dx, double *dy ) {
@@ -106,6 +125,9 @@ void Camera::Update( void ) {
 		//use the inverase of the acceleration to reduce camer back to center
 		Coordinate cameraCatchup = Coordinate( -cameraLag.GetX()*0.003,-cameraLag.GetY()*0.003 );
 		cameraLag += cameraCatchup;
+		// until the camera lag is cleaned up and only applies during rapid accel, it's just going
+		// to be turned off
+		cameraLag = 0;
 		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
 			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
 

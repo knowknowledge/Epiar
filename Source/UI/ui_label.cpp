@@ -38,11 +38,11 @@ void Label::Draw(  int relx, int rely ) {
 	y = GetY() + rely;
 
 	// draw the label
-	Vera10->SetColor( 1., 1., 1. );
+	SansSerif->SetColor( 1., 1., 1. );
 	if(centered){
-		Vera10->RenderCentered( x, y, (char *)label.c_str() );
+		SansSerif->RenderCentered( x, y, (char *)label.c_str() );
 	} else {
-		Vera10->Render( x, y, (char *)label.c_str() );
+		SansSerif->Render( x, y, (char *)label.c_str() );
 	}
 	
 }

@@ -25,6 +25,7 @@ extern "C" {
 #include "ui_window.h"
 #include "ui_button.h"
 
+#define EPIAR_UI_TABLE "Epiar.UI"
 #define EPIAR_UI "UI"
 
 class UI_Lua {
@@ -38,13 +39,20 @@ class UI_Lua {
 		static int newTextbox(lua_State *L);
 		static int newLabel(lua_State *L);
 		static int newPicture(lua_State *L);
+		static int newCheckbox(lua_State *L);
+
+		// Fuctions to get Widget information
+		static int IsChecked(lua_State *L);
+		static int GetText(lua_State *L);
 
 		// Functions to manipulate Widgets
 		static int add(lua_State *L);
 		static int close(lua_State *L);
 		static int rotatePicture(lua_State *L);
 		static int setText(lua_State *L);
+		static int setLabel(lua_State *L);
 		static int setPicture(lua_State *L);
+		static int setChecked(lua_State *L);
 	private:
 };
 #endif /*__H_UI_LUA*/

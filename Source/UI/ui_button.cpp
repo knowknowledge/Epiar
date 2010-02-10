@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/sound.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
@@ -18,7 +19,7 @@
 /**\class Button
  * \brief UI button. */
 
-void Button::init( int x, int y, int w, int h, string label ) {
+void Button::Initialize( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
 	// This cuts down on code duplication so it can be called by multiple constructors.
 	SetX( x );
@@ -30,11 +31,13 @@ void Button::init( int x, int y, int w, int h, string label ) {
 	this->label = label;
 	
 	// Load the bitmaps needed for drawing
-	bitmap_normal = new Image( "Resources/Graphics/ui_button.png" );
-	bitmap_normal->Resize( w, h );
-	bitmap_pressed = new Image( "Resources/Graphics/ui_button_pressed.png" );
-	bitmap_pressed->Resize( w, h );
+	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
+	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
+	
+	// Load sounds
+	this->sound_click = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
+	this->sound_hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 
 	this->clickCallBack = NULL;
 	this->lua_callback = "";
@@ -43,17 +46,17 @@ void Button::init( int x, int y, int w, int h, string label ) {
 Button::Button( int x, int y, int w, int h, string label ) {
 	// Is this default constructor even useful?
 	// Why would there ever be a button without a callback?
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->clickCallBack = debugClick;// TODO: set this to NULL
 }
 
 Button::Button( int x, int y, int w, int h, string label, void (*function)(void)) {
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->clickCallBack = function;
 }
 
 Button::Button( int x, int y, int w, int h, string label, string lua_code) {
-	init( x, y, w, h, label );
+	Initialize( x, y, w, h, label );
 	this->lua_callback = lua_code;
 }
 
@@ -68,26 +71,27 @@ void Button::Draw( int relx, int rely ) {
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
+	
+	Video::DrawRect( x, y, w, h, 1., 1., 1. );
 
 	// draw the button (loaded image is simply scaled)
-	bitmap_current->Draw( x, y );
+	bitmap_current->DrawStretch( x, y, w, h );
 
 	// draw the label
-	Vera10->SetColor( 1., 1., 1. );
-	Vera10->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
+	SansSerif->SetColor( 1., 1., 1. );
+	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
 }
 
-void Button::Focus( int x, int y ) {
+void Button::FocusMouse( int x, int y ) {
 	bitmap_current = bitmap_pressed;
-	//cout << "button focus: " << label << endl;
 }
 
-void Button::Unfocus( void ) {
+void Button::UnfocusMouse( void ) {
 	bitmap_current = bitmap_normal;
-	//cout << "button unfocus: " << label << endl;
 }
 
 void Button::MouseDown( int wx, int wy ) {
+	this->sound_click->Play();
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
 		clickCallBack();
