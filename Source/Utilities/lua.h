@@ -56,9 +56,11 @@ class Lua {
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
 		static int getWeaponInfo(lua_State *L);
+		static int getEngineInfo(lua_State *L);
 		static int setModelInfo(lua_State *L);
 		static int setPlanetInfo(lua_State *L);
 		static int setWeaponInfo(lua_State *L);
+		static int setEngineInfo(lua_State *L);
 
 		static void pushNames(lua_State *L, list<string> *names);
 		static void setField(const char* index, int value);

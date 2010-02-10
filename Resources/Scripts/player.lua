@@ -268,6 +268,14 @@ function showWeaponInfo(weaponName)
 	weaponInfoWin:add(UI.newButton( 80,350,100,30,"Close", "weaponInfoWin:close();weaponInfoWin=nil" ))
 end
 
+function showEngineInfo(engineName)
+	if engineInfoWin then return end
+	engineInfo = Epiar.getEngineInfo( engineName )
+	engineInfoWin = UI.newWindow( 50,100,200,400, "Engine Info:"..engineName)
+	infoTable(engineInfo,engineInfoWin)
+	engineInfoWin:add(UI.newButton( 80,350,100,30,"Close", "engineInfoWin:close();engineInfoWin=nil" ))
+end
+
 function createWindows()
 	Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 	Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")

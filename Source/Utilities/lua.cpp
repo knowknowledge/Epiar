@@ -221,6 +221,7 @@ void Lua::RegisterFunctions() {
 		{"getModelInfo", &Lua::getModelInfo},
 		{"getPlanetInfo", &Lua::getPlanetInfo},
 		{"getWeaponInfo", &Lua::getWeaponInfo},
+		{"getEngineInfo", &Lua::getEngineInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -454,6 +455,7 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Name", model->GetName().c_str());
 	//setField("mass", model->GetMass()); Why isn't there a GetMass function?
 	setField("Thrust", model->GetThrustOffset());
+	setField("Engine", model->GetEngine()->GetName().c_str() );
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
@@ -498,6 +500,21 @@ int Lua::getWeaponInfo(lua_State *L) {
 	return 1;
 }
 
+int Lua::getEngineInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
+	string engineName = (string)luaL_checkstring(L,1);
+	Engine* engine = Engines::Instance()->LookUp(engineName);
+	if( engine == NULL)
+		return luaL_error(L, "There is no engine named '%s'.", engineName.c_str());
+
+    lua_newtable(L);
+	setField("Name", engine->GetName().c_str());
+	setField("Force", engine->GetForceOutput());
+	return 1;
+}
+
 int Lua::setModelInfo(lua_State *L) {
 	return 0; // TODO
 }
@@ -510,3 +527,6 @@ int Lua::setWeaponInfo(lua_State *L) {
 	return 0; // TODO
 }
 
+int Lua::setEngineInfo(lua_State *L) {
+	return 0; // TODO
+}
