@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/audio.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
@@ -59,6 +60,8 @@ int main( int argc, char **argv ) {
 
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+	Audio::Instance().Initialize();
+	Audio::Instance().SetMusicVol ( 68 );
 
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
@@ -73,7 +76,8 @@ int main( int argc, char **argv ) {
 	}
 
 	Video::Shutdown();
-	
+	Audio::Instance().Shutdown();
+
 	Log::Message( "Epiar shutting down." );
 	
 	// free the main font files

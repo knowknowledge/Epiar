@@ -40,6 +40,7 @@
 #include "SDL.h"
 #include "SDL_thread.h"
 #include "SDL_image.h"
+#include "SDL_mixer.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include <zlib.h>

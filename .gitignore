@@ -49,4 +49,4 @@ Epiar-Log*.xml
 
 .DS_Store
 Epiar.tmproj
-
+*.swp

@@ -9,6 +9,7 @@
 #ifndef __H_BUTTON__
 #define __H_BUTTON__
 
+#include "Audio/sound.h"
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
@@ -34,6 +35,7 @@ class Button : public Widget {
 		int w, h;
 		string label;
 		Image *bitmap_current, *bitmap_normal, *bitmap_pressed;
+		Sound *sound_click, *sound_hover;
 
 		string lua_callback;
 		void (*clickCallBack)();

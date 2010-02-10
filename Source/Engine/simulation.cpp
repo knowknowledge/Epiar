@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/music.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Engine/alliances.h"
@@ -127,6 +128,11 @@ bool Simulation::Run( void ) {
 	Hud::Alert("Epiar is currently under development.");
 
 	fpsTS = Timer::GetTicks();
+
+	// Load sample game music
+	Song* bgmusic = Song::Get( OPTION(string,"options/simulation/bgmusic") );
+	bgmusic->Play();
+
 	// main game loop
 	while( !quit ) {
 		quit = inputs.Update();

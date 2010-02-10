@@ -9,6 +9,7 @@
 		<msrp>500</msrp>
 		<foldDrive>0</foldDrive>
 		<flareAnimation>Resources/Animations/thrust.ani</flareAnimation>
+		<thrustSound>Resources/Audio/Engines/22455__nathanshadow__Thruster_Level_II.ogg</thrustSound>
 	</engine>
 	<engine>
 		<name>Ion Engines</name>
@@ -16,5 +17,6 @@
 		<msrp>2000</msrp>
 		<foldDrive>1</foldDrive>
 		<flareAnimation>Resources/Animations/thrust2.ani</flareAnimation>
+		<thrustSound>Resources/Audio/Engines/22455__nathanshadow__Thruster_Level_II.ogg</thrustSound>
 	</engine>
 </engines>

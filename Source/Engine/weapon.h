@@ -10,6 +10,7 @@
 #define __H_WEAPON__
 
 #include "Sprites/sprite.h"
+#include "Audio/sound.h"
 
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
@@ -33,9 +34,9 @@ class Weapon {
 		int GetAmmoConsumption(void) { return ammoConsumption;}
 		int GetFireDelay(void) {return fireDelay;}
 		int GetLifetime(void) {return lifetime;}
+		Sound *sound; //Sound the weapon makes
 
 	private:
-
 		string name; //weapons name
 		Image *image;
 		int weaponType; //(energy, explosive, laser, etc)
