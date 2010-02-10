@@ -16,6 +16,8 @@
 /**\class SpriteManager
  * \brief Mangers sprites. */
 
+/**\brief Constructs a new sprite manager.
+ */
 SpriteManager::SpriteManager() {
 	spritelist = new list<Sprite*>();
 	spritelookup = new map<int,Sprite*>();
@@ -23,6 +25,9 @@ SpriteManager::SpriteManager() {
 
 SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
 
+/**\brief Retrieves or creates new SpriteManager instance.
+ * \return Pointer to SpriteManager
+ */
 SpriteManager *SpriteManager::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new SpriteManager; // create the sold instance
@@ -30,12 +35,20 @@ SpriteManager *SpriteManager::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Adds a sprite to the manager.
+ * \param sprite Pointer to the sprite
+ */
 void SpriteManager::Add( Sprite *sprite ) {
 	spritelist->push_back(sprite);
 	spritelookup->insert(make_pair(sprite->GetID(),sprite));
 	GetQuadrant( sprite->GetWorldPosition() )->Insert( sprite );
 }
 
+/**\brief Deletes a sprite from the manager (Internal use).
+ * \param sprite Pointer to the sprite
+ * \details
+ * This performs the actual deletion.
+ */
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	spritelist->remove(sprite);
 	spritelookup->erase( sprite->GetID() );
@@ -45,10 +58,18 @@ bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	return ( GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite ) );
 }
 
+/**\brief Deletes a sprite.
+ * \param sprite Pointer to the sprite object
+ * \details
+ * This just queues the sprite up to be deleted.
+ */
 bool SpriteManager::Delete( Sprite *sprite ) {
 	spritesToDelete.push_back(sprite);
 	return true;
 }
+
+/**\brief SpriteManager update function.
+ */
 void SpriteManager::Update() {
 	// Update the sprites inside each quadrant
 	// TODO: Update only the sprites that are in nearby Quadrants
@@ -83,6 +104,8 @@ void SpriteManager::Update() {
 	DeleteEmptyQuadrants();
 }
 
+/**\brief Deletes empty QuadTrees (Internal use)
+ */
 void SpriteManager::DeleteEmptyQuadrants() {
 	map<Coordinate,QuadTree*>::iterator iter;
 	// Delete QuadTrees that are empty
@@ -101,9 +124,10 @@ void SpriteManager::DeleteEmptyQuadrants() {
 			delete (*emptyIter);
 			trees.erase((*emptyIter)->GetCenter());
 	}
-
 }
 
+/**\brief Draws the current sprites
+ */
 void SpriteManager::Draw() {
 	if( OPTION(int,"options/development/debug-quadtree") )
 		GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
@@ -120,10 +144,16 @@ void SpriteManager::Draw() {
 	}
 }
 
+/**\brief Retrieves a list of the current sprites.
+ * \return std::list of Sprite pointers.
+ */
 list<Sprite *> *SpriteManager::GetSprites() {
 	return( spritelist );
 }
 
+/**\brief Queries for sprite by the ID
+ * \param id Identification of the sprite.
+ */
 Sprite *SpriteManager::GetSpriteByID(int id) {
 	map<int,Sprite*>::iterator val = spritelookup->find( id );
 	if( val != spritelookup->end() ){
@@ -132,6 +162,11 @@ Sprite *SpriteManager::GetSpriteByID(int id) {
 	return NULL;
 }
 
+/**\brief Retrieves nearby QuadTrees
+ * \param c Coordinate
+ * \param r Radius
+ * \return std::list of QuadTree pointers.
+ */
 list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	// The possibleQuadrants are those trees adjacent and within a radius r
 	// Gather more trees when r is greater than the size of a quadrant
@@ -161,6 +196,11 @@ list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	return nearbyQuadrants;
 }
 
+/**\brief Returns a list of sprites that are near coordinate.
+ * \param c Coordinate
+ * \param r Radius
+ * \return std::list of Sprite pointers.
+ */
 list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	list<Sprite*> *sprites = new list<Sprite*>();
 	
@@ -179,7 +219,10 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	return( sprites );
 }
 
-
+/**\brief Returns QuadTree center.
+ * \param point Coordinate
+ * \return Coordinate of centerpointer
+ */
 Coordinate SpriteManager::GetQuadrantCenter(Coordinate point){
 	// Figure out where the new Tree should go.
 	// Quadrants are tiled adjacent to the central Quadrant centered at (0,0).
@@ -189,6 +232,8 @@ Coordinate SpriteManager::GetQuadrantCenter(Coordinate point){
 	return Coordinate(cx,cy);
 }
 
+/**\brief Gets the number of Sprites in the SpriteManager
+ */
 int SpriteManager::GetNumSprites() {
 	unsigned int total = 0;
 	map<Coordinate,QuadTree*>::iterator iter;
@@ -200,6 +245,9 @@ int SpriteManager::GetNumSprites() {
 	return total;
 }
 
+/**\brief Returns QuadTree at Coordinate
+ * \param point Coordinate
+ */
 QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
 	Coordinate treeCenter = GetQuadrantCenter(point);
 

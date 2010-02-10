@@ -52,8 +52,10 @@ bool Song::Play( bool loop ){
 		return false;
 
 	if ( loop )
-		return Mix_PlayMusic( this->song, 1 );
+		Mix_PlayMusic( this->song, 1 );
 	else
-		return Mix_PlayMusic( this->song, 0 );
+		Mix_PlayMusic( this->song, 0 );
+
+	return true;
 }
 

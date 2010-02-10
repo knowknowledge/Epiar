@@ -14,7 +14,7 @@ const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOW
 
 
 QuadTree::QuadTree(Coordinate _center, float _radius){
-	//cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
+	// cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
 	assert(_radius>MIN_QUAD_SIZE/2);
 	for(int t=0;t<4;t++){
 		subtrees[t] = NULL;
@@ -28,6 +28,7 @@ QuadTree::QuadTree(Coordinate _center, float _radius){
 }
 
 QuadTree::~QuadTree(){
+	this->objects->clear();
 	delete objects;
 	// Delete the Subtrees (Node)
 	for(int t=0;t<4;t++){

@@ -125,7 +125,7 @@ Audio::Audio():
 	audio_rate( 22050 ),
 	audio_format( AUDIO_S16 ),
 	audio_channels( 2 ),
-	audio_buffers( 4096 ),
+	audio_buffers( 2048 ),
 	max_chan( 16 )
 {
 }

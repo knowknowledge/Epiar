@@ -33,10 +33,11 @@ Sound *Sound::Get( const string& filename ){
  * \param filename Sound file
  */
 Sound::Sound( const string& filename ):
+	channel( -1 ),
+	sound( NULL ),
 	fadefactor( 0.03 ),
-	panfactor( 0.1 )
+	panfactor( 0.1f )
 {
-	this->sound = NULL;
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
 		Log::Error( "Could not load sound file: %s, Mixer error: %s",
@@ -82,7 +83,7 @@ bool Sound::Play( Coordinate offset ){
 	Uint8 sounddist = static_cast<Uint8>( dist );
 
 	// Left-Right panning
-	float panx = this->panfactor * (offset.GetX())+127;
+	float panx = this->panfactor * static_cast<float>(offset.GetX())+127.f;
 	Uint8 soundpan = 127;
 	if ( panx < 0 )
 		soundpan = 0;
@@ -115,7 +116,8 @@ bool Sound::Play( Coordinate offset ){
  * This is sort of a roundabout way to implement engine sounds.
  */
 bool Sound::PlayNoRestart( Coordinate offset ){
-	if ( Mix_Playing( this->channel ) &&
+	if ( (this->channel != -1) &&
+			Mix_Playing( this->channel ) &&
 			(Mix_GetChunk( this->channel ) == this->sound ) )
 		return false;
 
