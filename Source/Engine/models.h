@@ -65,7 +65,11 @@ class Model {
 		float GetMaxSpeed( void ) {
 			return maxSpeed;
 		}
-		
+
+		Engine* GetEngine( void ) const {
+			return engine;
+		}
+
 		float GetAcceleration( void ) {
 			if( engine ) {
 				return( engine->GetForceOutput() / (float)mass );

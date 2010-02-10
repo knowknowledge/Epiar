@@ -48,6 +48,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetMethods[] = {
 		{"Name", &Planets_Lua::GetName},
 		{"GetID", &Planets_Lua::GetID},
+		{"GetType", &Planets_Lua::GetType},
 		{"Position", &Planets_Lua::GetPosition},
 		{"Alliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
@@ -98,6 +99,17 @@ int Planets_Lua::GetID(lua_State* L){
 	if (n == 1) {
 		cPlanet** planet= checkPlanet(L,1);
 		lua_pushinteger(L, (*planet)->GetID());
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+int Planets_Lua::GetType(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		cPlanet** planet= checkPlanet(L,1);
+		lua_pushinteger(L, (*planet)->GetDrawOrder());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}

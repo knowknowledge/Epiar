@@ -40,6 +40,8 @@ class Engine {
 			//cout << "Engine called " << name << ", priced at " << msrp << " with force of " << forceOutput << " and fold capability set to " << foldDrive << endl;
 		}
 		
+		string GetName() const { return name; }
+
 		bool IsNamed( string engineName ) {
 			if( engineName == name )
 				return true;

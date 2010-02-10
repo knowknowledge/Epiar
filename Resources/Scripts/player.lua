@@ -72,6 +72,7 @@ commands = {
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'I', "Get Info", "showInfo()",KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
@@ -198,6 +199,81 @@ function landOnPlanet(id)
 	landingWin:add(UI.newButton( 40,80,100,30,"Armory","armory()" ))
 	landingWin:add(UI.newButton( 40,120,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
+end
+
+function infoTable(info,win)
+	y1,y2=55,40
+	yoff=20
+	uiElements = {}
+	for title, value in pairs(info) do
+		win:add(UI.newLabel( 10, y1, title))
+		win:add(UI.newTextbox( 90, y2, 100, 1, value))
+		y1,y2=y1+yoff,y2+yoff
+	end
+	return infoTable
+end
+
+function showInfo()
+	currentTarget = HUD.getTarget()
+	sprite = Epiar.getSprite(currentTarget)
+	type = sprite:GetType()
+	if type == 0 then -- planet
+		showPlanetInfo()
+	elseif (type == 2) or (type == 3) then -- Ship or Player
+		showModelInfo()
+	else
+		io.write("Cannot show info for sprite of type [%d]\n",type)
+	end
+end
+
+function showPlanetInfo()
+	currentTarget = HUD.getTarget()
+	if SHIPS[currentTarget] ~= nil then return end
+	if planetInfoWin ~= nil then return end
+	
+	planetInfo = Epiar.getPlanetInfo( currentTarget )
+	planet = Epiar.getSprite(currentTarget)
+	planetName = planet:Name()
+	planetInfoWin = UI.newWindow( 50,100,200,400, "Planet Info:"..planetName)
+	infoTable(planetInfo,planetInfoWin)
+	planetInfoWin:add(UI.newButton( 80,350,100,30,"Close", "planetInfoWin:close();planetInfoWin=nil" ))
+end
+
+function showModelInfo()
+	currentTarget = HUD.getTarget()
+	if SHIPS[currentTarget] == nil then return end
+	if modelInfoWin ~= nil then return end
+	
+	modelName = SHIPS[currentTarget]:GetModelName()
+	modelInfo = Epiar.getModelInfo( modelName )
+	modelInfoWin = UI.newWindow( 50,100,200,400, "Model Info:"..modelName)
+	infoTable(modelInfo,modelInfoWin)
+	
+	weaponsAndAmmo = SHIPS[currentTarget]:GetWeapons()
+	for weapon,ammo in pairs(weaponsAndAmmo) do
+		modelInfoWin:add(UI.newLabel( 10, y1, weapon))
+		modelInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
+		modelInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
+		y1,y2=y1+yoff,y2+yoff
+	end
+	
+	modelInfoWin:add(UI.newButton( 80,350,100,30,"Close", "modelInfoWin:close();modelInfoWin=nil" ))
+end
+
+function showWeaponInfo(weaponName)
+	if weaponInfoWin then return end
+	weaponInfo = Epiar.getWeaponInfo( weaponName )
+	weaponInfoWin = UI.newWindow( 50,100,200,400, "Weapon Info:"..weaponName)
+	infoTable(weaponInfo,weaponInfoWin)
+	weaponInfoWin:add(UI.newButton( 80,350,100,30,"Close", "weaponInfoWin:close();weaponInfoWin=nil" ))
+end
+
+function showEngineInfo(engineName)
+	if engineInfoWin then return end
+	engineInfo = Epiar.getEngineInfo( engineName )
+	engineInfoWin = UI.newWindow( 50,100,200,400, "Engine Info:"..engineName)
+	infoTable(engineInfo,engineInfoWin)
+	engineInfoWin:add(UI.newButton( 80,350,100,30,"Close", "engineInfoWin:close();engineInfoWin=nil" ))
 end
 
 function createWindows()

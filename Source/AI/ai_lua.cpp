@@ -47,6 +47,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetModel", &AI_Lua::ShipSetModel},
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
+		{"GetType", &AI_Lua::ShipGetType},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
@@ -303,6 +304,18 @@ int AI_Lua::ShipSetModel(lua_State* L){
 	}
 	return 0;
 
+}
+
+int AI_Lua::ShipGetType(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI** ai = checkShip(L,1);
+		lua_pushinteger(L, (*ai)->GetDrawOrder() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
 }
 
 /**\brief Lua callable function to get the ship's ID
