@@ -220,6 +220,7 @@ void Lua::RegisterFunctions() {
 		{"UnRegisterKey", &Input::UnRegisterKey},  
 		{"getModelInfo", &Lua::getModelInfo},
 		{"getPlanetInfo", &Lua::getPlanetInfo},
+		{"getWeaponInfo", &Lua::getWeaponInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -462,7 +463,7 @@ int Lua::getModelInfo(lua_State *L) {
 int Lua::getPlanetInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (modelName)", n);
+		return luaL_error(L, "Got %d arguments expected 1 (planetID)", n);
 	int id = luaL_checkinteger(L,1);
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 	if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
@@ -480,7 +481,21 @@ int Lua::getPlanetInfo(lua_State *L) {
 }
 
 int Lua::getWeaponInfo(lua_State *L) {
-	return 0; // TODO
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
+	string weaponName = (string)luaL_checkstring(L,1);
+	Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
+	if( weapon == NULL)
+		return luaL_error(L, "There is no weapon named '%s'.", weaponName.c_str());
+
+    lua_newtable(L);
+	setField("Name", weapon->GetName().c_str());
+	setField("Payload", weapon->GetPayload());
+	setField("Velocity", weapon->GetVelocity());
+	setField("FireDelay", weapon->GetFireDelay());
+	setField("Lifetime", weapon->GetLifetime());
+	return 1;
 }
 
 int Lua::setModelInfo(lua_State *L) {
