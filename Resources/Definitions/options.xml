@@ -13,6 +13,7 @@
 	</video>
 	<simulation>
 		<starfield-density>750</starfield-density>
+		<bgmusic>Resources/Audio/Music/cyberm00n.mod</bgmusic>
 	</simulation>
 	<timing>
 		<mouse-fade>500</mouse-fade>

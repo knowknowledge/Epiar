@@ -124,6 +124,8 @@ void Ship::Accelerate( void ) {
 	SetMomentum( momentum );
 	
 	status.isAccelerating = true;
+	// Play engine sound
+	this->model->PlayEngineThrust(GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 }
 
 

@@ -45,7 +45,7 @@ bool Audio::Initialize( void ){
 
 	// Allocate channels
 	Mix_AllocateChannels( this->max_chan);
-	assert( this->max_chan == static_cast<unsigned int>(Mix_AllocateChannels( -1 )) );
+	assert( this->max_chan == static_cast<unsigned int>(this->GetTotalChannels()) );
 
 	return true;
 }
@@ -54,10 +54,16 @@ bool Audio::Initialize( void ){
  */
 bool Audio::Shutdown( void ){
 	/* This is the cleaning up part */
-	Mix_HaltChannel( -1 );			// Halts all channels
+	this->HaltAll();
 	Mix_CloseAudio();
 	Mix_Quit();
 	return true;
+}
+
+/**\brief Halts all currently playing sounds.
+ */
+void Audio::HaltAll( void ){
+	Mix_HaltChannel( -1 );			// Halts all channels
 }
 
 /**\brief Set's the music volume (Range from 0 - 128 ).
@@ -69,7 +75,7 @@ bool Audio::SetMusicVol( int volume ){
 
 /**\brief Retrieves the first available channel.
  */
-const int Audio::GetFreeChannel( void ){
+int Audio::GetFreeChannel( void ){
 	/**\todo Optimization: We could consider dynamically allocating.*/
 	// Find first available channel
 	int foundchan = Mix_GroupAvailable( -1 );
@@ -82,9 +88,20 @@ const int Audio::GetFreeChannel( void ){
 	return this->lastplayed.front();
 }
 
-/**\brief Wrapper for Mix_PlayChannel
+/**\brief Retrieves total number of mixing channels.
  */
-const int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
+int Audio::GetTotalChannels( void ){
+	return Mix_AllocateChannels( -1 );
+}
+
+/**\brief Wrapper for Mix_PlayChannel.
+ * \param chan Use -1 for any available channel
+ * \param chunk The Mix_Chunk to play
+ * \param loop Specify if looping is desired ( chunk will play 1+loop times)
+ * \details
+ * Plays the chunk on specified channel.
+ */
+int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 	int chan_used;			// Channel that was used to play a sound
 	if ( chan == -1 ){
 		chan_used = Mix_PlayChannel(this->GetFreeChannel(), chunk, loop );

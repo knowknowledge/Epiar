@@ -18,9 +18,11 @@ class Audio {
 		static Audio& Instance();
 		bool Initialize( void );
 		bool Shutdown( void );
+		void HaltAll( void );
 		bool SetMusicVol ( int volume );
-		const int GetFreeChannel( void );
-		const int PlayChannel( int chan, Mix_Chunk *chunk, int loop );
+		int GetFreeChannel( void );
+		int GetTotalChannels( void );
+		int PlayChannel( int chan, Mix_Chunk *chunk, int loop );
 
 	private:
 		Audio();
@@ -32,7 +34,7 @@ class Audio {
 		Uint16 audio_format;				// AUDIO_S16
 		int audio_channels;					// Stereo, etc.
 		int audio_buffers;					// Size of buffer
-		unsigned int max_chan;				// Total number of channels use
+		unsigned int max_chan;				// Total number of channels request
 		list<int> lastplayed;				// Queue of last used channels.
 };
 

@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/sound.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
@@ -33,6 +34,10 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
 	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
+	
+	// Load sounds
+	this->sound_click = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
+	this->sound_hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 
 	this->clickCallBack = NULL;
 	this->lua_callback = "";
@@ -86,6 +91,7 @@ void Button::UnfocusMouse( void ) {
 }
 
 void Button::MouseDown( int wx, int wy ) {
+	this->sound_click->Play();
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
 		clickCallBack();

@@ -130,7 +130,7 @@ bool Simulation::Run( void ) {
 	fpsTS = Timer::GetTicks();
 
 	// Load sample game music
-	Song* bgmusic = Song::Get( "Resources/Audio/Music/cyberm00n.mod" );
+	Song* bgmusic = Song::Get( OPTION(string,"options/simulation/bgmusic") );
 	bgmusic->Play();
 
 	// main game loop
@@ -180,7 +180,6 @@ bool Simulation::Run( void ) {
 			fpsCount = 0;
 		}
 	}
-	delete bgmusic;
 
 	Log::Message("Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;

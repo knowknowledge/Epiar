@@ -18,10 +18,14 @@ class Sound {
 		~Sound( void );
 		bool Play( void );
 		bool Play( Coordinate offset );
+		bool PlayNoRestart( Coordinate offset );
+		void SetFactors( double fade, float pan );
 
 	private:
 		Mix_Chunk *sound;
-		int channel;		/* Channel the sound is playing on. */
+		int channel;		/* Last channel the sound is playing on. */
+		double fadefactor;	// Scale factor to fade by as distance drops off
+		float panfactor;	// Scale factor to pan by, higher = more sensitive
 };
 
 
