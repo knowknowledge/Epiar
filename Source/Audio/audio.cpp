@@ -109,6 +109,7 @@ int Audio::GetFreeChannel( void ){
 		return foundchan;
 
 	// No channels available, halt oldest used one
+	assert( this->lastplayed.size() != 0 );
 	Mix_HaltChannel( this->lastplayed.front() );
 
 	return this->lastplayed.front();
