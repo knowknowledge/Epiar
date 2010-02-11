@@ -34,10 +34,10 @@ Sound *Sound::Get( const string& filename ){
  */
 Sound::Sound( const string& filename ):
 	channel( -1 ),
+	sound( NULL ),
 	fadefactor( 0.03 ),
-	panfactor( 0.1 )
+	panfactor( 0.1f )
 {
-	this->sound = NULL;
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
 		Log::Error( "Could not load sound file: %s, Mixer error: %s",
@@ -83,7 +83,7 @@ bool Sound::Play( Coordinate offset ){
 	Uint8 sounddist = static_cast<Uint8>( dist );
 
 	// Left-Right panning
-	float panx = this->panfactor * (offset.GetX())+127;
+	float panx = this->panfactor * static_cast<float>(offset.GetX())+127.f;
 	Uint8 soundpan = 127;
 	if ( panx < 0 )
 		soundpan = 0;
@@ -98,6 +98,9 @@ bool Sound::Play( Coordinate offset ){
 	//else
 	//	Log::Message("Distance set to %d on channel %d.", sounddist, freechan );
 
+	/**\bug SDL_mixer bug possibly: Need to check whether SDL_mixer is getting
+	 * Left/Right speaker switched around.
+	 */
 	if( Mix_SetPanning( freechan, 254 - soundpan, soundpan ) == 0 )
 		Log::Error("Set panning %d failed on channel %d.", soundpan - 127, freechan );
 	//else
@@ -116,7 +119,8 @@ bool Sound::Play( Coordinate offset ){
  * This is sort of a roundabout way to implement engine sounds.
  */
 bool Sound::PlayNoRestart( Coordinate offset ){
-	if ( Mix_Playing( this->channel ) &&
+	if ( (this->channel != -1) &&
+			Mix_Playing( this->channel ) &&
 			(Mix_GetChunk( this->channel ) == this->sound ) )
 		return false;
 
@@ -124,12 +128,23 @@ bool Sound::PlayNoRestart( Coordinate offset ){
 	return true;
 }
 
-/**\brief Sets fading and panning factor.
- * \param fade Fading factor (defaults to 0.03)
+/**\brief Sets the volume for this sound only.
+ */
+bool Sound::SetVolume( int volume ){
+	int volumeset;
+	volumeset = Mix_VolumeChunk( this->sound, volume );
+	if ( volumeset != volume ){
+		Log::Error("Unable to set volume for this sound!");
+		return false;
+	}
+	return true;
+}
+
+/**\brief Sets distance fading and panning factor.
+ * \param fade distance fading factor (defaults to 0.03)
  * \param pan Pan factor (defaults to 0.1)
  */
 void Sound::SetFactors( double fade, float pan ){
-	/**\todo Insert some kind of range checking to prevent ridiculous values.*/
 	this->fadefactor = fade;
 	this->panfactor = pan;
 }
