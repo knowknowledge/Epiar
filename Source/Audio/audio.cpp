@@ -30,6 +30,9 @@ Audio& Audio::Instance(){
 /**\brief Audio system initialization.
  */
 bool Audio::Initialize( void ){
+	if ( this -> initstatus )
+		return false;				// Already initialized
+
 	SDL_Init(SDL_INIT_AUDIO);
 
 	if(Mix_OpenAudio(this->audio_rate,
@@ -55,8 +58,19 @@ bool Audio::Initialize( void ){
 bool Audio::Shutdown( void ){
 	/* This is the cleaning up part */
 	this->HaltAll();
-	Mix_CloseAudio();
-	Mix_Quit();
+	// Free every library loaded
+	while(Mix_Init(0))
+		Mix_Quit();
+
+	// Query number of times audio device was opened (should be 1)
+	int freq, chan, ntimes;
+	Uint16 format;
+	if ( (ntimes = Mix_QuerySpec( &freq, &format, &chan )) != 1 )
+		Log::Warning("Audio was initialized multiple times.");
+
+	// Close as many times as opened.
+	for ( int i = 0; i < ntimes; i++ )
+		Mix_CloseAudio();
 	return true;
 }
 
@@ -66,10 +80,22 @@ void Audio::HaltAll( void ){
 	Mix_HaltChannel( -1 );			// Halts all channels
 }
 
-/**\brief Set's the music volume (Range from 0 - 128 ).
+/**\brief Sets the music volume (Range from 0 - 128 ).
  */
 bool Audio::SetMusicVol( int volume ){
 	Mix_VolumeMusic( volume );
+	return true;
+}
+
+/**\brief Sets sound volume (Range from 0 - 128).
+ */
+bool Audio::SetSoundVol( int volume ){
+	int volumeset;
+	volumeset = Mix_Volume( -1, volume );
+	if ( volumeset != volume ){
+		Log::Error("There was an error setting the volume.");
+		return false;
+	}
 	return true;
 }
 
@@ -121,7 +147,8 @@ int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 
 /**\brief Empty constructor (use initialization lists to initialize privates.
  */
-Audio::Audio(): 
+Audio::Audio():
+	initstatus( false ),
 	audio_rate( 22050 ),
 	audio_format( AUDIO_S16 ),
 	audio_channels( 2 ),

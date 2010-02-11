@@ -20,6 +20,7 @@ class Audio {
 		bool Shutdown( void );
 		void HaltAll( void );
 		bool SetMusicVol ( int volume );
+		bool SetSoundVol ( int volume );
 		int GetFreeChannel( void );
 		int GetTotalChannels( void );
 		int PlayChannel( int chan, Mix_Chunk *chunk, int loop );
@@ -27,9 +28,10 @@ class Audio {
 	private:
 		Audio();
 		Audio(Audio const&);				// Copy constructor
-		Audio& operator=(Audio const&);	// Assignment constructor
+		Audio& operator=(Audio const&);		// Assignment constructor
 		~Audio();
 
+		bool initstatus;					// Initialization status
 		int audio_rate;						// Samplerate
 		Uint16 audio_format;				// AUDIO_S16
 		int audio_channels;					// Stereo, etc.

@@ -20,6 +20,7 @@ class Sound : public Resource {
 		bool Play( void );
 		bool Play( Coordinate offset );
 		bool PlayNoRestart( Coordinate offset );
+		bool SetVolume( int volume );
 		void SetFactors( double fade, float pan );
 
 	private:
