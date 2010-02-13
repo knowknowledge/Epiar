@@ -36,6 +36,7 @@ class QuadTree {
 
 		list<Sprite*> *GetSprites();
 		void GetSpritesNear(Coordinate point, float distance, list<Sprite*> *returnList);
+		Sprite* GetNearestSprite(Sprite* obj, float distance);
 		list<Sprite*> *FixOutOfBounds();
 
 		void Update();

@@ -220,6 +220,26 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	return( sprites );
 }
 
+Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r) {
+	float tmpdist;
+	Sprite* closest=NULL;
+	Sprite* possible;
+	list<QuadTree*> nearbyQuadrants = GetQuadrantsNear(obj->GetWorldPosition(),r);
+	list<QuadTree*>::iterator it;
+	for(it = nearbyQuadrants.begin(); it != nearbyQuadrants.end(); ++it) {
+		possible = (*it)->GetNearestSprite(obj,r);
+		if(possible!=NULL) {
+			tmpdist = (obj->GetWorldPosition()-possible->GetWorldPosition()).GetMagnitude();
+			if(tmpdist<r) {
+				r = tmpdist;
+				closest = possible;
+			}
+		}
+	}
+	cout<<"SpriteManager returns Sprite #"<<closest->GetID()<<endl;
+	return closest;
+}
+
 /**\brief Returns QuadTree center.
  * \param point Coordinate
  * \return Coordinate of centerpointer

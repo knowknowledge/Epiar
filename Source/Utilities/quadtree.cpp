@@ -147,6 +147,50 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	}
 }
 
+Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance){
+	// The Maximum range is when the center and point are on a 45 degree angle.
+	//   Root-2 of the radius + the distance
+	const float maxrange = 1.42f*radius + distance;
+	Sprite* closest=NULL;
+	Sprite* possible=NULL;
+	float tmpdist;
+	float mindist=distance;
+	Coordinate point = obj->GetWorldPosition();
+
+	// If the distance to the point is greater than the max range,
+	//   then no collisions are possible
+	if( (point-center).GetMagnitudeSquared() > maxrange*maxrange){
+		return NULL;
+	}
+	if(!isLeaf){ // Node
+		// Nodes work in linear space
+		mindist=distance;
+		for(int t=0;t<4;t++){
+			if(NULL != (subtrees[t])){
+				possible = subtrees[t]->GetNearestSprite(obj,distance);
+				if(possible==NULL) continue; // This tree short circuited
+				tmpdist = (point-possible->GetWorldPosition()).GetMagnitude();
+				if( tmpdist < mindist ){
+					mindist = tmpdist;
+					closest = possible;
+				}
+			}
+		}
+	} else { // Leaf
+		// Leaves work in square space
+		mindist=distance*distance;
+		list<Sprite*>::iterator i;
+		for( i = objects->begin(); i != objects->end(); ++i ) {
+			tmpdist = (point - (*i)->GetWorldPosition()).GetMagnitudeSquared();
+			if( (tmpdist < mindist) && ((*i) != obj)) {
+				mindist = tmpdist;
+				closest = (*i);
+			}
+		}
+	}
+	return closest;
+}
+
 list<Sprite*> *QuadTree::FixOutOfBounds(){
 	list<Sprite*>::iterator i;
 	list<Sprite*> *other;
