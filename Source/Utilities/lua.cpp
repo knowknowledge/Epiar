@@ -392,27 +392,18 @@ int Lua::getSprites(lua_State *L, int type){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
 		double r = luaL_checknumber (L, 3);
-		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r));
+		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r),type);
 	} else {
-		sprites = SpriteManager::Instance()->GetSprites();
-	}
-	
-	// Collect only the Sprites of this type
-	list<Sprite *>::iterator i;
-	list<Sprite *> filtered;
-	for( i = sprites->begin(); i != sprites->end(); ++i ) {
-		if( (*i)->GetDrawOrder() == type){
-			filtered.push_back( (*i) );
-		}
+		sprites = SpriteManager::Instance()->GetSprites(type);
 	}
 
 	// Populate a Lua table with Sprites
-    lua_createtable(L, filtered.size(), 0);
+    lua_createtable(L, sprites->size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
     Sprite **s;
-    list<Sprite *>::const_iterator iter = filtered.begin();
-    while(iter != filtered.end()) {
+    list<Sprite *>::const_iterator iter = sprites->begin();
+    while(iter != sprites->end()) {
 		// push userdata
         switch(type){
             case DRAW_ORDER_PLAYER:
@@ -453,8 +444,9 @@ int Lua::getNearestShip(lua_State *L) {
 	AI** ai = AI_Lua::checkShip(L,1);
 	double r = luaL_checknumber (L, 2);
 	Sprite **s;
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((*ai),r);
-		if(closest!=NULL  && closest->GetDrawOrder()==DRAW_ORDER_SHIP){
+	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((*ai),r,DRAW_ORDER_SHIP);
+		if(closest!=NULL){
+		assert(closest->GetDrawOrder()==DRAW_ORDER_SHIP);
 		s = (Sprite **)AI_Lua::pushShip(L);
 		*s = closest;
 		cout<<"Lua pushed Sprite #"<<closest->GetID()<<endl;

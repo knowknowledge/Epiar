@@ -48,23 +48,13 @@ Projectile::~Projectile(void)
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	SpriteManager *sprites = SpriteManager::Instance();
-	int numImpacts = 0;
 	
-	list<Sprite*> *impacts = sprites->GetSpritesNear( this->GetWorldPosition(), 5 );
-	if( impacts->size() > 1) {
-		list<Sprite *>::iterator i;
-		for( i = impacts->begin(); i != impacts->end(); ++i ) {
-			if( ( ( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP )
-			    ||( (*i)->GetDrawOrder() == DRAW_ORDER_PLAYER ) )
-			  &&( (*i)->GetID() != ownerID )
-			 ) {
-				((Ship*)(*i))->Damage( weapon->GetPayload() );
-				numImpacts++;
-			}
-		}
+	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
+	if( impact != NULL && impact->GetID() != ownerID) {
+		((Ship*)impact)->Damage( weapon->GetPayload() );
+		sprites->Delete( (Sprite*)this );
 	}
-	if (numImpacts || ( Timer::GetTicks() > secondsOfLife + start )) {
-		//if(numImpacts ) cout<<"Projectile Hit "<<numImpacts<<" Ships!\n";
+	if (( Timer::GetTicks() > secondsOfLife + start )) {
 		sprites->Delete( (Sprite*)this );
 	}
 }
