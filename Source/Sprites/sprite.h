@@ -15,11 +15,13 @@
 #include "Utilities/coordinate.h"
 
 // With the draw order, higher numbers are drawn later (on top)
-#define DRAW_ORDER_PLANET  0
-#define DRAW_ORDER_WEAPON  1
-#define DRAW_ORDER_SHIP    2
-#define DRAW_ORDER_PLAYER  3
-#define DRAW_ORDER_EFFECT  4
+// By using non-overlapping bits we can bit mask during searches
+#define DRAW_ORDER_PLANET  0x0001
+#define DRAW_ORDER_WEAPON  0x0002
+#define DRAW_ORDER_SHIP    0x0004
+#define DRAW_ORDER_PLAYER  0x0008
+#define DRAW_ORDER_EFFECT  0x0010
+#define DRAW_ORDER_ALL     0xFFFF
 
 class Sprite {
 	public:
