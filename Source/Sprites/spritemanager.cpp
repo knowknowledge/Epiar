@@ -91,6 +91,7 @@ void SpriteManager::Update() {
 
 	//Delete all sprites queued to be deleted
 	if (!spritesToDelete.empty()) {
+		spritesToDelete.unique();
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);
 		}
