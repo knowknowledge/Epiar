@@ -131,7 +131,8 @@ bool Simulation::Run( void ) {
 
 	// Load sample game music
 	Song* bgmusic = Song::Get( OPTION(string,"options/simulation/bgmusic") );
-	bgmusic->Play();
+	if(OPTION(int, "options/sound/background"))
+		bgmusic->Play();
 
 	// main game loop
 	while( !quit ) {

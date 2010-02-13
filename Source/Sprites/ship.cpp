@@ -125,7 +125,8 @@ void Ship::Accelerate( void ) {
 	
 	status.isAccelerating = true;
 	// Play engine sound
-	this->model->PlayEngineThrust(GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+	if( OPTION(int,"options/sound/engines") )
+		this->model->PlayEngineThrust(GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 }
 
 
@@ -231,7 +232,8 @@ FireStatus Ship::Fire() {
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
 		//Play weapon sound
-		currentWeapon->sound->Play(
+		if( OPTION(int,"options/sound/weapons") )
+			currentWeapon->sound->Play(
 				GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
 
 		//Fire the weapon

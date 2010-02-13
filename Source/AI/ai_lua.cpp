@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Utilities/lua.h"
 #include "Sprites/effects.h"
 #include "AI/ai_lua.h"
@@ -234,8 +235,9 @@ int AI_Lua::ShipExplode(lua_State* L){
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
 		// Play explode sound
 		Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
-		explodesnd->Play(
-			(*ai)->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+		if(OPTION(int, "options/sound/explodes"))
+			explodesnd->Play(
+				(*ai)->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 		SpriteManager::Instance()->Add(
 			new Effect((*ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 		SpriteManager::Instance()->Delete((Sprite*)(*ai));

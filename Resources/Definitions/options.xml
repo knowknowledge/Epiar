@@ -11,6 +11,13 @@
 		<fullscreen>0</fullscreen>
 		<fps>60</fps>
 	</video>
+	<sound>
+		<background>1</background>
+		<weapons>1</weapons>
+		<engines>1</engines>
+		<explosions>1</explosions>
+		<buttons>1</buttons>
+	</sound>
 	<simulation>
 		<starfield-density>750</starfield-density>
 		<bgmusic>Resources/Audio/Music/beyond_the_network.it</bgmusic>

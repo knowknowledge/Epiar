@@ -91,7 +91,8 @@ void Button::UnfocusMouse( void ) {
 }
 
 void Button::MouseDown( int wx, int wy ) {
-	this->sound_click->Play();
+	if(OPTION(int, "options/sound/buttons"))
+		this->sound_click->Play();
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
 		clickCallBack();
