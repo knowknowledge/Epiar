@@ -120,7 +120,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 	}
 }
 
-void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby){
+void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
 	const float maxrange = 1.42f*radius + distance;
@@ -134,12 +134,13 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				subtrees[t]->GetSpritesNear(point,distance,nearby);
+				subtrees[t]->GetSpritesNear(point,distance,nearby,type);
 			}
 		}
 	} else { // Leaf
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
+			if( ((*i)->GetDrawOrder() & type) == 0) continue;
 			if( (point - (*i)->GetWorldPosition()).GetMagnitudeSquared() < distance*distance + (*i)->GetRadarSize()*(*i)->GetRadarSize() ) {
 				nearby->push_back( *i);
 			}
@@ -147,7 +148,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 	}
 }
 
-Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance){
+Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
 	const float maxrange = 1.42f*radius + distance;
@@ -167,7 +168,7 @@ Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance){
 		mindist=distance;
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				possible = subtrees[t]->GetNearestSprite(obj,distance);
+				possible = subtrees[t]->GetNearestSprite(obj,distance,type);
 				if(possible==NULL) continue; // This tree short circuited
 				tmpdist = (point-possible->GetWorldPosition()).GetMagnitude();
 				if( tmpdist < mindist ){
@@ -181,8 +182,10 @@ Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance){
 		mindist=distance*distance;
 		list<Sprite*>::iterator i;
 		for( i = objects->begin(); i != objects->end(); ++i ) {
+			if(((*i) == obj) || (((*i)->GetDrawOrder() & type) == 0))
+				continue;
 			tmpdist = (point - (*i)->GetWorldPosition()).GetMagnitudeSquared();
-			if( (tmpdist < mindist) && ((*i) != obj)) {
+			if( tmpdist < mindist ) {
 				mindist = tmpdist;
 				closest = (*i);
 			}

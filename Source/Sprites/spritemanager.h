@@ -26,9 +26,9 @@ class SpriteManager {
 		bool LoadNPCs( string filename );
 		
 		Sprite *GetSpriteByID(int id);
-		list<Sprite*> *GetSprites();
-		list<Sprite*> *GetSpritesNear(Coordinate c, float r);
-		Sprite* GetNearestSprite(Sprite *obj, float r);
+		list<Sprite*> *GetSprites(int type = DRAW_ORDER_ALL);
+		list<Sprite*> *GetSpritesNear(Coordinate c, float r, int type = DRAW_ORDER_ALL);
+		Sprite* GetNearestSprite(Sprite *obj, float r, int type = DRAW_ORDER_ALL);
 
 		Coordinate GetQuadrantCenter( Coordinate point );
 		int GetNumQuadrants() { return trees.size(); }

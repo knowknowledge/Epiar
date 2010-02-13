@@ -136,7 +136,7 @@ void SpriteManager::Draw() {
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen = new list<Sprite*>();
 	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *1.42f;
-	onscreen = GetSpritesNear( Camera::Instance()->GetFocusCoordinate(), r);
+	onscreen = GetSpritesNear( Camera::Instance()->GetFocusCoordinate(), r, DRAW_ORDER_ALL);
 
 	onscreen->sort(compareSpritePtrs);
 
@@ -148,8 +148,21 @@ void SpriteManager::Draw() {
 /**\brief Retrieves a list of the current sprites.
  * \return std::list of Sprite pointers.
  */
-list<Sprite *> *SpriteManager::GetSprites() {
-	return( spritelist );
+list<Sprite *> *SpriteManager::GetSprites(int type) {
+	list<Sprite *>::iterator i;
+	list<Sprite *> *filtered;
+	if( type==DRAW_ORDER_ALL ){
+		filtered = new list<Sprite*>(*spritelist);
+	} else {
+		filtered = new list<Sprite*>();
+		// Collect only the Sprites of this type
+		for( i = spritelist->begin(); i != spritelist->end(); ++i ) {
+			if( (*i)->GetDrawOrder() & type){
+				filtered->push_back( (*i) );
+			}
+		}
+	}
+	return( filtered);
 }
 
 /**\brief Queries for sprite by the ID
@@ -202,7 +215,7 @@ list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
  * \param r Radius
  * \return std::list of Sprite pointers.
  */
-list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
+list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r, int type) {
 	list<Sprite*> *sprites = new list<Sprite*>();
 	
 	// Search the possible quadrants
@@ -210,7 +223,7 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	list<QuadTree*>::iterator it;
 	for(it = nearbyQuadrants.begin(); it != nearbyQuadrants.end(); ++it) {
 			list<Sprite *>* nearby = new list<Sprite*>;
-			(*it)->GetSpritesNear(c,r,nearby);
+			(*it)->GetSpritesNear(c,r,nearby,type);
 			sprites->splice(sprites->end(), *nearby);
 			delete nearby;
 	}
@@ -220,14 +233,14 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r) {
 	return( sprites );
 }
 
-Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r) {
+Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r, int type) {
 	float tmpdist;
 	Sprite* closest=NULL;
 	Sprite* possible;
 	list<QuadTree*> nearbyQuadrants = GetQuadrantsNear(obj->GetWorldPosition(),r);
 	list<QuadTree*>::iterator it;
 	for(it = nearbyQuadrants.begin(); it != nearbyQuadrants.end(); ++it) {
-		possible = (*it)->GetNearestSprite(obj,r);
+		possible = (*it)->GetNearestSprite(obj,r, type);
 		if(possible!=NULL) {
 			tmpdist = (obj->GetWorldPosition()-possible->GetWorldPosition()).GetMagnitude();
 			if(tmpdist<r) {
@@ -236,7 +249,6 @@ Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r) {
 			}
 		}
 	}
-	cout<<"SpriteManager returns Sprite #"<<closest->GetID()<<endl;
 	return closest;
 }
 
