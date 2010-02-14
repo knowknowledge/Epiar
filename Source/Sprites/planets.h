@@ -25,6 +25,10 @@ extern "C" {
 #include "includes.h"
 #include "Sprites/sprite.h"
 #include "Utilities/coordinate.h"
+#include "Engine/models.h"
+#include "Engine/engines.h"
+#include "Engine/weapons.h"
+#include "Engine/technologies.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
@@ -51,6 +55,10 @@ class cPlanet : public Sprite {
 			} else PPA_MATCHES( "image" ) {
 				Image *image = new Image( value );
 				SetImage( image );
+			} else PPA_MATCHES( "technology" ) {
+				Technology *tech = Technologies::Instance()->GetTechnology( value );
+				technologies.push_back(tech);
+				technologies.unique();
 			}
 			SetRadarColor(Color::Get(48, 160, 255));
 			return true;
@@ -75,6 +83,9 @@ class cPlanet : public Sprite {
 		short int GetTraffic() {return traffic;}
 		short int GetMilitiaSize() {return militiaSize;}
 		bool GetLandable() {return landable;}
+		list<Model*> GetModels();
+		list<Engine*> GetEngines();
+		list<Weapon*> GetWeapons();
 		
 	private:
 		string name;
@@ -83,6 +94,7 @@ class cPlanet : public Sprite {
 		short int traffic;
 		short int militiaSize;
 		list<Sprite *> militia;
+		list<Technology*> technologies;
 };
 
 // Class that holds list of all planets; manages them

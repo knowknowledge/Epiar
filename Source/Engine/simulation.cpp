@@ -12,6 +12,7 @@
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Engine/alliances.h"
+#include "Engine/technologies.h"
 #include "Engine/starfield.h"
 #include "Graphics/video.h"
 #include "Input/input.h"
@@ -39,6 +40,7 @@ Simulation::Simulation( void ) {
 	models = Models::Instance();
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
+	technologies = Technologies::Instance();
 	currentFPS = 0.;
 }
 
@@ -50,6 +52,7 @@ Simulation::Simulation( string filename ) {
 	models = Models::Instance();
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
+	technologies = Technologies::Instance();
 	currentFPS = 0.;
 
 	this->filename = filename;
@@ -275,6 +278,12 @@ bool Simulation::Parse( void ) {
 				xmlFree( key );
 				Log::Message( "Alliances filename is %s.", alliancesFilename.c_str() );
 			}
+			if( !strcmp( sectionName, "technologies" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				technologiesFilename = (char *)key;
+				xmlFree( key );
+				Log::Message( "Technologies filename is %s.", technologiesFilename.c_str() );
+			}
 			if( !strcmp( sectionName, "playerDefaultModel" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				playerDefaultModel = (char *)key;
@@ -291,9 +300,6 @@ bool Simulation::Parse( void ) {
 	Log::Message( "'%s' parsing done. File is version %d.%d.%d.", filename.c_str(), versionMajor, versionMinor, versionMacro );
 
 	// Now load the various subsystems
-	if( planets->Load( planetsFilename ) != true ) {
-		Log::Warning( "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
-	}
 	if( engines->Load( enginesFilename ) != true ) {
 		Log::Error( "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
 	}
@@ -301,10 +307,16 @@ bool Simulation::Parse( void ) {
 		Log::Error( "There was an error loading the models from '%s'.", modelsFilename.c_str() );
 	}
 	if( weapons->Load( weaponsFilename ) != true ) {
-		Log::Error( "There was an error loading the weapons from '%s'.", weaponsFilename.c_str() );
+		Log::Error( "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+	}
+	if( technologies->Load( technologiesFilename ) != true ) {
+		Log::Error( "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
 		Log::Error( "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
+	}
+	if( planets->Load( planetsFilename ) != true ) {
+		Log::Warning( "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
 	}
 
 	return true;

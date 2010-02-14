@@ -8,6 +8,7 @@
 	<engines>Resources/Definitions/engines-default.xml</engines>
 	<alliances>Resources/Definitions/alliances-default.xml</alliances>
 	<weapons>Resources/Definitions/weapons-default.xml</weapons>
+	<technologies>Resources/Definitions/technologies-default.xml</technologies>
 	<armor></armor>
 	<outfits></outfits>
 	<commodities></commodities>

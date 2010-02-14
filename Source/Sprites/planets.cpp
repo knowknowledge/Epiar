@@ -10,7 +10,53 @@
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+#include "Engine/models.h"
+#include "Engine/engines.h"
+#include "Engine/weapons.h"
 #include "Sprites/spritemanager.h"
+
+
+list<Model*> cPlanet::GetModels() {
+	list<Model*> models;
+	list<Technology*>::iterator techiter;
+	list<Model*>::iterator listiter;
+	for(techiter=technologies.begin(); techiter!=technologies.end(); ++techiter) {
+		list<Model*> model_list = (*techiter)->GetModels();
+		for(listiter=model_list.begin(); listiter!=model_list.end(); ++listiter) {
+			models.push_back( *listiter );
+		}
+	}
+	models.unique();
+	return models;
+}
+
+list<Engine*> cPlanet::GetEngines() {
+	list<Engine*> engines;
+	list<Technology*>::iterator techiter;
+	list<Engine*>::iterator listiter;
+	for(techiter=technologies.begin(); techiter!=technologies.end(); ++techiter) {
+		list<Engine*> engine_list = (*techiter)->GetEngines();
+		for(listiter=engine_list.begin(); listiter!=engine_list.end(); ++listiter) {
+			engines.push_back( *listiter );
+		}
+	}
+	engines.unique();
+	return engines;
+}
+
+list<Weapon*> cPlanet::GetWeapons() {
+	list<Weapon*> weapons;
+	list<Technology*>::iterator techiter;
+	list<Weapon*>::iterator listiter;
+	for(techiter=technologies.begin(); techiter!=technologies.end(); ++techiter) {
+		list<Weapon*> weapon_list = (*techiter)->GetWeapons();
+		for(listiter=weapon_list.begin(); listiter!=weapon_list.end(); ++listiter) {
+			weapons.push_back( *listiter );
+		}
+	}
+	weapons.unique();
+	return weapons;
+}
 
 /**\class Planets
  * \brief Planets. */

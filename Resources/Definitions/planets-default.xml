@@ -13,6 +13,7 @@
 		<image>Resources/Graphics/planet1.png</image>
 		<militia>20</militia>
 		<sphereOfInfluence>3000</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
 	</planet>
 	<planet>
 		<name>Alexandria</name>
@@ -24,6 +25,7 @@
 		<image>Resources/Graphics/planet2.png</image>
 		<militia>5</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
 	</planet>
 	<planet>
 		<name>Bersia</name>
@@ -35,6 +37,8 @@
 		<image>Resources/Graphics/planet6.png</image>
 		<militia>7</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Medium-Scale Commerce</technology>
 	</planet>
 	<planet>
 		<name>Castal</name>
@@ -46,6 +50,9 @@
 		<image>Resources/Graphics/planet3.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Medium-Scale Commerce</technology>
 	</planet>
 	<planet>
 		<name>Destinaria</name>
@@ -57,6 +64,9 @@
 		<image>Resources/Graphics/planet4.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Medium-Scale Commerce</technology>
+		<technology>Terran Defence</technology>
 	</planet>
 	<planet>
 		<name>Exudusous</name>
@@ -68,6 +78,9 @@
 		<image>Resources/Graphics/planet5.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Medium-Scale Commerce</technology>
+		<technology>Terran War Fleet</technology>
 	</planet>
 	<planet>
 		<name>Fon`te Ral</name>
@@ -79,6 +92,9 @@
 		<image>Resources/Graphics/planet5.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Terran Medium-Scale Commerce</technology>
+		<technology>Terran Defence</technology>
 	</planet>
 	<planet>
 		<name>Fonral</name>
@@ -90,6 +106,8 @@
 		<image>Resources/Graphics/planet7.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
+		<technology>Solaran Outpost</technology>
 	</planet>
 	<planet>
 		<name>Galaphrain</name>
@@ -101,6 +119,9 @@
 		<image>Resources/Graphics/planet7.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Vespian</technology>
+		<technology>Solaran Outpost</technology>
+		<technology>Solaran Defence</technology>
 	</planet>
 	<planet>
 		<name>Outpost 1</name>
@@ -112,5 +133,6 @@
 		<image>Resources/Graphics/station1.png</image>
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
+		<technology>Terran Small-Scale Commerce</technology>
 	</planet>
 </planets>
