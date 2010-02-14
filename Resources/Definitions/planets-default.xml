@@ -102,4 +102,15 @@
 		<militia>1</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
 	</planet>
+	<planet>
+		<name>Outpost 1</name>
+		<alliance>Inter-Terran Conjunctive</alliance>
+		<x>620</x>
+		<y>390</y>
+		<landable>1</landable>
+		<traffic>2</traffic>
+		<image>Resources/Graphics/station1.png</image>
+		<militia>1</militia>
+		<sphereOfInfluence>0</sphereOfInfluence>
+	</planet>
 </planets>
