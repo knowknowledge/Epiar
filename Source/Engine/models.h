@@ -96,7 +96,10 @@ class Model {
 		
 		short int getMaxEnergyAbsorption() { return maxEnergyAbsorption; }
 
-		void PlayEngineThrust( Coordinate offset ){ this->engine->thrustsound->PlayNoRestart( offset );};
+		void PlayEngineThrust( float volume, Coordinate offset ){
+			this->engine->thrustsound->SetVolume( volume );
+			this->engine->thrustsound->PlayNoRestart( offset );
+		};
 		
 	private:
 		string name;

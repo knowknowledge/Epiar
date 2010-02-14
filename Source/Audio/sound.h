@@ -21,6 +21,7 @@ class Sound : public Resource {
 		bool Play( Coordinate offset );
 		bool PlayNoRestart( Coordinate offset );
 		bool SetVolume( int volume );
+		bool SetVolume( float volume );
 		void SetFactors( double fade, float pan );
 
 	private:
@@ -28,6 +29,7 @@ class Sound : public Resource {
 		int channel;		/* Last channel the sound is playing on. */
 		double fadefactor;	// Scale factor to fade by as distance drops off
 		float panfactor;	// Scale factor to pan by, higher = more sensitive
+		int volume;			// Volume for this sound
 };
 
 

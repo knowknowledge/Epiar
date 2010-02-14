@@ -83,13 +83,43 @@ void Audio::HaltAll( void ){
 /**\brief Sets the music volume (Range from 0 - 128 ).
  */
 bool Audio::SetMusicVol( int volume ){
-	Mix_VolumeMusic( volume );
+	if ( volume < 0 ){
+		Log::Warning("Volume (%d) must be >= 0.", volume);
+		volume = 0;
+	} else if ( volume > 128 ){
+		Log::Warning("Volume (%d) must be <= 128.", volume);
+		volume = 128;
+	}
+
+	int volumeset;
+	volumeset = Mix_VolumeMusic( volume );
+	if ( volumeset != volume ){
+		Log::Error("There was an error setting the volume.");
+		return false;
+	}
 	return true;
 }
+
+/**\brief Sets the music volume (Range from 0 - 1 ).
+ */
+bool Audio::SetMusicVol( float volume ){
+	int realvol=0;
+	realvol = static_cast<int>( volume * 128.f );
+	return this->SetMusicVol( realvol );
+}
+
 
 /**\brief Sets sound volume (Range from 0 - 128).
  */
 bool Audio::SetSoundVol( int volume ){
+	if ( volume < 0 ){
+		Log::Warning("Volume (%d) must be >= 0.", volume);
+		volume = 0;
+	} else if ( volume > 128 ){
+		Log::Warning("Volume (%d) must be <= 128.", volume);
+		volume = 128;
+	}
+
 	int volumeset;
 	volumeset = Mix_Volume( -1, volume );
 	if ( volumeset != volume ){
@@ -97,6 +127,14 @@ bool Audio::SetSoundVol( int volume ){
 		return false;
 	}
 	return true;
+}
+
+/**\brief Sets sound volume (Range from 0 - 1).
+ */
+bool Audio::SetSoundVol( float volume ){
+	int realvol = 0;
+	realvol = static_cast<int>( volume * 128.f );
+	return this->SetSoundVol( realvol );
 }
 
 /**\brief Retrieves the first available channel.

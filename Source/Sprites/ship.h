@@ -71,6 +71,7 @@ class Ship : public Sprite {
 		// Weapon Systems
 		multimap <int,int> ammo; //contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons;
+		float nonplayersound;	// Ratio for reducing non-player sounds
 };
 
 #endif // __H_SHIP__

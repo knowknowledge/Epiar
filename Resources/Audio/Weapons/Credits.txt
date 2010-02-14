@@ -1,5 +1,7 @@
 Creative Commons Sound from Freesound.org
 
+Name: "18397__inferno__smalllas.ogg"
+Url: http://www.freesound.org/samplesViewSingle.php?id=18397
 
 Name: "36847__EcoDTR__LaserRocket2.ogg"
 Url: http://www.freesound.org/samplesViewSingle.php?id=36847

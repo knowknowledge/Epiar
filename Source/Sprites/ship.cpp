@@ -21,7 +21,8 @@
 
 /**\brief Ship constructor that initializes default values.
  */
-Ship::Ship() {
+Ship::Ship() : nonplayersound( 0.4f )
+{
 	model = NULL;
 	flareAnimation = NULL;
 	
@@ -125,8 +126,11 @@ void Ship::Accelerate( void ) {
 	
 	status.isAccelerating = true;
 	// Play engine sound
-	if( OPTION(int,"options/sound/engines") )
-		this->model->PlayEngineThrust(GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+	float engvol = OPTION(int,"options/sound/engines");
+	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+		engvol = engvol * this->nonplayersound;
+	this->model->PlayEngineThrust( engvol,
+			GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 }
 
 
@@ -232,9 +236,14 @@ FireStatus Ship::Fire() {
 		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
 		//Play weapon sound
-		if( OPTION(int,"options/sound/weapons") )
-			currentWeapon->sound->Play(
-				GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+		float weapvol = OPTION(float,"options/sound/weapons");
+		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+			currentWeapon->sound->SetVolume( weapvol * this->nonplayersound );
+		else
+			currentWeapon->sound->SetVolume( weapvol );
+		currentWeapon->sound->Play(
+			GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+
 
 		//Fire the weapon
 		SpriteManager *sprites = SpriteManager::Instance();

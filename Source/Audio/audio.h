@@ -20,7 +20,9 @@ class Audio {
 		bool Shutdown( void );
 		void HaltAll( void );
 		bool SetMusicVol ( int volume );
+		bool SetMusicVol ( float volume );
 		bool SetSoundVol ( int volume );
+		bool SetSoundVol ( float volume );
 		int GetFreeChannel( void );
 		int GetTotalChannels( void );
 		int PlayChannel( int chan, Mix_Chunk *chunk, int loop );

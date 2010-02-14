@@ -43,7 +43,7 @@
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>200</fireDelay>
 		<lifetime>1000</lifetime>
-		<sound>32954__HardPCM__Chip054.wav.ogg</sound>
+		<sound>18397__inferno__smalllas.ogg</sound>
 	</weapon>
 	<weapon>
 		<name>Strong Laser</name>
@@ -71,6 +71,6 @@
 		<ammoConsumption>0</ammoConsumption>
 		<fireDelay>70</fireDelay>
 		<lifetime>1000</lifetime>
-		<sound>32954__HardPCM__Chip054.wav.ogg</sound>
+		<sound>18397__inferno__smalllas.ogg</sound>
 	</weapon>
 </weapons>

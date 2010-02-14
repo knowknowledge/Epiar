@@ -36,7 +36,8 @@ Sound::Sound( const string& filename ):
 	channel( -1 ),
 	sound( NULL ),
 	fadefactor( 0.03 ),
-	panfactor( 0.1f )
+	panfactor( 0.1f ),
+	volume( 128 )
 {
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
@@ -65,7 +66,7 @@ bool Sound::Play( void ){
 	int freechan = Audio::Instance().GetFreeChannel();
 	Mix_SetDistance( freechan, 0 );
 	Mix_SetPanning( freechan, 127, 127 );
-
+	Mix_Volume( freechan, this->volume );
 	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
 	if ( channel == -1 )
 		return false;
@@ -106,6 +107,7 @@ bool Sound::Play( Coordinate offset ){
 	//else
 	//	Log::Message("Panning set to %d on channel %d.", soundpan - 127, freechan );
 
+	Mix_Volume( freechan, this->volume );
 	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );
 
 	if ( channel == -1 )
@@ -128,17 +130,19 @@ bool Sound::PlayNoRestart( Coordinate offset ){
 	return true;
 }
 
-/**\brief Sets the volume for this sound only.
+/**\brief Sets the volume for this sound only (for next time it is played).
  */
 bool Sound::SetVolume( int volume ){
-	int volumeset;
-	volumeset = Mix_VolumeChunk( this->sound, volume );
-	if ( volumeset != volume ){
-		Log::Error("Unable to set volume for this sound!");
-		return false;
-	}
+	this->volume = volume;
 	return true;
 }
+
+/**\brief Sets the volume for this sound only (for next time it is played).
+ */
+bool Sound::SetVolume( float volume ){
+	return this->volume = static_cast<int>( volume * 128.f );
+}
+
 
 /**\brief Sets distance fading and panning factor.
  * \param fade distance fading factor (defaults to 0.03)
