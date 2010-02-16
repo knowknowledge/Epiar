@@ -121,9 +121,9 @@ void SpriteManager::DeleteEmptyQuadrants() {
 	// Delete empty trees
 	list<QuadTree*>::iterator emptyIter;
 	for ( emptyIter = emptyTrees.begin(); emptyIter != emptyTrees.end(); ++emptyIter) {
-			//cout<<"Deleting the empty tree at "<<(*emptyIter)->GetCenter()<<endl;
-			delete (*emptyIter);
-			trees.erase((*emptyIter)->GetCenter());
+		//cout<<"Deleting the empty tree at "<<(*emptyIter)->GetCenter()<<endl;
+		trees.erase((*emptyIter)->GetCenter());
+		delete (*emptyIter);
 	}
 }
 

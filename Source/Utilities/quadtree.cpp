@@ -32,7 +32,10 @@ QuadTree::~QuadTree(){
 	delete objects;
 	// Delete the Subtrees (Node)
 	for(int t=0;t<4;t++){
-		if(NULL != (subtrees[t])) delete subtrees[t];
+		if(NULL != (subtrees[t])){
+			delete subtrees[t];
+			this->subtrees[t] = NULL;
+		}
 	}
 }
 
