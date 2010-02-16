@@ -140,7 +140,8 @@ bool Sound::SetVolume( int volume ){
 /**\brief Sets the volume for this sound only (for next time it is played).
  */
 bool Sound::SetVolume( float volume ){
-	return this->volume = static_cast<int>( volume * 128.f );
+	this->volume = static_cast<int>( volume * 128.f );
+	return true;
 }
 
 

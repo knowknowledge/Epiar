@@ -442,7 +442,7 @@ int Lua::getNearestShip(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
 	}
 	AI** ai = AI_Lua::checkShip(L,1);
-	double r = luaL_checknumber (L, 2);
+	float r = static_cast<float>(luaL_checknumber (L, 2));
 	Sprite **s;
 	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((*ai),r,DRAW_ORDER_SHIP);
 		if(closest!=NULL){

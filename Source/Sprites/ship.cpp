@@ -126,7 +126,7 @@ void Ship::Accelerate( void ) {
 	
 	status.isAccelerating = true;
 	// Play engine sound
-	float engvol = OPTION(int,"options/sound/engines");
+	float engvol = OPTION(float,"options/sound/engines");
 	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
 		engvol = engvol * this->nonplayersound;
 	this->model->PlayEngineThrust( engvol,
