@@ -33,8 +33,8 @@ Sound *Sound::Get( const string& filename ){
  * \param filename Sound file
  */
 Sound::Sound( const string& filename ):
-	channel( -1 ),
 	sound( NULL ),
+	channel( -1 ),
 	fadefactor( 0.03 ),
 	panfactor( 0.1f ),
 	volume( 128 )
