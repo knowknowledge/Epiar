@@ -235,7 +235,7 @@ int AI_Lua::ShipExplode(lua_State* L){
 		Log::Message("A %s Exploded!",(*ai)->GetModelName().c_str());
 		// Play explode sound
 		Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
-		if(OPTION(int, "options/sound/explodes"))
+		if(OPTION(int, "options/sound/explosions"))
 			explodesnd->Play(
 				(*ai)->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
 		SpriteManager::Instance()->Add(
