@@ -67,6 +67,10 @@ class Lua {
 		static void setField(const char* index, int value);
 		static void setField(const char* index, float value);
 		static void setField(const char* index, const char* value);
+		static int getIntField(int index, const char* name);
+		static float getNumField(int index, const char* name);
+		static string getStringField(int index, const char* name);
+		static void stackDump(lua_State *L);
 
 	private:
 		static vector<string> buffer;

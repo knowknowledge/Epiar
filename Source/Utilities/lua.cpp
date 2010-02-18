@@ -220,9 +220,13 @@ void Lua::RegisterFunctions() {
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
 		{"getModelInfo", &Lua::getModelInfo},
+		{"setModelInfo", &Lua::setModelInfo},
 		{"getPlanetInfo", &Lua::getPlanetInfo},
+		{"setPlanetInfo", &Lua::setPlanetInfo},
 		{"getWeaponInfo", &Lua::getWeaponInfo},
+		{"setWeaponInfo", &Lua::setWeaponInfo},
 		{"getEngineInfo", &Lua::getEngineInfo},
+		{"setEngineInfo", &Lua::setEngineInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -356,6 +360,70 @@ void Lua::setField(const char* index, const char* value) {
 	lua_settable(L, -3);
 }
 
+int Lua::getIntField(int index, const char* name) {
+	int val;
+	assert(lua_istable(L,index));
+	lua_pushstring(L, name);
+	assert(lua_istable(L,index));
+	lua_gettable(L,index);
+	val = luaL_checkint(L,index+1);
+	lua_pop(L,1);
+	return val;
+}
+
+float Lua::getNumField(int index, const char* name) {
+	float val;
+	assert(lua_istable(L,index));
+	lua_pushstring(L, name);
+	assert(lua_istable(L,index));
+	lua_gettable(L, index);
+	val = luaL_checknumber(L,index+1);
+	lua_pop(L,1);
+	return val;
+}
+
+string Lua::getStringField(int index, const char* name) {
+	string val;
+	assert(lua_istable(L,index));
+	lua_pushstring(L, name);
+	assert(lua_istable(L,index));
+	lua_gettable(L, index);
+	val = luaL_checkstring(L,index+1);
+	lua_pop(L,1);
+	return val;
+}
+
+//can be found here  http://www.lua.org/pil/24.2.3.html
+void Lua::stackDump (lua_State *L) {
+  int i;
+  int top = lua_gettop(L);
+  for (i = 1; i <= top; i++) {  /* repeat for each level */
+	int t = lua_type(L, i);
+	switch (t) {
+
+	  case LUA_TSTRING:  /* strings */
+		printf("`%s'", lua_tostring(L, i));
+		break;
+
+	  case LUA_TBOOLEAN:  /* booleans */
+		printf(lua_toboolean(L, i) ? "true" : "false");
+		break;
+
+	  case LUA_TNUMBER:  /* numbers */
+		printf("%g", lua_tonumber(L, i));
+		break;
+
+	  default:  /* other values */
+		printf("%s", lua_typename(L, t));
+		break;
+
+	}
+	printf("  ");  /* put a separator */
+  }
+  printf("\n");  /* end the listing */
+}
+
+
 int Lua::getSpriteByID(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -471,7 +539,34 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
+
 	return 1;
+}
+
+int Lua::setModelInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (modelInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	string name = getStringField(1,"Name");
+	int thrust = getIntField(1,"Thrust");
+	string engine = getStringField(1,"Engine");
+	float rot = getNumField(1,"Rotation");
+	float speed = getNumField(1,"MaxSpeed");
+	int hull = getIntField(1,"MaxHull");
+
+	printf(
+		"NAME:     %s\n"
+		"Thrust:   %d\n"
+		"Engine:   %s\n"
+		"Rotation: %f\n"
+		"Speed:    %f\n"
+		"Hull:     %d\n"
+		,name.c_str(),thrust,engine.c_str(),rot,speed,hull);
+
+	return 0; // TODO
 }
 
 int Lua::getPlanetInfo(lua_State *L) {
@@ -494,6 +589,30 @@ int Lua::getPlanetInfo(lua_State *L) {
 	return 1;
 }
 
+int Lua::setPlanetInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	string name = getStringField(1,"Name");
+	string alliance = getStringField(1,"Alliance");
+	int traffic = getIntField(1,"Traffic");
+	int militia = getIntField(1,"Militia");
+	int landable = getIntField(1,"Landable");
+
+	printf(
+		"NAME:     %s\n"
+		"Alliance: %s\n"
+		"Traffic:  %d\n"
+		"Militia:  %d\n"
+		"Landable: %d\n"
+		,name.c_str(),alliance.c_str(),traffic,militia,landable);
+
+	return 0; // TODO
+}
+
 int Lua::getWeaponInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -512,6 +631,30 @@ int Lua::getWeaponInfo(lua_State *L) {
 	return 1;
 }
 
+int Lua::setWeaponInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	string name = getStringField(1,"Name");
+	int payload = getIntField(1,"Payload");
+	int velocity = getIntField(1,"Velocity");
+	int fireDelay = getIntField(1,"FireDelay");
+	int lifetime = getIntField(1,"Lifetime");
+
+	printf(
+		"NAME:     %s\n"
+		"Payload:  %d\n"
+		"Velocity: %d\n"
+		"Delay:    %d\n"
+		"Lifetime: %d\n"
+		,name.c_str(),payload,velocity,fireDelay,lifetime);
+
+	return 0; // TODO
+}
+
 int Lua::getEngineInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -527,18 +670,20 @@ int Lua::getEngineInfo(lua_State *L) {
 	return 1;
 }
 
-int Lua::setModelInfo(lua_State *L) {
-	return 0; // TODO
-}
-
-int Lua::setPlanetInfo(lua_State *L) {
-	return 0; // TODO
-}
-
-int Lua::setWeaponInfo(lua_State *L) {
-	return 0; // TODO
-}
-
 int Lua::setEngineInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	string name = getStringField(1,"Name");
+	int force = getIntField(1,"Force");
+
+	printf(
+		"NAME:     %s\n"
+		"Force:  %d\n"
+		,name.c_str(),force);
+
 	return 0; // TODO
 }
