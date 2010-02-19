@@ -37,6 +37,7 @@ class Technologies {
 	public:
 		static Technologies *Instance();
 		bool Load( string& filename );
+		bool Save( string filename );
 		Technology *GetTechnology( string& techname );
 
 		list<string> *GetTechNames();

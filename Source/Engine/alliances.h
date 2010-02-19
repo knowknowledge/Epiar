@@ -23,15 +23,27 @@ class Alliance {
 				aggressiveness = static_cast<float>(atof( value.c_str() ) / 10.);
 			} else PPA_MATCHES( "attackSize" ) {
 				attackSize = (short int)atof( value.c_str() );
+			} else PPA_MATCHES( "currency" ) {
+				currency = value;
+			} else PPA_MATCHES( "illegalCargo" ) {
+				illegalCargos.push_back( value );
 			}
 			
 			return true;
 		}
+
+		string GetName(void){return name;}
+		short int GetAttackSize(void){ return attackSize; }
+		float GetAggressiveness(void){ return aggressiveness; }
+		string GetCurrency(void){ return currency; }
+		list<string> GetIlligalCargos(void){ return illegalCargos; }
 		
 	private:
 		string name;
 		short int attackSize;
 		float aggressiveness;
+		string currency;
+		list<string> illegalCargos;
 };
 
 // Class that holds list of all planets; manages them
@@ -40,6 +52,7 @@ class Alliances {
 		static Alliances *Instance();
 		
 		bool Load( string& filename );
+		bool Save( string filename );
 
 	protected:
 		Alliances() {};

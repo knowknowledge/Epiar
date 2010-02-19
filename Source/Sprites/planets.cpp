@@ -84,6 +84,48 @@ bool Planets::Load( string filename ) {
 	return true;
 }
 
+bool Planets::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+    char buff[256];
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "planets");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<cPlanet*>::iterator i = planets.begin(); i != planets.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "planet");
+		xmlAddChild(root_node, section);
+
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+		xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST (*i)->GetAlliance().c_str() );
+        sprintf(buff, "%d", (int)(*i)->GetWorldPosition().GetX() );
+		xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
+        sprintf(buff, "%d", (int)(*i)->GetWorldPosition().GetY() );
+		xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
+		xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST ((*i)->GetLandable()?"1":"0") );
+        sprintf(buff, "%d", (*i)->GetTraffic() );
+		xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
+		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
+        sprintf(buff, "%d", (*i)->GetMilitiaSize() );
+		xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetInfluence() );
+		xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
+		list<Technology*> techs = (*i)->GetTechnologies();
+		for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
+			xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
+		}
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+
 void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
 		// Normally we would put a "new" function here.

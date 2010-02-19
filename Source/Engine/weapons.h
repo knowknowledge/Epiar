@@ -19,6 +19,7 @@ public:
 	~Weapons(void);
 	static Weapons *Instance();
 	bool Load( string filename );
+	bool Save( string filename );
 
 	Weapon *GetWeapon( string& weaponName );
 	list<string>* GetWeaponNames();

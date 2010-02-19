@@ -30,12 +30,13 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
 	} else PPA_MATCHES( "weaponType" ) {
-		if (atoi( value.c_str()) != 0)
-			weaponType = atoi( value.c_str() );
+		weaponType = atoi( value.c_str() );
 	} else PPA_MATCHES( "imageName" ) {
-		image = new Image(value);
+		image = Image::Get(value);
 	} else PPA_MATCHES( "picName" ) {
-		Image::Store(name, Image::Get(value));
+		pic = Image::Get(value);
+		// This can be accessed by either the path or the modelName
+		Image::Store(name, pic);
 	} else PPA_MATCHES( "payload" ) {
 		if (atoi( value.c_str()) != 0)
 			payload = atoi( value.c_str() );
@@ -57,7 +58,12 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 		if (atoi( value.c_str()) != 0)
 			lifetime = atoi( value.c_str() );
 	} else PPA_MATCHES( "sound" ) {
-			this->sound = Sound::Get( value.insert(0,"Resources/Audio/Weapons/") );
+			string pathPrefix = "Resources/Audio/Weapons/";
+			if( value.find(pathPrefix)==0 ) {
+				this->sound = Sound::Get( value );
+			} else {
+				this->sound = Sound::Get( value.insert(0,pathPrefix) );
+			}
 	}
 	//	SetRadarColor(Color::Get(255, 0, 0));
 	return true;

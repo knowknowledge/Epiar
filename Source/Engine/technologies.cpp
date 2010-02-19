@@ -40,6 +40,7 @@ bool Technology::parserCB( string sectionName, string subName, string value ) {
 			weapons.push_back( weapon );
 		}
 	}
+	return true;
 }
 
 void Technology::_dbg_PrintInfo( void ) {
@@ -65,6 +66,46 @@ bool Technologies::Load( string& filename ) {
 
 	return true;
 }
+
+bool Technologies::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "technologies");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<Technology*>::iterator i = technologies.begin(); i != technologies.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "technology");
+		xmlAddChild(root_node, section);
+
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+		
+		list<Model*> models = (*i)->GetModels();
+		for( list<Model*>::iterator it_m = models.begin(); it_m!=models.end(); ++it_m ){
+			xmlNewChild(section, NULL, BAD_CAST "model", BAD_CAST (*it_m)->GetName().c_str() );
+		}
+
+		list<Weapon*> weapons = (*i)->GetWeapons();
+		for( list<Weapon*>::iterator it_w = weapons.begin(); it_w!=weapons.end(); ++it_w ){
+			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST (*it_w)->GetName().c_str() );
+		}
+
+		list<Engine*> engines = (*i)->GetEngines();
+		for( list<Engine*>::iterator it_e = engines.begin(); it_e!=engines.end(); ++it_e ){
+			xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST (*it_e)->GetName().c_str() );
+		}
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+
 
 Technology* Technologies::GetTechnology( string& techname ) {
 	list<Technology*>::iterator iter;

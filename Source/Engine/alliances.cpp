@@ -38,3 +38,40 @@ bool Alliances::Load( string& filename )
 
 	return true;
 }
+
+bool Alliances::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+	char buff[256];
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "alliances");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<Alliance*>::iterator i = alliances.begin(); i != alliances.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "alliance");
+		xmlAddChild(root_node, section);
+
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+
+        sprintf(buff, "%1.1f", (*i)->GetAggressiveness()*10 );
+		xmlNewChild(section, NULL, BAD_CAST "aggressiveness", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetAttackSize() );
+		xmlNewChild(section, NULL, BAD_CAST "attackSize", BAD_CAST buff );
+		xmlNewChild(section, NULL, BAD_CAST "currency", BAD_CAST (*i)->GetCurrency().c_str() );
+
+		list<string> illegals = (*i)->GetIlligalCargos();
+		for( list<string>::iterator it = illegals.begin(); it!=illegals.end(); ++it ){
+			xmlNewChild(section, NULL, BAD_CAST "illegalCargo", BAD_CAST (*it).c_str() );
+		}
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+

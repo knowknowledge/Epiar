@@ -27,9 +27,11 @@ class Weapon {
 
 		string GetName(void) {return name;}
 		Image *GetImage(void) {return image;}
+		Image *GetPicture(void) {return pic;}
 		int GetType(void) {return weaponType;}
 		int GetPayload(void) {return payload;}
 		int GetVelocity(void) {return velocity;}
+		int GetAcceleration(void) {return acceleration;}
 		int GetAmmoType(void) {return ammoType;}
 		int GetAmmoConsumption(void) { return ammoConsumption;}
 		int GetFireDelay(void) {return fireDelay;}
@@ -39,6 +41,7 @@ class Weapon {
 	private:
 		string name; //weapons name
 		Image *image;
+		Image *pic;
 		int weaponType; //(energy, explosive, laser, etc)
 		int payload; //intesity of explosion
 	    int velocity; //speed of travel

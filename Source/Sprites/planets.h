@@ -55,6 +55,8 @@ class cPlanet : public Sprite {
 			} else PPA_MATCHES( "image" ) {
 				Image *image = new Image( value );
 				SetImage( image );
+			} else PPA_MATCHES( "sphereOfInfluence" ) {
+				sphereOfInfluence = atoi( value.c_str() );
 			} else PPA_MATCHES( "technology" ) {
 				Technology *tech = Technologies::Instance()->GetTechnology( value );
 				technologies.push_back(tech);
@@ -83,6 +85,8 @@ class cPlanet : public Sprite {
 		short int GetTraffic() {return traffic;}
 		short int GetMilitiaSize() {return militiaSize;}
 		bool GetLandable() {return landable;}
+		int GetInfluence() {return sphereOfInfluence;}
+		list<Technology*> GetTechnologies() { return technologies;}
 		list<Model*> GetModels();
 		list<Engine*> GetEngines();
 		list<Weapon*> GetWeapons();
@@ -93,6 +97,7 @@ class cPlanet : public Sprite {
 		bool landable;
 		short int traffic;
 		short int militiaSize;
+		int sphereOfInfluence;
 		list<Sprite *> militia;
 		list<Technology*> technologies;
 };
@@ -103,6 +108,7 @@ class Planets {
 		static Planets *Instance();
 		
 		bool Load( string filename );
+		bool Save( string filename );
 		
 	protected:
 		Planets() {};

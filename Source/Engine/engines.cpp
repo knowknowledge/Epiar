@@ -40,6 +40,40 @@ bool Engines::Load( string filename ) {
 	return true;
 }
 
+bool Engines::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+	char buff[256];
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "engines");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<Engine*>::iterator i = engines.begin(); i != engines.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "engine");
+		xmlAddChild(root_node, section);
+
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+
+        sprintf(buff, "%1.1f", (*i)->GetForceOutput() );
+		xmlNewChild(section, NULL, BAD_CAST "forceOutput", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetMSRP() );
+		xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
+		xmlNewChild(section, NULL, BAD_CAST "foldDrive", BAD_CAST ((*i)->GetFoldDrive()?"1":"0") );
+		xmlNewChild(section, NULL, BAD_CAST "flareAnimation", BAD_CAST (*i)->GetFlareAnimation().c_str() );
+		xmlNewChild(section, NULL, BAD_CAST "thrustSound", BAD_CAST (*i)->thrustsound->GetPath().c_str() );
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+
+
 /**\brief Lookup engine name.
  * \return Pointer to an Engine object.
  */

@@ -56,6 +56,9 @@ class Engine {
 		string GetFlareAnimation( void ) {
 			return flareAnimation;
 		}
+
+		short int GetMSRP( void ) { return msrp; }
+		short int GetFoldDrive( void ) { return foldDrive; }
 		
 		Sound *thrustsound;
 
@@ -72,6 +75,7 @@ class Engines {
 	public:
 		static Engines *Instance();
 		bool Load( string filename );
+		bool Save( string filename );
 		
 		Engine *LookUp( string engineName );
 

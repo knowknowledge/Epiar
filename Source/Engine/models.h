@@ -77,6 +77,8 @@ class Model {
 				return( 0. ); // no engine
 			}
 		}
+
+		float GetMass(void ) { return mass; }
 		
 		Image *GetImage( void ) {
 			return image;
@@ -117,6 +119,7 @@ class Models {
 	public:
 		static Models *Instance();
 		bool Load( string& filename );
+		bool Save( string filename );
 		Model *GetModel( string& modelName );
 		list<string> *GetModelNames();
 

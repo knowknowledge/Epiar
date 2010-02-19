@@ -53,6 +53,53 @@ bool Weapons::Load( string filename ) {
 	return true;
 }
 
+bool Weapons::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+    char buff[256];
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "weapons");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<Weapon*>::iterator i = weapons.begin(); i != weapons.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "weapon");
+		xmlAddChild(root_node, section);
+
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+        sprintf(buff, "%d", (*i)->GetType() );
+		xmlNewChild(section, NULL, BAD_CAST "weaponType", BAD_CAST buff );
+
+		xmlNewChild(section, NULL, BAD_CAST "imageName", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
+		xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST (*i)->GetPicture()->GetPath().c_str() );
+
+        sprintf(buff, "%d", (*i)->GetPayload() );
+		xmlNewChild(section, NULL, BAD_CAST "payload", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetVelocity() );
+		xmlNewChild(section, NULL, BAD_CAST "velocity", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetAcceleration() );
+		xmlNewChild(section, NULL, BAD_CAST "acceleration", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetAmmoType() );
+		xmlNewChild(section, NULL, BAD_CAST "ammoType", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetAmmoConsumption() );
+		xmlNewChild(section, NULL, BAD_CAST "ammoConsumption", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetFireDelay() );
+		xmlNewChild(section, NULL, BAD_CAST "fireDelay", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetLifetime() );
+		xmlNewChild(section, NULL, BAD_CAST "lifetime", BAD_CAST buff );
+		xmlNewChild(section, NULL, BAD_CAST "sound", BAD_CAST (*i)->sound->GetPath().c_str() );
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+
+
 /**\brief Returns Weapon based on its name
  * \param weaponName string of the weapon name
  */

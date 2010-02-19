@@ -50,6 +50,43 @@ bool Models::Load( string& filename )
 	return true;
 }
 
+bool Models::Save( string filename )
+{
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+    char buff[256];
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "models");
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+
+	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
+		section = xmlNewNode(NULL, BAD_CAST "model");
+		xmlAddChild(root_node, section);
+		
+		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
+		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
+		xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST (*i)->GetEngine()->GetName().c_str() );
+        sprintf(buff, "%1.2f", (*i)->GetMass() );
+		xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
+        sprintf(buff, "%1.2f", (*i)->GetRotationsPerSecond() );
+		xmlNewChild(section, NULL, BAD_CAST "rotationsPerSecond", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->GetThrustOffset() );
+		xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
+        sprintf(buff, "%1.1f", (*i)->GetMaxSpeed() );
+		xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
+        sprintf(buff, "%d", (*i)->getMaxEnergyAbsorption() );
+		xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
+	}
+
+	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	return true;
+}
+
 /**\brief Returns the specified Model.
  * \param modelName Name of the model to get.
  * \return Pointer to the Model
