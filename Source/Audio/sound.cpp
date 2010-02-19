@@ -34,6 +34,7 @@ Sound *Sound::Get( const string& filename ){
  */
 Sound::Sound( const string& filename ):
 	sound( NULL ),
+	pathName(filename),
 	channel( -1 ),
 	fadefactor( 0.03 ),
 	panfactor( 0.1f ),

@@ -23,6 +23,7 @@ Image::Image() {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
+	filepath="";
 }
 
 // Create instance by loading image from file
@@ -32,6 +33,7 @@ Image::Image( const string& filename ) {
 	scale_w = scale_h = 1.;
 
 	Load(filename);
+	filepath=filename;
 }
 
 //Deallocate allocations

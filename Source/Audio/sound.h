@@ -23,9 +23,11 @@ class Sound : public Resource {
 		bool SetVolume( int volume );
 		bool SetVolume( float volume );
 		void SetFactors( double fade, float pan );
+		string GetPath( void ) { return pathName; }
 
 	private:
 		Mix_Chunk *sound;
+		string pathName;
 		int channel;		/* Last channel the sound is playing on. */
 		double fadefactor;	// Scale factor to fade by as distance drops off
 		float panfactor;	// Scale factor to pan by, higher = more sensitive

@@ -53,6 +53,8 @@ class Image : public Resource {
 		// Draw the image within a box but not stretched
 		void DrawFit( int x, int y, int w, int h, float angle = 0. );
 
+		string GetPath(){return filepath;}
+
 	private:
 		// Converts an SDL surface to an OpenGL texture
 		bool ConvertToTexture( SDL_Surface *s );
@@ -69,6 +71,7 @@ class Image : public Resource {
 		                        // defaults = 1.0, this factor is always used, so non-expanded images are
 		                        // simply "scaled" at 1.0. THIS HAS NOTHING TO DO WITH RESIZE()
 		GLuint image; // OpenGL pointer to texture
+		string filepath;
 };
 
 #endif // __H_IMAGE__
