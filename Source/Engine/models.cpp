@@ -22,6 +22,30 @@ struct model_name_equals
 	}
 };
 
+Model::Model() {
+}
+
+Model::Model(const Model& other) {
+	name = other.name;
+	image = other.image;
+	engine = other.engine;
+	mass = other.mass;
+	thrustOffset = other.thrustOffset;
+	rotPerSecond = other.rotPerSecond;
+	maxSpeed = other.maxSpeed;
+}
+
+Model::Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption) :
+	name(_name),
+	image(_image),
+	engine(_engine),
+	mass(_mass),
+	thrustOffset(_thrustOffset),
+	rotPerSecond(_rotPerSecond),
+	maxSpeed(_maxSpeed)
+{}
+
+
 Models *Models::pInstance = 0; // initialize pointer
 
 /**\brief Returns or creates the Model instance.
@@ -97,7 +121,7 @@ Model * Models::GetModel( string& modelName )
 	if( i != models.end() ) {
 		return( *i );
 	}
-	
+	cout<<"Couldn't find the Model Named: "<<modelName<<endl;
 	return( NULL );
 }
 

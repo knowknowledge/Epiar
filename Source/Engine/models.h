@@ -19,6 +19,9 @@
 // Abstraction of a single ship model
 class Model {
 	public:
+		Model();
+		Model(const Model& other);
+		Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption);
 		bool parserCB( string sectionName, string subName, string value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;

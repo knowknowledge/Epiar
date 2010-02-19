@@ -15,6 +15,29 @@
 #include "Engine/weapons.h"
 #include "Sprites/spritemanager.h"
 
+cPlanet::cPlanet(){}
+
+cPlanet::cPlanet(const cPlanet& other){
+	name = other.name;
+	alliance = other.alliance;
+	landable = other.landable;
+	traffic = other.traffic;
+	militiaSize = other.militiaSize;
+	sphereOfInfluence = other.sphereOfInfluence;
+	militia = other.militia;
+	technologies = other.technologies;
+}
+
+cPlanet::cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):
+	name(_name),
+	alliance(_alliance),
+	landable(_landable),
+	traffic(_traffic),
+	militiaSize(_militiaSize),
+	sphereOfInfluence(_sphereOfInfluence),
+	militia(_militia),
+	technologies(_technologies)
+{}
 
 list<Model*> cPlanet::GetModels() {
 	list<Model*> models;

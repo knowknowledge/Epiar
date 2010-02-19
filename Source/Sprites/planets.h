@@ -35,6 +35,9 @@ extern "C" {
 // Abstraction of a single planet
 class cPlanet : public Sprite {
 	public:
+	cPlanet();
+	cPlanet(const cPlanet& other);
+	cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
 		bool parserCB( string sectionName, string subName, string value ) {
 			PPA_MATCHES( "name" ) {
 				name = value;

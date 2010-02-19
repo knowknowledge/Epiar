@@ -18,6 +18,39 @@
 Weapon::Weapon(void)
 {
 }
+
+
+Weapon::Weapon(const Weapon& other){
+	name = other.name;
+	image = other.image;
+	pic = other.pic;
+	weaponType = other.weaponType;
+	payload = other.payload;
+	velocity = other.velocity;
+	acceleration = other.acceleration;
+	ammoType = other.ammoType;
+	ammoConsumption = other.ammoConsumption;
+	fireDelay = other.fireDelay;
+	lifetime = other.lifetime;
+	sound = other.sound;
+}
+
+Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound) :
+	sound(_sound),
+	name(_name),
+	image(_image),
+	pic(_pic),
+	weaponType(_weaponType),
+	payload(_payload),
+	velocity(_velocity),
+	acceleration(_acceleration),
+	ammoType(_ammoType),
+	ammoConsumption(_ammoConsumption),
+	fireDelay(_fireDelay),
+	lifetime(_lifetime)
+{}
+
+
 /**\brief Empty destructor
  */
 Weapon::~Weapon(void)
