@@ -207,7 +207,8 @@ function infoTable(info,win)
 	uiElements = {}
 	for title, value in pairs(info) do
 		win:add(UI.newLabel( 10, y1, title))
-		win:add(UI.newTextbox( 90, y2, 100, 1, value))
+		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
+		win:add(uiElements[title])
 		y1,y2=y1+yoff,y2+yoff
 	end
 	return uiElements
@@ -216,7 +217,7 @@ end
 function infoTableCollect(info,uiElements)
 	for title, value in pairs(info) do
 		if uiElements[title]~=nil then
-		info[title] = uiElements[title]:GetText()
+			info[title] = uiElements[title]:GetText()
 		end
 	end
 end
@@ -255,15 +256,17 @@ end
 
 function showModelInfo()
 	currentTarget = HUD.getTarget()
-	if SHIPS[currentTarget] == nil then return end
 	if modelInfoWin ~= nil then return end
+	ship = Epiar.getSprite(currentTarget)
+	type = ship:GetType()
+	if (type ~= 4) and (type ~= 8) then return end -- Neither Ship nor Player
 	
-	modelName = SHIPS[currentTarget]:GetModelName()
+	modelName = ship:GetModelName()
 	modelInfo = Epiar.getModelInfo( modelName )
 	modelInfoWin = UI.newWindow( 50,100,200,400, "Model Info:"..modelName)
 	infoTexts = infoTable(modelInfo,modelInfoWin)
-	
-	weaponsAndAmmo = SHIPS[currentTarget]:GetWeapons()
+
+	weaponsAndAmmo = ship:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		modelInfoWin:add(UI.newLabel( 10, y1, weapon))
 		modelInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))

@@ -533,7 +533,7 @@ int Lua::getModelInfo(lua_State *L) {
 
     lua_newtable(L);
 	setField("Name", model->GetName().c_str());
-	//setField("mass", model->GetMass()); Why isn't there a GetMass function?
+	setField("Mass", model->GetMass());
 	setField("Thrust", model->GetThrustOffset());
 	setField("Engine", model->GetEngine()->GetName().c_str() );
 	setField("Rotation", model->GetRotationsPerSecond());
@@ -551,22 +551,19 @@ int Lua::setModelInfo(lua_State *L) {
 		return luaL_error(L, "Argument 1 is not a table");
 
 	string name = getStringField(1,"Name");
+	float mass = getNumField(1,"Mass");
 	int thrust = getIntField(1,"Thrust");
 	string engine = getStringField(1,"Engine");
 	float rot = getNumField(1,"Rotation");
 	float speed = getNumField(1,"MaxSpeed");
 	int hull = getIntField(1,"MaxHull");
 
-	printf(
-		"NAME:     %s\n"
-		"Thrust:   %d\n"
-		"Engine:   %s\n"
-		"Rotation: %f\n"
-		"Speed:    %f\n"
-		"Hull:     %d\n"
-		,name.c_str(),thrust,engine.c_str(),rot,speed,hull);
+	Model* oldModel = Models::Instance()->GetModel(name);
+	if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
+	Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull);
+	*oldModel = newModel;
 
-	return 0; // TODO
+	return 0;
 }
 
 int Lua::getPlanetInfo(lua_State *L) {
@@ -626,6 +623,7 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("Name", weapon->GetName().c_str());
 	setField("Payload", weapon->GetPayload());
 	setField("Velocity", weapon->GetVelocity());
+	setField("Acceleration", weapon->GetAcceleration());
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
 	return 1;
@@ -641,18 +639,15 @@ int Lua::setWeaponInfo(lua_State *L) {
 	string name = getStringField(1,"Name");
 	int payload = getIntField(1,"Payload");
 	int velocity = getIntField(1,"Velocity");
+	int acceleration = getIntField(1,"Acceleration");
 	int fireDelay = getIntField(1,"FireDelay");
 	int lifetime = getIntField(1,"Lifetime");
 
-	printf(
-		"NAME:     %s\n"
-		"Payload:  %d\n"
-		"Velocity: %d\n"
-		"Delay:    %d\n"
-		"Lifetime: %d\n"
-		,name.c_str(),payload,velocity,fireDelay,lifetime);
+	Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
+	if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
+	*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound);
 
-	return 0; // TODO
+	return 0;
 }
 
 int Lua::getEngineInfo(lua_State *L) {
