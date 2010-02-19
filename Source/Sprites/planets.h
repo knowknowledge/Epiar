@@ -128,6 +128,9 @@ class Planets_Lua {
 		static int GetTraffic(lua_State* L);
 		static int GetMilitiaSize(lua_State* L);
 		static int GetLandable(lua_State* L);
+		static int GetModels(lua_State* L);
+		static int GetEngines(lua_State* L);
+		static int GetWeapons(lua_State* L);
 	private:
 };
 

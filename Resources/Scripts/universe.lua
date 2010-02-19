@@ -231,11 +231,12 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 	return win
 end
 
-function shipyard()
+function shipyard(planetID)
 	Epiar.pause()
 	if storefront ~=nil then return end
+	planet = Epiar.getSprite(planetID)
 
-	local models = Epiar.models()
+	local models = planet:GetModels()
 	local buylist = {}
 	for m =1,#models do
 		buylist[m] = {models[m], "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
@@ -243,11 +244,12 @@ function shipyard()
 	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
 
-function armory()
+function armory(planetID)
 	Epiar.pause()
 	if storefront ~=nil then return end
+	planet = Epiar.getSprite(planetID)
 
-	weapons = Epiar.weapons()
+	local weapons = planet:GetWeapons()
 	local buylist = {}
 	for i =1,#weapons do
 		buylist[i] = {weapons[i], "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}

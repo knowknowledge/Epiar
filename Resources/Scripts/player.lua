@@ -195,8 +195,8 @@ function landOnPlanet(id)
 	planet = Epiar.getSprite(id)
 	
 	landingWin = UI.newWindow( 200,100,400,300, string.format("%s Landing Screen",planet:Name()))
-	landingWin:add(UI.newButton( 40,40,100,30,"Shipyard","shipyard()" ))
-	landingWin:add(UI.newButton( 40,80,100,30,"Armory","armory()" ))
+	landingWin:add(UI.newButton( 40,40,100,30,"Shipyard",string.format("shipyard(%d)",id) ))
+	landingWin:add(UI.newButton( 40,80,100,30,"Armory",string.format("armory(%d)",id) ))
 	landingWin:add(UI.newButton( 40,120,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end

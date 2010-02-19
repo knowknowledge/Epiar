@@ -100,6 +100,9 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"Traffic", &Planets_Lua::GetTraffic},
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
 		{"Landable", &Planets_Lua::GetLandable},
+		{"GetModels", &Planets_Lua::GetModels},
+		{"GetEngines", &Planets_Lua::GetEngines},
+		{"GetWeapons", &Planets_Lua::GetWeapons},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -214,6 +217,63 @@ int Planets_Lua::GetLandable(lua_State* L){
 		lua_pushboolean(L, (*planet)->GetLandable() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}
+
+int Planets_Lua::GetModels(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		cPlanet** planet= checkPlanet(L,1);
+		list<Model*> models = (*planet)->GetModels();
+		list<Model*>::iterator iter;
+		lua_createtable(L, models.size(), 0);
+		int newTable = lua_gettop(L);
+		int index = 1;
+		for(iter=models.begin();iter!=models.end();++iter,++index){
+			lua_pushstring(L, (*iter)->GetName().c_str() );
+			lua_rawseti(L, newTable, index);
+		}
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+int Planets_Lua::GetEngines(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		cPlanet** planet= checkPlanet(L,1);
+		list<Engine*> engines = (*planet)->GetEngines();
+		list<Engine*>::iterator iter;
+		lua_createtable(L, engines.size(), 0);
+		int newTable = lua_gettop(L);
+		int index = 1;
+		for(iter=engines.begin();iter!=engines.end();++iter,++index){
+			lua_pushstring(L, (*iter)->GetName().c_str() );
+			lua_rawseti(L, newTable, index);
+		}
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+int Planets_Lua::GetWeapons(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		cPlanet** planet= checkPlanet(L,1);
+		list<Weapon*> weapons = (*planet)->GetWeapons();
+		list<Weapon*>::iterator iter;
+		lua_createtable(L, weapons.size(), 0);
+		int newTable = lua_gettop(L);
+		int index = 1;
+		for(iter=weapons.begin();iter!=weapons.end();++iter,++index){
+			lua_pushstring(L, (*iter)->GetName().c_str() );
+			lua_rawseti(L, newTable, index);
+		}
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
