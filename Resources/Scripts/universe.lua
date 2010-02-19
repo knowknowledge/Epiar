@@ -74,7 +74,14 @@ function pauseMessage(message)
 		)
 	Epiar.pause()
 end
---registerInit(function() pauseMessage("hello world") end)
+
+function godmode()
+	function heal()
+		PLAYER:Repair(10000)
+	end
+	registerPostStep(heal)
+end
+--godmode() -- Uncomment this line to never die
 
 -- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
