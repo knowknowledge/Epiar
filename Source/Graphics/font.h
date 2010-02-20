@@ -24,6 +24,7 @@ class Font {
 			Rect RenderCentered( int x, int y, const char *text );
 			void SetColor( float r, float g, float b, float a=1.0f );
 			Rect BoundingBox( const char *text );
+			Rect BoundingBox( string text );
 
 		private:
 			string fontname; // filename of the loaded font

@@ -134,3 +134,7 @@ Rect Font::BoundingBox( const char *text ) {
 
 	return Rect( 0., 0., -(llx - urx), lly - ury );	
 }
+
+Rect Font::BoundingBox( string text ) {
+	return BoundingBox( text.c_str() );
+}
