@@ -24,7 +24,7 @@ extern Font *SansSerif, *BitType, *Serif, *Mono;
 
 // to simply accessing the options file
 #define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
-#define SETOPTION(path, value) (optionsfile->Set(path,convertTo<string>(value)) )
+#define SETOPTION(path, value) (optionsfile->Set((path),(value)) )
 
 struct create_delete_functor
 {

@@ -136,3 +136,25 @@ void XMLFile::Set( const string& path, const string& value ) {
 	values[path] = value;
 	assert( value == Get(path));
 }
+
+void XMLFile::Set( const string& path, const float value ) {
+	// Convert the float to a string before saving it.
+	string stringvalue;
+	stringstream val_ss;
+	val_ss << value;
+	val_ss >> stringvalue;
+	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	values[path] = stringvalue;
+	assert( stringvalue == Get(path));
+}
+
+void XMLFile::Set( const string& path, const int value ) {
+	// Convert the int to a string before saving it.
+	string stringvalue;
+	stringstream val_ss;
+	val_ss << value;
+	val_ss >> stringvalue;
+	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	values[path] = stringvalue;
+	assert( stringvalue == Get(path));
+}

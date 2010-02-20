@@ -24,6 +24,8 @@ class XMLFile {
 		bool Close();
 		string Get( const string& path ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const string& value ); // cast/convert this to whatever return value you need
+		void Set( const string& path, const float value ); // cast/convert this to whatever return value you need
+		void Set( const string& path, const int value ); // cast/convert this to whatever return value you need
 
 	private:
 		xmlDocPtr xmlPtr;
