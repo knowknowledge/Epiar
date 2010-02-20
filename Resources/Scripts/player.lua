@@ -206,6 +206,10 @@ function infoTable(info,win)
 	yoff=20
 	uiElements = {}
 	for title, value in pairs(info) do
+		-- Truncate decimal numbers to only 2 digits
+		if type(value)=="number" and math.floor(value) ~= value then
+			value = string.format("%.2f",value)
+		end
 		win:add(UI.newLabel( 10, y1, title))
 		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
 		win:add(uiElements[title])
@@ -225,13 +229,13 @@ end
 function showInfo()
 	currentTarget = HUD.getTarget()
 	sprite = Epiar.getSprite(currentTarget)
-	type = sprite:GetType()
-	if type == 1 then -- planet
+	spritetype = sprite:GetType()
+	if spritetype == 1 then -- planet
 		showPlanetInfo()
-	elseif (type == 4) or (type == 8) then -- Ship or Player
+	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
 		showModelInfo()
 	else
-		io.write(string.format("Cannot show info for sprite of type [%d]\n",type))
+		io.write(string.format("Cannot show info for sprite of type [%d]\n",spritetype))
 	end
 end
 
@@ -258,8 +262,8 @@ function showModelInfo()
 	currentTarget = HUD.getTarget()
 	if modelInfoWin ~= nil then return end
 	ship = Epiar.getSprite(currentTarget)
-	type = ship:GetType()
-	if (type ~= 4) and (type ~= 8) then return end -- Neither Ship nor Player
+	spritetype = ship:GetType()
+	if (spritetype ~= 4) and (spritetype ~= 8) then return end -- Neither Ship nor Player
 	
 	modelName = ship:GetModelName()
 	modelInfo = Epiar.getModelInfo( modelName )
