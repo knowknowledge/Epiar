@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<technologies>
+	<version-major>0</version-major>
+	<version-minor>7</version-minor>
+	<version-macro>0</version-macro>
+	<technology>
+		<name>Terran Small-Scale Commerce</name>
+		<model>Escape Pod</model>
+		<model>Terran Miner</model>
+		<model>Terran Assist</model>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<weapon>Minigun</weapon>
+		<model>Terran FV-5 Frigate</model>
+	</technology>
+	<technology>
+		<name>Terran Medium-Scale Commerce</name>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<weapon>Laser</weapon>
+		<model>Hammer Freighter</model>
+		<model>Terran Explorer</model>
+	</technology>
+	<technology>
+		<name>Terran Defence</name>
+		<weapon>Missile</weapon>
+		<model>Uber</model>
+		<model>Fleet Guard</model>
+		<model>Terran Corvert Mark I</model>
+		<model>Terran Corvert Mark II</model>
+	</technology>
+	<technology>
+		<name>Terran War Fleet</name>
+		<weapon>Missile</weapon>
+		<weapon>Slow Missile</weapon>
+		<model>Uber</model>
+		<model>Terran Corvert Mark II</model>
+		<engine>Ion Engines</engine>
+	</technology>
+	<technology>
+		<name>Solaran Outpost</name>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<weapon>Strong Laser</weapon>
+		<weapon>Slow Missile</weapon>
+		<model>Raven</model>
+		<model>Gate Enforcer</model>
+	</technology>
+	<technology>
+		<name>Solaran Defence</name>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<engine>Ion Engines</engine>
+		<weapon>Minigun</weapon>
+		<weapon>Strong Laser</weapon>
+		<model>Kartanal</model>
+		<model>Solaran Battle Cuiser</model>
+		<model>Patitu</model>
+	</technology>
+	<technology>
+		<name>Vespian</name>
+		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+		<weapon>Strong Laser</weapon>
+		<weapon>Missile</weapon>
+		<model>Terran XV</model>
+		<model>Large Vesper</model>
+		<model>Mid Vesper</model>
+	</technology>
+</technologies>
