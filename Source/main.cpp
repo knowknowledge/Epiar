@@ -117,6 +117,7 @@ int parseArgs( int argc, char **argv ) {
 			printf("\n\t--help           - Displays this message");
 			printf("\n\t--version        - Displays program version");
 			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
+			printf("\n\t--no-audio       - Turns off all sounds.");
 			printf("\n\t--enable-logging - Turn on XML-based logging");
 			//printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
 			printf("\n\t--lua-test       - Tests the Lua scripting functionality");
@@ -128,8 +129,14 @@ int parseArgs( int argc, char **argv ) {
 			return( -1 ); // indicates we should quit immediately and not run
 		} else if( parm == "ui-demo" ) {
 			ui_demo( true ); // temporary function
-
 			return( -1 );
+		} else if( parm == "no-audio" ) {
+			cout<<"turning off sound"<<endl;
+			SETOPTION("options/sound/background",0);
+			SETOPTION("options/sound/weapons",0);
+			SETOPTION("options/sound/engines",0);
+			SETOPTION("options/sound/explosions",0);
+			SETOPTION("options/sound/buttons",0);
 		} else if( parm == "graphics-demo" ) {
 			//graphics_demo(); // temporary function
 			return( -1 );
