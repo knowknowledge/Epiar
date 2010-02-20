@@ -47,8 +47,9 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i)->Contains(relx,rely) )
+		if( (*i)->Contains(relx, rely) ) {
 			return (*i);
+		}
 	}
 
 	return( NULL );

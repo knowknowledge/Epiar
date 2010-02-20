@@ -33,6 +33,8 @@ class Textbox : public Widget {
 		void MouseDown( int wx, int wy );
 		
 		bool KeyPress( SDLKey key );
+		
+		string GetName( void ) {return string("Textbox_"+text);}
 	private:
 		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
 		int w, h;
