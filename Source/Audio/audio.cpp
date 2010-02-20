@@ -100,7 +100,8 @@ bool Audio::SetMusicVol( int volume ){
 	}
 
 	int volumeset;
-	volumeset = Mix_VolumeMusic( volume );
+	Mix_VolumeMusic( volume );
+	volumeset = Mix_VolumeMusic( -1 );
 	if ( volumeset != volume ){
 		Log::Error("There was an error setting the volume.");
 		return false;
@@ -129,7 +130,8 @@ bool Audio::SetSoundVol( int volume ){
 	}
 
 	int volumeset;
-	volumeset = Mix_Volume( -1, volume );
+	Mix_Volume( -1, volume );
+	volumeset = Mix_Volume( -1, -1 );
 	if ( volumeset != volume ){
 		Log::Error("There was an error setting the volume.");
 		return false;
