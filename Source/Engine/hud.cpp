@@ -204,13 +204,13 @@ void Hud::DrawFPS() {
 	const char *frameRate[16] = {0};
 	memset(frameRate, 0, sizeof(char) * 10);
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	sprintf((char *)frameRate, "%f fps", Simulation::GetFPS());
+	snprintf((char *)frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
 
-	sprintf((char *)frameRate, "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
+	snprintf((char *)frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
 
-	sprintf((char *)frameRate, "%d Sprites", SpriteManager::Instance()->GetNumSprites());
+	snprintf((char *)frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
 }
 

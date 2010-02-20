@@ -72,25 +72,25 @@ bool Weapons::Save( string filename )
 		xmlAddChild(root_node, section);
 
 		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
-        sprintf(buff, "%d", (*i)->GetType() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetType() );
 		xmlNewChild(section, NULL, BAD_CAST "weaponType", BAD_CAST buff );
 
 		xmlNewChild(section, NULL, BAD_CAST "imageName", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
 		xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST (*i)->GetPicture()->GetPath().c_str() );
 
-        sprintf(buff, "%d", (*i)->GetPayload() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetPayload() );
 		xmlNewChild(section, NULL, BAD_CAST "payload", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetVelocity() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetVelocity() );
 		xmlNewChild(section, NULL, BAD_CAST "velocity", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetAcceleration() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetAcceleration() );
 		xmlNewChild(section, NULL, BAD_CAST "acceleration", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetAmmoType() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetAmmoType() );
 		xmlNewChild(section, NULL, BAD_CAST "ammoType", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetAmmoConsumption() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetAmmoConsumption() );
 		xmlNewChild(section, NULL, BAD_CAST "ammoConsumption", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetFireDelay() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetFireDelay() );
 		xmlNewChild(section, NULL, BAD_CAST "fireDelay", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetLifetime() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetLifetime() );
 		xmlNewChild(section, NULL, BAD_CAST "lifetime", BAD_CAST buff );
 		xmlNewChild(section, NULL, BAD_CAST "sound", BAD_CAST (*i)->sound->GetPath().c_str() );
 	}

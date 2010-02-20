@@ -127,17 +127,17 @@ bool Planets::Save( string filename )
 
 		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
 		xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST (*i)->GetAlliance().c_str() );
-        sprintf(buff, "%d", (int)(*i)->GetWorldPosition().GetX() );
+        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetX() );
 		xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
-        sprintf(buff, "%d", (int)(*i)->GetWorldPosition().GetY() );
+        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetY() );
 		xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
 		xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST ((*i)->GetLandable()?"1":"0") );
-        sprintf(buff, "%d", (*i)->GetTraffic() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetTraffic() );
 		xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
 		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
-        sprintf(buff, "%d", (*i)->GetMilitiaSize() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetMilitiaSize() );
 		xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetInfluence() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetInfluence() );
 		xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
 		list<Technology*> techs = (*i)->GetTechnologies();
 		for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){

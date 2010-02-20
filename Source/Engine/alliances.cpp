@@ -59,9 +59,9 @@ bool Alliances::Save( string filename )
 
 		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
 
-        sprintf(buff, "%1.1f", (*i)->GetAggressiveness()*10 );
+        snprintf(buff, sizeof(buff), "%1.1f", (*i)->GetAggressiveness()*10 );
 		xmlNewChild(section, NULL, BAD_CAST "aggressiveness", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetAttackSize() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetAttackSize() );
 		xmlNewChild(section, NULL, BAD_CAST "attackSize", BAD_CAST buff );
 		xmlNewChild(section, NULL, BAD_CAST "currency", BAD_CAST (*i)->GetCurrency().c_str() );
 

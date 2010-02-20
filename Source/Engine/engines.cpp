@@ -60,9 +60,9 @@ bool Engines::Save( string filename )
 
 		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
 
-        sprintf(buff, "%1.1f", (*i)->GetForceOutput() );
+        snprintf(buff, sizeof(buff), "%1.1f", (*i)->GetForceOutput() );
 		xmlNewChild(section, NULL, BAD_CAST "forceOutput", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetMSRP() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetMSRP() );
 		xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 		xmlNewChild(section, NULL, BAD_CAST "foldDrive", BAD_CAST ((*i)->GetFoldDrive()?"1":"0") );
 		xmlNewChild(section, NULL, BAD_CAST "flareAnimation", BAD_CAST (*i)->GetFlareAnimation().c_str() );

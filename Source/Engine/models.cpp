@@ -95,15 +95,15 @@ bool Models::Save( string filename )
 		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
 		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
 		xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST (*i)->GetEngine()->GetName().c_str() );
-        sprintf(buff, "%1.2f", (*i)->GetMass() );
+        snprintf(buff, sizeof(buff), "%1.2f", (*i)->GetMass() );
 		xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
-        sprintf(buff, "%1.2f", (*i)->GetRotationsPerSecond() );
+        snprintf(buff, sizeof(buff), "%1.2f", (*i)->GetRotationsPerSecond() );
 		xmlNewChild(section, NULL, BAD_CAST "rotationsPerSecond", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->GetThrustOffset() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->GetThrustOffset() );
 		xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
-        sprintf(buff, "%1.1f", (*i)->GetMaxSpeed() );
+        snprintf(buff, sizeof(buff), "%1.1f", (*i)->GetMaxSpeed() );
 		xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
-        sprintf(buff, "%d", (*i)->getMaxEnergyAbsorption() );
+        snprintf(buff, sizeof(buff), "%d", (*i)->getMaxEnergyAbsorption() );
 		xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
 	}
 

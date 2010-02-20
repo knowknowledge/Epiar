@@ -31,7 +31,7 @@ void Log::EnableFileLogging( void ) {
 	timestamp[ 16 ] ='_';
 
 	// generate the log's filename based on the time
-	sprintf( logFilename, "Epiar-Log-%s.xml", timestamp );
+	snprintf( logFilename, sizeof(logFilename), "Epiar-Log-%s.xml", timestamp );
 
 	// open the debug file
 	fp = fopen( logFilename, "wb" );
@@ -66,13 +66,13 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 	// Set type for logging
 	switch( type ) {
 		case _logMessage:
-			sprintf( logType, "Message" );
+			snprintf( logType, sizeof(logType), "Message" );
 			break;
 		case _logWarning:
-			sprintf( logType, "Warning" );
+			snprintf( logType, sizeof(logType), "Warning" );
 			break;
 		case _logError:
-			sprintf( logType, "Error" );
+			snprintf( logType, sizeof(logType), "Error" );
 			break;
 	}
 
@@ -87,7 +87,7 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 
 	va_start( args, message );
 
-	vsnprintf( logBuffer, 4095, message, args );
+	vsnprintf( logBuffer, sizeof(logBuffer), message, args );
 
 	va_end( args );
 
