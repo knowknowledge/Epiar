@@ -43,8 +43,12 @@ bool Audio::Initialize( void ){
 		return false;
 	}
 
-	// Load MOD and OGG libraries
-	Mix_Init( MIX_INIT_MOD | MIX_INIT_OGG );
+	// Load MOD and OGG libraries (If SDL_mixer version supports it)
+	#ifdef SDL_MIXER_MAJOR_VERSION
+		#if SDL_MIXER_MAJOR_VERSION>=1 && SDL_MIXER_MINOR_VERSION>=2 && SDL_MIXER_PATCHLEVEL>=10
+		Mix_Init( MIX_INIT_MOD | MIX_INIT_OGG );
+		#endif // SDL_MIXER_MAJOR_VERSION>=1 ...
+	#endif // SDL_MIXER_MAJOR_VERSION
 
 	// Allocate channels
 	Mix_AllocateChannels( this->max_chan);
@@ -59,8 +63,12 @@ bool Audio::Shutdown( void ){
 	/* This is the cleaning up part */
 	this->HaltAll();
 	// Free every library loaded
-	while(Mix_Init(0))
-		Mix_Quit();
+	#ifdef SDL_MIXER_MAJOR_VERSION
+		#if SDL_MIXER_MAJOR_VERSION>=1 && SDL_MIXER_MINOR_VERSION>=2 && SDL_MIXER_PATCHLEVEL>=10
+		while(Mix_Init(0))
+			Mix_Quit();
+		#endif // SDL_MIXER_MAJOR_VERSION>=1 ...
+	#endif // SDL_MIXER_MAJOR_VERSION
 
 	// Query number of times audio device was opened (should be 1)
 	int freq, chan, ntimes;
