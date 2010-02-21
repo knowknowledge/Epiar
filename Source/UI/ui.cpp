@@ -36,6 +36,11 @@ UI::~UI() {
 	children.clear();
 }
 
+bool UI::Active( void ) {
+	if( children.size() ) return true;
+	return false;
+}
+
 bool UI::Add( Widget *widget ) {
 	if( !widget ) return false;
 	

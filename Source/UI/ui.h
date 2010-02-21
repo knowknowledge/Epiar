@@ -33,6 +33,7 @@ class UI {
 		static void Close( Widget *widget );
 		static void HandleInput( list<InputEvent> & events );
 		static void ResetInput(void);
+		static bool Active(void);
 		
 		static void RegisterKeyboardFocus( Widget *widget );
 		static Widget *DetermineMouseFocus( int x, int y );
