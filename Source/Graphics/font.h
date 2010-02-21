@@ -1,7 +1,7 @@
 /**\file			font.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Christopher Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
- * \date			Modified: Sunday, November 22, 2009
+ * \date			Modified: Saturday, February 20, 2010
  * \brief
  * \details
  */
@@ -16,32 +16,21 @@
 class Font {
 		public:
 			Font();
+			Font( string filename );
+			~Font();
 
-			virtual bool SetFont( string filename ) = 0;
-			virtual Rect Render( int x, int y, const char *text ) = 0;
-			virtual Rect RenderCentered( int x, int y, const char *text ) = 0;
+			bool SetFont( string filename );
+			Rect Render( int x, int y, const char *text );
+			Rect RenderCentered( int x, int y, const char *text );
 			void SetColor( float r, float g, float b, float a=1.0f );
-
+			Rect BoundingBox( const char *text );
+			Rect BoundingBox( string text );
 
 		private:
 			string fontname; // filename of the loaded font
 			float r, g, b, a; // color of text
-			int height,width,base;
+			int height, width, base;
 
-			friend class FreeFont;
-};
-
-
-// Uses the FreeType and FTGL libraries
-class FreeFont: public Font {
-		public:
-			FreeFont() { font=NULL; }
-			FreeFont( string filename );
-			~FreeFont();
-			bool SetFont( string filename );
-			Rect Render( int x, int y, const char *text );
-			Rect RenderCentered( int x, int y, const char *text );
-		private:
 			FTTextureFont* font;
 };
 

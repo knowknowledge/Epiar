@@ -17,11 +17,15 @@
  * \brief UI label. */
 
 Label::Label( int x, int y, string label, bool centered) {
+	Rect size;
+	
 	SetX( x );
 	SetY( y );
 
-	this->w = w;
-	this->h = h;
+	// w/h is dependent upon the text given
+	size = SansSerif->BoundingBox( label );
+	this->w = size.w;
+	this->h = size.h;
 	
 	this->label = label;
 	this->centered = centered;

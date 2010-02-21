@@ -66,10 +66,10 @@ int main( int argc, char **argv ) {
 
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
-	SansSerif       = (Font*)new FreeFont( "Resources/Fonts/FreeSans.ttf" );
-	BitType         = (Font*)new FreeFont( "Resources/Fonts/visitor2.ttf" );
-	Serif           = (Font*)new FreeFont( "Resources/Fonts/FreeSerif.ttf" );
-	Mono            = (Font*)new FreeFont( "Resources/Fonts/FreeMono.ttf" );
+	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
+	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
+	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
+	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );

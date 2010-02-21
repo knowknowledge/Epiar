@@ -23,6 +23,8 @@ class Label : public Widget {
 		
 		void setText(string text){label=text;}
 	
+		string GetName( void ) {return string("Label_"+label);}
+	
 	private:
 		int w, h;
 		string label;
