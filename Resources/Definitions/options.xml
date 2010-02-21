@@ -3,7 +3,10 @@
 	<version-major>0</version-major>
 	<version-minor>7</version-minor>
 	<version-macro>0</version-macro>
-	<logging>0</logging>
+	<log>
+		<xml>0</xml>
+		<out>1</out>
+	</log>
 	<video>
 		<w>1024</w>
 		<h>768</h>

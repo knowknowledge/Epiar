@@ -49,6 +49,7 @@ int main( int argc, char **argv ) {
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
+	Log::Start();
 	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );
 
 #ifdef COMP_MSVC
@@ -118,7 +119,8 @@ int parseArgs( int argc, char **argv ) {
 			printf("\n\t--version        - Displays program version");
 			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
 			printf("\n\t--no-audio       - Turns off all sounds.");
-			printf("\n\t--enable-logging - Turn on XML-based logging");
+			printf("\n\t--[no]log-xml    - Turn on logggin to an XML file");
+			printf("\n\t--[no]log-stdout - Turn on logging to standard out");
 			//printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
 			printf("\n\t--lua-test       - Tests the Lua scripting functionality");
 			printf("\n");
@@ -143,8 +145,10 @@ int parseArgs( int argc, char **argv ) {
 		} else if( parm == "lua-test" ) {
 			//lua_test(); // temporary function
 			return( -1 );
-		} else if( parm == "enable-logging" ) {
-			Log::EnableFileLogging();
+		} else if( parm == "log-xml" ) { SETOPTION("options/log/xml", 1);
+		} else if( parm == "log-out" ) { SETOPTION("options/log/out", 1);
+		} else if( parm == "nolog-xml" ) { SETOPTION("options/log/xml", 0);
+		} else if( parm == "nolog-out" ) { SETOPTION("options/log/out", 0);
 		}
 	}
 	

@@ -36,18 +36,15 @@ class Log {
 
 		static void realLog( int type, const char *func, const char *message, ... );
 
+		static void Start( void );
 		static void Close( void );
-		
-		static void EnableFileLogging( void );
-
-	protected:
-		Log();
-		Log( const Log & );
-		Log& operator= (const Log&);
 
 	private:
+		static void Open( void );
+
+		static char *timestamp;
+		static string logFilename;
 		static FILE *fp; // pointer to the log
-		static bool logToFile;
 };
 
 #endif // __H_LOG__
