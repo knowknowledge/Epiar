@@ -434,6 +434,11 @@ int Lua::getSpriteByID(lua_State *L){
     Sprite **s;
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 
+	if(sprite==NULL){
+		Log::Error("Lua requested sprite with unknown id %d",id);
+		return luaL_error(L, "The ID %d doesn't refer to anything",id );
+	}
+
 	// Push Sprite
 	switch( sprite->GetDrawOrder() ){
 		case DRAW_ORDER_PLAYER:
