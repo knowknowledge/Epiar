@@ -20,9 +20,10 @@
 /**\brief Constructs new font (default color white).
  */
 Font::Font() {
-	r = 1.;
-	g = 1.;
-	b = 1.;
+	// Solid White
+	r = 0.;
+	g = 0.;
+	b = 0.;
 	a = 1.;
 	
 	font = NULL;
@@ -49,6 +50,11 @@ void Font::SetColor( float r, float g, float b, float a ) {
  * \param filename String containing file.
  */
 Font::Font( string filename ) {
+	// Solid White
+	r = 0.;
+	g = 0.;
+	b = 0.;
+	a = 1.;
 	font = NULL;
 	SetFont( filename );
 }

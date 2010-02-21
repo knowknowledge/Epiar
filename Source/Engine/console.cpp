@@ -114,6 +114,7 @@ void Console::Draw() {
 				static_cast<float>(.5), static_cast<float>(.3) );
 
 		int pos = 8;
+		Mono->SetColor(.9,.9,.9,1.0);
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
 			Mono->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
 			pos--;
