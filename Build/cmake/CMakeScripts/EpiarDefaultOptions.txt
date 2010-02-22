@@ -1,0 +1,31 @@
+# set first time options
+option(DEFAULT_EPIAR_OPTIONS "reset epiar options to default?" true)
+# default options on first run
+if(DEFAULT_EPIAR_OPTIONS)
+	if(msvc)
+		set(CMAKE_CXX_FLAGS "/dwin32 /d_windows /w3 /ehsc /gr" CACHE STRING
+			"flags used by the compiler during all build types" FORCE)
+		set(CMAKE_C_FLAGS "/dwin32 /d_windows /w3 /ehsc /gr" CACHE STRING
+			"flags used by the compiler during all build types" FORCE)
+	elseif(CMAKE_COMPILER_IS_GNUCC)
+		set(CMAKE_CXX_FLAGS "-Wall" CACHE STRING
+			"flags used by the compiler during all build types" FORCE)
+		set(CMAKE_C_FLAGS "-Wall" CACHE STRING
+			"flags used by the compiler during all build types" FORCE)
+	endif(msvc)
+	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif(DEFAULT_EPIAR_OPTIONS)
+
+# Reset the flag
+set(DEFAULT_EPIAR_OPTIONS FALSE CACHE BOOL "Reset Epiar Options to default?" FORCE)
+
+# Epiar options
+option(COMPILE_USE_PRECOMPILED_HEADERS "use precompiled headers?" true)
+option(USE_PHYSICSFS "Use physfs filesystem?")
+if (WIN32)
+	option(USE_LUAJIT "Use LuaJIT?" true)
+else (WIN32)
+	option(USE_LUAJIT "Use LuaJIT?")
+endif (WIN32)
+
+# vim:ft=cmake

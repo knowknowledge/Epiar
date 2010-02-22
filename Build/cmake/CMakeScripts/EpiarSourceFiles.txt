@@ -1,0 +1,159 @@
+# Sets the source files to use
+set (Epiar_src
+	${Epiar_SRC_DIR}/main.cpp
+	${Epiar_SRC_DIR}/common.h
+	${Epiar_SRC_DIR}/defines.h
+	${Epiar_SRC_DIR}/includes.h
+	${Epiar_SRC_DIR}/version.h
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/AI/ai.h
+	${Epiar_SRC_DIR}/AI/ai_lua.h
+	${Epiar_SRC_DIR}/AI/ai.cpp
+	${Epiar_SRC_DIR}/AI/ai_lua.cpp
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Audio/audio.cpp
+	${Epiar_SRC_DIR}/Audio/music.cpp
+	${Epiar_SRC_DIR}/Audio/sound.cpp
+	${Epiar_SRC_DIR}/Audio/audio.h
+	${Epiar_SRC_DIR}/Audio/music.h
+	${Epiar_SRC_DIR}/Audio/sound.h
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Engine/alliances.h
+	${Epiar_SRC_DIR}/Engine/console.h
+	${Epiar_SRC_DIR}/Engine/engines.h
+	${Epiar_SRC_DIR}/Engine/hud.h
+	${Epiar_SRC_DIR}/Engine/models.h
+	${Epiar_SRC_DIR}/Engine/quadrant.h
+	${Epiar_SRC_DIR}/Engine/simulation.h
+	${Epiar_SRC_DIR}/Engine/starfield.h
+	${Epiar_SRC_DIR}/Engine/technologies.h
+	${Epiar_SRC_DIR}/Engine/weapon.h
+	${Epiar_SRC_DIR}/Engine/weapons.h
+	${Epiar_SRC_DIR}/Engine/alliances.cpp
+	${Epiar_SRC_DIR}/Engine/console.cpp
+	${Epiar_SRC_DIR}/Engine/engines.cpp
+	${Epiar_SRC_DIR}/Engine/hud.cpp
+	${Epiar_SRC_DIR}/Engine/models.cpp
+	${Epiar_SRC_DIR}/Engine/quadrant.cpp
+	${Epiar_SRC_DIR}/Engine/simulation.cpp
+	${Epiar_SRC_DIR}/Engine/starfield.cpp
+	${Epiar_SRC_DIR}/Engine/technologies.cpp
+	${Epiar_SRC_DIR}/Engine/weapon.cpp
+	${Epiar_SRC_DIR}/Engine/weapons.cpp
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Graphics/animation.h
+	${Epiar_SRC_DIR}/Graphics/font.h
+	${Epiar_SRC_DIR}/Graphics/image.h
+	${Epiar_SRC_DIR}/Graphics/video.h
+	${Epiar_SRC_DIR}/Graphics/animation.cpp
+	${Epiar_SRC_DIR}/Graphics/font.cpp
+	${Epiar_SRC_DIR}/Graphics/image.cpp
+	${Epiar_SRC_DIR}/Graphics/video.cpp
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Input/input.cpp
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Menu/menu.h
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Server/client.h
+	${Epiar_SRC_DIR}/Server/queue_lockfree.h
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Sprites/effects.h
+	${Epiar_SRC_DIR}/Sprites/planets.h
+	${Epiar_SRC_DIR}/Sprites/player.h
+	${Epiar_SRC_DIR}/Sprites/projectile.h
+	${Epiar_SRC_DIR}/Sprites/ship.h
+	${Epiar_SRC_DIR}/Sprites/sprite.h
+	${Epiar_SRC_DIR}/Sprites/spritemanager.h
+	${Epiar_SRC_DIR}/Sprites/effects.cpp
+	${Epiar_SRC_DIR}/Sprites/planets.cpp
+	${Epiar_SRC_DIR}/Sprites/player.cpp
+	${Epiar_SRC_DIR}/Sprites/projectile.cpp
+	${Epiar_SRC_DIR}/Sprites/ship.cpp
+	${Epiar_SRC_DIR}/Sprites/sprite.cpp
+	${Epiar_SRC_DIR}/Sprites/spritemanager.cpp
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/UI/ui_button.cpp
+	${Epiar_SRC_DIR}/UI/ui_button.h
+	${Epiar_SRC_DIR}/UI/ui_checkbox.cpp
+	${Epiar_SRC_DIR}/UI/ui_checkbox.h
+	${Epiar_SRC_DIR}/UI/ui.cpp
+	${Epiar_SRC_DIR}/UI/ui.h
+	${Epiar_SRC_DIR}/UI/ui_label.cpp
+	${Epiar_SRC_DIR}/UI/ui_label.h
+	${Epiar_SRC_DIR}/UI/ui_lua.cpp
+	${Epiar_SRC_DIR}/UI/ui_lua.h
+	${Epiar_SRC_DIR}/UI/ui_picture.cpp
+	${Epiar_SRC_DIR}/UI/ui_picture.h
+	${Epiar_SRC_DIR}/UI/ui_textbox.cpp
+	${Epiar_SRC_DIR}/UI/ui_textbox.h
+	${Epiar_SRC_DIR}/UI/ui_widget.cpp
+	${Epiar_SRC_DIR}/UI/ui_widget.h
+	${Epiar_SRC_DIR}/UI/ui_window.cpp
+	${Epiar_SRC_DIR}/UI/ui_window.h
+	)
+set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Utilities/camera.h
+	${Epiar_SRC_DIR}/Utilities/cmath.h
+	${Epiar_SRC_DIR}/Utilities/coordinate.h
+	${Epiar_SRC_DIR}/Utilities/debug.h
+	${Epiar_SRC_DIR}/Utilities/file.h
+	${Epiar_SRC_DIR}/Utilities/filesystem.h
+	${Epiar_SRC_DIR}/Utilities/hashtbl.h
+	${Epiar_SRC_DIR}/Utilities/log.h
+	${Epiar_SRC_DIR}/Utilities/lua.h
+	${Epiar_SRC_DIR}/Utilities/parser.h
+	${Epiar_SRC_DIR}/Utilities/quadtree.h
+	${Epiar_SRC_DIR}/Utilities/resource.h
+	${Epiar_SRC_DIR}/Utilities/string_convert.h
+	${Epiar_SRC_DIR}/Utilities/timer.h
+	${Epiar_SRC_DIR}/Utilities/trig.h
+	${Epiar_SRC_DIR}/Utilities/vector.h
+	${Epiar_SRC_DIR}/Utilities/vfl.h
+	${Epiar_SRC_DIR}/Utilities/xml.h
+	${Epiar_SRC_DIR}/Utilities/camera.cpp
+	${Epiar_SRC_DIR}/Utilities/cmath.cpp
+	${Epiar_SRC_DIR}/Utilities/coordinate.cpp
+	${Epiar_SRC_DIR}/Utilities/debug.cpp
+	${Epiar_SRC_DIR}/Utilities/file.cpp
+	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
+	${Epiar_SRC_DIR}/Utilities/hashtbl.cpp
+	${Epiar_SRC_DIR}/Utilities/log.cpp
+	${Epiar_SRC_DIR}/Utilities/lua.cpp
+	${Epiar_SRC_DIR}/Utilities/quadtree.cpp
+	${Epiar_SRC_DIR}/Utilities/resource.cpp
+	${Epiar_SRC_DIR}/Utilities/timer.cpp
+	${Epiar_SRC_DIR}/Utilities/trig.cpp
+	${Epiar_SRC_DIR}/Utilities/vector.cpp
+	${Epiar_SRC_DIR}/Utilities/xml.cpp
+	)
+if (WIN32)
+	set (Epiar_src ${Epiar_src}
+		${Epiar_SRC_DIR}/epiar.rc
+		)
+endif (WIN32)
+# Add groups for source file
+source_group(AI REGULAR_EXPRESSION ".*/AI/.*")
+source_group(Audio REGULAR_EXPRESSION ".*/Audio/.*")
+source_group(Engine REGULAR_EXPRESSION ".*/Engine/.*")
+source_group(Graphics REGULAR_EXPRESSION ".*/Graphics/.*")
+source_group(Input REGULAR_EXPRESSION ".*/Input/.*")
+source_group(Menu REGULAR_EXPRESSION ".*/Menu/.*")
+source_group(Server REGULAR_EXPRESSION ".*/Server/.*")
+source_group(Sprites REGULAR_EXPRESSION ".*/Sprites/.*")
+source_group(UI REGULAR_EXPRESSION ".*/UI/.*")
+source_group(Utilities REGULAR_EXPRESSION ".*/Utilities/.*")
+source_group(Resource "${Epiar_SRC_DIR}/epiar.rc")
+
+
+add_executable(EpiarBIN WIN32 ${Epiar_src})
+
+# vim:ft=cmake

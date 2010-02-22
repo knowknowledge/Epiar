@@ -1,0 +1,60 @@
+# Epiar Install directives
+
+if(WIN32)
+	set(CMAKE_INSTALL_PREFIX "C:/Documents and Settings/Maoserr/Desktop/Test")
+	install(TARGETS EpiarBIN
+		DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources"
+		DESTINATION .)
+	install(FILES
+		"${Epiar_OUT_DIR}/mikmod.dll"
+		"${Epiar_OUT_DIR}/libogg-0.dll"
+		"${Epiar_OUT_DIR}/libvorbis-0.dll"
+		"${Epiar_OUT_DIR}/libvorbisfile-3.dll"
+		DESTINATION .)
+	set(CPACK_GENERATOR NSIS ZIP)
+	set(CPACK_NSIS_DISPLAY_NAME "Epiar ${EPIAR_VERSION}")
+	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_MUI_ICON.ico")
+	set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_MUI_UNIICON.ico")
+	set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_BrandImage.bmp")
+	set(CPACK_NSIS_HELP_LINK "http://www.epiar.net/howtoplay")
+	set(CPACK_NSIS_URL_INFO_ABOUT "http://www.epiar.net")
+	set(CPACK_NSIS_CONTACT "Maoserr@gmail.com")
+	set(CPACK_NSIS_MENU_LINKS
+		"Epiar.exe" "Epiar"
+		"http://www.epiar.net" "Epiar Homepage")
+	set(CPACK_PACKAGE_EXECUTABLES "" "")
+elseif (UNIX)
+	install(TARGETS EpiarBIN
+		DESTINATION ./bin)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources"
+		DESTINATION ./share/Epiar)
+	set(CPACK_GENERATOR TGZ DEB)
+	set(CPACK_DEBIAN_PACKAGE_SECTION "game")
+	set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+		"Epiar is a space combat/trading
+		game based on the Escape velocity game.")
+	set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE "amd64")
+	#set( CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA 
+	#	${CMAKE_CURRENT_SOURCE_DIR}/CMake/Deb/postinst
+	#	${CMAKE_CURRENT_SOURCE_DIR}/CMake/Deb/prerm )
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS
+		"libsdl1.2debian,")
+endif (WIN32)
+
+set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+set(CPACK_PACKAGE_NAME "Epiar")
+set(CPACK_PACKAGE_VENDOR "Epiar Development Team")
+set(CPACK_PACKAGE_CONTACT "Maoserr [maoserr@gmail.com]")
+set(CPACK_PACKAGE_VERSION_MAJOR ${EPIAR_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${EPIAR_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${EPIAR_VERSION_PATCH})
+set(CPACK_PACKAGE_DESCRIPTION "${Epiar_OUT_DIR}/README")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Epiar is a space combat/trading game.")
+set(CPACK_PACKAGE_FILE_NAME "Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "Epiar")
+set(CPACK_RESOURCE_FILE_LICENSE "${Epiar_OUT_DIR}/LICENSE")
+
+INCLUDE(CPack)
+
+# vim:ft=cmake

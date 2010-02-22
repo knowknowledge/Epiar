@@ -1,0 +1,21 @@
+## Stuff that doesn't belong anywhere else
+
+if (MSVC_IDE)
+	# Hack to get rid of putting output in Debug/Release subdirs
+	set_target_properties (EpiarBIN PROPERTIES
+		PREFIX "../")
+	foreach (CURR_BUILD ${CMAKE_CONFIGURATION_TYPES})
+		if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${CURR_BUILD})
+			file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${CURR_BUILD}")
+		endif(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${CURR_BUILD})
+	endforeach (CURR_BUILD ${CMAKE_CONFIGURATION_TYPES})
+endif (MSVC_IDE)
+
+#Precompiled headers for GCC
+if(CMAKE_COMPILER_IS_GNUCXX)
+	if (COMPILE_USE_PRECOMPILED_HEADERS)
+		ADD_PRECOMPILED_HEADER(EpiarBIN "${Epiar_SRC_DIR}/includes.h")
+	endif (COMPILE_USE_PRECOMPILED_HEADERS)
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
+# vim:ft=cmake
