@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Epiar
+GenericName=Epiar Game
+Comment=Space combat/trading game
+TryExec=epiar
+Exec=epiar
+StartupNotify=false
+Terminal=false
+Type=Application
+Icon=epiar
+Categories=Game;AdventureGame;Simulation
+

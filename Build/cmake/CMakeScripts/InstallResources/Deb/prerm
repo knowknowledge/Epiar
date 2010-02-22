@@ -1,0 +1,27 @@
+#! /bin/sh
+# prerm file for Epiar
+
+# Abort if any command returns an error value
+set -e
+
+case "$1" in
+  remove)
+    # This package about to be removed.
+	rm /usr/bin/epiar
+    ;;
+  deconfigure)
+    ;;
+  upgrade)
+    # Prepare to upgrade FROM THIS VERSION of this package to version $2.
+    ;;
+  failed-upgrade)
+    # Prepare to upgrade from version $2 of this package TO THIS VERSION.
+    # This is only used if the old version's prerm couldn't handle it,
+    # and returned non-zero.  (Fix old prerm bugs here.)
+    ;;
+  *) echo "$0: didn't understand being called with \`$1'" 1>&2
+     exit 0;;
+esac
+
+exit 0
+
