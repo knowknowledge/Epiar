@@ -377,7 +377,7 @@ float Lua::getNumField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = luaL_checknumber(L,index+1);
+	val = static_cast<float>(luaL_checknumber(L,index+1));
 	lua_pop(L,1);
 	return val;
 }

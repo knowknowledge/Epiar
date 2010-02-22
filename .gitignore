@@ -35,6 +35,8 @@ tags
 Epiar*.exe*
 epiar*.pdb
 epiar*.ilk
+Epiar*.ilk
+epiar*.idb
 .deps
 *.o
 *.a
@@ -46,6 +48,8 @@ Doxygen/latex
 
 ### Epiar Log Files
 Epiar-Log*.xml
+stdout.txt
+stderr.txt
 
 .DS_Store
 Epiar.tmproj

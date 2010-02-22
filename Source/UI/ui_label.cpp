@@ -24,8 +24,8 @@ Label::Label( int x, int y, string label, bool centered) {
 
 	// w/h is dependent upon the text given
 	size = SansSerif->BoundingBox( label );
-	this->w = size.w;
-	this->h = size.h;
+	this->w = static_cast<int>(size.w);
+	this->h = static_cast<int>(size.h);
 	
 	this->label = label;
 	this->centered = centered;
