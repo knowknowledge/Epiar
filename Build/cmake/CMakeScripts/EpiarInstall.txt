@@ -6,17 +6,11 @@ if(WIN32)
 		DESTINATION .)
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources"
 		DESTINATION .)
-	install(FILES
-		"${Epiar_OUT_DIR}/mikmod.dll"
-		"${Epiar_OUT_DIR}/libogg-0.dll"
-		"${Epiar_OUT_DIR}/libvorbis-0.dll"
-		"${Epiar_OUT_DIR}/libvorbisfile-3.dll"
-		DESTINATION .)
 	set(CPACK_GENERATOR NSIS ZIP)
 	set(CPACK_NSIS_DISPLAY_NAME "Epiar ${EPIAR_VERSION}")
-	set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_MUI_ICON.ico")
-	set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_MUI_UNIICON.ico")
-	set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/CMake/InstallResources\\\\NSIS_BrandImage.bmp")
+	set(CPACK_NSIS_MUI_ICON "${SCRIPT_DIR}/InstallResources\\\\NSIS_MUI_ICON.ico")
+	set(CPACK_NSIS_MUI_UNIICON "${SCRIPT_DIR}/InstallResources\\\\NSIS_MUI_UNIICON.ico")
+	set(CPACK_PACKAGE_ICON "${SCRIPT_DIR}/InstallResources\\\\NSIS_BrandImage.bmp")
 	set(CPACK_NSIS_HELP_LINK "http://www.epiar.net/howtoplay")
 	set(CPACK_NSIS_URL_INFO_ABOUT "http://www.epiar.net")
 	set(CPACK_NSIS_CONTACT "Maoserr@gmail.com")
