@@ -6,7 +6,11 @@ if (NOT LUA_SOURCE_NAME)
 	set (LUA_SOURCE_NAME "lua-5.1.4" CACHE STRING "Lua51 source name")
 endif (NOT LUA_SOURCE_NAME)
 
-set(LUA_SRC_FOLDER "${PROJECT_SOURCE_DIR}/${LUA_SOURCE_NAME}/src")
+
+if (NOT LUA_SRC_FOLDER)
+	set(LUA_SRC_FOLDER "${PROJECT_SOURCE_DIR}/${LUA_SOURCE_NAME}/src")
+endif (NOT LUA_SRC_FOLDER)
+
 # Create variable for include and library
 set(LUA_INCLUDE_DIR "${LUA_SRC_FOLDER}" CACHE STRING "Lua51 include directory" FORCE)
 set(LUA_LIBRARIES lua51 CACHE STRING "Lua51 libraries" FORCE)

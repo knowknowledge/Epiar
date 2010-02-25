@@ -23,9 +23,17 @@ set(DEFAULT_EPIAR_OPTIONS FALSE CACHE BOOL "Reset Epiar Options to default?" FOR
 option(COMPILE_USE_PRECOMPILED_HEADERS "use precompiled headers?" true)
 option(USE_PHYSICSFS "Use physfs filesystem?")
 if (WIN32)
-	option(USE_LUAJIT "Use LuaJIT?" true)
+	option(USE_INTERNAL_LUA "Use Lua source in Epiar?")
 else (WIN32)
-	option(USE_LUAJIT "Use LuaJIT?")
+	option(USE_INTERNAL_LUA "Use Lua source in Epiar?" true)
 endif (WIN32)
+
+if (NOT USE_INTERNAL_LUA)
+	if (WIN32)
+		option(USE_LUAJIT "Use LuaJIT?" true)
+	else (WIN32)
+		option(USE_LUAJIT "Use LuaJIT?")
+	endif (WIN32)
+endif (NOT USE_INTERNAL_LUA)
 
 # vim:ft=cmake

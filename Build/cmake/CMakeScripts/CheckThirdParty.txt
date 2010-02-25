@@ -70,7 +70,7 @@ macro(CHECK_3RD_PARTY)
 		FIND_THIRD_PARTY(${3RD_FNDNAME} ${TP_REQUIRE} FOUNDVAR ${3RD_FOUNDVAR})
 	endif (NOT ${3RD_BASENAME}_BUILD)
 	# If not found, then we're downloading
-	if (THIRDPARTY_DOWNLOAD)
+	if (THIRDPARTY_DOWNLOAD AND 3RD_MIRROR)
 		if (NOT ${3RD_FOUNDVAR})
 			set(${3RD_BASENAME}_BUILD TRUE CACHE STRING "Build ${3RD_BASENAME}" FORCE)
 			if (NOT EXISTS "${EPIAR_3RD_PARTY}/${3RD_BASENAME}.${3RD_ARCFORMAT}")
@@ -80,7 +80,7 @@ macro(CHECK_3RD_PARTY)
 			EXTRACT_ARCHIVE("${EPIAR_3RD_PARTY}/${3RD_BASENAME}.${3RD_ARCFORMAT}"
 				"${EPIAR_3RD_PARTY}/${3RD_FNDNAME}" REQUIRED)
 		endif (NOT ${3RD_FOUNDVAR})
-	endif (THIRDPARTY_DOWNLOAD)
+	endif (THIRDPARTY_DOWNLOAD AND 3RD_MIRROR)
 	# Add dependencies (if necessary)
 	if (${3RD_BASENAME}_BUILD)
 		set(${3RD_BASENAME}_STATICLIB_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/lib" CACHE PATH "Output to Epiar's Lib Folder" FORCE)
@@ -139,15 +139,24 @@ CHECK_3RD_PARTY("SDL_mixer/SDL_mixer-1.2.11"
 	FNDNAME SDL_mixer
 	LIBVAR SDLMIXER_LIBRARY)
 
-if (USE_LUAJIT)
-	CHECK_3RD_PARTY("LuaJIT/LuaJIT-1.1.5/src"
-		"http://luajit.org/download/LuaJIT-1.1.5.tar.gz" LUAJIT)
-else (USE_LUAJIT)
-	CHECK_3RD_PARTY("Lua51/lua-5.1.4/src"
-		"http://www.lua.org/ftp/lua-5.1.4.tar.gz" LUA
-		FNDNAME Lua51
-		FOUNDVAR LUA51_FOUND)
-endif (USE_LUAJIT)
+if (USE_INTERNAL_LUA)
+	set(LUA_SRC_FOLDER "${Epiar_SRC_DIR}/Lua/src" CACHE STRING "Path to Lua source")
+	add_subdirectory("${EPIAR_3RD_PARTY}/Lua51")
+	mark_as_advanced(LUA_SOURCE_NAME LUA_STATICLIB_OUTPUT_PATH LUA_LIBRARIES LUA_INCLUDE_DIR)
+	add_dependencies(EpiarBIN ${LUA_LIBRARIES})
+	set(EpiarLIBS ${EpiarLIBS}
+		${LUA_LIBRARIES})
+else (USE_INTERNAL_LUA)
+	if (USE_LUAJIT)
+		CHECK_3RD_PARTY("LuaJIT/LuaJIT-1.1.5/src"
+			"http://luajit.org/download/LuaJIT-1.1.5.tar.gz" LUAJIT)
+	else (USE_LUAJIT)
+		CHECK_3RD_PARTY("Lua51/lua-5.1.4/src"
+			"http://www.lua.org/ftp/lua-5.1.4.tar.gz" LUA
+			FNDNAME Lua51
+			FOUNDVAR LUA51_FOUND)
+	endif (USE_LUAJIT)
+endif (USE_INTERNAL_LUA)
 
 CHECK_3RD_PARTY("LibXML2/libxml2-2.7.6/include"
 	"ftp://xmlsoft.org/libxml2/libxml2-sources-2.7.6.tar.gz" LIBXML2
