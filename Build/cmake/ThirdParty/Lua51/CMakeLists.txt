@@ -55,13 +55,31 @@ endif (NOT LUA_STATICLIB_OUTPUT_PATH)
 set_target_properties (${LUA_LIBRARIES} PROPERTIES
 	ARCHIVE_OUTPUT_DIRECTORY "${Lua51_STATICLIB_OUTPUT_PATH}")
 
+unset(lua_compile_def)
+unset(lua_link_libs)
 if (WIN32)
 	if (MSVC)
-		set(lua_compile_def
+		set(lua_compile_def ${lua_compile_def}
 			_CRT_SECURE_NO_DEPRECATE
 			_CRT_NONSTDC_NO_DEPRECATE)
 	endif (MSVC)
+elseif (APPLE) # Actually Macos too
+	set(lua_compile_def ${lua_compile_def}
+		LUA_USE_MACOSX
+		)
+elseif (UNIX)
+	set(lua_compile_def ${lua_compile_def}
+		LUA_USE_LINUX
+		)
+	set(lua_link_libs ${lua_link_libs}
+		dl
+		readline
+		history
+		ncurses
+		)
 endif (WIN32)
 set_target_properties(${LUA_LIBRARIES} PROPERTIES
 	COMPILE_DEFINITIONS "${lua_compile_def}")
+target_link_libraries(${LUA_LIBRARIES}
+		${lua_link_libs})
 # vim:ft=cmake
