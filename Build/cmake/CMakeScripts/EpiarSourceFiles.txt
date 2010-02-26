@@ -140,6 +140,7 @@ if (WIN32)
 		${Epiar_SRC_DIR}/epiar.rc
 		)
 endif (WIN32)
+
 # Add groups for source file
 source_group(AI REGULAR_EXPRESSION ".*/AI/.*")
 source_group(Audio REGULAR_EXPRESSION ".*/Audio/.*")
@@ -152,11 +153,17 @@ source_group(Sprites REGULAR_EXPRESSION ".*/Sprites/.*")
 source_group(UI REGULAR_EXPRESSION ".*/UI/.*")
 source_group(Utilities REGULAR_EXPRESSION ".*/Utilities/.*")
 source_group(Resource "${Epiar_SRC_DIR}/epiar.rc")
-if (USE_INTERNAL_LUA)
-	source_group(Lua REGULAR_EXPRESSION ".*/Lua/.*")
-endif (USE_INTERNAL_LUA)
-
 
 add_executable(EpiarBIN WIN32 ${Epiar_src})
 
+if (APPLE)
+	# mac osx needs sdlmain compiled separately
+	include_directories(${Epiar_OUT_DIR})
+	add_library(SDLmain STATIC
+		${Epiar_OUT_DIR}/SDLMain.m)
+	add_dependencies(EpiarBIN SDLmain)
+	target_link_libraries(EpiarBIN SDLmain)
+endif (APPLE)
+
 # vim:ft=cmake
+
