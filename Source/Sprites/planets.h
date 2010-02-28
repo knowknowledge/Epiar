@@ -32,11 +32,11 @@ extern "C" {
 #include "Engine/technologies.h"
 
 // Abstraction of a single planet
-class cPlanet : public Sprite, public Component {
+class Planet : public Sprite, public Component {
 	public:
-	cPlanet();
-	cPlanet(const cPlanet& other);
-	cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
+	Planet();
+	Planet(const Planet& other);
+	Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
 		bool parserCB( string sectionName, string subName, string value );
 		
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
@@ -45,7 +45,7 @@ class cPlanet : public Sprite, public Component {
 
 		xmlNodePtr ToXMLNode(string componentName);
 		
-		~cPlanet();
+		~Planet();
 
 		string GetAlliance() {return alliance;}
 		short int GetTraffic() {return traffic;}
@@ -71,8 +71,8 @@ class cPlanet : public Sprite, public Component {
 class Planets : public Components {
 	public:
 		static Planets *Instance();
-		cPlanet *GetPlanet( string& PlanetName ) { return (cPlanet*) this->Get(PlanetName); }
-		Component* newComponent() { return new cPlanet(); }
+		Planet *GetPlanet( string& PlanetName ) { return (Planet*) this->Get(PlanetName); }
+		Component* newComponent() { return new Planet(); }
 		
 	protected:
 		Planets() {};
@@ -86,8 +86,8 @@ class Planets : public Components {
 class Planets_Lua {
 	public:
 		static void RegisterPlanets(lua_State *L);
-		static cPlanet **pushPlanet(lua_State *L);
-		static cPlanet **checkPlanet(lua_State *L, int index);
+		static Planet **pushPlanet(lua_State *L);
+		static Planet **checkPlanet(lua_State *L, int index);
 
 		static int GetName(lua_State* L);
 		static int GetType(lua_State* L);

@@ -580,7 +580,7 @@ int Lua::getPlanetInfo(lua_State *L) {
 	if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
 		return luaL_error(L, "ID #%d does not point to a Planet", id);
 
-	cPlanet* p = (cPlanet*)(sprite);
+	Planet* p = (Planet*)(sprite);
 
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
