@@ -286,8 +286,7 @@ int Lua::setoption(lua_State *L) {
 }
 
 int Lua::getPlayer(lua_State *L){
-	Player **player = (Player**)AI_Lua::pushShip(L);
-	*player = Player::Instance();
+	Lua::pushSprite(L,Player::Instance() );
 	return 1;
 }
 
@@ -328,6 +327,37 @@ int Lua::getModelNames(lua_State *L){
 	delete names;
     return 1;
 }
+
+
+void Lua::pushSprite(lua_State *L,Sprite* s){
+	int* id = (int*)lua_newuserdata(L, sizeof(int*));
+	*id = s->GetID();
+	assert(s->GetDrawOrder() & (DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET) );
+	switch(s->GetDrawOrder()){
+	case DRAW_ORDER_SHIP:
+	case DRAW_ORDER_PLAYER:
+		luaL_getmetatable(L, EPIAR_SHIP);
+		lua_setmetatable(L, -2);
+		break;
+	case DRAW_ORDER_PLANET:
+		luaL_getmetatable(L, EPIAR_PLANET);
+		lua_setmetatable(L, -2);
+		break;
+	default:
+		Log::Error("Accidentally pushing sprite #%d with invalid type: %d",s->GetID(),s->GetDrawOrder());
+	}
+}
+
+/*
+Sprite* Lua::checkSprite(lua_State *L,int id ){
+	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_SHIP);
+	cout<<"Checking ID "<<(*idptr)<<endl;
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_SHIP' expected");
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	return s;
+}
+*/
 
 void Lua::pushNames(lua_State *L, list<string> *names){
     lua_createtable(L, names->size(), 0);
@@ -431,7 +461,6 @@ int Lua::getSpriteByID(lua_State *L){
 
 	// Get the Sprite using the ID
 	int id = (int)(luaL_checkint(L,1));
-    Sprite **s;
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 
 	if(sprite==NULL){
@@ -439,21 +468,7 @@ int Lua::getSpriteByID(lua_State *L){
 		return luaL_error(L, "The ID %d doesn't refer to anything",id );
 	}
 
-	// Push Sprite
-	switch( sprite->GetDrawOrder() ){
-		case DRAW_ORDER_PLAYER:
-		case DRAW_ORDER_SHIP:
-			s = (Sprite **)AI_Lua::pushShip(L);
-			break;
-		case DRAW_ORDER_PLANET:
-			s = (Sprite **)Planets_Lua::pushPlanet(L);
-			break;
-		default:
-			Log::Error("Unexpected Sprite Type '%d'", sprite->GetDrawOrder() );
-			s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
-			break;
-	}
-	*s = sprite;
+	Lua::pushSprite(L,sprite);
 	return 1;
 }
 
@@ -474,25 +489,10 @@ int Lua::getSprites(lua_State *L, int type){
     lua_createtable(L, sprites->size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
-    Sprite **s;
     list<Sprite *>::const_iterator iter = sprites->begin();
     while(iter != sprites->end()) {
 		// push userdata
-        switch(type){
-            case DRAW_ORDER_PLAYER:
-            case DRAW_ORDER_SHIP:
-                s = (Sprite **)AI_Lua::pushShip(L);
-                break;
-            case DRAW_ORDER_PLANET:
-                s = (Sprite **)Planets_Lua::pushPlanet(L);
-                break;
-            default:
-                Log::Error("Unexpected Sprite Type '%d'",type);
-                s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
-                break;
-        }
-    
-		*s = *iter;
+		pushSprite(L,(*iter));
         lua_rawseti(L, newTable, index);
         ++iter;
         ++index;
@@ -506,7 +506,18 @@ int Lua::getShips(lua_State *L){
 }
 
 int Lua::getPlanets(lua_State *L){
-	return Lua::getSprites(L,DRAW_ORDER_PLANET);
+	Planets *planets = Planets::Instance();
+	list<string>* planetNames = planets->GetNames();
+
+    lua_createtable(L, planetNames->size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+		pushSprite(L,planets->GetPlanet(*pname));
+        lua_rawseti(L, newTable, index);
+        ++index;
+	}
+	return 1;
 }
 
 int Lua::getNearestShip(lua_State *L) {
@@ -514,14 +525,12 @@ int Lua::getNearestShip(lua_State *L) {
 	if( n!=2 ){
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
 	}
-	AI** ai = AI_Lua::checkShip(L,1);
+	AI* ai = AI_Lua::checkShip(L,1);
 	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite **s;
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((*ai),r,DRAW_ORDER_SHIP);
+	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,DRAW_ORDER_SHIP);
 		if(closest!=NULL){
 		assert(closest->GetDrawOrder()==DRAW_ORDER_SHIP);
-		s = (Sprite **)AI_Lua::pushShip(L);
-		*s = closest;
+		pushSprite(L,(closest));
 		cout<<"Lua pushed Sprite #"<<closest->GetID()<<endl;
 		return 1;
 	} else {

@@ -63,6 +63,7 @@ class Lua {
 		static int setWeaponInfo(lua_State *L);
 		static int setEngineInfo(lua_State *L);
 
+		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushNames(lua_State *L, list<string> *names);
 		static void setField(const char* index, int value);
 		static void setField(const char* index, float value);

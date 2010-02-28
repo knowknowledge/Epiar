@@ -86,8 +86,8 @@ class Planets : public Components {
 class Planets_Lua {
 	public:
 		static void RegisterPlanets(lua_State *L);
-		static Planet **pushPlanet(lua_State *L);
-		static Planet **checkPlanet(lua_State *L, int index);
+		//static Planet **pushPlanet(lua_State *L);
+		static Planet *checkPlanet(lua_State *L, int index);
 
 		static int GetName(lua_State* L);
 		static int GetType(lua_State* L);

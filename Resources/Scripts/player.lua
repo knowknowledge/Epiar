@@ -372,6 +372,7 @@ end
 registerInit(createHUD)
 
 updateHUD = function ()
+	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
 	x,y = PLAYER:GetPosition()
 	qx,qy = coordinateToQuadrant(x,y)

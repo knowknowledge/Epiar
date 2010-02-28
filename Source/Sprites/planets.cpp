@@ -197,6 +197,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 }
 
 
+/*
 Planet **Planets_Lua::pushPlanet(lua_State *L){
 	Planet **s = (Planet **)lua_newuserdata(L, sizeof(Planet*));
 	*s = new Planet();
@@ -204,20 +205,27 @@ Planet **Planets_Lua::pushPlanet(lua_State *L){
 	lua_setmetatable(L, -2);
 	return s;
 }
+*/
 
-Planet **Planets_Lua::checkPlanet(lua_State *L, int index){
-	Planet **p;
-	luaL_checktype(L, index, LUA_TUSERDATA);
-	p = (Planet**)luaL_checkudata(L, index, EPIAR_PLANET);
-	if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
-	return p;
+Planet *Planets_Lua::checkPlanet(lua_State *L, int index){
+	int *idptr;
+	idptr = (int*)luaL_checkudata(L, index, EPIAR_PLANET);
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_PLANET' expected");
+
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	if ((s) == NULL) luaL_typerror(L, index, EPIAR_PLANET);
+	if (0==((s)->GetDrawOrder() & DRAW_ORDER_PLANET)){
+		luaL_typerror(L, index, EPIAR_PLANET);
+	}
+	return (Planet*)s;
 }
 
 int Planets_Lua::GetName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushstring(L, (*planet)->GetName().c_str());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetName().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -227,8 +235,8 @@ int Planets_Lua::GetName(lua_State* L){
 int Planets_Lua::GetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushinteger(L, (*planet)->GetID());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushinteger(L, planet->GetID());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
@@ -238,8 +246,8 @@ int Planets_Lua::GetID(lua_State* L){
 int Planets_Lua::GetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushinteger(L, (*planet)->GetDrawOrder());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushinteger(L, planet->GetDrawOrder());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
@@ -249,9 +257,9 @@ int Planets_Lua::GetType(lua_State* L){
 int Planets_Lua::GetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetWorldPosition().GetX() );
-		lua_pushnumber(L, (*planet)->GetWorldPosition().GetY() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetWorldPosition().GetX() );
+		lua_pushnumber(L, planet->GetWorldPosition().GetY() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -261,8 +269,8 @@ int Planets_Lua::GetPosition(lua_State* L){
 int Planets_Lua::GetAlliance(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushstring(L, (*planet)->GetAlliance().c_str());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetAlliance().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -272,8 +280,8 @@ int Planets_Lua::GetAlliance(lua_State* L){
 int Planets_Lua::GetTraffic(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetTraffic() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetTraffic() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -283,8 +291,8 @@ int Planets_Lua::GetTraffic(lua_State* L){
 int Planets_Lua::GetMilitiaSize(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetMilitiaSize() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetMilitiaSize() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -294,8 +302,8 @@ int Planets_Lua::GetMilitiaSize(lua_State* L){
 int Planets_Lua::GetLandable(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		lua_pushboolean(L, (*planet)->GetLandable() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushboolean(L, planet->GetLandable() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -305,8 +313,8 @@ int Planets_Lua::GetLandable(lua_State* L){
 int Planets_Lua::GetModels(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		list<Model*> models = (*planet)->GetModels();
+		Planet* planet= checkPlanet(L,1);
+		list<Model*> models = planet->GetModels();
 		list<Model*>::iterator iter;
 		lua_createtable(L, models.size(), 0);
 		int newTable = lua_gettop(L);
@@ -324,8 +332,8 @@ int Planets_Lua::GetModels(lua_State* L){
 int Planets_Lua::GetEngines(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		list<Engine*> engines = (*planet)->GetEngines();
+		Planet* planet= checkPlanet(L,1);
+		list<Engine*> engines = planet->GetEngines();
 		list<Engine*>::iterator iter;
 		lua_createtable(L, engines.size(), 0);
 		int newTable = lua_gettop(L);
@@ -343,8 +351,8 @@ int Planets_Lua::GetEngines(lua_State* L){
 int Planets_Lua::GetWeapons(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		Planet** planet= checkPlanet(L,1);
-		list<Weapon*> weapons = (*planet)->GetWeapons();
+		Planet* planet= checkPlanet(L,1);
+		list<Weapon*> weapons = planet->GetWeapons();
 		list<Weapon*>::iterator iter;
 		lua_createtable(L, weapons.size(), 0);
 		int newTable = lua_gettop(L);
