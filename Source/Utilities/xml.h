@@ -12,7 +12,6 @@
 #define __H_XML__
 
 #include "includes.h"
-#include <map>
 #include <zlib.h>
 
 class XMLFile {
