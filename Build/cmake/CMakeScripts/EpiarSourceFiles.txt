@@ -104,6 +104,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/camera.h
 	${Epiar_SRC_DIR}/Utilities/cmath.h
 	${Epiar_SRC_DIR}/Utilities/coordinate.h
+	${Epiar_SRC_DIR}/Utilities/components.h
 	${Epiar_SRC_DIR}/Utilities/debug.h
 	${Epiar_SRC_DIR}/Utilities/file.h
 	${Epiar_SRC_DIR}/Utilities/filesystem.h
@@ -122,6 +123,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/camera.cpp
 	${Epiar_SRC_DIR}/Utilities/cmath.cpp
 	${Epiar_SRC_DIR}/Utilities/coordinate.cpp
+	${Epiar_SRC_DIR}/Utilities/components.cpp
 	${Epiar_SRC_DIR}/Utilities/debug.cpp
 	${Epiar_SRC_DIR}/Utilities/file.cpp
 	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
