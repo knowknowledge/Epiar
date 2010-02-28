@@ -11,6 +11,24 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 
+bool Engine::parserCB( string sectionName, string subName, string value ) {
+	PPA_MATCHES( "name" ) {
+		name = value;
+	} else PPA_MATCHES( "forceOutput" ) {
+		forceOutput = static_cast<float> (atof( value.c_str() ));
+	} else PPA_MATCHES( "msrp" ) {
+		msrp = (short int)atoi( value.c_str() );
+	} else PPA_MATCHES( "foldDrive" ) {
+		foldDrive = (atoi( value.c_str() ) != 0);
+	} else PPA_MATCHES( "flareAnimation" ) {
+		flareAnimation = value;
+	} else PPA_MATCHES( "thrustSound" ){
+		this->thrustsound = Sound::Get( value );
+	}
+
+	return true;
+}
+
 xmlNodePtr Engine::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
@@ -26,6 +44,10 @@ xmlNodePtr Engine::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "thrustSound", BAD_CAST this->thrustsound->GetPath().c_str() );
 
 	return section;
+}
+
+void Engine::_dbg_PrintInfo( void ) {
+	//cout << "Engine called " << name << ", priced at " << msrp << " with force of " << forceOutput << " and fold capability set to " << foldDrive << endl;
 }
 
 /**\class Engines

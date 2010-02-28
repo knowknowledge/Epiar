@@ -46,12 +46,12 @@ class Weapon : public Component {
 		Image *pic;
 		int weaponType; //(energy, explosive, laser, etc)
 		int payload; //intesity of explosion
-	    int velocity; //speed of travel
+		int velocity; //speed of travel
 		int acceleration; //speed of acceleration
 		int ammoType; //type of ammo used, unique id
 		int ammoConsumption; //ammount of ammo to consume per shot
 		int fireDelay; //delay between being able to fire agian in ticks
-	    int lifetime; //ticks until weapon is destroyed
+		int lifetime; //ticks until weapon is destroyed
 		//TODO tracking factor
 };
 

@@ -37,52 +37,15 @@ class cPlanet : public Sprite, public Component {
 	cPlanet();
 	cPlanet(const cPlanet& other);
 	cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
-		bool parserCB( string sectionName, string subName, string value ) {
-			PPA_MATCHES( "name" ) {
-				name = value;
-			} else PPA_MATCHES( "alliance" ) {
-				alliance = value;
-			} else PPA_MATCHES( "x" ) {
-				Coordinate pos = GetWorldPosition();
-				pos.SetX( (double)atof( value.c_str() ) );
-				SetWorldPosition( pos );
-			} else PPA_MATCHES( "y" ) {
-				Coordinate pos = GetWorldPosition();
-				pos.SetY( (double)atof( value.c_str() ) );
-				SetWorldPosition( pos );
-			} else PPA_MATCHES( "landable" ) {
-				landable = (atoi( value.c_str() ) !=0);
-			} else PPA_MATCHES( "traffic" ) {
-				traffic = (short int)atoi( value.c_str() );
-			} else PPA_MATCHES( "image" ) {
-				Image *image = new Image( value );
-				SetImage( image );
-			} else PPA_MATCHES( "sphereOfInfluence" ) {
-				sphereOfInfluence = atoi( value.c_str() );
-			} else PPA_MATCHES( "technology" ) {
-				Technology *tech = Technologies::Instance()->GetTechnology( value );
-				technologies.push_back(tech);
-				technologies.unique();
-			}
-			SetRadarColor(Color::Get(48, 160, 255));
-			return true;
-		}
+		bool parserCB( string sectionName, string subName, string value );
 		
-		virtual int GetDrawOrder( void ) {
-			return( DRAW_ORDER_PLANET );
-		}
+		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
-		void _dbg_PrintInfo( void ) {
-			//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
-		}
+		void _dbg_PrintInfo( void );
 
 		xmlNodePtr ToXMLNode(string componentName);
 		
-		~cPlanet() {
-			Image *image = GetImage();
-			if( image )
-				delete image; // planets delete their own images. not all Sprites do
-		}
+		~cPlanet();
 
 		string GetAlliance() {return alliance;}
 		short int GetTraffic() {return traffic;}

@@ -14,6 +14,22 @@
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
 
+bool Alliance::parserCB( string sectionName, string subName, string value ) {
+	PPA_MATCHES( "name" ) {
+		name = value;
+	} else PPA_MATCHES( "aggressiveness" ) {
+		aggressiveness = static_cast<float>(atof( value.c_str() ) / 10.);
+	} else PPA_MATCHES( "attackSize" ) {
+		attackSize = (short int)atof( value.c_str() );
+	} else PPA_MATCHES( "currency" ) {
+		currency = value;
+	} else PPA_MATCHES( "illegalCargo" ) {
+		illegalCargos.push_back( value );
+	}
+	
+	return true;
+}
+
 xmlNodePtr Alliance::ToXMLNode(string componentName){
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
