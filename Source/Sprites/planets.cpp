@@ -10,6 +10,7 @@
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+#include "Utilities/components.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
@@ -29,7 +30,6 @@ cPlanet::cPlanet(const cPlanet& other){
 }
 
 cPlanet::cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):
-	name(_name),
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
@@ -37,7 +37,9 @@ cPlanet::cPlanet( string _name, string _alliance, bool _landable, int _traffic, 
 	sphereOfInfluence(_sphereOfInfluence),
 	militia(_militia),
 	technologies(_technologies)
-{}
+{
+	SetName(_name);
+}
 
 list<Model*> cPlanet::GetModels() {
 	list<Model*> models;
@@ -81,6 +83,33 @@ list<Weapon*> cPlanet::GetWeapons() {
 	return weapons;
 }
 
+
+xmlNodePtr cPlanet::ToXMLNode(string componentName) {
+	char buff[256];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST this->GetAlliance().c_str() );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
+	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
+	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST (this->GetLandable()?"1":"0") );
+	snprintf(buff, sizeof(buff), "%d", this->GetTraffic() );
+	xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetMilitiaSize() );
+	xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetInfluence() );
+	xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
+	list<Technology*> techs = this->GetTechnologies();
+	for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
+		xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
+	}
+
+	return section;
+}
+
 /**\class Planets
  * \brief Planets. */
 
@@ -89,64 +118,10 @@ Planets *Planets::pInstance = 0; // initialize pointer
 Planets *Planets::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Planets; // create the sold instance
+		pInstance->rootName = "planets";
+		pInstance->componentName = "planet";
 	}
 	return( pInstance );
-}
-
-bool Planets::Load( string filename ) {
-	Parser<cPlanet> parser;
-	
-	SpriteManager* sprites = SpriteManager::Instance();
-	planets = parser.Parse( filename, "planets", "planet" );
-
-	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		(*i)->_dbg_PrintInfo();
-		sprites->Add( (*i) );
-	}
-
-	return true;
-}
-
-bool Planets::Save( string filename )
-{
-    xmlDocPtr doc = NULL;       /* document pointer */
-    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
-    char buff[256];
-
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root_node = xmlNewNode(NULL, BAD_CAST "planets");
-    xmlDocSetRootElement(doc, root_node);
-
-	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
-
-	for( list<cPlanet*>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		section = xmlNewNode(NULL, BAD_CAST "planet");
-		xmlAddChild(root_node, section);
-
-		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
-		xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST (*i)->GetAlliance().c_str() );
-        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetX() );
-		xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetY() );
-		xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
-		xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST ((*i)->GetLandable()?"1":"0") );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetTraffic() );
-		xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
-		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetMilitiaSize() );
-		xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetInfluence() );
-		xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
-		list<Technology*> techs = (*i)->GetTechnologies();
-		for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
-			xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
-		}
-	}
-
-	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
-	return true;
 }
 
 void Planets_Lua::RegisterPlanets(lua_State *L){

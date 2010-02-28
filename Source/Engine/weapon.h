@@ -11,13 +11,14 @@
 
 #include "Sprites/sprite.h"
 #include "Audio/sound.h"
+#include "Utilities/components.h"
 
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
 
 enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo};
 
-class Weapon {
+class Weapon : public Component {
 	public:
 		Weapon(void);
 		Weapon(const Weapon& other);
@@ -26,8 +27,8 @@ class Weapon {
 
 		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
+		xmlNodePtr ToXMLNode(string componentName);
 
-		string GetName(void) {return name;}
 		Image *GetImage(void) {return image;}
 		Image *GetPicture(void) {return pic;}
 		int GetType(void) {return weaponType;}
@@ -41,7 +42,6 @@ class Weapon {
 		Sound *sound; //Sound the weapon makes
 
 	private:
-		string name; //weapons name
 		Image *image;
 		Image *pic;
 		int weaponType; //(energy, explosive, laser, etc)

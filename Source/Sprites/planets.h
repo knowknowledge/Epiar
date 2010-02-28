@@ -25,15 +25,14 @@ extern "C" {
 #include "includes.h"
 #include "Sprites/sprite.h"
 #include "Utilities/coordinate.h"
+#include "Utilities/components.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
 
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
-
 // Abstraction of a single planet
-class cPlanet : public Sprite {
+class cPlanet : public Sprite, public Component {
 	public:
 	cPlanet();
 	cPlanet(const cPlanet& other);
@@ -76,6 +75,8 @@ class cPlanet : public Sprite {
 		void _dbg_PrintInfo( void ) {
 			//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
 		}
+
+		xmlNodePtr ToXMLNode(string componentName);
 		
 		~cPlanet() {
 			Image *image = GetImage();
@@ -83,7 +84,6 @@ class cPlanet : public Sprite {
 				delete image; // planets delete their own images. not all Sprites do
 		}
 
-		string GetName() {return name;}
 		string GetAlliance() {return alliance;}
 		short int GetTraffic() {return traffic;}
 		short int GetMilitiaSize() {return militiaSize;}
@@ -95,7 +95,6 @@ class cPlanet : public Sprite {
 		list<Weapon*> GetWeapons();
 		
 	private:
-		string name;
 		string alliance;
 		bool landable;
 		short int traffic;
@@ -106,12 +105,11 @@ class cPlanet : public Sprite {
 };
 
 // Class that holds list of all planets; manages them
-class Planets {
+class Planets : public Components {
 	public:
 		static Planets *Instance();
-		
-		bool Load( string filename );
-		bool Save( string filename );
+		cPlanet *GetPlanet( string& PlanetName ) { return (cPlanet*) this->Get(PlanetName); }
+		Component* newComponent() { return new cPlanet(); }
 		
 	protected:
 		Planets() {};
@@ -120,7 +118,6 @@ class Planets {
 
 	private:
 		static Planets *pInstance;
-		list<cPlanet *> planets;
 };
 
 class Planets_Lua {

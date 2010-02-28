@@ -14,33 +14,30 @@
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Utilities/parser.h"
+#include "Utilities/components.h"
 
-class Technology {
+class Technology : public Component {
 	public:
 		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
+		xmlNodePtr ToXMLNode(string componentName);
 
-		string GetName() const { return name; }
 		list<Model*> GetModels() { return models; }
 		list<Engine*> GetEngines() { return engines; }
 		list<Weapon*> GetWeapons() { return weapons; }
 
 	private:
-		string name;
 		list<Model*> models;
 		list<Engine*> engines;
 		list<Weapon*> weapons;
 };
 
 // Class that holds list of all technologies; manages them
-class Technologies {
+class Technologies : public Components {
 	public:
 		static Technologies *Instance();
-		bool Load( string& filename );
-		bool Save( string filename );
-		Technology *GetTechnology( string& techname );
-
-		list<string> *GetTechNames();
+		Technology *GetTechnology( string& TechnologyName ) { return (Technology*) this->Get(TechnologyName); }
+		Component* newComponent(){ return new Technology; }
 
 	protected:
 		Technologies() {};
@@ -49,7 +46,6 @@ class Technologies {
 
 	private:
 		static Technologies *pInstance;
-		list<Technology*> technologies;
 };
 
 #endif // __h_technologies

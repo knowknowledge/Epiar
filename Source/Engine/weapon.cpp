@@ -37,7 +37,6 @@ Weapon::Weapon(const Weapon& other){
 
 Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound) :
 	sound(_sound),
-	name(_name),
 	image(_image),
 	pic(_pic),
 	weaponType(_weaponType),
@@ -48,7 +47,10 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _
 	ammoConsumption(_ammoConsumption),
 	fireDelay(_fireDelay),
 	lifetime(_lifetime)
-{}
+{
+	SetName(_name);
+	//((Component*)this)->SetName(_name);
+}
 
 
 /**\brief Empty destructor
@@ -100,6 +102,36 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	}
 	//	SetRadarColor(Color::Get(255, 0, 0));
 	return true;
+}
+
+xmlNodePtr Weapon::ToXMLNode(string componentName) {
+	char buff[256];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetType() );
+	xmlNewChild(section, NULL, BAD_CAST "weaponType", BAD_CAST buff );
+
+	xmlNewChild(section, NULL, BAD_CAST "imageName", BAD_CAST this->GetImage()->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST this->GetPicture()->GetPath().c_str() );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetPayload() );
+	xmlNewChild(section, NULL, BAD_CAST "payload", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetVelocity() );
+	xmlNewChild(section, NULL, BAD_CAST "velocity", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetAcceleration() );
+	xmlNewChild(section, NULL, BAD_CAST "acceleration", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetAmmoType() );
+	xmlNewChild(section, NULL, BAD_CAST "ammoType", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetAmmoConsumption() );
+	xmlNewChild(section, NULL, BAD_CAST "ammoConsumption", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetFireDelay() );
+	xmlNewChild(section, NULL, BAD_CAST "fireDelay", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetLifetime() );
+	xmlNewChild(section, NULL, BAD_CAST "lifetime", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "sound", BAD_CAST this->sound->GetPath().c_str() );
+
+	return section;
 }
 
 

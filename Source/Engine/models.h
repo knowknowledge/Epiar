@@ -13,11 +13,10 @@
 #include "Graphics/image.h"
 #include "includes.h"
 #include "Utilities/log.h"
-
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
+#include "Utilities/components.h"
 
 // Abstraction of a single ship model
-class Model {
+class Model : public Component {
 	public:
 		Model();
 		Model(const Model& other);
@@ -34,7 +33,7 @@ class Model {
 			} else PPA_MATCHES( "engine" ) {
 				Engines *engines = Engines::Instance();
 
-				engine = engines->LookUp( value );
+				engine = engines->GetEngine( value );
 				
 				if( engine == NULL ) {
 					Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
@@ -46,21 +45,25 @@ class Model {
 			} else PPA_MATCHES( "maxEnergyAbsorption" ) {
 				maxEnergyAbsorption = (short)atoi( value.c_str() );
 			}
+			// TODO This is a bad spot for this.
+			if(image!=NULL && name!="dead"){ 
+				Image::Store(name,(Resource*)image);
+			}
 			return true;
 		}
+		xmlNodePtr ToXMLNode(string componentName);
 		
 		void _dbg_PrintInfo( void ) {
 			if( mass <= 0.001 ){
 				// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
 				Log::Error("Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
 			}
-			if(image!=NULL && name!=""){ Image::Store(name,(Resource*)image);}
+			if(image!=NULL && name!=""){ 
+				cout<<"Storing Image for "<<name<<endl;
+				Image::Store(name,(Resource*)image);
+			} else { assert(0); }
 		}
-		
-		string GetName( void ) const {
-			return name;
-		}
-		
+
 		float GetRotationsPerSecond( void ) {
 			return rotPerSecond;
 		}
@@ -107,7 +110,6 @@ class Model {
 		};
 		
 	private:
-		string name;
 		Image *image;
 		Engine *engine;
 		float mass;
@@ -118,13 +120,11 @@ class Model {
 };
 
 // Class that holds list of all models; manages them
-class Models {
+class Models : public Components {
 	public:
 		static Models *Instance();
-		bool Load( string& filename );
-		bool Save( string filename );
-		Model *GetModel( string& modelName );
-		list<string> *GetModelNames();
+		Model* GetModel(string name) { return (Model*) this->Get(name); }
+		Component* newComponent() { return new Model(); }
 
 	protected:
 		Models() {};
@@ -133,7 +133,6 @@ class Models {
 
 	private:
 		static Models *pInstance;
-		list<Model *> models;
 };
 
 #endif // __h_models__

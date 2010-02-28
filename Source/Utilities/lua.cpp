@@ -315,7 +315,7 @@ int Lua::focusCamera(lua_State *L){
 
 int Lua::getWeaponNames(lua_State *L){
 	Weapons *weapons= Weapons::Instance();
-	list<string> *names = weapons->GetWeaponNames();
+	list<string> *names = weapons->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
@@ -323,7 +323,7 @@ int Lua::getWeaponNames(lua_State *L){
 
 int Lua::getModelNames(lua_State *L){
 	Models *models = Models::Instance();
-	list<string> *names = models->GetModelNames();
+	list<string> *names = models->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
@@ -660,7 +660,7 @@ int Lua::getEngineInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
 	string engineName = (string)luaL_checkstring(L,1);
-	Engine* engine = Engines::Instance()->LookUp(engineName);
+	Engine* engine = Engines::Instance()->GetEngine(engineName);
 	if( engine == NULL)
 		return luaL_error(L, "There is no engine named '%s'.", engineName.c_str());
 

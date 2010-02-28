@@ -10,11 +10,10 @@
 #define __h_alliance__
 
 #include "includes.h"
-
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
+#include "Utilities/components.h"
 
 // Abstraction of a single planet
-class Alliance {
+class Alliance : public Component {
 	public:
 		bool parserCB( string sectionName, string subName, string value ) {
 			PPA_MATCHES( "name" ) {
@@ -31,15 +30,14 @@ class Alliance {
 			
 			return true;
 		}
+		xmlNodePtr ToXMLNode(string componentName);
 
-		string GetName(void){return name;}
 		short int GetAttackSize(void){ return attackSize; }
 		float GetAggressiveness(void){ return aggressiveness; }
 		string GetCurrency(void){ return currency; }
 		list<string> GetIlligalCargos(void){ return illegalCargos; }
 		
 	private:
-		string name;
 		short int attackSize;
 		float aggressiveness;
 		string currency;
@@ -47,12 +45,11 @@ class Alliance {
 };
 
 // Class that holds list of all planets; manages them
-class Alliances {
+class Alliances : public Components {
 	public:
 		static Alliances *Instance();
-		
-		bool Load( string& filename );
-		bool Save( string filename );
+		Alliance* GetModel(string name) { return (Alliance*) this->Get(name); }
+		Component* newComponent() { return new Alliance(); }
 
 	protected:
 		Alliances() {};
@@ -61,7 +58,6 @@ class Alliances {
 
 	private:
 		static Alliances *pInstance;
-		list<Alliance *> alliances;
 };
 
 #endif // __h_alliances__

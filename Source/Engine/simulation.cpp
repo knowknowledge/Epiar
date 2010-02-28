@@ -112,6 +112,12 @@ bool Simulation::Run( void ) {
 	player->SetModel( models->GetModel( playerDefaultModel ) );
 	sprites->Add( player->GetSprite() );
 
+	Planets *planets = Planets::Instance();
+	list<string>* planetNames = planets->GetNames();
+	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+		sprites->Add(  planets->GetPlanet(*pname) );
+	}
+
 	// Focus the camera on the sprite
 	camera->Focus( player->GetSprite() );
 
