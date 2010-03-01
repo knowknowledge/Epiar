@@ -158,18 +158,17 @@ end
 function attemptLanding()
 	if landingWin ~= nil then return end
 	x,y = PLAYER:GetPosition()
-	nearby = Epiar.planets(x,y,1000)
-	if #nearby==0 then return end
-	px,py = nearby[1]:Position()
+	planet = Epiar.nearestPlanet(PLAYER,4096)
+	px,py = planet:Position()
 	distance = distfrom( px,py, x,y)
 	message=""
-	if HUD.getTarget() ~= nearby[1]:GetID() then -- Add this text before the first message.
-		message = string.format("This is %s Landing Control. ",nearby[1]:Name())
+	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
+		message = string.format("This is %s Landing Control. ",planet:Name())
 	end
 	
 	-- Check if the ship is close enough and moving slowly enough to land on the planet.
-	HUD.setTarget(nearby[1]:GetID())
-	TargetName:setStatus(nearby[1]:Name() )
+	HUD.setTarget(planet:GetID())
+	TargetName:setStatus(planet:Name() )
 	-- TODO make this distance check based off of the planet size.
 	if distance > 200 then
 		if message~="" then
@@ -183,8 +182,8 @@ function attemptLanding()
 		if velocity > 2 then
 			HUD.newAlert(message.."Please slow your approach.")
 		else
-			HUD.newAlert(string.format("Welcome to %s.",nearby[1]:Name()))
-			landOnPlanet( nearby[1]:GetID() )
+			HUD.newAlert(string.format("Welcome to %s.",planet:Name()))
+			landOnPlanet( planet:GetID() )
 		end
 	end
 end

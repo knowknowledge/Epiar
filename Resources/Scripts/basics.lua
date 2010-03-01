@@ -40,16 +40,14 @@ function fleePoint(x,y)
 end
 
 function nearestPlanet(cur_ship,timeleft)
-	planets = Epiar.planets()
-	myx,myy = cur_ship:GetPosition()
-	if #planets then
-		x,y = planets[1]:Position()
+	planet = Epiar.nearestPlanet(cur_ship,4096)
+	if planet ~= nil then
+		x,y = planet:Position()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)>200 then
 			cur_ship:Accelerate()
 		end
 	else
-		cur_ship:Rotate( cur_ship:directionTowards(0, 0) )
 		cur_ship:Accelerate()
 	end
 end

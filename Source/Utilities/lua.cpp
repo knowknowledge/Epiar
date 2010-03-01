@@ -217,6 +217,7 @@ void Lua::RegisterFunctions() {
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		{"nearestShip", &Lua::getNearestShip},
+		{"nearestPlanet", &Lua::getNearestPlanet},
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
 		{"getModelInfo", &Lua::getModelInfo},
@@ -520,22 +521,29 @@ int Lua::getPlanets(lua_State *L){
 	return 1;
 }
 
-int Lua::getNearestShip(lua_State *L) {
+int Lua::getNearestSprite(lua_State *L,int type) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=2 ){
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
 	}
 	AI* ai = AI_Lua::checkShip(L,1);
 	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,DRAW_ORDER_SHIP);
+	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,type);
 		if(closest!=NULL){
-		assert(closest->GetDrawOrder()==DRAW_ORDER_SHIP);
+		assert(closest->GetDrawOrder() & (type));
 		pushSprite(L,(closest));
-		cout<<"Lua pushed Sprite #"<<closest->GetID()<<endl;
 		return 1;
 	} else {
 		return 0;
 	}
+}
+
+int Lua::getNearestShip(lua_State *L) {
+	return Lua::getNearestSprite(L,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER);
+}
+
+int Lua::getNearestPlanet(lua_State *L) {
+	return Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
 }
 
 int Lua::getModelInfo(lua_State *L) {

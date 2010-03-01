@@ -50,7 +50,9 @@ class Lua {
 		static int getWeaponNames(lua_State *L);
 		static int getSpriteByID(lua_State *L);
 		static int getSprites(lua_State *L, int type);
+		static int getNearestSprite(lua_State *L, int type=DRAW_ORDER_ALL);
 		static int getNearestShip(lua_State *L);
+		static int getNearestPlanet(lua_State *L);
 		static int getShips(lua_State *L);
 		static int getPlanets(lua_State *L);
 
