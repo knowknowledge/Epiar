@@ -193,9 +193,9 @@ function MoveShip(id)
 			HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
 			x,y = cur_ship:GetPosition()
 			cur_ship:Explode()
-			for pod = 1,10 do
+			for pod = 1,3 do
 				cur_ship = createShip(x,y,"Escape Pod")
-				AIPlans[ cur_ship:GetID() ] = {plan=fleePoint(x,y),time=100}
+				AIPlans[ cur_ship:GetID() ] = {plan=landOnNearestPlanet,time=10000}
 			end
 		end
 end
