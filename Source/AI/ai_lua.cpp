@@ -42,6 +42,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Repair", &AI_Lua::ShipRepair},
 		{"Explode", &AI_Lua::ShipExplode},
+		{"Remove", &AI_Lua::ShipRemove},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
@@ -247,6 +248,18 @@ int AI_Lua::ShipExplode(lua_State* L){
 		SpriteManager::Instance()->Delete((Sprite*)(ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+	}
+	return 0;
+}
+
+int AI_Lua::ShipRemove(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		SpriteManager::Instance()->Delete((Sprite*)(ai));
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
 	return 0;
 }
