@@ -527,9 +527,12 @@ int Lua::getNearestSprite(lua_State *L,int type) {
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
 	}
 	AI* ai = AI_Lua::checkShip(L,1);
+	if( ai==NULL ) {
+		return 0;
+	}
 	float r = static_cast<float>(luaL_checknumber (L, 2));
 	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,type);
-		if(closest!=NULL){
+	if(closest!=NULL){
 		assert(closest->GetDrawOrder() & (type));
 		pushSprite(L,(closest));
 		return 1;
