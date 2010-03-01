@@ -62,10 +62,10 @@ function stop(cur_ship,timeleft)
 end
 
 function nearestShip(cur_ship,timeleft)
-	ships= Epiar.ships()
-	if #ships then
+	ship = Epiar.nearestShip(cur_ship,4096)
+	if ship then
 		myx,myy = cur_ship:GetPosition()
-		x,y = ships[1]:GetPosition()
+		x,y = ship:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)<200 then
 			cur_ship:Fire()
