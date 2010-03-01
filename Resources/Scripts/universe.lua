@@ -135,7 +135,48 @@ function CreateShips(number_of_ships, X, Y)
 	end
 end
 
+function options()
+	Epiar.pause()
+	if optionWindow ~= nil then
+		Epiar.unpause()
+		closeOptions()
+		return
+	end
+	optionWindow = UI.newWindow( 30,100,200,300,"Options")
+	 
+	-- Sounds
+	soundsLabel     = UI.newLabel(20,40,"Sound Options:",0)
+	backgroundSound = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/background") ), "Background sounds")
+	weaponsSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
+	enginesSound    = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
+	explosionsSound = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
+	buttonsSound    = UI.newCheckbox(20, 130, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
+	optionWindow:add( soundsLabel, backgroundSound, weaponsSound, enginesSound, explosionsSound, buttonsSound )
 
+	-- Debugging
+	debugLabel      = UI.newLabel(20,160,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 170, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 190, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 210, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	optionWindow:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
+	
+	function saveOptions()
+		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/sound/weapons",    weaponsSound    :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/sound/engines",    enginesSound    :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/sound/explosions", explosionsSound :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/out",    		stdoutLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
+	end
+	function closeOptions()
+		optionWindow:close();
+		optionWindow=nil;
+	end
+	optionWindow:add( UI.newButton(20, 230, 100, 30,"Custom Keys ->","chooseKeys()") )
+	optionWindow:add( UI.newButton(130, 260, 60, 30,"Save","saveOptions(); closeOptions()") )
+end
 
 -- Execute the current plan of each AI
 function MoveShip(id)

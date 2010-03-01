@@ -76,6 +76,7 @@ commands = {
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
+	{'?', "Game Options", "options()",KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED}
 }
 
