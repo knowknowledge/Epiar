@@ -21,7 +21,7 @@ enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo};
 class Weapon : public Component {
 	public:
 		Weapon(void);
-		Weapon(const Weapon& other);
+		Weapon& operator=(const Weapon& other);
 		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound);
 		~Weapon(void);
 

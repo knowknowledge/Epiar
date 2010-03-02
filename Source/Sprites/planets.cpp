@@ -18,7 +18,7 @@
 
 Planet::Planet(){}
 
-Planet::Planet(const Planet& other){
+Planet& Planet::operator=(const Planet& other) {
 	name = other.name;
 	alliance = other.alliance;
 	landable = other.landable;
@@ -27,6 +27,7 @@ Planet::Planet(const Planet& other){
 	sphereOfInfluence = other.sphereOfInfluence;
 	militia = other.militia;
 	technologies = other.technologies;
+	return *this;
 }
 
 Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):

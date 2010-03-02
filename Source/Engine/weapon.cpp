@@ -15,12 +15,24 @@
 
 /**\brief Empty constructor
  */
-Weapon::Weapon(void)
+Weapon::Weapon(void) :
+	sound(NULL),
+	image(NULL),
+	pic(NULL),
+	weaponType(0),
+	payload(0),
+	velocity(0),
+	acceleration(0),
+	ammoType(0),
+	ammoConsumption(0),
+	fireDelay(0),
+	lifetime(0)
 {
+	SetName("dead");
 }
 
 
-Weapon::Weapon(const Weapon& other){
+Weapon& Weapon::operator=(const Weapon& other) {
 	name = other.name;
 	image = other.image;
 	pic = other.pic;

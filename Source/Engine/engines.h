@@ -19,6 +19,10 @@
 // Abstraction of a single engine
 class Engine : public Component {
 	public:
+		Engine();
+		Engine& operator= (const Engine&);
+		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation);
+
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
 

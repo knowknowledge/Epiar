@@ -17,7 +17,7 @@ Model::Model(): image(NULL),engine(NULL),mass(0.0){
 	SetName("dead");
 }
 
-Model::Model(const Model& other) {
+Model& Model::operator=(const Model& other) {
 	name = other.name;
 	image = other.image;
 	engine = other.engine;
@@ -25,6 +25,7 @@ Model::Model(const Model& other) {
 	thrustOffset = other.thrustOffset;
 	rotPerSecond = other.rotPerSecond;
 	maxSpeed = other.maxSpeed;
+	return *this;
 }
 
 Model::Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption) :

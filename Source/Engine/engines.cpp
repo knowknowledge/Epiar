@@ -11,6 +11,36 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 
+Engine::Engine() :
+	thrustsound(NULL),
+	forceOutput(0.0),
+	msrp(0),
+	foldDrive(false),
+	flareAnimation("")
+{
+	SetName("dead");
+}
+
+Engine& Engine::operator= (const Engine& other) {
+	name = other.name;
+	thrustsound = other.thrustsound;
+	forceOutput = other.forceOutput;
+	msrp = other.msrp;
+	foldDrive = other.foldDrive;
+	flareAnimation = other.flareAnimation;
+	return *this;
+}
+
+Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation) :
+	thrustsound(_thrustsound),
+	forceOutput(_forceOutput),
+	msrp(_msrp),
+	foldDrive(_foldDrive),
+	flareAnimation(_flareAnimation)
+{
+	SetName(_name);
+}
+
 bool Engine::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;

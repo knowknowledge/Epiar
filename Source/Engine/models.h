@@ -19,7 +19,7 @@
 class Model : public Component {
 	public:
 		Model();
-		Model(const Model& other);
+  		Model& operator= (const Model&);
 		Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption);
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
