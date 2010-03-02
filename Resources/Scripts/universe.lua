@@ -135,7 +135,6 @@ end
 function options()
 	Epiar.pause()
 	if optionWindow ~= nil then
-		Epiar.unpause()
 		closeOptions()
 		return
 	end
@@ -170,6 +169,7 @@ function options()
 	function closeOptions()
 		optionWindow:close();
 		optionWindow=nil;
+		Epiar.unpause()
 	end
 	optionWindow:add( UI.newButton(20, 230, 100, 30,"Custom Keys ->","chooseKeys()") )
 	optionWindow:add( UI.newButton(130, 260, 60, 30,"Save","saveOptions(); closeOptions()") )
