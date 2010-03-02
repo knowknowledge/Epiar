@@ -108,31 +108,28 @@ function createShip(X,Y,model)
 	return cur_ship
 end
 
-function createRandomShip(X,Y,Range)
-	shiptypes = Epiar.models()
+function createRandomShip(X,Y,Range,shiptypes,weapons)
+	if shiptypes==nil then
+		shiptypes = Epiar.models()
+	end
+	if weapons==nil then
+		weapons = Epiar.weapons()
+	end
 	X = X + math.random(Range)-Range/2
 	Y = Y + math.random(Range)-Range/2
 	model = shiptypes[math.random(#shiptypes)]
 	s = createShip(X,Y,model)
-	attachRandomWeapon(s)
+	attachRandomWeapon(s,weapons)
 	AIPlans[ cur_ship:GetID() ] = newPlan()
 	return s
 end
 
-function attachRandomWeapon(cur_ship)
-	weapons = Epiar.weapons()
+function attachRandomWeapon(cur_ship,weapons)
+	if weapons==nil or #weapons==0 then return end
 	--Randomly assign a weapon to everyone
 	i = math.random(#weapons)
 	cur_ship:AddWeapon( weapons[i] )
 	cur_ship:AddAmmo( weapons[i],100 )
-end
-	
--- Create some Random Ships around a Planet
-function CreateShips(number_of_ships, X, Y)
-	-- Generate Ships
-	for s =1,number_of_ships do
-		createRandomShip(X,Y,1000)
-	end
 end
 
 function options()
@@ -207,12 +204,17 @@ end
 function planetTraffic()
 	planets = Epiar.planets()
 	for p=1,#planets do
-		expectedTraffic = 1* planets[p]:Traffic()
-		x,y = planets[p]:Position()
-		currentTraffic = #(Epiar.ships(x,y,2000))
-		if currentTraffic < expectedTraffic then
-			HUD.newAlert((expectedTraffic-currentTraffic).." ships launched from ".. planets[p]:Name())
-			CreateShips(expectedTraffic-currentTraffic,x,y)
+		planet = planets[p]
+		expectedTraffic = 1* planet:Traffic()
+		x,y = planet:Position()
+		influence = planet:Influence()
+		currentTraffic = #(Epiar.ships(x,y,influence))
+		if influence>0 and currentTraffic < expectedTraffic then
+			models = planet:GetModels()
+			weapons = planet:GetWeapons()
+			for s=currentTraffic,expectedTraffic do
+				createRandomShip(x,y,influence,models,weapons)
+			end
 		end
 	end
 end

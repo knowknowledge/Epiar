@@ -180,6 +180,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"Alliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
+		{"Influence", &Planets_Lua::GetInfluence},
 		{"Landable", &Planets_Lua::GetLandable},
 		{"GetModels", &Planets_Lua::GetModels},
 		{"GetEngines", &Planets_Lua::GetEngines},
@@ -293,6 +294,17 @@ int Planets_Lua::GetMilitiaSize(lua_State* L){
 	if (n == 1) {
 		Planet* planet= checkPlanet(L,1);
 		lua_pushnumber(L, planet->GetMilitiaSize() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}
+
+int Planets_Lua::GetInfluence(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetInfluence() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
