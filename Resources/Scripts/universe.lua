@@ -138,7 +138,8 @@ function options()
 		closeOptions()
 		return
 	end
-	optionWindow = UI.newWindow( 30,100,200,300,"Options")
+	local height=300
+	optionWindow = UI.newWindow( 30,100,200,height,"Options")
 	 
 	-- Sounds
 	soundsLabel     = UI.newLabel(20,40,"Sound Options:",0)
@@ -171,8 +172,8 @@ function options()
 		optionWindow=nil;
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton(20, 230, 100, 30,"Custom Keys ->","chooseKeys()") )
-	optionWindow:add( UI.newButton(130, 260, 60, 30,"Save","saveOptions(); closeOptions()") )
+	optionWindow:add( UI.newButton(20, height-40, 100, 30,"Customize Keys","chooseKeys()") )
+	optionWindow:add( UI.newButton(130, height-40, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 
 -- Execute the current plan of each AI
