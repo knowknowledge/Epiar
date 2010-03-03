@@ -1,6 +1,51 @@
 -- Use this script for a solar system
-
 infoWindows = {}
+componentWins = {}
+
+function componentDebugger()
+	if componentWindow ~= nil then return end
+	componentWindow = UI.newWindow( 200,10,620,70, "Game Component Debugging",
+		UI.newButton( 10,30,100,30,"Alliances","componentViewer('Alliances',Epiar.alliances,'Epiar.getAllianceInfo','Epiar.setAllianceInfo')" ),
+		UI.newButton(110,30,100,30,"Engines","componentViewer('Engines',Epiar.engines,'Epiar.getEngineInfo','Epiar.setEngineInfo')" ),
+		UI.newButton(510,30,100,30,"Weapons","componentViewer('Weapons',Epiar.weapons,'Epiar.getWeaponInfo','Epiar.setWeaponInfo')" ),
+		UI.newButton(210,30,100,30,"Models","componentViewer('Models',Epiar.models,'Epiar.getModelInfo','Epiar.setModelInfo')" ),
+		-- TODO: The above requires more getter/setter passing than should be required
+		--       Can we merge the c++ engine getter/setters into one function and have them detect the Component Type?
+		--       Notice how the buttons sometimes pass strings and sometimes pass function objects. Yuck. This will cause problems later.
+		UI.newButton(310,30,100,30,"Planets","planetViewer()" ),
+		UI.newButton(410,30,100,30,"Technologies","technologyViewer()")
+	)
+end
+componentDebugger()
+
+-- Creates a generic list of Component buttons
+-- TODO: This window should have an "Add Component" button
+function componentViewer(name,listFunc,getStr,setStr)
+	if componentWins[name] ~= nil then return end
+	list = listFunc()
+	componentWins[name] = UI.newWindow(10,100,140,(#list)*30+50,name)
+	for i = 1,#list do
+		s = list[i]
+		componentWins[name]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent('%s',%s,'%s')",s,getStr,setStr)))
+	end
+	componentWins[name]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",name,name)))
+end
+
+-- Creates an attribute setter for a particular Component
+function showComponent(name,getterFunc,setterStr)
+	if infoWindows[name] ~= nil then return end
+	local theInfo = getterFunc( name )
+	local theWin = UI.newWindow(150,100,200,400,name,
+		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo(%s,'%s')",setterStr,name )),
+		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+	local theTexts = infoTable(theInfo,theWin)
+	infoWindows[name] = {win=theWin, info=theInfo, texts=theTexts}
+end
+
+-- Lays out a series of labels and textboxes
+-- Returns the checkboxes for later
+-- TODO This makes WAY too many assumptions about the size and shape of the window
+-- TODO The C++ engine should be able to auto-arrange these for us.
 function infoTable(info,win)
 	y1,y2=55,40
 	yoff=20
@@ -18,22 +63,14 @@ function infoTable(info,win)
 	return uiElements
 end
 
-function infoTableCollect(info,uiElements)
-	for title, value in pairs(info) do
-		if uiElements[title]~=nil then
-			info[title] = uiElements[title]:GetText()
-		end
-	end
-end
-
+-- Show Info for the current Target
 function showInfo()
 	currentTarget = HUD.getTarget()
-	sprite = Epiar.getSprite(currentTarget)
 	spritetype = sprite:GetType()
 	if spritetype == 1 then -- planet
-		showPlanetInfo()
+		showPlanetInfo(currentTarget)
 	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
-		showModelInfo(sprite)
+		showShipInfo(sprite)
 	else
 		io.write(string.format("Cannot show info for sprite of type [%d]\n",spritetype))
 	end
@@ -44,7 +81,11 @@ function saveInfo(saveFunc,name)
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
 	local win = infoWindows[name].win
-	infoTableCollect(info, texts)
+	for title, value in pairs(info) do
+		if texts[title]~=nil then
+			info[title] = texts[title]:GetText()
+		end
+	end
 	saveFunc(info);
 	win:close();
 	win=nil
@@ -52,56 +93,88 @@ function saveInfo(saveFunc,name)
 	print("Saved "..name)
 end
 
-function showPlanetInfo()
-	currentTarget = HUD.getTarget()
-	if SHIPS[currentTarget] ~= nil then return end
-	planet = Epiar.getSprite(currentTarget)
+function planetViewer()
+	if planetsWindow ~= nil then return end
+	planets = Epiar.planets()
+	planetsWindow = UI.newWindow(10,100,140,(#planets)*30+50,"Planets")
+	for i = 1,#planets do
+		p = planets[i]
+		planetsWindow:add( UI.newButton(10,i*30,120,30,p:Name(),string.format("showPlanetInfo(%d)",p:GetID())))
+	end
+	planetsWindow:add( UI.newButton(115,5,15,15,"X","planetsWindow:close();planetsWindow=nil"))
+end
+
+function showPlanetInfo(planetID)
+	planet = Epiar.getSprite(planetID)
 	planetName = planet:Name()
+	Epiar.focusCamera(planetID)
 	if infoWindows[planetName]~= nil then return end
-	
-	local planetInfo = Epiar.getPlanetInfo( currentTarget )
-	local planetInfoWin = UI.newWindow( 50,100,200,400, "Planet Info: "..planetName)
+	local planetInfo = Epiar.getPlanetInfo( planetID )
+	local planetInfoWin = UI.newWindow(150,100,200,400, "Planet Info: "..planetName)
 	local infoTexts = infoTable(planetInfo,planetInfoWin)
+	-- TODO: Add checkboxes for different technologies
 	planetInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setPlanetInfo,'"..planetName.."')" ))
+	planetInfoWin:add( UI.newButton(175,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil;",planetName,planetName)))
 	infoWindows[planetName] = {win=planetInfoWin, info=planetInfo, texts=infoTexts}
 end
 
-function showModelInfo(ship)
-	modelName = ship:GetModelName()
-	if infoWindows[modelName] ~= nil then return end
-	
-	modelInfo = Epiar.getModelInfo( modelName )
-	modelInfoWin = UI.newWindow( 50,100,200,400, "Model Info: "..modelName)
-	infoTexts = infoTable(modelInfo,modelInfoWin)
-	infoWindows[modelName] = {win=modelInfoWin, info=modelInfo, texts=infoTexts}
+function technologyViewer()
+	if technologiesWindow ~= nil then return end
+	technologies = Epiar.technologies()
+	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+50,"technologies")
+	for i = 1,#technologies do
+		name = technologies[i]
+		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo('%s')",name)))
+	end
+	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
+end
 
+function showTechInfo(name)
+	if infoWindows[name]~= nil then return end
+	local allmodels = Epiar.models()
+	local allweapons = Epiar.weapons()
+	local allengines = Epiar.engines()
+	local models,weapons,engines = Epiar.getTechnologyInfo(name)
+	local height = 50 + math.max(#allweapons,#allmodels,#allengines)*20
+	local theWin = UI.newWindow(150,100,600,height,name)
+	local knownTechs = {}
+	local checkedTechs = {}
+	for i,t in ipairs({allmodels,allweapons,allengines}) do
+		for j,s in ipairs(t) do knownTechs[s]=0 end
+	end
+	for i,t in ipairs({models,weapons,engines}) do
+		for j,s in ipairs(t) do knownTechs[s]=1 end
+	end
+	function showTable(techName,techList,x)
+		theWin:add(UI.newLabel(x,35,techName))
+		for i,s in ipairs(techList) do
+			--print(string.format("%s %d: %s",techName,i,s))
+			checkedTechs[s] = UI.newCheckbox( x,30+i*20,knownTechs[s],s)
+			theWin:add(checkedTechs[s])
+			--TODO: Add tiny button to view/edit this technology
+		end
+	end
+	showTable("Models",allmodels,50)
+	showTable("Weapons",allweapons,200)
+	showTable("Engines",allengines,350)
+	infoWindows[name] = {win=theWin,boxes=checkedTechs}
+	theWin:add( UI.newButton(575,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+	theWin:add(UI.newButton( 480,height-40,100,30,"Can't Save", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil;HUD.newAlert('Cannot Save Technologies yet...')",name,name) ))
+end
+
+function showShipInfo(ship)
+	shipID = ship:GetID()
+	modelName = ship:GetModelName()
+	Epiar.focusCamera(shipID)
+	if infoWindows[shipID] ~= nil then return end
 	weaponsAndAmmo = ship:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
-		modelInfoWin:add(UI.newLabel( 10, y1, weapon))
-		modelInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
-		modelInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
+		shipInfoWin:add(UI.newLabel( 10, y1, weapon))
+		shipInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
+		shipInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
 		y1,y2=y1+yoff,y2+yoff
 	end
-	
-	modelInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setModelInfo,'"..modelName.."')" ))
-end
-
-function showWeaponInfo(weaponName)
-	if infoWindows[weaponName] ~= nil then return end
-
-	weaponInfo = Epiar.getWeaponInfo( weaponName )
-	weaponInfoWin = UI.newWindow( 50,100,200,400, "Weapon Info: "..weaponName)
-	local infoTexts = infoTable(weaponInfo,weaponInfoWin)
-	weaponInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveInfo(Epiar.setWeaponInfo,'"..weaponName.."')" ))
-	infoWindows[weaponName] = {win=weaponInfoWin, info=weaponInfo, texts=infoTexts}
-end
-
-function showEngineInfo(engineName)
-	if infoWindows[engineName] then return end
-	engineInfo = Epiar.getEngineInfo( engineName )
-	engineInfoWin = UI.newWindow( 50,100,200,400, "Engine Info: "..engineName)
-	local infoTexts = infoTable(engineInfo,engineInfoWin)
-	engineInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveInfo(Epiar.setEngineInfo,'"..enginName.."')" ))
-	infoWindows[weaponName] = {win=engineInfoWin, info=engineInfo, texts=infoTexts}
+	infoWindows[shipID] = {win=shipInfoWin, info={},texts={}}
+	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d]:close();infoWindows[%d]=nil",shipID,shipID) ))
 end
 

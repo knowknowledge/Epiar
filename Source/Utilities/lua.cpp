@@ -211,8 +211,11 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
+		{"alliances", &Lua::getAllianceNames},
 		{"models", &Lua::getModelNames},
 		{"weapons", &Lua::getWeaponNames},
+		{"engines", &Lua::getEngineNames},
+		{"technologies", &Lua::getTechnologyNames},
 		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
@@ -228,6 +231,8 @@ void Lua::RegisterFunctions() {
 		{"setWeaponInfo", &Lua::setWeaponInfo},
 		{"getEngineInfo", &Lua::getEngineInfo},
 		{"setEngineInfo", &Lua::setEngineInfo},
+		{"getTechnologyInfo", &Lua::getTechnologyInfo},
+		{"setTechnologyInfo", &Lua::setTechnologyInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -313,22 +318,39 @@ int Lua::focusCamera(lua_State *L){
 	return 0;
 }
 
+int Lua::getAllianceNames(lua_State *L){
+	list<string> *names = Alliances::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
 int Lua::getWeaponNames(lua_State *L){
-	Weapons *weapons= Weapons::Instance();
-	list<string> *names = weapons->GetNames();
+	list<string> *names = Weapons::Instance()->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
 }
 
 int Lua::getModelNames(lua_State *L){
-	Models *models = Models::Instance();
-	list<string> *names = models->GetNames();
+	list<string> *names = Models::Instance()->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
 }
 
+int Lua::getEngineNames(lua_State *L){
+	list<string> *names = Engines::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
+int Lua::getTechnologyNames(lua_State *L){
+	list<string> *names = Technologies::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
 
 void Lua::pushSprite(lua_State *L,Sprite* s){
 	int* id = (int*)lua_newuserdata(L, sizeof(int*));
@@ -708,3 +730,64 @@ int Lua::setEngineInfo(lua_State *L) {
 
 	return 0;
 }
+
+int Lua::getTechnologyInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (techName)", n);
+	string techName = (string)luaL_checkstring(L,1);
+	Technology* tech = Technologies::Instance()->GetTechnology(techName);
+	if( tech == NULL)
+		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
+	
+	// The info for a technology is a nested table:
+	// techInfo = { Weapons={...}, Models={...}, Engines={...} }
+
+	// Push the Main Table
+	int i;
+	list<Model*>::iterator iter_m;
+	list<Weapon*>::iterator iter_w;
+	list<Engine*>::iterator iter_e;
+
+	// Push the Models Table
+	list<Model*> models = tech->GetModels();
+    lua_createtable(L,models.size(),0);
+	int modeltable = lua_gettop(L);
+	for(i=1,iter_m=models.begin();iter_m!=models.end();++iter_m,++i) {
+		lua_pushstring(L, (*iter_m)->GetName().c_str() );
+        lua_rawseti(L, modeltable, i);
+	}
+
+	// Push the Weapons Table
+	list<Weapon*> weapons = tech->GetWeapons();
+    lua_newtable(L);
+	int weapontable = lua_gettop(L);
+	for(i=1,iter_w=weapons.begin();iter_w!=weapons.end();++iter_w,++i) {
+		lua_pushstring(L, (*iter_w)->GetName().c_str() );
+        lua_rawseti(L, weapontable, i);
+	}
+
+	// Push the Engines Table
+	list<Engine*> engines = tech->GetEngines();
+    lua_newtable(L);
+	int enginetable = lua_gettop(L);
+	for(i=1,iter_e=engines.begin();iter_e!=engines.end();++iter_e,++i) {
+		lua_pushstring(L, (*iter_e)->GetName().c_str() );
+        lua_rawseti(L, enginetable, i);
+	}
+
+	return 3;
+}
+
+int Lua::setTechnologyInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	cerr<<"Error Not Implemented!"<<endl;
+
+	return 0;
+}
+
