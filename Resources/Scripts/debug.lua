@@ -36,6 +36,7 @@ function showComponent(name,getterFunc,setterStr)
 	if infoWindows[name] ~= nil then return end
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,200,400,name,
+		UI.newPicture( 70,25,100,100,name),
 		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo(%s,'%s')",setterStr,name )),
 		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	local theTexts = infoTable(theInfo,theWin)
@@ -47,7 +48,7 @@ end
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
 function infoTable(info,win)
-	y1,y2=55,40
+	y1,y2=155,140
 	yoff=20
 	uiElements = {}
 	for title, value in pairs(info) do
@@ -114,6 +115,7 @@ function showPlanetInfo(planetID)
 	local infoTexts = infoTable(planetInfo,planetInfoWin)
 	-- TODO: Add checkboxes for different technologies
 	planetInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setPlanetInfo,'"..planetName.."')" ))
+	planetInfoWin:add(UI.newPicture( 70,25,100,100,planetName))
 	planetInfoWin:add( UI.newButton(175,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil;",planetName,planetName)))
 	infoWindows[planetName] = {win=planetInfoWin, info=planetInfo, texts=infoTexts}
 end

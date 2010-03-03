@@ -66,7 +66,8 @@ bool Planet::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "traffic" ) {
 		traffic = (short int)atoi( value.c_str() );
 	} else PPA_MATCHES( "image" ) {
-		Image *image = new Image( value );
+		Image *image = Image::Get( value );
+		Image::Store(name,Image::Get(value));
 		SetImage( image );
 	} else PPA_MATCHES( "sphereOfInfluence" ) {
 		sphereOfInfluence = atoi( value.c_str() );
