@@ -57,7 +57,8 @@ void Picture::Draw( int relx, int rely ){
 					bitmap->GetWidth(), bitmap->GetHeight(),
 					1.0,1.0,1.0,0.1 );
 	*/
-	bitmap->DrawFit( GetX()+relx, GetY()+rely, w, h, static_cast<float>(rotation));
+	if(bitmap!=NULL)
+		bitmap->DrawFit( GetX()+relx, GetY()+rely, w, h, static_cast<float>(rotation));
 }
 
 void Picture::Set( Image *img ){

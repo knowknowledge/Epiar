@@ -49,8 +49,13 @@ Image* Image::Get( string filename ) {
 	Image* value;
 	value = (Image*)Resource::Get(filename);
 	if( value == NULL ) {
-		value = new Image(filename);
-		Resource::Store(filename,(Resource*)value);
+		value = new Image();
+		if(value->Load(filename)){
+			Resource::Store(filename,(Resource*)value);
+		} else {
+			delete value;
+			return NULL;
+		}
 	}
 	return value;
 }
