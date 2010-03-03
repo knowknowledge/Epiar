@@ -3,55 +3,15 @@
 -- Keyboard States:
 KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
 -- SDL Key Translations
-Key = {}
-Key["backspace"] =8;
-Key["tab"] =9;
-Key["clear"] =12;
-Key["return"] =13;
-Key["pause"] =19;
-Key["escape"] =27;
-Key["space"] =32;
-
-Key["up"] =273;
-Key["down"] =274;
-Key["right"] =275;
-Key["left"] =276;
-Key["insert"] =277;
-Key["home"] =278;
-Key["end"] =279;
-Key["pageup"] =280;
-Key["pagedown"] =281;
-
--- Should we support the function keys?
---Key["f1"] =282;
---Key["f2"] =283;
---Key["f3"] =284;
---Key["f4"] =285;
---Key["f5"] =286;
---Key["f6"] =287;
---Key["f7"] =288;
---Key["f8"] =289;
---Key["f9"] =290;
---Key["f10"] =291;
---Key["f11"] =292;
---Key["f12"] =293;
---Key["f13"] =294;
---Key["f14"] =295;
---Key["f15"] =296;
-
-Key["numlock"] =300;
-Key["capslock"] =301;
-Key["scrolllock"] =302;
-Key["rshift"] =303;
-Key["lshift"] =304;
-Key["rctrl"] =305;
-Key["lctrl"] =306;
-Key["ralt"] =307;
-Key["lalt"] =308;
-Key["rmeta"] =309;
-Key["lmeta"] =310;
-Key["lsuper"] =311;
-Key["rsuper"] =312;
+Key = {
+	backspace=8, tab=9, clear=12, pause=19, escape=27, space=32,
+	up=273, down=274, right=275, left=276, insert=277, home=278, pageup=280, pagedown=281,
+	-- Should we support the function keys?
+	f1=282, f2=283, f3=284, f4=285, f5=286, f6=287, f7=288, f8=289, f9=290, f10=291, f11=292, f12=293, f13=294, f14=295, f15=296,
+	numlock=300, capslock=301, scrolllock=302, rshift=303, lshift=304, rctrl=305, lctrl=306, ralt=307, lalt=308, rmeta=309, lmeta=310, lsuper=311, rsuper=312,
+	-- Special Lua keywords
+	["return"]=13, ["end"]=279
+}
 
 function sdlkey(k)
 	if Key[k] then
@@ -199,111 +159,6 @@ function landOnPlanet(id)
 	landingWin:add(UI.newButton( 40,80,100,30,"Armory",string.format("armory(%d)",id) ))
 	landingWin:add(UI.newButton( 40,120,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
-end
-
-infoWindows = {}
-function infoTable(info,win)
-	y1,y2=55,40
-	yoff=20
-	uiElements = {}
-	for title, value in pairs(info) do
-		-- Truncate decimal numbers to only 2 digits
-		if type(value)=="number" and math.floor(value) ~= value then
-			value = string.format("%.2f",value)
-		end
-		win:add(UI.newLabel( 10, y1, title))
-		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
-		win:add(uiElements[title])
-		y1,y2=y1+yoff,y2+yoff
-	end
-	return uiElements
-end
-
-function infoTableCollect(info,uiElements)
-	for title, value in pairs(info) do
-		if uiElements[title]~=nil then
-			info[title] = uiElements[title]:GetText()
-		end
-	end
-end
-
-function showInfo()
-	currentTarget = HUD.getTarget()
-	sprite = Epiar.getSprite(currentTarget)
-	spritetype = sprite:GetType()
-	if spritetype == 1 then -- planet
-		showPlanetInfo()
-	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
-		showModelInfo(sprite)
-	else
-		io.write(string.format("Cannot show info for sprite of type [%d]\n",spritetype))
-	end
-end
-
-function saveInfo(saveFunc,name)
-	if infoWindows[name] == nil then return end
-	local info = infoWindows[name].info
-	local texts = infoWindows[name].texts
-	local win = infoWindows[name].win
-	infoTableCollect(info, texts)
-	saveFunc(info);
-	win:close();
-	win=nil
-	infoWindows[name]=nil
-	print("Saved "..name)
-end
-
-function showPlanetInfo()
-	currentTarget = HUD.getTarget()
-	if SHIPS[currentTarget] ~= nil then return end
-	planet = Epiar.getSprite(currentTarget)
-	planetName = planet:Name()
-	if infoWindows[planetName]~= nil then return end
-	
-	local planetInfo = Epiar.getPlanetInfo( currentTarget )
-	local planetInfoWin = UI.newWindow( 50,100,200,400, "Planet Info: "..planetName)
-	local infoTexts = infoTable(planetInfo,planetInfoWin)
-	planetInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setPlanetInfo,'"..planetName.."')" ))
-	infoWindows[planetName] = {win=planetInfoWin, info=planetInfo, texts=infoTexts}
-end
-
-function showModelInfo(ship)
-	modelName = ship:GetModelName()
-	if infoWindows[modelName] ~= nil then return end
-	
-	modelInfo = Epiar.getModelInfo( modelName )
-	modelInfoWin = UI.newWindow( 50,100,200,400, "Model Info: "..modelName)
-	infoTexts = infoTable(modelInfo,modelInfoWin)
-	infoWindows[modelName] = {win=modelInfoWin, info=modelInfo, texts=infoTexts}
-
-	weaponsAndAmmo = ship:GetWeapons()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		modelInfoWin:add(UI.newLabel( 10, y1, weapon))
-		modelInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
-		modelInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
-		y1,y2=y1+yoff,y2+yoff
-	end
-	
-	modelInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setModelInfo,'"..modelName.."')" ))
-end
-
-function showWeaponInfo(weaponName)
-	if infoWindows[weaponName] ~= nil then return end
-
-	weaponInfo = Epiar.getWeaponInfo( weaponName )
-	weaponInfoWin = UI.newWindow( 50,100,200,400, "Weapon Info: "..weaponName)
-	local infoTexts = infoTable(weaponInfo,weaponInfoWin)
-	weaponInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveInfo(Epiar.setWeaponInfo,'"..weaponName.."')" ))
-	infoWindows[weaponName] = {win=weaponInfoWin, info=weaponInfo, texts=infoTexts}
-end
-
-function showEngineInfo(engineName)
-	if infoWindows[engineName] then return end
-	engineInfo = Epiar.getEngineInfo( engineName )
-	engineInfoWin = UI.newWindow( 50,100,200,400, "Engine Info: "..engineName)
-	local infoTexts = infoTable(engineInfo,engineInfoWin)
-	engineInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveInfo(Epiar.setEngineInfo,'"..enginName.."')" ))
-	infoWindows[weaponName] = {win=engineInfoWin, info=engineInfo, texts=infoTexts}
 end
 
 function createWindows()
