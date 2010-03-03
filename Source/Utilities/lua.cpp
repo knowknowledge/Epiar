@@ -624,15 +624,11 @@ int Lua::setPlanetInfo(lua_State *L) {
 	int militia = getIntField(1,"Militia");
 	int landable = getIntField(1,"Landable");
 
-	printf(
-		"NAME:     %s\n"
-		"Alliance: %s\n"
-		"Traffic:  %d\n"
-		"Militia:  %d\n"
-		"Landable: %d\n"
-		,name.c_str(),alliance.c_str(),traffic,militia,landable);
+	Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
+	if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
+	*oldPlanet = Planet(name,alliance,(bool)landable,traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
-	return 0; // TODO
+	return 0;
 }
 
 int Lua::getWeaponInfo(lua_State *L) {
@@ -687,6 +683,9 @@ int Lua::getEngineInfo(lua_State *L) {
     lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
 	setField("Force", engine->GetForceOutput());
+	setField("Animation", engine->GetFlareAnimation().c_str());
+	setField("MSRP", engine->GetMSRP());
+	setField("Fold Drive", engine->GetFoldDrive());
 	return 1;
 }
 
@@ -699,11 +698,13 @@ int Lua::setEngineInfo(lua_State *L) {
 
 	string name = getStringField(1,"Name");
 	int force = getIntField(1,"Force");
+	string flare = getStringField(1,"Animation");
+	int msrp = getIntField(1,"MSRP");
+	int foldDrive = getIntField(1,"Fold Drive");
 
-	printf(
-		"NAME:     %s\n"
-		"Force:  %d\n"
-		,name.c_str(),force);
+	Engine* oldEngine = Engines::Instance()->GetEngine(name);
+	if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
+	*oldEngine = Engine(name,oldEngine->thrustsound,force,msrp,foldDrive,flare);
 
-	return 0; // TODO
+	return 0;
 }

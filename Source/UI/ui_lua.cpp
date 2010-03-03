@@ -256,7 +256,6 @@ int UI_Lua::add(lua_State *L){
 		Widget** ptrOuter = (Widget**)lua_touserdata(L,1);
 		for(int i=2; i<=n; i++){
 			Widget** ptrInner = (Widget**)lua_touserdata(L,i);
-			cout<<"Adding Widget '"<<(*ptrInner)->GetName()<<"' to "<<(*ptrOuter)->GetName()<<endl;
 			(*ptrOuter)->AddChild(*ptrInner);
 		}
 	} else {
