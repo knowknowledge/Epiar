@@ -648,7 +648,7 @@ int Lua::setPlanetInfo(lua_State *L) {
 
 	Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 	if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-	*oldPlanet = Planet(name,alliance,(bool)landable,traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
+	*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
 	return 0;
 }
@@ -726,7 +726,7 @@ int Lua::setEngineInfo(lua_State *L) {
 
 	Engine* oldEngine = Engines::Instance()->GetEngine(name);
 	if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-	*oldEngine = Engine(name,oldEngine->thrustsound,force,msrp,foldDrive,flare);
+	*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
 
 	return 0;
 }

@@ -6,10 +6,10 @@
  * \details
  */
 
+#include "includes.h"
 #include "Utilities/log.h"
 #include "Utilities/file.h"
 #include "Utilities/components.h"
-#include "includes.h"
 
 list<string>* Components::GetNames() {
 	return new list<string>(names);

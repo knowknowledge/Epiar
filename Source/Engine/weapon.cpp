@@ -45,6 +45,7 @@ Weapon& Weapon::operator=(const Weapon& other) {
 	fireDelay = other.fireDelay;
 	lifetime = other.lifetime;
 	sound = other.sound;
+	return *this;
 }
 
 Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound) :
