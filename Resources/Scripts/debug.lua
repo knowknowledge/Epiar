@@ -39,7 +39,7 @@ function showComponent(kind,name,getterFunc)
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,200,400,name,
 		UI.newPicture( 20,25,160,100,name),
-		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo('%s','%s')",kind,name )),
+		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo('%s')",name )),
 		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	local theTexts = infoTable(theInfo,theWin)
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theTexts}
@@ -80,7 +80,7 @@ function showInfo()
 	end
 end
 
-function saveInfo(saveFunc,name)
+function saveInfo(name)
 	if infoWindows[name] == nil then return end
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
@@ -109,6 +109,29 @@ function technologyViewer()
 	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
 end
 
+function saveTech(name)
+	if infoWindows[name] == nil then return end
+	local win = infoWindows[name].win
+	local boxes = infoWindows[name].boxes
+	local models,weapons,engines={},{},{}
+	-- Gather the chosen techs into the correct lists
+	for techGroup,boxset in pairs(boxes) do
+		for tech,box in pairs(boxset) do
+			if box:IsChecked() then
+				if     techGroup=="Models"  then table.insert(models,tech)
+				elseif techGroup=="Weapons" then table.insert(weapons,tech)
+				elseif techGroup=="Engines" then table.insert(engines,tech)
+				end
+			end
+		end
+	end
+	-- Save these lists
+	Epiar.setInfo('Technology',name,models,weapons,engines)
+	win:close()
+	win=nil
+	infoWindows[name]=nil
+end
+
 function showTechInfo(name)
 	if infoWindows[name]~= nil then return end
 	local allmodels = Epiar.models()
@@ -118,28 +141,29 @@ function showTechInfo(name)
 	local height = 50 + math.max(#allweapons,#allmodels,#allengines)*20
 	local theWin = UI.newWindow(150,100,600,height,name)
 	local knownTechs = {}
-	local checkedTechs = {}
+	checkedTechs = {}
 	for i,t in ipairs({allmodels,allweapons,allengines}) do
 		for j,s in ipairs(t) do knownTechs[s]=0 end
 	end
 	for i,t in ipairs({models,weapons,engines}) do
 		for j,s in ipairs(t) do knownTechs[s]=1 end
 	end
-	function showTable(techName,techList,x)
-		theWin:add(UI.newLabel(x,35,techName))
+	function showTable(techGroup,techList,x)
+		theWin:add(UI.newLabel(x,35,techGroup))
+		checkedTechs[techGroup]={}
 		for i,s in ipairs(techList) do
-			--print(string.format("%s %d: %s",techName,i,s))
-			checkedTechs[s] = UI.newCheckbox( x,30+i*20,knownTechs[s],s)
-			theWin:add(checkedTechs[s])
+			checkedTechs[techGroup][s] = UI.newCheckbox( x,30+i*20,knownTechs[s],s)
+			theWin:add(checkedTechs[techGroup][s])
+			--print(string.format("%s %d: %s %s",techGroup,i,s,(checkedTechs[techGroup][s]:IsChecked() and "YES" or "NO")))
 			--TODO: Add tiny button to view/edit this technology
 		end
 	end
 	showTable("Models",allmodels,50)
 	showTable("Weapons",allweapons,200)
 	showTable("Engines",allengines,350)
-	infoWindows[name] = {win=theWin,boxes=checkedTechs}
+	infoWindows[name] = {kind='Technology',win=theWin,boxes=checkedTechs}
 	theWin:add( UI.newButton(575,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
-	theWin:add(UI.newButton( 480,height-40,100,30,"Can't Save", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil;HUD.newAlert('Cannot Save Technologies yet...')",name,name) ))
+	theWin:add(UI.newButton( 480,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))
 end
 
 function showShipInfo(ship)

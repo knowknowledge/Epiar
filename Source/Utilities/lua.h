@@ -80,6 +80,7 @@ class Lua {
 		static int getIntField(int index, const char* name);
 		static float getNumField(int index, const char* name);
 		static string getStringField(int index, const char* name);
+		static list<string> getStringListField(int index);
 		static void stackDump(lua_State *L);
 
 	private:

@@ -14,6 +14,25 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 
+Technology::Technology(){}
+
+Technology& Technology::operator= (const Technology& other)
+{
+	name = other.name;
+	models = other.models;
+	engines = other.engines;
+	weapons = other.weapons;
+	return *this;
+}
+
+Technology::Technology( string _name, list<Model*> _models, list<Engine*>_engines, list<Weapon*>_weapons) :
+	models (_models ),
+	engines(_engines),
+	weapons(_weapons)
+{
+	SetName(_name);
+}
+
 bool Technology::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;

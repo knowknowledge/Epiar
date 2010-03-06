@@ -485,6 +485,23 @@ string Lua::getStringField(int index, const char* name) {
 	return val;
 }
 
+list<string> Lua::getStringListField(int index) {
+	list<string> results;
+
+	// Go to the nil element of the array
+	lua_pushnil(L);
+	// While there are elements in the array
+	// push the "next" one to the top of the stack
+	while(lua_next(L, index)) {
+		string val =  lua_tostring(L, -1);
+		results.push_back(val);
+		// Pop off this value
+		lua_pop(L, 1);
+	}
+	return results;
+}
+
+
 //can be found here  http://www.lua.org/pil/24.2.3.html
 void Lua::stackDump (lua_State *L) {
   int i;
@@ -494,19 +511,19 @@ void Lua::stackDump (lua_State *L) {
 	switch (t) {
 
 	  case LUA_TSTRING:  /* strings */
-		printf("`%s'", lua_tostring(L, i));
+		printf("[%d]`%s'", i,lua_tostring(L, i));
 		break;
 
 	  case LUA_TBOOLEAN:  /* booleans */
-		printf(lua_toboolean(L, i) ? "true" : "false");
+		printf("[%d]%s",i,lua_toboolean(L, i) ? "true" : "false");
 		break;
 
 	  case LUA_TNUMBER:  /* numbers */
-		printf("%g", lua_tonumber(L, i));
+		printf("[%d]%g",i, lua_tonumber(L, i));
 		break;
 
 	  default:  /* other values */
-		printf("%s", lua_typename(L, t));
+		printf("[%d]%s",i, lua_typename(L, t));
 		break;
 
 	}
@@ -725,7 +742,6 @@ int Lua::getTechnologyInfo(lua_State *L) {
 		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
 	
 	// The info for a technology is a nested table:
-	// techInfo = { Weapons={...}, Models={...}, Engines={...} }
 
 	// Push the Main Table
 	int i;
@@ -765,7 +781,7 @@ int Lua::getTechnologyInfo(lua_State *L) {
 
 int Lua::setInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if( n!=2 )
+	if( !(n==2||n==5)  )
 		return luaL_error(L, "Got %d arguments expected 1 (infoType,infoTable)", n);
 	string kind = luaL_checkstring(L,1);
 
@@ -816,8 +832,36 @@ int Lua::setInfo(lua_State *L) {
 		*oldPlanet = Planet(name,alliance,(bool)landable,traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
 	} else if(kind == "Technology"){
-		return luaL_error(L, "Setting Technology is not implemented");
+		list<string>::iterator iter;
+		list<Model*> models;
+		list<Weapon*> weapons;
+		list<Engine*> engines;
 
+		string name = luaL_checkstring(L,2);
+
+		list<string> modelNames = getStringListField(3);
+		for(iter=modelNames.begin();iter!=modelNames.end();++iter){
+			if(Models::Instance()->GetModel(*iter))
+				models.push_back( Models::Instance()->GetModel(*iter) );
+		}
+
+		list<string> weaponNames = getStringListField(4);
+		for(iter=weaponNames.begin();iter!=weaponNames.end();++iter){
+			if(Weapons::Instance()->GetWeapon(*iter))
+				weapons.push_back( Weapons::Instance()->GetWeapon(*iter) );
+		}
+
+		list<string> engineNames = getStringListField(5);
+		for(iter=engineNames.begin();iter!=engineNames.end();++iter){
+			if(Engines::Instance()->GetEngine(*iter))
+				engines.push_back( Engines::Instance()->GetEngine(*iter) );
+		}
+
+		Technology* oldTechnology = Technologies::Instance()->GetTechnology(name);
+		if(oldTechnology==NULL) return 0; // If the name changes then the below doesn't work.
+		*oldTechnology = Technology(name,models,engines,weapons);
+
+		return 0;
 	} else if(kind == "Weapon"){
 		string name = getStringField(2,"Name");
 		int payload = getIntField(2,"Payload");
