@@ -14,6 +14,29 @@
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
 
+Alliance::Alliance() : attackSize(0),aggressiveness(0.0),currency("Credits")
+{
+	SetName("dead");
+}
+
+Alliance& Alliance::operator= (const Alliance& other){
+	name = other.name;
+    attackSize = other.attackSize;
+    aggressiveness = other.aggressiveness;
+    currency = other.currency;
+    illegalCargos = list<string>(other.illegalCargos);
+    return *this;
+}
+
+Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, list<string> _illegalCargos) :
+    attackSize(_attackSize),
+    aggressiveness(_aggressiveness),
+    currency(_currency)
+{
+    illegalCargos = list<string>(_illegalCargos);
+    SetName(_name);
+}
+
 bool Alliance::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
