@@ -50,8 +50,8 @@ end
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
 function infoTable(info,win)
-	y1,y2=155,140
-	yoff=20
+	local y1,y2=155,140
+	local yoff=20
 	uiElements = {}
 	for title, value in pairs(info) do
 		-- Truncate decimal numbers to only 2 digits
@@ -171,15 +171,27 @@ function showShipInfo(ship)
 	modelName = ship:GetModelName()
 	Epiar.focusCamera(shipID)
 	if infoWindows[shipID] ~= nil then return end
+	shipModel = ship:GetModelName()
+	shipname = string.format("%s #%d",shipModel, shipID)
+	shipInfoWin = UI.newWindow(150,100,200,400,shipname)
+	shipInfoWin:add( UI.newPicture( 20,25,160,100,shipModel))
+	y1,y2=155,140
+	yoff=20
+	-- Model
+	shipInfoWin:add(UI.newLabel( 10, y1, "Model:"))
+	shipInfoWin:add(UI.newButton( 90, y2, 100, 20, shipModel, "showComponent('Model','"..shipModel.."',Epiar.getModelInfo)"))
+	y1,y2=y1+yoff,y2+yoff
+	-- Weapons
 	weaponsAndAmmo = ship:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		shipInfoWin:add(UI.newLabel( 10, y1, weapon))
 		shipInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
-		shipInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
+		shipInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showComponent('Weapon','"..weapon.."',Epiar.getWeaponInfo)"))
 		y1,y2=y1+yoff,y2+yoff
 	end
+	-- TODO Outfit?
 	infoWindows[shipID] = {win=shipInfoWin, info={},texts={}}
-	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d]:close();infoWindows[%d]=nil",shipID,shipID) ))
+	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d].win:close();infoWindows[%d]=nil",shipID,shipID) ))
 end
 
 DX,DY = 20,20
