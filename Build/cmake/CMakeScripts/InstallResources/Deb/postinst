@@ -1,0 +1,28 @@
+#!/bin/bash
+# postinst script for Epiar
+
+# Abort if any command returns an error value
+set -e
+
+case "$1" in
+    configure)
+		# Create script to call Epiar in the bin directory
+		echo '#! /bin/bash
+			cd /usr/share/Epiar
+			./Epiar
+			' > /usr/bin/epiar
+		chmod +x /usr/bin/epiar
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        # nothing to do
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+exit 0
+

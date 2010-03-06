@@ -1,0 +1,31 @@
+# Some compile/linking flags
+if (USE_PHYSICSFS)
+	set(epiarbin_compile_def ${epiarbin_compile_def}
+		USE_PHYSICSFS)
+	set(EpiarLIBS ${EpiarLIBS}
+		${PHYSFS_LIBRARY}
+		)
+endif (USE_PHYSICSFS)
+
+if (WIN32)
+	set(epiarbin_compile_def ${epiarbin_compile_def}
+		USE_FREETYPE
+		FTGL_LIBRARY_STATIC
+		LIBXML_STATIC
+		)
+	if (MSVC)
+		set(epiarbin_compile_def ${epiarbin_compile_def}
+			_CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
+		if (COMPILE_USE_PRECOMPILED_HEADERS)
+			set(epiarbin_compile_flag "/Ycincludes.h")
+		endif (COMPILE_USE_PRECOMPILED_HEADERS)
+	endif (MSVC)
+endif(WIN32)
+
+set_target_properties(EpiarBIN PROPERTIES
+	COMPILE_DEFINITIONS_DEBUG _DEBUG
+	COMPILE_DEFINITIONS "${epiarbin_compile_def}"
+	COMPILE_FLAGS "${epiarbin_compile_flag}"
+	DEBUG_POSTFIX "_debug")
+
+# vim:ft=cmake

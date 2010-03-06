@@ -40,16 +40,15 @@ function fleePoint(x,y)
 end
 
 function nearestPlanet(cur_ship,timeleft)
-	planets = Epiar.planets()
-	myx,myy = cur_ship:GetPosition()
-	if #planets then
-		x,y = planets[1]:Position()
+	planet = Epiar.nearestPlanet(cur_ship,4096)
+	if planet ~= nil then
+		myx,myy = cur_ship:GetPosition()
+		x,y = planet:Position()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)>200 then
 			cur_ship:Accelerate()
 		end
 	else
-		cur_ship:Rotate( cur_ship:directionTowards(0, 0) )
 		cur_ship:Accelerate()
 	end
 end
@@ -63,11 +62,24 @@ function stop(cur_ship,timeleft)
 	end
 end
 
-function nearestShip(cur_ship,timeleft)
-	ships= Epiar.ships()
-	if #ships then
+function landOnNearestPlanet(cur_ship,timeleft)
+	planet = Epiar.nearestPlanet(cur_ship,4096)
+	if planet ~= nil then
 		myx,myy = cur_ship:GetPosition()
-		x,y = ships[1]:GetPosition()
+		x,y = planet:Position()
+		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
+		if distfrom(myx,myy,x,y)<100 then
+			cur_ship:Remove()
+		end
+	end
+	cur_ship:Accelerate()
+end
+
+function nearestShip(cur_ship,timeleft)
+	ship = Epiar.nearestShip(cur_ship,4096)
+	if ship then
+		myx,myy = cur_ship:GetPosition()
+		x,y = ship:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)<200 then
 			cur_ship:Fire()

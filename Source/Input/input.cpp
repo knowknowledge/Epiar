@@ -90,7 +90,7 @@ bool Input::Update( void ) {
 	Hud::HandleInput( events );
 	HandleLuaCallBacks( events );
 
-	if(Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")){
+	if((Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")) && !UI::Active()){
 		Video::DisableMouse();
 	}
 

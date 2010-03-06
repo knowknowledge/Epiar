@@ -29,6 +29,8 @@ void Textbox::Initialize( int x, int y, int w, int rows, string text, string lab
 	
 	this->text = text;
 	this->label = label;
+
+	entryDisabled = false;
 	
 	hasKeyboardFocus = false;
 	
@@ -56,6 +58,14 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 	Initialize( x, y, w, rows, text, label );
 }
 
+void Textbox::DisableEntry( void ) {
+	entryDisabled = true;
+}
+
+void Textbox::EnableEntry( void ) {
+	entryDisabled = false;
+}
+
 Textbox::~Textbox() {
 	Log::Message( "Deleting Textbox: '%s'.", (char *)text.c_str() );
 }
@@ -77,12 +87,14 @@ void Textbox::Draw( int relx, int rely ) {
 	                                                              // be updated later to actually reflect font size
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
-	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) ) {
+	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) && !entryDisabled ) {
 		Video::DrawRect( x + 6 + static_cast<int>(bbox.w), y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
 }
 
 void Textbox::MouseDown( int wx, int wy ) {
+	if(entryDisabled) return;
+
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)text.c_str() );
 		clickCallBack();
@@ -110,6 +122,8 @@ bool Textbox::KeyPress( SDLKey key ) {
 	string keyname = SDL_GetKeyName( key );
 	stringstream key_ss;
 	string key_s;
+
+	if(entryDisabled) return false;
 
 	switch(key){
 	// Ignore Modifiers

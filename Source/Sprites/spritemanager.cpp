@@ -236,7 +236,9 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r, int type) {
 Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r, int type) {
 	float tmpdist;
 	Sprite* closest=NULL;
-	Sprite* possible;
+	Sprite* possible=NULL;
+	if(obj==NULL)
+		return (Sprite*)NULL;
 	list<QuadTree*> nearbyQuadrants = GetQuadrantsNear(obj->GetWorldPosition(),r);
 	list<QuadTree*>::iterator it;
 	for(it = nearbyQuadrants.begin(); it != nearbyQuadrants.end(); ++it) {

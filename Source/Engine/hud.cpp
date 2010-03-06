@@ -82,6 +82,8 @@ void StatusBar::Draw(int x, int y) {
 	BorderMiddle->DrawTiled(x,y,width, BorderMiddle->GetHeight());
 	BorderRight->Draw(x+width,y);
 
+	BitType->SetColor(1.f,1.f,1.f,1.f);
+
 	// Draw the Title
 	if( title != "") {
 		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
@@ -186,6 +188,7 @@ void Hud::DrawMessages() {
 	Uint32 age;
 	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
 	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
+	BitType->SetColor(1.f,1.f,1.f,1.f);
 	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;

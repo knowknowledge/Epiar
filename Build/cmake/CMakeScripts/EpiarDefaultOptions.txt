@@ -1,0 +1,62 @@
+# compiler options
+option(EXTRA_WARNINGS "use extra warnings during compilation?" false)
+if (NOT EXTRA_WARNINGS_PREV)
+	set(EXTRA_WARNINGS_PREV OFF CACHE INTERNAL "")
+endif(NOT EXTRA_WARNINGS_PREV)
+if (NOT "${EXTRA_WARNINGS}" STREQUAL "${EXTRA_WARNINGS_PREV}")
+	message(STATUS "Extra Warnings: Switched from ${EXTRA_WARNINGS_PREV} to ${EXTRA_WARNINGS}")
+	set(DEFAULT_EPIAR_OPTIONS TRUE CACHE BOOL "" FORCE)
+	set(EXTRA_WARNINGS_PREV ${EXTRA_WARNINGS} CACHE INTERNAL "" FORCE)
+endif (NOT "${EXTRA_WARNINGS}" STREQUAL "${EXTRA_WARNINGS_PREV}")
+
+# set first time options
+option(DEFAULT_EPIAR_OPTIONS "reset epiar options to default?" true)
+# default options on first run
+if(DEFAULT_EPIAR_OPTIONS)
+	message(STATUS "Resetting compiler flags...")
+	if(MSVC)
+		set(CMAKE_CXX_FLAGS "/dwin32 /d_windows /ehsc /gr")
+		set(CMAKE_C_FLAGS "/dwin32 /d_windows /ehsc /gr")
+		if(EXTRA_WARNINGS)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w4")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w4")
+		else(EXTRA_WARNINGS)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w3")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w3")
+		endif(EXTRA_WARNINGS)
+	elseif(CMAKE_COMPILER_IS_GNUCC)
+		set(CMAKE_CXX_FLAGS "-Wall")
+		set(CMAKE_C_FLAGS "-Wall")
+		if(EXTRA_WARNINGS)
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra")
+		endif(EXTRA_WARNINGS)
+	endif(MSVC)
+	set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} CACHE STRING
+		"CXX flags used by the compiler during all build types" FORCE)
+	set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} CACHE STRING
+		"C flags used by the compiler during all build types" FORCE)
+	set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif(DEFAULT_EPIAR_OPTIONS)
+
+# Reset the flag
+set(DEFAULT_EPIAR_OPTIONS FALSE CACHE BOOL "Reset Epiar Options to default?" FORCE)
+
+# Epiar options
+option(COMPILE_USE_PRECOMPILED_HEADERS "use precompiled headers?" true)
+option(USE_PHYSICSFS "Use physfs filesystem?")
+if (WIN32)
+	option(USE_INTERNAL_LUA "Use Lua source in Epiar?")
+else (WIN32)
+	option(USE_INTERNAL_LUA "Use Lua source in Epiar?" true)
+endif (WIN32)
+
+if (NOT USE_INTERNAL_LUA)
+	if (WIN32)
+		option(USE_LUAJIT "Use LuaJIT?" true)
+	else (WIN32)
+		option(USE_LUAJIT "Use LuaJIT?")
+	endif (WIN32)
+endif (NOT USE_INTERNAL_LUA)
+
+# vim:ft=cmake

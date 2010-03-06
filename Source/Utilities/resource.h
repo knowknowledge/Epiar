@@ -7,7 +7,6 @@
  * Notes         :
  */
 
-#include <map>
 #include "includes.h"
 
 #ifndef __H_RESOURCE_CLASS

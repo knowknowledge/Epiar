@@ -12,7 +12,7 @@
 		<traffic>3</traffic>
 		<image>Resources/Graphics/planet1.png</image>
 		<militia>20</militia>
-		<sphereOfInfluence>3000</sphereOfInfluence>
+		<sphereOfInfluence>1000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 	</planet>
 	<planet>
@@ -24,7 +24,7 @@
 		<traffic>6</traffic>
 		<image>Resources/Graphics/planet2.png</image>
 		<militia>5</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>3000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 	</planet>
 	<planet>
@@ -36,7 +36,7 @@
 		<traffic>6</traffic>
 		<image>Resources/Graphics/planet6.png</image>
 		<militia>7</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>1000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Medium-Scale Commerce</technology>
 	</planet>
@@ -49,7 +49,7 @@
 		<traffic>2</traffic>
 		<image>Resources/Graphics/planet3.png</image>
 		<militia>1</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>500</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Medium-Scale Commerce</technology>
@@ -63,7 +63,7 @@
 		<traffic>3</traffic>
 		<image>Resources/Graphics/planet4.png</image>
 		<militia>1</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>1000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Medium-Scale Commerce</technology>
 		<technology>Terran Defence</technology>
@@ -77,7 +77,7 @@
 		<traffic>3</traffic>
 		<image>Resources/Graphics/planet5.png</image>
 		<militia>1</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>1000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Medium-Scale Commerce</technology>
 		<technology>Terran War Fleet</technology>
@@ -91,7 +91,7 @@
 		<traffic>3</traffic>
 		<image>Resources/Graphics/planet5.png</image>
 		<militia>1</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>6000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Terran Medium-Scale Commerce</technology>
 		<technology>Terran Defence</technology>
@@ -105,7 +105,7 @@
 		<traffic>3</traffic>
 		<image>Resources/Graphics/planet7.png</image>
 		<militia>1</militia>
-		<sphereOfInfluence>0</sphereOfInfluence>
+		<sphereOfInfluence>1000</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 		<technology>Solaran Outpost</technology>
 	</planet>
@@ -129,9 +129,9 @@
 		<x>620</x>
 		<y>390</y>
 		<landable>1</landable>
-		<traffic>2</traffic>
+		<traffic>0</traffic>
 		<image>Resources/Graphics/station1.png</image>
-		<militia>1</militia>
+		<militia>0</militia>
 		<sphereOfInfluence>0</sphereOfInfluence>
 		<technology>Terran Small-Scale Commerce</technology>
 	</planet>

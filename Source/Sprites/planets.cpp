@@ -10,14 +10,15 @@
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
+#include "Utilities/components.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Sprites/spritemanager.h"
 
-cPlanet::cPlanet(){}
+Planet::Planet(){}
 
-cPlanet::cPlanet(const cPlanet& other){
+Planet& Planet::operator=(const Planet& other) {
 	name = other.name;
 	alliance = other.alliance;
 	landable = other.landable;
@@ -26,10 +27,10 @@ cPlanet::cPlanet(const cPlanet& other){
 	sphereOfInfluence = other.sphereOfInfluence;
 	militia = other.militia;
 	technologies = other.technologies;
+	return *this;
 }
 
-cPlanet::cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):
-	name(_name),
+Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
@@ -37,9 +38,53 @@ cPlanet::cPlanet( string _name, string _alliance, bool _landable, int _traffic, 
 	sphereOfInfluence(_sphereOfInfluence),
 	militia(_militia),
 	technologies(_technologies)
-{}
+{
+	SetName(_name);
+}
 
-list<Model*> cPlanet::GetModels() {
+Planet::~Planet() {
+	Image *image = GetImage();
+	if( image )
+		delete image; // planets delete their own images. not all Sprites do
+}
+
+bool Planet::parserCB( string sectionName, string subName, string value ) {
+	PPA_MATCHES( "name" ) {
+		name = value;
+	} else PPA_MATCHES( "alliance" ) {
+		alliance = value;
+	} else PPA_MATCHES( "x" ) {
+		Coordinate pos = GetWorldPosition();
+		pos.SetX( (double)atof( value.c_str() ) );
+		SetWorldPosition( pos );
+	} else PPA_MATCHES( "y" ) {
+		Coordinate pos = GetWorldPosition();
+		pos.SetY( (double)atof( value.c_str() ) );
+		SetWorldPosition( pos );
+	} else PPA_MATCHES( "landable" ) {
+		landable = (atoi( value.c_str() ) !=0);
+	} else PPA_MATCHES( "traffic" ) {
+		traffic = (short int)atoi( value.c_str() );
+	} else PPA_MATCHES( "image" ) {
+		Image *image = Image::Get( value );
+		Image::Store(name,Image::Get(value));
+		SetImage( image );
+	} else PPA_MATCHES( "sphereOfInfluence" ) {
+		sphereOfInfluence = atoi( value.c_str() );
+	} else PPA_MATCHES( "technology" ) {
+		Technology *tech = Technologies::Instance()->GetTechnology( value );
+		technologies.push_back(tech);
+		technologies.unique();
+	}
+	SetRadarColor(Color::Get(48, 160, 255));
+	return true;
+}
+
+void Planet::_dbg_PrintInfo( void ) {
+	//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
+}
+
+list<Model*> Planet::GetModels() {
 	list<Model*> models;
 	list<Technology*>::iterator techiter;
 	list<Model*>::iterator listiter;
@@ -53,7 +98,7 @@ list<Model*> cPlanet::GetModels() {
 	return models;
 }
 
-list<Engine*> cPlanet::GetEngines() {
+list<Engine*> Planet::GetEngines() {
 	list<Engine*> engines;
 	list<Technology*>::iterator techiter;
 	list<Engine*>::iterator listiter;
@@ -67,7 +112,7 @@ list<Engine*> cPlanet::GetEngines() {
 	return engines;
 }
 
-list<Weapon*> cPlanet::GetWeapons() {
+list<Weapon*> Planet::GetWeapons() {
 	list<Weapon*> weapons;
 	list<Technology*>::iterator techiter;
 	list<Weapon*>::iterator listiter;
@@ -81,6 +126,33 @@ list<Weapon*> cPlanet::GetWeapons() {
 	return weapons;
 }
 
+
+xmlNodePtr Planet::ToXMLNode(string componentName) {
+	char buff[256];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST this->GetAlliance().c_str() );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
+	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
+	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST (this->GetLandable()?"1":"0") );
+	snprintf(buff, sizeof(buff), "%d", this->GetTraffic() );
+	xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetMilitiaSize() );
+	xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetInfluence() );
+	xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
+	list<Technology*> techs = this->GetTechnologies();
+	for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
+		xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
+	}
+
+	return section;
+}
+
 /**\class Planets
  * \brief Planets. */
 
@@ -89,64 +161,10 @@ Planets *Planets::pInstance = 0; // initialize pointer
 Planets *Planets::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Planets; // create the sold instance
+		pInstance->rootName = "planets";
+		pInstance->componentName = "planet";
 	}
 	return( pInstance );
-}
-
-bool Planets::Load( string filename ) {
-	Parser<cPlanet> parser;
-	
-	SpriteManager* sprites = SpriteManager::Instance();
-	planets = parser.Parse( filename, "planets", "planet" );
-
-	for( list<cPlanet *>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		(*i)->_dbg_PrintInfo();
-		sprites->Add( (*i) );
-	}
-
-	return true;
-}
-
-bool Planets::Save( string filename )
-{
-    xmlDocPtr doc = NULL;       /* document pointer */
-    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
-    char buff[256];
-
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root_node = xmlNewNode(NULL, BAD_CAST "planets");
-    xmlDocSetRootElement(doc, root_node);
-
-	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
-
-	for( list<cPlanet*>::iterator i = planets.begin(); i != planets.end(); ++i ) {
-		section = xmlNewNode(NULL, BAD_CAST "planet");
-		xmlAddChild(root_node, section);
-
-		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
-		xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST (*i)->GetAlliance().c_str() );
-        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetX() );
-		xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (int)(*i)->GetWorldPosition().GetY() );
-		xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
-		xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST ((*i)->GetLandable()?"1":"0") );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetTraffic() );
-		xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
-		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetMilitiaSize() );
-		xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetInfluence() );
-		xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
-		list<Technology*> techs = (*i)->GetTechnologies();
-		for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
-			xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
-		}
-	}
-
-	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
-	return true;
 }
 
 void Planets_Lua::RegisterPlanets(lua_State *L){
@@ -164,6 +182,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"Alliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
+		{"Influence", &Planets_Lua::GetInfluence},
 		{"Landable", &Planets_Lua::GetLandable},
 		{"GetModels", &Planets_Lua::GetModels},
 		{"GetEngines", &Planets_Lua::GetEngines},
@@ -181,27 +200,35 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 }
 
 
-cPlanet **Planets_Lua::pushPlanet(lua_State *L){
-	cPlanet **s = (cPlanet **)lua_newuserdata(L, sizeof(cPlanet*));
-	*s = new cPlanet();
+/*
+Planet **Planets_Lua::pushPlanet(lua_State *L){
+	Planet **s = (Planet **)lua_newuserdata(L, sizeof(Planet*));
+	*s = new Planet();
 	luaL_getmetatable(L, EPIAR_PLANET);
 	lua_setmetatable(L, -2);
 	return s;
 }
+*/
 
-cPlanet **Planets_Lua::checkPlanet(lua_State *L, int index){
-	cPlanet **p;
-	luaL_checktype(L, index, LUA_TUSERDATA);
-	p = (cPlanet**)luaL_checkudata(L, index, EPIAR_PLANET);
-	if (p == NULL) luaL_typerror(L, index, EPIAR_PLANET);
-	return p;
+Planet *Planets_Lua::checkPlanet(lua_State *L, int index){
+	int *idptr;
+	idptr = (int*)luaL_checkudata(L, index, EPIAR_PLANET);
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_PLANET' expected");
+
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	if ((s) == NULL) luaL_typerror(L, index, EPIAR_PLANET);
+	if (0==((s)->GetDrawOrder() & DRAW_ORDER_PLANET)){
+		luaL_typerror(L, index, EPIAR_PLANET);
+	}
+	return (Planet*)s;
 }
 
 int Planets_Lua::GetName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushstring(L, (*planet)->GetName().c_str());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetName().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -211,8 +238,8 @@ int Planets_Lua::GetName(lua_State* L){
 int Planets_Lua::GetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushinteger(L, (*planet)->GetID());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushinteger(L, planet->GetID());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
@@ -222,8 +249,8 @@ int Planets_Lua::GetID(lua_State* L){
 int Planets_Lua::GetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushinteger(L, (*planet)->GetDrawOrder());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushinteger(L, planet->GetDrawOrder());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
@@ -233,9 +260,9 @@ int Planets_Lua::GetType(lua_State* L){
 int Planets_Lua::GetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetWorldPosition().GetX() );
-		lua_pushnumber(L, (*planet)->GetWorldPosition().GetY() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetWorldPosition().GetX() );
+		lua_pushnumber(L, planet->GetWorldPosition().GetY() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -245,8 +272,8 @@ int Planets_Lua::GetPosition(lua_State* L){
 int Planets_Lua::GetAlliance(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushstring(L, (*planet)->GetAlliance().c_str());
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetAlliance().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -256,8 +283,8 @@ int Planets_Lua::GetAlliance(lua_State* L){
 int Planets_Lua::GetTraffic(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetTraffic() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetTraffic() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -267,8 +294,19 @@ int Planets_Lua::GetTraffic(lua_State* L){
 int Planets_Lua::GetMilitiaSize(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushnumber(L, (*planet)->GetMilitiaSize() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetMilitiaSize() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+	}
+	return 1;
+}
+
+int Planets_Lua::GetInfluence(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetInfluence() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -278,8 +316,8 @@ int Planets_Lua::GetMilitiaSize(lua_State* L){
 int Planets_Lua::GetLandable(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		lua_pushboolean(L, (*planet)->GetLandable() );
+		Planet* planet= checkPlanet(L,1);
+		lua_pushboolean(L, planet->GetLandable() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
 	}
@@ -289,8 +327,8 @@ int Planets_Lua::GetLandable(lua_State* L){
 int Planets_Lua::GetModels(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		list<Model*> models = (*planet)->GetModels();
+		Planet* planet= checkPlanet(L,1);
+		list<Model*> models = planet->GetModels();
 		list<Model*>::iterator iter;
 		lua_createtable(L, models.size(), 0);
 		int newTable = lua_gettop(L);
@@ -308,8 +346,8 @@ int Planets_Lua::GetModels(lua_State* L){
 int Planets_Lua::GetEngines(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		list<Engine*> engines = (*planet)->GetEngines();
+		Planet* planet= checkPlanet(L,1);
+		list<Engine*> engines = planet->GetEngines();
 		list<Engine*>::iterator iter;
 		lua_createtable(L, engines.size(), 0);
 		int newTable = lua_gettop(L);
@@ -327,8 +365,8 @@ int Planets_Lua::GetEngines(lua_State* L){
 int Planets_Lua::GetWeapons(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
-		cPlanet** planet= checkPlanet(L,1);
-		list<Weapon*> weapons = (*planet)->GetWeapons();
+		Planet* planet= checkPlanet(L,1);
+		list<Weapon*> weapons = planet->GetWeapons();
 		list<Weapon*>::iterator iter;
 		lua_createtable(L, weapons.size(), 0);
 		int newTable = lua_gettop(L);

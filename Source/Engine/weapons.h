@@ -12,23 +12,19 @@
 
 //#include "Sprites/sprite.h"
 #include "Engine/weapon.h"
+#include "Utilities/components.h"
 
-class Weapons {
+class Weapons : public Components {
 public:
-	
-	~Weapons(void);
 	static Weapons *Instance();
-	bool Load( string filename );
-	bool Save( string filename );
 
-	Weapon *GetWeapon( string& weaponName );
-	list<string>* GetWeaponNames();
+	Weapon *GetWeapon( string& weaponName ) { return (Weapon*) this->Get(weaponName); }
+	Component* newComponent() { return new Weapon(); }
 protected:
 	Weapons(){};
+	Weapons( const Weapons & );
+	Weapons& operator= (const Weapons&);
 private:
-	string filename;
-	list<Weapon *> weapons;
-	
 	static Weapons *pInstance;
 };
 

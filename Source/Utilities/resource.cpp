@@ -6,7 +6,6 @@
  * \details
  */
 
-#include <map>
 #include "includes.h"
 #include "Utilities/resource.h"
 

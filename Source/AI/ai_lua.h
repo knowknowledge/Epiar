@@ -19,8 +19,8 @@ class AI_Lua{
 	public:
 		// Functions to communicate with Lua
 		static void RegisterAI(lua_State *L);
-		static AI **pushShip(lua_State *L);
-		static AI **checkShip(lua_State *L, int index);
+		//static void pushShip(lua_State *L,int id);
+		static AI *checkShip(lua_State *L, int index);
 		static int newShip(lua_State *L);
 
 		// Actions
@@ -31,6 +31,7 @@ class AI_Lua{
 		static int ShipDamage(lua_State* L);
 		static int ShipRepair(lua_State* L);
 		static int ShipExplode(lua_State* L);
+		static int ShipRemove(lua_State* L);
 		static int ShipAddWeapon(lua_State* L);
 		static int ShipChangeWeapon(lua_State* L);
 		static int ShipAddAmmo(lua_State* L);

@@ -252,12 +252,14 @@ int UI_Lua::setPicture(lua_State *L){
 
 int UI_Lua::add(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n == 2){
+	if (n >= 2){
 		Widget** ptrOuter = (Widget**)lua_touserdata(L,1);
-		Widget** ptrInner = (Widget**)lua_touserdata(L,2);
-		(*ptrOuter)->AddChild(*ptrInner);
+		for(int i=2; i<=n; i++){
+			Widget** ptrInner = (Widget**)lua_touserdata(L,i);
+			(*ptrOuter)->AddChild(*ptrInner);
+		}
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (self, widget)", n); 
+		luaL_error(L, "Got %d arguments expected 2 or more (self, widget [...])", n);
 	}
 	return 0;
 }

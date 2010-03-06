@@ -20,10 +20,18 @@
 /**\brief Constructs new font (default color white).
  */
 Font::Font() {
-	r = 1.;
-	g = 1.;
-	b = 1.;
+	// Solid White
+	r = 0.;
+	g = 0.;
+	b = 0.;
 	a = 1.;
+	
+	font = NULL;
+}
+
+Font::~Font() {
+	delete (FTTextureFont*)this->font;
+	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
 /**\brief Sets the new color and alpha value.
@@ -41,22 +49,20 @@ void Font::SetColor( float r, float g, float b, float a ) {
 /**\brief Construct new font based on file.
  * \param filename String containing file.
  */
-FreeFont::FreeFont( string filename ) {
-	font=NULL;
+Font::Font( string filename ) {
+	// Solid White
+	r = 0.;
+	g = 0.;
+	b = 0.;
+	a = 1.;
+	font = NULL;
 	SetFont( filename );
-}
-
-/**\brief Destructor, handles deleting FTGL instance.
- */
-FreeFont::~FreeFont() {
-	delete (FTTextureFont*)this->font;
-	Log::Message( "Font '%s' freed.", fontname.c_str() );
 }
 
 /**\brief Loads the font (uses FTGL Texture Fonts).
  * \param filename Path to font file.
  */
-bool FreeFont::SetFont( string filename ) {
+bool Font::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
 		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
@@ -88,7 +94,7 @@ bool FreeFont::SetFont( string filename ) {
  * \param y Y coordinate
  * \param text C style string pointer to text.
  */
-Rect FreeFont::Render( int x, int y, const char *text ) {
+Rect Font::Render( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
 
@@ -110,7 +116,7 @@ Rect FreeFont::Render( int x, int y, const char *text ) {
  * Taking the bounding box into account.
  * \sa FreeFont::Render
  */
-Rect FreeFont::RenderCentered( int x, int y, const char *text ) {
+Rect Font::RenderCentered( int x, int y, const char *text ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
 
@@ -121,3 +127,20 @@ Rect FreeFont::RenderCentered( int x, int y, const char *text ) {
 	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
 }
 
+/**\brief Returns the graphical size of text without rendering it.
+ * \details
+ * 
+ * \sa
+ */
+Rect Font::BoundingBox( const char *text ) {
+	float llx, lly, llz;
+	float urx, ury, urz;
+
+	( (FTTextureFont*)font )->BBox( text, llx, lly, llz, urx, ury, urz );
+
+	return Rect( 0., 0., -(llx - urx), lly - ury );	
+}
+
+Rect Font::BoundingBox( string text ) {
+	return BoundingBox( text.c_str() );
+}

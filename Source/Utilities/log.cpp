@@ -14,13 +14,11 @@
  * \brief Main logging facilities for the code base. */
 
 FILE *Log::fp = NULL;
-bool Log::logToFile = false;
+char *Log::timestamp = NULL;
+string Log::logFilename = "";
 
-void Log::EnableFileLogging( void ) {
+void Log::Start(){
 	time_t rawtime;
-	char logFilename[128] = {0};
-	char *timestamp = NULL;
-
 	time( &rawtime );
 
 	timestamp = ctime( &rawtime );
@@ -31,12 +29,16 @@ void Log::EnableFileLogging( void ) {
 	timestamp[ 16 ] ='_';
 
 	// generate the log's filename based on the time
-	snprintf( logFilename, sizeof(logFilename), "Epiar-Log-%s.xml", timestamp );
+	logFilename = string("Epiar-Log-") + string(timestamp) + string(".xml");
 
+	fp = NULL;
+}
+
+void Log::Open() {
 	// open the debug file
-	fp = fopen( logFilename, "wb" );
+	fp = fopen( logFilename.c_str(), "wb" );
 	if( !fp ) {
-		fprintf( stderr, "Could not open \"%s\" for debugging!", logFilename );
+		fprintf( stderr, "Could not open \"%s\" for debugging!", logFilename.c_str() );
 	} else {
 		// Write the xml header
 		fprintf(fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"	);
@@ -58,6 +60,7 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 	static char logBuffer[ 4096 ] = {0};
 	char logType[8] = {0};
 
+
 	time( &rawtime );
 
 	timestamp = ctime( &rawtime );
@@ -76,14 +79,6 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 			break;
 	}
 
-	if( fp ) {
-		fprintf(fp, "<log>\n");
-		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func, logType, timestamp );
-	}
-
-#ifdef DEBUG
-	printf( "%s (%s) - ", func, logType );
-#endif
 
 	va_start( args, message );
 
@@ -93,12 +88,24 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
-	if( fp ) fprintf( fp, "%s\n", logBuffer );
-#ifdef DEBUG
-	printf( "%s\n", logBuffer );
-#endif
+	// Print the message:
+	if( OPTION(int, "options/log/out") == 1 ) {
+		printf( "%s (%s) - ", func, logType );
+		printf( "%s\n", logBuffer );
+	}
+	
+	// Save the message to a file
+	if( OPTION(int, "options/log/xml") == 1 ) {
 
-	if( fp ) fprintf( fp, "</message>\n</log>\n" );
+		if( fp==NULL ){
+			Log::Open();
+		}
+
+		fprintf(fp, "<log>\n");
+		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func, logType, timestamp );
+		fprintf(fp, "%s", logBuffer );
+		fprintf(fp, "</message>\n</log>\n" );
+	}
 
 	return;
 }

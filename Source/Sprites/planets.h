@@ -25,77 +25,40 @@ extern "C" {
 #include "includes.h"
 #include "Sprites/sprite.h"
 #include "Utilities/coordinate.h"
+#include "Utilities/components.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
 
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
-
 // Abstraction of a single planet
-class cPlanet : public Sprite {
+class Planet : public Sprite, public Component {
 	public:
-	cPlanet();
-	cPlanet(const cPlanet& other);
-	cPlanet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
-		bool parserCB( string sectionName, string subName, string value ) {
-			PPA_MATCHES( "name" ) {
-				name = value;
-			} else PPA_MATCHES( "alliance" ) {
-				alliance = value;
-			} else PPA_MATCHES( "x" ) {
-				Coordinate pos = GetWorldPosition();
-				pos.SetX( (double)atof( value.c_str() ) );
-				SetWorldPosition( pos );
-			} else PPA_MATCHES( "y" ) {
-				Coordinate pos = GetWorldPosition();
-				pos.SetY( (double)atof( value.c_str() ) );
-				SetWorldPosition( pos );
-			} else PPA_MATCHES( "landable" ) {
-				landable = (atoi( value.c_str() ) !=0);
-			} else PPA_MATCHES( "traffic" ) {
-				traffic = (short int)atoi( value.c_str() );
-			} else PPA_MATCHES( "image" ) {
-				Image *image = new Image( value );
-				SetImage( image );
-			} else PPA_MATCHES( "sphereOfInfluence" ) {
-				sphereOfInfluence = atoi( value.c_str() );
-			} else PPA_MATCHES( "technology" ) {
-				Technology *tech = Technologies::Instance()->GetTechnology( value );
-				technologies.push_back(tech);
-				technologies.unique();
-			}
-			SetRadarColor(Color::Get(48, 160, 255));
-			return true;
-		}
+		Planet();
+		Planet& operator=(const Planet& other);
+		Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
+		bool parserCB( string sectionName, string subName, string value );
 		
-		virtual int GetDrawOrder( void ) {
-			return( DRAW_ORDER_PLANET );
-		}
+		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
-		void _dbg_PrintInfo( void ) {
-			//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
-		}
-		
-		~cPlanet() {
-			Image *image = GetImage();
-			if( image )
-				delete image; // planets delete their own images. not all Sprites do
-		}
+		void _dbg_PrintInfo( void );
 
-		string GetName() {return name;}
+		xmlNodePtr ToXMLNode(string componentName);
+		
+		~Planet();
+
 		string GetAlliance() {return alliance;}
 		short int GetTraffic() {return traffic;}
 		short int GetMilitiaSize() {return militiaSize;}
 		bool GetLandable() {return landable;}
 		int GetInfluence() {return sphereOfInfluence;}
+		list<Sprite *> GetMilitia() { return militia;}
 		list<Technology*> GetTechnologies() { return technologies;}
 		list<Model*> GetModels();
 		list<Engine*> GetEngines();
 		list<Weapon*> GetWeapons();
 		
 	private:
-		string name;
 		string alliance;
 		bool landable;
 		short int traffic;
@@ -106,12 +69,11 @@ class cPlanet : public Sprite {
 };
 
 // Class that holds list of all planets; manages them
-class Planets {
+class Planets : public Components {
 	public:
 		static Planets *Instance();
-		
-		bool Load( string filename );
-		bool Save( string filename );
+		Planet *GetPlanet( string& PlanetName ) { return (Planet*) this->Get(PlanetName); }
+		Component* newComponent() { return new Planet(); }
 		
 	protected:
 		Planets() {};
@@ -120,14 +82,13 @@ class Planets {
 
 	private:
 		static Planets *pInstance;
-		list<cPlanet *> planets;
 };
 
 class Planets_Lua {
 	public:
 		static void RegisterPlanets(lua_State *L);
-		static cPlanet **pushPlanet(lua_State *L);
-		static cPlanet **checkPlanet(lua_State *L, int index);
+		//static Planet **pushPlanet(lua_State *L);
+		static Planet *checkPlanet(lua_State *L, int index);
 
 		static int GetName(lua_State* L);
 		static int GetType(lua_State* L);
@@ -136,6 +97,7 @@ class Planets_Lua {
 		static int GetAlliance(lua_State* L);
 		static int GetTraffic(lua_State* L);
 		static int GetMilitiaSize(lua_State* L);
+		static int GetInfluence(lua_State* L);
 		static int GetLandable(lua_State* L);
 		static int GetModels(lua_State* L);
 		static int GetEngines(lua_State* L);

@@ -11,59 +11,31 @@
 
 #include "Audio/sound.h"
 #include "Graphics/animation.h"
+#include "Utilities/components.h"
 #include "includes.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
 // Abstraction of a single engine
-class Engine {
+class Engine : public Component {
 	public:
-		bool parserCB( string sectionName, string subName, string value ) {
-			PPA_MATCHES( "name" ) {
-				name = value;
-			} else PPA_MATCHES( "forceOutput" ) {
-				forceOutput = static_cast<float> (atof( value.c_str() ));
-			} else PPA_MATCHES( "msrp" ) {
-				msrp = (short int)atoi( value.c_str() );
-			} else PPA_MATCHES( "foldDrive" ) {
-				foldDrive = (atoi( value.c_str() ) != 0);
-			} else PPA_MATCHES( "flareAnimation" ) {
-				flareAnimation = value;
-			} else PPA_MATCHES( "thrustSound" ){
-				this->thrustsound = Sound::Get( value );
-			}
-			
-			return true;
-		}
-		
-		void _dbg_PrintInfo( void ) {
-			//cout << "Engine called " << name << ", priced at " << msrp << " with force of " << forceOutput << " and fold capability set to " << foldDrive << endl;
-		}
-		
-		string GetName() const { return name; }
+		Engine();
+		Engine& operator= (const Engine&);
+		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation);
 
-		bool IsNamed( string engineName ) {
-			if( engineName == name )
-				return true;
-			
-			return false;
-		}
-		
-		float GetForceOutput( void ) {
-			return forceOutput;
-		}
-		
-		string GetFlareAnimation( void ) {
-			return flareAnimation;
-		}
+		bool parserCB( string sectionName, string subName, string value );
+		xmlNodePtr ToXMLNode(string componentName);
 
+		void _dbg_PrintInfo( void );
+		
+		float GetForceOutput( void ) { return forceOutput; }
+		string GetFlareAnimation( void ) { return flareAnimation; }
 		short int GetMSRP( void ) { return msrp; }
 		short int GetFoldDrive( void ) { return foldDrive; }
 		
 		Sound *thrustsound;
 
 	private:
-		string name;
 		float forceOutput;
 		short int msrp;
 		bool foldDrive;
@@ -71,13 +43,11 @@ class Engine {
 };
 
 // Class that holds list of all planets; manages them
-class Engines {
+class Engines : public Components {
 	public:
 		static Engines *Instance();
-		bool Load( string filename );
-		bool Save( string filename );
-		
-		Engine *LookUp( string engineName );
+		Engine* GetEngine(string name) { return (Engine*) this->Get(name); }
+		Component* newComponent() { return new Engine(); }
 
 	protected:
 		Engines() {};
@@ -86,7 +56,6 @@ class Engines {
 		
 	private:
 		static Engines *pInstance;
-		list<Engine *> engines;
 };
 
 #endif // __h_planets__

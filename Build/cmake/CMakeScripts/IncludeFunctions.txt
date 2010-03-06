@@ -1,0 +1,15 @@
+# This script includes external functions
+if (WIN32)
+	set(G_UTIL_PATH "${SCRIPT_DIR}/Win32Tools")
+endif (WIN32)
+
+include ("PARSE_ARGUMENTS")
+include ("DOWNLOAD_FILE")
+include ("EXTRACT_ARCHIVE")
+# Precompiled headers for GCC
+if(CMAKE_COMPILER_IS_GNUCXX)
+	include ("GCC_PRECOMPILED_H")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+include ("FIND_THIRD_PARTY")
+
+# vim:ft=cmake

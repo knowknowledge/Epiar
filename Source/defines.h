@@ -22,4 +22,8 @@
 #define u_byte unsigned char
 #endif // byte
 
+#ifndef TO_BOOL
+#define TO_BOOL(X) (X != 0)
+#endif // TO_BOOL
+
 #endif /*DEFINES_H_*/

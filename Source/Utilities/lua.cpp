@@ -211,12 +211,16 @@ void Lua::RegisterFunctions() {
 		{"player", &Lua::getPlayer},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
+		{"alliances", &Lua::getAllianceNames},
 		{"models", &Lua::getModelNames},
 		{"weapons", &Lua::getWeaponNames},
+		{"engines", &Lua::getEngineNames},
+		{"technologies", &Lua::getTechnologyNames},
 		{"getSprite", &Lua::getSpriteByID},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		{"nearestShip", &Lua::getNearestShip},
+		{"nearestPlanet", &Lua::getNearestPlanet},
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
 		{"getModelInfo", &Lua::getModelInfo},
@@ -227,6 +231,8 @@ void Lua::RegisterFunctions() {
 		{"setWeaponInfo", &Lua::setWeaponInfo},
 		{"getEngineInfo", &Lua::getEngineInfo},
 		{"setEngineInfo", &Lua::setEngineInfo},
+		{"getTechnologyInfo", &Lua::getTechnologyInfo},
+		{"setTechnologyInfo", &Lua::setTechnologyInfo},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -286,8 +292,7 @@ int Lua::setoption(lua_State *L) {
 }
 
 int Lua::getPlayer(lua_State *L){
-	Player **player = (Player**)AI_Lua::pushShip(L);
-	*player = Player::Instance();
+	Lua::pushSprite(L,Player::Instance() );
 	return 1;
 }
 
@@ -313,21 +318,69 @@ int Lua::focusCamera(lua_State *L){
 	return 0;
 }
 
+int Lua::getAllianceNames(lua_State *L){
+	list<string> *names = Alliances::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
 int Lua::getWeaponNames(lua_State *L){
-	Weapons *weapons= Weapons::Instance();
-	list<string> *names = weapons->GetWeaponNames();
+	list<string> *names = Weapons::Instance()->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
 }
 
 int Lua::getModelNames(lua_State *L){
-	Models *models = Models::Instance();
-	list<string> *names = models->GetModelNames();
+	list<string> *names = Models::Instance()->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
 }
+
+int Lua::getEngineNames(lua_State *L){
+	list<string> *names = Engines::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
+int Lua::getTechnologyNames(lua_State *L){
+	list<string> *names = Technologies::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
+void Lua::pushSprite(lua_State *L,Sprite* s){
+	int* id = (int*)lua_newuserdata(L, sizeof(int*));
+	*id = s->GetID();
+	assert(s->GetDrawOrder() & (DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET) );
+	switch(s->GetDrawOrder()){
+	case DRAW_ORDER_SHIP:
+	case DRAW_ORDER_PLAYER:
+		luaL_getmetatable(L, EPIAR_SHIP);
+		lua_setmetatable(L, -2);
+		break;
+	case DRAW_ORDER_PLANET:
+		luaL_getmetatable(L, EPIAR_PLANET);
+		lua_setmetatable(L, -2);
+		break;
+	default:
+		Log::Error("Accidentally pushing sprite #%d with invalid type: %d",s->GetID(),s->GetDrawOrder());
+	}
+}
+
+/*
+Sprite* Lua::checkSprite(lua_State *L,int id ){
+	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_SHIP);
+	cout<<"Checking ID "<<(*idptr)<<endl;
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_SHIP' expected");
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	return s;
+}
+*/
 
 void Lua::pushNames(lua_State *L, list<string> *names){
     lua_createtable(L, names->size(), 0);
@@ -377,7 +430,7 @@ float Lua::getNumField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = luaL_checknumber(L,index+1);
+	val = static_cast<float>(luaL_checknumber(L,index+1));
 	lua_pop(L,1);
 	return val;
 }
@@ -431,24 +484,14 @@ int Lua::getSpriteByID(lua_State *L){
 
 	// Get the Sprite using the ID
 	int id = (int)(luaL_checkint(L,1));
-    Sprite **s;
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 
-	// Push Sprite
-	switch( sprite->GetDrawOrder() ){
-		case DRAW_ORDER_PLAYER:
-		case DRAW_ORDER_SHIP:
-			s = (Sprite **)AI_Lua::pushShip(L);
-			break;
-		case DRAW_ORDER_PLANET:
-			s = (Sprite **)Planets_Lua::pushPlanet(L);
-			break;
-		default:
-			Log::Error("Unexpected Sprite Type '%d'", sprite->GetDrawOrder() );
-			s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
-			break;
+	if(sprite==NULL){
+		Log::Error("Lua requested sprite with unknown id %d",id);
+		return luaL_error(L, "The ID %d doesn't refer to anything",id );
 	}
-	*s = sprite;
+
+	Lua::pushSprite(L,sprite);
 	return 1;
 }
 
@@ -469,25 +512,10 @@ int Lua::getSprites(lua_State *L, int type){
     lua_createtable(L, sprites->size(), 0);
     int newTable = lua_gettop(L);
     int index = 1;
-    Sprite **s;
     list<Sprite *>::const_iterator iter = sprites->begin();
     while(iter != sprites->end()) {
 		// push userdata
-        switch(type){
-            case DRAW_ORDER_PLAYER:
-            case DRAW_ORDER_SHIP:
-                s = (Sprite **)AI_Lua::pushShip(L);
-                break;
-            case DRAW_ORDER_PLANET:
-                s = (Sprite **)Planets_Lua::pushPlanet(L);
-                break;
-            default:
-                Log::Error("Unexpected Sprite Type '%d'",type);
-                s = (Sprite **)lua_newuserdata(L, sizeof(Sprite*));
-                break;
-        }
-    
-		*s = *iter;
+		pushSprite(L,(*iter));
         lua_rawseti(L, newTable, index);
         ++iter;
         ++index;
@@ -501,27 +529,46 @@ int Lua::getShips(lua_State *L){
 }
 
 int Lua::getPlanets(lua_State *L){
-	return Lua::getSprites(L,DRAW_ORDER_PLANET);
+	Planets *planets = Planets::Instance();
+	list<string>* planetNames = planets->GetNames();
+
+    lua_createtable(L, planetNames->size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+		pushSprite(L,planets->GetPlanet(*pname));
+        lua_rawseti(L, newTable, index);
+        ++index;
+	}
+	return 1;
 }
 
-int Lua::getNearestShip(lua_State *L) {
+int Lua::getNearestSprite(lua_State *L,int type) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=2 ){
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
 	}
-	AI** ai = AI_Lua::checkShip(L,1);
+	AI* ai = AI_Lua::checkShip(L,1);
+	if( ai==NULL ) {
+		return 0;
+	}
 	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite **s;
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((*ai),r,DRAW_ORDER_SHIP);
-		if(closest!=NULL){
-		assert(closest->GetDrawOrder()==DRAW_ORDER_SHIP);
-		s = (Sprite **)AI_Lua::pushShip(L);
-		*s = closest;
-		cout<<"Lua pushed Sprite #"<<closest->GetID()<<endl;
+	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,type);
+	if(closest!=NULL){
+		assert(closest->GetDrawOrder() & (type));
+		pushSprite(L,(closest));
 		return 1;
 	} else {
 		return 0;
 	}
+}
+
+int Lua::getNearestShip(lua_State *L) {
+	return Lua::getNearestSprite(L,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER);
+}
+
+int Lua::getNearestPlanet(lua_State *L) {
+	return Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
 }
 
 int Lua::getModelInfo(lua_State *L) {
@@ -575,7 +622,7 @@ int Lua::getPlanetInfo(lua_State *L) {
 	if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
 		return luaL_error(L, "ID #%d does not point to a Planet", id);
 
-	cPlanet* p = (cPlanet*)(sprite);
+	Planet* p = (Planet*)(sprite);
 
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
@@ -599,15 +646,11 @@ int Lua::setPlanetInfo(lua_State *L) {
 	int militia = getIntField(1,"Militia");
 	int landable = getIntField(1,"Landable");
 
-	printf(
-		"NAME:     %s\n"
-		"Alliance: %s\n"
-		"Traffic:  %d\n"
-		"Militia:  %d\n"
-		"Landable: %d\n"
-		,name.c_str(),alliance.c_str(),traffic,militia,landable);
+	Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
+	if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
+	*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
-	return 0; // TODO
+	return 0;
 }
 
 int Lua::getWeaponInfo(lua_State *L) {
@@ -655,13 +698,16 @@ int Lua::getEngineInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
 	string engineName = (string)luaL_checkstring(L,1);
-	Engine* engine = Engines::Instance()->LookUp(engineName);
+	Engine* engine = Engines::Instance()->GetEngine(engineName);
 	if( engine == NULL)
 		return luaL_error(L, "There is no engine named '%s'.", engineName.c_str());
 
     lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
 	setField("Force", engine->GetForceOutput());
+	setField("Animation", engine->GetFlareAnimation().c_str());
+	setField("MSRP", engine->GetMSRP());
+	setField("Fold Drive", engine->GetFoldDrive());
 	return 1;
 }
 
@@ -674,11 +720,74 @@ int Lua::setEngineInfo(lua_State *L) {
 
 	string name = getStringField(1,"Name");
 	int force = getIntField(1,"Force");
+	string flare = getStringField(1,"Animation");
+	int msrp = getIntField(1,"MSRP");
+	int foldDrive = getIntField(1,"Fold Drive");
 
-	printf(
-		"NAME:     %s\n"
-		"Force:  %d\n"
-		,name.c_str(),force);
+	Engine* oldEngine = Engines::Instance()->GetEngine(name);
+	if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
+	*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
 
-	return 0; // TODO
+	return 0;
 }
+
+int Lua::getTechnologyInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (techName)", n);
+	string techName = (string)luaL_checkstring(L,1);
+	Technology* tech = Technologies::Instance()->GetTechnology(techName);
+	if( tech == NULL)
+		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
+	
+	// The info for a technology is a nested table:
+	// techInfo = { Weapons={...}, Models={...}, Engines={...} }
+
+	// Push the Main Table
+	int i;
+	list<Model*>::iterator iter_m;
+	list<Weapon*>::iterator iter_w;
+	list<Engine*>::iterator iter_e;
+
+	// Push the Models Table
+	list<Model*> models = tech->GetModels();
+    lua_createtable(L,models.size(),0);
+	int modeltable = lua_gettop(L);
+	for(i=1,iter_m=models.begin();iter_m!=models.end();++iter_m,++i) {
+		lua_pushstring(L, (*iter_m)->GetName().c_str() );
+        lua_rawseti(L, modeltable, i);
+	}
+
+	// Push the Weapons Table
+	list<Weapon*> weapons = tech->GetWeapons();
+    lua_newtable(L);
+	int weapontable = lua_gettop(L);
+	for(i=1,iter_w=weapons.begin();iter_w!=weapons.end();++iter_w,++i) {
+		lua_pushstring(L, (*iter_w)->GetName().c_str() );
+        lua_rawseti(L, weapontable, i);
+	}
+
+	// Push the Engines Table
+	list<Engine*> engines = tech->GetEngines();
+    lua_newtable(L);
+	int enginetable = lua_gettop(L);
+	for(i=1,iter_e=engines.begin();iter_e!=engines.end();++iter_e,++i) {
+		lua_pushstring(L, (*iter_e)->GetName().c_str() );
+        lua_rawseti(L, enginetable, i);
+	}
+
+	return 3;
+}
+
+int Lua::setTechnologyInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
+	if( !lua_istable(L,1) )
+		return luaL_error(L, "Argument 1 is not a table");
+
+	cerr<<"Error Not Implemented!"<<endl;
+
+	return 0;
+}
+

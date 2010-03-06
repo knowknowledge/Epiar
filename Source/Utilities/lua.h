@@ -46,23 +46,32 @@ class Lua {
 		static int getPlayer(lua_State *L);
 		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
-		static int getModelNames(lua_State *L);
-		static int getWeaponNames(lua_State *L);
 		static int getSpriteByID(lua_State *L);
 		static int getSprites(lua_State *L, int type);
+		static int getNearestSprite(lua_State *L, int type=DRAW_ORDER_ALL);
 		static int getNearestShip(lua_State *L);
+		static int getNearestPlanet(lua_State *L);
 		static int getShips(lua_State *L);
+
+		static int getAllianceNames(lua_State *L);
+		static int getEngineNames(lua_State *L);
+		static int getModelNames(lua_State *L);
 		static int getPlanets(lua_State *L);
+		static int getWeaponNames(lua_State *L);
+		static int getTechnologyNames(lua_State *L);
 
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
 		static int getWeaponInfo(lua_State *L);
 		static int getEngineInfo(lua_State *L);
+		static int getTechnologyInfo(lua_State *L);
 		static int setModelInfo(lua_State *L);
 		static int setPlanetInfo(lua_State *L);
 		static int setWeaponInfo(lua_State *L);
 		static int setEngineInfo(lua_State *L);
+		static int setTechnologyInfo(lua_State *L);
 
+		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushNames(lua_State *L, list<string> *names);
 		static void setField(const char* index, int value);
 		static void setField(const char* index, float value);

@@ -33,11 +33,17 @@ class Textbox : public Widget {
 		void MouseDown( int wx, int wy );
 		
 		bool KeyPress( SDLKey key );
+		
+		string GetName( void ) {return string("Textbox_"+text);}
+
+		void DisableEntry( void );
+		void EnableEntry( void );
 	private:
 		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
 		int w, h;
 		string text, label;
 		bool hasKeyboardFocus;
+		bool entryDisabled;
 
 		string lua_callback;
 		void (*clickCallBack)();

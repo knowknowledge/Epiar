@@ -3,55 +3,15 @@
 -- Keyboard States:
 KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
 -- SDL Key Translations
-Key = {}
-Key["backspace"] =8;
-Key["tab"] =9;
-Key["clear"] =12;
-Key["return"] =13;
-Key["pause"] =19;
-Key["escape"] =27;
-Key["space"] =32;
-
-Key["up"] =273;
-Key["down"] =274;
-Key["right"] =275;
-Key["left"] =276;
-Key["insert"] =277;
-Key["home"] =278;
-Key["end"] =279;
-Key["pageup"] =280;
-Key["pagedown"] =281;
-
--- Should we support the function keys?
---Key["f1"] =282;
---Key["f2"] =283;
---Key["f3"] =284;
---Key["f4"] =285;
---Key["f5"] =286;
---Key["f6"] =287;
---Key["f7"] =288;
---Key["f8"] =289;
---Key["f9"] =290;
---Key["f10"] =291;
---Key["f11"] =292;
---Key["f12"] =293;
---Key["f13"] =294;
---Key["f14"] =295;
---Key["f15"] =296;
-
-Key["numlock"] =300;
-Key["capslock"] =301;
-Key["scrolllock"] =302;
-Key["rshift"] =303;
-Key["lshift"] =304;
-Key["rctrl"] =305;
-Key["lctrl"] =306;
-Key["ralt"] =307;
-Key["lalt"] =308;
-Key["rmeta"] =309;
-Key["lmeta"] =310;
-Key["lsuper"] =311;
-Key["rsuper"] =312;
+Key = {
+	backspace=8, tab=9, clear=12, pause=19, escape=27, space=32,
+	up=273, down=274, right=275, left=276, insert=277, home=278, pageup=280, pagedown=281,
+	-- Should we support the function keys?
+	f1=282, f2=283, f3=284, f4=285, f5=286, f6=287, f7=288, f8=289, f9=290, f10=291, f11=292, f12=293, f13=294, f14=295, f15=296,
+	numlock=300, capslock=301, scrolllock=302, rshift=303, lshift=304, rctrl=305, lctrl=306, ralt=307, lalt=308, rmeta=309, lmeta=310, lsuper=311, rsuper=312,
+	-- Special Lua keywords
+	["return"]=13, ["end"]=279
+}
 
 function sdlkey(k)
 	if Key[k] then
@@ -76,6 +36,7 @@ commands = {
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
+	{'?', "Game Options", "options()",KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED}
 }
 
@@ -157,18 +118,17 @@ end
 function attemptLanding()
 	if landingWin ~= nil then return end
 	x,y = PLAYER:GetPosition()
-	nearby = Epiar.planets(x,y,1000)
-	if #nearby==0 then return end
-	px,py = nearby[1]:Position()
+	planet = Epiar.nearestPlanet(PLAYER,4096)
+	px,py = planet:Position()
 	distance = distfrom( px,py, x,y)
 	message=""
-	if HUD.getTarget() ~= nearby[1]:GetID() then -- Add this text before the first message.
-		message = string.format("This is %s Landing Control. ",nearby[1]:Name())
+	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
+		message = string.format("This is %s Landing Control. ",planet:Name())
 	end
 	
 	-- Check if the ship is close enough and moving slowly enough to land on the planet.
-	HUD.setTarget(nearby[1]:GetID())
-	TargetName:setStatus(nearby[1]:Name() )
+	HUD.setTarget(planet:GetID())
+	TargetName:setStatus(planet:Name() )
 	-- TODO make this distance check based off of the planet size.
 	if distance > 200 then
 		if message~="" then
@@ -182,8 +142,8 @@ function attemptLanding()
 		if velocity > 2 then
 			HUD.newAlert(message.."Please slow your approach.")
 		else
-			HUD.newAlert(string.format("Welcome to %s.",nearby[1]:Name()))
-			landOnPlanet( nearby[1]:GetID() )
+			HUD.newAlert(string.format("Welcome to %s.",planet:Name()))
+			landOnPlanet( planet:GetID() )
 		end
 	end
 end
@@ -201,128 +161,9 @@ function landOnPlanet(id)
 	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
-function infoTable(info,win)
-	y1,y2=55,40
-	yoff=20
-	uiElements = {}
-	for title, value in pairs(info) do
-		-- Truncate decimal numbers to only 2 digits
-		if type(value)=="number" and math.floor(value) ~= value then
-			value = string.format("%.2f",value)
-		end
-		win:add(UI.newLabel( 10, y1, title))
-		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
-		win:add(uiElements[title])
-		y1,y2=y1+yoff,y2+yoff
-	end
-	return uiElements
-end
-
-function infoTableCollect(info,uiElements)
-	for title, value in pairs(info) do
-		if uiElements[title]~=nil then
-			info[title] = uiElements[title]:GetText()
-		end
-	end
-end
-
-function showInfo()
-	currentTarget = HUD.getTarget()
-	sprite = Epiar.getSprite(currentTarget)
-	spritetype = sprite:GetType()
-	if spritetype == 1 then -- planet
-		showPlanetInfo()
-	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
-		showModelInfo()
-	else
-		io.write(string.format("Cannot show info for sprite of type [%d]\n",spritetype))
-	end
-end
-
-function showPlanetInfo()
-	currentTarget = HUD.getTarget()
-	if SHIPS[currentTarget] ~= nil then return end
-	if planetInfoWin ~= nil then return end
-	
-	planetInfo = Epiar.getPlanetInfo( currentTarget )
-	planet = Epiar.getSprite(currentTarget)
-	planetName = planet:Name()
-	planetInfoWin = UI.newWindow( 50,100,200,400, "Planet Info:"..planetName)
-	local infoTexts = infoTable(planetInfo,planetInfoWin)
-	function savePlanet()
-		infoTableCollect(planetInfo, infoTexts)
-		Epiar.setPlanetInfo(planetInfo)
-		planetInfoWin:close()
-		planetInfoWin=nil
-	end
-	planetInfoWin:add(UI.newButton( 80,350,100,30,"Close", "savePlanet()" ))
-end
-
-function showModelInfo()
-	currentTarget = HUD.getTarget()
-	if modelInfoWin ~= nil then return end
-	ship = Epiar.getSprite(currentTarget)
-	spritetype = ship:GetType()
-	if (spritetype ~= 4) and (spritetype ~= 8) then return end -- Neither Ship nor Player
-	
-	modelName = ship:GetModelName()
-	modelInfo = Epiar.getModelInfo( modelName )
-	modelInfoWin = UI.newWindow( 50,100,200,400, "Model Info:"..modelName)
-	infoTexts = infoTable(modelInfo,modelInfoWin)
-
-	weaponsAndAmmo = ship:GetWeapons()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		modelInfoWin:add(UI.newLabel( 10, y1, weapon))
-		modelInfoWin:add(UI.newTextbox( 90, y2, 60, 1, ammo))
-		modelInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showWeaponInfo('"..weapon.."')"))
-		y1,y2=y1+yoff,y2+yoff
-	end
-
-	function saveModel()
-		infoTableCollect(modelInfo, infoTexts)
-		Epiar.setModelInfo(modelInfo)
-		modelInfoWin:close()
-		modelInfoWin=nil
-	end
-	
-	modelInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveModel()" ))
-end
-
-function showWeaponInfo(weaponName)
-	if weaponInfoWin then return end
-	weaponInfo = Epiar.getWeaponInfo( weaponName )
-	weaponInfoWin = UI.newWindow( 50,100,200,400, "Weapon Info:"..weaponName)
-	local infoTexts = infoTable(weaponInfo,weaponInfoWin)
-	function saveWeapon()
-		infoTableCollect(weaponInfo, infoTexts)
-		Epiar.setWeaponInfo(weaponInfo);
-		weaponInfoWin:close();
-		weaponInfoWin=nil
-	end
-	weaponInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveWeapon()" ))
-end
-
-function showEngineInfo(engineName)
-	if engineInfoWin then return end
-	engineInfo = Epiar.getEngineInfo( engineName )
-	engineInfoWin = UI.newWindow( 50,100,200,400, "Engine Info:"..engineName)
-	local infoTexts = infoTable(engineInfo,engineInfoWin)
-	function saveEngine()
-		infoTableCollect(engineInfo, infoTexts)
-		Epiar.setEngineInfo(engineInfo);
-		engineInfoWin:close();
-		engineInfoWin=nil
-	end
-	engineInfoWin:add(UI.newButton( 80,350,100,30,"Close", "saveEngine()" ))
-end
-
 function createWindows()
 	Epiar.RegisterKey('p',KEYTYPED,"togglePause()")
 	Epiar.RegisterKey('g',KEYTYPED,"ui_demo()")
-	Epiar.RegisterKey('k', KEYTYPED, "chooseKeys()" )
-	-- pause should 1) not be implemented in lua and 2) should respond to keytyped events, not keydown events, else
-	-- a 'p' typed into the UI will also pause the game. this makes no sense. however, if a UI text input has no
-	-- focus, the UI will pass the typed event down the chain and pause should reach it eventually
 end
 registerInit(createWindows)
 
@@ -372,6 +213,7 @@ end
 registerInit(createHUD)
 
 updateHUD = function ()
+	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
 	x,y = PLAYER:GetPosition()
 	qx,qy = coordinateToQuadrant(x,y)

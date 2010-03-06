@@ -8,24 +8,16 @@
 
 #include "includes.h"
 #include "Engine/models.h"
-#include "Utilities/parser.h"
+#include "Utilities/components.h"
 
 /**\class Models
  * \brief Handles ship models. */
 
-struct model_name_equals
-	: public std::binary_function<Model*, string, bool>
-{
-	bool operator()( Model* model, const string& name ) const
-	{
-		return model->GetName() == name;		
-	}
-};
-
-Model::Model() {
+Model::Model(): image(NULL),engine(NULL),mass(0.0){
+	SetName("dead");
 }
 
-Model::Model(const Model& other) {
+Model& Model::operator=(const Model& other) {
 	name = other.name;
 	image = other.image;
 	engine = other.engine;
@@ -33,18 +25,105 @@ Model::Model(const Model& other) {
 	thrustOffset = other.thrustOffset;
 	rotPerSecond = other.rotPerSecond;
 	maxSpeed = other.maxSpeed;
+	return *this;
 }
 
 Model::Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption) :
-	name(_name),
 	image(_image),
 	engine(_engine),
 	mass(_mass),
 	thrustOffset(_thrustOffset),
 	rotPerSecond(_rotPerSecond),
 	maxSpeed(_maxSpeed)
-{}
+{
+	SetName(_name);
+	//((Component*)this)->SetName(_name);
+}
 
+
+bool Model::parserCB( string sectionName, string subName, string value ) {
+	PPA_MATCHES( "name" ) {
+		name = value;
+	} else PPA_MATCHES( "image" ) {
+		image = (Image*)Image::Get( value );
+	} else PPA_MATCHES( "mass" ) {
+		mass = (float)atof( value.c_str() );
+	} else PPA_MATCHES( "rotationsPerSecond" ) {
+		rotPerSecond = static_cast<float>(atof( value.c_str() ));
+	} else PPA_MATCHES( "engine" ) {
+		Engines *engines = Engines::Instance();
+
+		engine = engines->GetEngine( value );
+
+		if( engine == NULL ) {
+			Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
+		}
+	} else PPA_MATCHES( "thrustOffset" ) {
+		thrustOffset = (short)atoi( value.c_str() );
+	} else PPA_MATCHES( "maxSpeed" ) {
+		maxSpeed = (float)atof( value.c_str() );
+	} else PPA_MATCHES( "maxEnergyAbsorption" ) {
+		maxEnergyAbsorption = (short)atoi( value.c_str() );
+	}
+	// TODO This is a bad spot for this.
+	if(image!=NULL && name!="dead"){ 
+		Image::Store(name,(Resource*)image);
+	}
+	return true;
+}
+
+void Model::_dbg_PrintInfo( void ) {
+	if( mass <= 0.001 ){
+		// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
+		Log::Error("Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
+	}
+	if(image!=NULL && name!=""){ 
+		cout<<"Storing Image for "<<name<<endl;
+		Image::Store(name,(Resource*)image);
+	} else { assert(0); }
+}
+
+xmlNodePtr Model::ToXMLNode(string componentName) {
+	char buff[256];
+    xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngine()->GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%1.2f", this->GetMass() );
+	xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%1.2f", this->GetRotationsPerSecond() );
+	xmlNewChild(section, NULL, BAD_CAST "rotationsPerSecond", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetThrustOffset() );
+	xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%1.1f", this->GetMaxSpeed() );
+	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->getMaxEnergyAbsorption() );
+	xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
+
+	return section;
+}
+
+float Model::GetAcceleration( void ) {
+	if( engine ) {
+		return( engine->GetForceOutput() / (float)mass );
+	} else {
+		return( 0. ); // no engine
+	}
+}
+
+string Model::GetFlareAnimation( void ) {
+	if( engine ) {
+		return( engine->GetFlareAnimation() );
+	} else {
+		return string("Error");
+	}
+}
+
+void Model::PlayEngineThrust( float volume, Coordinate offset ){
+	this->engine->thrustsound->SetVolume( volume );
+	this->engine->thrustsound->PlayNoRestart( offset );
+}
 
 Models *Models::pInstance = 0; // initialize pointer
 
@@ -54,85 +133,9 @@ Models *Models::pInstance = 0; // initialize pointer
 Models *Models::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Models; // create the sold instance
+		pInstance->rootName = "models";
+		pInstance->componentName = "model";
 	}
 	return( pInstance );
 }
 
-/**\brief Loads a model from an XML file
- * \param filename String containing filename
- */
-bool Models::Load( string& filename )
-{
-	Parser<Model> parser;
-	
-	models = parser.Parse( filename, "models", "model" );
-
-	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
-		(*i)->_dbg_PrintInfo();
-	}
-
-	return true;
-}
-
-bool Models::Save( string filename )
-{
-    xmlDocPtr doc = NULL;       /* document pointer */
-    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
-    char buff[256];
-
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root_node = xmlNewNode(NULL, BAD_CAST "models");
-    xmlDocSetRootElement(doc, root_node);
-
-	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
-
-	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
-		section = xmlNewNode(NULL, BAD_CAST "model");
-		xmlAddChild(root_node, section);
-		
-		xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST (*i)->GetName().c_str() );
-		xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST (*i)->GetImage()->GetPath().c_str() );
-		xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST (*i)->GetEngine()->GetName().c_str() );
-        snprintf(buff, sizeof(buff), "%1.2f", (*i)->GetMass() );
-		xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%1.2f", (*i)->GetRotationsPerSecond() );
-		xmlNewChild(section, NULL, BAD_CAST "rotationsPerSecond", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (*i)->GetThrustOffset() );
-		xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%1.1f", (*i)->GetMaxSpeed() );
-		xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
-        snprintf(buff, sizeof(buff), "%d", (*i)->getMaxEnergyAbsorption() );
-		xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
-	}
-
-	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
-	return true;
-}
-
-/**\brief Returns the specified Model.
- * \param modelName Name of the model to get.
- * \return Pointer to the Model
- */
-Model * Models::GetModel( string& modelName )
-{
-	list<Model *>::iterator i = std::find_if( models.begin(), models.end(), std::bind2nd( model_name_equals(), modelName ));
-	if( i != models.end() ) {
-		return( *i );
-	}
-	cout<<"Couldn't find the Model Named: "<<modelName<<endl;
-	return( NULL );
-}
-
-/**\brief Returns a list of all the Model names
- * \return list of Model names.
- */
-list<string>* Models::GetModelNames()
-{
-	list<string> *names = new list<string>();
-	for( list<Model *>::iterator i = models.begin(); i != models.end(); ++i ) {
-		names->push_back( (*i)->GetName() );
-	}
-	return names;
-}
