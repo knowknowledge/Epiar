@@ -33,7 +33,7 @@ commands = {
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
 	{'I', "Get Info", "showInfo()",KEYTYPED},
-	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
+	{'L', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
 	{'?', "Game Options", "options()",KEYTYPED},
@@ -123,12 +123,12 @@ function attemptLanding()
 	distance = distfrom( px,py, x,y)
 	message=""
 	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
-		message = string.format("This is %s Landing Control. ",planet:Name())
+		message = string.format("This is %s Landing Control. ",planet:GetName())
 	end
 	
 	-- Check if the ship is close enough and moving slowly enough to land on the planet.
 	HUD.setTarget(planet:GetID())
-	TargetName:setStatus(planet:Name() )
+	TargetName:setStatus(planet:GetName() )
 	-- TODO make this distance check based off of the planet size.
 	if distance > 200 then
 		if message~="" then
@@ -142,7 +142,7 @@ function attemptLanding()
 		if velocity > 2 then
 			HUD.newAlert(message.."Please slow your approach.")
 		else
-			HUD.newAlert(string.format("Welcome to %s.",planet:Name()))
+			HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
 			landOnPlanet( planet:GetID() )
 		end
 	end
@@ -154,11 +154,11 @@ function landOnPlanet(id)
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
-	landingWin = UI.newWindow( 200,100,400,300, string.format("%s Landing Screen",planet:Name()))
+	landingWin = UI.newWindow( 200,100,400,300, string.format("%s Landing Screen",planet:GetName()))
 	landingWin:add(UI.newButton( 40,40,100,30,"Shipyard",string.format("shipyard(%d)",id) ))
 	landingWin:add(UI.newButton( 40,80,100,30,"Armory",string.format("armory(%d)",id) ))
 	landingWin:add(UI.newButton( 40,120,100,30,"Repair","PLAYER:Repair(10000)" ))
-	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:Name()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
+	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 function createWindows()

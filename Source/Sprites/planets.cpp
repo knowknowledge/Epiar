@@ -11,6 +11,7 @@
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
+#include "Utilities/lua.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
@@ -171,11 +172,12 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
 		// Normally we would put a "new" function here.
 		// Lua may not ever need to create planets though.
+		{"Get", &Planets_Lua::Get},
 		{NULL, NULL}
 	};
 
 	static const luaL_Reg PlanetMethods[] = {
-		{"Name", &Planets_Lua::GetName},
+		{"GetName", &Planets_Lua::GetName},
 		{"GetID", &Planets_Lua::GetID},
 		{"GetType", &Planets_Lua::GetType},
 		{"Position", &Planets_Lua::GetPosition},
@@ -199,6 +201,31 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);  
 }
 
+
+int Planets_Lua::Get(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 ){
+		return luaL_error(L, "Got %d arguments expected 1 (id or name)", n);
+	}
+    Planet* p = NULL;
+    if(lua_isstring(L,1)) {
+        string name = (string)luaL_checkstring(L,1);
+        p = (Planet*)Planets::Instance()->GetPlanet(name);
+        if (p==NULL){
+            return luaL_error(L, "There is no planet by the name of '%s'", name.c_str());
+        }
+    } else if(lua_isnumber(L,1)) {
+        int id = (int)luaL_checkinteger(L,1);
+        p = (Planet*)SpriteManager::Instance()->GetSpriteByID(id);
+        if (p==NULL || p->GetDrawOrder() != DRAW_ORDER_PLANET){
+            return luaL_error(L, "There is no planet with ID %d", id);
+        }
+    } else {
+        return luaL_error(L, "Cannot get planet with these arguments.  Expected id or name.");
+    }
+    Lua::pushSprite(L,p);
+    return 1;
+}
 
 /*
 Planet **Planets_Lua::pushPlanet(lua_State *L){
