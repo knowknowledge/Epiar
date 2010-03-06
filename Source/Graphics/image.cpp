@@ -33,7 +33,6 @@ Image::Image( const string& filename ) {
 	scale_w = scale_h = 1.;
 
 	Load(filename);
-	filepath=filename;
 }
 
 //Deallocate allocations
@@ -72,6 +71,7 @@ bool Image::Load( const string& filename ) {
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
 	if ( retval ){
+        filepath=filename;
 		return true;
 	}
 	return NULL;

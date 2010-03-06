@@ -53,6 +53,7 @@ void Picture::Draw( int relx, int rely ){
 					w,h,
 					0.0,1.0,0.0,0.1 );
 	// The Image
+	if(bitmap!=NULL)
 	vid->DrawRect( GetX()+relx+w/2 - bitmap->GetWidth()/2, GetY()+rely+h/2 - bitmap->GetHeight()/2,
 					bitmap->GetWidth(), bitmap->GetHeight(),
 					1.0,1.0,1.0,0.1 );

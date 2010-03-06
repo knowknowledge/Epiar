@@ -61,17 +61,16 @@ class Lua {
 		static int getPlanets(lua_State *L);
 		static int getWeaponNames(lua_State *L);
 		static int getTechnologyNames(lua_State *L);
+		static int getPlanetNames(lua_State *L);
 
+		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
 		static int getWeaponInfo(lua_State *L);
 		static int getEngineInfo(lua_State *L);
 		static int getTechnologyInfo(lua_State *L);
-		static int setModelInfo(lua_State *L);
-		static int setPlanetInfo(lua_State *L);
-		static int setWeaponInfo(lua_State *L);
-		static int setEngineInfo(lua_State *L);
-		static int setTechnologyInfo(lua_State *L);
+		static int setInfo(lua_State *L);
+		static int saveComponents(lua_State *L);
 
 		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushNames(lua_State *L, list<string> *names);

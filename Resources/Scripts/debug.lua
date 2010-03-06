@@ -4,43 +4,45 @@ componentWins = {}
 
 function componentDebugger()
 	if componentWindow ~= nil then return end
-	componentWindow = UI.newWindow( 200,10,620,70, "Game Component Debugging",
-		UI.newButton( 10,30,100,30,"Alliances","componentViewer('Alliances',Epiar.alliances,'Epiar.getAllianceInfo','Epiar.setAllianceInfo')" ),
-		UI.newButton(110,30,100,30,"Engines","componentViewer('Engines',Epiar.engines,'Epiar.getEngineInfo','Epiar.setEngineInfo')" ),
-		UI.newButton(510,30,100,30,"Weapons","componentViewer('Weapons',Epiar.weapons,'Epiar.getWeaponInfo','Epiar.setWeaponInfo')" ),
-		UI.newButton(210,30,100,30,"Models","componentViewer('Models',Epiar.models,'Epiar.getModelInfo','Epiar.setModelInfo')" ),
-		-- TODO: The above requires more getter/setter passing than should be required
-		--       Can we merge the c++ engine getter/setters into one function and have them detect the Component Type?
-		--       Notice how the buttons sometimes pass strings and sometimes pass function objects. Yuck. This will cause problems later.
-		UI.newButton(310,30,100,30,"Planets","planetViewer()" ),
-		UI.newButton(410,30,100,30,"Technologies","technologyViewer()")
+	componentWindow = UI.newWindow( 150,10,740,70, "Game Component Debugging",
+		UI.newButton( 10,30,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
+		UI.newButton(110,30,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
+		UI.newButton(210,30,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
+		UI.newButton(310,30,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
+		UI.newButton(410,30,100,30,"Technology","technologyViewer()"),
+		UI.newButton(510,30,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
+		UI.newButton(630,30,100,30,"Save","Epiar.saveComponents()" )
 	)
 end
 componentDebugger()
 
 -- Creates a generic list of Component buttons
 -- TODO: This window should have an "Add Component" button
-function componentViewer(name,listFunc,getStr,setStr)
-	if componentWins[name] ~= nil then return end
+function componentViewer(kind,listFunc,getStr)
+	if componentWins[kind] ~= nil then return end
 	list = listFunc()
-	componentWins[name] = UI.newWindow(10,100,140,(#list)*30+50,name)
+	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+50,kind)
 	for i = 1,#list do
 		s = list[i]
-		componentWins[name]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent('%s',%s,'%s')",s,getStr,setStr)))
+		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent('%s','%s',%s)",kind,s,getStr)))
 	end
-	componentWins[name]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",name,name)))
+	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",kind,kind)))
 end
 
 -- Creates an attribute setter for a particular Component
-function showComponent(name,getterFunc,setterStr)
+function showComponent(kind,name,getterFunc)
+    if kind=="Planet" then
+        planet = Planet.Get(name)
+        Epiar.focusCamera(planet:GetID())
+    end
 	if infoWindows[name] ~= nil then return end
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,200,400,name,
-		UI.newPicture( 70,25,100,100,name),
-		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo(%s,'%s')",setterStr,name )),
+		UI.newPicture( 20,25,160,100,name),
+		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo('%s','%s')",kind,name )),
 		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	local theTexts = infoTable(theInfo,theWin)
-	infoWindows[name] = {win=theWin, info=theInfo, texts=theTexts}
+	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theTexts}
 end
 
 -- Lays out a series of labels and textboxes
@@ -67,9 +69,10 @@ end
 -- Show Info for the current Target
 function showInfo()
 	currentTarget = HUD.getTarget()
+    sprite = Epiar.getSprite(currentTarget)
 	spritetype = sprite:GetType()
 	if spritetype == 1 then -- planet
-		showPlanetInfo(currentTarget)
+        showComponent("Planet",sprite:GetName(),Epiar.getPlanetInfo)
 	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
 		showShipInfo(sprite)
 	else
@@ -82,42 +85,17 @@ function saveInfo(saveFunc,name)
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
 	local win = infoWindows[name].win
+	local kind = infoWindows[name].kind
 	for title, value in pairs(info) do
 		if texts[title]~=nil then
 			info[title] = texts[title]:GetText()
 		end
 	end
-	saveFunc(info);
-	win:close();
+	Epiar.setInfo(kind,info)
+	win:close()
 	win=nil
 	infoWindows[name]=nil
 	print("Saved "..name)
-end
-
-function planetViewer()
-	if planetsWindow ~= nil then return end
-	planets = Epiar.planets()
-	planetsWindow = UI.newWindow(10,100,140,(#planets)*30+50,"Planets")
-	for i = 1,#planets do
-		p = planets[i]
-		planetsWindow:add( UI.newButton(10,i*30,120,30,p:Name(),string.format("showPlanetInfo(%d)",p:GetID())))
-	end
-	planetsWindow:add( UI.newButton(115,5,15,15,"X","planetsWindow:close();planetsWindow=nil"))
-end
-
-function showPlanetInfo(planetID)
-	planet = Epiar.getSprite(planetID)
-	planetName = planet:Name()
-	Epiar.focusCamera(planetID)
-	if infoWindows[planetName]~= nil then return end
-	local planetInfo = Epiar.getPlanetInfo( planetID )
-	local planetInfoWin = UI.newWindow(150,100,200,400, "Planet Info: "..planetName)
-	local infoTexts = infoTable(planetInfo,planetInfoWin)
-	-- TODO: Add checkboxes for different technologies
-	planetInfoWin:add(UI.newButton( 80,350,100,30,"Save", "saveInfo(Epiar.setPlanetInfo,'"..planetName.."')" ))
-	planetInfoWin:add(UI.newPicture( 70,25,100,100,planetName))
-	planetInfoWin:add( UI.newButton(175,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil;",planetName,planetName)))
-	infoWindows[planetName] = {win=planetInfoWin, info=planetInfo, texts=infoTexts}
 end
 
 function technologyViewer()
