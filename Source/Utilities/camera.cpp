@@ -46,8 +46,8 @@ void Camera::Focus( double x, double y ) {
 	dx = x - this->x;
 	dy = y - this->y;
 
-	this->x += dx;
-	this->y += dy;
+	this->x = x;
+	this->y = y;
 	// assign the new camera position
 	//if(hasZoomed){
 		//this->x = x;
@@ -118,6 +118,8 @@ void Camera::Move( int dx, int dy ) {
 
 // updates camera, including currently focused position
 void Camera::Update( void ) {
+	dx = 0;
+	dy = 0;
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
 		//get player acceleration

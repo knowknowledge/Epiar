@@ -32,6 +32,7 @@
 		<alert-fade>2500</alert-fade>
 	</timing>
 	<development>
+		<debug-mode>0</debug-mode>
 		<debug-quadtree>0</debug-quadtree>
 		<override-tgz>1</override-tgz>
 	</development>

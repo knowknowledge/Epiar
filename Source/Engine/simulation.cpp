@@ -85,7 +85,7 @@ void Simulation::unpause(){
 /**\brief Main game loop
  * \return true
  */
-bool Simulation::Run( void ) {
+bool Simulation::Run( int debugMode ) {
 	bool quit = false;
 	Input inputs;
 	int fpsCount = 0; // for FPS calculations
@@ -106,11 +106,16 @@ bool Simulation::Run( void ) {
 	// Create a spritelist
 	SpriteManager *sprites = SpriteManager::Instance();
 
-	Player *player = Player::Instance();
+    if(!debugMode){
+        Player *player = Player::Instance();
 
-	// Set player model based on simulation xml file settings
-	player->SetModel( models->GetModel( playerDefaultModel ) );
-	sprites->Add( player->GetSprite() );
+        // Set player model based on simulation xml file settings
+        player->SetModel( models->GetModel( playerDefaultModel ) );
+        sprites->Add( player->GetSprite() );
+
+        // Focus the camera on the sprite
+        camera->Focus( player->GetSprite() );
+    }
 
 	Planets *planets = Planets::Instance();
 	list<string>* planetNames = planets->GetNames();
@@ -118,8 +123,6 @@ bool Simulation::Run( void ) {
 		sprites->Add(  planets->GetPlanet(*pname) );
 	}
 
-	// Focus the camera on the sprite
-	camera->Focus( player->GetSprite() );
 
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
@@ -127,6 +130,20 @@ bool Simulation::Run( void ) {
 		Log::Error("Fatal error starting Lua.");
 		quit = true;
 	}
+    if(!debugMode){
+        if( !( Lua::Load("Resources/Scripts/player.lua") ))
+        {
+            Log::Error("Fatal error starting Lua.");
+            quit = true;
+        }
+    } else if(debugMode){
+        if( !( Lua::Load("Resources/Scripts/debug.lua") ))
+        {
+            Log::Error("Fatal error starting Lua.");
+            quit = true;
+        }
+    }
+    Lua::Call("Start");
 
 	// Create the hud
 	Hud::Hud();
@@ -176,8 +193,6 @@ bool Simulation::Run( void ) {
 		// Don't kill the CPU (play nice)
 		Timer::Delay();
 		
-		Coordinate playerPos = player->GetWorldPosition();
-
 		// Counting Frames
 		fpsCount++;
 		fpsTotal++;

@@ -44,6 +44,8 @@ class Lua {
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
 		static int getPlayer(lua_State *L);
+		static int getCamera(lua_State *L);
+		static int moveCamera(lua_State *L);
 		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
 		static int getSpriteByID(lua_State *L);

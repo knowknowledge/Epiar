@@ -74,7 +74,7 @@ int main( int argc, char **argv ) {
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
-		debug.Run();
+		debug.Run(OPTION(int,"options/development/debug-mode"));
 	}
 
 	Video::Shutdown();

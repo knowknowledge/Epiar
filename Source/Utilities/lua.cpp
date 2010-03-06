@@ -209,6 +209,8 @@ void Lua::RegisterFunctions() {
 		{"getoption", &Lua::getoption},
 		{"setoption", &Lua::setoption},
 		{"player", &Lua::getPlayer},
+		{"getCamera", &Lua::getCamera},
+		{"moveCamera", &Lua::moveCamera},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
 		{"alliances", &Lua::getAllianceNames},
@@ -296,6 +298,28 @@ int Lua::getPlayer(lua_State *L){
 	return 1;
 }
 
+int Lua::getCamera(lua_State *L){
+    int n = lua_gettop(L);
+	if (n != 0) {
+		return luaL_error(L, "Getting the Camera Coordinates didn't expect %d arguments. But thanks anyway", n);
+    }
+    Coordinate c = Camera::Instance()->GetFocusCoordinate();
+    lua_pushinteger(L,c.GetX());
+    lua_pushinteger(L,c.GetY());
+	return 2;
+}
+
+int Lua::moveCamera(lua_State *L){
+    int n = lua_gettop(L);
+	if (n != 2) {
+		return luaL_error(L, "Moving the Camera needs 2 arguments (X,Y) not %d arguments", n);
+    }
+    int x = luaL_checkinteger(L,1);
+    int y = luaL_checkinteger(L,2);
+    Camera::Instance()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
+    Camera::Instance()->Move(-x,y);
+	return 0;
+}
 //Allow camera shaking from Lua
 int Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
@@ -307,14 +331,22 @@ int Lua::shakeCamera(lua_State *L){
 }
 
 int Lua::focusCamera(lua_State *L){
-	if (lua_gettop(L) == 1) {
+    int n = lua_gettop(L);
+	if (n == 1) {
 		int id = (int)(luaL_checkint(L,1));
-		Camera *pInstance = Camera::Instance();
 		SpriteManager *sprites= SpriteManager::Instance();
 		Sprite* target = sprites->GetSpriteByID(id);
 		if(target!=NULL)
-			pInstance->Focus( target );
-	}
+            Camera::Instance()->Focus( target );
+	} else if (n == 2) {
+		double x,y;
+        x = (luaL_checknumber(L,1));
+        y = (luaL_checknumber(L,2));
+        Camera::Instance()->Focus((Sprite*)NULL);
+        Camera::Instance()->Focus(x,y);
+    } else {
+		return luaL_error(L, "Got %d arguments expected 1 (SpriteID) or 2 (X,Y)", n);
+    }
 	return 0;
 }
 

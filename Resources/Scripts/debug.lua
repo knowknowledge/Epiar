@@ -180,3 +180,26 @@ function showShipInfo(ship)
 	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d]:close();infoWindows[%d]=nil",shipID,shipID) ))
 end
 
+DX,DY = 20,20
+
+debugCommands = {
+	-- Each command should be a table
+	-- { KEY, TITLE, SCRIPT }
+	{'left', "Pan Left", "Epiar.moveCamera(-DX,0)",KEYPRESSED},
+	{'down', "Pan Down", "Epiar.moveCamera(0,-DY)",KEYPRESSED},
+	{'up', "Pan Up", "Epiar.moveCamera(0,DY)",KEYPRESSED},
+	{'right', "Pan Right", "Epiar.moveCamera(DX,0)",KEYPRESSED},
+	{'I', "Get Info", "showInfo()",KEYTYPED},
+}
+registerCommands(debugCommands)
+
+function debugZoomKeys()
+    for k =1,9 do
+        local keyval = string.byte(k)
+        local vis = 1000*math.pow(2,k-1)
+        local delta = 10*math.pow(2,k-1)
+        local cmd = string.format("DX,DY=%f,%f;HUD.setVisibity(%d)",delta,delta,vis)
+        Epiar.RegisterKey(keyval, KEYPRESSED, cmd)
+    end
+end
+registerInit(debugZoomKeys)
