@@ -71,7 +71,7 @@ bool Planet::parserCB( string sectionName, string subName, string value ) {
 		Image::Store(name,Image::Get(value));
 		SetImage( image );
 	} else PPA_MATCHES( "militia" ) {
-		militia = (short int)atoi( value.c_str() );
+		militiaSize = (short int)atoi( value.c_str() );
 	} else PPA_MATCHES( "sphereOfInfluence" ) {
 		sphereOfInfluence = atoi( value.c_str() );
 	} else PPA_MATCHES( "technology" ) {
