@@ -232,7 +232,7 @@ registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buyShip(model)
-	HUD.newAlert("Enjoy your new "..model..".")
+	HUD.newAlert("Enjoy your new "..model.." for "..Epiar.getMSRP(model).." credits.")
 	PLAYER:SetModel(model)
 	return 1
 end
@@ -243,7 +243,7 @@ function buyWeapon(weapon)
 		PLAYER:AddAmmo(weapon,100)
 		return 0
 	else
-		HUD.newAlert("Enjoy your new "..weapon.." system.")
+		HUD.newAlert("Enjoy your new "..weapon.." system for "..Epiar.getMSRP(weapon).." credits")
 		PLAYER:AddWeapon(weapon)
 		PLAYER:AddAmmo(weapon,100)
 		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
@@ -259,7 +259,7 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 	row,col = 1,1
 	getPos = function(c,r)
 		pos_x = pad*(col)+box*(col-1)
-		pos_y = pad*(row)+box*(row-1)
+		pos_y = pad*(row)+box*(row-1)+20
 		return pos_x,pos_y
 	end
 

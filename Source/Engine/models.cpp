@@ -25,16 +25,20 @@ Model& Model::operator=(const Model& other) {
 	thrustOffset = other.thrustOffset;
 	rotPerSecond = other.rotPerSecond;
 	maxSpeed = other.maxSpeed;
+	msrp = other.msrp;
+	maxEnergyAbsorption = other.maxEnergyAbsorption;
 	return *this;
 }
 
-Model::Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption) :
+Model::Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp) :
 	image(_image),
 	engine(_engine),
 	mass(_mass),
 	thrustOffset(_thrustOffset),
 	rotPerSecond(_rotPerSecond),
-	maxSpeed(_maxSpeed)
+	maxSpeed(_maxSpeed),
+	msrp(_msrp),
+	maxEnergyAbsorption(_maxEnergyAbsorption)
 {
 	SetName(_name);
 	//((Component*)this)->SetName(_name);
@@ -62,6 +66,8 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 		thrustOffset = (short)atoi( value.c_str() );
 	} else PPA_MATCHES( "maxSpeed" ) {
 		maxSpeed = (float)atof( value.c_str() );
+	} else PPA_MATCHES( "msrp" ) {
+		msrp = atoi( value.c_str() );
 	} else PPA_MATCHES( "maxEnergyAbsorption" ) {
 		maxEnergyAbsorption = (short)atoi( value.c_str() );
 	}
@@ -100,6 +106,8 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->getMaxEnergyAbsorption() );
 	xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
+	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 
 	return section;
 }

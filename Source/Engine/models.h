@@ -20,7 +20,7 @@ class Model : public Component {
 	public:
 		Model();
   		Model& operator= (const Model&);
-		Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption);
+		Model( string _name, Image* _image, Engine* _engine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp);
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
@@ -35,6 +35,7 @@ class Model : public Component {
 		int GetThrustOffset( void ) { return thrustOffset; }
 		short int getMaxEnergyAbsorption() { return maxEnergyAbsorption; }
 		void PlayEngineThrust( float volume, Coordinate offset );
+		int GetMSRP() {return msrp;}
 		
 	private:
 		Image *image;
@@ -43,6 +44,7 @@ class Model : public Component {
 		short int thrustOffset; // engine flare animation offset
 		float rotPerSecond;
 		float maxSpeed;
+		int msrp;
 		short int maxEnergyAbsorption; 
 };
 

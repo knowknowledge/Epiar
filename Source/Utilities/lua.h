@@ -41,13 +41,16 @@ class Lua {
 		static int getoption(lua_State *L);
 		static int setoption(lua_State *L);
 
+		// Simulation Interfaces
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
-		static int getPlayer(lua_State *L);
 		static int getCamera(lua_State *L);
 		static int moveCamera(lua_State *L);
 		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
+
+		// Sprite Fetchers
+		static int getPlayer(lua_State *L);
 		static int getSpriteByID(lua_State *L);
 		static int getSprites(lua_State *L, int type);
 		static int getNearestSprite(lua_State *L, int type=DRAW_ORDER_ALL);
@@ -55,6 +58,8 @@ class Lua {
 		static int getNearestPlanet(lua_State *L);
 		static int getShips(lua_State *L);
 
+
+		// Game Components
 		static int getAllianceNames(lua_State *L);
 		static int getEngineNames(lua_State *L);
 		static int getModelNames(lua_State *L);
@@ -63,6 +68,10 @@ class Lua {
 		static int getTechnologyNames(lua_State *L);
 		static int getPlanetNames(lua_State *L);
 
+		// Information about Components
+		static int getMSRP(lua_State *L);
+
+		// Editor Commands
 		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
@@ -72,6 +81,7 @@ class Lua {
 		static int setInfo(lua_State *L);
 		static int saveComponents(lua_State *L);
 
+		// Lua Stack Helpers
 		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushNames(lua_State *L, list<string> *names);
 		static void setField(const char* index, int value);

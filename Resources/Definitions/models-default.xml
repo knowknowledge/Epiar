@@ -12,6 +12,7 @@
     <thrustOffset>10</thrustOffset>
     <maxSpeed>2.0</maxSpeed>
     <maxEnergyAbsorption>100</maxEnergyAbsorption>
+    <msrp>500</msrp>
   </model>
   <model>
     <name>Fleet Guard</name>
@@ -22,6 +23,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <maxEnergyAbsorption>700</maxEnergyAbsorption>
+    <msrp>3000</msrp>
   </model>
   <model>
     <name>Gate Enforcer</name>
@@ -32,6 +34,7 @@
     <thrustOffset>35</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <maxEnergyAbsorption>600</maxEnergyAbsorption>
+    <msrp>6000</msrp>
   </model>
   <model>
     <name>Hammer Freighter</name>
@@ -42,6 +45,7 @@
     <thrustOffset>44</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <maxEnergyAbsorption>800</maxEnergyAbsorption>
+    <msrp>6000</msrp>
   </model>
   <model>
     <name>Kartanal</name>
@@ -52,6 +56,7 @@
     <thrustOffset>31</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <msrp>4000</msrp>
   </model>
   <model>
     <name>Large Vesper</name>
@@ -62,6 +67,7 @@
     <thrustOffset>25</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <msrp>5000</msrp>
   </model>
   <model>
     <name>Mid Vesper</name>
@@ -72,6 +78,7 @@
     <thrustOffset>20</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <maxEnergyAbsorption>200</maxEnergyAbsorption>
+    <msrp>3500</msrp>
   </model>
   <model>
     <name>Patitu</name>
@@ -82,6 +89,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <msrp>6000</msrp>
   </model>
   <model>
     <name>Raven</name>
@@ -92,6 +100,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <maxEnergyAbsorption>300</maxEnergyAbsorption>
+    <msrp>3000</msrp>
   </model>
   <model>
     <name>Solaran Battle Cuiser</name>
@@ -100,8 +109,9 @@
     <mass>2.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>70</thrustOffset>
-    <maxSpeed>4.0</maxSpeed>
-    <maxEnergyAbsorption>1775</maxEnergyAbsorption>
+    <maxSpeed>5.0</maxSpeed>
+    <maxEnergyAbsorption>2500</maxEnergyAbsorption>
+    <msrp>8000</msrp>
   </model>
   <model>
     <name>Terran Assist</name>
@@ -112,6 +122,7 @@
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <maxEnergyAbsorption>800</maxEnergyAbsorption>
+    <msrp>4000</msrp>
   </model>
   <model>
     <name>Terran Corvert Mark I</name>
@@ -122,6 +133,7 @@
     <thrustOffset>34</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <maxEnergyAbsorption>700</maxEnergyAbsorption>
+    <msrp>6000</msrp>
   </model>
   <model>
     <name>Terran Corvert Mark II</name>
@@ -131,7 +143,8 @@
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>50</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>1200</maxEnergyAbsorption>
+    <maxEnergyAbsorption>2000</maxEnergyAbsorption>
+    <msrp>8000</msrp>
   </model>
   <model>
     <name>Terran Explorer</name>
@@ -142,6 +155,7 @@
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <msrp>1500</msrp>
   </model>
   <model>
     <name>Terran FV-5 Frigate</name>
@@ -152,6 +166,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <msrp>2000</msrp>
   </model>
   <model>
     <name>Terran Miner</name>
@@ -162,6 +177,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
     <maxEnergyAbsorption>600</maxEnergyAbsorption>
+    <msrp>1000</msrp>
   </model>
   <model>
     <name>Terran XV</name>
@@ -172,6 +188,7 @@
     <thrustOffset>27</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <msrp>2500</msrp>
   </model>
   <model>
     <name>Uber</name>
@@ -180,7 +197,8 @@
     <mass>10.00</mass>
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>90</thrustOffset>
-    <maxSpeed>3.0</maxSpeed>
-    <maxEnergyAbsorption>3000</maxEnergyAbsorption>
+    <maxSpeed>4.0</maxSpeed>
+    <maxEnergyAbsorption>5000</maxEnergyAbsorption>
+    <msrp>15000</msrp>
   </model>
 </models>

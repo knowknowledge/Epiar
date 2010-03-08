@@ -221,6 +221,7 @@ void Lua::RegisterFunctions() {
 		{"technologies", &Lua::getTechnologyNames},
 		{"planetNames", &Lua::getPlanetNames},
 		{"getSprite", &Lua::getSpriteByID},
+		{"getMSRP", &Lua::getMSRP},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		{"nearestShip", &Lua::getNearestShip},
@@ -579,6 +580,27 @@ int Lua::getSprites(lua_State *L, int kind){
     return 1;
 }
 
+int Lua::getMSRP(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (  )", n);
+	string name = (string)luaL_checkstring(L,1);
+
+	// Is there a priced Component named 'name'?
+	Component* comp = NULL;
+	if( (comp = Models::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Model*)comp)->GetMSRP() );
+	else if( (comp = Engines::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Engine*)comp)->GetMSRP() );
+	else if( (comp = Weapons::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Weapon*)comp)->GetMSRP() );
+	else {
+		return luaL_error(L, "Couldn't find anything by the name: '%s'", name.c_str());
+	}
+	// One of those should have worked or we would have hit the above else
+	assert(comp!=NULL);
+	return 1;
+}
 
 int Lua::getShips(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_SHIP);
@@ -659,6 +681,7 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
+	setField("MSRP", model->GetMSRP());
 
 	return 1;
 }
@@ -711,6 +734,7 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("Acceleration", weapon->GetAcceleration());
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
+	setField("MSRP", weapon->GetMSRP());
 	return 1;
 }
 
@@ -814,10 +838,11 @@ int Lua::setInfo(lua_State *L) {
 		float rot = getNumField(2,"Rotation");
 		float speed = getNumField(2,"MaxSpeed");
 		int hull = getIntField(2,"MaxHull");
+		int msrp = getIntField(2,"MSRP");
 
 		Model* oldModel = Models::Instance()->GetModel(name);
 		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-		Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull);
+		Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull,msrp);
 		*oldModel = newModel;
 
 	} else if(kind == "Planet"){
@@ -869,10 +894,11 @@ int Lua::setInfo(lua_State *L) {
 		int acceleration = getIntField(2,"Acceleration");
 		int fireDelay = getIntField(2,"FireDelay");
 		int lifetime = getIntField(2,"Lifetime");
+		int msrp = getIntField(2,"MSRP");
 
 		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
 		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound);
+		*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());

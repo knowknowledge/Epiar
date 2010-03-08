@@ -16,6 +16,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>1000</lifetime>
     <sound>Resources/Audio/Weapons/18397__inferno__smalllas.ogg</sound>
+    <msrp>100</msrp>
   </weapon>
   <weapon>
     <name>Minigun</name>
@@ -30,6 +31,7 @@
     <fireDelay>70</fireDelay>
     <lifetime>1000</lifetime>
     <sound>Resources/Audio/Weapons/18397__inferno__smalllas.ogg</sound>
+    <msrp>50</msrp>
   </weapon>
   <weapon>
     <name>Missile</name>
@@ -44,6 +46,7 @@
     <fireDelay>500</fireDelay>
     <lifetime>3000</lifetime>
     <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
+    <msrp>1000</msrp>
   </weapon>
   <weapon>
     <name>Slow Missile</name>
@@ -58,6 +61,7 @@
     <fireDelay>1000</fireDelay>
     <lifetime>30000</lifetime>
     <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
+    <msrp>1500</msrp>
   </weapon>
   <weapon>
     <name>Strong Laser</name>
@@ -72,5 +76,6 @@
     <fireDelay>200</fireDelay>
     <lifetime>500</lifetime>
     <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <msrp>200</msrp>
   </weapon>
 </weapons>

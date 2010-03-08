@@ -26,7 +26,8 @@ Weapon::Weapon(void) :
 	ammoType(0),
 	ammoConsumption(0),
 	fireDelay(0),
-	lifetime(0)
+	lifetime(0),
+	msrp(0)
 {
 	SetName("dead");
 }
@@ -44,11 +45,12 @@ Weapon& Weapon::operator=(const Weapon& other) {
 	ammoConsumption = other.ammoConsumption;
 	fireDelay = other.fireDelay;
 	lifetime = other.lifetime;
+	msrp = other.msrp;
 	sound = other.sound;
 	return *this;
 }
 
-Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound) :
+Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, int _msrp) :
 	sound(_sound),
 	image(_image),
 	pic(_pic),
@@ -59,7 +61,8 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _
 	ammoType(_ammoType),
 	ammoConsumption(_ammoConsumption),
 	fireDelay(_fireDelay),
-	lifetime(_lifetime)
+	lifetime(_lifetime),
+	msrp(_msrp)
 {
 	SetName(_name);
 	//((Component*)this)->SetName(_name);
@@ -105,6 +108,9 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "lifetime" ) {
 		if (atoi( value.c_str()) != 0)
 			lifetime = atoi( value.c_str() );
+	} else PPA_MATCHES( "msrp" ) {
+		if (atoi( value.c_str()) != 0)
+			msrp = atoi( value.c_str() );
 	} else PPA_MATCHES( "sound" ) {
 			string pathPrefix = "Resources/Audio/Weapons/";
 			if( value.find(pathPrefix)==0 ) {
@@ -143,6 +149,8 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetLifetime() );
 	xmlNewChild(section, NULL, BAD_CAST "lifetime", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "sound", BAD_CAST this->sound->GetPath().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
+	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 
 	return section;
 }
