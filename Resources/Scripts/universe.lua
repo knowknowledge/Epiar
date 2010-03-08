@@ -232,21 +232,39 @@ registerInit(planetTraffic)
 registerPlan(aimCenter)
 
 function buyShip(model)
-	HUD.newAlert("Enjoy your new "..model.." for "..Epiar.getMSRP(model).." credits.")
-	PLAYER:SetModel(model)
+	price = Epiar.getMSRP(model)
+	if player_credits >= price then
+		currentModel = PLAYER:GetModelName()
+		if currentModel ~= model then
+			player_credits = player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel))
+			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
+			PLAYER:SetModel(model)
+			PLAYER:Repair(10000)
+		else
+			HUD.newAlert("You already have a "..model)
+		end
+	else
+		HUD.newAlert("You can't afford to buy a "..model)
+	end
 	return 1
 end
 
 function buyWeapon(weapon)
-	weaponsAndAmmo = PLAYER:GetWeapons()
-	if weaponsAndAmmo[weapon]~=nil then
-		PLAYER:AddAmmo(weapon,100)
-		return 0
+	price = Epiar.getMSRP(weapon)
+	if player_credits >= price then
+		player_credits = player_credits - price
+		weaponsAndAmmo = PLAYER:GetWeapons()
+		if weaponsAndAmmo[weapon]~=nil then
+			PLAYER:AddAmmo(weapon,100)
+			return 0
+		else
+			HUD.newAlert("Enjoy your new "..weapon.." system for "..price.." credits")
+			PLAYER:AddWeapon(weapon)
+			PLAYER:AddAmmo(weapon,100)
+			myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
+		end
 	else
-		HUD.newAlert("Enjoy your new "..weapon.." system for "..Epiar.getMSRP(weapon).." credits")
-		PLAYER:AddWeapon(weapon)
-		PLAYER:AddAmmo(weapon,100)
-		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
+		HUD.newAlert("You can't afford to buy a "..weapon)
 	end
 	return 1
 end
@@ -290,7 +308,8 @@ function shipyard(planetID)
 	local models = planet:GetModels()
 	local buylist = {}
 	for m =1,#models do
-		buylist[m] = {models[m], "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
+		price = Epiar.getMSRP(models[m])
+		buylist[m] = {models[m]..": "..price, "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
 	end
 	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
@@ -303,7 +322,8 @@ function armory(planetID)
 	local weapons = planet:GetWeapons()
 	local buylist = {}
 	for i =1,#weapons do
-		buylist[i] = {weapons[i], "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}
+		price = Epiar.getMSRP(weapons[i])
+		buylist[i] = {weapons[i]..": "..price, "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}
 	end
 	storefront = createTable(30,30,820,500,"Armory",weapons,buylist)
 end

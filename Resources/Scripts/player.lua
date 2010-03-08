@@ -1,6 +1,7 @@
--- Use this script for a solar system
+-- Use this script for code directly to the Players
 
--- Keyboard States:
+PLAYER = Epiar.player()
+player_credits = 1000
 
 playerCommands = {
 	-- Each command should be a table
@@ -108,6 +109,7 @@ function createHUD()
 	qx,qy = coordinateToQuadrant(x,y)
 	pos = HUD.newStatus("Coordinate:",130,1,string.format("( %d , %d )",x,y))
 	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
+	creditBar = HUD.newStatus("Credits:",130,1,string.format("$%d",player_credits))
 
 	-- Weapon and Armor Status Bars
 	myhull = HUD.newStatus("HULL:",100,0,1.0)
@@ -131,6 +133,7 @@ updateHUD = function ()
 	qx,qy = coordinateToQuadrant(x,y)
 	pos:setStatus(string.format("( %d , %d )",x,y))
 	quad:setStatus(string.format("( %d , %d )",qx,qy))
+	creditBar:setStatus(string.format("$%d",player_credits))
 
 	-- Update Weapons and Armor
 	myhull:setStatus(PLAYER:GetHull())
