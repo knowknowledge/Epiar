@@ -304,8 +304,8 @@ int Lua::getCamera(lua_State *L){
 		return luaL_error(L, "Getting the Camera Coordinates didn't expect %d arguments. But thanks anyway", n);
     }
     Coordinate c = Camera::Instance()->GetFocusCoordinate();
-    lua_pushinteger(L,c.GetX());
-    lua_pushinteger(L,c.GetY());
+    lua_pushinteger(L,static_cast<lua_Integer>(c.GetX()));
+    lua_pushinteger(L,static_cast<lua_Integer>(c.GetY()));
 	return 2;
 }
 
@@ -804,7 +804,7 @@ int Lua::setInfo(lua_State *L) {
 
 		Engine* oldEngine = Engines::Instance()->GetEngine(name);
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldEngine = Engine(name,oldEngine->thrustsound,force,msrp,foldDrive,flare);
+		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
@@ -829,7 +829,7 @@ int Lua::setInfo(lua_State *L) {
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldPlanet = Planet(name,alliance,(bool)landable,traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
+		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
 	} else if(kind == "Technology"){
 		list<string>::iterator iter;
