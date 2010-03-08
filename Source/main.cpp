@@ -46,6 +46,15 @@ int main( int argc, char **argv ) {
 	Filesystem::Init( argv[0], "dat" );
 #endif
 
+#ifdef __APPLE__
+	string path = argv[0];
+	if( path.find("MacOS/Epiar") ){ // If this is being run from inside a Bundle
+		// Chdir to the Bundle Contents
+		string ContentsPath = path.substr(0, path.find("MacOS/Epiar") );
+		chdir(ContentsPath.c_str());
+	}
+#endif
+
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
@@ -58,6 +67,8 @@ int main( int argc, char **argv ) {
 #ifdef COMP_GCC
 	Log::Message( "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
 #endif // COMP_GCC
+
+	Log::Message("Executable Path: %s", argv[0]);
 
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
@@ -112,6 +123,7 @@ int parseArgs( int argc, char **argv ) {
 		
 		// it'd be nice if we could overload the switch control structure to accept std::string, sigh
 		string parm = argv[i];
+		Log::Message("Argument[%d]: %s", i,argv[i]);
 		
 		if( parm == "help" ) {
 			// remember to keep this list updated when new parms are added
