@@ -346,7 +346,7 @@ end
 
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
-dofile "Resources/Scripts/swarm.lua"
+--dofile "Resources/Scripts/swarm.lua"
 dofile "Resources/Scripts/commands.lua"
 
 -- Run Start now that everything is loaded
