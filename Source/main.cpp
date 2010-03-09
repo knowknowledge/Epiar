@@ -74,7 +74,7 @@ int main( int argc, char **argv ) {
 
 	if( parseArgs( argc, argv ) == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
-		debug.Run(OPTION(int,"options/development/debug-mode"));
+		debug.Run();
 	}
 
 	Video::Shutdown();
@@ -117,7 +117,7 @@ int parseArgs( int argc, char **argv ) {
 			// remember to keep this list updated when new parms are added
 			printf("\n\t--help           - Displays this message");
 			printf("\n\t--version        - Displays program version");
-			printf("\n\t--debug-mode     - Debug and edit Game Components");
+			printf("\n\t--editor-mode    - Editor and edit Game Components");
 			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
 			printf("\n\t--no-audio       - Turns off all sounds.");
 			printf("\n\t--[no]log-xml    - Turn on logggin to an XML file");
@@ -130,8 +130,8 @@ int parseArgs( int argc, char **argv ) {
 			printf("\nEpiar version %s", EPIAR_VERSION_FULL );
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
-		} else if( parm == "debug-mode" ) {
-			SETOPTION("options/development/debug-mode",1);
+		} else if( parm == "editor-mode" ) {
+			SETOPTION("options/development/editor-mode",1);
 		} else if( parm == "ui-demo" ) {
 			ui_demo( true ); // temporary function
 			return( -1 );

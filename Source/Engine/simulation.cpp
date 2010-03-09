@@ -85,7 +85,7 @@ void Simulation::unpause(){
 /**\brief Main game loop
  * \return true
  */
-bool Simulation::Run( int debugMode ) {
+bool Simulation::Run() {
 	bool quit = false;
 	Input inputs;
 	int fpsCount = 0; // for FPS calculations
@@ -106,7 +106,7 @@ bool Simulation::Run( int debugMode ) {
 	// Create a spritelist
 	SpriteManager *sprites = SpriteManager::Instance();
 
-    if(!debugMode){
+    if( 0 == OPTION(int,"options/development/editor-mode") ){
         Player *player = Player::Instance();
 
         // Set player model based on simulation xml file settings
@@ -130,14 +130,14 @@ bool Simulation::Run( int debugMode ) {
 		Log::Error("Fatal error starting Lua.");
 		quit = true;
 	}
-    if(!debugMode){
+    if( 0 == OPTION(int,"options/development/editor-mode") ){
         if( !( Lua::Load("Resources/Scripts/player.lua") ))
         {
             Log::Error("Fatal error starting Lua.");
             quit = true;
         }
-    } else if(debugMode){
-        if( !( Lua::Load("Resources/Scripts/debug.lua") ))
+    } else {
+        if( !( Lua::Load("Resources/Scripts/editor.lua") ))
         {
             Log::Error("Fatal error starting Lua.");
             quit = true;

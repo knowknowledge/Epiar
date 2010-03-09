@@ -22,7 +22,7 @@ class Simulation {
 		Simulation( string filename );
 		
 		bool Load( string filename );
-		bool Run( int debugMode=0 );
+		bool Run();
 
 		static float GetFPS();
 		
