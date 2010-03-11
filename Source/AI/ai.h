@@ -15,12 +15,13 @@
 // to run an AI simulation
 class AI : public Ship{
 	public:
-		AI();
+		AI(string machine);
 		void Update();
 		void SetScript(string& script);
 
 	private:
-		string my_script;
+		string stateMachine;
+		string state;
 };
 
 #endif /*AI_H_*/

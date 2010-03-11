@@ -87,7 +87,7 @@ bool Lua::Run( string line ) {
 // It was originally named "call_va"
 bool Lua::Call(const char *func, const char *sig, ...) {
 	va_list vl;
-	int narg, nres;  /* number of arguments and results */
+	int narg, nres,resultcount;  /* number of arguments and results */
 
 	va_start(vl, sig);
 	lua_getglobal(L, func);  /* get function */
@@ -120,13 +120,13 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 	} endwhile:
 
 	/* do the call */
-	nres = strlen(sig);  /* number of expected results */
-	if (lua_pcall(L, narg, nres, 0) != 0)  /* do the call */
+	resultcount = strlen(sig);  /* number of expected results */
+	if (lua_pcall(L, narg, resultcount, 0) != 0)  /* do the call */
 		luaL_error(L, "error running function `%s': %s",
 				func, lua_tostring(L, -1));
 
 	/* retrieve results */
-	nres = -nres;  /* stack index of first result */
+	nres = -resultcount;  /* stack index of first result */
 	while (*sig) {  /* get results */
 		switch (*sig++) {
 
@@ -154,6 +154,7 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 		nres++;
 	}
 	va_end(vl);
+	lua_pop(L,resultcount);
 	return true;
 }
 
@@ -545,7 +546,7 @@ int Lua::getSpriteByID(lua_State *L){
 
 	if(sprite==NULL){
 		Log::Error("Lua requested sprite with unknown id %d",id);
-		return luaL_error(L, "The ID %d doesn't refer to anything",id );
+		return 0;
 	}
 
 	Lua::pushSprite(L,sprite);

@@ -102,7 +102,9 @@ end
 SHIPS={}
 
 function createShip(X,Y,model)
-	cur_ship = Ship.new(X,Y,model,"blank")
+	
+	plans = {"Hunter","Trader"}
+	cur_ship = Ship.new(X,Y,model,plans[math.random(2)])
 	cur_ship:SetRadarColor(0,255,0)
 	SHIPS[ cur_ship:GetID() ] = cur_ship
 	return cur_ship
@@ -120,7 +122,6 @@ function createRandomShip(X,Y,Range,shiptypes,weapons)
 	model = shiptypes[math.random(#shiptypes)]
 	s = createShip(X,Y,model)
 	attachRandomWeapon(s,weapons)
-	AIPlans[ cur_ship:GetID() ] = newPlan()
 	return s
 end
 
@@ -177,28 +178,6 @@ function options()
 end
 
 -- Execute the current plan of each AI
-function MoveShip(id)
-		cur_ship = SHIPS[id]
-		n = cur_ship:GetID()
-		AIPlans[n].plan( cur_ship, AIPlans[n].time )
-		AIPlans[n].time = AIPlans[n].time -1
-		-- When the current plan is complete, pick a new plan
-		if AIPlans[n].time == 0 then
-			AIPlans[n] = newPlan()
-		end
-		percent = 0.10
-		if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
-			HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
-			x,y = cur_ship:GetPosition()
-			cur_ship:Explode()
-			for pod = 1,3 do
-				cur_ship = createShip(x,y,"Escape Pod")
-				AIPlans[ cur_ship:GetID() ] = {plan=landOnNearestPlanet,time=10000}
-			end
-		end
-end
-
---------------------------------------------------------------------------------
 -- Necessary functions for now.
 
 -- Create Some ships around the planets

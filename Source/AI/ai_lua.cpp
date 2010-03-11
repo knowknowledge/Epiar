@@ -107,16 +107,15 @@ int AI_Lua::newShip(lua_State *L){
 	double x = luaL_checknumber (L, 1);
 	double y = luaL_checknumber (L, 2);
 	string modelname = luaL_checkstring (L, 3);
-	string scriptname = luaL_checkstring (L, 4);
+	string statemachine = luaL_checkstring (L, 4);
 
 	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
 	AI* s;
-	s = new AI();
+	s = new AI(statemachine);
 	s->SetWorldPosition( Coordinate(x, y) );
 	s->SetModel( Models::Instance()->GetModel(modelname) );
-	s->SetScript( scriptname );
 	Lua::pushSprite(L,s);
 
 	// Add this ship to the SpriteManager
@@ -374,7 +373,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 			lua_pushnumber(L, 0 );
 			return 1;
 		}
-		lua_pushnumber(L, (double) (ai)->GetAngle() );
+		lua_pushnumber(L, (double) normalizeAngle( (ai)->GetAngle() ) );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
