@@ -43,7 +43,7 @@ function attemptLanding()
 	if landingWin ~= nil then return end
 	x,y = PLAYER:GetPosition()
 	planet = Epiar.nearestPlanet(PLAYER,4096)
-	px,py = planet:Position()
+	px,py = planet:GetPosition()
 	distance = distfrom( px,py, x,y)
 	message=""
 	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.

@@ -207,7 +207,7 @@ function planetTraffic()
 	for p=1,#planets do
 		planet = planets[p]
 		expectedTraffic = 1* planet:Traffic()
-		x,y = planet:Position()
+		x,y = planet:GetPosition()
 		influence = planet:Influence()
 		currentTraffic = #(Epiar.ships(x,y,influence))
 		if influence>0 and currentTraffic < expectedTraffic then

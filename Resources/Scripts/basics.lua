@@ -43,7 +43,7 @@ function nearestPlanet(cur_ship,timeleft)
 	planet = Epiar.nearestPlanet(cur_ship,4096)
 	if planet ~= nil then
 		myx,myy = cur_ship:GetPosition()
-		x,y = planet:Position()
+		x,y = planet:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)>200 then
 			cur_ship:Accelerate()
@@ -66,7 +66,7 @@ function landOnNearestPlanet(cur_ship,timeleft)
 	planet = Epiar.nearestPlanet(cur_ship,4096)
 	if planet ~= nil then
 		myx,myy = cur_ship:GetPosition()
-		x,y = planet:Position()
+		x,y = planet:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(x, y) )
 		if distfrom(myx,myy,x,y)<100 then
 			cur_ship:Remove()
