@@ -13,6 +13,7 @@
 #include "AI/ai_lua.h"
 #include "Audio/sound.h"
 #include "Utilities/camera.h"
+#include "Utilities/trig.h"
 
 /**\class AI_Lua
  * \brief Lua bridge for AI.*/
