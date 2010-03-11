@@ -57,6 +57,7 @@ bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	}
 	GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite );
 	delete sprite;
+	return true;
 }
 
 /**\brief Deletes a sprite.
