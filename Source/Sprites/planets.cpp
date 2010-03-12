@@ -182,7 +182,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetName", &Planets_Lua::GetName},
 		{"GetID", &Planets_Lua::GetID},
 		{"GetType", &Planets_Lua::GetType},
-		{"Position", &Planets_Lua::GetPosition},
+		{"GetPosition", &Planets_Lua::GetPosition},
 		{"Alliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
