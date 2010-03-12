@@ -62,8 +62,8 @@ int main( int argc, char **argv ) {
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 	Audio::Instance().Initialize();
-	Audio::Instance().SetMusicVol ( 68 );
-	Audio::Instance().SetSoundVol ( 68 );
+	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
+	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
