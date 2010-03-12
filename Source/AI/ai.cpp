@@ -27,6 +27,7 @@ AI::AI(string machine) :
  */
 void AI::Update(){
 	// Decide
+	string newstate;
 	
 	Lua::Call(this->stateMachine.c_str(), "iddddds>s",
 		this->GetID(),
@@ -36,8 +37,9 @@ void AI::Update(){
 		this->GetMomentum().GetMagnitude(), // Speed
 		this->GetMomentum().GetAngle(), // Vector
 		this->state.c_str()
-		,&(this->state)
+		,&(newstate)
 		);
+	state= newstate;
 
 	// Now act like a normal ship
 	this->Ship::Update();
