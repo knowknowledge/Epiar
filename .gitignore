@@ -29,6 +29,7 @@ Source/Lua/src/luac
 
 ### vim development files
 tags
+luatags
 .vimrc
 
 ### Epiar Binaries

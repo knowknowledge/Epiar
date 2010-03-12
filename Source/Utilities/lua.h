@@ -38,8 +38,12 @@ class Lua {
 
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
+
+		// Options Interfaces
 		static int getoption(lua_State *L);
 		static int setoption(lua_State *L);
+		static int setsoundvol(lua_State *L);
+		static int setmusicvol(lua_State *L);
 
 		// Simulation Interfaces
 		static int unpause(lua_State *L);

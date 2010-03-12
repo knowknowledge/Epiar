@@ -9,6 +9,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/audio.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -213,6 +214,8 @@ void Lua::RegisterFunctions() {
 		{"ispaused", &Lua::ispaused},
 		{"getoption", &Lua::getoption},
 		{"setoption", &Lua::setoption},
+		{"setsoundvol", &Lua::setsoundvol},
+		{"setmusicvol", &Lua::setmusicvol},
 		{"player", &Lua::getPlayer},
 		{"getCamera", &Lua::getCamera},
 		{"moveCamera", &Lua::moveCamera},
@@ -295,6 +298,26 @@ int Lua::setoption(lua_State *L) {
 	string path = (string)lua_tostring(L, 1);
 	string value = (string)lua_tostring(L, 2);
 	SETOPTION(path,value);
+	return 0;
+}
+
+int Lua::setsoundvol(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if (n !=  1)
+		return luaL_error(L, "Sound volume: Got %d arguments expected 1 (volume)", n);
+	float volume = TO_FLOAT(luaL_checknumber(L, 1));
+	Audio::Instance().SetSoundVol(volume);
+	SETOPTION("options/sound/soundvolume",volume);
+	return 0;
+}
+
+int Lua::setmusicvol(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if (n !=  1)
+		return luaL_error(L, "Music volume: Got %d arguments expected 1 (volume)", n);
+	float volume = TO_FLOAT(luaL_checknumber(L, 1));
+	Audio::Instance().SetMusicVol(volume);
+	SETOPTION("options/sound/musicvolume",volume);
 	return 0;
 }
 

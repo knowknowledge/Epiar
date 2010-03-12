@@ -121,13 +121,14 @@ bool Audio::SetSoundVol( float volume ){
 		Log::Warning("Volume (%f) must be >= 0.", volume);
 		this->sound_vol = 0;
 		return false;
-	} else if ( volume > AUDIO_MAX_VOL ){
+	} else if ( volume > 1 ){
 		Log::Warning("Volume (%f) must be <= 1.", volume);
 		this->sound_vol = 1;
 		return false;
 	}
 
 	this->sound_vol = volume;
+	Log::Message("Sound volume changed to %f",this->sound_vol);
 	return true;
 }
 

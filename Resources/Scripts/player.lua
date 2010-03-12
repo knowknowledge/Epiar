@@ -14,7 +14,7 @@ playerCommands = {
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
-	{'L', "Land on Planet", "attemptLanding()",KEYTYPED},
+	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED},

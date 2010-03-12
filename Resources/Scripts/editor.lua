@@ -211,7 +211,7 @@ debugCommands = {
 	{'down', "Pan Down", "Epiar.moveCamera(0,-DY)",KEYPRESSED},
 	{'up', "Pan Up", "Epiar.moveCamera(0,DY)",KEYPRESSED},
 	{'right', "Pan Right", "Epiar.moveCamera(DX,0)",KEYPRESSED},
-	{'I', "Get Info", "showInfo()",KEYTYPED},
+	{'i', "Get Info", "showInfo()",KEYTYPED},
 }
 registerCommands(debugCommands)
 

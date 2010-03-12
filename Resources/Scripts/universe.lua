@@ -139,7 +139,7 @@ function options()
 		closeOptions()
 		return
 	end
-	local height=300
+	local height=340
 	optionWindow = UI.newWindow( 30,100,200,height,"Options")
 	 
 	-- Sounds
@@ -149,13 +149,26 @@ function options()
 	enginesSound    = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
 	explosionsSound = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
 	buttonsSound    = UI.newCheckbox(20, 130, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
-	optionWindow:add( soundsLabel, backgroundSound, weaponsSound, enginesSound, explosionsSound, buttonsSound )
+	soundVolume     = { Textbox = UI.newTextbox(20,  150, 30, 1,Epiar.getoption("options/sound/soundvolume")),
+						Label = UI.newLabel(55, 165, "Sound volume (0-1)")}
+	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
+						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
+	optionWindow:add( soundsLabel,
+					backgroundSound,
+					weaponsSound,
+					enginesSound,
+					explosionsSound,
+					buttonsSound,
+					soundVolume.Textbox,
+					soundVolume.Label,
+					musicVolume.Textbox,
+					musicVolume.Label)
 
 	-- Debugging
-	debugLabel      = UI.newLabel(20,160,"Debug Options:",0)
-	xmlfileLogging  = UI.newCheckbox(20, 170, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
-	stdoutLogging   = UI.newCheckbox(20, 190, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 210, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	debugLabel      = UI.newLabel(20,210,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 220, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 240, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 260, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
 	optionWindow:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
 	
 	function saveOptions()
@@ -164,6 +177,8 @@ function options()
 		Epiar.setoption("options/sound/engines",    enginesSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/explosions", explosionsSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
+		Epiar.setsoundvol(soundVolume.Textbox:GetText() )
+		Epiar.setmusicvol(musicVolume.Textbox:GetText() )
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",    		stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
