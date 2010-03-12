@@ -189,6 +189,14 @@ function showShipInfo(ship)
 		shipInfoWin:add(UI.newButton( 150, y2, 40, 20, "-->", "showComponent('Weapon','"..weapon.."',Epiar.getWeaponInfo)"))
 		y1,y2=y1+yoff,y2+yoff
 	end
+	-- View the AI State Machine
+	local machine, state = ship:GetState()
+	shipInfoWin:add(UI.newLabel( 10, y1, "Machine:"))
+	shipInfoWin:add(UI.newTextbox( 90, y2, 100, 1, machine))
+	-- TODO The State doesn't get updated in real time.  Fix this somehow...
+	y1,y2=y1+yoff,y2+yoff
+	shipInfoWin:add(UI.newLabel( 10, y1, "State:"))
+	shipInfoWin:add(UI.newTextbox( 90, y2, 100, 1, state))
 	-- TODO Outfit?
 	infoWindows[shipID] = {win=shipInfoWin, info={},texts={}}
 	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d].win:close();infoWindows[%d]=nil",shipID,shipID) ))

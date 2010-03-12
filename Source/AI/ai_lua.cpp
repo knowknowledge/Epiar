@@ -62,6 +62,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetHull", &AI_Lua::ShipGetHull},
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
+		{"GetState", &AI_Lua::ShipGetState},
 
 		{NULL, NULL}
 	};
@@ -563,12 +564,29 @@ int AI_Lua::ShipGetHull(lua_State* L){
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL){
+			// The ship doesn't exist (anymore?) so it's probably dead
 			lua_pushnumber(L, 0 );
 			return 1;
 		}
 		lua_pushnumber(L, (double) (ai)->getHullIntegrityPct() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (self)", n);
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
+}
+
+int AI_Lua::ShipGetState(lua_State* L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushstring(L, (ai)->GetStateMachine().c_str() );
+		lua_pushstring(L, (ai)->GetState().c_str() );
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 2;
 }

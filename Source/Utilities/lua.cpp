@@ -85,6 +85,9 @@ bool Lua::Run( string line ) {
 // This function is from the Lua PIL
 // http://www.lua.org/pil/25.3.html
 // It was originally named "call_va"
+//
+// WARNING: any s as a return must be a pointer to a string (not a c str)
+//          This allows Lua::Call to clear the stack when we're done.
 bool Lua::Call(const char *func, const char *sig, ...) {
 	va_list vl;
 	int narg, nres,resultcount;  /* number of arguments and results */
@@ -145,7 +148,7 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 			case 's':  /* string result */
 				if (!lua_isstring(L, nres))
 					luaL_error(L, "wrong result kind");
-				*va_arg(vl, const char **) = lua_tostring(L, nres);
+				*va_arg(vl, string*) = lua_tostring(L, nres);
 				break;
 
 			default:

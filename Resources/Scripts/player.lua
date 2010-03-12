@@ -123,29 +123,39 @@ function createHUD()
 	-- DEBUG Bars
 	TargetName = HUD.newStatus("Target:",130,1,"")
 	TargetHULL = HUD.newStatus("Target:",130,1,0)
+	TargetMachine = HUD.newStatus("Machine:",130,1,"")
+	TargetState = HUD.newStatus("State:",130,1,0)
 end
 registerInit(createHUD)
 
 updateHUD = function ()
 	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
-	x,y = PLAYER:GetPosition()
-	qx,qy = coordinateToQuadrant(x,y)
+	local x,y = PLAYER:GetPosition()
+	local qx,qy = coordinateToQuadrant(x,y)
 	pos:setStatus(string.format("( %d , %d )",x,y))
 	quad:setStatus(string.format("( %d , %d )",qx,qy))
 	creditBar:setStatus(string.format("$%d",player_credits))
 
 	-- Update Weapons and Armor
 	myhull:setStatus(PLAYER:GetHull())
-	weaponsAndAmmo = PLAYER:GetWeapons()
-	cur_weapon = PLAYER:GetCurrentWeapon()
+	local weaponsAndAmmo = PLAYER:GetWeapons()
+	local cur_weapon = PLAYER:GetCurrentWeapon()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if cur_weapon == weapon then star=" ARMED" else star="" end
 		if 0==ammo then ammo="---" end
 		myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
 	end
-	if SHIPS[HUD.getTarget()]~=nil then
-		TargetHULL:setStatus( SHIPS[HUD.getTarget()]:GetHull() )
+	local target = Epiar.getSprite( HUD.getTarget() )
+	if target~=nil then
+		if ( target:GetType() == 4) or ( target:GetType() == 8) then
+			TargetHULL:setStatus( target:GetHull() )
+		end
+		if ( target:GetType() == 4) then
+			local machine, state = target:GetState()
+			TargetMachine:setStatus(machine)
+			TargetState:setStatus(state)
+		end
 	end
 end
 registerPostStep(updateHUD)
