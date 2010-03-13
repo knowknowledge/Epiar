@@ -570,8 +570,8 @@ int Lua::getSpriteByID(lua_State *L){
 	int id = (int)(luaL_checkint(L,1));
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 
+	// Return nil if the sprite no longer exists
 	if(sprite==NULL){
-		Log::Error("Lua requested sprite with unknown id %d",id);
 		return 0;
 	}
 
