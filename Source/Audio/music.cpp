@@ -55,7 +55,8 @@ bool Song::Play( bool loop ){
 		Mix_PlayMusic( this->song, 1 );
 	else
 		Mix_PlayMusic( this->song, 0 );
-
+	/** \bug: SDL_mixer doesn't seem to respect VolumeMusic when starting a new song.*/
+	Mix_VolumeMusic( Mix_VolumeMusic(-1) );
 	return true;
 }
 

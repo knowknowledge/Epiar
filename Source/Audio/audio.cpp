@@ -167,14 +167,14 @@ int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 		int freechan = this->GetFreeChannel();
 		int chan_vol = Mix_Volume(freechan, -1);
 		// Scale channel volume by global volume
-		int scaled_vol = (chan_vol*this->sound_vol);
+		int scaled_vol = static_cast<int>(static_cast<float>(chan_vol)*this->sound_vol);
 		Mix_Volume( freechan, scaled_vol );
 		assert( Mix_Volume(freechan, -1) == scaled_vol);
 		chan_used = Mix_PlayChannel( freechan, chunk, loop );
 	}else{
 		int chan_vol = Mix_Volume(chan, -1);
 		// Scale channel volume by global volume
-		int scaled_vol = (chan_vol*this->sound_vol);
+		int scaled_vol = static_cast<int>(static_cast<float>(chan_vol)*this->sound_vol);
 		Mix_Volume( chan, scaled_vol );
 		assert( Mix_Volume(chan,-1)  == scaled_vol);
 		chan_used = Mix_PlayChannel( chan, chunk, loop );
