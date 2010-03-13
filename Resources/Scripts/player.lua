@@ -21,6 +21,7 @@ playerCommands = {
 }
 registerCommands(playerCommands)
 
+--- Target closest ship
 function targetClosestShip()
 	x,y = PLAYER:GetPosition()
 	nearby = Epiar.ships(x,y,4096)
@@ -39,6 +40,7 @@ function targetClosestShip()
 	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
 
+--- Try to land
 function attemptLanding()
 	if landingWin ~= nil then return end
 	x,y = PLAYER:GetPosition()
@@ -72,6 +74,7 @@ function attemptLanding()
 	end
 end
 
+--- Land on a planet
 function landOnPlanet(id)
 	-- Create the Planet Landing Screen
 	if landingWin ~= nil then return end
@@ -85,7 +88,7 @@ function landOnPlanet(id)
 	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
--- Register the player functions
+--- Register the player functions
 function radarZoomKeys()
 	for k =1,9 do
 		kn = string.byte(k)
@@ -95,6 +98,7 @@ function radarZoomKeys()
 end
 registerInit(radarZoomKeys)
 
+--- Convert coordinate to quadrant
 function coordinateToQuadrant(x,y)
 	qsize = 4096
 	function c2q(z)
@@ -103,6 +107,7 @@ function coordinateToQuadrant(x,y)
 	return c2q(x),c2q(y)
 end
 
+--- Create a HUD
 function createHUD()
 	-- Location Status Bars
 	x,y = PLAYER:GetPosition()

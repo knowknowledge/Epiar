@@ -10,6 +10,7 @@ Key = {
 	["return"]=13, ["end"]=279
 }
 
+--- Translates key
 function sdlkey(k)
 	if Key[k] then
 		return Key[k]
@@ -23,15 +24,20 @@ commands = {
 	{'?', "Game Options", "options()",KEYTYPED},
 	{'p', "Pause", "togglePause()",KEYTYPED}
 	}
+
+--- Register command
 function registerCommand(cmd)
 	table.insert(PreSteps,step)
 end
+
+--- Register multiple commands
 function registerCommands(cmds)
     for i,cmd in ipairs(cmds) do
         table.insert(commands,cmd)
     end
 end
 
+--- Register commands with Epiar
 function registerEpiarCommands()
 	for i=1,#commands do
 		keyval, name, code = commands[i][1],commands[i][2],commands[i][3]
@@ -40,6 +46,7 @@ function registerEpiarCommands()
 end
 registerInit(registerEpiarCommands)
 
+--- Specify keys configuration
 function chooseKeys()
 	Epiar.pause()
 	if keywin ~=nil then return end
@@ -63,6 +70,7 @@ function chooseKeys()
 	keywin:add(UI.newButton(10, h-38, 30, 30, "?", "keyhelp()"))
 end
 
+--- Process the key configuration
 function processKeyWin(commands)
 	for i=1,#commands do
 		keyval = keyinput[i]:GetText()
@@ -82,6 +90,7 @@ function processKeyWin(commands)
 	end
 end
 
+--- Help window
 function keyhelp()
 	Epiar.pause()
 	if keyhelpwin ~=nil then return end

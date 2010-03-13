@@ -2,6 +2,7 @@
 -- Game of Tag
 
 it = {}
+--- Setup
 it.setup = function()
     -- Setup Tag variables
     it.ship = Epiar.player()
@@ -22,6 +23,8 @@ it.setup = function()
         --it.label
         --)
 end
+
+--- Find the closest one
 it.findClosest = function()
 	if nil == it.ship then io.write("No one is IT!") return end
 	it.x,it.y = Ship.GetPosition(it.ship)
@@ -39,6 +42,8 @@ it.findClosest = function()
 	it.target_dist= distfrom(it.target_x,it.target_y, it.x,it.y)
 	io.write(string.format("Closest Ship to (%d,%d): Ship #%d is at (%d,%d) %d clicks away.\n", it.x,it.y, it.targetID,it.target_x,it.target_y,it.target_dist))
 end
+
+--- Tag it
 it.tag = function(target)
 	-- the old IT now runs
 	AIPlans[it.shipID] = {}
@@ -64,6 +69,8 @@ it.tag = function(target)
 	AIPlans[it.shipID].plan=chaseClosest
 	Ship.SetRadarColor(it.ship,255,0,0)
 end
+
+--- Update tag
 it.UpdateIT = function()
 	-- Set the Who's It? Dashboard to the correct Image
 	UI.setPicture(it.pic, Ship.GetModelName(it.ship) )
@@ -93,6 +100,7 @@ it.UpdateIT = function()
 	end
 end
 
+--- Chase closest
 function chaseClosest(cur_ship,timeleft)
 	-- This is only done by the ship that is IT
 	Ship.Rotate(cur_ship, 
@@ -100,6 +108,7 @@ function chaseClosest(cur_ship,timeleft)
 	Ship.Accelerate(cur_ship )
 end
 
+--- Aim towards tag target
 function aimTowardsIT(cur_ship,timeleft)
 	-- direction towards the ship that is IT
 	Ship.Rotate(cur_ship,
@@ -109,6 +118,7 @@ function aimTowardsIT(cur_ship,timeleft)
 	end
 end
 
+-- Aim away from tag target
 function aimAwayFromIT(cur_ship,timeleft)
 	-- direction away from the ship that is IT
 	Ship.Rotate(cur_ship,
