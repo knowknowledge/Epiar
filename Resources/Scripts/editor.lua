@@ -2,6 +2,7 @@
 infoWindows = {}
 componentWins = {}
 
+--- View components
 function componentDebugger()
 	if componentWindow ~= nil then return end
 	componentWindow = UI.newWindow( 150,10,740,70, "Game Component Debugging",
@@ -16,7 +17,7 @@ function componentDebugger()
 end
 componentDebugger()
 
--- Creates a generic list of Component buttons
+--- Creates a generic list of Component buttons
 -- TODO: This window should have an "Add Component" button
 function componentViewer(kind,listFunc,getStr)
 	if componentWins[kind] ~= nil then return end
@@ -29,7 +30,7 @@ function componentViewer(kind,listFunc,getStr)
 	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",kind,kind)))
 end
 
--- Creates an attribute setter for a particular Component
+--- Creates an attribute setter for a particular Component
 function showComponent(kind,name,getterFunc)
     if kind=="Planet" then
         planet = Planet.Get(name)
@@ -45,7 +46,7 @@ function showComponent(kind,name,getterFunc)
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theTexts}
 end
 
--- Lays out a series of labels and textboxes
+--- Lays out a series of labels and textboxes
 -- Returns the checkboxes for later
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
@@ -66,7 +67,7 @@ function infoTable(info,win)
 	return uiElements
 end
 
--- Show Info for the current Target
+--- Show Info for the current Target
 function showInfo()
 	currentTarget = HUD.getTarget()
     sprite = Epiar.getSprite(currentTarget)
@@ -80,6 +81,7 @@ function showInfo()
 	end
 end
 
+--- Saves information
 function saveInfo(name)
 	if infoWindows[name] == nil then return end
 	local info = infoWindows[name].info
@@ -98,6 +100,7 @@ function saveInfo(name)
 	print("Saved "..name)
 end
 
+--- View technology
 function technologyViewer()
 	if technologiesWindow ~= nil then return end
 	technologies = Epiar.technologies()
@@ -109,6 +112,7 @@ function technologyViewer()
 	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
 end
 
+--- Save technology
 function saveTech(name)
 	if infoWindows[name] == nil then return end
 	local win = infoWindows[name].win
@@ -132,6 +136,7 @@ function saveTech(name)
 	infoWindows[name]=nil
 end
 
+--- Show technology information
 function showTechInfo(name)
 	if infoWindows[name]~= nil then return end
 	local allmodels = Epiar.models()
@@ -166,6 +171,7 @@ function showTechInfo(name)
 	theWin:add(UI.newButton( 480,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))
 end
 
+--- Show ship information
 function showShipInfo(ship)
 	shipID = ship:GetID()
 	modelName = ship:GetModelName()
@@ -215,6 +221,7 @@ debugCommands = {
 }
 registerCommands(debugCommands)
 
+-- Zoom keys
 function debugZoomKeys()
     for k =1,9 do
         local keyval = string.byte(k)

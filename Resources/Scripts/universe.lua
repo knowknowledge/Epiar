@@ -6,6 +6,7 @@ PLAYER = Epiar.player()
 -- Init is a list of functions to be run when the game (re)starts
 
 Init = {}
+--- Initialization functions
 function registerInit(step)
 	table.insert(Init,step)
 end
@@ -14,6 +15,7 @@ end
 -- Registered Plans for AI to choose from
 
 Plans = {}
+--- List of plans for AI
 function registerPlan(plan)
 	table.insert(Plans,plan)
 end
@@ -24,13 +26,16 @@ AIPlans = {}
 
 PreSteps = {}
 PostSteps = {}
+--- Steps before each update
 function registerPreStep(step)
 	table.insert(PreSteps,step)
 end
+--- Steps after each update
 function registerPostStep(step)
 	table.insert(PostSteps,step)
 end
 
+--- Run the functions
 function Start()
 	io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
 	for i,func in ipairs(Init) do
@@ -38,6 +43,7 @@ function Start()
 	end
 end
 
+--- Update function
 function Update()
 	if #PreSteps >0 then
 		for i,pre_func in ipairs(PreSteps) do
@@ -54,6 +60,7 @@ end
 --------------------------------------------------------------------------------
 -- Basic Utilities
 
+--- Pause the game
 function togglePause()
 	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
@@ -65,7 +72,7 @@ function togglePause()
 	end
 end
 
--- Pause the Game with a given message
+--- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
 	pauseWin= UI.newWindow( 400,100,320,150,"Paused",
@@ -75,6 +82,7 @@ function pauseMessage(message)
 	Epiar.pause()
 end
 
+--- For debugging
 function godmode()
 	function heal()
 		PLAYER:Repair(10000)
@@ -83,14 +91,14 @@ function godmode()
 end
 --godmode() -- Uncomment this line to never die
 
--- Calculate the Distance between two points
+--- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	x_diff = (pt1_x - pt2_x)
 	y_diff = pt1_y - pt2_y
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
--- Generate a new plan from the list above
+--- Generate a new plan from the list above
 function newPlan()
 	theNewPlan = {}
 	planNum = math.random(#Plans)
@@ -101,6 +109,7 @@ end
 
 SHIPS={}
 
+--- Creates a new ship
 function createShip(X,Y,model)
 	
 	plans = {"Hunter","Trader"}
@@ -110,6 +119,7 @@ function createShip(X,Y,model)
 	return cur_ship
 end
 
+--- Creates a random ship
 function createRandomShip(X,Y,Range,shiptypes,weapons)
 	if shiptypes==nil then
 		shiptypes = Epiar.models()
@@ -125,6 +135,7 @@ function createRandomShip(X,Y,Range,shiptypes,weapons)
 	return s
 end
 
+--- Fixate random weapon
 function attachRandomWeapon(cur_ship,weapons)
 	if weapons==nil or #weapons==0 then return end
 	--Randomly assign a weapon to everyone
@@ -133,6 +144,7 @@ function attachRandomWeapon(cur_ship,weapons)
 	cur_ship:AddAmmo( weapons[i],100 )
 end
 
+--- List of options
 function options()
 	Epiar.pause()
 	if optionWindow ~= nil then
@@ -195,7 +207,7 @@ end
 -- Execute the current plan of each AI
 -- Necessary functions for now.
 
--- Create Some ships around the planets
+--- Create Some ships around the planets
 function planetTraffic()
 	planets = Epiar.planets()
 	for p=1,#planets do
@@ -214,6 +226,7 @@ function planetTraffic()
 	end
 end
 
+--- Aim at center
 function aimCenter(cur_ship,timeleft)
 	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
@@ -225,6 +238,7 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
+--- Buys a ship
 function buyShip(model)
 	price = Epiar.getMSRP(model)
 	if player_credits >= price then
@@ -243,6 +257,7 @@ function buyShip(model)
 	return 1
 end
 
+--- Buys a weapon
 function buyWeapon(weapon)
 	price = Epiar.getMSRP(weapon)
 	if player_credits >= price then
@@ -263,6 +278,7 @@ function buyWeapon(weapon)
 	return 1
 end
 
+--- Creates a table
 function createTable(x,y,w,h,title,piclist,buttonlist)
 	pad = 10
 	box = 120
@@ -294,6 +310,7 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 	return win
 end
 
+--- Ship yard
 function shipyard(planetID)
 	Epiar.pause()
 	if storefront ~=nil then return end
@@ -308,6 +325,7 @@ function shipyard(planetID)
 	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
 end
 
+--- Armory
 function armory(planetID)
 	Epiar.pause()
 	if storefront ~=nil then return end
@@ -322,6 +340,7 @@ function armory(planetID)
 	storefront = createTable(30,30,820,500,"Armory",weapons,buylist)
 end
 
+--- UI demo
 function ui_demo()
 	if demo_win ~= nil then return end
 

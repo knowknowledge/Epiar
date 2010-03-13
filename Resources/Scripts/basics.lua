@@ -1,6 +1,7 @@
---------------------------------------------------------------------------------
+--
 -- Basic Scenario
 
+--- Trader AI
 function Trader(id,x,y,angle,speed,vector,state)
 	local cur_ship = Epiar.getSprite(id)
 	local newstate = state
@@ -45,6 +46,7 @@ function Trader(id,x,y,angle,speed,vector,state)
 	return newstate
 end
 
+--- Hunter AI
 function Hunter(id,x,y,angle,speed,vector,state)
 	local cur_ship = Epiar.getSprite(id)
 	local newstate = state
@@ -110,14 +112,16 @@ function Hunter(id,x,y,angle,speed,vector,state)
 	return newstate
 end
 
+
+--- Direction towards the center or the universe
 function aimCenter(cur_ship,timeleft)
-	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
 		cur_ship:Rotate( cur_ship:directionTowards(0,0) )
 	end
 	cur_ship:Accelerate()
 end
 
+--- Chase routine
 function chaseClosure(targetShip)
 	function plan(cur_ship,timeleft)
 		myx,myy = cur_ship:GetPosition()
@@ -131,6 +135,7 @@ function chaseClosure(targetShip)
 	return plan 
 end
 
+--- Flee routine
 function fleeClosure(targetShip)
 	function plan(cur_ship,timeleft)
 		x,y = targetShip:GetPosition()
@@ -140,6 +145,7 @@ function fleeClosure(targetShip)
 	return plan 
 end
 
+--- Flee to a point
 function fleePoint(x,y)
 	function flee(cur_ship,timeleft)
 		cur_ship:Rotate( -cur_ship:directionTowards(x, y) )
@@ -148,6 +154,7 @@ function fleePoint(x,y)
 	return plan
 end
 
+--- Look for nearest planet
 function nearestPlanet(cur_ship,timeleft)
 	planet = Epiar.nearestPlanet(cur_ship,4096)
 	if planet ~= nil then
@@ -162,9 +169,11 @@ function nearestPlanet(cur_ship,timeleft)
 	end
 end
 
+--- Stop
 function stop(cur_ship,timeleft)
 end
 
+--- Land on nearest planet
 function landOnNearestPlanet(cur_ship,timeleft)
 	planet = Epiar.nearestPlanet(cur_ship,4096)
 	if planet ~= nil then
@@ -178,6 +187,7 @@ function landOnNearestPlanet(cur_ship,timeleft)
 	cur_ship:Accelerate()
 end
 
+--- Look for nearest ship
 function nearestShip(cur_ship,timeleft)
 	ship = Epiar.nearestShip(cur_ship,4096)
 	if ship then
@@ -196,7 +206,7 @@ end
 chasePlayer = chaseClosure( PLAYER )
 fleePlayer = fleeClosure( PLAYER )
 
--- Zig, Then Zag
+--- Zig, Then Zag
 function zigzag(cur_ship,timeleft)
 	-- Change direction rapidly
 	if timeleft % 10 <=3 then
@@ -210,6 +220,7 @@ function zigzag(cur_ship,timeleft)
 	cur_ship:Accelerate()
 end
 
+--- ???
 function moreTraffic(tickcycle)
 	ticks = tickcycle
 	function traffic()
@@ -223,8 +234,9 @@ function moreTraffic(tickcycle)
 end
 
 
--- Closure to create a bounding box function to keep all ships near
+--- Closure to create a bounding box function to keep all ships near
 function boundingClosure(distance, ticks)
+	--- return function
 	function boundingBox()
 		ships = Epiar.ships()
 		-- Move Non-Player ships

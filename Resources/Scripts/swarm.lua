@@ -1,8 +1,7 @@
---------------------------------------------------------------------------------
+--
 -- Swarm 
 
--- The swarm is the net average of all ships
---
+--- The swarm is the net average of all ships
 function newSwarm()
 	swarm = {}
 	swarm.avg_x= 0
@@ -12,6 +11,8 @@ function newSwarm()
 	swarm.avg_speed = 0
 	return swarm
 end
+
+--- Swarm average
 function swarmAverage(x,y,r)
 	swarm = newSwarm()
 	-- Average the statistics of each ship
@@ -34,6 +35,7 @@ function swarmAverage(x,y,r)
 	return swarm
 end
 
+--- AIM at swarm center
 function aimSwarmCenter(cur_ship,timeleft)
 	-- direction towards the center of the swarm
 	x,y = cur_ship:GetPosition()
@@ -44,6 +46,7 @@ function aimSwarmCenter(cur_ship,timeleft)
 	cur_ship:Accelerate()
 end
 
+--- AIM in swarm direction
 function aimSwarmDirection(cur_ship,timeleft)
 	x,y = cur_ship:GetPosition()
 	swarm = swarmAverage(x,y,1000)
