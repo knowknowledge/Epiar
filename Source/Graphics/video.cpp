@@ -12,6 +12,43 @@
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
+/**\class Color
+ * \brief Wrapper for RGB color.
+ * \fn Color::Get( int r, int g, int b)
+ *  \brief Creates the Color object.
+ * \fn Color::Get( float r, float g, float b )
+ *  \brief Creates the Color object (float version)
+ * \var Color::r
+ *  \brief Red component
+ */
+/**\var Color::g
+ *  \brief Green component
+ */
+/** \var Color::b
+ *  \brief Blue component
+ */
+
+/**\class Rect
+ * \brief Wrapper for a rectangle.
+ * \fn Rect::Rect()
+ *  \brief Creates a rectangle with 0 for x,y, width, and height.
+ * \fn Rect::Rect( float x, float y, float w, float h )
+ *  \brief Creates a rectangle with specified dimensions.
+ * \fn Rect::Rect( int x, int y, int w, int h )
+ *  \brief Creates a rectangle with specified dimensions. (float version)
+ * \var Rect::x
+ *  \brief x coordinate
+ */
+/**\var Rect::y
+ *  \brief y coordinate
+ */
+/**\var Rect::w
+ *  \brief width
+ */
+/**\var Rect::h
+ *  \brief height
+ */
+
 /**\class Video
  * \brief Video handling. */
 
@@ -36,6 +73,13 @@ Video *Video::Instance( void ) {
 Video::Video( void ) {
 	
 }
+
+/**\fn Video::Video( const Video& )
+ *  \brief Empty copy constructor.
+ * \fn Video::operator= (const Video&)
+ *  \brief Empty assignment operator.
+ */
+
 
 /**\brief Initializes the Video display.
  */
@@ -164,37 +208,49 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	return( true );
 }
 
+/**\brief Video updates.
+ */
 void Video::Update( void ) {
 	glFlush();
 	SDL_GL_SwapBuffers();
 	glFinish();
 }
 
+/**\brief Clears screen.
+ */
 void Video::Erase( void ) {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glLoadIdentity();
 }
 
+/**\brief Returns the width of the screen.
+ */
 int Video::GetWidth( void ) {
 	return( w );
 }
 
+/**\brief Returns the height of the screen.
+ */
 int Video::GetHeight( void ) {
 	return( h );
 }
 
-// draws a point, a single pixel, on the screen
+/**\brief draws a point, a single pixel, on the screen
+ */
 void Video::DrawPoint( int x, int y, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
 	glColor3f( r, g, b );
 	glRecti( x, y, x + 1, y + 1 );
 }
 
+/**\brief Draw a point using Coordinate and Color.
+ */
 void Video::DrawPoint( Coordinate c, Color col ) {
 	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
 }
 
-// draws a rectangle
+/**\brief Draws a rectangle
+ */
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
@@ -202,7 +258,8 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
 	glRecti( x, y, x + w, y + h );
 }
 
-// same as above but takes alpha
+/**\brief Draws a rectangle with transparency
+ */
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, float a ) {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
@@ -210,14 +267,20 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, flo
 	glRecti( x, y, x + w, y + h );
 }
 
+/**\brief Draws a circle.
+ */
 void Video::DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b) {
 	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, r, g, b );
 }
 
+/**\brief Draws a circle with Color
+ */
 void Video::DrawCircle( Coordinate c, int radius, float line_width, Color col) {
 	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, col.r, col.g, col.b );
 }
 
+/**\brief Draws a circle
+ */
 void Video::DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b) {
 	glDisable(GL_TEXTURE_2D);
 	glColor3f(r,g,b);
@@ -230,8 +293,10 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glEnd();
 }
 
+/**\brief Draw a filled circle.
+ */
 void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float b) {
-	//TODO: Make this draw a filled circle.
+	/// \todo: Make this draw a filled circle.
 	glColor3f(r,g,b);
 	glBegin(GL_LINE_STRIP);
 	for(double ang = 0; ang <= 2.5 * M_PI; ang = ang + 0.1)
@@ -241,6 +306,8 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 	glEnd();
 }
 
+/**\brief Draws a targeting overlay.
+ */
 void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b ) {
 	// d is for 'depth' and is the number of crosshair pixels
 	glColor3f(r,g,b);
@@ -260,18 +327,26 @@ void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, flo
 	glEnd();
 }
 
+/**\brief Enables the mouse
+ */
 void Video::EnableMouse( void ) {
 	SDL_ShowCursor( 1 );
 }
 
+/**\brief Disables the mouse
+ */
 void Video::DisableMouse( void ) {
 	SDL_ShowCursor( 0 );
 }
 
+/**\brief Returns the half width.
+ */
 int Video::GetHalfWidth( void ) {
 	return( w2 );
 }
 
+/**\brief Returns the half height.
+ */
 int Video::GetHalfHeight( void ) {
 	return( h2 );
 }

@@ -25,16 +25,16 @@ class Model : public Component {
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 		
+		float GetAcceleration( void );
+		string GetFlareAnimation( void );
+		void PlayEngineThrust( float volume, Coordinate offset );
 		float GetRotationsPerSecond( void ) { return rotPerSecond; }
 		float GetMaxSpeed( void ) { return maxSpeed; }
 		Engine* GetEngine( void ) const { return engine; }
-		float GetAcceleration( void );
 		float GetMass(void ) { return mass; }
 		Image *GetImage( void ) { return image; }
-		string GetFlareAnimation( void );
 		int GetThrustOffset( void ) { return thrustOffset; }
 		short int getMaxEnergyAbsorption() { return maxEnergyAbsorption; }
-		void PlayEngineThrust( float volume, Coordinate offset );
 		int GetMSRP() {return msrp;}
 		
 	private:

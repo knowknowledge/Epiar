@@ -165,7 +165,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 }
 
 /**\brief Lua callable function to set ship's radar color.
- * \sa Ship::SetRadarColor
+ * \sa Sprite::SetRadarColor
  */
 int AI_Lua::ShipRadarColor(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -344,7 +344,7 @@ int AI_Lua::ShipGetType(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's ID
- * \sa Ship:GetID()
+ * \sa Sprite::GetID()
  */
 int AI_Lua::ShipGetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -384,7 +384,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's position.
- * \sa Ship::GetWorldPosition()
+ * \sa Coordinate::GetWorldPosition()
  */
 int AI_Lua::ShipGetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -406,8 +406,8 @@ int AI_Lua::ShipGetPosition(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's momentum angle.
- * \sa Ship::GetMomentum()
- * \sa Coordinate::GetAngle()
+ * \sa Sprite::GetMomentum()
+ * \sa Sprite::GetAngle()
  */
 int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -427,7 +427,7 @@ int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's momentum speed.
- * \sa Ship::GetMomentum()
+ * \sa Sprite::GetMomentum()
  * \sa Coordinate::GetMagnitude()
  */
 int AI_Lua::ShipGetMomentumSpeed(lua_State* L){

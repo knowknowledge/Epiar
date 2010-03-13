@@ -1,4 +1,4 @@
-/**\filename		simulation.cpp
+/**\file			simulation.cpp
  * \author			Chris Thielen (chris@luethy.net)
  * \date			Created: July 2006
  * \date			Modified: Tuesday, June 23, 2009
@@ -343,3 +343,6 @@ bool Simulation::Parse( void ) {
 	return true;
 }
 
+/**\fn Simulation::isPaused()
+ * \brief Checks to see if Simulation is paused
+ */

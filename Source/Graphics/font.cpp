@@ -130,7 +130,7 @@ Rect Font::RenderCentered( int x, int y, const char *text ) {
 /**\brief Returns the graphical size of text without rendering it.
  * \details
  * 
- * \sa
+ * \sa Font::BoundingBox( string text )
  */
 Rect Font::BoundingBox( const char *text ) {
 	float llx, lly, llz;
@@ -141,6 +141,8 @@ Rect Font::BoundingBox( const char *text ) {
 	return Rect( 0., 0., -(llx - urx), lly - ury );	
 }
 
+/**\brief Returns the graphical size of the text without rendering it.
+ */
 Rect Font::BoundingBox( string text ) {
 	return BoundingBox( text.c_str() );
 }

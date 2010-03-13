@@ -22,6 +22,36 @@
 map<InputEvent, string> Input::eventMappings;
 Uint32 Input::lastMouseMove= 0;
 
+/**\class InputEvent
+ * \brief Handles Input events. For specific key handling, see the Lua scripts.
+ * \fn InputEvent::InputEvent( eventType type, keyState kstate, SDLKey key )
+ *  \brief Handles input events based on SDLKey.
+ * \fn InputEvent::InputEvent( eventType type, keyState kstate, int key )
+ *  \brief Handles input events based on key code.
+ * \fn InputEvent::InputEvent( eventType type, mouseState mstate, int mx, int my )
+ *  \brief Handles mouse events.
+ * \fn InputEvent::operator==(const InputEvent& e1, const InputEvent& e2 )
+ *  \brief Compares to see if two input events are the same.
+ * \fn InputEvent::operator <(const InputEvent& e1, const InputEvent& e2 )
+ *  \brief Compares if keys or mouse coords are less than each other.
+ */
+ /// \var InputEvent::type
+ ///  \brief Type of event
+
+ /// \var InputEvent::key
+ ///  \brief The key pressed
+
+ /// \var InputEvent::kstate
+ ///  \brief Key state (up, down, or hold)
+
+ /// \var InputEvent::mstate
+ ///  \brief Mouse state
+
+ /// \var InputEvent::mx
+ ///  \brief Mouse x coordinate.
+
+ /// \var InputEvent::my
+ ///  \brief Mouse y coordinate.
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};

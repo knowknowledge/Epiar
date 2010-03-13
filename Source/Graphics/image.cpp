@@ -19,6 +19,8 @@
 /**\class Image
  * \brief Image handling. */
 
+/**\brief Constructor, initialize default values
+ */
 Image::Image() {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
@@ -26,7 +28,8 @@ Image::Image() {
 	filepath="";
 }
 
-// Create instance by loading image from file
+/**\brief Create instance by loading image from file
+ */
 Image::Image( const string& filename ) {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
@@ -35,7 +38,8 @@ Image::Image( const string& filename ) {
 	Load(filename);
 }
 
-//Deallocate allocations
+/**\brief Deallocate allocations
+ */
 Image::~Image() {
 	if ( image ) {
 		glDeleteTextures( 1, &image );
@@ -43,7 +47,8 @@ Image::~Image() {
 	}
 }
 
-// Lazy fetch an Image
+/**\brief Lazy fetch an Image
+ */
 Image* Image::Get( string filename ) {
 	Image* value;
 	value = (Image*)Resource::Get(filename);
@@ -59,7 +64,8 @@ Image* Image::Get( string filename ) {
 	return value;
 }
 
-// Load image from file
+/**\brief Load image from file
+ */
 bool Image::Load( const string& filename ) {
 	File file = File( filename );
 	char* buffer = file.Read();
@@ -77,7 +83,8 @@ bool Image::Load( const string& filename ) {
 	return NULL;
 }
 
-// Load image from buffer
+/**\brief Load image from buffer
+ */
 bool Image::Load( char *buf, int bufSize ) {
 	SDL_RWops *rw;
 	SDL_Surface *s = NULL;
@@ -108,7 +115,8 @@ bool Image::Load( char *buf, int bufSize ) {
 	return( true );
 }
 
-// Draw the image (angle is in degrees)
+/**\brief Draw the image (angle is in degrees)
+ */
 void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_ratio_h) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
@@ -180,19 +188,22 @@ void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_
 	glBindTexture(GL_TEXTURE_2D,0); // Unbind The Blur Texture
 }
 
-// Draw the image centered on (x,y)
+/**\brief Draw the image centered on (x,y)
+ */
 void Image::DrawCentered( int x, int y, float angle ) {
 	Draw( x - (w / 2), y - (h / 2), angle );
 }
 
-// Draw the image stretched within to a box
+/**\brief Draw the image stretched within to a box
+ */
 void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
 	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
 	Draw(x, y, angle, resize_ratio_w, resize_ratio_h);
 }
 
-// Draw the image within a box but not stretched
+/**\brief Draw the image within a box but not stretched
+ */
 void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_w = (float)box_w / (float)this->w;
 	float resize_ratio_h = (float)box_h / (float)this->h;
@@ -201,7 +212,8 @@ void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
 	Draw(x, y, angle, resize_ratio, resize_ratio);
 }
 
-// Returns the next highest power of two if num is not a power of two
+/**\brief Returns the next highest power of two if num is not a power of two
+ */
 int Image::PowerOfTwo(int num) {
 	float q = (float)num;
 
@@ -219,7 +231,8 @@ int Image::PowerOfTwo(int num) {
 	}
 }
 
-// Converts an SDL surface to an OpenGL texture. Will free 's' by design. Do not do anything with it after this point.
+/**\brief Converts an SDL surface to an OpenGL texture. Will free 's' by design. Do not do anything with it after this point.
+ */
 bool Image::ConvertToTexture( SDL_Surface *s ) {
 	assert(s);
 
@@ -295,7 +308,8 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	return( true );
 }
 
-// Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
+/**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
+ */
 void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 {
 	if( !image ) {
@@ -346,8 +360,9 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 }
 
 
-// Will destroy 's' so don't do anything with it after this and don't worry about freeing it (it's freed here)
-// e.g. proper usage: convert = ExpandCanvas( convert, w, h );
+/**\brief Will destroy 's' so don't do anything with it after this and don't worry about freeing it (it's freed here)
+ * e.g. proper usage: convert = ExpandCanvas( convert, w, h );
+ */
 SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	SDL_Surface *expanded = NULL;
 	SDL_Surface *original = s;
@@ -379,3 +394,14 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	return( expanded );
 }
 
+/**\fn Image::GetWidth()
+ *  \brief Returns width of image.
+ * \fn Image::GetHeight()
+ *  \brief Returns height of image.
+ * \fn Image::GetHalfWidth()
+ *  \brief Returns half the width of image.
+ * \fn Image::GetHalfHeight()
+ *  \brief Returns half the height of image.
+ * \fn Image::GetPath()
+ *  \brief Returns the path to the image.
+ */

@@ -46,3 +46,18 @@ void AI::Update(){
 }
 
 
+/**\fn AI::SetStateMachine(string _machine)
+ * \brief Set's the state machine.
+ */
+
+/**\fn AI::SetState(string _state)
+ * \brief Set's the current state.
+ */
+
+/**\fn AI::GetStateMachine
+ * \brief Retrieves the state machine.
+ */
+
+/**\fn AI::GetState
+ * \brief Retrieves the current state.
+ */

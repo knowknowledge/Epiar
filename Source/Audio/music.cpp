@@ -59,3 +59,32 @@ bool Song::Play( bool loop ){
 	return true;
 }
 
+/**\class Music
+ * \brief Music control class
+ * \todo This class isn't implemented yet as we're only playing one song.
+ */
+
+/**\fn Music::LoadPlaylist
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::LoadSong( const string& )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::InsertSong( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Play( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Pause( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Stop( )
+ * \brief Unimplemented.
+ */
+

@@ -26,8 +26,8 @@ class Weapon : public Component {
 		~Weapon(void);
 
 		bool parserCB( string sectionName, string subName, string value );
-		void _dbg_PrintInfo( void );
 		xmlNodePtr ToXMLNode(string componentName);
+		void _dbg_PrintInfo( void );
 
 		Image *GetImage(void) {return image;}
 		Image *GetPicture(void) {return pic;}

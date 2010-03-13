@@ -32,7 +32,8 @@ Weapon::Weapon(void) :
 	SetName("dead");
 }
 
-
+/**\brief Assignment operator (Copy fields)
+ */
 Weapon& Weapon::operator=(const Weapon& other) {
 	name = other.name;
 	image = other.image;
@@ -50,7 +51,24 @@ Weapon& Weapon::operator=(const Weapon& other) {
 	return *this;
 }
 
-Weapon::Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, int _msrp) :
+/**\brief Creates a new Weapon object given parameters.
+ * \param _name Name of the weapon
+ * \param _image Picture of the weapon as fired
+ * \param _pic Picture of the weapon in shop
+ * \param _weaponType Type of weapon
+ * \param _payload Amount of damage
+ * \param _velocity Traveling velocity
+ * \param _acceleration Acceleration of the weapon
+ * \param _ammoType Type of ammo required
+ * \param _ammoConsumption Amount of ammo consumed per shot
+ * \param _fireDelay Delay after firing
+ * \param _lifetime Life the ammo
+ * \param _sound Sound the weapon makes
+ * \param _msrp Price of the weapon
+ */
+Weapon::Weapon( string _name, Image* _image, Image* _pic,
+		int _weaponType, int _payload, int _velocity, int _acceleration,
+		int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, int _msrp) :
 	sound(_sound),
 	image(_image),
 	pic(_pic),
@@ -123,6 +141,8 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
+/** \brief Converts the Weapon object to an XML node.
+ */
 xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
@@ -155,7 +175,35 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	return section;
 }
 
-
+/**\brief Prints debugging information (not implemented)
+ */
 void Weapon::_dbg_PrintInfo( void ) {
 	cout << "Weapon: " << name << endl;
 }
+
+/**\fn Weapon::GetImage( )
+ *  \brief Returns the image of the fired weapon
+ * \fn Weapon::GetPicture( )
+ *  \brief Returns the image of the weapon as seen in ship
+ * \fn Weapon::GetType( )
+ *  \brief Retrieves the type of Weapon
+ * \fn Weapon::GetPayload( )
+ *  \brief Retrieves the payload
+ * \fn Weapon::GetVelocity( )
+ *  \brief Retrieves the velocity
+ * \fn Weapon::GetAcceleration( )
+ *  \brief Retrieves the acceleration
+ * \fn Weapon::GetAmmoType( )
+ *  \brief Retrieves the ammo type
+ * \fn Weapon::GetAmmoConsumption( )
+ *  \brief Retrieves the ammo consumption
+ * \fn Weapon::GetFireDelay( )
+ *  \brief Retrieves the firing delay
+ * \fn Weapon::GetMSRP( )
+ *  \brief Retrieves the price
+ * \fn Weapon::GetLifetime( )
+ *  \brief Retrieves the ammo life time
+ * \var Weapon::sound
+ *  \brief Pointer to the Sound object
+ */
+
