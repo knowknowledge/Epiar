@@ -88,21 +88,18 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 	list<Widget *>::reverse_iterator i;
 
 	for( i = children.rbegin(); i != children.rend(); ++i ) {
-		int wx, wy, w, h;
-		
-		wx = (*i)->GetX();
-		wy = (*i)->GetY();
-		w = (*i)->GetWidth();
-		h = (*i)->GetHeight();
-		
-		if( x > wx ) {
-			if( y > wy ) {
-				if( x < (wx + w ) ) {
-					if( y < (wy + h ) ) {
-						return (*i);
-					}
-				}
+		if WITHIN_BOUNDS(x,y,
+				(*i)->GetX(),
+				(*i)->GetY(),
+				(*i)->GetWidth(),
+				(*i)->GetHeight()){
+			/// \todo: Consider using a more optimal way of identifying windows
+			if ( (*i)->GetName().find("Window_") == 0 ){
+				Widget *found = (*i)->DetermineMouseFocus( x-(*i)->GetX(),y-(*i)->GetY() );
+				if ( found )
+					return found;
 			}
+			return (*i);
 		}
 	}
 	
@@ -125,7 +122,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 		
 			switch(i->kstate) {
 				case KEYTYPED:
-					if( keyboardFocus ) { 
+					if( keyboardFocus ) {
 						bool handled = keyboardFocus->KeyPress( i->key );
 						
 						// if the input was handled, we need to remove it from the queue so no other
@@ -158,9 +155,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					dx = mouseFocus->GetDragX();
 					dy = mouseFocus->GetDragY();
 
-					mouseFocus->SetX( x - dx );
-					mouseFocus->SetY( y - dy );
-					
+					mouseFocus->MouseMotion(x,y,dx,dy);
 					eventWasHandled = true;
 				}
 				break;
@@ -176,7 +171,8 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				break;
 			case MOUSEDOWN:
 				Widget *focusedWidget = DetermineMouseFocus( x, y );
-				
+				if (focusedWidget)
+					Log::Message("Widget Focused: %s",focusedWidget->GetName().c_str());
 				// did they click a different widget than the one already in focus?
 				if( mouseFocus != focusedWidget ) {
 					// A new widget now has focus

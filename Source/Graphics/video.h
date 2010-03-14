@@ -42,7 +42,7 @@ class Rect {
 		
 		Rect() { x = y = w = h = 0.0f; }
 		Rect( float x, float y, float w, float h ) { this->x = x; this->y = y; this->w = w; this->h = h; }
-		Rect( int x, int y, int w, int h ) { this->x = (float)x; this->y = (float)y; this->w = (float)w; this->h = (float)h; }
+		Rect( int x, int y, int w, int h ) { this->x = TO_FLOAT(x); this->y = TO_FLOAT(y); this->w = TO_FLOAT(w); this->h = TO_FLOAT(h); }
 };
 
 class Video {

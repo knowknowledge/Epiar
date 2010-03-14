@@ -35,12 +35,12 @@ class Widget {
 		virtual int GetWidth( void ) = 0;
 		virtual int GetHeight( void ) = 0;
 
-		virtual string GetName( void ) { return string("GenericWidget"); }
-	
+		virtual string GetName( void ) { return string("RandomWidget"); }
+
 		virtual bool Contains( int relx, int rely );
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
-		
+		virtual void MouseMotion( int x, int y, int dx, int dy);
 		virtual bool KeyPress( SDLKey key );
 	
 	private:

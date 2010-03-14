@@ -90,13 +90,21 @@ void Window::Draw( int relx, int rely ) {
 }
 
 void Window::FocusMouse( int x, int y ) {
-	//cout << "window has focus" << endl;
+	// cout << "window has focus" << endl;
 	Widget::FocusMouse( x, y );
 }
 
 void Window::UnfocusMouse( void ) {
-	//cout << "window lost focus" << endl;
+	// cout << "window lost focus" << endl;
 	Widget::UnfocusMouse();
+}
+
+void Window::MouseMotion( int x, int y, int dx, int dy ){
+	// Only drag by titlebar
+	if ( dy < bitmaps[1]->GetHeight() ) {
+		this->SetX( x - dx);
+		this->SetY( y - dy);
+	}
 }
 
 // wx & wy are coords of mouse down, relative to widget's upper left (0,0)

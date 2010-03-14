@@ -48,6 +48,7 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i)->Contains(relx, rely) ) {
+			Log::Message("Widget Found %s", (*i)->GetName().c_str());
 			return (*i);
 		}
 	}
@@ -62,16 +63,16 @@ void Widget::FocusMouse( int x, int y ) {
 
 	Widget *mouseFocus = DetermineMouseFocus( x, y );
 	
-	if( mouseFocus ) mouseFocus->FocusMouse( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
-	
 	if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
 	keyboardFocus = mouseFocus;
 	if( keyboardFocus ) keyboardFocus->FocusKeyboard();
 }
 
 void Widget::MouseDown( int x, int y ) {
-	Widget *down_on = DetermineMouseFocus( x, y );
-	if( down_on ) down_on->MouseDown( x, y );
+}
+
+void Widget::MouseMotion( int x, int y, int dx, int dy ){
+	// Default to not do anythinga
 }
 
 // when a widget loses focus, so do all of its children

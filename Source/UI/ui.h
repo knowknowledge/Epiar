@@ -21,6 +21,9 @@
 #include "ui_textbox.h"
 #include "ui_checkbox.h"
 
+// Macro to check if xi, yi point is inside a rectangle x,y,w,h
+#define WITHIN_BOUNDS(xi,yi,x,y,w,h) ( (xi > x) && (yi > y) && (xi < (x+w) ) && (yi < (y+h)) )
+
 class UI {
 	public:
 		UI();

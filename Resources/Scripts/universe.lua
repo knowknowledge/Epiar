@@ -161,20 +161,25 @@ function options()
 	enginesSound    = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
 	explosionsSound = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
 	buttonsSound    = UI.newCheckbox(20, 130, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
-	soundVolume     = { Textbox = UI.newTextbox(20,  150, 30, 1,Epiar.getoption("options/sound/soundvolume")),
+	--[[soundVolume     = { Textbox = UI.newTextbox(20,  150, 30, 1,Epiar.getoption("options/sound/soundvolume")),
 						Label = UI.newLabel(55, 165, "Sound volume (0-1)")}
 	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
+						--]]
+	soundVolume = { Slider = UI.newSlider(20, 150, 60, 16, "Sound Volume")}
+	musicVolume = { Slider = UI.newSlider(20, 170, 60, 16, "Music Volume")}
 	optionWindow:add( soundsLabel,
 					backgroundSound,
 					weaponsSound,
 					enginesSound,
 					explosionsSound,
 					buttonsSound,
-					soundVolume.Textbox,
-					soundVolume.Label,
-					musicVolume.Textbox,
-					musicVolume.Label)
+					soundVolume.Slider,
+					musicVolume.Slider)
+					--soundVolume.Textbox,
+					--soundVolume.Label,
+					--musicVolume.Textbox,
+					--musicVolume.Label)
 
 	-- Debugging
 	debugLabel      = UI.newLabel(20,210,"Debug Options:",0)
@@ -189,8 +194,8 @@ function options()
 		Epiar.setoption("options/sound/engines",    enginesSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/explosions", explosionsSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
-		Epiar.setsoundvol(soundVolume.Textbox:GetText() )
-		Epiar.setmusicvol(musicVolume.Textbox:GetText() )
+		--Epiar.setsoundvol(soundVolume.Textbox:GetText() )
+		--Epiar.setmusicvol(musicVolume.Textbox:GetText() )
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",    		stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )

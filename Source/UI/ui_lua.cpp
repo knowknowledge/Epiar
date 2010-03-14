@@ -13,6 +13,7 @@
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_picture.h"
+#include "ui_slider.h"
 #include "Engine/models.h"
 
 /**\class UI_Lua
@@ -30,6 +31,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
 		{"newCheckbox", &UI_Lua::newCheckbox},
+		{"newSlider", &UI_Lua::newSlider},
 		{NULL, NULL}
 	};
 
@@ -137,6 +139,26 @@ int UI_Lua::newButton(lua_State *L){
 	//       Lua will have to do that for us.
 	//       This may be a bad idea (memory leaks from bad lua scripts)
 
+	return 1;
+}
+
+int UI_Lua::newSlider(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 5 )
+		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, label)", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+	string label = luaL_checkstring (L, 5);
+	
+	// Allocate memory for a pointer to object
+	Slider **slider= (Slider**)lua_newuserdata(L, sizeof(Slider**));
+    luaL_getmetatable(L, EPIAR_UI);
+    lua_setmetatable(L, -2);
+	*slider = new Slider(x,y,w,h,label);
+	
 	return 1;
 }
 
