@@ -93,12 +93,6 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 				(*i)->GetY(),
 				(*i)->GetWidth(),
 				(*i)->GetHeight()){
-			/// \todo: Consider using a more optimal way of identifying windows
-			if ( (*i)->GetName().find("Window_") == 0 ){
-				Widget *found = (*i)->DetermineMouseFocus( x-(*i)->GetX(),y-(*i)->GetY() );
-				if ( found )
-					return found;
-			}
 			return (*i);
 		}
 	}
@@ -171,8 +165,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				break;
 			case MOUSEDOWN:
 				Widget *focusedWidget = DetermineMouseFocus( x, y );
-				if (focusedWidget)
-					Log::Message("Widget Focused: %s",focusedWidget->GetName().c_str());
+
 				// did they click a different widget than the one already in focus?
 				if( mouseFocus != focusedWidget ) {
 					// A new widget now has focus
@@ -182,7 +175,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					mouseFocus = focusedWidget;
 					
 					if( mouseFocus ) {
-						mouseFocus->FocusMouse( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+						mouseFocus->FocusMouse( x, y );
 					}
 				}
 				// mouse down also changes keyboard focus (e.g. clicked on a new text field)
@@ -198,7 +191,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				
 				// pass the event to the widget
 				if( mouseFocus ) {
-					mouseFocus->MouseDown( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
+					mouseFocus->MouseDown( x, y );
 					
 					eventWasHandled = true;				
 				}

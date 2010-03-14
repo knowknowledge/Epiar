@@ -104,6 +104,9 @@ void Window::MouseMotion( int x, int y, int dx, int dy ){
 	if ( dy < bitmaps[1]->GetHeight() ) {
 		this->SetX( x - dx);
 		this->SetY( y - dy);
+	} else {
+	// Pass the event onto widget if not handling it.
+		Widget::MouseMotion( x, y, dx, dy );
 	}
 }
 

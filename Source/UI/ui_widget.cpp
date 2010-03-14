@@ -48,7 +48,6 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i)->Contains(relx, rely) ) {
-			Log::Message("Widget Found %s", (*i)->GetName().c_str());
 			return (*i);
 		}
 	}
@@ -57,22 +56,40 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 }
 
 void Widget::FocusMouse( int x, int y ) {
-	// update drag coordinates in case this is draggable
-	dragX = x;
-	dragY = y;
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
 
-	Widget *mouseFocus = DetermineMouseFocus( x, y );
-	
+	// update drag coordinates in case this is draggable
+	dragX = xr;
+	dragY = yr;
+
+	Widget *mouseFocus = DetermineMouseFocus( xr, yr );
+
+	if( mouseFocus )
+		mouseFocus->FocusMouse( xr, yr );
+
 	if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
 	keyboardFocus = mouseFocus;
 	if( keyboardFocus ) keyboardFocus->FocusKeyboard();
 }
 
 void Widget::MouseDown( int x, int y ) {
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	Widget *down_on = DetermineMouseFocus( xr, yr );
+	if( down_on ) down_on->MouseDown( xr,yr );
 }
 
 void Widget::MouseMotion( int x, int y, int dx, int dy ){
-	// Default to not do anythinga
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	Widget *motion = DetermineMouseFocus( xr, yr );
+	if( motion ) motion->MouseMotion( xr,yr,dx,dy);
 }
 
 // when a widget loses focus, so do all of its children

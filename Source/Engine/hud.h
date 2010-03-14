@@ -9,8 +9,8 @@
 #ifndef __h_hud__
 #define __h_hud__
 
-#include "Graphics/image.h"
 #include "includes.h"
+#include "Graphics/image.h"
 #include "Utilities/lua.h"
 #include "Input/input.h"
 

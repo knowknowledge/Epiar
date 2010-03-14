@@ -14,10 +14,16 @@
 #define SLIDER_H 4
 // Marker width
 #define SLIDER_MW 4
+// Padding above slider to display number
+#define SLIDER_VALPAD 2
 
 class Slider : public Widget {
 	public:
 		Slider( int x, int y, int w, int h, const string& label);
+		
+		// Utility functions to convert between pixel and values
+		int ValToPixel( float value );
+		float PixelToVal( int pixels);
 		~Slider();
 
 		void Draw( int relx=0, int rely = 0 );
@@ -26,7 +32,7 @@ class Slider : public Widget {
 		int GetHeight( void ) { return h; };
 
 		void MouseMotion( int x, int y, int dx, int dy );
-
+		void MouseDown( int wx, int wy );
 		string GetName( void ) {return string("Slider_"+label); }
 
 	private:
