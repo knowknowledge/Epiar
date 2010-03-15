@@ -23,6 +23,7 @@ class Tab : public Widget {
 
 	private:
 		int w,h;
+		int capw;
 		string caption;
 };
 
@@ -43,6 +44,8 @@ class Tabs : public Widget {
 		string GetName( void ) {return string("Tabs_"+name);}
 
 	private:
+		Tab* CheckTabClicked( int xr, int yr );
+
 		int w,h;
 		string name;
 		Tab* activetab;

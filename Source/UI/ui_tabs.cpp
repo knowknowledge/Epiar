@@ -13,7 +13,7 @@
 #include "Utilities/log.h"
 
 #define TAB_HEADER 20
-#define TAB_PAD 5
+#define TAB_PAD 8
 
 /**\class Tab
  * \brief A single tab.
@@ -22,9 +22,11 @@
 /**\brief Constructs a single tab with caption.
  */
 Tab::Tab( const string& _caption ):
-	caption( string(_caption) ){
+		caption( string(_caption) ){
 	SetX(0);
 	SetY(TAB_HEADER);
+	Rect bounds = SansSerif->BoundingBox( _caption );
+	this->capw = bounds.w;
 }
 
 /**\brief Empty destructor.
@@ -51,13 +53,16 @@ bool Tabs::AddChild( Widget *widget ){
 				widget->GetName().c_str());
 		return false;
 	}
+	Tab* tabwidget = static_cast<Tab*>( widget );
 
+	// Call generic to add the widget
 	Widget::AddChild( widget );
-	if ( activetab == NULL)
-		this->activetab = (Tab*) widget;
 
-	((Tab *) widget)->w = this->w;
-	((Tab *) widget)->h = this->h-TAB_HEADER;
+	if ( activetab == NULL)
+		this->activetab = tabwidget;
+
+	tabwidget->w = this->w;
+	tabwidget->h = this->h-TAB_HEADER;
 
 	return true;
 }
@@ -68,7 +73,7 @@ void Tabs::TabNext( void ){
 	list<Widget *>::iterator i;
 
 	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
-		if ( ((Tab*)*i) == activetab ){
+		if ( static_cast<Tab*>(*i) == activetab ){
 			if ( (++i) == Widget::children.end() )
 				this->activetab = (Tab*) (Widget::children.front());
 			else
@@ -90,29 +95,34 @@ void Tabs::Draw( int relx, int rely ){
 	int x = GetX() + relx;
 	int y = GetY() + rely;
 
+	// Draw tabs outline
+	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, 0.15f, 0.15f, 0.15f );
+	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, 0.223f, 0.223f, 0.223f );
+
 	list<Widget *>::iterator i;
 
 	int xo = 0;
 	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
-		Rect bounds = SansSerif->BoundingBox( ((Tab*)*i)->caption.c_str() );
-		Video::DrawRect( xo+x,y+TAB_HEADER,
-			bounds.w+TAB_PAD*2, bounds.h-TAB_PAD*2, 0.15f, 0.15f, 0.15f );
-		if ( ((Tab*)*i) == activetab )
-			Video::DrawRect( xo+x+1,y+TAB_HEADER-1,
-				bounds.w+TAB_PAD*2-2, bounds.h-TAB_PAD*2+2, 0.223f, 0.223f, 0.223f );
-		SansSerif->Render(xo+x+TAB_PAD,y+TAB_HEADER-TAB_PAD, ((Tab*)*i)->caption.c_str());
-		xo += bounds.w+TAB_PAD*2+2;
+		Tab* currtab = static_cast<Tab*>(*i);
+		Video::DrawRect( xo+x,y,
+			currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
+		if ( currtab == activetab )
+			Video::DrawRect( xo+x+1,y+1,
+				currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
+
+		SansSerif->RenderCentered(xo+x+TAB_PAD+currtab->capw/2,
+				y+TAB_HEADER/2,
+				currtab->caption.c_str());
+		xo += currtab->capw+TAB_PAD*2+1;
 	}
 
-	// Draw tabs outline
-	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, 0.15f, 0.15f, 0.15f );
-	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, 0.223f, 0.223f, 0.223f );
-	
 	if (activetab){
-		activetab->Draw( GetX() + relx, GetY() + rely );
+		activetab->Draw( x, y );
 	}
 }
 
+/**\brief First check if clicked on one of the Tab, if not, pass it on.
+ */
 void Tabs::MouseDown( int x, int y ) {
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
@@ -120,12 +130,14 @@ void Tabs::MouseDown( int x, int y ) {
 
 	Log::Message("Mouse down detected: %d", yr);
 	if ( yr < TAB_HEADER ){
-		this->TabNext();
+		activetab = this->CheckTabClicked( xr, yr );
 	}else{
 		activetab->MouseDown( xr,yr );
 	}
 }
 
+/**\brief This passes the mouse motion to the active tab.
+ */
 void Tabs::MouseMotion( int x, int y, int dx, int dy ){
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
@@ -134,9 +146,26 @@ void Tabs::MouseMotion( int x, int y, int dx, int dy ){
 	activetab->MouseMotion( xr,yr,dx,dy);
 }
 
+/**\brief Checks which Tab was clicked.
+ */
+Tab* Tabs::CheckTabClicked( int xr, int yr ){
+	list<Widget *>::iterator i;
+	int xo = 0;
+	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
+		Tab* currtab = static_cast<Tab*>(*i);
+		if ( xr < (currtab->capw+xo+TAB_PAD*2) )
+			return currtab;
+		xo += currtab->capw+TAB_PAD*2+1;
+	}
+	// Active Tab didn't change
+	return this->activetab;
+}
+
 
 /**\fn Tabs::GetWidth( )
  *  \brief Returns the width of the Tabs collection.
  * \fn Tabs::GetHeight( )
  *  \brief Returns the height of the Tabs collection.
+ * \fn Tabs::GetName()
+ *  \brief Returns the name of the Tabs collection.
  */
