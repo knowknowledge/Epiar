@@ -24,7 +24,6 @@ class Slider : public Widget {
 		float GetVal( void ){ return this->val;};
 		float GetMin( void ){ return this->minval;};
 		float GetMax( void ){ return this->maxval;};
-		~Slider();
 
 		void Draw( int relx=0, int rely = 0 );
 

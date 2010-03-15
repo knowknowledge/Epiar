@@ -13,7 +13,6 @@
 class Tab : public Widget {
 	public:
 		Tab( const string& _caption );
-		~Tab();
 
 		int GetWidth( void ) { return w; }
 		int GetHeight( void ) { return h; }
@@ -32,7 +31,6 @@ class Tabs : public Widget {
 		Tabs( int x, int y, int w, int h, const string& name );
 		bool AddChild( Widget *widget );
 		void TabNext( void );
-		~Tabs();
 
 		void Draw( int relx = 0, int rely = 0 );
 		int GetWidth( void ) { return w; };

@@ -36,11 +36,6 @@
  *  \brief Returns the current maximum value.
  */
 
-/**\brief Empty destructor.
- */
-Slider::~Slider() {
-}
-
 /**\brief Slider drawing function.
  */
 

@@ -17,7 +17,6 @@ class Textbox : public Widget {
 		Textbox( int x, int y, int w, int rows );
 		Textbox( int x, int y, int w, int rows, string text );
 		Textbox( int x, int y, int w, int rows, string text, string label );
-		~Textbox();
 		
 		void Draw( int relx = 0, int rely = 0 );
 

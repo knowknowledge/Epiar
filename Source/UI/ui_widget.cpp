@@ -13,12 +13,24 @@
 /**\class Widget
  * \brief Widgets. */
 
+/**\brief Adds a child to the current widget.
+ */
 bool Widget::AddChild( Widget *widget ) {
 	if( !widget) return false;
 	
 	children.push_back( widget );
 
 	return true;
+}
+
+/**\brief Destroys this widget and all children.
+ * \todo Implement a Widget::Hide routine that doesn't destroy children.
+ */
+Widget::~Widget( void ){
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		delete (*i);
+	}
 }
 
 void Widget::Draw( int relx, int rely ) {

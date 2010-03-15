@@ -29,11 +29,6 @@ Tab::Tab( const string& _caption ):
 	this->capw = bounds.w;
 }
 
-/**\brief Empty destructor.
- */
-Tab::~Tab(){
-}
-
 /**\brief Constructs a tab collection (no caption), you could add a label though.
  * \param name (not shown) Tabs collection don't really have a caption.
  */
@@ -81,11 +76,6 @@ void Tabs::TabNext( void ){
 			break;
 		}
 	}
-}
-
-/**\brief Empty destructor.
- */
-Tabs::~Tabs(){
 }
 
 /**\brief Tabs drawing function.

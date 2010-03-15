@@ -30,33 +30,20 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	Debug::Unset();
 	
 	// Load the bitmaps needed for drawing
-	bitmaps[0] = new Image( "Resources/Graphics/ui_wnd_up_left.png" );
-	bitmaps[1] = new Image( "Resources/Graphics/ui_wnd_up.png" );
-	bitmaps[2] = new Image( "Resources/Graphics/ui_wnd_up_right.png" );
-	bitmaps[3] = new Image( "Resources/Graphics/ui_wnd_left.png" );
-	bitmaps[4] = new Image( "Resources/Graphics/ui_wnd_right.png" );
-	bitmaps[5] = new Image( "Resources/Graphics/ui_wnd_low_left.png" );
-	bitmaps[6] = new Image( "Resources/Graphics/ui_wnd_low.png" );
-	bitmaps[7] = new Image( "Resources/Graphics/ui_wnd_low_right.png" );
-	bitmaps[8] = new Image( "Resources/Graphics/ui_wnd_back.png" );
+	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
+	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
+	bitmaps[2] = Image::Get( "Resources/Graphics/ui_wnd_up_right.png" );
+	bitmaps[3] = Image::Get( "Resources/Graphics/ui_wnd_left.png" );
+	bitmaps[4] = Image::Get( "Resources/Graphics/ui_wnd_right.png" );
+	bitmaps[5] = Image::Get( "Resources/Graphics/ui_wnd_low_left.png" );
+	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
+	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
+	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
 
 	//inner_top = bitmaps[0]->GetHeight();
 	//inner_left = bitmaps[0]->GetWidth();
 	//inner_right = w - bitmaps[7]->GetWidth();
 	//inner_low = h - bitmaps[7]->GetHeight();
-}
-
-Window::~Window() {
-	Log::Message( "Deleting Window: '%s'.", (char *)caption.c_str() );
-	delete bitmaps[0];
-	delete bitmaps[1];
-	delete bitmaps[2];
-	delete bitmaps[3];
-	delete bitmaps[4];
-	delete bitmaps[5];
-	delete bitmaps[6];
-	delete bitmaps[7];
-	delete bitmaps[8];
 }
 
 void Window::Draw( int relx, int rely ) {

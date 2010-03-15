@@ -36,10 +36,6 @@ Picture::Picture( int x, int y, int w, int h, string filename ){
 	bitmap = Image::Get(filename);
 }
 
-Picture::~Picture(){
-	delete bitmap;
-}
-
 void Picture::Rotate(double angle){
 	rotation=angle;
 }

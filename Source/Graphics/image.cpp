@@ -51,7 +51,7 @@ Image::~Image() {
  */
 Image* Image::Get( string filename ) {
 	Image* value;
-	value = (Image*)Resource::Get(filename);
+	value = static_cast<Image*>(Resource::Get(filename));
 	if( value == NULL ) {
 		value = new Image();
 		if(value->Load(filename)){

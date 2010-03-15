@@ -13,7 +13,7 @@
 class Widget {
 	public:
 		Widget() { keyboardFocus = NULL; };
-		virtual ~Widget() { };
+		virtual ~Widget( void );
 		
 		virtual bool AddChild( Widget *widget );
 		virtual void Draw( int relx = 0, int rely = 0 );

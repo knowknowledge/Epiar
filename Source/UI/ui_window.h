@@ -15,7 +15,6 @@
 class Window : public Widget {
 	public:
 		Window( int x, int y, int w, int h, string caption );
-		~Window();
 		
 		void Draw( int relx = 0, int rely = 0 );
 

@@ -28,10 +28,6 @@ Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	}
 }
 
-Checkbox::~Checkbox() {
-	Log::Message( "Deleting Checkbox: '%s'.", (char *)label.c_str() );
-}
-
 void Checkbox::Draw( int relx, int rely ) {
 	int x, y;
 	

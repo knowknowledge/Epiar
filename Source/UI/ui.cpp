@@ -63,12 +63,16 @@ void UI::Run( void ) {
 
 void UI::Close( void ) {
 	// Free all widgets
-	std::for_each(children.begin(), children.end(), create_delete_functor());
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		delete (*i);
+	}
 	children.clear();
 	ResetInput();
 }
 
 void UI::Close( Widget *widget ) {
+	delete widget;
 	children.remove(widget);
 	ResetInput();
 }

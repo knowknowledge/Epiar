@@ -60,12 +60,6 @@ Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	this->lua_callback = lua_code;
 }
 
-Button::~Button() {
-	Log::Message( "Deleting Button: '%s'.", (char *)label.c_str() );
-	delete bitmap_normal;
-	delete bitmap_pressed;
-}
-
 void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
