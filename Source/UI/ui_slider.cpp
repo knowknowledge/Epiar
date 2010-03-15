@@ -148,6 +148,4 @@ void Slider::SetVal( float value ){
 			checkedval = minval;
 	}
 	this->val = checkedval;
-	Log::Message("New value: %f (%f - %f)",this->val,
-			this->maxval,this->minval);
 }

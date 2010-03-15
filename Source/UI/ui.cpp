@@ -165,7 +165,6 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				break;
 			case MOUSEDOWN:
 				Widget *focusedWidget = DetermineMouseFocus( x, y );
-
 				// did they click a different widget than the one already in focus?
 				if( mouseFocus != focusedWidget ) {
 					// A new widget now has focus

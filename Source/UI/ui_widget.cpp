@@ -8,6 +8,7 @@
 
 #include "includes.h"
 #include "ui.h"
+#include "Utilities/log.h"
 
 /**\class Widget
  * \brief Widgets. */
@@ -16,7 +17,7 @@ bool Widget::AddChild( Widget *widget ) {
 	if( !widget) return false;
 	
 	children.push_back( widget );
-	
+
 	return true;
 }
 
@@ -80,7 +81,9 @@ void Widget::MouseDown( int x, int y ) {
 	int yr = y - GetY();
 
 	Widget *down_on = DetermineMouseFocus( xr, yr );
-	if( down_on ) down_on->MouseDown( xr,yr );
+	if( down_on ){
+		down_on->MouseDown( xr,yr );
+	}
 }
 
 void Widget::MouseMotion( int x, int y, int dx, int dy ){

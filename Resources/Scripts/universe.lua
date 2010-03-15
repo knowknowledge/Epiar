@@ -151,26 +151,31 @@ function options()
 		closeOptions()
 		return
 	end
-	local height=340
-	optionWindow = UI.newWindow( 30,100,200,height,"Options")
-	 
+	local height=400
+	optionWindow = UI.newWindow( 30,100,220,height,"Options")
+	optionTabs = UI.newTabCont( 10, 30, 200, height-100,"Options Tabs")
+	optionWindow:add(optionTabs)
+
 	-- Sounds
-	soundsLabel     = UI.newLabel(20,40,"Sound Options:",0)
-	backgroundSound = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/background") ), "Background sounds")
-	weaponsSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
-	enginesSound    = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
-	explosionsSound = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
-	buttonsSound    = UI.newCheckbox(20, 130, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
+	soundsTab = UI.newTab("Audio")
+	optionTabs:add(soundsTab)
+
+	soundsLabel     = UI.newLabel(20,20,"Sound Options:",0)
+	backgroundSound = UI.newCheckbox(20,  30, ( Epiar.getoption("options/sound/background") ), "Background sounds")
+	weaponsSound    = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
+	enginesSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
+	explosionsSound = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
+	buttonsSound    = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
 	--[[soundVolume     = { Textbox = UI.newTextbox(20,  150, 30, 1,Epiar.getoption("options/sound/soundvolume")),
 						Label = UI.newLabel(55, 165, "Sound volume (0-1)")}
 	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
 						--]]
-	soundVolume = { Slider = UI.newSlider(20, 160, 80, 16, "Sound Volume","Audio.setSoundVolume"),
-					Label = UI.newLabel( 105, 172, "Sound Volume", 0)}
-	musicVolume = { Slider = UI.newSlider(20, 190, 80, 16, "Music Volume","Audio.setMusicVolume"),
-					Label = UI.newLabel( 105, 202, "Music Volume", 0)}
-	optionWindow:add( soundsLabel,
+	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume","Audio.setSoundVolume"),
+					Label = UI.newLabel( 105, 152, "Sound Volume", 0)}
+	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume","Audio.setMusicVolume"),
+					Label = UI.newLabel( 105, 182, "Music Volume", 0)}
+	soundsTab:add(  soundsLabel,
 					backgroundSound,
 					weaponsSound,
 					enginesSound,
@@ -182,11 +187,13 @@ function options()
 					musicVolume.Label)
 
 	-- Debugging
-	debugLabel      = UI.newLabel(20,220,"Debug Options:",0)
-	xmlfileLogging  = UI.newCheckbox(20, 230, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
-	stdoutLogging   = UI.newCheckbox(20, 250, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 270, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
-	optionWindow:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
+	debugTab = UI.newTab("Debugging")
+	optionTabs:add(debugTab)
+	debugLabel      = UI.newLabel(20,200,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 210, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 230, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 250, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
 	
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -203,8 +210,8 @@ function options()
 		optionWindow=nil;
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton(20, height-40, 100, 30,"Customize Keys","chooseKeys()") )
-	optionWindow:add( UI.newButton(130, height-40, 60, 30,"Save","saveOptions(); closeOptions()") )
+	optionWindow:add( UI.newButton(20, height-50, 100, 30,"Customize Keys","chooseKeys()") )
+	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 
 -- Execute the current plan of each AI

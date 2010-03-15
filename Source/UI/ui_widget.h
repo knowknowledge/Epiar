@@ -15,7 +15,7 @@ class Widget {
 		Widget() { keyboardFocus = NULL; };
 		virtual ~Widget() { };
 		
-		bool AddChild( Widget *widget );
+		virtual bool AddChild( Widget *widget );
 		virtual void Draw( int relx = 0, int rely = 0 );
 		virtual void Update( void );
 
@@ -43,10 +43,12 @@ class Widget {
 		virtual void MouseMotion( int x, int y, int dx, int dy);
 		virtual bool KeyPress( SDLKey key );
 	
+	protected:
+		list<Widget *> children;
+
 	private:
 		int x, y;
 		int dragX, dragY; // if dragging, this is the offset from (x,y) to the point of click for the drag
-		list<Widget *> children;
 		
 		Widget *keyboardFocus; // we have to track keyboardFocus within children, unlike mouseFocus
 };

@@ -14,6 +14,7 @@
 #include "ui_button.h"
 #include "ui_picture.h"
 #include "ui_slider.h"
+#include "ui_tabs.h"
 #include "Engine/models.h"
 
 /**\class UI_Lua
@@ -32,6 +33,8 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTextbox", &UI_Lua::newTextbox},
 		{"newCheckbox", &UI_Lua::newCheckbox},
 		{"newSlider", &UI_Lua::newSlider},
+		{"newTabCont", &UI_Lua::newTabCont},
+		{"newTab", &UI_Lua::newTab},
 		{NULL, NULL}
 	};
 
@@ -165,6 +168,45 @@ int UI_Lua::newSlider(lua_State *L){
 	else 
 		*slider = new Slider(x,y,w,h,label);
 	
+	return 1;
+}
+
+/**\brief Creates a new Tabs container.
+ */
+int UI_Lua::newTabCont(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if ( (n != 5 ) )
+		return luaL_error(L,
+		"Got %d arguments expected 5 (x, y, w, h, label)", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+	string name = luaL_checkstring (L, 5);
+	Tabs **tabs = (Tabs**)lua_newuserdata(L, sizeof(Tabs**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+
+	*tabs = new Tabs(x,y,w,h,name);
+
+	return 1;
+}
+
+int UI_Lua::newTab(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if ( (n != 1 ) )
+		return luaL_error(L,
+		"Got %d arguments expected 1 (caption)", n);
+
+	string name = luaL_checkstring (L, 1);
+	
+	Tab **tab = (Tab**)lua_newuserdata(L, sizeof(Tab**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+
+	*tab = new Tab(name);
+
 	return 1;
 }
 
