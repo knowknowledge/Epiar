@@ -14,9 +14,11 @@ set (Epiar_src ${Epiar_src}
 	)
 set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Audio/audio.cpp
+	${Epiar_SRC_DIR}/Audio/audio_lua.cpp
 	${Epiar_SRC_DIR}/Audio/music.cpp
 	${Epiar_SRC_DIR}/Audio/sound.cpp
 	${Epiar_SRC_DIR}/Audio/audio.h
+	${Epiar_SRC_DIR}/Audio/audio_lua.h
 	${Epiar_SRC_DIR}/Audio/music.h
 	${Epiar_SRC_DIR}/Audio/sound.h
 	)

@@ -17,32 +17,96 @@
  * \todo Some calculations are unnecessary here.
  */
 
-/**\brief Constructs slider with given parameters
+/**\brief Constructs a slider with given parameters and a Lua callback
  */
-Slider::Slider( int x, int y, int w, int h, const string& label ):
-	minval( 0.0f ), maxval( 1.0f ), val ( 0.5f),
-	w ( w ), h ( h ), label ( string(label) ){
+ Slider::Slider( int x, int y, int w, int h, const string& label,
+		const string& callback):
+	minval( 0.000f ), maxval( 1.000f ), val ( 0.5f),
+	w ( w ), h ( h ), label ( string(label) ),
+	lua_callback( string(callback) ){
 	SetX( x );
 	SetY( y );
 }
 
+/**\fn Slider::GetVal( )
+ *  \brief Returns the current value.
+ * \fn Slider::GetMin( )
+ *  \brief Returns the current minimum value.
+ * \fn Slider::GetMax( )
+ *  \brief Returns the current maximum value.
+ */
+
+/**\brief Empty destructor.
+ */
+Slider::~Slider() {
+}
+
+/**\brief Slider drawing function.
+ */
+
+void Slider::Draw( int relx, int rely ){
+	int x, y;
+	char value[20];
+
+	x = GetX() + relx;
+	y = GetY() + rely;
+
+	int markerxr = this->ValToPixel( this->val );
+	int markerx = x + markerxr;
+	
+	// Draw slider background
+	Video::DrawRect( x, y+(this->h/2)-SLIDER_H/2, this->w, SLIDER_H,
+			0.4f, 0.4f, 0.4f);
+	Video::DrawRect( x+1, y+(this->h/2)-SLIDER_H/2+1, this->w-2, SLIDER_H-2,
+			0.15f, 0.15f, 0.15f);
+	Video::DrawRect( x+3, y+(this->h/2)-SLIDER_H/2+3, 
+			markerxr-3, SLIDER_H-6,
+			0.4f, 0.4f, 0.4f);
+
+	// Draw marker
+	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, this->h,
+			0.4f, 0.4f, 0.4f);
+	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, this->h-2,
+			0.15f, 0.15f, 0.15f);
+
+	// Render the value indicator
+	snprintf(value,20,"%.2f",this->val);
+	Rect bounds = SansSerif->BoundingBox( value );
+	SansSerif->RenderCentered( markerx, y+bounds.h/2 - SLIDER_VALPAD, value );
+}
+
+/**\brief Slider mouse drag call back.
+ */
+void Slider::MouseMotion( int xi, int yi, int dx, int dy ){
+	this->SetVal(this->PixelToVal(xi - GetX()));
+	if( "" != this->lua_callback){
+		/// \todo This will be replaced with Lua::Call
+		std::ostringstream fullcmd;
+		fullcmd << lua_callback << "(" << this->GetVal() << ")";
+		if ( !fullcmd )
+			Log::Error("Bad conversion of float to string");
+		Lua::Run(fullcmd.str());
+	}
+}
+
+/**\brief Slider mouse down call back.
+ */
+void Slider::MouseDown( int wx, int wy ){
+	this->SetVal(this->PixelToVal(wx - GetX()));
+	if( "" != this->lua_callback){
+		/// \todo This will be replaced with Lua::Call
+		std::ostringstream fullcmd;
+		fullcmd << lua_callback << "(" << this->GetVal() << ")";
+		if ( !fullcmd )
+			Log::Error("Bad conversion of float to string");
+		Lua::Run(fullcmd.str());
+	}
+}
+
+// Private functions
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
  int Slider::ValToPixel( float value ){
-	 
-	// In case the user switched max and min val,
-	// we can still go ahead, everything will just be flipped.
-	if ( this->maxval < this->minval){
-		if ( (this->val < this->maxval))
-			this->val = maxval;
-		else if (this->val > this->minval)
-			this->val = minval;
-	}else{
-		if ( (this->val > this->maxval))
-			this->val = maxval;
-		else if (this->val < this->minval)
-			this->val = minval;
-	}
 	return static_cast<int>((this->w - SLIDER_MW) *
 		((this->val - this->minval)/
 		(this->maxval - this->minval)) + SLIDER_MW/2);
@@ -63,52 +127,27 @@ Slider::Slider( int x, int y, int w, int h, const string& label ):
 	return value;
  }
 
-/**\brief Empty destructor.
+/**\brief Never set the this->val directly, use this function.
+ * \details
+ * Bounds checking are performed.
  */
+void Slider::SetVal( float value ){
+	float checkedval = value;
 
-Slider::~Slider() {
-}
-
-/**\brief Slider drawing function.
- */
-
-void Slider::Draw( int relx, int rely ){
-	int x, y;
-	char value[20];
-
-	x = GetX() + relx;
-	y = GetY() + rely;
-
-	int markerxr = this->ValToPixel( this->val );
-	int markerx = x + markerxr;
-	
-	// Draw slider background
-	Video::DrawRect( x, y+(this->h/2)-SLIDER_H/2, this->w, SLIDER_H,
-			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( markerx+1, y+(this->h/2)-SLIDER_H/2+1, 
-			this->w-2 - markerxr, SLIDER_H-2,
-			0.15f, 0.15f, 0.15f);
-
-	// Draw marker
-	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, this->h,
-			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, this->h-2,
-			0.15f, 0.15f, 0.15f);
-
-	// Render the value indicator
-	snprintf(value,20,"%.2f",this->val);
-	Rect bounds = SansSerif->BoundingBox( value );
-	SansSerif->RenderCentered( markerx, y+bounds.h/2 - SLIDER_VALPAD, value );
-}
-
-/**\brief Slider mouse drag call back.
- */
-void Slider::MouseMotion( int xi, int yi, int dx, int dy ){
-	this->val = this->PixelToVal(xi - GetX());
-}
-
-/**\brief Slider mouse down call back.
- */
-void Slider::MouseDown( int wx, int wy ){
-	this->val = this->PixelToVal(wx - GetX());
+	// In case the user switched max and min val,
+	// we can still go ahead, everything will just be flipped.
+	if ( this->maxval < this->minval){
+		if ( value < this->maxval )
+			checkedval = maxval;
+		else if ( value > this->minval )
+			checkedval = minval;
+	}else{
+		if ( value > this->maxval)
+			checkedval = maxval;
+		else if ( value < this->minval)
+			checkedval = minval;
+	}
+	this->val = checkedval;
+	Log::Message("New value: %f (%f - %f)",this->val,
+			this->maxval,this->minval);
 }

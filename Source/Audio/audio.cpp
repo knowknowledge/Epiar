@@ -103,9 +103,10 @@ bool Audio::SetMusicVol( float volume ){
 	}
 
 	int volumeset;
-	Mix_VolumeMusic( static_cast<int>(volume*AUDIO_MAX_VOL) );
+	int volumeint = static_cast<int>(volume*AUDIO_MAX_VOL);
+	Mix_VolumeMusic( volumeint );
 	volumeset = Mix_VolumeMusic( -1 );
-	if ( volumeset != volume ){
+	if ( volumeset != volumeint ){
 		Log::Error("There was an error setting the volume.");
 		return false;
 	}
@@ -128,7 +129,6 @@ bool Audio::SetSoundVol( float volume ){
 	}
 
 	this->sound_vol = volume;
-	Log::Message("Sound volume changed to %f",this->sound_vol);
 	return true;
 }
 

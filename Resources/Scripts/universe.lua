@@ -166,9 +166,9 @@ function options()
 	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
 						--]]
-	soundVolume = { Slider = UI.newSlider(20, 160, 80, 16, "Sound Volume"),
+	soundVolume = { Slider = UI.newSlider(20, 160, 80, 16, "Sound Volume","Audio.setSoundVolume"),
 					Label = UI.newLabel( 105, 172, "Sound Volume", 0)}
-	musicVolume = { Slider = UI.newSlider(20, 190, 80, 16, "Music Volume"),
+	musicVolume = { Slider = UI.newSlider(20, 190, 80, 16, "Music Volume","Audio.setMusicVolume"),
 					Label = UI.newLabel( 105, 202, "Music Volume", 0)}
 	optionWindow:add( soundsLabel,
 					backgroundSound,
@@ -182,10 +182,10 @@ function options()
 					musicVolume.Label)
 
 	-- Debugging
-	debugLabel      = UI.newLabel(20,210,"Debug Options:",0)
-	xmlfileLogging  = UI.newCheckbox(20, 220, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
-	stdoutLogging   = UI.newCheckbox(20, 240, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 260, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	debugLabel      = UI.newLabel(20,220,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 230, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 250, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 270, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
 	optionWindow:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
 	
 	function saveOptions()

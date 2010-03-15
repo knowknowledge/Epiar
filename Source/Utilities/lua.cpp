@@ -10,6 +10,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Audio/audio.h"
+#include "Audio/audio_lua.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
@@ -251,6 +252,7 @@ void Lua::RegisterFunctions() {
 	// Register these functions to their own lua namespaces
 	AI_Lua::RegisterAI(L);
 	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
 }
