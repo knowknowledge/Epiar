@@ -122,11 +122,16 @@ void Tabs::MouseDown( int x, int y ) {
 	if ( yr < TAB_HEADER ){
 		this->TabNext();
 	}else{
-		Widget *down_on = DetermineMouseFocus( xr, yr );
-		if( down_on ){
-			down_on->MouseDown( xr,yr );
-		}
+		activetab->MouseDown( xr,yr );
 	}
+}
+
+void Tabs::MouseMotion( int x, int y, int dx, int dy ){
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	activetab->MouseMotion( xr,yr,dx,dy);
 }
 
 
