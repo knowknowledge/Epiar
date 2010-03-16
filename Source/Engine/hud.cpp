@@ -238,7 +238,7 @@ void Hud::HandleInput( list<InputEvent> & events ) {
 	list<InputEvent>::iterator i;
 	for(i= events.begin(); i != events.end() ; ++i ) {
 		// Mouse Clicks
-		if( i->type == MOUSE && i->mstate==MOUSEDOWN) {
+		if( i->type == MOUSE && i->mstate==MOUSELDOWN) {
 			Coordinate screenPos(i->mx, i->my), worldPos;
 			Camera::Instance()->TranslateScreenToWorld( screenPos, worldPos );
 			// Target any clicked Sprite

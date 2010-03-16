@@ -52,6 +52,7 @@ Uint32 Input::lastMouseMove= 0;
 
  /// \var InputEvent::my
  ///  \brief Mouse y coordinate.
+
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
@@ -130,6 +131,25 @@ bool Input::Update( void ) {
 	return quitSignal;
 }
 
+/**\brief Converts SDL_MouseButtonEvent to Epiar's Input model.
+ */
+mouseState Input::_CheckMouseState( Uint8 button, bool up ){
+	switch (button){
+		case SDL_BUTTON_LEFT:
+			return (up? MOUSELUP : MOUSELDOWN);
+		case SDL_BUTTON_MIDDLE:
+			return (up? MOUSEMUP : MOUSEMDOWN);
+		case SDL_BUTTON_RIGHT:
+			return (up? MOUSERUP : MOUSERDOWN);
+		// We'll only handle one event, return unhandled on down events.
+		case SDL_BUTTON_WHEELUP:
+			return (up? MOUSEWUP : UNHANDLED);
+		case SDL_BUTTON_WHEELDOWN:
+			return (up? MOUSEWDOWN : UNHANDLED);
+	}
+	return UNHANDLED;
+}
+
 void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 	assert( event );
 
@@ -148,24 +168,28 @@ void Input::_UpdateHandleMouseDown( SDL_Event *event ) {
 	assert( event );
 
 	Uint16 x, y;
-	
+	mouseState state=_CheckMouseState(event->button.button,false);
+
 	// translate so (0,0) is lower-left of screen
 	x = event->button.x;
 	y = event->button.y;
 
-	events.push_front( InputEvent( MOUSE, MOUSEDOWN, x, y ) );
+
+	if (state)
+		events.push_front( InputEvent( MOUSE, state, x, y ) );
 }
 
 void Input::_UpdateHandleMouseUp( SDL_Event *event ) {
 	assert( event );
 
 	Uint16 x, y;
+	mouseState state=_CheckMouseState(event->button.button,true);
 	
 	// translate so (0,0) is lower-left of screen					
 	x = event->button.x;
 	y = event->button.y;
 
-	events.push_front( InputEvent( MOUSE, MOUSEUP, x, y ) );
+	events.push_front( InputEvent( MOUSE, state, x, y ) );
 }
 
 bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {

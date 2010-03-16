@@ -157,7 +157,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					eventWasHandled = true;
 				}
 				break;
-			case MOUSEUP:
+			case MOUSELUP:
 				// release focus if needed
 				if( mouseFocus ) {
 					// let the focused widget know it's no longer focused
@@ -167,7 +167,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 					eventWasHandled = true;
 				}
 				break;
-			case MOUSEDOWN:
+			case MOUSELDOWN:
 				Widget *focusedWidget = DetermineMouseFocus( x, y );
 				// did they click a different widget than the one already in focus?
 				if( mouseFocus != focusedWidget ) {

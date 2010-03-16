@@ -26,13 +26,4 @@ extern Font *SansSerif, *BitType, *Serif, *Mono;
 #define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
 #define SETOPTION(path, value) (optionsfile->Set((path),(value)) )
 
-struct create_delete_functor
-{
-	template <typename T>
-	void operator()(T* _p)
-	{
-		delete _p;
-	}
-};
-
 #endif // __H_COMMON__
