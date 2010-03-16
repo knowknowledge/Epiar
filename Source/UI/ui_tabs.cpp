@@ -123,7 +123,23 @@ void Tabs::MouseLDown( int x, int y ) {
 	}else{
 		// Pass events onto Tab contents
 		this->mouseDownOn = activetab;
+		Log::Message("Mouse down on tab %s",activetab->GetName().c_str());
 		activetab->MouseLDown( xr,yr );
+	}
+}
+
+/**\brief Pass on mouse up event to active Tab.
+ */
+void Tabs::MouseLUp( int x, int y ){
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	if ( yr < TAB_HEADER ){
+		this->UnfocusMouse();
+	} else {
+		// Pass events onto Tab contents
+		activetab->MouseLUp( xr,yr );
 	}
 }
 
