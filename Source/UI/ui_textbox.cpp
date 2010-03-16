@@ -88,7 +88,7 @@ void Textbox::Draw( int relx, int rely ) {
 	}
 }
 
-void Textbox::MouseDown( int wx, int wy ) {
+void Textbox::MouseLDown( int wx, int wy ) {
 	if(entryDisabled) return;
 
 	if( clickCallBack ){

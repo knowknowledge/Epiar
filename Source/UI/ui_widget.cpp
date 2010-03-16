@@ -87,15 +87,45 @@ void Widget::FocusMouse( int x, int y ) {
 	if( keyboardFocus ) keyboardFocus->FocusKeyboard();
 }
 
-void Widget::MouseDown( int x, int y ) {
+/**\brief Generic left mouse down callback for widgets.
+ */
+void Widget::MouseLDown( int x, int y ) {
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
 	int yr = y - GetY();
 
 	Widget *down_on = DetermineMouseFocus( xr, yr );
 	if( down_on ){
-		down_on->MouseDown( xr,yr );
+		this->mouseDownOn = down_on;
+		down_on->MouseLDown( xr,yr );
 	}
+}
+
+/**\brief Generic left mouse down and up (fires on up) callback for widgets.
+ * \details
+ * Mouse up is actually the up motion, the requirement is that the
+ * mouse was also pressed on this widget too to fire this event.
+ */
+void Widget::MouseLUp( int x, int y ){
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	Widget *event_on = DetermineMouseFocus( xr, yr );
+
+	if( event_on && (event_on == this->mouseDownOn) ){
+		// Unfocus everything else
+		list<Widget *>::iterator i;
+		for( i = children.begin(); i != children.end(); ++i ) {
+			if ( (*i) != event_on ){
+				(*i)->UnfocusMouse();
+			}
+		}
+		// This could destroy our widget, so can't use it after this.
+		event_on->MouseLUp( xr,yr );
+	} else
+		this->UnfocusMouse();
+
 }
 
 void Widget::MouseMotion( int x, int y, int dx, int dy ){
@@ -103,17 +133,22 @@ void Widget::MouseMotion( int x, int y, int dx, int dy ){
 	int xr = x - GetX();
 	int yr = y - GetY();
 
-	Widget *motion = DetermineMouseFocus( xr, yr );
-	if( motion ) motion->MouseMotion( xr,yr,dx,dy);
+	if( this->mouseDownOn )
+		this->mouseDownOn->MouseMotion( xr,yr,dx,dy);
 }
 
-// when a widget loses focus, so do all of its children
+/** \brief when a widget loses focus, so do all of its children
+ */
 void Widget::UnfocusMouse( void ) {
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		(*i)->UnfocusMouse();
 	}
+
+	// Already handled the up event.
+	this->mouseDownOn = NULL;
+
 }
 
 void Widget::UnfocusKeyboard( void ) {

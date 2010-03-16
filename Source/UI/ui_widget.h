@@ -10,9 +10,11 @@
 #ifndef __H_UI_WIDGET__
 #define __H_UI_WIDGET__
 
+typedef enum{LEFT,MIDDLE,RIGHT} mouseBtn;
+
 class Widget {
 	public:
-		Widget() { keyboardFocus = NULL; };
+		Widget() { keyboardFocus = NULL; mouseDownOn = NULL; mouseFocused = NULL; };
 		virtual ~Widget( void );
 		
 		virtual bool AddChild( Widget *widget );
@@ -39,12 +41,15 @@ class Widget {
 
 		virtual bool Contains( int relx, int rely );
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
-		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
+		virtual void MouseLDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
+		virtual void MouseLUp( int wx, int wy );
 		virtual void MouseMotion( int x, int y, int dx, int dy);
 		virtual bool KeyPress( SDLKey key );
 	
 	protected:
 		list<Widget *> children;
+		// Tracks which widget the mouse was down on last before up
+		Widget *mouseDownOn, *mouseFocused;
 
 	private:
 		int x, y;

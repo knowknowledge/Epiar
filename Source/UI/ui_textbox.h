@@ -29,7 +29,7 @@ class Textbox : public Widget {
 		string GetText() { return text; }
 		void SetText(string s) { text = s; }
 	
-		void MouseDown( int wx, int wy );
+		void MouseLDown( int wx, int wy );
 		
 		bool KeyPress( SDLKey key );
 		

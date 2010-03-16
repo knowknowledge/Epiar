@@ -160,14 +160,15 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			case MOUSELUP:
 				// release focus if needed
 				if( mouseFocus ) {
-					// let the focused widget know it's no longer focused
-					mouseFocus->UnfocusMouse();
+					// Sometimes this will kill the current widget, so keep this last
+					mouseFocus->MouseLUp( x, y );
+
 					mouseFocus = NULL;
 
 					eventWasHandled = true;
 				}
 				break;
-			case MOUSELDOWN:
+			case MOUSELDOWN:{
 				Widget *focusedWidget = DetermineMouseFocus( x, y );
 				// did they click a different widget than the one already in focus?
 				if( mouseFocus != focusedWidget ) {
@@ -194,11 +195,32 @@ void UI::HandleInput( list<InputEvent> & events ) {
 				
 				// pass the event to the widget
 				if( mouseFocus ) {
-					mouseFocus->MouseDown( x, y );
+					mouseFocus->MouseLDown( x, y );
 					
 					eventWasHandled = true;				
 				}
 				break;
+			}
+			case MOUSEMDOWN:
+				;
+				break;
+			case MOUSEMUP:
+				;
+				break;
+			case MOUSERDOWN:
+				;
+				break;
+			case MOUSERUP:
+				;
+				break;
+			case MOUSEWDOWN:
+				;
+				break;
+			case MOUSEWUP:
+				;
+				break;
+			default:
+				Log::Warning("Unhandled UI input detected.");
 			}
 			break;
 		}

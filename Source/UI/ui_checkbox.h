@@ -23,13 +23,10 @@ class Checkbox : public Widget {
 		int GetWidth( void ) { return CHECKBOX_W; };
 		int GetHeight( void ) { return CHECKBOX_H; };
 
-		void FocusMouse( int x, int y );
-		void UnfocusMouse( void );
-
 		bool IsChecked() {return checked;}
 		void Set(bool val) {checked = val;}
 	
-		void MouseDown( int wx, int wy );
+		void MouseLUp( int wx, int wy );
 		virtual string GetName( void ) { return string("Checkbox_" + label ); }
 	private:
 		string label;

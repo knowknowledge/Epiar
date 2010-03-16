@@ -84,9 +84,14 @@ void Button::UnfocusMouse( void ) {
 	bitmap_current = bitmap_normal;
 }
 
-void Button::MouseDown( int wx, int wy ) {
+void Button::MouseLDown( int wx, int wy ) {
 	if(OPTION(int, "options/sound/buttons"))
 		this->sound_click->Play();
+}
+
+void Button::MouseLUp( int wx, int wy ) {
+	this->UnfocusMouse();
+
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
 		clickCallBack();

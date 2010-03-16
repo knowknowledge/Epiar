@@ -113,16 +113,17 @@ void Tabs::Draw( int relx, int rely ){
 
 /**\brief First check if clicked on one of the Tab, if not, pass it on.
  */
-void Tabs::MouseDown( int x, int y ) {
+void Tabs::MouseLDown( int x, int y ) {
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
 	int yr = y - GetY();
 
-	Log::Message("Mouse down detected: %d", yr);
 	if ( yr < TAB_HEADER ){
 		activetab = this->CheckTabClicked( xr, yr );
 	}else{
-		activetab->MouseDown( xr,yr );
+		// Pass events onto Tab contents
+		this->mouseDownOn = activetab;
+		activetab->MouseLDown( xr,yr );
 	}
 }
 

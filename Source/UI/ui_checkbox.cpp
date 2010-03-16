@@ -43,15 +43,7 @@ void Checkbox::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
-void Checkbox::FocusMouse( int x, int y ) {
-
-}
-
-void Checkbox::UnfocusMouse( void ) {
-
-}
-
-void Checkbox::MouseDown( int wx, int wy ) {
+void Checkbox::MouseLUp( int wx, int wy ) {
 	if(checked) checked = false;
 	else checked = true;
 }

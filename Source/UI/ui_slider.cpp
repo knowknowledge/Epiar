@@ -86,7 +86,7 @@ void Slider::MouseMotion( int xi, int yi, int dx, int dy ){
 
 /**\brief Slider mouse down call back.
  */
-void Slider::MouseDown( int wx, int wy ){
+void Slider::MouseLDown( int wx, int wy ){
 	this->SetVal(this->PixelToVal(wx - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call

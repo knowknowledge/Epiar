@@ -36,7 +36,7 @@ class Tabs : public Widget {
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 	
-		void MouseDown( int x, int y );
+		void MouseLDown( int x, int y );
 		void MouseMotion( int x, int y, int dx, int dy );
 
 		string GetName( void ) {return string("Tabs_"+name);}

@@ -31,7 +31,7 @@ class Slider : public Widget {
 		int GetHeight( void ) { return h; };
 
 		void MouseMotion( int x, int y, int dx, int dy );
-		void MouseDown( int wx, int wy );
+		void MouseLDown( int wx, int wy );
 		string GetName( void ) {return string("Slider_"+label); }
 
 	private:

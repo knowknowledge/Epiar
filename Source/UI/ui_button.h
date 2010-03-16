@@ -27,7 +27,8 @@ class Button : public Widget {
 		void FocusMouse( int x, int y );
 		void UnfocusMouse( void );
 	
-		void MouseDown( int wx, int wy );
+		void MouseLDown( int wx, int wy );
+		void MouseLUp( int wx, int wy );
 		virtual string GetName( void ) {return string("Button_"+label);}
 	private:
 		void Initialize( int x, int y, int w, int h, string label);

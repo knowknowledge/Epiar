@@ -76,16 +76,6 @@ void Window::Draw( int relx, int rely ) {
 	Widget::Draw();
 }
 
-void Window::FocusMouse( int x, int y ) {
-	// cout << "window has focus" << endl;
-	Widget::FocusMouse( x, y );
-}
-
-void Window::UnfocusMouse( void ) {
-	// cout << "window lost focus" << endl;
-	Widget::UnfocusMouse();
-}
-
 void Window::MouseMotion( int x, int y, int dx, int dy ){
 	// Only drag by titlebar
 	if ( dy < bitmaps[1]->GetHeight() ) {
@@ -98,12 +88,12 @@ void Window::MouseMotion( int x, int y, int dx, int dy ){
 }
 
 // wx & wy are coords of mouse down, relative to widget's upper left (0,0)
-//void Window::MouseDown( int wx, int wy ) {
+//void Window::MouseLDown( int wx, int wy ) {
 //	cout << "mouse down event on window, relative at " << wx << ", " << wy << endl;
 //	Widget *down_on = DetermineMouseFocus( wx, wy );
 //	if(down_on) {
 //		cout << "mouse down on child of window widget" << endl;
-//		down_on->MouseDown(wx,wy);
+//		down_on->MouseLDown(wx,wy);
 //	} else {
 //		cout << "mouse NOT down on child of window widget" << endl;
 //	}
