@@ -99,7 +99,7 @@ function keyhelp()
 	-- This seems to be the only way to count keys in a dictionary.
 	for k,v in pairs(Key) do h=h+20 end 
 	-- TODO: Make this a scrollable window
-	keyhelpwin = UI.newWindow( 100, 100, w, h, "Possible Keys")
+	keyhelpwin = UI.newWindow( 100, 100, w, 300, "Possible Keys")
 	for k,v in pairs(Key) do
 		off_y = off_y + 20
 		keyhelpwin:add( UI.newLabel(off_x,off_y,"- "..k) )

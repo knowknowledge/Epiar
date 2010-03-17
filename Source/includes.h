@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <queue>
 #include <errno.h>
+#include <stack>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
