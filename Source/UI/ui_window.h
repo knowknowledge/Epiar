@@ -11,11 +11,13 @@
 
 #include "Graphics/image.h"
 #include "UI/ui.h"
+#include "UI/ui_scrollbar.h"
 
 class Window : public Widget {
 	public:
 		Window( int x, int y, int w, int h, string caption );
-		
+		bool AddChild( Widget *widget );
+
 		void Draw( int relx = 0, int rely = 0 );
 
 		int GetWidth( void ) { return w; };
@@ -32,6 +34,9 @@ class Window : public Widget {
 		//int inner_top,inner_left,inner_right,inner_low;
 		string caption;
 		Image *bitmaps[9];
+
+		Scrollbar *hscrollbar;
+		Scrollbar *vscrollbar;
 };
 
 #endif // __H_WINDOW__

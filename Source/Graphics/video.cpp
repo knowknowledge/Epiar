@@ -57,6 +57,7 @@ int Video::w = 0;
 int Video::h = 0;
 int Video::w2 = 0;
 int Video::h2 = 0;
+stack<Rect> Video::cropRects;
 
 /**\brief Creates the singleton or retrieves the current instance.
  */
@@ -351,3 +352,29 @@ int Video::GetHalfHeight( void ) {
 	return( h2 );
 }
 
+/**\brief Set crop rectangle.
+ */
+void Video::SetCropRect( int x, int y, int w, int h ){
+	if (cropRects.empty())
+		glEnable(GL_SCISSOR_TEST);
+	cropRects.push(Rect( x, y, w, h ));
+	// Need to convert top down y-axis
+	glScissor( x, Video::h-(y+h), w, h );
+}
+
+/**\brief Unset the previous crop rectangle after use.
+ */
+void Video::UnsetCropRect( void ){
+	if (!cropRects.empty()) // Shouldn't be empty
+		cropRects.pop();
+	else
+		Log::Warning("You unset the crop rect too many times.");
+
+	if ( cropRects.empty() )
+		glDisable(GL_SCISSOR_TEST);
+	else{	//Set's the previous crop rectangle.
+		Rect prevrect = cropRects.top();
+		glScissor( prevrect.x, prevrect.y, 
+				prevrect.w, prevrect.h );
+	}
+}

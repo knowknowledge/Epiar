@@ -76,6 +76,8 @@ class Video {
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b);
 		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b );
 
+		static void SetCropRect( int x, int y, int w, int h );
+		static void UnsetCropRect( void );
  	protected:
  		Video();
   		Video( const Video & );
@@ -85,6 +87,7 @@ class Video {
   		static Video *pInstance;
   		static int w, h; // width/height of screen
 		static int w2, h2; // width/height divided by 2
+		static stack<Rect> cropRects;
 };
 
 #endif // __H_VIDEO__

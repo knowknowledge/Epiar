@@ -189,7 +189,8 @@ void Input::_UpdateHandleMouseUp( SDL_Event *event ) {
 	x = event->button.x;
 	y = event->button.y;
 
-	events.push_front( InputEvent( MOUSE, state, x, y ) );
+	if (state)
+		events.push_front( InputEvent( MOUSE, state, x, y ) );
 }
 
 bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {

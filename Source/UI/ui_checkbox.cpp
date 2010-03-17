@@ -17,6 +17,8 @@
 /**\class Checkbox
  * \brief UI checkbox. */
 
+/**\brief Constructs a new Checkbox.
+ */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	SetX( x );
 	SetY( y );
