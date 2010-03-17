@@ -289,7 +289,7 @@ function buyWeapon(weapon)
 end
 
 --- Creates a table
-function createTable(x,y,w,h,title,piclist,buttonlist)
+function createTable(win,w,h,piclist,buttonlist)
 	pad = 10
 	box = 120
 	button_h = 30
@@ -302,7 +302,6 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 	end
 
 	-- Lay out the buttons with pictures beneath them
-	win = UI.newWindow( 30,30,w,h,title)
 	for i=1,#piclist do
 		pos_x,pos_y = getPos(col,row)
 		-- When there isn't enough room, wrap to the next row.
@@ -316,38 +315,45 @@ function createTable(x,y,w,h,title,piclist,buttonlist)
 
 		col =col+1
 	end
-	win:add(UI.newButton( w-button_w-15, h-button_h-15, button_w,button_h, "Cancel","storefront:close();storefront=nil"))
-	return win
 end
 
---- Ship yard
-function shipyard(planetID)
+--- Land on a planet
+function landingDialog(id)
+	-- Create the Planet Landing Screen
+	if landingWin ~= nil then return end
 	Epiar.pause()
-	if storefront ~=nil then return end
-	planet = Epiar.getSprite(planetID)
+	planet = Epiar.getSprite(id)
+	
+	height = 600
+	width = 600
+	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
+	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
+	landingWin:add(storeframe)
 
+	-- Shipyard
+	shipyard = UI.newTab("Ship Yard")
 	local models = planet:GetModels()
-	local buylist = {}
+	local modelButtons = {}
 	for m =1,#models do
 		price = Epiar.getMSRP(models[m])
-		buylist[m] = {models[m]..": "..price, "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
+		modelButtons[m] = {models[m]..": "..price, "buyShip(\""..models[m].."\")"}
 	end
-	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
-end
+	createTable(shipyard,width-20,height-100,models,modelButtons)
 
---- Armory
-function armory(planetID)
-	Epiar.pause()
-	if storefront ~=nil then return end
-	planet = Epiar.getSprite(planetID)
-
+	-- Armory
+	armory = UI.newTab("Armory")
 	local weapons = planet:GetWeapons()
-	local buylist = {}
+	local weaponButtons= {}
 	for i =1,#weapons do
 		price = Epiar.getMSRP(weapons[i])
-		buylist[i] = {weapons[i]..": "..price, "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}
+		weaponButtons[i] = {weapons[i]..": "..price, "buyWeapon(\""..weapons[i].."\")"}
 	end
-	storefront = createTable(30,30,820,500,"Armory",weapons,buylist)
+	createTable(armory,width-20,height-100,weapons,weaponButtons)
+
+	storeframe:add(shipyard,armory)
+
+	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
+	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 --- UI demo

@@ -69,23 +69,9 @@ function attemptLanding()
 			HUD.newAlert(message.."Please slow your approach.")
 		else
 			HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
-			landOnPlanet( planet:GetID() )
+			landingDialog( planet:GetID() )
 		end
 	end
-end
-
---- Land on a planet
-function landOnPlanet(id)
-	-- Create the Planet Landing Screen
-	if landingWin ~= nil then return end
-	Epiar.pause()
-	planet = Epiar.getSprite(id)
-	
-	landingWin = UI.newWindow( 200,100,400,300, string.format("%s Landing Screen",planet:GetName()))
-	landingWin:add(UI.newButton( 40,40,100,30,"Shipyard",string.format("shipyard(%d)",id) ))
-	landingWin:add(UI.newButton( 40,80,100,30,"Armory",string.format("armory(%d)",id) ))
-	landingWin:add(UI.newButton( 40,120,100,30,"Repair","PLAYER:Repair(10000)" ))
-	landingWin:add(UI.newButton( 290,260,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 --- Register the player functions
