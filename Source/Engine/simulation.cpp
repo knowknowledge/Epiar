@@ -17,6 +17,7 @@
 #include "Graphics/video.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
+#include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
 #include "Utilities/camera.h"
@@ -123,6 +124,13 @@ bool Simulation::Run() {
 		sprites->Add(  planets->GetPlanet(*pname) );
 	}
 
+	// Gates!
+	// TODO: These are random for now, but they should be set up in a structured network based on the planet locations at some point
+	Gate* g;
+	for(int i=0; i<100; i++){
+		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
+		sprites->Add(g);
+	}
 
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
