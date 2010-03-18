@@ -88,6 +88,8 @@ void Widget::FocusMouse( int x, int y ) {
 }
 
 /**\brief Generic left mouse down callback for widgets.
+ * \todo Consider reverting back to the old way of doing relative coordinates
+ * (I.E. Relative to current widget rather than current parent)
  */
 void Widget::MouseLDown( int x, int y ) {
 	// Relative coordinate - to current widget
