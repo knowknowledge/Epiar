@@ -33,7 +33,7 @@ Tab::Tab( const string& _caption ):
 	this->w=0;
 
 	Rect bounds = SansSerif->BoundingBox( _caption );
-	this->capw = bounds.w;
+	this->capw = static_cast<int>(bounds.w);
 }
 
 /**\brief Adds children to the Tab object.

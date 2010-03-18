@@ -150,7 +150,7 @@ int Scrollbar::MarkerPosToPixel( void ){
 		posratio = TO_FLOAT(pos)
 			/TO_FLOAT(maxpos-(this->h+2*SCROLLBAR_PAD));
 	}
-	markerpos = SCROLLBAR_BTN+effectivelen*posratio;
+	markerpos = SCROLLBAR_BTN+static_cast<int>(effectivelen*posratio);
 	return markerpos;
 }
 
@@ -165,15 +165,15 @@ int Scrollbar::MarkerPixelToPos( int xr, int yr ){
 	if ( type == HORIZONTAL ){
 		effectivelen = this->w-2*SCROLLBAR_BTN-marksize;
 		screenlen = this->w+2*SCROLLBAR_PAD;
-		newpos = TO_FLOAT(xr - effectivestart)
+		newpos = TO_INT(TO_FLOAT(xr - effectivestart)
 			/TO_FLOAT(effectivelen)
-			*(maxpos-screenlen);
+			*(maxpos-screenlen));
 	}else{
 		effectivelen = this->h-2*SCROLLBAR_BTN-marksize;
 		screenlen = this->h+2*SCROLLBAR_PAD;
-		newpos = TO_FLOAT(yr - effectivestart)
+		newpos = TO_INT(TO_FLOAT(yr - effectivestart)
 			/TO_FLOAT(effectivelen)
-			*(maxpos-screenlen);
+			*(maxpos-screenlen));
 	}
 	return newpos;
 }

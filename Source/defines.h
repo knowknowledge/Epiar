@@ -30,4 +30,8 @@
 #define TO_FLOAT(X) (static_cast<float>(X))
 #endif // TO_FLOAT
 
+#ifndef TO_INT
+#define TO_INT(X) (static_cast<int>(X))
+#endif // TO_INT
+
 #endif /*DEFINES_H_*/

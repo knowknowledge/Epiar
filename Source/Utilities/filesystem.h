@@ -14,7 +14,9 @@
 #ifdef USE_PHYSICSFS
 #include <physfs.h>
 #else
+#ifndef _WIN32
 #include <dirent.h>
+#endif
 #endif
 
 class Filesystem {

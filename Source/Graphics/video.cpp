@@ -374,7 +374,7 @@ void Video::UnsetCropRect( void ){
 		glDisable(GL_SCISSOR_TEST);
 	else{	//Set's the previous crop rectangle.
 		Rect prevrect = cropRects.top();
-		glScissor( prevrect.x, prevrect.y, 
-				prevrect.w, prevrect.h );
+		glScissor( TO_INT(prevrect.x), TO_INT(prevrect.y), 
+				TO_INT(prevrect.w), TO_INT(prevrect.h) );
 	}
 }
