@@ -118,8 +118,8 @@ int main( int argc, char **argv ) {
 int parseArgs( int argc, char **argv ) {
 	for( int i = 1; i < argc; i++ ) {
 		// remove any leading - or --
-		if( (char)argv[i][0] == '-' ) argv[1] = &argv[1][1]; // handle a single '-', eg -help
-		if( (char)argv[i][0] == '-' ) argv[1] = &argv[1][1]; // purposefully repeated to handle '--', eg --help
+		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // handle a single '-', eg -help
+		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // purposefully repeated to handle '--', eg --help
 		
 		// it'd be nice if we could overload the switch control structure to accept std::string, sigh
 		string parm = argv[i];
@@ -164,6 +164,8 @@ int parseArgs( int argc, char **argv ) {
 		} else if( parm == "log-out" ) { SETOPTION("options/log/out", 1);
 		} else if( parm == "nolog-xml" ) { SETOPTION("options/log/xml", 0);
 		} else if( parm == "nolog-out" ) { SETOPTION("options/log/out", 0);
+		} else {
+			printf("Unknown option: '%s'\n",parm.c_str());
 		}
 	}
 	
