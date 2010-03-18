@@ -129,7 +129,7 @@ void Window::Draw( int relx, int rely ) {
 		// Skip scrollbars
 		if ( ((*i)==this->hscrollbar) ||
 				((*i)==this->vscrollbar) ){
-			(*i)->Draw( x + relx, y + rely );
+			(*i)->Draw( x, y );
 			continue;
 		}
 		int xscroll=0;
@@ -138,8 +138,7 @@ void Window::Draw( int relx, int rely ) {
 			xscroll = hscrollbar->pos;
 		if ( this->vscrollbar )
 			yscroll = vscrollbar->pos;
-		(*i)->Draw( x + relx-xscroll,
-				y + rely-yscroll );
+		(*i)->Draw( x-xscroll,y-yscroll );
 	}
 	
 	if ( this->hscrollbar || this->vscrollbar )

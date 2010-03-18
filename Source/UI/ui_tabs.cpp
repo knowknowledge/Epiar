@@ -25,8 +25,85 @@ Tab::Tab( const string& _caption ):
 		caption( string(_caption) ){
 	SetX(0);
 	SetY(TAB_HEADER);
+
+	this->hscrollbar = NULL;
+	this->vscrollbar = NULL;
+
 	Rect bounds = SansSerif->BoundingBox( _caption );
 	this->capw = bounds.w;
+}
+
+/**\brief Adds children to the Tab object.
+ */
+bool Tab::AddChild( Widget *widget ){
+	// Check to see if widget is past the bounds.
+	int hbnd = widget->GetX()+widget->GetWidth();
+	int vbnd = widget->GetY()+widget->GetHeight();
+
+	if ( hbnd > this->w ){
+		if ( !this->hscrollbar ){
+			this->hscrollbar = new Scrollbar( SCROLLBAR_PAD,
+				this->h-SCROLLBAR_THICK-SCROLLBAR_PAD,
+				this->w-2*SCROLLBAR_PAD, HORIZONTAL,
+				this);
+			Widget::AddChild( this->hscrollbar );
+		}
+		this->hscrollbar->maxpos = hbnd;
+	}
+
+	if ( vbnd > this->h ){
+		if ( !this->vscrollbar ){
+			this->vscrollbar = new Scrollbar(
+				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
+				SCROLLBAR_PAD,
+				this->h-2*SCROLLBAR_PAD
+				-SCROLLBAR_THICK, VERTICAL,
+				this);
+			Widget::AddChild( this->vscrollbar );
+		}
+		this->vscrollbar->maxpos = vbnd;
+	}
+
+	return Widget::AddChild( widget );
+}
+
+
+/**\brief Draws the Tab contents.
+ */
+void Tab::Draw( int relx, int rely ){
+	int x, y;
+	
+	x = GetX() + relx;
+	y = GetY() + rely;
+
+	// Crop when necessary
+	if ( this->hscrollbar || this->vscrollbar )
+		Video::SetCropRect(x,y,
+				this->w-SCROLLBAR_PAD,
+				this->h-SCROLLBAR_PAD);
+	
+	// Draw any children
+	list<Widget *>::iterator i;
+	
+	for( i = children.begin(); i != children.end(); ++i ) {
+		// Skip scrollbars
+		if ( ((*i)==this->hscrollbar) ||
+				((*i)==this->vscrollbar) ){
+			(*i)->Draw( x, y );
+			continue;
+		}
+		int xscroll=0;
+		int yscroll=0;
+		if ( this->hscrollbar )
+			xscroll = hscrollbar->pos;
+		if ( this->vscrollbar )
+			yscroll = vscrollbar->pos;
+		(*i)->Draw( x-xscroll,
+				y-yscroll );
+	}
+	
+	if ( this->hscrollbar || this->vscrollbar )
+		Video::UnsetCropRect();
 }
 
 /**\brief Constructs a tab collection (no caption), you could add a label though.

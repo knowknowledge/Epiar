@@ -8,8 +8,11 @@
 #ifndef __H_SCROLLBAR__
 #define __H_SCROLLBAR__
 
-#define SCROLLBAR_THICK 15
-#define SCROLLBAR_PAD 8
+#define SCROLLBAR_THICK		15
+#define SCROLLBAR_PAD		8
+#define SCROLLBAR_MINMARK	10	// Minimum marker size
+#define SCROLLBAR_BTN		18	// Scrollbar button size
+#define SCROLLBAR_SCROLL	20	// Amount of scrolling per click
 typedef enum{HORIZONTAL,VERTICAL} scrollbarType;
 
 class Scrollbar : public Widget {
@@ -23,11 +26,18 @@ class Scrollbar : public Widget {
 		int GetHeight( void ) { return h; }
 
 		void MouseLDown( int x, int y );
+		void MouseMotion( int xi, int yi, int dx, int dy );
 
 		int pos,maxpos;
 
 	private:
+		int GetMarkerSize( void );
+		int MarkerPosToPixel( void );
+		int MarkerPixelToPos( int xr, int yr );
+		int CheckPos( int newpos );
+
 		int w,h;
+		int markersize;
 		scrollbarType type;
 		Widget *parent;
 
