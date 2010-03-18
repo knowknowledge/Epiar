@@ -84,6 +84,7 @@ class Lua {
 		static int getTechnologyInfo(lua_State *L);
 		static int setInfo(lua_State *L);
 		static int saveComponents(lua_State *L);
+		static int listImages(lua_State *L);
 
 		// Lua Stack Helpers
 		static void pushSprite(lua_State *L,Sprite* sprite);

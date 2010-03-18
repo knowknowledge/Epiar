@@ -29,6 +29,7 @@
 #include "Utilities/camera.h" 
 #include "Input/input.h"
 #include "Utilities/file.h"
+#include "Utilities/filesystem.h"
 
 #include "Engine/hud.h"
 
@@ -244,6 +245,7 @@ void Lua::RegisterFunctions() {
 		{"getTechnologyInfo", &Lua::getTechnologyInfo},
 		{"setInfo", &Lua::setInfo},
 		{"saveComponents", &Lua::saveComponents},
+		{"listImages", &Lua::listImages},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -846,6 +848,8 @@ int Lua::setInfo(lua_State *L) {
 		
         Alliance* oldAlliance = Alliances::Instance()->GetAlliance(name);
         if(oldAlliance==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       List of Illegal Cargo
         *oldAlliance = Alliance(name,attack,aggressiveness,currency,oldAlliance->GetIlligalCargos());
 
 	} else if(kind == "Engine"){
@@ -857,6 +861,8 @@ int Lua::setInfo(lua_State *L) {
 
 		Engine* oldEngine = Engines::Instance()->GetEngine(name);
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Thrust Sound
 		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
 
 	} else if(kind == "Model"){
@@ -871,6 +877,9 @@ int Lua::setInfo(lua_State *L) {
 
 		Model* oldModel = Models::Instance()->GetModel(name);
 		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Image
+		//       Engine
 		Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull,msrp);
 		*oldModel = newModel;
 
@@ -883,6 +892,10 @@ int Lua::setInfo(lua_State *L) {
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Technologies
+		//       Militia
+		//       Influence
 		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
 
 	} else if(kind == "Technology"){
@@ -927,6 +940,12 @@ int Lua::setInfo(lua_State *L) {
 
 		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
 		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Image
+		//       Picture (Image that gets shown at the store)
+		//       Ammo Type
+		//       Ammo Consumption
+		//       Sound
 		*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
 
 	} else {
@@ -944,3 +963,10 @@ int Lua::saveComponents(lua_State *L) {
     Technologies::Instance()->Save("Resources/Definitions/technologies-default.xml");
     return 0;
 }
+
+int Lua::listImages(lua_State *L) {
+	list<string> pics = Filesystem::Enumerate("Resources/Graphics/",".png");
+	pushNames(L,&pics);
+	return 1;
+}
+

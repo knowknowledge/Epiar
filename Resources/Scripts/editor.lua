@@ -41,6 +41,7 @@ function showComponent(kind,name,getterFunc)
 	local theWin = UI.newWindow(150,100,200,400,name,
 		UI.newPicture( 20,25,160,100,name),
 		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo('%s')",name )),
+		UI.newButton( 10,350,60,30,"Pic", string.format("ImagePicker()",name )),
 		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	local theTexts = infoTable(theInfo,theWin)
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theTexts}
@@ -206,6 +207,27 @@ function showShipInfo(ship)
 	-- TODO Outfit?
 	infoWindows[shipID] = {win=shipInfoWin, info={},texts={}}
 	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d].win:close();infoWindows[%d]=nil",shipID,shipID) ))
+end
+
+function ImagePicker(textBox)
+	if imagePickerWin ~=nil then return end
+	imagePickerWin = UI.newWindow(700,150,250,500, "Image Picker")
+	--TODO: Preserve the textbox assosciated with this window.
+	--      When imagePick is called, set the textbox value to the image path
+
+	function imagePick(path)
+		if imagePickerWin ==nil then return end
+		imagePickerWin:close()
+		imagePickerWin = nil
+		print( "Picture Path:", path )
+	end
+
+	pics = Epiar.listImages()
+	for i,picPath in ipairs(pics) do
+		imagePickerWin:add(
+			UI.newPicture(25,25+300*(i-1),200,200,"Resources/Graphics/"..picPath),
+			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s')","Resources/Graphics/"..picPath )))
+	end
 end
 
 DX,DY = 20,20
