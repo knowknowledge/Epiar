@@ -25,8 +25,14 @@ class Scrollbar : public Widget {
 		int GetWidth( void ) { return w; }
 		int GetHeight( void ) { return h; }
 
+		// Use these when the encompassing window size changes
+		void SetPosition(int x, int y){ SetX(x);SetY(y); }
+		void SetSize(int length);
+
 		void MouseLDown( int x, int y );
 		void MouseMotion( int xi, int yi, int dx, int dy );
+
+		string GetName( void ) {return string((type==HORIZONTAL)?"Horizontal":"Vertical") + string(" Scrollbar");}
 
 		int pos,maxpos;
 

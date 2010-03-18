@@ -296,24 +296,19 @@ function createTable(win,w,h,piclist,buttonlist)
 	button_w = 100
 	row,col = 1,1
 	getPos = function(c,r)
-		pos_x = pad*(col)+box*(col-1)
-		pos_y = pad*(row)+box*(row-1)+20
+		pos_x = box*(col-1)+20
+		pos_y = box*(row-1)+20
 		return pos_x,pos_y
 	end
 
 	-- Lay out the buttons with pictures beneath them
 	for i=1,#piclist do
 		pos_x,pos_y = getPos(col,row)
-		-- When there isn't enough room, wrap to the next row.
-		if  pos_x+box >= w then
-			col=1; row=row+1
-			pos_x,pos_y = getPos(col,row)
-		end
 
-		win:add(UI.newButton( pos_x+(box-button_w)/2, pos_y, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
+		win:add(UI.newButton( pos_x+(box-button_w)/2+box, pos_y+box/2-button_h/2, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
 		win:add(UI.newPicture( pos_x, pos_y + button_h, box,box-button_h,piclist[i]))
 
-		col =col+1
+		row=row+1
 	end
 end
 
@@ -324,8 +319,8 @@ function landingDialog(id)
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
-	height = 600
-	width = 600
+	height = 400
+	width = 300
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
 	landingWin:add(storeframe)

@@ -28,6 +28,7 @@ class Tab : public Widget {
 		int capw;
 		string caption;
 
+		void ResetScrollBars();
 		Scrollbar *hscrollbar;
 		Scrollbar *vscrollbar;
 };
