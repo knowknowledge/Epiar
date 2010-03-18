@@ -72,6 +72,9 @@ macro(CHECK_3RD_PARTY)
 	# If not found, then we're downloading
 	if (THIRDPARTY_DOWNLOAD AND 3RD_MIRROR)
 		if (NOT ${3RD_FOUNDVAR})
+			# These dummy variables are place holders
+			set(${3RD_INCVAR} Dummy)
+			set(${3RD_LIBVAR} Dummy)
 			set(${3RD_BASENAME}_BUILD TRUE CACHE STRING "Build ${3RD_BASENAME}" FORCE)
 			if (NOT EXISTS "${EPIAR_3RD_PARTY}/${3RD_BASENAME}.${3RD_ARCFORMAT}")
 				DOWNLOAD_FILE("${DL_${3RD_BASENAME}_MIRROR}"
