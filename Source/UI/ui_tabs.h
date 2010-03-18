@@ -13,6 +13,9 @@
 class Tab : public Widget {
 	public:
 		Tab( const string& _caption );
+		bool AddChild( Widget *widget );
+
+		void Draw( int relx = 0, int rely = 0 );
 
 		int GetWidth( void ) { return w; }
 		int GetHeight( void ) { return h; }
@@ -24,6 +27,9 @@ class Tab : public Widget {
 		int w,h;
 		int capw;
 		string caption;
+
+		Scrollbar *hscrollbar;
+		Scrollbar *vscrollbar;
 };
 
 class Tabs : public Widget {
