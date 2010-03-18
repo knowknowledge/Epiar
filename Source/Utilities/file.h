@@ -34,6 +34,9 @@ class File {
 		bool Seek( long pos );
 		int SetBuffer( int bufSize );
 
+		static bool Exists( const string& filename );
+		static bool IsDir( const string& filename );
+
 	private:
 #ifdef USE_PHYSICSFS
 		PHYSFS_file *fp;		/** File pointer.  */

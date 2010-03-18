@@ -7,11 +7,13 @@
  */
 
 #include "includes.h"
-#ifdef USE_PHYSICSFS
 
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 
+list<string> Filesystem::paths;
+
+#ifdef USE_PHYSICSFS
 /**\class Filesystem
  * An interface to deal with file system operations.
  * see the File class for dealing with specific files.
@@ -68,27 +70,30 @@ int Filesystem::PrependPath( const string& archivename ) {
 /**Enumerates all files available in a path.
  * \param path String pointing to the path
  * \return Nonzero on success */
-int Filesystem::Enumerate( const string& path )
+list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 {
+	list<string> files;
 	char **rc;
 
 	rc = PHYSFS_enumerateFiles(path.c_str());
 	if (rc == NULL){
 		Log::Error("Failure to enumerate %s. reason: %s.\n",
 				path.c_str(),PHYSFS_getLastError());
-		return 0;
 	}
 	else
 	{
 		int file_count;
 		char **i;
 		for (i = rc, file_count = 0; *i != NULL; i++, file_count++)
-			Log::Message("%s\n", *i);
+		{
+			files.push_back( string(*i) );
+		}
 
 		Log::Message("\n total (%d) files.\n", file_count);
 		PHYSFS_freeList(rc);
 		return 1;
 	}
+	return files;
 }
 
 #if defined(_DEBUG) || defined(DEBUG)
@@ -129,5 +134,93 @@ int Filesystem::DeInit() {
 		Log::Error("Error de-initializing PhysicsFS.\n%s",PHYSFS_getLastError());
 	return retval;
 }
+
+#else
+
+/**\class Filesystem
+ * An interface to deal with file system operations.
+ * see the File class for dealing with specific files.
+ * \sa File */
+
+/**Initialize the PhysFS system
+ * \return Nonzero on success. */
+int Filesystem::Init( const char* argv0 ) {
+	return 1;
+}
+
+/**Initialize the PhysFS system with some default configuration.
+ * The write directory is set to $HOME/.Games/Epiar
+ * The search path is set to
+ *  - The write directory
+ *  - The directory of the current executeable
+ *  - Any archives found in the path (must pass in the extension)
+ * \return Nonzero on success. */
+int Filesystem::Init( const char* argv0, const string &extension ) {
+	return 1;
+}
+
+/**Appends an archive to be searched for files
+ * \param archivename The path to the archive
+ * \return Nonzero on success */
+int Filesystem::AppendPath( const string& archivename ) {
+	paths.push_back( archivename );
+	return 1;
+}
+
+/**Prepends an archive to be searched for files
+ * \param ardhivename The path to the archive (can also be a folder)
+ * \return Nonzero on success */
+int Filesystem::PrependPath( const string& archivename ) {
+	paths.push_front( archivename );
+	return 1;
+}
+
+/**Enumerates all files available in a path.
+ * \param path String pointing to the path
+ * \return Nonzero on success */
+list<string> Filesystem::Enumerate( const string& path, const string &suffix )
+{
+	DIR *dp;
+	struct dirent *ep;
+	list<string> files;
+	string fname;
+
+	dp = opendir (path.c_str());
+	if (dp != NULL)
+	{
+		while (NULL != (ep = readdir (dp))) {
+			fname = string(ep->d_name);
+			// Check if the suffix matches
+			if(fname.size() > suffix.size()) {
+				if( std::equal(fname.begin() + fname.size() - suffix.size(), fname.end(), suffix.begin()) ) {
+					files.push_back( fname );
+				}
+			}
+		}
+		(void) closedir (dp);
+	}
+	else
+		perror ("Couldn't open the directory");
+
+	return files;
+}
+
+/**Prints the current version of PhysFS.*/
+void Filesystem::Version( void ){
+}
+
+/**Prints the current archives supported.*/
+void Filesystem::OutputArchivers( void ){
+	
+}
+
+/**Unloads the physfs library
+  * \return Nonzero on success */
+int Filesystem::DeInit() {
+	return 1;
+}
+
+
+
 
 #endif

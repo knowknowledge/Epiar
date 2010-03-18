@@ -23,7 +23,13 @@ Scrollbar::Scrollbar( int x, int y, int length,
 
 	SetX( x );
 	SetY( y );
+	SetSize(length);
+}
 
+/**\brief Set the Length and Height of a Scrollbar.
+ */
+
+void Scrollbar::SetSize(int length) {
 	if ( type == HORIZONTAL ){
 		this->w = length;
 		this->h = SCROLLBAR_THICK;

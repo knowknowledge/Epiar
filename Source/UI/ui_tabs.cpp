@@ -29,6 +29,9 @@ Tab::Tab( const string& _caption ):
 	this->hscrollbar = NULL;
 	this->vscrollbar = NULL;
 
+	this->h=0;
+	this->w=0;
+
 	Rect bounds = SansSerif->BoundingBox( _caption );
 	this->capw = bounds.w;
 }
@@ -36,35 +39,11 @@ Tab::Tab( const string& _caption ):
 /**\brief Adds children to the Tab object.
  */
 bool Tab::AddChild( Widget *widget ){
+	bool success;
+	success = Widget::AddChild( widget );
 	// Check to see if widget is past the bounds.
-	int hbnd = widget->GetX()+widget->GetWidth();
-	int vbnd = widget->GetY()+widget->GetHeight();
-
-	if ( hbnd > this->w ){
-		if ( !this->hscrollbar ){
-			this->hscrollbar = new Scrollbar( SCROLLBAR_PAD,
-				this->h-SCROLLBAR_THICK-SCROLLBAR_PAD,
-				this->w-2*SCROLLBAR_PAD, HORIZONTAL,
-				this);
-			Widget::AddChild( this->hscrollbar );
-		}
-		this->hscrollbar->maxpos = hbnd;
-	}
-
-	if ( vbnd > this->h ){
-		if ( !this->vscrollbar ){
-			this->vscrollbar = new Scrollbar(
-				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
-				SCROLLBAR_PAD,
-				this->h-2*SCROLLBAR_PAD
-				-SCROLLBAR_THICK, VERTICAL,
-				this);
-			Widget::AddChild( this->vscrollbar );
-		}
-		this->vscrollbar->maxpos = vbnd;
-	}
-
-	return Widget::AddChild( widget );
+	ResetScrollBars();
+	return success;
 }
 
 
@@ -106,13 +85,81 @@ void Tab::Draw( int relx, int rely ){
 		Video::UnsetCropRect();
 }
 
+
+/**\brief Move the Scrollbars to the edges.
+ */
+
+void Tab::ResetScrollBars(){
+	int widget_height,widget_width;
+	int max_height,max_width;
+	max_height=0;
+	max_width=0;
+
+	// It doesn't make sense to add scrollbars for a TAB without a size
+	if(this->w==0 || this->h==0 ) return;
+
+	// Find the Max edges
+	Widget* widget;
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		widget = *i;
+		widget_width = widget->GetX()+widget->GetWidth();
+		widget_height = widget->GetY()+widget->GetHeight();
+		if( widget_height > max_height) max_height=widget_height;
+		if( widget_width > max_width) max_width=widget_width;
+	}
+
+	// Add a Horizontal ScrollBar if necessary
+	if ( max_width > GetWidth() || this->hscrollbar != NULL ){
+		int v_x = SCROLLBAR_PAD;
+		int v_y = this->h-SCROLLBAR_THICK-SCROLLBAR_PAD;
+		int v_l = this->w-2*SCROLLBAR_PAD;
+		// Only add a Scrollbar when it doesn't already exist
+		if ( !this->hscrollbar ){
+			printf("Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			this->hscrollbar = new Scrollbar(
+				v_x, v_y, v_l,
+				HORIZONTAL,
+				this);
+			Widget::AddChild( this->hscrollbar );
+		} else {
+			printf("Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			this->hscrollbar->SetPosition(v_x,v_y);
+			this->hscrollbar->SetSize(v_l);
+		}
+		this->hscrollbar->maxpos = max_width;
+	}
+
+	// Add a Vertical ScrollBar if necessary
+	if ( max_height > GetHeight() || this->vscrollbar != NULL ){
+		int v_x = this->w-SCROLLBAR_THICK-SCROLLBAR_PAD;
+		int v_y = SCROLLBAR_PAD;
+		int v_l = this->h-2*SCROLLBAR_PAD;
+		// Only add a Scrollbar when it doesn't already exist
+		if ( !this->vscrollbar ){
+			printf("Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			this->vscrollbar = new Scrollbar(
+				v_x, v_y, v_l,
+				VERTICAL,
+				this);
+			Widget::AddChild( this->vscrollbar );
+		} else {
+			printf("Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			this->vscrollbar->SetPosition(v_x,v_y);
+			this->vscrollbar->SetSize(v_l);
+		}
+		this->vscrollbar->maxpos = max_height;
+	}
+}
+
 /**\brief Constructs a tab collection (no caption), you could add a label though.
  * \param name (not shown) Tabs collection don't really have a caption.
  */
-Tabs::Tabs( int x, int y, int w, int h, const string& name ):
-	w ( w ), h ( h ),activetab( NULL ){
+Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
+	w ( _w ), h ( _h ),activetab( NULL ){
 	SetX( x );
 	SetY( y );
+	printf("Creating Tabs at(%d %d) W=%d H=%d\n",x,y,GetWidth(),GetHeight());
 	
 	this->name = name;
 }
@@ -133,8 +180,11 @@ bool Tabs::AddChild( Widget *widget ){
 	if ( activetab == NULL)
 		this->activetab = tabwidget;
 
-	tabwidget->w = this->w;
-	tabwidget->h = this->h-TAB_HEADER;
+	// Adjust Scrollbars to this container
+	tabwidget->w = GetWidth();
+	tabwidget->h = GetHeight()-TAB_HEADER;
+	printf("Attaching TAB to Container H=%d W=%d\n",tabwidget->GetHeight(),tabwidget->GetWidth());
+	tabwidget->ResetScrollBars();
 
 	return true;
 }
