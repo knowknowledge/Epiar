@@ -139,10 +139,10 @@ updateHUD = function ()
 	end
 	local target = Epiar.getSprite( HUD.getTarget() )
 	if target~=nil then
-		if ( target:GetType() == 4) or ( target:GetType() == 8) then
+		if ( target:GetType() == 8) or ( target:GetType() == 16) then
 			TargetHULL:setStatus( target:GetHull() )
 		end
-		if ( target:GetType() == 4) then
+		if ( target:GetType() == 8) then
 			local machine, state = target:GetState()
 			TargetMachine:setStatus(machine)
 			TargetState:setStatus(state)
