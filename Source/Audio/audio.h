@@ -13,15 +13,16 @@
 
 #include "includes.h"
 
+/** Maximum audio volume */
+#define AUDIO_MAX_VOL 128
+
 class Audio {
 	public:
 		static Audio& Instance();
 		bool Initialize( void );
 		bool Shutdown( void );
 		void HaltAll( void );
-		bool SetMusicVol ( int volume );
 		bool SetMusicVol ( float volume );
-		bool SetSoundVol ( int volume );
 		bool SetSoundVol ( float volume );
 		int GetFreeChannel( void );
 		int GetTotalChannels( void );
@@ -38,6 +39,7 @@ class Audio {
 		Uint16 audio_format;				// AUDIO_S16
 		int audio_channels;					// Stereo, etc.
 		int audio_buffers;					// Size of buffer
+		float sound_vol;					// Sound volumes
 		unsigned int max_chan;				// Total number of channels request
 		list<int> lastplayed;				// Queue of last used channels.
 };

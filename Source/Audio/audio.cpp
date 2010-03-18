@@ -88,63 +88,48 @@ void Audio::HaltAll( void ){
 	Mix_HaltChannel( -1 );			// Halts all channels
 }
 
-/**\brief Sets the music volume (Range from 0 - 128 ).
- */
-bool Audio::SetMusicVol( int volume ){
-	if ( volume < 0 ){
-		Log::Warning("Volume (%d) must be >= 0.", volume);
-		volume = 0;
-	} else if ( volume > 128 ){
-		Log::Warning("Volume (%d) must be <= 128.", volume);
-		volume = 128;
-	}
-
-	int volumeset;
-	Mix_VolumeMusic( volume );
-	volumeset = Mix_VolumeMusic( -1 );
-	if ( volumeset != volume ){
-		Log::Error("There was an error setting the volume.");
-		return false;
-	}
-	return true;
-}
-
 /**\brief Sets the music volume (Range from 0 - 1 ).
  */
 bool Audio::SetMusicVol( float volume ){
-	int realvol=0;
-	realvol = static_cast<int>( volume * 128.f );
-	return this->SetMusicVol( realvol );
-}
-
-
-/**\brief Sets sound volume (Range from 0 - 128).
- */
-bool Audio::SetSoundVol( int volume ){
+	bool exceed_bounds = false;
 	if ( volume < 0 ){
-		Log::Warning("Volume (%d) must be >= 0.", volume);
+		Log::Warning("Volume (%f) must be >= 0.", volume);
 		volume = 0;
-	} else if ( volume > 128 ){
-		Log::Warning("Volume (%d) must be <= 128.", volume);
-		volume = 128;
+		exceed_bounds = true;
+	} else if ( volume > 1 ){
+		Log::Warning("Volume (%f) must be <= 1.", volume);
+		volume = 1;
+		exceed_bounds = true;
 	}
 
 	int volumeset;
-	Mix_Volume( -1, volume );
-	volumeset = Mix_Volume( -1, -1 );
-	if ( volumeset != volume ){
+	int volumeint = static_cast<int>(volume*AUDIO_MAX_VOL);
+	Mix_VolumeMusic( volumeint );
+	volumeset = Mix_VolumeMusic( -1 );
+	if ( volumeset != volumeint ){
 		Log::Error("There was an error setting the volume.");
 		return false;
 	}
+	if ( exceed_bounds )
+		return false;
 	return true;
 }
 
 /**\brief Sets sound volume (Range from 0 - 1).
  */
 bool Audio::SetSoundVol( float volume ){
-	int realvol = 0;
-	realvol = static_cast<int>( volume * 128.f );
-	return this->SetSoundVol( realvol );
+	if ( volume < 0 ){
+		Log::Warning("Volume (%f) must be >= 0.", volume);
+		this->sound_vol = 0;
+		return false;
+	} else if ( volume > 1 ){
+		Log::Warning("Volume (%f) must be <= 1.", volume);
+		this->sound_vol = 1;
+		return false;
+	}
+
+	this->sound_vol = volume;
+	return true;
 }
 
 /**\brief Retrieves the first available channel.
@@ -179,8 +164,19 @@ int Audio::GetTotalChannels( void ){
 int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 	int chan_used;			// Channel that was used to play a sound
 	if ( chan == -1 ){
-		chan_used = Mix_PlayChannel(this->GetFreeChannel(), chunk, loop );
+		int freechan = this->GetFreeChannel();
+		int chan_vol = Mix_Volume(freechan, -1);
+		// Scale channel volume by global volume
+		int scaled_vol = static_cast<int>(static_cast<float>(chan_vol)*this->sound_vol);
+		Mix_Volume( freechan, scaled_vol );
+		assert( Mix_Volume(freechan, -1) == scaled_vol);
+		chan_used = Mix_PlayChannel( freechan, chunk, loop );
 	}else{
+		int chan_vol = Mix_Volume(chan, -1);
+		// Scale channel volume by global volume
+		int scaled_vol = static_cast<int>(static_cast<float>(chan_vol)*this->sound_vol);
+		Mix_Volume( chan, scaled_vol );
+		assert( Mix_Volume(chan,-1)  == scaled_vol);
 		chan_used = Mix_PlayChannel( chan, chunk, loop );
 	}
 
@@ -202,6 +198,7 @@ Audio::Audio():
 	audio_format( AUDIO_S16 ),
 	audio_channels( 2 ),
 	audio_buffers( 2048 ),
+	sound_vol( 1 ),
 	max_chan( 16 )
 {
 }

@@ -22,12 +22,12 @@ class Weapon : public Component {
 	public:
 		Weapon(void);
 		Weapon& operator=(const Weapon& other);
-		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound);
+		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound, int _msrp);
 		~Weapon(void);
 
 		bool parserCB( string sectionName, string subName, string value );
-		void _dbg_PrintInfo( void );
 		xmlNodePtr ToXMLNode(string componentName);
+		void _dbg_PrintInfo( void );
 
 		Image *GetImage(void) {return image;}
 		Image *GetPicture(void) {return pic;}
@@ -38,6 +38,7 @@ class Weapon : public Component {
 		int GetAmmoType(void) {return ammoType;}
 		int GetAmmoConsumption(void) { return ammoConsumption;}
 		int GetFireDelay(void) {return fireDelay;}
+		int GetMSRP(void) {return msrp;}
 		int GetLifetime(void) {return lifetime;}
 		Sound *sound; //Sound the weapon makes
 
@@ -52,6 +53,7 @@ class Weapon : public Component {
 		int ammoConsumption; //ammount of ammo to consume per shot
 		int fireDelay; //delay between being able to fire agian in ticks
 		int lifetime; //ticks until weapon is destroyed
+		int msrp;
 		//TODO tracking factor
 };
 

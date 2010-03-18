@@ -8,16 +8,29 @@
 
 #include "includes.h"
 #include "ui.h"
+#include "Utilities/log.h"
 
 /**\class Widget
  * \brief Widgets. */
 
+/**\brief Adds a child to the current widget.
+ */
 bool Widget::AddChild( Widget *widget ) {
 	if( !widget) return false;
 	
 	children.push_back( widget );
-	
+
 	return true;
+}
+
+/**\brief Destroys this widget and all children.
+ * \todo Implement a Widget::Hide routine that doesn't destroy children.
+ */
+Widget::~Widget( void ){
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		delete (*i);
+	}
 }
 
 void Widget::Draw( int relx, int rely ) {
@@ -56,31 +69,88 @@ Widget *Widget::DetermineMouseFocus( int relx, int rely ) {
 }
 
 void Widget::FocusMouse( int x, int y ) {
-	// update drag coordinates in case this is draggable
-	dragX = x;
-	dragY = y;
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
 
-	Widget *mouseFocus = DetermineMouseFocus( x, y );
-	
-	if( mouseFocus ) mouseFocus->FocusMouse( x - mouseFocus->GetX(), y - mouseFocus->GetY() );
-	
+	// update drag coordinates in case this is draggable
+	dragX = xr;
+	dragY = yr;
+
+	Widget *mouseFocus = DetermineMouseFocus( xr, yr );
+
+	if( mouseFocus )
+		mouseFocus->FocusMouse( xr, yr );
+
 	if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
 	keyboardFocus = mouseFocus;
 	if( keyboardFocus ) keyboardFocus->FocusKeyboard();
 }
 
-void Widget::MouseDown( int x, int y ) {
-	Widget *down_on = DetermineMouseFocus( x, y );
-	if( down_on ) down_on->MouseDown( x, y );
+/**\brief Generic left mouse down callback for widgets.
+ * \todo Consider reverting back to the old way of doing relative coordinates
+ * (I.E. Relative to current widget rather than current parent)
+ */
+void Widget::MouseLDown( int x, int y ) {
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	Widget *down_on = DetermineMouseFocus( xr, yr );
+	if( down_on ){
+		this->mouseDownOn = down_on;
+		down_on->MouseLDown( xr,yr );
+	}
 }
 
-// when a widget loses focus, so do all of its children
+/**\brief Generic left mouse down and up (fires on up) callback for widgets.
+ * \details
+ * Mouse up is actually the up motion, the requirement is that the
+ * mouse was also pressed on this widget too to fire this event.
+ */
+void Widget::MouseLUp( int x, int y ){
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	Widget *event_on = DetermineMouseFocus( xr, yr );
+
+	if( event_on && (event_on == this->mouseDownOn) ){
+		// Unfocus everything else
+		list<Widget *>::iterator i;
+		for( i = children.begin(); i != children.end(); ++i ) {
+			if ( (*i) != event_on ){
+				(*i)->UnfocusMouse();
+			}
+		}
+		// This could destroy our widget, so can't use it after this.
+		event_on->MouseLUp( xr,yr );
+	} else
+		this->UnfocusMouse();
+
+}
+
+void Widget::MouseMotion( int x, int y, int dx, int dy ){
+	// Relative coordinate - to current widget
+	int xr = x - GetX();
+	int yr = y - GetY();
+
+	if( this->mouseDownOn )
+		this->mouseDownOn->MouseMotion( xr,yr,dx,dy);
+}
+
+/** \brief when a widget loses focus, so do all of its children
+ */
 void Widget::UnfocusMouse( void ) {
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		(*i)->UnfocusMouse();
 	}
+
+	// Already handled the up event.
+	this->mouseDownOn = NULL;
+
 }
 
 void Widget::UnfocusKeyboard( void ) {

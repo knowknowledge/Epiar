@@ -121,6 +121,22 @@ bool Ani::Load( string& filename ) {
 	return( true );
 }
 
+/**\var Ani::frames
+ *  \brief Frames of the animation as Image objects
+ */
+/**\var Ani::numFrames
+ *  \brief Number of frames
+ */
+/**\var Ani::delay
+ *  \brief Animation delay
+ */
+/**\var Ani::w
+ *  \brief Width of Ani
+ */
+/**\var Ani::h
+ *  \brief Height of Ani
+ */
+
 /**\class Animation
  * \brief Animations implementation. */
 
@@ -186,4 +202,14 @@ void Animation::Reset( void ) {
 	fnum=0;
 	startTime = 0;
 }
+
+/**\fn Animation::SetLooping( bool looping )
+ *  \brief Set to true to loop the animation
+ * \fn Animation::GetLooping( void )
+ *  \brief Returns the status of the looping.
+ * \fn Animation::GetHalfWidth( void )]
+ *  \brief Returns half the width of the animation
+ * \fn Animation::GetHalfHeight( void )
+ *  \brief Returns half the height of the animation
+ */
 

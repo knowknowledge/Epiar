@@ -11,23 +11,22 @@
 
 #include "Graphics/image.h"
 #include "UI/ui.h"
+#include "UI/ui_scrollbar.h"
 
 class Window : public Widget {
 	public:
 		Window( int x, int y, int w, int h, string caption );
-		~Window();
-		
+		bool AddChild( Widget *widget );
+
 		void Draw( int relx = 0, int rely = 0 );
 
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 	
-		void FocusMouse( int x, int y );
-		void UnfocusMouse( void );
-
+		void MouseMotion( int x, int y, int dx, int dy );
 		//Widget *DetermineMouseFocus( int x, int y );
 
-		//void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
+		//void MouseLDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
 		string GetName( void ) {return string("Window_"+caption);}
 
 	private:
@@ -35,6 +34,9 @@ class Window : public Widget {
 		//int inner_top,inner_left,inner_right,inner_low;
 		string caption;
 		Image *bitmaps[9];
+
+		Scrollbar *hscrollbar;
+		Scrollbar *vscrollbar;
 };
 
 #endif // __H_WINDOW__

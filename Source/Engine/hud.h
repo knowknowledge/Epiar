@@ -9,8 +9,8 @@
 #ifndef __h_hud__
 #define __h_hud__
 
-#include "Graphics/image.h"
 #include "includes.h"
+#include "Graphics/image.h"
 #include "Utilities/lua.h"
 #include "Input/input.h"
 
@@ -29,7 +29,9 @@ class StatusBar {
 	public:
 		StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio) : title(_title), width(_width), pos(_pos), name(_name), ratio(_ratio){}
 		void Draw(int x, int y);
-		static Image *im_infobar_left, *im_infobar_right, *im_infobar_middle;
+		static Image *im_infobar_left,
+				*im_infobar_right,
+				*im_infobar_middle;
 		void SetName( string n ) { name = n; }
 		string GetName() { return name; }
 		void SetRatio(float _ratio ) { ratio = _ratio; }

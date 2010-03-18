@@ -46,6 +46,15 @@ int main( int argc, char **argv ) {
 	Filesystem::Init( argv[0], "dat" );
 #endif
 
+#ifdef __APPLE__
+	string path = argv[0];
+	if( path.find("MacOS/Epiar") ){ // If this is being run from inside a Bundle
+		// Chdir to the Bundle Contents
+		string ContentsPath = path.substr(0, path.find("MacOS/Epiar") );
+		chdir(ContentsPath.c_str());
+	}
+#endif
+
 	// load the main configuration file (used throughout the tree)
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
 
@@ -59,11 +68,13 @@ int main( int argc, char **argv ) {
 	Log::Message( "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
 #endif // COMP_GCC
 
+	Log::Message("Executable Path: %s", argv[0]);
+
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 	Audio::Instance().Initialize();
-	Audio::Instance().SetMusicVol ( 68 );
-	Audio::Instance().SetSoundVol ( 68 );
+	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
+	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
 	Log::Message("Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
@@ -107,16 +118,18 @@ int main( int argc, char **argv ) {
 int parseArgs( int argc, char **argv ) {
 	for( int i = 1; i < argc; i++ ) {
 		// remove any leading - or --
-		if( (char)argv[i][0] == '-' ) argv[1] = &argv[1][1]; // handle a single '-', eg -help
-		if( (char)argv[i][0] == '-' ) argv[1] = &argv[1][1]; // purposefully repeated to handle '--', eg --help
+		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // handle a single '-', eg -help
+		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // purposefully repeated to handle '--', eg --help
 		
 		// it'd be nice if we could overload the switch control structure to accept std::string, sigh
 		string parm = argv[i];
+		Log::Message("Argument[%d]: %s", i,argv[i]);
 		
 		if( parm == "help" ) {
 			// remember to keep this list updated when new parms are added
 			printf("\n\t--help           - Displays this message");
 			printf("\n\t--version        - Displays program version");
+			printf("\n\t--editor-mode    - Editor and edit Game Components");
 			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
 			printf("\n\t--no-audio       - Turns off all sounds.");
 			printf("\n\t--[no]log-xml    - Turn on logggin to an XML file");
@@ -129,6 +142,8 @@ int parseArgs( int argc, char **argv ) {
 			printf("\nEpiar version %s", EPIAR_VERSION_FULL );
 			printf("\n");
 			return( -1 ); // indicates we should quit immediately and not run
+		} else if( parm == "editor-mode" ) {
+			SETOPTION("options/development/editor-mode",1);
 		} else if( parm == "ui-demo" ) {
 			ui_demo( true ); // temporary function
 			return( -1 );
@@ -149,6 +164,8 @@ int parseArgs( int argc, char **argv ) {
 		} else if( parm == "log-out" ) { SETOPTION("options/log/out", 1);
 		} else if( parm == "nolog-xml" ) { SETOPTION("options/log/xml", 0);
 		} else if( parm == "nolog-out" ) { SETOPTION("options/log/out", 0);
+		} else {
+			printf("Unknown option: '%s'\n",parm.c_str());
 		}
 	}
 	

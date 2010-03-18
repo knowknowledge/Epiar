@@ -6,14 +6,53 @@
  * \details
  */
 
-/**\class Alliances
- * \brief Government/Faction. */
-
 #include "includes.h"
 #include "Engine/alliances.h"
 #include "Utilities/log.h"
 #include "Utilities/parser.h"
 
+/**\class Alliance
+ * \brief Government/Faction.
+ */
+
+/**\brief Initializes alliance class using default values.
+ * \details
+ * - Attack Size = 0
+ * - Aggressiveness = 0
+ * - Current = "Credits"
+ */
+Alliance::Alliance() : attackSize(0),aggressiveness(0.0),currency("Credits")
+{
+	SetName("dead");
+}
+
+/**\brief Assignment constructor, copies field values.
+ */
+Alliance& Alliance::operator= (const Alliance& other){
+	name = other.name;
+    attackSize = other.attackSize;
+    aggressiveness = other.aggressiveness;
+    currency = other.currency;
+    illegalCargos = list<string>(other.illegalCargos);
+    return *this;
+}
+
+/**\brief Initializes alliance class using given values.
+ * \param _name Name of the alliance.
+ * \param _attackSize Size of the fleet
+ * \param _aggressiveness Aggressiveness
+ */
+Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, list<string> _illegalCargos) :
+    attackSize(_attackSize),
+    aggressiveness(_aggressiveness),
+    currency(_currency)
+{
+    illegalCargos = list<string>(_illegalCargos);
+    SetName(_name);
+}
+
+/**\brief Parser to parse the XML file.
+ */
 bool Alliance::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
@@ -30,6 +69,8 @@ bool Alliance::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
+/**\brief Converts the Alliance object to an XML node.
+ */
 xmlNodePtr Alliance::ToXMLNode(string componentName){
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
@@ -48,11 +89,30 @@ xmlNodePtr Alliance::ToXMLNode(string componentName){
 	}
 	return section;
 }
+/**\fn Alliance::GetAttackSize()
+ * \brief Returns the size of the fleet.
+ */
 
+/**\fn Alliance::GetAggressiveness()
+ * \brief Returns the aggressiveness attribute.
+ */
+
+/**\fn Alliance::GetCurrency()
+ * \brief Returns the type of currency used.
+ */
+
+/**\fn Alliance::GetIlligalCargos()
+ * \brief Returns illegal cargo for this Alliance
+ */
+
+
+/**\class Alliances
+ * \brief Collection of Alliance objects.
+ */
 Alliances *Alliances::pInstance = 0; // initialize pointer
 
 /**\brief Initializes a new instance or gets the current instance.
- * \return Pointer to an Alliance object
+ * \return Pointer to an Alliances object
  */
 Alliances *Alliances::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
@@ -63,3 +123,10 @@ Alliances *Alliances::Instance( void ) {
 	return( pInstance );
 }
 
+/**\fn Alliances::GetAlliance( string name )
+ * \brief Returns a pointer to the named Alliance.
+ */
+
+/**\fn Alliances::newComponent()
+ * \brief Creates a new Alliance object.
+ */

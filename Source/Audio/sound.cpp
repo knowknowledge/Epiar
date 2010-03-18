@@ -133,13 +133,6 @@ bool Sound::PlayNoRestart( Coordinate offset ){
 
 /**\brief Sets the volume for this sound only (for next time it is played).
  */
-bool Sound::SetVolume( int volume ){
-	this->volume = volume;
-	return true;
-}
-
-/**\brief Sets the volume for this sound only (for next time it is played).
- */
 bool Sound::SetVolume( float volume ){
 	this->volume = static_cast<int>( volume * 128.f );
 	return true;

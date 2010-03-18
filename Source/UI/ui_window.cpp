@@ -16,6 +16,8 @@
 /**\class Window
  * \brief Window handling. */
 
+/**\brief Creates a new window with specified parameters.
+ */
 Window::Window( int x, int y, int w, int h, string caption ) {
 	SetX( x );
 	SetY( y );
@@ -24,21 +26,23 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	this->h = h;
 	
 	this->caption = caption;
+	this->hscrollbar = NULL;
+	this->vscrollbar = NULL;
 
 	Debug::Set();
 	Debug::Print("new window (%d,%d,%d,%d,%s)\n", x, y, w, h, caption.c_str());
 	Debug::Unset();
 	
 	// Load the bitmaps needed for drawing
-	bitmaps[0] = new Image( "Resources/Graphics/ui_wnd_up_left.png" );
-	bitmaps[1] = new Image( "Resources/Graphics/ui_wnd_up.png" );
-	bitmaps[2] = new Image( "Resources/Graphics/ui_wnd_up_right.png" );
-	bitmaps[3] = new Image( "Resources/Graphics/ui_wnd_left.png" );
-	bitmaps[4] = new Image( "Resources/Graphics/ui_wnd_right.png" );
-	bitmaps[5] = new Image( "Resources/Graphics/ui_wnd_low_left.png" );
-	bitmaps[6] = new Image( "Resources/Graphics/ui_wnd_low.png" );
-	bitmaps[7] = new Image( "Resources/Graphics/ui_wnd_low_right.png" );
-	bitmaps[8] = new Image( "Resources/Graphics/ui_wnd_back.png" );
+	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
+	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
+	bitmaps[2] = Image::Get( "Resources/Graphics/ui_wnd_up_right.png" );
+	bitmaps[3] = Image::Get( "Resources/Graphics/ui_wnd_left.png" );
+	bitmaps[4] = Image::Get( "Resources/Graphics/ui_wnd_right.png" );
+	bitmaps[5] = Image::Get( "Resources/Graphics/ui_wnd_low_left.png" );
+	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
+	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
+	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
 
 	//inner_top = bitmaps[0]->GetHeight();
 	//inner_left = bitmaps[0]->GetWidth();
@@ -46,19 +50,43 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	//inner_low = h - bitmaps[7]->GetHeight();
 }
 
-Window::~Window() {
-	Log::Message( "Deleting Window: '%s'.", (char *)caption.c_str() );
-	delete bitmaps[0];
-	delete bitmaps[1];
-	delete bitmaps[2];
-	delete bitmaps[3];
-	delete bitmaps[4];
-	delete bitmaps[5];
-	delete bitmaps[6];
-	delete bitmaps[7];
-	delete bitmaps[8];
+/**\brief Adds a widget to the current Window.
+ */
+bool Window::AddChild( Widget *widget ){
+	// Check to see if widget is past the bounds.
+	int hbnd = widget->GetX()+widget->GetWidth();
+	int vbnd = widget->GetY()+widget->GetHeight();
+
+	if ( hbnd > this->w ){
+		if ( !this->hscrollbar ){
+			this->hscrollbar = new Scrollbar( SCROLLBAR_PAD,
+				this->h-SCROLLBAR_THICK-SCROLLBAR_PAD,
+				this->w-2*SCROLLBAR_PAD, HORIZONTAL,
+				this);
+			Widget::AddChild( this->hscrollbar );
+		}
+		this->hscrollbar->maxpos = hbnd;
+	}
+
+	if ( vbnd > this->h ){
+		if ( !this->vscrollbar ){
+			this->vscrollbar = new Scrollbar(
+				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
+				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
+				this->h-2*SCROLLBAR_PAD
+				-bitmaps[1]->GetHeight()
+				-SCROLLBAR_THICK, VERTICAL,
+				this);
+			Widget::AddChild( this->vscrollbar );
+		}
+		this->vscrollbar->maxpos = vbnd;
+	}
+
+	return Widget::AddChild( widget );
 }
 
+/**\brief Draws the current window.
+ */
 void Window::Draw( int relx, int rely ) {
 	int x, y;
 	
@@ -86,26 +114,55 @@ void Window::Draw( int relx, int rely ) {
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
 
-	Widget::Draw();
+	// Crop when necessary
+	if ( this->hscrollbar || this->vscrollbar )
+		Video::SetCropRect(this->GetX(),
+				this->GetY()+bitmaps[1]->GetHeight(),
+				this->w-SCROLLBAR_PAD,
+				this->h-SCROLLBAR_PAD
+				-bitmaps[1]->GetHeight());
+	
+	// Draw any children
+	list<Widget *>::iterator i;
+	
+	for( i = children.begin(); i != children.end(); ++i ) {
+		// Skip scrollbars
+		if ( ((*i)==this->hscrollbar) ||
+				((*i)==this->vscrollbar) ){
+			(*i)->Draw( x, y );
+			continue;
+		}
+		int xscroll=0;
+		int yscroll=0;
+		if ( this->hscrollbar )
+			xscroll = hscrollbar->pos;
+		if ( this->vscrollbar )
+			yscroll = vscrollbar->pos;
+		(*i)->Draw( x-xscroll,y-yscroll );
+	}
+	
+	if ( this->hscrollbar || this->vscrollbar )
+		Video::UnsetCropRect();
 }
 
-void Window::FocusMouse( int x, int y ) {
-	//cout << "window has focus" << endl;
-	Widget::FocusMouse( x, y );
-}
-
-void Window::UnfocusMouse( void ) {
-	//cout << "window lost focus" << endl;
-	Widget::UnfocusMouse();
+void Window::MouseMotion( int x, int y, int dx, int dy ){
+	// Only drag by titlebar
+	if ( dy < bitmaps[1]->GetHeight() ) {
+		this->SetX( x - dx);
+		this->SetY( y - dy);
+	} else {
+	// Pass the event onto widget if not handling it.
+		Widget::MouseMotion( x, y, dx, dy );
+	}
 }
 
 // wx & wy are coords of mouse down, relative to widget's upper left (0,0)
-//void Window::MouseDown( int wx, int wy ) {
+//void Window::MouseLDown( int wx, int wy ) {
 //	cout << "mouse down event on window, relative at " << wx << ", " << wy << endl;
 //	Widget *down_on = DetermineMouseFocus( wx, wy );
 //	if(down_on) {
 //		cout << "mouse down on child of window widget" << endl;
-//		down_on->MouseDown(wx,wy);
+//		down_on->MouseLDown(wx,wy);
 //	} else {
 //		cout << "mouse NOT down on child of window widget" << endl;
 //	}

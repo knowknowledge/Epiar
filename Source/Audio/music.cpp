@@ -55,7 +55,37 @@ bool Song::Play( bool loop ){
 		Mix_PlayMusic( this->song, 1 );
 	else
 		Mix_PlayMusic( this->song, 0 );
-
+	/** \bug: SDL_mixer doesn't seem to respect VolumeMusic when starting a new song.*/
+	Mix_VolumeMusic( Mix_VolumeMusic(-1) );
 	return true;
 }
+
+/**\class Music
+ * \brief Music control class
+ * \todo This class isn't implemented yet as we're only playing one song.
+ */
+
+/**\fn Music::LoadPlaylist
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::LoadSong( const string& )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::InsertSong( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Play( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Pause( )
+ * \brief Unimplemented.
+ */
+
+/**\fn Music::Stop( )
+ * \brief Unimplemented.
+ */
 

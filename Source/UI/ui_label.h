@@ -14,7 +14,6 @@
 class Label : public Widget {
 	public:
 		Label( int x, int y, string label, bool centered=false );
-		~Label();
 		
 		void Draw(  int relx = 0, int rely = 0 );
 

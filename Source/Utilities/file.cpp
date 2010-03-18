@@ -41,25 +41,9 @@ bool File::OpenRead( const string& filename ) {
 	cName = filename.c_str();
 
 	// Check for file existence
-#ifdef USE_PHYSICSFS
-	if ( !PHYSFS_exists( cName ) ){
-		Log::Error("File does not exist: %s.", cName);
+	if( !File::Exists(filename) ){
 		return false;
 	}
-#else
-	struct stat fileStatus;
-	int stat_ret = stat(cName, &fileStatus );
-	if ( stat_ret != 0 ) {
-		printf("Stat for %s: [%d]\n",cName,stat_ret);
-		switch( stat_ret ) {
-			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
-			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
-			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;
-			default:			Log::Error("Unknown error occurred: %s.", cName);
-		}
-		return false;
-	}
-#endif
 
 #ifdef USE_PHYSICSFS
 	fp = PHYSFS_openRead( cName );
@@ -75,6 +59,8 @@ bool File::OpenRead( const string& filename ) {
 #ifdef USE_PHYSICSFS
 	contentSize = static_cast<long>( PHYSFS_fileLength( fp ) );
 #else
+	struct stat fileStatus;
+	int stat_ret = stat(cName, &fileStatus );
 	contentSize = fileStatus.st_size;
 #endif
 	validName.assign( filename );
@@ -266,5 +252,36 @@ bool File::Close() {
 	}
 	contentSize = 0;
 	return true;
+}
+
+bool File::Exists( const string& filename ) {
+	const char *cName;
+	cName = filename.c_str();
+#ifdef USE_PHYSICSFS
+	if ( !PHYSFS_exists( cName ) ){
+		Log::Error("File does not exist: %s.", cName);
+		return false;
+	}
+#else
+	struct stat fileStatus;
+	int stat_ret = stat(cName, &fileStatus );
+	if ( stat_ret != 0 ) {
+		printf("Stat for %s: [%d]\n",cName,stat_ret);
+		switch( stat_ret ) {
+			case EACCES:        Log::Error("Epiar cannot access:%s.", cName); break;
+			case EFAULT:        Log::Error("Invalid address: %s.", cName); break;
+			case EIO:           Log::Error("An I/O Error Occured: %s.", cName); break;
+			default:			Log::Error("Unknown error occurred: %s.", cName);
+		}
+		return false;
+	}
+#endif
+	return true;
+}
+
+bool File::IsDir( const string& filename ) {
+	// TODO: determine if the filename is a directory
+	// This can be used for walking a directory tree
+	// This can be used for skipping directories
 }
 

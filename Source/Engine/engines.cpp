@@ -11,6 +11,13 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 
+/**\class Engine
+ * \brief A ship propeller system.
+ */
+
+/**\brief Initializes a new Engine to default values.
+ *
+ */
 Engine::Engine() :
 	thrustsound(NULL),
 	forceOutput(0.0),
@@ -21,6 +28,8 @@ Engine::Engine() :
 	SetName("dead");
 }
 
+/**\brief Assignment constructor - copies all fields.
+ */
 Engine& Engine::operator= (const Engine& other) {
 	name = other.name;
 	thrustsound = other.thrustsound;
@@ -31,7 +40,16 @@ Engine& Engine::operator= (const Engine& other) {
 	return *this;
 }
 
-Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation) :
+/**\brief Initializes a new Engine with the given parameters.
+ * \param _name Name of the Engine
+ * \param _thrustsound Pointer to a Sound object that will be played for thrust
+ * \param _forceOutput The amount of force the Engine generates
+ * \param _msrp Price of the Engine
+ * \param foldDrive Fold capable
+ * \param _flareAnimation Thrust animation
+ */
+Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
+		short int _msrp, bool _foldDrive, string _flareAnimation) :
 	thrustsound(_thrustsound),
 	forceOutput(_forceOutput),
 	msrp(_msrp),
@@ -41,6 +59,8 @@ Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput, short int
 	SetName(_name);
 }
 
+/**\brief Parser to parse the XML file
+ */
 bool Engine::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
@@ -59,6 +79,8 @@ bool Engine::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
+/**\brief Converts the Engine object to an XML node.
+ */
 xmlNodePtr Engine::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
@@ -76,9 +98,27 @@ xmlNodePtr Engine::ToXMLNode(string componentName) {
 	return section;
 }
 
+/**\brief Prints debugging information
+ */
 void Engine::_dbg_PrintInfo( void ) {
 	//cout << "Engine called " << name << ", priced at " << msrp << " with force of " << forceOutput << " and fold capability set to " << foldDrive << endl;
 }
+
+/**\fn Engine::GetForceOutput()
+ * \brief Returns the force output.
+ */
+
+/**\fn Engine::GetFlareAnimation()
+ * \brief Gets the animation.
+ */
+
+/**\fn Engine::GetMSRP()
+ * \brief Retrieves the price
+ */
+
+/**\fn Engine::GetFoldDrive()
+ * \brief Retrieves fold capability
+ */
 
 /**\class Engines
  * \brief Handles ship engines. */
@@ -96,4 +136,21 @@ Engines *Engines::Instance( void ) {
 	}
 	return( pInstance );
 }
+
+/**\fn Engines::GetEngine(string name)
+ * \brief Returns the named Engine
+ */
+
+/**\fn Engines::newComponent()
+ * \brief Creates a new Engine object.
+ */
+
+// Projected members
+/**\fn Engines::Engines( const Engines & )
+ * \brief Creates a new Engines object
+ */
+
+/**\fn Engines::operator= (const Engines &)
+ * \brief Assignment operator (empty)
+ */
 

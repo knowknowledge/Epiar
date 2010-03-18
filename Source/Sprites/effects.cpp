@@ -13,19 +13,33 @@
 #include "Sprites/sprite.h"
 #include "Sprites/effects.h"
 
+/**\class Effect
+ * \brief Various Animation effects.
+ */
+
+/**\brief Creates a new Effect at specified coordinate with Animation file
+ */
 Effect::Effect(Coordinate pos, string filename, bool looping) {
 	SetWorldPosition(pos);
 	visual = new Animation(filename);
 	visual->SetLooping(looping);
 }
 
+/**\brief Updates the Effect
+ */
 void Effect::Update( void ) {
 	if( visual->Update() == true ) {
 		SpriteManager::Instance()->Delete( (Sprite*)this );
 	}
 }
 
+/**\brief Draws the Effect
+ */
 void Effect::Draw( void ) {
 	Coordinate pos = GetWorldPosition();
 	visual->Draw( pos.GetScreenX(), pos.GetScreenY(), 0.0);
 }
+
+/**\fn Effect::GetDrawOrder( )
+ *  \brief Returns the Draw order of the Effect
+ */

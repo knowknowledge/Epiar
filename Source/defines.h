@@ -26,4 +26,8 @@
 #define TO_BOOL(X) (X != 0)
 #endif // TO_BOOL
 
+#ifndef TO_FLOAT
+#define TO_FLOAT(X) (static_cast<float>(X))
+#endif // TO_FLOAT
+
 #endif /*DEFINES_H_*/

@@ -9,9 +9,12 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Audio/audio.h"
+#include "Audio/audio_lua.h"
 #include "Engine/console.h"
 #include "Engine/simulation.h"
 #include "Engine/models.h"
+#include "Engine/alliances.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "AI/ai_lua.h"
@@ -26,6 +29,7 @@
 #include "Utilities/camera.h" 
 #include "Input/input.h"
 #include "Utilities/file.h"
+#include "Utilities/filesystem.h"
 
 #include "Engine/hud.h"
 
@@ -84,9 +88,12 @@ bool Lua::Run( string line ) {
 // This function is from the Lua PIL
 // http://www.lua.org/pil/25.3.html
 // It was originally named "call_va"
+//
+// WARNING: any s as a return must be a pointer to a string (not a c str)
+//          This allows Lua::Call to clear the stack when we're done.
 bool Lua::Call(const char *func, const char *sig, ...) {
 	va_list vl;
-	int narg, nres;  /* number of arguments and results */
+	int narg, nres,resultcount;  /* number of arguments and results */
 
 	va_start(vl, sig);
 	lua_getglobal(L, func);  /* get function */
@@ -119,32 +126,32 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 	} endwhile:
 
 	/* do the call */
-	nres = strlen(sig);  /* number of expected results */
-	if (lua_pcall(L, narg, nres, 0) != 0)  /* do the call */
+	resultcount = strlen(sig);  /* number of expected results */
+	if (lua_pcall(L, narg, resultcount, 0) != 0)  /* do the call */
 		luaL_error(L, "error running function `%s': %s",
 				func, lua_tostring(L, -1));
 
 	/* retrieve results */
-	nres = -nres;  /* stack index of first result */
+	nres = -resultcount;  /* stack index of first result */
 	while (*sig) {  /* get results */
 		switch (*sig++) {
 
 			case 'd':  /* double result */
 				if (!lua_isnumber(L, nres))
-					luaL_error(L, "wrong result type");
+					luaL_error(L, "wrong result kind");
 				*va_arg(vl, double *) = lua_tonumber(L, nres);
 				break;
 
 			case 'i':  /* int result */
 				if (!lua_isnumber(L, nres))
-					luaL_error(L, "wrong result type");
+					luaL_error(L, "wrong result kind");
 				*va_arg(vl, int *) = (int)lua_tonumber(L, nres);
 				break;
 
 			case 's':  /* string result */
 				if (!lua_isstring(L, nres))
-					luaL_error(L, "wrong result type");
-				*va_arg(vl, const char **) = lua_tostring(L, nres);
+					luaL_error(L, "wrong result kind");
+				*va_arg(vl, string*) = lua_tostring(L, nres);
 				break;
 
 			default:
@@ -153,6 +160,7 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 		nres++;
 	}
 	va_end(vl);
+	lua_pop(L,resultcount);
 	return true;
 }
 
@@ -208,7 +216,11 @@ void Lua::RegisterFunctions() {
 		{"ispaused", &Lua::ispaused},
 		{"getoption", &Lua::getoption},
 		{"setoption", &Lua::setoption},
+		{"setsoundvol", &Lua::setsoundvol},
+		{"setmusicvol", &Lua::setmusicvol},
 		{"player", &Lua::getPlayer},
+		{"getCamera", &Lua::getCamera},
+		{"moveCamera", &Lua::moveCamera},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
 		{"alliances", &Lua::getAllianceNames},
@@ -216,23 +228,24 @@ void Lua::RegisterFunctions() {
 		{"weapons", &Lua::getWeaponNames},
 		{"engines", &Lua::getEngineNames},
 		{"technologies", &Lua::getTechnologyNames},
+		{"planetNames", &Lua::getPlanetNames},
 		{"getSprite", &Lua::getSpriteByID},
+		{"getMSRP", &Lua::getMSRP},
 		{"ships", &Lua::getShips},
 		{"planets", &Lua::getPlanets},
 		{"nearestShip", &Lua::getNearestShip},
 		{"nearestPlanet", &Lua::getNearestPlanet},
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
+		{"getAllianceInfo", &Lua::getAllianceInfo},
 		{"getModelInfo", &Lua::getModelInfo},
-		{"setModelInfo", &Lua::setModelInfo},
 		{"getPlanetInfo", &Lua::getPlanetInfo},
-		{"setPlanetInfo", &Lua::setPlanetInfo},
 		{"getWeaponInfo", &Lua::getWeaponInfo},
-		{"setWeaponInfo", &Lua::setWeaponInfo},
 		{"getEngineInfo", &Lua::getEngineInfo},
-		{"setEngineInfo", &Lua::setEngineInfo},
 		{"getTechnologyInfo", &Lua::getTechnologyInfo},
-		{"setTechnologyInfo", &Lua::setTechnologyInfo},
+		{"setInfo", &Lua::setInfo},
+		{"saveComponents", &Lua::saveComponents},
+		{"listImages", &Lua::listImages},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -241,6 +254,7 @@ void Lua::RegisterFunctions() {
 	// Register these functions to their own lua namespaces
 	AI_Lua::RegisterAI(L);
 	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
 }
@@ -291,11 +305,53 @@ int Lua::setoption(lua_State *L) {
 	return 0;
 }
 
+int Lua::setsoundvol(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if (n !=  1)
+		return luaL_error(L, "Sound volume: Got %d arguments expected 1 (volume)", n);
+	float volume = TO_FLOAT(luaL_checknumber(L, 1));
+	Audio::Instance().SetSoundVol(volume);
+	SETOPTION("options/sound/soundvolume",volume);
+	return 0;
+}
+
+int Lua::setmusicvol(lua_State *L){
+	int n = lua_gettop(L);	// Number of arguments
+	if (n !=  1)
+		return luaL_error(L, "Music volume: Got %d arguments expected 1 (volume)", n);
+	float volume = TO_FLOAT(luaL_checknumber(L, 1));
+	Audio::Instance().SetMusicVol(volume);
+	SETOPTION("options/sound/musicvolume",volume);
+	return 0;
+}
+
 int Lua::getPlayer(lua_State *L){
 	Lua::pushSprite(L,Player::Instance() );
 	return 1;
 }
 
+int Lua::getCamera(lua_State *L){
+    int n = lua_gettop(L);
+	if (n != 0) {
+		return luaL_error(L, "Getting the Camera Coordinates didn't expect %d arguments. But thanks anyway", n);
+    }
+    Coordinate c = Camera::Instance()->GetFocusCoordinate();
+    lua_pushinteger(L,static_cast<lua_Integer>(c.GetX()));
+    lua_pushinteger(L,static_cast<lua_Integer>(c.GetY()));
+	return 2;
+}
+
+int Lua::moveCamera(lua_State *L){
+    int n = lua_gettop(L);
+	if (n != 2) {
+		return luaL_error(L, "Moving the Camera needs 2 arguments (X,Y) not %d arguments", n);
+    }
+    int x = luaL_checkinteger(L,1);
+    int y = luaL_checkinteger(L,2);
+    Camera::Instance()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
+    Camera::Instance()->Move(-x,y);
+	return 0;
+}
 //Allow camera shaking from Lua
 int Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
@@ -307,14 +363,22 @@ int Lua::shakeCamera(lua_State *L){
 }
 
 int Lua::focusCamera(lua_State *L){
-	if (lua_gettop(L) == 1) {
+    int n = lua_gettop(L);
+	if (n == 1) {
 		int id = (int)(luaL_checkint(L,1));
-		Camera *pInstance = Camera::Instance();
 		SpriteManager *sprites= SpriteManager::Instance();
 		Sprite* target = sprites->GetSpriteByID(id);
 		if(target!=NULL)
-			pInstance->Focus( target );
-	}
+            Camera::Instance()->Focus( target );
+	} else if (n == 2) {
+		double x,y;
+        x = (luaL_checknumber(L,1));
+        y = (luaL_checknumber(L,2));
+        Camera::Instance()->Focus((Sprite*)NULL);
+        Camera::Instance()->Focus(x,y);
+    } else {
+		return luaL_error(L, "Got %d arguments expected 1 (SpriteID) or 2 (X,Y)", n);
+    }
 	return 0;
 }
 
@@ -352,6 +416,13 @@ int Lua::getTechnologyNames(lua_State *L){
     return 1;
 }
 
+int Lua::getPlanetNames(lua_State *L){
+	list<string> *names = Planets::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
 void Lua::pushSprite(lua_State *L,Sprite* s){
 	int* id = (int*)lua_newuserdata(L, sizeof(int*));
 	*id = s->GetID();
@@ -367,7 +438,7 @@ void Lua::pushSprite(lua_State *L,Sprite* s){
 		lua_setmetatable(L, -2);
 		break;
 	default:
-		Log::Error("Accidentally pushing sprite #%d with invalid type: %d",s->GetID(),s->GetDrawOrder());
+		Log::Error("Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
 	}
 }
 
@@ -446,6 +517,23 @@ string Lua::getStringField(int index, const char* name) {
 	return val;
 }
 
+list<string> Lua::getStringListField(int index) {
+	list<string> results;
+
+	// Go to the nil element of the array
+	lua_pushnil(L);
+	// While there are elements in the array
+	// push the "next" one to the top of the stack
+	while(lua_next(L, index)) {
+		string val =  lua_tostring(L, -1);
+		results.push_back(val);
+		// Pop off this value
+		lua_pop(L, 1);
+	}
+	return results;
+}
+
+
 //can be found here  http://www.lua.org/pil/24.2.3.html
 void Lua::stackDump (lua_State *L) {
   int i;
@@ -455,19 +543,19 @@ void Lua::stackDump (lua_State *L) {
 	switch (t) {
 
 	  case LUA_TSTRING:  /* strings */
-		printf("`%s'", lua_tostring(L, i));
+		printf("[%d]`%s'", i,lua_tostring(L, i));
 		break;
 
 	  case LUA_TBOOLEAN:  /* booleans */
-		printf(lua_toboolean(L, i) ? "true" : "false");
+		printf("[%d]%s",i,lua_toboolean(L, i) ? "true" : "false");
 		break;
 
 	  case LUA_TNUMBER:  /* numbers */
-		printf("%g", lua_tonumber(L, i));
+		printf("[%d]%g",i, lua_tonumber(L, i));
 		break;
 
 	  default:  /* other values */
-		printf("%s", lua_typename(L, t));
+		printf("[%d]%s",i, lua_typename(L, t));
 		break;
 
 	}
@@ -486,16 +574,16 @@ int Lua::getSpriteByID(lua_State *L){
 	int id = (int)(luaL_checkint(L,1));
 	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
 
+	// Return nil if the sprite no longer exists
 	if(sprite==NULL){
-		Log::Error("Lua requested sprite with unknown id %d",id);
-		return luaL_error(L, "The ID %d doesn't refer to anything",id );
+		return 0;
 	}
 
 	Lua::pushSprite(L,sprite);
 	return 1;
 }
 
-int Lua::getSprites(lua_State *L, int type){
+int Lua::getSprites(lua_State *L, int kind){
 	int n = lua_gettop(L);  // Number of arguments
 
 	list<Sprite *> *sprites = NULL;
@@ -503,9 +591,9 @@ int Lua::getSprites(lua_State *L, int type){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
 		double r = luaL_checknumber (L, 3);
-		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r),type);
+		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r),kind);
 	} else {
-		sprites = SpriteManager::Instance()->GetSprites(type);
+		sprites = SpriteManager::Instance()->GetSprites(kind);
 	}
 
 	// Populate a Lua table with Sprites
@@ -523,6 +611,27 @@ int Lua::getSprites(lua_State *L, int type){
     return 1;
 }
 
+int Lua::getMSRP(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (  )", n);
+	string name = (string)luaL_checkstring(L,1);
+
+	// Is there a priced Component named 'name'?
+	Component* comp = NULL;
+	if( (comp = Models::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Model*)comp)->GetMSRP() );
+	else if( (comp = Engines::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Engine*)comp)->GetMSRP() );
+	else if( (comp = Weapons::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Weapon*)comp)->GetMSRP() );
+	else {
+		return luaL_error(L, "Couldn't find anything by the name: '%s'", name.c_str());
+	}
+	// One of those should have worked or we would have hit the above else
+	assert(comp!=NULL);
+	return 1;
+}
 
 int Lua::getShips(lua_State *L){
 	return Lua::getSprites(L,DRAW_ORDER_SHIP);
@@ -543,7 +652,7 @@ int Lua::getPlanets(lua_State *L){
 	return 1;
 }
 
-int Lua::getNearestSprite(lua_State *L,int type) {
+int Lua::getNearestSprite(lua_State *L,int kind) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=2 ){
 		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
@@ -553,9 +662,9 @@ int Lua::getNearestSprite(lua_State *L,int type) {
 		return 0;
 	}
 	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,type);
+	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,kind);
 	if(closest!=NULL){
-		assert(closest->GetDrawOrder() & (type));
+		assert(closest->GetDrawOrder() & (kind));
 		pushSprite(L,(closest));
 		return 1;
 	} else {
@@ -570,6 +679,23 @@ int Lua::getNearestShip(lua_State *L) {
 int Lua::getNearestPlanet(lua_State *L) {
 	return Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
 }
+
+int Lua::getAllianceInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
+	string name = (string)luaL_checkstring(L,1);
+	Alliance *alliance = Alliances::Instance()->GetAlliance(name);
+
+    lua_newtable(L);
+	setField("Name", alliance->GetName().c_str());
+	setField("AttackSize", alliance->GetAttackSize());
+	setField("Aggressiveness", alliance->GetAggressiveness());
+	setField("Currency", alliance->GetCurrency().c_str() );
+
+    return 1;
+}
+
 
 int Lua::getModelInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
@@ -586,44 +712,34 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
+	setField("MSRP", model->GetMSRP());
 
 	return 1;
-}
-
-int Lua::setModelInfo(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (modelInfo)", n);
-	if( !lua_istable(L,1) )
-		return luaL_error(L, "Argument 1 is not a table");
-
-	string name = getStringField(1,"Name");
-	float mass = getNumField(1,"Mass");
-	int thrust = getIntField(1,"Thrust");
-	string engine = getStringField(1,"Engine");
-	float rot = getNumField(1,"Rotation");
-	float speed = getNumField(1,"MaxSpeed");
-	int hull = getIntField(1,"MaxHull");
-
-	Model* oldModel = Models::Instance()->GetModel(name);
-	if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-	Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull);
-	*oldModel = newModel;
-
-	return 0;
 }
 
 int Lua::getPlanetInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (planetID)", n);
-	int id = luaL_checkinteger(L,1);
-	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
-	if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
-		return luaL_error(L, "ID #%d does not point to a Planet", id);
 
-	Planet* p = (Planet*)(sprite);
+	// Figure out which planet we're fetching
+	Planet* p = NULL;
+	if( lua_isnumber(L,1)){
+		int id = luaL_checkinteger(L,1);
+		Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+		if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
+			return luaL_error(L, "ID #%d does not point to a Planet", id);
+		p = (Planet*)(sprite);
+	} else if( lua_isstring(L,1)){
+		string name = luaL_checkstring(L,1);
+		p = Planets::Instance()->GetPlanet(name);
+		if( p == NULL )
+			return luaL_error(L, "Cannot get Info for nonexistant Planet named '%s'", name.c_str() );
+	} else {
+		return luaL_error(L, "Cannot get Info Planet because of bad arguments.  Expected Name or ID" );
+	}
 
+	// Populate the Info Table.
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
 	setField("Alliance", p->GetAlliance().c_str());
@@ -631,26 +747,6 @@ int Lua::getPlanetInfo(lua_State *L) {
 	setField("Militia", p->GetMilitiaSize());
 	setField("Landable", p->GetLandable());
 	return 1;
-}
-
-int Lua::setPlanetInfo(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
-	if( !lua_istable(L,1) )
-		return luaL_error(L, "Argument 1 is not a table");
-
-	string name = getStringField(1,"Name");
-	string alliance = getStringField(1,"Alliance");
-	int traffic = getIntField(1,"Traffic");
-	int militia = getIntField(1,"Militia");
-	int landable = getIntField(1,"Landable");
-
-	Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
-	if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-	*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
-
-	return 0;
 }
 
 int Lua::getWeaponInfo(lua_State *L) {
@@ -669,28 +765,8 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("Acceleration", weapon->GetAcceleration());
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
+	setField("MSRP", weapon->GetMSRP());
 	return 1;
-}
-
-int Lua::setWeaponInfo(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
-	if( !lua_istable(L,1) )
-		return luaL_error(L, "Argument 1 is not a table");
-
-	string name = getStringField(1,"Name");
-	int payload = getIntField(1,"Payload");
-	int velocity = getIntField(1,"Velocity");
-	int acceleration = getIntField(1,"Acceleration");
-	int fireDelay = getIntField(1,"FireDelay");
-	int lifetime = getIntField(1,"Lifetime");
-
-	Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
-	if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
-	*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound);
-
-	return 0;
 }
 
 int Lua::getEngineInfo(lua_State *L) {
@@ -711,26 +787,6 @@ int Lua::getEngineInfo(lua_State *L) {
 	return 1;
 }
 
-int Lua::setEngineInfo(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
-	if( !lua_istable(L,1) )
-		return luaL_error(L, "Argument 1 is not a table");
-
-	string name = getStringField(1,"Name");
-	int force = getIntField(1,"Force");
-	string flare = getStringField(1,"Animation");
-	int msrp = getIntField(1,"MSRP");
-	int foldDrive = getIntField(1,"Fold Drive");
-
-	Engine* oldEngine = Engines::Instance()->GetEngine(name);
-	if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-	*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
-
-	return 0;
-}
-
 int Lua::getTechnologyInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -741,7 +797,6 @@ int Lua::getTechnologyInfo(lua_State *L) {
 		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
 	
 	// The info for a technology is a nested table:
-	// techInfo = { Weapons={...}, Models={...}, Engines={...} }
 
 	// Push the Main Table
 	int i;
@@ -779,15 +834,139 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	return 3;
 }
 
-int Lua::setTechnologyInfo(lua_State *L) {
+int Lua::setInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (planetInfo)", n);
-	if( !lua_istable(L,1) )
-		return luaL_error(L, "Argument 1 is not a table");
+	if( !(n==2||n==5)  )
+		return luaL_error(L, "Got %d arguments expected 1 (infoType,infoTable)", n);
+	string kind = luaL_checkstring(L,1);
 
-	cerr<<"Error Not Implemented!"<<endl;
+	if(kind == "Alliance"){
+        string name = getStringField(2,"Name");
+        int attack = getIntField(2,"AttackSize");
+        float aggressiveness = getNumField(2,"Aggressiveness");
+        string currency = getStringField(2,"Currency");
+		
+        Alliance* oldAlliance = Alliances::Instance()->GetAlliance(name);
+        if(oldAlliance==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       List of Illegal Cargo
+        *oldAlliance = Alliance(name,attack,aggressiveness,currency,oldAlliance->GetIlligalCargos());
 
+	} else if(kind == "Engine"){
+		string name = getStringField(2,"Name");
+		int force = getIntField(2,"Force");
+		string flare = getStringField(2,"Animation");
+		int msrp = getIntField(2,"MSRP");
+		int foldDrive = getIntField(2,"Fold Drive");
+
+		Engine* oldEngine = Engines::Instance()->GetEngine(name);
+		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Thrust Sound
+		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
+
+	} else if(kind == "Model"){
+		string name = getStringField(2,"Name");
+		float mass = getNumField(2,"Mass");
+		int thrust = getIntField(2,"Thrust");
+		string engine = getStringField(2,"Engine");
+		float rot = getNumField(2,"Rotation");
+		float speed = getNumField(2,"MaxSpeed");
+		int hull = getIntField(2,"MaxHull");
+		int msrp = getIntField(2,"MSRP");
+
+		Model* oldModel = Models::Instance()->GetModel(name);
+		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Image
+		//       Engine
+		Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull,msrp);
+		*oldModel = newModel;
+
+	} else if(kind == "Planet"){
+		string name = getStringField(2,"Name");
+		string alliance = getStringField(2,"Alliance");
+		int traffic = getIntField(2,"Traffic");
+		int militia = getIntField(2,"Militia");
+		int landable = getIntField(2,"Landable");
+
+		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
+		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Technologies
+		//       Militia
+		//       Influence
+		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
+
+	} else if(kind == "Technology"){
+		list<string>::iterator iter;
+		list<Model*> models;
+		list<Weapon*> weapons;
+		list<Engine*> engines;
+
+		string name = luaL_checkstring(L,2);
+
+		list<string> modelNames = getStringListField(3);
+		for(iter=modelNames.begin();iter!=modelNames.end();++iter){
+			if(Models::Instance()->GetModel(*iter))
+				models.push_back( Models::Instance()->GetModel(*iter) );
+		}
+
+		list<string> weaponNames = getStringListField(4);
+		for(iter=weaponNames.begin();iter!=weaponNames.end();++iter){
+			if(Weapons::Instance()->GetWeapon(*iter))
+				weapons.push_back( Weapons::Instance()->GetWeapon(*iter) );
+		}
+
+		list<string> engineNames = getStringListField(5);
+		for(iter=engineNames.begin();iter!=engineNames.end();++iter){
+			if(Engines::Instance()->GetEngine(*iter))
+				engines.push_back( Engines::Instance()->GetEngine(*iter) );
+		}
+
+		Technology* oldTechnology = Technologies::Instance()->GetTechnology(name);
+		if(oldTechnology==NULL) return 0; // If the name changes then the below doesn't work.
+		*oldTechnology = Technology(name,models,engines,weapons);
+
+		return 0;
+	} else if(kind == "Weapon"){
+		string name = getStringField(2,"Name");
+		int payload = getIntField(2,"Payload");
+		int velocity = getIntField(2,"Velocity");
+		int acceleration = getIntField(2,"Acceleration");
+		int fireDelay = getIntField(2,"FireDelay");
+		int lifetime = getIntField(2,"Lifetime");
+		int msrp = getIntField(2,"MSRP");
+
+		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
+		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
+		// TODO: Fix attributes that aren't editable
+		//       Image
+		//       Picture (Image that gets shown at the store)
+		//       Ammo Type
+		//       Ammo Consumption
+		//       Sound
+		*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
+
+	} else {
+		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());
+	}
 	return 0;
+}
+
+int Lua::saveComponents(lua_State *L) {
+    Alliances::Instance()->Save("Resources/Definitions/alliances-default.xml");
+    Models::Instance()->Save("Resources/Definitions/models-default.xml");
+    Weapons::Instance()->Save("Resources/Definitions/weapons-default.xml");
+    Engines::Instance()->Save("Resources/Definitions/engines-default.xml");
+    Planets::Instance()->Save("Resources/Definitions/planets-default.xml");
+    Technologies::Instance()->Save("Resources/Definitions/technologies-default.xml");
+    return 0;
+}
+
+int Lua::listImages(lua_State *L) {
+	list<string> pics = Filesystem::Enumerate("Resources/Graphics/",".png");
+	pushNames(L,&pics);
+	return 1;
 }
 

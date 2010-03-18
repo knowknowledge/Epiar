@@ -12,6 +12,9 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 
+/**\class Weapons
+ * \brief Collection of Weapon objects
+ */
 Weapons *Weapons::pInstance = 0; // initialize pointer
 
 /**\brief Gets or returns Weapons instance
@@ -26,3 +29,12 @@ Weapons *Weapons::Instance( void ) {
 	return( pInstance );
 }
 
+/**\fn Weapons::GetWeapon(string& weaponName)
+ *  \brief Retrieves a Weapon by name
+ * \fn Weapons::newComponent( )
+ *  \brief Creates a new Weapon object
+ * \fn Weapons::Weapons( const Weapons & )
+ *  \brief Empty copy constructor
+ * \fn Weapons::operator = (const Weapons&)
+ *  \brief Empty assignment operator
+ */

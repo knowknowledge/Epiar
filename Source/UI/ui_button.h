@@ -18,7 +18,6 @@ class Button : public Widget {
 		Button( int x, int y, int w, int h, string label);
 		Button( int x, int y, int w, int h, string label, void (*clickCallBack)());
 		Button( int x, int y, int w, int h, string label, string lua_code);
-		~Button();
 		
 		void Draw( int relx = 0, int rely = 0 );
 
@@ -28,7 +27,8 @@ class Button : public Widget {
 		void FocusMouse( int x, int y );
 		void UnfocusMouse( void );
 	
-		void MouseDown( int wx, int wy );
+		void MouseLDown( int wx, int wy );
+		void MouseLUp( int wx, int wy );
 		virtual string GetName( void ) {return string("Button_"+label);}
 	private:
 		void Initialize( int x, int y, int w, int h, string label);

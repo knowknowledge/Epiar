@@ -1,4 +1,4 @@
-/**\filename		simulation.cpp
+/**\file			simulation.cpp
  * \author			Chris Thielen (chris@luethy.net)
  * \date			Created: July 2006
  * \date			Modified: Tuesday, June 23, 2009
@@ -17,6 +17,7 @@
 #include "Graphics/video.h"
 #include "Input/input.h"
 #include "Sprites/player.h"
+#include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
 #include "Utilities/camera.h"
@@ -85,7 +86,7 @@ void Simulation::unpause(){
 /**\brief Main game loop
  * \return true
  */
-bool Simulation::Run( void ) {
+bool Simulation::Run() {
 	bool quit = false;
 	Input inputs;
 	int fpsCount = 0; // for FPS calculations
@@ -106,11 +107,16 @@ bool Simulation::Run( void ) {
 	// Create a spritelist
 	SpriteManager *sprites = SpriteManager::Instance();
 
-	Player *player = Player::Instance();
+    if( 0 == OPTION(int,"options/development/editor-mode") ){
+        Player *player = Player::Instance();
 
-	// Set player model based on simulation xml file settings
-	player->SetModel( models->GetModel( playerDefaultModel ) );
-	sprites->Add( player->GetSprite() );
+        // Set player model based on simulation xml file settings
+        player->SetModel( models->GetModel( playerDefaultModel ) );
+        sprites->Add( player->GetSprite() );
+
+        // Focus the camera on the sprite
+        camera->Focus( player->GetSprite() );
+    }
 
 	Planets *planets = Planets::Instance();
 	list<string>* planetNames = planets->GetNames();
@@ -118,8 +124,13 @@ bool Simulation::Run( void ) {
 		sprites->Add(  planets->GetPlanet(*pname) );
 	}
 
-	// Focus the camera on the sprite
-	camera->Focus( player->GetSprite() );
+	// Gates!
+	// TODO: These are random for now, but they should be set up in a structured network based on the planet locations at some point
+	Gate* g;
+	for(int i=0; i<100; i++){
+		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
+		sprites->Add(g);
+	}
 
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
@@ -127,6 +138,20 @@ bool Simulation::Run( void ) {
 		Log::Error("Fatal error starting Lua.");
 		quit = true;
 	}
+    if( 0 == OPTION(int,"options/development/editor-mode") ){
+        if( !( Lua::Load("Resources/Scripts/player.lua") ))
+        {
+            Log::Error("Fatal error starting Lua.");
+            quit = true;
+        }
+    } else {
+        if( !( Lua::Load("Resources/Scripts/editor.lua") ))
+        {
+            Log::Error("Fatal error starting Lua.");
+            quit = true;
+        }
+    }
+    Lua::Call("Start");
 
 	// Create the hud
 	Hud::Hud();
@@ -176,8 +201,6 @@ bool Simulation::Run( void ) {
 		// Don't kill the CPU (play nice)
 		Timer::Delay();
 		
-		Coordinate playerPos = player->GetWorldPosition();
-
 		// Counting Frames
 		fpsCount++;
 		fpsTotal++;
@@ -328,3 +351,6 @@ bool Simulation::Parse( void ) {
 	return true;
 }
 
+/**\fn Simulation::isPaused()
+ * \brief Checks to see if Simulation is paused
+ */

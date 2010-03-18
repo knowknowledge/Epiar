@@ -18,7 +18,9 @@ if(WIN32)
 		"Epiar.exe" "Epiar"
 		"http://www.epiar.net" "Epiar Homepage")
 	set(CPACK_PACKAGE_EXECUTABLES "" "")
-elseif (UNIX)
+	set(CPACK_PACKAGE_FILE_NAME
+		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}")
+elseif (UNIX AND NOT APPLE)
 	install(TARGETS EpiarBIN
 		DESTINATION ./share/Epiar)
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources"
@@ -49,6 +51,24 @@ elseif (UNIX)
 		liblua5.1-0 ,
 		libxml2,
 		libftgl2")
+	set(CPACK_PACKAGE_FILE_NAME
+		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+elseif (APPLE)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Animations" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Audio" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Definitions" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Fonts" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Graphics" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Icons" DESTINATION .)
+	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Scripts" DESTINATION .)
+	set(CPACK_GENERATOR Bundle)
+	set(CPACK_PACKAGE_FILE_NAME
+		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+	set(CPACK_BUNDLE_NAME Epiar)
+	set(CPACK_BUNDLE_ICON "${Epiar_OUT_DIR}/Resources/Graphics/Epiar_Icon2.icns")
+	set(CPACK_BUNDLE_PLIST "${SCRIPT_DIR}/InstallResources/Mac/Info.plist")
+	set(CPACK_BUNDLE_STARTUP_COMMAND "${Epiar_OUT_DIR}/Epiar_debug")
+	set(CPACK_PACKAGE_ICON "${Epiar_OUT_DIR}/Resources/Graphics/Epiar_Icon2.icns")
 endif (WIN32)
 
 set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
@@ -60,12 +80,11 @@ set(CPACK_PACKAGE_VERSION_MINOR ${EPIAR_VERSION_MINOR})
 set(CPACK_PACKAGE_VERSION_PATCH ${EPIAR_VERSION_PATCH})
 set(CPACK_PACKAGE_DESCRIPTION "${Epiar_OUT_DIR}/README")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Epiar is a space combat/trading game.")
-set(CPACK_PACKAGE_FILE_NAME
-	"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "Epiar")
 set(CPACK_RESOURCE_FILE_LICENSE "${Epiar_OUT_DIR}/LICENSE")
 
 INCLUDE(CPack)
 
 # vim:ft=cmake
+
 

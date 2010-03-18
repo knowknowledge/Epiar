@@ -31,10 +31,6 @@ Label::Label( int x, int y, string label, bool centered) {
 	this->centered = centered;
 }
 
-Label::~Label() {
-
-}
-
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	

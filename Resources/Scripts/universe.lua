@@ -6,6 +6,7 @@ PLAYER = Epiar.player()
 -- Init is a list of functions to be run when the game (re)starts
 
 Init = {}
+--- Initialization functions
 function registerInit(step)
 	table.insert(Init,step)
 end
@@ -14,6 +15,7 @@ end
 -- Registered Plans for AI to choose from
 
 Plans = {}
+--- List of plans for AI
 function registerPlan(plan)
 	table.insert(Plans,plan)
 end
@@ -24,13 +26,16 @@ AIPlans = {}
 
 PreSteps = {}
 PostSteps = {}
+--- Steps before each update
 function registerPreStep(step)
 	table.insert(PreSteps,step)
 end
+--- Steps after each update
 function registerPostStep(step)
 	table.insert(PostSteps,step)
 end
 
+--- Run the functions
 function Start()
 	io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
 	for i,func in ipairs(Init) do
@@ -38,6 +43,7 @@ function Start()
 	end
 end
 
+--- Update function
 function Update()
 	if #PreSteps >0 then
 		for i,pre_func in ipairs(PreSteps) do
@@ -54,6 +60,7 @@ end
 --------------------------------------------------------------------------------
 -- Basic Utilities
 
+--- Pause the game
 function togglePause()
 	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
@@ -65,7 +72,7 @@ function togglePause()
 	end
 end
 
--- Pause the Game with a given message
+--- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
 	pauseWin= UI.newWindow( 400,100,320,150,"Paused",
@@ -75,6 +82,7 @@ function pauseMessage(message)
 	Epiar.pause()
 end
 
+--- For debugging
 function godmode()
 	function heal()
 		PLAYER:Repair(10000)
@@ -83,14 +91,14 @@ function godmode()
 end
 --godmode() -- Uncomment this line to never die
 
--- Calculate the Distance between two points
+--- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	x_diff = (pt1_x - pt2_x)
 	y_diff = pt1_y - pt2_y
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
--- Generate a new plan from the list above
+--- Generate a new plan from the list above
 function newPlan()
 	theNewPlan = {}
 	planNum = math.random(#Plans)
@@ -101,13 +109,17 @@ end
 
 SHIPS={}
 
+--- Creates a new ship
 function createShip(X,Y,model)
-	cur_ship = Ship.new(X,Y,model,"blank")
+	
+	plans = {"Hunter","Trader"}
+	cur_ship = Ship.new(X,Y,model,plans[math.random(2)])
 	cur_ship:SetRadarColor(0,255,0)
 	SHIPS[ cur_ship:GetID() ] = cur_ship
 	return cur_ship
 end
 
+--- Creates a random ship
 function createRandomShip(X,Y,Range,shiptypes,weapons)
 	if shiptypes==nil then
 		shiptypes = Epiar.models()
@@ -120,10 +132,10 @@ function createRandomShip(X,Y,Range,shiptypes,weapons)
 	model = shiptypes[math.random(#shiptypes)]
 	s = createShip(X,Y,model)
 	attachRandomWeapon(s,weapons)
-	AIPlans[ cur_ship:GetID() ] = newPlan()
 	return s
 end
 
+--- Fixate random weapon
 function attachRandomWeapon(cur_ship,weapons)
 	if weapons==nil or #weapons==0 then return end
 	--Randomly assign a weapon to everyone
@@ -132,30 +144,56 @@ function attachRandomWeapon(cur_ship,weapons)
 	cur_ship:AddAmmo( weapons[i],100 )
 end
 
+--- List of options
 function options()
 	Epiar.pause()
 	if optionWindow ~= nil then
 		closeOptions()
 		return
 	end
-	local height=300
-	optionWindow = UI.newWindow( 30,100,200,height,"Options")
-	 
+	local height=400
+	optionWindow = UI.newWindow( 30,100,220,height,"Options")
+	optionTabs = UI.newTabCont( 10, 30, 200, height-100,"Options Tabs")
+	optionWindow:add(optionTabs)
+
 	-- Sounds
-	soundsLabel     = UI.newLabel(20,40,"Sound Options:",0)
-	backgroundSound = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/background") ), "Background sounds")
-	weaponsSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
-	enginesSound    = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
-	explosionsSound = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
-	buttonsSound    = UI.newCheckbox(20, 130, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
-	optionWindow:add( soundsLabel, backgroundSound, weaponsSound, enginesSound, explosionsSound, buttonsSound )
+	soundsTab = UI.newTab("Audio")
+	optionTabs:add(soundsTab)
+
+	soundsLabel     = UI.newLabel(20,20,"Sound Options:",0)
+	backgroundSound = UI.newCheckbox(20,  30, ( Epiar.getoption("options/sound/background") ), "Background sounds")
+	weaponsSound    = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
+	enginesSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
+	explosionsSound = UI.newCheckbox(20,  90, ( Epiar.getoption("options/sound/explosions") ), "Explosions sounds")
+	buttonsSound    = UI.newCheckbox(20, 110, ( Epiar.getoption("options/sound/buttons")    ), "Buttons sounds")
+	--[[soundVolume     = { Textbox = UI.newTextbox(20,  150, 30, 1,Epiar.getoption("options/sound/soundvolume")),
+						Label = UI.newLabel(55, 165, "Sound volume (0-1)")}
+	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
+						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
+						--]]
+	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume","Audio.setSoundVolume"),
+					Label = UI.newLabel( 105, 152, "Sound Volume", 0)}
+	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume","Audio.setMusicVolume"),
+					Label = UI.newLabel( 105, 182, "Music Volume", 0)}
+	soundsTab:add(  soundsLabel,
+					backgroundSound,
+					weaponsSound,
+					enginesSound,
+					explosionsSound,
+					buttonsSound,
+					soundVolume.Slider,
+					soundVolume.Label,
+					musicVolume.Slider,
+					musicVolume.Label)
 
 	-- Debugging
-	debugLabel      = UI.newLabel(20,160,"Debug Options:",0)
-	xmlfileLogging  = UI.newCheckbox(20, 170, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
-	stdoutLogging   = UI.newCheckbox(20, 190, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 210, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
-	optionWindow:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
+	debugTab = UI.newTab("Debugging")
+	optionTabs:add(debugTab)
+	debugLabel      = UI.newLabel(20,200,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 210, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 230, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 250, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
 	
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -172,42 +210,20 @@ function options()
 		optionWindow=nil;
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton(20, height-40, 100, 30,"Customize Keys","chooseKeys()") )
-	optionWindow:add( UI.newButton(130, height-40, 60, 30,"Save","saveOptions(); closeOptions()") )
+	optionWindow:add( UI.newButton(20, height-50, 100, 30,"Customize Keys","chooseKeys()") )
+	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 
 -- Execute the current plan of each AI
-function MoveShip(id)
-		cur_ship = SHIPS[id]
-		n = cur_ship:GetID()
-		AIPlans[n].plan( cur_ship, AIPlans[n].time )
-		AIPlans[n].time = AIPlans[n].time -1
-		-- When the current plan is complete, pick a new plan
-		if AIPlans[n].time == 0 then
-			AIPlans[n] = newPlan()
-		end
-		percent = 0.10
-		if (cur_ship:GetHull() < percent) and (cur_ship:GetModelName() ~= "Escape Pod" )then
-			HUD.newAlert("A "..cur_ship:GetModelName().." is evacuating into the escape pods!")
-			x,y = cur_ship:GetPosition()
-			cur_ship:Explode()
-			for pod = 1,3 do
-				cur_ship = createShip(x,y,"Escape Pod")
-				AIPlans[ cur_ship:GetID() ] = {plan=landOnNearestPlanet,time=10000}
-			end
-		end
-end
-
---------------------------------------------------------------------------------
 -- Necessary functions for now.
 
--- Create Some ships around the planets
+--- Create Some ships around the planets
 function planetTraffic()
 	planets = Epiar.planets()
 	for p=1,#planets do
 		planet = planets[p]
 		expectedTraffic = 1* planet:Traffic()
-		x,y = planet:Position()
+		x,y = planet:GetPosition()
 		influence = planet:Influence()
 		currentTraffic = #(Epiar.ships(x,y,influence))
 		if influence>0 and currentTraffic < expectedTraffic then
@@ -220,6 +236,7 @@ function planetTraffic()
 	end
 end
 
+--- Aim at center
 function aimCenter(cur_ship,timeleft)
 	-- direction towards the center or the universe
 	if timeleft%3 ==0 then
@@ -231,83 +248,110 @@ end
 registerInit(planetTraffic)
 registerPlan(aimCenter)
 
+--- Buys a ship
 function buyShip(model)
-	HUD.newAlert("Enjoy your new "..model..".")
-	PLAYER:SetModel(model)
-	return 1
-end
-
-function buyWeapon(weapon)
-	weaponsAndAmmo = PLAYER:GetWeapons()
-	if weaponsAndAmmo[weapon]~=nil then
-		PLAYER:AddAmmo(weapon,100)
-		return 0
+	price = Epiar.getMSRP(model)
+	if player_credits >= price then
+		currentModel = PLAYER:GetModelName()
+		if currentModel ~= model then
+			player_credits = player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel))
+			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
+			PLAYER:SetModel(model)
+			PLAYER:Repair(10000)
+		else
+			HUD.newAlert("You already have a "..model)
+		end
 	else
-		HUD.newAlert("Enjoy your new "..weapon.." system.")
-		PLAYER:AddWeapon(weapon)
-		PLAYER:AddAmmo(weapon,100)
-		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
+		HUD.newAlert("You can't afford to buy a "..model)
 	end
 	return 1
 end
 
-function createTable(x,y,w,h,title,piclist,buttonlist)
+--- Buys a weapon
+function buyWeapon(weapon)
+	price = Epiar.getMSRP(weapon)
+	if player_credits >= price then
+		player_credits = player_credits - price
+		weaponsAndAmmo = PLAYER:GetWeapons()
+		if weaponsAndAmmo[weapon]~=nil then
+			PLAYER:AddAmmo(weapon,100)
+			return 0
+		else
+			HUD.newAlert("Enjoy your new "..weapon.." system for "..price.." credits")
+			PLAYER:AddWeapon(weapon)
+			PLAYER:AddAmmo(weapon,100)
+			myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
+		end
+	else
+		HUD.newAlert("You can't afford to buy a "..weapon)
+	end
+	return 1
+end
+
+--- Creates a table
+function createTable(win,w,h,piclist,buttonlist)
 	pad = 10
 	box = 120
 	button_h = 30
 	button_w = 100
 	row,col = 1,1
 	getPos = function(c,r)
-		pos_x = pad*(col)+box*(col-1)
-		pos_y = pad*(row)+box*(row-1)
+		pos_x = box*(col-1)+20
+		pos_y = box*(row-1)+20
 		return pos_x,pos_y
 	end
 
 	-- Lay out the buttons with pictures beneath them
-	win = UI.newWindow( 30,30,w,h,title)
 	for i=1,#piclist do
 		pos_x,pos_y = getPos(col,row)
-		-- When there isn't enough room, wrap to the next row.
-		if  pos_x+box >= w then
-			col=1; row=row+1
-			pos_x,pos_y = getPos(col,row)
-		end
 
-		win:add(UI.newButton( pos_x+(box-button_w)/2, pos_y, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
+		win:add(UI.newButton( pos_x+(box-button_w)/2+box, pos_y+box/2-button_h/2, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
 		win:add(UI.newPicture( pos_x, pos_y + button_h, box,box-button_h,piclist[i]))
 
-		col =col+1
+		row=row+1
 	end
-	win:add(UI.newButton( w-button_w-15, h-button_h-15, button_w,button_h, "Cancel","storefront:close();storefront=nil"))
-	return win
 end
 
-function shipyard(planetID)
+--- Land on a planet
+function landingDialog(id)
+	-- Create the Planet Landing Screen
+	if landingWin ~= nil then return end
 	Epiar.pause()
-	if storefront ~=nil then return end
-	planet = Epiar.getSprite(planetID)
+	planet = Epiar.getSprite(id)
+	
+	height = 400
+	width = 300
+	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
+	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
+	landingWin:add(storeframe)
 
+	-- Shipyard
+	shipyard = UI.newTab("Ship Yard")
 	local models = planet:GetModels()
-	local buylist = {}
+	local modelButtons = {}
 	for m =1,#models do
-		buylist[m] = {models[m], "buyShip(\""..models[m].."\"); storefront:close();storefront=nil "}
+		price = Epiar.getMSRP(models[m])
+		modelButtons[m] = {models[m]..": "..price, "buyShip(\""..models[m].."\")"}
 	end
-	storefront = createTable(30,30,820,500,"Ship Yard",models,buylist)
-end
+	createTable(shipyard,width-20,height-100,models,modelButtons)
 
-function armory(planetID)
-	Epiar.pause()
-	if storefront ~=nil then return end
-	planet = Epiar.getSprite(planetID)
-
+	-- Armory
+	armory = UI.newTab("Armory")
 	local weapons = planet:GetWeapons()
-	local buylist = {}
+	local weaponButtons= {}
 	for i =1,#weapons do
-		buylist[i] = {weapons[i], "buyWeapon(\""..weapons[i].."\"); storefront:close();storefront=nil "}
+		price = Epiar.getMSRP(weapons[i])
+		weaponButtons[i] = {weapons[i]..": "..price, "buyWeapon(\""..weapons[i].."\")"}
 	end
-	storefront = createTable(30,30,820,500,"Armory",weapons,buylist)
+	createTable(armory,width-20,height-100,weapons,weaponButtons)
+
+	storeframe:add(shipyard,armory)
+
+	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
+	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
+--- UI demo
 function ui_demo()
 	if demo_win ~= nil then return end
 
@@ -346,9 +390,6 @@ end
 
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
-dofile "Resources/Scripts/swarm.lua"
-dofile "Resources/Scripts/player.lua"
-dofile "Resources/Scripts/debug.lua"
+--dofile "Resources/Scripts/swarm.lua"
+dofile "Resources/Scripts/commands.lua"
 
--- Run Start now that everything is loaded
-Start()

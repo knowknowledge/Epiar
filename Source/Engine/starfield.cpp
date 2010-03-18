@@ -14,6 +14,10 @@
 /**\class Starfield
  * \brief Controls the starfield. */
 
+/**\struct Starfield::_stars
+ * \brief Contains x,y coordinate as well as the color
+ */
+
 /**\brief Initializes the starfield.
  * \param num Number of stars to initialize
  */

@@ -55,7 +55,9 @@ bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 	if( sprite==Camera::Instance()->GetFocus() ) {
 		Camera::Instance()->Focus(NULL);
 	}
-	return ( GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite ) );
+	GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite );
+	delete sprite;
+	return true;
 }
 
 /**\brief Deletes a sprite.

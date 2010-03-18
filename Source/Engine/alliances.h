@@ -15,6 +15,9 @@
 // Abstraction of a single planet
 class Alliance : public Component {
 	public:
+		Alliance();
+  		Alliance& operator= (const Alliance&);
+		Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, list<string> _illegalCargos);
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
 
@@ -34,7 +37,7 @@ class Alliance : public Component {
 class Alliances : public Components {
 	public:
 		static Alliances *Instance();
-		Alliance* GetModel(string name) { return (Alliance*) this->Get(name); }
+		Alliance* GetAlliance(string name) { return (Alliance*) this->Get(name); }
 		Component* newComponent() { return new Alliance(); }
 
 	protected:

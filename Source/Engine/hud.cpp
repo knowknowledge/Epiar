@@ -40,6 +40,14 @@ int Radar::visibility = 7000;
  * \brief Alert/Info messages
  */
 
+/**\var AlertMessage::message
+ * \brief The message
+ */
+
+/**\var AlertMessage::start
+ * \brief The start time (For expiration)
+ */
+
 /**\brief Adds an alert to the queue.
  * \param message std:string containing the message
  * \param start Starting time (for expiration)
@@ -49,6 +57,10 @@ AlertMessage::AlertMessage( string message, Uint32 start )
 	this->message = message;
 	this->start = start;
 }
+
+/**\fn AlertMessage::operator ==(const AlertMessage& other)
+ * \brief Compares the start time of two AlertMessage
+ */
 
 /**\brief Checks to see if message expired.
  * \param msg Pointer to an AlertMessage object
@@ -60,6 +72,18 @@ bool MessageExpired(const AlertMessage& msg){
 
 /**\class StatusBar
  * \brief Status bar
+ */
+
+/**\var StatusBar::im_infobar_left
+ * \brief Left side image
+ */
+
+/**\var StatusBar::im_infobar_right
+ * \brief Right side image
+ */
+
+/**\var StatusBar::im_infobar_middle
+ * \brief Middle image
  */
 
 /**\brief Draws the StatusBar
@@ -113,10 +137,56 @@ void StatusBar::Draw(int x, int y) {
 	}
 }
 
-Hud *Hud::pInstance = 0; // initialize pointer
+/**\fn StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio) : title(_title), width(_width), pos(_pos), name(_name), ratio(_ratio)
+ * \brief Empty constructor.
+ */
+
+/**\fn StatusBar::SetName(string n)
+ * \brief Sets the name of the StatusBar
+ */
+
+/**\fn StatusBar::GetName
+ * \brief Returns the name of the StatusBar
+ */
+
+/**\fn StatusBar::SetRatio(float _ratio)
+ * \brief Sets ratio (Ratio of the middle to the whole)
+ */
+
+/**\fn StatusBar::GetRatio
+ * \brief Returns the ratio
+ * \sa StatusBar::SetRatio(float _ratio)
+ */
+
+/**\fn StatusBar::GetPosition
+ * \brief Returns the QuadPosition
+ */
+
+//Protect members
+/**\var StatusBar::title
+ * \brief Title of the StatusBar
+ */
+
+/**\var StatusBar::width
+ * \brief Width of the StatusBar
+ */
+
+/**\var StatusBar::pos
+ * \brief QuadPosition of the StatusBar
+ */
+
+/**\var StatusBar::name
+ * \brief Name of the StatusBar
+ */
+
+/**\var StatusBar::ratio
+ * \brief Ratio of the StatusBar
+ * \sa StatusBar::SetRatio(float _ratio)
+ */
 
 /**\class Hud
  * \brief Heads-Up-Display. */
+Hud *Hud::pInstance = 0; // initialize pointer
 
 /**\brief Gets or initializes the current instance.
  */
@@ -148,6 +218,8 @@ void Hud::Update( void ) {
 	Console::Update();
 }
 
+/**\brief Draws the Hud
+ */
 void Hud::Draw( void ) {
 	Hud::DrawTarget();
 	Hud::DrawShieldIntegrity();
@@ -166,7 +238,7 @@ void Hud::HandleInput( list<InputEvent> & events ) {
 	list<InputEvent>::iterator i;
 	for(i= events.begin(); i != events.end() ; ++i ) {
 		// Mouse Clicks
-		if( i->type == MOUSE && i->mstate==MOUSEDOWN) {
+		if( i->type == MOUSE && i->mstate==MOUSELDOWN) {
 			Coordinate screenPos(i->mx, i->my), worldPos;
 			Camera::Instance()->TranslateScreenToWorld( screenPos, worldPos );
 			// Target any clicked Sprite
@@ -219,7 +291,7 @@ void Hud::DrawFPS() {
 
 /**\brief Draws the status bar.
  */
-void::Hud::DrawStatusBars() {
+void Hud::DrawStatusBars() {
 	// Initialize the starting Coordinates
 	int barHeight = Image::Get( "Resources/Graphics/hud_bar_left.png" )->GetHeight()+5;
 	Coordinate startCoords[4];

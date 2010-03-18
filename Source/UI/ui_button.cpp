@@ -60,12 +60,6 @@ Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	this->lua_callback = lua_code;
 }
 
-Button::~Button() {
-	Log::Message( "Deleting Button: '%s'.", (char *)label.c_str() );
-	delete bitmap_normal;
-	delete bitmap_pressed;
-}
-
 void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
@@ -83,16 +77,22 @@ void Button::Draw( int relx, int rely ) {
 }
 
 void Button::FocusMouse( int x, int y ) {
-	bitmap_current = bitmap_pressed;
+
 }
 
 void Button::UnfocusMouse( void ) {
 	bitmap_current = bitmap_normal;
 }
 
-void Button::MouseDown( int wx, int wy ) {
+void Button::MouseLDown( int wx, int wy ) {
 	if(OPTION(int, "options/sound/buttons"))
 		this->sound_click->Play();
+	bitmap_current = bitmap_pressed;
+}
+
+void Button::MouseLUp( int wx, int wy ) {
+	this->UnfocusMouse();
+
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
 		clickCallBack();

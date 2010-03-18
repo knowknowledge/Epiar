@@ -10,12 +10,14 @@
 #ifndef __H_UI_WIDGET__
 #define __H_UI_WIDGET__
 
+typedef enum{LEFT,MIDDLE,RIGHT} mouseBtn;
+
 class Widget {
 	public:
-		Widget() { keyboardFocus = NULL; };
-		virtual ~Widget() { };
+		Widget() { keyboardFocus = NULL; mouseDownOn = NULL; mouseFocused = NULL; };
+		virtual ~Widget( void );
 		
-		bool AddChild( Widget *widget );
+		virtual bool AddChild( Widget *widget );
 		virtual void Draw( int relx = 0, int rely = 0 );
 		virtual void Update( void );
 
@@ -35,18 +37,23 @@ class Widget {
 		virtual int GetWidth( void ) = 0;
 		virtual int GetHeight( void ) = 0;
 
-		virtual string GetName( void ) { return string("GenericWidget"); }
-	
+		virtual string GetName( void ) { return string("RandomWidget"); }
+
 		virtual bool Contains( int relx, int rely );
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
-		virtual void MouseDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
-		
+		virtual void MouseLDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
+		virtual void MouseLUp( int wx, int wy );
+		virtual void MouseMotion( int x, int y, int dx, int dy);
 		virtual bool KeyPress( SDLKey key );
 	
+	protected:
+		list<Widget *> children;
+		// Tracks which widget the mouse was down on last before up
+		Widget *mouseDownOn, *mouseFocused;
+
 	private:
 		int x, y;
 		int dragX, dragY; // if dragging, this is the offset from (x,y) to the point of click for the drag
-		list<Widget *> children;
 		
 		Widget *keyboardFocus; // we have to track keyboardFocus within children, unlike mouseFocus
 };

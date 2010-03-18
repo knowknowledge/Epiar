@@ -40,6 +40,9 @@ class UI_Lua {
 		static int newLabel(lua_State *L);
 		static int newPicture(lua_State *L);
 		static int newCheckbox(lua_State *L);
+		static int newSlider(lua_State *L);
+		static int newTabCont(lua_State *L);
+		static int newTab(lua_State *L);
 
 		// Fuctions to get Widget information
 		static int IsChecked(lua_State *L);

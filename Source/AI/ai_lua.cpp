@@ -13,6 +13,7 @@
 #include "AI/ai_lua.h"
 #include "Audio/sound.h"
 #include "Utilities/camera.h"
+#include "Utilities/trig.h"
 
 /**\class AI_Lua
  * \brief Lua bridge for AI.*/
@@ -61,6 +62,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetHull", &AI_Lua::ShipGetHull},
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
+		{"GetState", &AI_Lua::ShipGetState},
 
 		{NULL, NULL}
 	};
@@ -107,16 +109,15 @@ int AI_Lua::newShip(lua_State *L){
 	double x = luaL_checknumber (L, 1);
 	double y = luaL_checknumber (L, 2);
 	string modelname = luaL_checkstring (L, 3);
-	string scriptname = luaL_checkstring (L, 4);
+	string statemachine = luaL_checkstring (L, 4);
 
 	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
 
 	// Allocate memory for a pointer to object
 	AI* s;
-	s = new AI();
+	s = new AI(statemachine);
 	s->SetWorldPosition( Coordinate(x, y) );
 	s->SetModel( Models::Instance()->GetModel(modelname) );
-	s->SetScript( scriptname );
 	Lua::pushSprite(L,s);
 
 	// Add this ship to the SpriteManager
@@ -164,7 +165,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 }
 
 /**\brief Lua callable function to set ship's radar color.
- * \sa Ship::SetRadarColor
+ * \sa Sprite::SetRadarColor
  */
 int AI_Lua::ShipRadarColor(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -343,7 +344,7 @@ int AI_Lua::ShipGetType(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's ID
- * \sa Ship:GetID()
+ * \sa Sprite::GetID()
  */
 int AI_Lua::ShipGetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -374,7 +375,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 			lua_pushnumber(L, 0 );
 			return 1;
 		}
-		lua_pushnumber(L, (double) (ai)->GetAngle() );
+		lua_pushnumber(L, (double) normalizeAngle( (ai)->GetAngle() ) );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
@@ -383,7 +384,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's position.
- * \sa Ship::GetWorldPosition()
+ * \sa Coordinate::GetWorldPosition()
  */
 int AI_Lua::ShipGetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -405,8 +406,8 @@ int AI_Lua::ShipGetPosition(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's momentum angle.
- * \sa Ship::GetMomentum()
- * \sa Coordinate::GetAngle()
+ * \sa Sprite::GetMomentum()
+ * \sa Sprite::GetAngle()
  */
 int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -426,7 +427,7 @@ int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's momentum speed.
- * \sa Ship::GetMomentum()
+ * \sa Sprite::GetMomentum()
  * \sa Coordinate::GetMagnitude()
  */
 int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
@@ -563,12 +564,29 @@ int AI_Lua::ShipGetHull(lua_State* L){
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL){
+			// The ship doesn't exist (anymore?) so it's probably dead
 			lua_pushnumber(L, 0 );
 			return 1;
 		}
 		lua_pushnumber(L, (double) (ai)->getHullIntegrityPct() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (self)", n);
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
+}
+
+int AI_Lua::ShipGetState(lua_State* L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushstring(L, (ai)->GetStateMachine().c_str() );
+		lua_pushstring(L, (ai)->GetState().c_str() );
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 2;
 }

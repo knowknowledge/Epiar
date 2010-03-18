@@ -15,7 +15,10 @@
 /**\class AI
  * \brief AI controls the non-player shipts.*/
 
-AI::AI() {
+AI::AI(string machine) :
+	stateMachine(machine),
+	state("")
+{
 	
 }
 
@@ -24,17 +27,37 @@ AI::AI() {
  */
 void AI::Update(){
 	// Decide
-	Lua::Call("MoveShip","i>",this->GetID() );
+	string newstate;
+	
+	Lua::Call(this->stateMachine.c_str(), "iddddds>s",
+		this->GetID(),
+		this->GetWorldPosition().GetX(),
+		this->GetWorldPosition().GetY(),
+		this->GetAngle(),
+		this->GetMomentum().GetMagnitude(), // Speed
+		this->GetMomentum().GetAngle(), // Vector
+		this->state.c_str()
+		,&(newstate)
+		);
+	state= newstate;
 
 	// Now act like a normal ship
 	this->Ship::Update();
 }
 
-/**\brief Sets the Lua script to be used for this AI
+
+/**\fn AI::SetStateMachine(string _machine)
+ * \brief Set's the state machine.
  */
-void AI::SetScript( string& script )
-{
-	my_script = script;
-}
 
+/**\fn AI::SetState(string _state)
+ * \brief Set's the current state.
+ */
 
+/**\fn AI::GetStateMachine
+ * \brief Retrieves the state machine.
+ */
+
+/**\fn AI::GetState
+ * \brief Retrieves the current state.
+ */

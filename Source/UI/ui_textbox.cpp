@@ -66,10 +66,6 @@ void Textbox::EnableEntry( void ) {
 	entryDisabled = false;
 }
 
-Textbox::~Textbox() {
-	Log::Message( "Deleting Textbox: '%s'.", (char *)text.c_str() );
-}
-
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
 	Rect bbox; // bounding box of the drawn text
@@ -92,7 +88,7 @@ void Textbox::Draw( int relx, int rely ) {
 	}
 }
 
-void Textbox::MouseDown( int wx, int wy ) {
+void Textbox::MouseLDown( int wx, int wy ) {
 	if(entryDisabled) return;
 
 	if( clickCallBack ){

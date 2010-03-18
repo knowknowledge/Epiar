@@ -16,12 +16,14 @@
 
 // With the draw order, higher numbers are drawn later (on top)
 // By using non-overlapping bits we can bit mask during searches
-#define DRAW_ORDER_PLANET  0x0001
-#define DRAW_ORDER_WEAPON  0x0002
-#define DRAW_ORDER_SHIP    0x0004
-#define DRAW_ORDER_PLAYER  0x0008
-#define DRAW_ORDER_EFFECT  0x0010
-#define DRAW_ORDER_ALL     0xFFFF
+#define DRAW_ORDER_PLANET              0x0001
+#define DRAW_ORDER_GATE_BOTTOM         0x0002
+#define DRAW_ORDER_WEAPON              0x0004
+#define DRAW_ORDER_SHIP                0x0008
+#define DRAW_ORDER_PLAYER              0x0010
+#define DRAW_ORDER_GATE_TOP            0x0020
+#define DRAW_ORDER_EFFECT              0x0040
+#define DRAW_ORDER_ALL                 0xFFFF
 
 class Sprite {
 	public:

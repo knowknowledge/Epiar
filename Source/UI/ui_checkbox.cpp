@@ -17,6 +17,8 @@
 /**\class Checkbox
  * \brief UI checkbox. */
 
+/**\brief Constructs a new Checkbox.
+ */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	SetX( x );
 	SetY( y );
@@ -26,10 +28,6 @@ Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	if(label!=""){
 		this->AddChild( new Label(CHECKBOX_W+5,CHECKBOX_H, label, 0) );
 	}
-}
-
-Checkbox::~Checkbox() {
-	Log::Message( "Deleting Checkbox: '%s'.", (char *)label.c_str() );
 }
 
 void Checkbox::Draw( int relx, int rely ) {
@@ -47,15 +45,7 @@ void Checkbox::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
-void Checkbox::FocusMouse( int x, int y ) {
-
-}
-
-void Checkbox::UnfocusMouse( void ) {
-
-}
-
-void Checkbox::MouseDown( int wx, int wy ) {
+void Checkbox::MouseLUp( int wx, int wy ) {
 	if(checked) checked = false;
 	else checked = true;
 }
