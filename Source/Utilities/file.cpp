@@ -283,5 +283,6 @@ bool File::IsDir( const string& filename ) {
 	// TODO: determine if the filename is a directory
 	// This can be used for walking a directory tree
 	// This can be used for skipping directories
+	return false;
 }
 

@@ -176,13 +176,15 @@ int Filesystem::PrependPath( const string& archivename ) {
 }
 
 /**Enumerates all files available in a path.
+ * \todo Need windows version
  * \param path String pointing to the path
  * \return Nonzero on success */
 list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 {
+	list<string> files;
+#ifndef _WIN32
 	DIR *dp;
 	struct dirent *ep;
-	list<string> files;
 	string fname;
 
 	dp = opendir (path.c_str());
@@ -201,7 +203,7 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 	}
 	else
 		perror ("Couldn't open the directory");
-
+#endif
 	return files;
 }
 
