@@ -77,7 +77,7 @@ void Button::Draw( int relx, int rely ) {
 }
 
 void Button::FocusMouse( int x, int y ) {
-	bitmap_current = bitmap_pressed;
+
 }
 
 void Button::UnfocusMouse( void ) {
@@ -87,6 +87,7 @@ void Button::UnfocusMouse( void ) {
 void Button::MouseLDown( int wx, int wy ) {
 	if(OPTION(int, "options/sound/buttons"))
 		this->sound_click->Play();
+	bitmap_current = bitmap_pressed;
 }
 
 void Button::MouseLUp( int wx, int wy ) {
