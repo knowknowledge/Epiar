@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "ArgParser.h"
 #include "Audio/audio.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
@@ -83,7 +84,8 @@ int main( int argc, char **argv ) {
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
 	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
 
-	if( parseArgs( argc, argv ) == 0 ) {
+	int argpresult = parseArgs( argc, argv );
+	if( argpresult == 0 ) {
 		Simulation debug( "Resources/Definitions/sim-debug.xml" );
 		debug.Run();
 	}
@@ -109,65 +111,71 @@ int main( int argc, char **argv ) {
 	return( 0 );
 }
 
-/**Parse command line switches.
+/**\brief Parse command line switches.
  * \return -1 if a switch indicates the game should not be run, e.g. --help
  * \details
  * Cmd line args override settings in options.xml (found in data.tgz) 
  * for just this run of the program.
  */
 int parseArgs( int argc, char **argv ) {
-	for( int i = 1; i < argc; i++ ) {
-		// remove any leading - or --
-		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // handle a single '-', eg -help
-		if( (char)argv[i][0] == '-' ) argv[i] = &argv[i][1]; // purposefully repeated to handle '--', eg --help
-		
-		// it'd be nice if we could overload the switch control structure to accept std::string, sigh
-		string parm = argv[i];
-		Log::Message("Argument[%d]: %s", i,argv[i]);
-		
-		if( parm == "help" ) {
-			// remember to keep this list updated when new parms are added
-			printf("\n\t--help           - Displays this message");
-			printf("\n\t--version        - Displays program version");
-			printf("\n\t--editor-mode    - Editor and edit Game Components");
-			printf("\n\t--ui-demo        - Runs a debug/display demo of the UI");
-			printf("\n\t--no-audio       - Turns off all sounds.");
-			printf("\n\t--[no]log-xml    - Turn on logggin to an XML file");
-			printf("\n\t--[no]log-stdout - Turn on logging to standard out");
-			//printf("\n\t--graphics-demo - Runs a debug/display demo of various graphics functionality");
-			printf("\n\t--lua-test       - Tests the Lua scripting functionality");
-			printf("\n");
-			return( -1 ); // indicates we should quit immediately and not run
-		} else if( parm == "version" ) {
-			printf("\nEpiar version %s", EPIAR_VERSION_FULL );
-			printf("\n");
-			return( -1 ); // indicates we should quit immediately and not run
-		} else if( parm == "editor-mode" ) {
-			SETOPTION("options/development/editor-mode",1);
-		} else if( parm == "ui-demo" ) {
+	ArgParser argparser(argc,argv);
+	argparser.SetOpt("h",				"Display help screen");
+	argparser.SetOpt("help",			"Display help screen");
+	argparser.SetOpt("version",			"Display program version");
+	argparser.SetOpt("ui-demo",			"Show a UI demo");
+	argparser.SetOpt("graphics-demo",	"Demo the graphics");
+	argparser.SetOpt("lua-test",		"Test Lua functionality");
+	argparser.SetOpt("editor-mode",		"Puts you in edit mode");
+	argparser.SetOpt("no-audio",		"Disables audio");
+	argparser.SetOpt("nolog-xml",		"(Default) Disable logging messages to xml files.");
+	argparser.SetOpt("log-xml",			"Log messages to xml files.");
+	argparser.SetOpt("log-out",			"(Default) Log messages to console.");
+	argparser.SetOpt("nolog-out",		"Disable logging messages to console.");
+
+	// These are immediate options (I.E. they stop the argument processing immediately)
+	if ( argparser.HaveOpt("h") || argparser.HaveOpt("help") ){
+		argparser.PrintUsage();
+		return -1;
+	}
+	if ( argparser.HaveOpt("version") ){
+		printf("\nEpiar version %s", EPIAR_VERSION_FULL );
+		printf("\n");
+		return( -1 ); // indicates we should quit immediately
+	}
+	if ( argparser.HaveOpt("ui-demo") ) {
 			ui_demo( true ); // temporary function
+			return( 0 );
+	}
+	if ( argparser.HaveOpt("graphics-demo") ) {
+			//graphics_demo(); // temporary function
 			return( -1 );
-		} else if( parm == "no-audio" ) {
+	}
+	if ( argparser.HaveOpt("lua-test") ) {
+			//lua_test(); // temporary function
+			return( -1 );
+	}
+	// Following are cumulative options (I.E. you can have multiple of them)
+	if ( argparser.HaveOpt("editor-mode") ){
+			SETOPTION("options/development/editor-mode",1);
+	}
+	if ( argparser.HaveOpt("no-audio") ) {
 			cout<<"turning off sound"<<endl;
 			SETOPTION("options/sound/background",0);
 			SETOPTION("options/sound/weapons",0);
 			SETOPTION("options/sound/engines",0);
 			SETOPTION("options/sound/explosions",0);
 			SETOPTION("options/sound/buttons",0);
-		} else if( parm == "graphics-demo" ) {
-			//graphics_demo(); // temporary function
-			return( -1 );
-		} else if( parm == "lua-test" ) {
-			//lua_test(); // temporary function
-			return( -1 );
-		} else if( parm == "log-xml" ) { SETOPTION("options/log/xml", 1);
-		} else if( parm == "log-out" ) { SETOPTION("options/log/out", 1);
-		} else if( parm == "nolog-xml" ) { SETOPTION("options/log/xml", 0);
-		} else if( parm == "nolog-out" ) { SETOPTION("options/log/out", 0);
-		} else {
-			printf("Unknown option: '%s'\n",parm.c_str());
-		}
 	}
-	
+	if ( argparser.HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
+	else if ( argparser.HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
+	if ( argparser.HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
+	else if ( argparser.HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
+
+	// Print unused options.
+	list<string> unused = argparser.GetUnused();
+	list<string>::iterator it;
+	for ( it=unused.begin() ; it != unused.end(); it++ )
+		cout << "\tUnknown options:\t" << (*it)<<endl;
+
 	return( 0 );
 }

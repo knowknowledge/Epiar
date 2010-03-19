@@ -1,5 +1,6 @@
 # Sets the source files to use
 set (Epiar_src
+	${Epiar_SRC_DIR}/ArgParser.h
 	${Epiar_SRC_DIR}/main.cpp
 	${Epiar_SRC_DIR}/common.h
 	${Epiar_SRC_DIR}/defines.h
