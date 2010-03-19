@@ -128,7 +128,7 @@ bool Simulation::Run() {
 	// TODO: These are random for now, but they should be set up in a structured network based on the planet locations at some point
 	Gate* g;
 	for(int i=0; i<100; i++){
-		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
+		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
 		sprites->Add(g);
 	}
 
