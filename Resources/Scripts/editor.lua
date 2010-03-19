@@ -17,6 +17,64 @@ function componentDebugger()
 end
 componentDebugger()
 
+--- The EditorLayouts describe the ordering and type of the component attributes
+--- This could be hardcoded into the c++ engine
+
+AllianceEditorLayout = {
+	{"Name", "String"},
+	{"Aggressiveness", "Number"},
+	{"AttackSize", "Integer"},
+	--{"Illegal", "List"},
+	}
+
+EngineEditorLayout = {
+	{"Name", "String"},
+	--{"Animation", "Animation"}, -- Animation Picker
+	{"MSRP", "Integer"},
+	{"Force", "Integer"},
+	{"Fold Drive", "Integer"},
+	}
+
+ModelEditorLayout = {
+	{"Name", "String"},
+	{"Image", "Picture"}, -- Picture Picker
+	{"Rotation", "Number"},
+	{"MSRP", "Integer"},
+	{"Thrust", "Integer"},
+	{"Mass", "Number"},
+	{"MaxHull", "Integer"},
+	{"MaxSpeed", "Integer"},
+	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
+	}
+
+PlanetEditorLayout = {
+	{"Name", "String"},
+	{"Image", "Picture"}, -- Picture Picker
+	--{"Alliance", "Alliance"}, -- Alliance Picker (Dropdown of available Alliances)
+	{"Landable", "Integer"},
+	{"Traffic", "Integer"},
+	{"Militia", "Integer"},
+	}
+
+WeaponEditorLayout = {
+	{"Name", "String"},
+	{"Picture", "Picture"}, -- Picture Picker
+	{"Image", "Picture"}, -- Picture Picker
+	{"MSRP", "Integer"},
+	{"Payload", "Integer"},
+	{"Velocity", "Integer"},
+	{"Lifetime", "Integer"},
+	{"FireDelay", "Integer"},
+	}
+
+EditorLayouts = {
+	Alliance=AllianceEditorLayout,
+	Engine=EngineEditorLayout,
+	Model=ModelEditorLayout,
+	Planet=PlanetEditorLayout,
+	Weapon=WeaponEditorLayout,
+}
+
 --- Creates a generic list of Component buttons
 -- TODO: This window should have an "Add Component" button
 function componentViewer(kind,listFunc,getStr)
@@ -30,21 +88,62 @@ function componentViewer(kind,listFunc,getStr)
 	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",kind,kind)))
 end
 
---- Creates an attribute setter for a particular Component
 function showComponent(kind,name,getterFunc)
     if kind=="Planet" then
         planet = Planet.Get(name)
         Epiar.focusCamera(planet:GetID())
     end
 	if infoWindows[name] ~= nil then return end
+	local width=250
 	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,200,400,name,
-		UI.newPicture( 20,25,160,100,name),
-		UI.newButton( 80,350,100,30,"Save", string.format("saveInfo('%s')",name )),
-		UI.newButton( 10,350,60,30,"Pic", string.format("ImagePicker()",name )),
-		UI.newButton( 175,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
-	local theTexts = infoTable(theInfo,theWin)
-	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theTexts}
+	local theWin = UI.newWindow(150,100,width,600,name,
+		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+	
+	local theFields = {}
+	local thePics = {}
+	yoff=40 -- Buffer for the titlebar?
+	for i,layout in ipairs(EditorLayouts[kind]) do
+		local title,fieldType = layout[1],layout[2]
+		local field = nil
+		local value = theInfo[title]
+		if fieldType == "String" then
+			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			theWin:add(field)
+			yoff = yoff+20
+		elseif fieldType == "Integer" then
+			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			theWin:add(field)
+			yoff = yoff+20
+		elseif fieldType == "Number" then
+			if math.floor(value) ~= value then
+				value = string.format("%.2f",value)
+			end
+			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			theWin:add(field)
+			yoff = yoff+20
+		elseif fieldType == "Picture" then
+			theWin:add(UI.newLabel( 10, yoff+25, title..":"))
+			yoff = yoff+35
+			local pic = UI.newPicture( 10, yoff, width-20, 100, value)
+			theWin:add(pic)
+			thePics[title] = pic
+			yoff = yoff+100
+			field = UI.newTextbox( 10, yoff,width-30,1, value)
+			theWin:add(field)
+			yoff = yoff+20
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker('%s','%s')",name,title)))
+			yoff = yoff+20+5
+		else
+			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
+		end
+		theFields[title] = field
+	end
+	
+	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo('%s')",name )) )
+	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics}
 end
 
 --- Lays out a series of labels and textboxes
@@ -209,14 +308,16 @@ function showShipInfo(ship)
 	shipInfoWin:add(UI.newButton( 80,350,100,30,"Save", string.format("infoWindows[%d].win:close();infoWindows[%d]=nil",shipID,shipID) ))
 end
 
-function ImagePicker(textBox)
+function ImagePicker(name,title)
 	if imagePickerWin ~=nil then return end
-	imagePickerWin = UI.newWindow(700,150,250,500, "Image Picker")
+	imagePickerWin = UI.newWindow(700,150,250,700, "Image Picker")
 	--TODO: Preserve the textbox assosciated with this window.
 	--      When imagePick is called, set the textbox value to the image path
 
-	function imagePick(path)
+	function imagePick(name,title,path)
 		if imagePickerWin ==nil then return end
+		infoWindows[name]["texts"][title]:setText( path )
+		infoWindows[name]["pics"][title]:setPicture( path )
 		imagePickerWin:close()
 		imagePickerWin = nil
 		print( "Picture Path:", path )
@@ -226,7 +327,7 @@ function ImagePicker(textBox)
 	for i,picPath in ipairs(pics) do
 		imagePickerWin:add(
 			UI.newPicture(25,25+300*(i-1),200,200,"Resources/Graphics/"..picPath),
-			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s')","Resources/Graphics/"..picPath )))
+			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s','%s','%s')",name,title,"Resources/Graphics/"..picPath )))
 	end
 end
 
