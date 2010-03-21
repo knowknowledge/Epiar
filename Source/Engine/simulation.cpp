@@ -112,6 +112,7 @@ bool Simulation::Run() {
 
         // Set player model based on simulation xml file settings
         player->SetModel( models->GetModel( playerDefaultModel ) );
+        player->SetEngine( engines->GetEngine( playerDefaultEngine ) );
         sprites->Add( player->GetSprite() );
 
         // Focus the camera on the sprite
@@ -128,7 +129,7 @@ bool Simulation::Run() {
 	// TODO: These are random for now, but they should be set up in a structured network based on the planet locations at some point
 	Gate* g;
 	for(int i=0; i<100; i++){
-		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
+		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
 		sprites->Add(g);
 	}
 
@@ -318,6 +319,12 @@ bool Simulation::Parse( void ) {
 				playerDefaultModel = (char *)key;
 				xmlFree( key );
 				Log::Message( "playerDefaultModel is %s.", playerDefaultModel.c_str() );
+			}
+			if( !strcmp( sectionName, "playerDefaultEngine" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				playerDefaultEngine = (char *)key;
+				xmlFree( key );
+				Log::Message( "playerDefaultEngine is %s.", playerDefaultEngine.c_str() );
 			}
 		}
 		

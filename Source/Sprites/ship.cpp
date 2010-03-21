@@ -14,7 +14,8 @@
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/xml.h"
-
+#include "Sprites/effects.h"
+#include "Audio/sound.h"
 
 /**\class Ship
  * \brief Ship handling. */
@@ -24,6 +25,7 @@
 Ship::Ship() : nonplayersound( 0.4f )
 {
 	model = NULL;
+	engine = NULL;
 	flareAnimation = NULL;
 	
 	/* Initalize ship's condition */
@@ -36,6 +38,15 @@ Ship::Ship() : nonplayersound( 0.4f )
 	SetAngle( float( rand() %360 ) );
 }
 
+/**\brief Ship Destructor
+ */ 
+Ship::~Ship() {
+	if(flareAnimation) {
+		delete flareAnimation;
+		flareAnimation=NULL;
+	}
+}
+
 /**\brief Sets the ship model.
  * \param Model Ship model to use
  * \return true if successful
@@ -46,7 +57,28 @@ bool Ship::SetModel( Model *model ) {
 		this->model = model;
 		
 		SetImage( model->GetImage() );
-		SetFlareAnimation( model->GetFlareAnimation() );
+		
+		return( true );
+	}
+	
+	return( false );
+}
+
+/**\brief Sets the ship engine.
+ * \param Engine Engine to use
+ * \return true if successful
+ * \sa Engine
+ */
+bool Ship::SetEngine( Engine *engine ) {
+	assert( engine );
+	{
+		this->engine = engine;
+		
+		// Creates a new Flare Animation specific for this Ship
+		if( flareAnimation )
+			delete flareAnimation;
+		flareAnimation = new Animation( engine->GetFlareAnimation() );
+		flareAnimation->Reset();
 		
 		return( true );
 	}
@@ -69,6 +101,18 @@ Sprite *Ship::GetSprite() {
 string Ship::GetModelName() {
 	if (model){
 		return model->GetName();
+	} else {
+		return "";
+	}
+}
+
+/**\brief Returns the engine name.
+ * \return string containing model name
+ * \sa Engine::Getname()
+ */
+string Ship::GetEngineName() {
+	if (engine){
+		return engine->GetName();
 	} else {
 		return "";
 	}
@@ -117,8 +161,10 @@ void Ship::Accelerate( void ) {
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
 	float speed = model->GetMaxSpeed();
 
-	momentum += Coordinate( trig->GetCos( angle ) * model->GetAcceleration() * Timer::GetDelta(),
-	                         -1 * trig->GetSin( angle ) * model->GetAcceleration() * Timer::GetDelta() );
+	float acceleration = engine->GetForceOutput() / model->GetMass();
+
+	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
+	                         -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
 
 	momentum.EnforceBoundaries(speed,speed,speed,speed);
 	
@@ -127,10 +173,11 @@ void Ship::Accelerate( void ) {
 	status.isAccelerating = true;
 	// Play engine sound
 	float engvol = OPTION(float,"options/sound/engines");
+	Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
 	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
 		engvol = engvol * this->nonplayersound;
-	this->model->PlayEngineThrust( engvol,
-			GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+	this->engine->thrustsound->SetVolume( engvol );
+	this->engine->thrustsound->PlayNoRestart( offset );
 }
 
 
@@ -165,20 +212,21 @@ void Ship::Update( void ) {
 	// It Explodes!
 	if( status.hullEnergyAbsorbed >=  (float)model->getMaxEnergyAbsorption() ) {
 		SpriteManager *sprites = SpriteManager::Instance();
+
+		// Play explode sound
+		if(OPTION(int, "options/sound/explosions")) {
+			Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
+			explodesnd->Play(
+				this->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+		}
+
+		// Create Explosion
+		sprites->Add(
+			new Effect(this->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
+
+		// Remove this Sprite from the
 		sprites->Delete( (Sprite*)this );
 	}
-}
-
-/**\brief Set's the engine flare animation.
- * \param filename A string to a new file
- */
-bool Ship::SetFlareAnimation( string filename ) {
-	if( flareAnimation )
-		delete flareAnimation;
-	
-	flareAnimation = new Animation( filename );
-	
-	return true;
 }
 
 /**\brief Draw function.

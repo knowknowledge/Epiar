@@ -7,15 +7,15 @@
  */
 
 #include "includes.h"
-#include "Engine/models.h"
 #include "Utilities/components.h"
+#include "Engine/models.h"
 
 /**\class Models
  * \brief Handles ship models. */
 
 /**\brief Creates an empty Model object.
  */
-Model::Model(): image(NULL),engine(NULL),mass(0.0){
+Model::Model(): image(NULL),mass(0.0){
 	SetName("dead");
 }
 
@@ -24,7 +24,6 @@ Model::Model(): image(NULL),engine(NULL),mass(0.0){
 Model& Model::operator=(const Model& other) {
 	name = other.name;
 	image = other.image;
-	engine = other.engine;
 	mass = other.mass;
 	thrustOffset = other.thrustOffset;
 	rotPerSecond = other.rotPerSecond;
@@ -37,7 +36,6 @@ Model& Model::operator=(const Model& other) {
 /**\brief Creates a Model with the given parameters.
  * \param _name Name of the ship
  * \param _image Image of the ship
- * \param _engine Default Engine of the ship
  * \param _mass Mass of the ship
  * \param _thrustOffset For animation
  * \param _rotPerSecond Rotation per second
@@ -45,10 +43,9 @@ Model& Model::operator=(const Model& other) {
  * \param _maxEnergyAbsorption Maximum damage it can take
  * \param _msrp Price
  */
-Model::Model( string _name, Image* _image, Engine* _engine, float _mass,
+Model::Model( string _name, Image* _image, float _mass,
 		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp) :
 	image(_image),
-	engine(_engine),
 	mass(_mass),
 	thrustOffset(_thrustOffset),
 	rotPerSecond(_rotPerSecond),
@@ -71,14 +68,6 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 		mass = (float)atof( value.c_str() );
 	} else PPA_MATCHES( "rotationsPerSecond" ) {
 		rotPerSecond = static_cast<float>(atof( value.c_str() ));
-	} else PPA_MATCHES( "engine" ) {
-		Engines *engines = Engines::Instance();
-
-		engine = engines->GetEngine( value );
-
-		if( engine == NULL ) {
-			Log::Error( "Model parser could not find engine '%s'.", value.c_str() );
-		}
 	} else PPA_MATCHES( "thrustOffset" ) {
 		thrustOffset = (short)atoi( value.c_str() );
 	} else PPA_MATCHES( "maxSpeed" ) {
@@ -116,7 +105,6 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
-	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngine()->GetName().c_str() );
 	snprintf(buff, sizeof(buff), "%1.2f", this->GetMass() );
 	xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%1.2f", this->GetRotationsPerSecond() );
@@ -133,39 +121,10 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	return section;
 }
 
-/**\brief Retrieves the acceleration rate.
- */
-float Model::GetAcceleration( void ) {
-	if( engine ) {
-		return( engine->GetForceOutput() / (float)mass );
-	} else {
-		return( 0. ); // no engine
-	}
-}
-
-/**\brief Retrieves Flare animation.
- */
-string Model::GetFlareAnimation( void ) {
-	if( engine ) {
-		return( engine->GetFlareAnimation() );
-	} else {
-		return string("Error");
-	}
-}
-
-/**\brief Plays the Engine sound.
- */
-void Model::PlayEngineThrust( float volume, Coordinate offset ){
-	this->engine->thrustsound->SetVolume( volume );
-	this->engine->thrustsound->PlayNoRestart( offset );
-}
-
 /**\fn Model::GetRotationsPerSecond()
  *  \brief Retrieves the rotation per second of the model.
  * \fn Model::GetMaxSpeed()
  *  \brief Retrieves the maximum speed
- * \fn Model::GetEngine()
- *  \brief Retrieves a pointer to the Engine
  * \fn Model::GetMass()
  *  \brief Retrieves the mass of the Model
  * \fn Model::GetImage()

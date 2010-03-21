@@ -36,6 +36,7 @@ class AI_Lua{
 		static int ShipChangeWeapon(lua_State* L);
 		static int ShipAddAmmo(lua_State* L);
 		static int ShipSetModel(lua_State* L);
+		static int ShipSetEngine(lua_State* L);
 
 		// Current Ship State
 		static int ShipGetType(lua_State* L);

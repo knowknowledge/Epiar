@@ -28,6 +28,7 @@ Effect::Effect(Coordinate pos, string filename, bool looping) {
 /**\brief Updates the Effect
  */
 void Effect::Update( void ) {
+	Sprite::Update();
 	if( visual->Update() == true ) {
 		SpriteManager::Instance()->Delete( (Sprite*)this );
 	}
@@ -37,7 +38,7 @@ void Effect::Update( void ) {
  */
 void Effect::Draw( void ) {
 	Coordinate pos = GetWorldPosition();
-	visual->Draw( pos.GetScreenX(), pos.GetScreenY(), 0.0);
+	visual->Draw( pos.GetScreenX(), pos.GetScreenY(), this->GetAngle());
 }
 
 /**\fn Effect::GetDrawOrder( )

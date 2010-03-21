@@ -706,9 +706,9 @@ int Lua::getModelInfo(lua_State *L) {
 
     lua_newtable(L);
 	setField("Name", model->GetName().c_str());
+	setField("Image", model->GetImage()->GetPath().c_str());
 	setField("Mass", model->GetMass());
 	setField("Thrust", model->GetThrustOffset());
-	setField("Engine", model->GetEngine()->GetName().c_str() );
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
@@ -742,6 +742,7 @@ int Lua::getPlanetInfo(lua_State *L) {
 	// Populate the Info Table.
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
+	setField("Image", p->GetImage()->GetPath().c_str());
 	setField("Alliance", p->GetAlliance().c_str());
 	setField("Traffic", p->GetTraffic());
 	setField("Militia", p->GetMilitiaSize());
@@ -760,6 +761,8 @@ int Lua::getWeaponInfo(lua_State *L) {
 
     lua_newtable(L);
 	setField("Name", weapon->GetName().c_str());
+	setField("Image", weapon->GetImage()->GetPath().c_str());
+	setField("Picture", weapon->GetPicture()->GetPath().c_str());
 	setField("Payload", weapon->GetPayload());
 	setField("Velocity", weapon->GetVelocity());
 	setField("Acceleration", weapon->GetAcceleration());
@@ -863,13 +866,14 @@ int Lua::setInfo(lua_State *L) {
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
 		//       Thrust Sound
-		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
+		//       Pic (Store Image)
+		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,oldEngine->GetPicture());
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
+		string imageName = getStringField(2,"Image");
 		float mass = getNumField(2,"Mass");
 		int thrust = getIntField(2,"Thrust");
-		string engine = getStringField(2,"Engine");
 		float rot = getNumField(2,"Rotation");
 		float speed = getNumField(2,"MaxSpeed");
 		int hull = getIntField(2,"MaxHull");
@@ -877,10 +881,7 @@ int Lua::setInfo(lua_State *L) {
 
 		Model* oldModel = Models::Instance()->GetModel(name);
 		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Image
-		//       Engine
-		Model newModel(name,oldModel->GetImage(),oldModel->GetEngine(),mass,thrust,rot,speed,hull,msrp);
+		Model newModel(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
 		*oldModel = newModel;
 
 	} else if(kind == "Planet"){
@@ -931,6 +932,8 @@ int Lua::setInfo(lua_State *L) {
 		return 0;
 	} else if(kind == "Weapon"){
 		string name = getStringField(2,"Name");
+		string imageName = getStringField(2,"Image");
+		string pictureName = getStringField(2,"Picture");
 		int payload = getIntField(2,"Payload");
 		int velocity = getIntField(2,"Velocity");
 		int acceleration = getIntField(2,"Acceleration");
@@ -941,12 +944,10 @@ int Lua::setInfo(lua_State *L) {
 		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
 		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
-		//       Image
-		//       Picture (Image that gets shown at the store)
 		//       Ammo Type
 		//       Ammo Consumption
 		//       Sound
-		*oldWeapon = Weapon(name,oldWeapon->GetImage(),oldWeapon->GetPicture(),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
+		*oldWeapon = Weapon(name,Image::Get(imageName),Image::Get(pictureName),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());

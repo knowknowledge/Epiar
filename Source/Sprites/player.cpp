@@ -27,10 +27,12 @@ Player::Player() {
 
 }
 
+Player::~Player() {
+	pInstance = NULL;
+	Log::Message( "You have been destroyed..." );
+}
+
 void Player::Update( void ) {
 	Ship::Update();
-	if( getHullIntegrityPct() <= 0) {
-		Log::Message( "You have been destroyed..." );
-	}
 }
 

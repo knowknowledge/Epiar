@@ -48,6 +48,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
+		{"SetEngine", &AI_Lua::ShipSetEngine},
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
 		{"GetType", &AI_Lua::ShipGetType},
@@ -103,21 +104,23 @@ AI* AI_Lua::checkShip(lua_State *L, int index){
  */
 int AI_Lua::newShip(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 4)
-		return luaL_error(L, "Got %d arguments expected 4 (x, y, model, script)", n);
+	if (n != 5)
+		return luaL_error(L, "Got %d arguments expected 5 (x, y, model, engine, script)", n);
 
 	double x = luaL_checknumber (L, 1);
 	double y = luaL_checknumber (L, 2);
 	string modelname = luaL_checkstring (L, 3);
-	string statemachine = luaL_checkstring (L, 4);
+	string enginename = luaL_checkstring (L, 4);
+	string statemachine = luaL_checkstring (L, 5);
 
-	//Log::Message("Creating new Ship (%f,%f) (%s) (%s)",x,y,modelname.c_str(),scriptname.c_str());
+	//Log::Message("Creating new Ship (%f,%f) (%s) (%s) (%s)",x,y,modelname.c_str(),enginename.c_str(),statemachine.c_str());
 
 	// Allocate memory for a pointer to object
 	AI* s;
 	s = new AI(statemachine);
 	s->SetWorldPosition( Coordinate(x, y) );
 	s->SetModel( Models::Instance()->GetModel(modelname) );
+	s->SetEngine( Engines::Instance()->GetEngine(enginename) );
 	Lua::pushSprite(L,s);
 
 	// Add this ship to the SpriteManager
@@ -329,6 +332,23 @@ int AI_Lua::ShipSetModel(lua_State* L){
 	return 0;
 
 }
+
+/**\brief Lua callable function to set the ship engine.
+ * \sa Ship::SetEngine(Engine*)
+ */
+int AI_Lua::ShipSetEngine(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string engineName = luaL_checkstring (L, 2);
+		(ai)->SetEngine( Engines::Instance()->GetEngine(engineName) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n); 
+	}
+	return 0;
+}	
+
 
 int AI_Lua::ShipGetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments

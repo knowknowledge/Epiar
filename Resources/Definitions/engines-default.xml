@@ -10,6 +10,7 @@
     <foldDrive>0</foldDrive>
     <flareAnimation>Resources/Animations/thrust.ani</flareAnimation>
     <thrustSound>Resources/Audio/Engines/22455__nathanshadow__Thruster_Level_II.ogg</thrustSound>
+    <picName>Resources/Graphics/thruster.png</picName>
   </engine>
   <engine>
     <name>Ion Engines</name>
@@ -18,5 +19,6 @@
     <foldDrive>1</foldDrive>
     <flareAnimation>Resources/Animations/thrust2.ani</flareAnimation>
     <thrustSound>Resources/Audio/Engines/22455__nathanshadow__Thruster_Level_II.ogg</thrustSound>
+    <picName>Resources/Graphics/engine_upgrade.png</picName>
   </engine>
 </engines>
