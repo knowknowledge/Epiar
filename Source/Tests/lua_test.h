@@ -9,7 +9,7 @@
 #ifndef __H_DEBUG_LUA__
 #define __H_DEBUG_LUA__
 
-void lua_test(void);
+int lua_test(int argc, char **argv);
 
 #endif // _H_DEBUG_LUA__
 

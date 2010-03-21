@@ -1,9 +1,9 @@
 #include "includes.h"
 #include "common.h"
-#include "Debug/lua_test.h"
 #include "Utilities/lua.h"
 
-void lua_test(void) {
+int lua_test(int argc, char **argv) {
+/**\todo Hmm, this doesn't seem to work.
 	LuaScript *script = new LuaScript("test.lua");
 
 	char buff[256] = {0};
@@ -14,8 +14,11 @@ void lua_test(void) {
 		if(error) {
 			fprintf(stderr, "%s", lua_tostring(LuaScript::luaVM, -1));
 			lua_pop(LuaScript::luaVM, 1); // pop error message from the stack
+			return -1;
 		}
 	}
-
+	return 0;
+	 */
+	 return 0;
 }
 

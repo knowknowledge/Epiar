@@ -8,11 +8,10 @@
 
 #include "includes.h"
 #include "common.h"
-#include "Debug/graphics.h"
 #include "Graphics/image.h"
 #include "Graphics/video.h"
 
-void graphics_demo(void) {
+int graphics_demo(int argc, char **argv) {
 	Video::Erase();
 
 	// draw a grid
@@ -38,10 +37,11 @@ void graphics_demo(void) {
 	Image frigate("terran-frigate.png");
 	frigate.DrawCentered(400, 300, 45.);
 
-	Visitor10->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
+	SansSerif->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
 
 	Video::Update();
 
 	SDL_Delay(2500);
+	return 0;
 }
 
