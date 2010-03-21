@@ -21,7 +21,7 @@ class Engine : public Component {
 	public:
 		Engine();
 		Engine& operator= (const Engine&);
-		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation);
+		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic);
 
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
@@ -32,6 +32,7 @@ class Engine : public Component {
 		string GetFlareAnimation( void ) { return flareAnimation; }
 		short int GetMSRP( void ) { return msrp; }
 		short int GetFoldDrive( void ) { return foldDrive; }
+		Image* GetPicture( void ) { return pic; }
 		
 		Sound *thrustsound;
 
@@ -40,6 +41,7 @@ class Engine : public Component {
 		short int msrp;
 		bool foldDrive;
 		string flareAnimation;
+		Image *pic;
 };
 
 // Class that holds list of all planets; manages them

@@ -13,4 +13,5 @@
 	<outfits></outfits>
 	<commodities></commodities>
 	<playerDefaultModel>Terran FV-5 Frigate</playerDefaultModel>
+	<playerDefaultEngine>Altaire Corp. NM66 Sublight Thrusters</playerDefaultEngine>
 </simulation>

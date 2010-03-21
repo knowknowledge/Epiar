@@ -44,6 +44,7 @@ class Simulation {
 		Technologies *technologies;
 		
 		string playerDefaultModel;
+		string playerDefaultEngine;
 
 		static float currentFPS;
 		static bool paused;

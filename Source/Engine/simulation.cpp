@@ -112,6 +112,7 @@ bool Simulation::Run() {
 
         // Set player model based on simulation xml file settings
         player->SetModel( models->GetModel( playerDefaultModel ) );
+        player->SetEngine( engines->GetEngine( playerDefaultEngine ) );
         sprites->Add( player->GetSprite() );
 
         // Focus the camera on the sprite
@@ -318,6 +319,12 @@ bool Simulation::Parse( void ) {
 				playerDefaultModel = (char *)key;
 				xmlFree( key );
 				Log::Message( "playerDefaultModel is %s.", playerDefaultModel.c_str() );
+			}
+			if( !strcmp( sectionName, "playerDefaultEngine" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				playerDefaultEngine = (char *)key;
+				xmlFree( key );
+				Log::Message( "playerDefaultEngine is %s.", playerDefaultEngine.c_str() );
 			}
 		}
 		
