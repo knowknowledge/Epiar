@@ -42,6 +42,7 @@ Simulation::Simulation( void ) {
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	technologies = Technologies::Instance();
+	players = Players::Instance();
 	currentFPS = 0.;
 }
 
@@ -54,6 +55,7 @@ Simulation::Simulation( string filename ) {
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	technologies = Technologies::Instance();
+	players = Players::Instance();
 	currentFPS = 0.;
 
 	this->filename = filename;
@@ -108,11 +110,10 @@ bool Simulation::Run() {
 	SpriteManager *sprites = SpriteManager::Instance();
 
     if( 0 == OPTION(int,"options/development/editor-mode") ){
+		Player::LoadLast();
         Player *player = Player::Instance();
 
         // Set player model based on simulation xml file settings
-        player->SetModel( models->GetModel( playerDefaultModel ) );
-        player->SetEngine( engines->GetEngine( playerDefaultEngine ) );
         sprites->Add( player->GetSprite() );
 
         // Focus the camera on the sprite
@@ -215,6 +216,8 @@ bool Simulation::Run() {
 		}
 	}
 
+	Players::Instance()->Save(playersFilename);
+
 	Log::Message("Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
 }
@@ -314,17 +317,11 @@ bool Simulation::Parse( void ) {
 				xmlFree( key );
 				Log::Message( "Technologies filename is %s.", technologiesFilename.c_str() );
 			}
-			if( !strcmp( sectionName, "playerDefaultModel" ) ) {
+			if( !strcmp( sectionName, "players" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-				playerDefaultModel = (char *)key;
+				playersFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "playerDefaultModel is %s.", playerDefaultModel.c_str() );
-			}
-			if( !strcmp( sectionName, "playerDefaultEngine" ) ) {
-				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-				playerDefaultEngine = (char *)key;
-				xmlFree( key );
-				Log::Message( "playerDefaultEngine is %s.", playerDefaultEngine.c_str() );
+				Log::Message( "Players filename is %s.", playersFilename.c_str() );
 			}
 		}
 		
@@ -353,6 +350,9 @@ bool Simulation::Parse( void ) {
 	}
 	if( planets->Load( planetsFilename ) != true ) {
 		Log::Warning( "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
+	}
+	if( players->Load( playersFilename ) != true ) {
+		Log::Error( "There was an error loading the players from '%s'.", playersFilename.c_str() );
 	}
 
 	return true;

@@ -9,9 +9,8 @@
 	<alliances>Resources/Definitions/alliances-default.xml</alliances>
 	<weapons>Resources/Definitions/weapons-default.xml</weapons>
 	<technologies>Resources/Definitions/technologies-default.xml</technologies>
+	<players>Resources/Definitions/saved-games.xml</players>
 	<armor></armor>
 	<outfits></outfits>
 	<commodities></commodities>
-	<playerDefaultModel>Terran FV-5 Frigate</playerDefaultModel>
-	<playerDefaultEngine>Altaire Corp. NM66 Sublight Thrusters</playerDefaultEngine>
 </simulation>

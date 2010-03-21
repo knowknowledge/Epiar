@@ -56,7 +56,11 @@ bool SpriteManager::DeleteSprite( Sprite *sprite ) {
 		Camera::Instance()->Focus(NULL);
 	}
 	GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite );
-	delete sprite;
+	// Delete the sprite itself unless it is a Planet or Player.
+	// Planets and Players are special sprites since they are Components and get saved.
+	if( !(sprite->GetDrawOrder() & (DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET)) ) {
+		delete sprite;
+	}
 	return true;
 }
 

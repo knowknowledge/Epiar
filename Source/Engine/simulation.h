@@ -15,6 +15,7 @@
 #include "Sprites/planets.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
+#include "Sprites/player.h"
 
 class Simulation {
 	public:
@@ -34,7 +35,7 @@ class Simulation {
 		bool Parse( void );
 	
 		string filename;
-		string planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename, technologiesFilename;
+		string planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename, technologiesFilename, playersFilename;
 		
 		Planets *planets;
 		Engines *engines;
@@ -42,10 +43,8 @@ class Simulation {
 		Weapons *weapons;
 		Alliances *alliances;
 		Technologies *technologies;
+		Players *players;
 		
-		string playerDefaultModel;
-		string playerDefaultEngine;
-
 		static float currentFPS;
 		static bool paused;
 };

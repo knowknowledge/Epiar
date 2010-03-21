@@ -13,9 +13,16 @@
 #include "includes.h"
 #include "Sprites/ship.h"
 
-class Player : public Ship {
+class Player : public Ship , public Component {
 	public:
 		static Player *Instance();
+		static void LoadLast();
+		string GetName() { return name; }
+
+		bool parserCB( string sectionName, string subName, string value );
+		xmlNodePtr ToXMLNode(string componentName);
+
+		friend class Players;
 
 	protected:
 		Player();
@@ -32,6 +39,22 @@ class Player : public Ship {
 
 	private:
 		static Player *pInstance;
+		string name;
+};
+
+class Players : public Components {
+	public:
+		static Players *Instance();
+		Player* GetPlayer(string name) { return (Player*) this->Get(name); }
+		Component* newComponent() { return new Player(); }
+
+	protected:
+		Players() {};
+		Players( const Players & );
+		Players& operator= (const Players&);
+
+	private:
+		static Players *pInstance;
 };
 
 #endif // __H_PLAYER__
