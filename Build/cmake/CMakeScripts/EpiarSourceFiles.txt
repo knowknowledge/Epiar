@@ -1,6 +1,5 @@
 # Sets the source files to use
 set (Epiar_src
-	${Epiar_SRC_DIR}/ArgParser.h
 	${Epiar_SRC_DIR}/main.cpp
 	${Epiar_SRC_DIR}/common.h
 	${Epiar_SRC_DIR}/defines.h
@@ -112,6 +111,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_window.h
 	)
 set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Utilities/argparser.h
+	${Epiar_SRC_DIR}/Utilities/argparser.cpp
 	${Epiar_SRC_DIR}/Utilities/camera.h
 	${Epiar_SRC_DIR}/Utilities/cmath.h
 	${Epiar_SRC_DIR}/Utilities/coordinate.h
@@ -153,6 +154,16 @@ if (WIN32)
 		${Epiar_SRC_DIR}/epiar.rc
 		)
 endif (WIN32)
+
+# Add tests
+if (COMPILE_TESTS)
+	# Just add all .cpp and .h files in the test directory
+	file(GLOB Epiar_Tests "${Epiar_SRC_DIR}/Tests/*.cpp" "${Epiar_SRC_DIR}/Tests/*.h")
+	set (Epiar_src ${Epiar_src}
+			${Epiar_Tests}
+		)
+endif (COMPILE_TESTS)
+
 
 # Add groups for source file
 source_group(AI REGULAR_EXPRESSION ".*/AI/.*")

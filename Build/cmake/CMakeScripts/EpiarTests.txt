@@ -1,0 +1,18 @@
+# Sets up tests to be run (testing only works in debug mode)
+
+if (COMPILE_TESTS)
+	enable_testing()
+	get_target_property(EpiarBinName EpiarBIN DEBUG_OUTPUT_NAME)
+	set(EpiarCmd "${Epiar_OUT_DIR}/${EpiarBinName}")
+
+	# Test lua
+	add_test(Lua_test ${EpiarCmd} --run-test=lua_test)
+
+
+
+
+
+
+endif (COMPILE_TESTS)
+
+# vim:ft=cmake

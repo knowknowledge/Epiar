@@ -37,9 +37,13 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(EpiarBIN ${EpiarLIBS})
 set_target_properties(EpiarBIN PROPERTIES
 	OUTPUT_NAME	Epiar
+	DEBUG_OUTPUT_NAME Epiar_debug
 	RUNTIME_OUTPUT_DIRECTORY ${Epiar_OUT_DIR}
 #	VERSION "${EPIAR_VERSION}")
 	)
+
+# Include tests
+include ("${SCRIPT_DIR}/EpiarTests.txt")
 
 # Footer
 include ("${SCRIPT_DIR}/EpiarFooter.txt")
