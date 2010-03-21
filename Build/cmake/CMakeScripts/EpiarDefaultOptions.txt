@@ -57,6 +57,7 @@ set(DEFAULT_EPIAR_OPTIONS FALSE CACHE BOOL "Reset Epiar Options to default?" FOR
 # Epiar options
 option(COMPILE_USE_PRECOMPILED_HEADERS "use precompiled headers?" true)
 option(COMPILE_TESTS "compiled Epiar tests?")
+option(COMPILE_DOXYGEN "compile documentation?" true)
 option(USE_PHYSICSFS "Use physfs filesystem?")
 if (WIN32)
 	option(USE_INTERNAL_LUA "Use Lua source in Epiar?")

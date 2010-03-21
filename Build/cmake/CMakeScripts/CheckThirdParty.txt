@@ -184,13 +184,14 @@ CHECK_3RD_PARTY("FTGL/ftgl-2.1.3~rc5/src"
 set(THIRDPARTY_DOWNLOAD FALSE CACHE BOOL "Download/Build missing dependencies?" FORCE)
 
 # Look for Doxygen
-find_package(Doxygen)
-if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
-	option(COMPILE_DOXYGEN "compile documentation?" true)
-	if (COMPILE_DOXYGEN)
+if (COMPILE_DOXYGEN)
+	find_package(Doxygen)
+	if (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
 		add_custom_target(docs "${DOXYGEN_EXECUTABLE}"
 			WORKING_DIRECTORY ${Epiar_SRC_DIR})
-	endif (COMPILE_DOXYGEN)
-endif (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
+	else (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
+		message(ERROR "Doxygen not found, cannot compile documentation.")
+	endif (DOXYGEN_FOUND AND DOXYGEN_DOT_FOUND)
+endif (COMPILE_DOXYGEN)
 
 # vim:ft=cmake
