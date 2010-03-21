@@ -21,6 +21,7 @@ class Player : public Ship {
 		Player();
 		Player( const Player & );
 		Player& operator= (const Player&);
+		~Player();
 
 		void Update( void );
 
