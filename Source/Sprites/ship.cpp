@@ -14,7 +14,8 @@
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/xml.h"
-
+#include "Sprites/effects.h"
+#include "Audio/sound.h"
 
 /**\class Ship
  * \brief Ship handling. */
@@ -165,6 +166,19 @@ void Ship::Update( void ) {
 	// It Explodes!
 	if( status.hullEnergyAbsorbed >=  (float)model->getMaxEnergyAbsorption() ) {
 		SpriteManager *sprites = SpriteManager::Instance();
+
+		// Play explode sound
+		if(OPTION(int, "options/sound/explosions")) {
+			Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
+			explodesnd->Play(
+				this->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+		}
+
+		// Create Explosion
+		sprites->Add(
+			new Effect(this->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
+
+		// Remove this Sprite from the
 		sprites->Delete( (Sprite*)this );
 	}
 }

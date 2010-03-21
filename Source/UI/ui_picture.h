@@ -24,9 +24,8 @@ class Picture: public Widget {
 		void Set( string filename );
 
 		// Widget functions
-		// TODO: When Image::resize works, just return w and h
-		int GetWidth( void ) {return (bitmap)?bitmap->GetWidth():w;} 
-		int GetHeight( void ) {return (bitmap)?bitmap->GetHeight():h;} 
+		int GetWidth( void ) {return w;}
+		int GetHeight( void ) {return h;}
 
 		string GetName( void ) {return string("Picture");}
 	private:
