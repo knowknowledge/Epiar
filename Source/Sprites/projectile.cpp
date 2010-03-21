@@ -11,6 +11,7 @@
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
 #include "Sprites/ship.h"
+#include "Sprites/effects.h"
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
 
@@ -53,6 +54,13 @@ void Projectile::Update( void ) {
 	if( impact != NULL && impact->GetID() != ownerID) {
 		((Ship*)impact)->Damage( weapon->GetPayload() );
 		sprites->Delete( (Sprite*)this );
+		
+		// Create a fire burst where this projectile hit the ship's shields.
+		// TODO: This shows how much we need to improve our collision detection.
+		Effect* hit = new Effect(this->GetWorldPosition(), "Resources/Animations/shield.ani", 0);
+		hit->SetAngle( -this->GetAngle() );
+		hit->SetMomentum( impact->GetMomentum() );
+		sprites->Add( hit );
 	}
 	if (( Timer::GetTicks() > secondsOfLife + start )) {
 		sprites->Delete( (Sprite*)this );
