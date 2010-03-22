@@ -44,20 +44,27 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
  *  - Calls any cleanup code
  */
 int main( int argc, char **argv ) {
+#ifdef _WIN32
+	// This attaches a console to the parent process if it has a console
+	AttachConsole(ATTACH_PARENT_PROCESS);
+	freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
+	freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
+#endif //_WIN32
+
 	// Parse command line options first.
 	ArgParser argparser(argc,argv);
-	argparser.SetOpt(SHORT,"h",				"Display help screen");
-	argparser.SetOpt(LONG,"help",			"Display help screen");
-	argparser.SetOpt(SHORT,"v",				"Display program version");
-	argparser.SetOpt(LONG,"version",		"Display program version");
-	argparser.SetOpt(LONG,"editor-mode",	"Puts you in edit mode");
-	argparser.SetOpt(LONG,"no-audio",		"Disables audio");
-	argparser.SetOpt(LONG,"nolog-xml",		"(Default) Disable logging messages to xml files.");
-	argparser.SetOpt(LONG,"log-xml",		"Log messages to xml files.");
-	argparser.SetOpt(LONG,"log-out",		"(Default) Log messages to console.");
-	argparser.SetOpt(LONG,"nolog-out",		"Disable logging messages to console.");
+	argparser.SetOpt(SHORTOPT,"h",				"Display help screen");
+	argparser.SetOpt(LONGOPT,"help",			"Display help screen");
+	argparser.SetOpt(SHORTOPT,"v",				"Display program version");
+	argparser.SetOpt(LONGOPT,"version",			"Display program version");
+	argparser.SetOpt(LONGOPT,"editor-mode",		"Puts you in edit mode");
+	argparser.SetOpt(LONGOPT,"no-audio",		"Disables audio");
+	argparser.SetOpt(LONGOPT,"nolog-xml",		"(Default) Disable logging messages to xml files.");
+	argparser.SetOpt(LONGOPT,"log-xml",			"Log messages to xml files.");
+	argparser.SetOpt(LONGOPT,"log-out",			"(Default) Log messages to console.");
+	argparser.SetOpt(LONGOPT,"nolog-out",		"Disable logging messages to console.");
 #ifdef EPIAR_COMPILE_TESTS
-	argparser.SetOpt(VALUE,"run-test",		"Run specified test");
+	argparser.SetOpt(VALUEOPT,"run-test",		"Run specified test");
 #endif // EPIAR_COMPILE_TESTS
 
 	// These are immediate options (I.E. they stop the argument processing immediately)

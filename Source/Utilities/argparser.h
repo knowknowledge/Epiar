@@ -5,7 +5,7 @@
  * \brief		Command line argument parsing routines.
  */
 
-typedef enum{NOTVALID,SHORT,LONG,VALUE,ARG} argType;
+typedef enum{NOTVALID,SHORTOPT,LONGOPT,VALUEOPT,ARG} argType;
 
 class ArgParser {
 	public:

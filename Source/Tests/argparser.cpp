@@ -21,9 +21,9 @@ int test_argparser(int argc, char **argv){
 	ArgParser argpInst(test_argc,test_argv);
 
 	// Test for arguments
-	argpInst.SetOpt(SHORT,"h","Display help screen");
-	argpInst.SetOpt(LONG,"help","Display help screen");
-	argpInst.SetOpt(VALUE,"answer","Display the answer to life");
+	argpInst.SetOpt(SHORTOPT,"h","Display help screen");
+	argpInst.SetOpt(LONGOPT,"help","Display help screen");
+	argpInst.SetOpt(VALUEOPT,"answer","Display the answer to life");
 
 	if ( argpInst.HaveShort("h"))
 		cout<<"Success: Short option."<<endl;

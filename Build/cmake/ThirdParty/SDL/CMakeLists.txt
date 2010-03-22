@@ -106,11 +106,14 @@ set_target_properties (${SDL_LIBRARY_BULK} ${SDL_LIBRARY_MAIN} PROPERTIES
 add_dependencies(${SDL_LIBRARY_MAIN} ${SDL_LIBRARY_BULK})
 # Some defines
 if (WIN32)
+	set(sdl_compile_def
+		NO_STDIO_REDIRECT
+		)
 	if (MSVC)
-		set(sdl_compile_def
+		set(sdl_compile_def ${sdl_compile_def}
 			_CRT_SECURE_NO_WARNINGS)
 	elseif (WATCOM)
-		set(sdl_compile_def
+		set(sdl_compile_def ${sdl_compile_def}
 			WIN32
 			_WINDOWS
 			ENABLE_DIRECTX
