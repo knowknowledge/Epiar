@@ -17,6 +17,5 @@ class Test{
 
 	private:
 		map<string,testFunc> tests;
-		bool validtest;
 		string testname;
 };

@@ -1,4 +1,4 @@
-/**\file		ArgParser.cpp
+/**\file		argparser.cpp
  * \author		Maoserr
  * \date		Created: Saturday, March 20, 2010
  * \date		Modified: Saturday, March 20, 2010
