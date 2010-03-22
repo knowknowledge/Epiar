@@ -709,7 +709,6 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Image", model->GetImage()->GetPath().c_str());
 	setField("Mass", model->GetMass());
 	setField("Thrust", model->GetThrustOffset());
-	setField("Engine", model->GetEngine()->GetName().c_str() );
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
 	setField("MaxHull", model->getMaxEnergyAbsorption());
@@ -867,14 +866,14 @@ int Lua::setInfo(lua_State *L) {
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
 		//       Thrust Sound
-		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare);
+		//       Pic (Store Image)
+		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,oldEngine->GetPicture());
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
 		string imageName = getStringField(2,"Image");
 		float mass = getNumField(2,"Mass");
 		int thrust = getIntField(2,"Thrust");
-		string engine = getStringField(2,"Engine");
 		float rot = getNumField(2,"Rotation");
 		float speed = getNumField(2,"MaxSpeed");
 		int hull = getIntField(2,"MaxHull");
@@ -882,9 +881,7 @@ int Lua::setInfo(lua_State *L) {
 
 		Model* oldModel = Models::Instance()->GetModel(name);
 		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Engine
-		Model newModel(name,Image::Get(imageName),oldModel->GetEngine(),mass,thrust,rot,speed,hull,msrp);
+		Model newModel(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
 		*oldModel = newModel;
 
 	} else if(kind == "Planet"){

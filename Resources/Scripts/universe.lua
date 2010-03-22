@@ -110,27 +110,31 @@ end
 SHIPS={}
 
 --- Creates a new ship
-function createShip(X,Y,model)
+function createShip(X,Y,model,engine)
 	
 	plans = {"Hunter","Trader"}
-	cur_ship = Ship.new(X,Y,model,plans[math.random(2)])
+	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(2)])
 	cur_ship:SetRadarColor(0,255,0)
 	SHIPS[ cur_ship:GetID() ] = cur_ship
 	return cur_ship
 end
 
 --- Creates a random ship
-function createRandomShip(X,Y,Range,shiptypes,weapons)
-	if shiptypes==nil then
-		shiptypes = Epiar.models()
+function createRandomShip(X,Y,Range,models,engines,weapons)
+	if models==nil then
+		models = Epiar.models()
+	end
+	if engines==nil then
+		engines = Epiar.engines()
 	end
 	if weapons==nil then
 		weapons = Epiar.weapons()
 	end
 	X = X + math.random(Range)-Range/2
 	Y = Y + math.random(Range)-Range/2
-	model = shiptypes[math.random(#shiptypes)]
-	s = createShip(X,Y,model)
+	model = models[math.random(#models)]
+	engine = engines[math.random(#engines)]
+	s = createShip(X,Y,model,engine)
 	attachRandomWeapon(s,weapons)
 	return s
 end
@@ -228,9 +232,10 @@ function planetTraffic()
 		currentTraffic = #(Epiar.ships(x,y,influence))
 		if influence>0 and currentTraffic < expectedTraffic then
 			models = planet:GetModels()
+			engines = planet:GetEngines()
 			weapons = planet:GetWeapons()
 			for s=currentTraffic,expectedTraffic do
-				createRandomShip(x,y,influence,models,weapons)
+				createRandomShip(x,y,influence,models,engines,weapons)
 			end
 		end
 	end
@@ -284,6 +289,19 @@ function buyWeapon(weapon)
 		end
 	else
 		HUD.newAlert("You can't afford to buy a "..weapon)
+	end
+	return 1
+end
+
+--- Buys an Engine
+function buyEngine(engine)
+	price = Epiar.getMSRP(engine)
+	if player_credits >= price then
+		player_credits = player_credits - price
+		HUD.newAlert("Enjoy your new "..engine.." system for "..price.." credits")
+		PLAYER:SetEngine(engine)
+	else
+		HUD.newAlert("You can't afford to buy a "..engine)
 	end
 	return 1
 end
@@ -345,7 +363,17 @@ function landingDialog(id)
 	end
 	createTable(armory,width-20,height-100,weapons,weaponButtons)
 
-	storeframe:add(shipyard,armory)
+	-- Outfitting
+	outfitting = UI.newTab("Outfitting")
+	local engines = planet:GetEngines()
+	local engineButtons= {}
+	for i =1,#engines do
+		price = Epiar.getMSRP(engines[i])
+		engineButtons[i] = {engines[i]..": "..price, "buyEngine(\""..engines[i].."\")"}
+	end
+	createTable(outfitting,width-20,height-100,engines,engineButtons)
+
+	storeframe:add(shipyard,armory,outfitting)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))

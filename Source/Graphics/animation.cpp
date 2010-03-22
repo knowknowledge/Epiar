@@ -152,7 +152,7 @@ Animation::Animation() {
  * \param filename File to load.
  * \sa Ani::Get
  */
-Animation::Animation( string& filename ) {
+Animation::Animation( string filename ) {
 	fnum=0;
 	startTime = 0;
 	looping = false;

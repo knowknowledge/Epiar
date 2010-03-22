@@ -19,11 +19,13 @@
 class Ship : public Sprite {
 	public:
 		Ship();
+		~Ship();
 		
 		bool SetModel( Model *model );
-		bool SetFlareAnimation( string filename );
+		bool SetEngine( Engine *engine );
 		Sprite *GetSprite();
 		string GetModelName();
+		string GetEngineName();
 		
 		void Update( void );
 		void Rotate( float direction );
@@ -48,6 +50,7 @@ class Ship : public Sprite {
 		Weapon* getCurrentWeapon();
 		int getCurrentAmmo();
 		map<Weapon*,int> getWeaponsAndAmmo();
+		Engine* GetEngine( void ) const { return engine; }
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
@@ -55,6 +58,7 @@ class Ship : public Sprite {
 		
 	private:
 		Model *model;
+		Engine *engine;
 		Animation *flareAnimation;
 
 		struct {

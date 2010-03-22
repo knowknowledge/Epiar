@@ -28,6 +28,7 @@
     <model>Terran Corvert Mark I</model>
     <model>Terran Corvert Mark II</model>
     <weapon>Missile</weapon>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
   </technology>
   <technology>
     <name>Terran Medium-Scale Commerce</name>

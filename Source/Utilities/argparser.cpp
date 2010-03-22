@@ -1,4 +1,4 @@
-/**\file		ArgParser.cpp
+/**\file		argparser.cpp
  * \author		Maoserr
  * \date		Created: Saturday, March 20, 2010
  * \date		Modified: Saturday, March 20, 2010
@@ -31,9 +31,9 @@
  *		ArgParser argpInst(argc,argv);
  *
  *		// Test for arguments
- *		argpInst.SetOpt(SHORT,"h","Display help screen");
- *		argpInst.SetOpt(LONG,"help","Display help screen");
- *		argpInst.SetOpt(VALUE,"answer","Display the answer to life");
+ *		argpInst.SetOpt(SHORTOPT,"h","Display help screen");
+ *		argpInst.SetOpt(LONGOPT,"help","Display help screen");
+ *		argpInst.SetOpt(VALUEOPT,"answer","Display the answer to life");
  *
  *		if ( argpInst.HaveShort("h") || argpInst.HaveLong("help") )
  *			argpInst.PrintUsage(); // This prints the list of defined options
@@ -59,9 +59,9 @@ ArgParser::ArgParser( int argc, char **argv ){
 /**\brief Set's a valid option and it's description.
  * \details
  * Valid types are:
- *		- SHORT
- *		- LONG
- *		- VALUE
+ *		- SHORTOPT
+ *		- LONGOPT
+ *		- VALUEOPT
  *
  *	\note You don't need to set ARG type as valid.
  */
@@ -86,7 +86,7 @@ bool ArgParser::HaveShort( const string& arg ){
 		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
-	if( this->validopttype[ arg ] != SHORT ){
+	if( this->validopttype[ arg ] != SHORTOPT ){
 		// Option exists, but it's the wrong type
 		return false;
 	}
@@ -104,7 +104,7 @@ bool ArgParser::HaveLong( const string& arg ){
 		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
-	if( this->validopttype[ arg ] != LONG ){
+	if( this->validopttype[ arg ] != LONGOPT ){
 		// Option exists, but it's the wrong type
 		return false;
 	}
@@ -122,7 +122,7 @@ string ArgParser::HaveValue( const string& arg ){
 		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
-	if( this->validopttype[ arg ] != VALUE ){
+	if( this->validopttype[ arg ] != VALUEOPT ){
 		// Option exists, but it's the wrong type
 		return false;
 	}
@@ -154,14 +154,14 @@ void ArgParser::PrintUsage( void ){
 	cout<<"Epiar Options:"<<endl;
 	for ( it=validopt.begin(); it != validopt.end(); it++ ){
 		switch (validopttype[(*it).first]){
-			case SHORT:
+			case SHORTOPT:
 				cout<< "\t-"<< setw(21)<<left<<(*it).first<< "- "<<(*it).second<<endl;
 				break;
-			case LONG:
+			case LONGOPT:
 				cout<< "\t--"<< setw(20)<<left<<(*it).first << "- "<<(*it).second<<endl;
 				break;
-			case VALUE:
-				cout<< "\t--"<< setw(20)<<left<<(*it).first+"=<VALUE>" << "- "<<(*it).second<<endl;
+			case VALUEOPT:
+				cout<< "\t--"<< setw(20)<<left<<(*it).first+"=<value>" << "- "<<(*it).second<<endl;
 				break;
 			default:
 				break;
@@ -210,15 +210,15 @@ void ArgParser::Parse( int argc, char **argv ){
 			case NOTVALID:
 				cout<<"Invalid option: "<<currarg<<endl;
 				break;
-			case SHORT:
+			case SHORTOPT:
 				this->opts[currarg.substr(1)] = true;
 				cout<<"Found short option: "<<currarg.substr(1)<<endl;
 				break;
-			case LONG:
+			case LONGOPT:
 				this->longopts[currarg.substr(2)] = true;
 				cout<<"Found long option: "<<currarg.substr(2)<<endl;
 				break;
-			case VALUE:{
+			case VALUEOPT:{
 				size_t splitpos = currarg.find( '=' );
 				string valuearg = currarg.substr(2,splitpos-2);
 				string valueval;
@@ -265,16 +265,16 @@ argType ArgParser::CheckArg( const string& anarg ){
 			// It is a long or value
 			if ( len > 2 ){
 				if ( anarg.find('=') != anarg.npos )
-					return VALUE;
+					return VALUEOPT;
 				else
-					return LONG;
+					return LONGOPT;
 
 			}else{
 			// It's '--' hmmm, we'll just say it's an ARG
 				return ARG;
 			}
 		}else
-			return SHORT;
+			return SHORTOPT;
 	}else
 	// Just an arg
 		return ARG;

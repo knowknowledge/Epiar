@@ -1,11 +1,11 @@
-/**\file		ArgParser.h
+/**\file		argparser.h
  * \author		Maoserr
  * \date		Created: Saturday, March 20, 2010
  * \date		Modified: Saturday, March 20, 2010
  * \brief		Command line argument parsing routines.
  */
 
-typedef enum{NOTVALID,SHORT,LONG,VALUE,ARG} argType;
+typedef enum{NOTVALID,SHORTOPT,LONGOPT,VALUEOPT,ARG} argType;
 
 class ArgParser {
 	public:

@@ -1,7 +1,7 @@
 -- Use this script for code directly to the Players
 
 PLAYER = Epiar.player()
-player_credits = 1000
+player_credits = 10000
 
 playerCommands = {
 	-- Each command should be a table

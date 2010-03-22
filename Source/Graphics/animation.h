@@ -29,7 +29,7 @@ class Ani: public Resource {
 class Animation {
 	public:
 		Animation();
-		Animation( string& filename );
+		Animation( string filename );
 		bool Update( void );
 		void Draw( int x, int y, float ang );
 		void SetLooping( bool looping ) { this->looping = looping; };

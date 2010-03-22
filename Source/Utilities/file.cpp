@@ -61,6 +61,8 @@ bool File::OpenRead( const string& filename ) {
 #else
 	struct stat fileStatus;
 	int stat_ret = stat(cName, &fileStatus );
+	if (stat_ret)
+		return false;
 	contentSize = fileStatus.st_size;
 #endif
 	validName.assign( filename );

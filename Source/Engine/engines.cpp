@@ -23,7 +23,8 @@ Engine::Engine() :
 	forceOutput(0.0),
 	msrp(0),
 	foldDrive(false),
-	flareAnimation("")
+	flareAnimation(""),
+	pic(NULL)
 {
 	SetName("dead");
 }
@@ -37,6 +38,7 @@ Engine& Engine::operator= (const Engine& other) {
 	msrp = other.msrp;
 	foldDrive = other.foldDrive;
 	flareAnimation = other.flareAnimation;
+	pic = other.pic;
 	return *this;
 }
 
@@ -49,12 +51,13 @@ Engine& Engine::operator= (const Engine& other) {
  * \param _flareAnimation Thrust animation
  */
 Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
-		short int _msrp, bool _foldDrive, string _flareAnimation) :
+		short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic) :
 	thrustsound(_thrustsound),
 	forceOutput(_forceOutput),
 	msrp(_msrp),
 	foldDrive(_foldDrive),
-	flareAnimation(_flareAnimation)
+	flareAnimation(_flareAnimation),
+	pic(_pic)
 {
 	SetName(_name);
 }
@@ -74,6 +77,10 @@ bool Engine::parserCB( string sectionName, string subName, string value ) {
 		flareAnimation = value;
 	} else PPA_MATCHES( "thrustSound" ){
 		this->thrustsound = Sound::Get( value );
+	} else PPA_MATCHES( "picName" ){
+		pic = Image::Get(value);
+		// This can be accessed by either the path or the Engine Name
+		Image::Store(name, pic);
 	}
 
 	return true;

@@ -10,7 +10,7 @@
 #ifndef __H_DEBUG_GRAPHICS__
 #define __H_DEBUG_GRAPHICS__
 
-int graphics_demo(int argc, char **argv);
+int test_graphics(int argc, char **argv);
 
 #endif // _H_DEBUG_GRAPHICS__
 
