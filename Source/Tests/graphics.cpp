@@ -11,7 +11,7 @@
 #include "Graphics/image.h"
 #include "Graphics/video.h"
 
-int graphics_demo(int argc, char **argv) {
+int test_graphics(int argc, char **argv) {
 	Video::Erase();
 
 	// draw a grid
