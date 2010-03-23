@@ -512,7 +512,7 @@ FunctionEnd
 @CPACK_NSIS_INSTALLER_MUI_ICON_CODE@
 @CPACK_NSIS_INSTALLER_ICON_CODE@
 @CPACK_NSIS_INSTALLER_MUI_COMPONENTS_DESC@
-
+!define MUI_WELCOMEFINISHPAGE_BITMAP "@CPACK_NSIS_WELCOME_BITMAP@"
 ;--------------------------------
 ;Pages
   !insertmacro MUI_PAGE_WELCOME
@@ -883,24 +883,23 @@ Function .onInit
   Pop $1
   StrCmp $1 "Admin" 0 checkpower
     SetShellVarContext all
-    ;MessageBox MB_OK 'User "$0" is in the Admin group'
     StrCpy $SV_ALLUSERS "AllUsers"
     Goto done
   checkpower:
-    StrCmp $1 "Power" 0 noLM
+    StrCmp $1 "Power" 0 done
       SetShellVarContext all
-      ;MessageBox MB_OK 'User "$0" is in the Power Users group'
       StrCpy $SV_ALLUSERS "AllUsers"
       Goto done
     
   noLM:
-    StrCpy $SV_ALLUSERS "AllUsers"
+	StrCpy $SV_ALLUSERS "AllUsers"
     ;Get installation folder from registry if available
 
   done:
-  StrCmp $SV_ALLUSERS "AllUsers" 0 +2
+  StrCmp $SV_ALLUSERS "AllUsers" 0 checkmodpath
     StrCpy $INSTDIR "$PROGRAMFILES\@CPACK_PACKAGE_INSTALL_DIRECTORY@"
 
+  checkmodpath:
   StrCmp "@CPACK_NSIS_MODIFY_PATH@" "ON" 0 noOptionsPage
     !insertmacro MUI_INSTALLOPTIONS_EXTRACT "NSIS.InstallOptions.ini"
 
