@@ -46,9 +46,10 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 int main( int argc, char **argv ) {
 #ifdef _WIN32
 	// This attaches a console to the parent process if it has a console
-	AttachConsole(ATTACH_PARENT_PROCESS);
-	freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
-	freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
+	if(AttachConsole(ATTACH_PARENT_PROCESS)){
+		freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
+		freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
+	}
 #endif //_WIN32
 
 	// Parse command line options first.

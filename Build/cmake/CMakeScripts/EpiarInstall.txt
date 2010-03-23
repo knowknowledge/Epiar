@@ -1,12 +1,16 @@
 # Epiar Install directives
 
 if(WIN32)
-	set(CMAKE_INSTALL_PREFIX "C:/Documents and Settings/Maoserr/Desktop/Test")
 	install(TARGETS EpiarBIN
-		DESTINATION .)
+		DESTINATION .
+		COMPONENT "EpiarExe")
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources"
-		DESTINATION .)
-	set(CPACK_GENERATOR NSIS ZIP)
+		DESTINATION .
+		COMPONENT "EpiarResources")
+	install(FILES "${Epiar_OUT_DIR}/Epiar.cmd"
+		DESTINATION .
+		COMPONENT "Console")
+	set(CPACK_GENERATOR NSIS)
 	set(CPACK_NSIS_DISPLAY_NAME "Epiar ${EPIAR_VERSION}")
 	set(CPACK_NSIS_MUI_ICON "${SCRIPT_DIR}/InstallResources\\\\NSIS_MUI_ICON.ico")
 	set(CPACK_NSIS_MUI_UNIICON "${SCRIPT_DIR}/InstallResources\\\\NSIS_MUI_UNIICON.ico")
@@ -15,11 +19,11 @@ if(WIN32)
 	set(CPACK_NSIS_URL_INFO_ABOUT "http://www.epiar.net")
 	set(CPACK_NSIS_CONTACT "Maoserr@gmail.com")
 	set(CPACK_NSIS_MENU_LINKS
-		"Epiar.exe" "Epiar"
+		"EpiarExe.exe" "Epiar"
 		"http://www.epiar.net" "Epiar Homepage")
 	set(CPACK_PACKAGE_EXECUTABLES "" "")
 	set(CPACK_PACKAGE_FILE_NAME
-		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}")
+		"Epiar-${EPIAR_VERSION}")
 elseif (UNIX AND NOT APPLE)
 	install(TARGETS EpiarBIN
 		DESTINATION ./share/Epiar)
@@ -84,6 +88,40 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "Epiar")
 set(CPACK_RESOURCE_FILE_LICENSE "${Epiar_OUT_DIR}/LICENSE")
 
 INCLUDE(CPack)
+
+# Advanced configuration of CPACK
+if(WIN32)
+	cpack_add_component(EpiarExe
+		DISPLAY_NAME "Epiar executable"
+		DESCRIPTION "The base Epiar runtime"
+		REQUIRED
+		GROUP Req
+		INSTALL_TYPES Standard Console)
+		cpack_add_component(EpiarResources
+		DISPLAY_NAME "Epiar resources"
+		DESCRIPTION "Resource files Epiar requires"
+		REQUIRED
+		GROUP Req
+		INSTALL_TYPES Standard Console)
+	cpack_add_component(Console
+		DISPLAY_NAME "Epiar command line"
+		DESCRIPTION "Small batch file for running Epiar on the command line"
+		DISABLED
+		INSTALL_TYPES Console)
+	cpack_add_component_group(Req
+		DISPLAY_NAME "Required"
+		DESCRIPTION "Required"
+		EXPANDED
+		BOLD_TITLE)
+	cpack_add_install_type(Standard
+		DISPLAY_NAME "Standard")
+	cpack_add_install_type(Console
+		DISPLAY_NAME "With Console")
+else(UNIX AND NOT APPLE)
+
+else(APPLE)
+
+endif(WIN32)
 
 # vim:ft=cmake
 
