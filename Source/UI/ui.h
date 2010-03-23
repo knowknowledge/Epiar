@@ -42,6 +42,9 @@ class UI {
 		static Widget *DetermineMouseFocus( int x, int y );
 		
 	private:
+		static bool HandleKeyboard( InputEvent &i );
+		static bool HandleMouse( InputEvent &i );
+
 		static list<Widget *> children;
 		static Widget *mouseFocus, *keyboardFocus; // remembers which widgets last had focus
 };

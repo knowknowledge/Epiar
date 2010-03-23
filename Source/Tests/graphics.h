@@ -7,10 +7,8 @@
  */
 
 
-#ifndef __H_DEBUG_GRAPHICS__
-#define __H_DEBUG_GRAPHICS__
-
+#ifndef __H_TEST_GRAPHICS__
+#define __H_TEST_GRAPHICS__
 int test_graphics(int argc, char **argv);
-
-#endif // _H_DEBUG_GRAPHICS__
+#endif // _H_TEST_GRAPHICS__
 

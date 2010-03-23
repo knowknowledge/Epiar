@@ -5,7 +5,7 @@
  * \brief		Tests the command line parser.
  */
 
-#ifndef __H_TESTS_ARGPARSER__
-#define __H_TESTS_ARGPARSER__
+#ifndef __H_TEST_ARGPARSER__
+#define __H_TEST_ARGPARSER__
 int test_argparser(int argc, char **argv);
-#endif//__H_TESTS_ARGPARSER__
+#endif//__H_TEST_ARGPARSER__

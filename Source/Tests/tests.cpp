@@ -32,7 +32,6 @@ extern Font *SansSerif, *BitType, *Serif, *Mono;
 #define REQUIRE_VIDEO		(1L << 1)
 #define REQUIRE_AUDIO		(1L << 2)
 #define REQUIRE_FONTS		(1L << 3)
-#define REQUIRE_INPUT		(1L << 4)
  
 /**\class Test
  * \brief Encompasses a single test.*/
@@ -43,7 +42,7 @@ Test::Test( const string& testname ):testname( testname ){
 		REQUIRE_VIDEO|REQUIRE_OPTIONS);
 	tests["argparser"]=make_pair(test_argparser,0);
 	tests["UI"]=make_pair(test_ui,
-		REQUIRE_VIDEO|REQUIRE_OPTIONS|REQUIRE_INPUT)
+		REQUIRE_VIDEO|REQUIRE_OPTIONS|REQUIRE_FONTS);
 
 
 }

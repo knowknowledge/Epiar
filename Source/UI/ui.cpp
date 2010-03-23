@@ -104,127 +104,29 @@ Widget *UI::DetermineMouseFocus( int x, int y ) {
 	return( NULL );
 }
 
-// list of events is passed from main input handler. we remove the events we handle and leave the rest to be handled
-// by the next input handler. the order of input handlers is in input.cpp
-void UI::HandleInput( list<InputEvent> & events ) {
+/**\brief Handles Input Events from the event queue.
+ * \details
+ * List of events is passed from main input handler.
+ * We remove the events we handle and leave the rest 
+ * to be handled by the next input handler.
+ * The order of input handlers is in input.cpp.
+ */
+void UI::HandleInput( list<InputEvent> &events ) {
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
 	list<InputEvent>::iterator i = events.begin();
-	while( i != events.end() )
-	{
+	while( i != events.end() ){
 		bool eventWasHandled = false;
 	
 		switch( i->type ) {
-		case KEY:
-		
-			switch(i->kstate) {
-				case KEYTYPED:
-					if( keyboardFocus ) {
-						bool handled = keyboardFocus->KeyPress( i->key );
-						
-						// if the input was handled, we need to remove it from the queue so no other
-						// subsystem sees it and acts on it
-						if( handled ) {
-							events.erase(i);
-							i = events.begin();
-						}
-					}
-					break;
-				
-				default:
-					break;
-			}
-
-			break;
-		case MOUSE:
-			int x, y;
-			
-			// mouse coordinates associated with the mouse event
-			x = i->mx;
-			y = i->my;
-
-			switch(i->mstate) {
-			case MOUSEMOTION:
-				// if a widget has mouse focus, we are dragging
-				if( mouseFocus ) {
-					int dx, dy; // original point of click for the drag
-					
-					dx = mouseFocus->GetDragX();
-					dy = mouseFocus->GetDragY();
-
-					mouseFocus->MouseMotion(x,y,dx,dy);
-					eventWasHandled = true;
-				}
+			case KEY:
+				eventWasHandled = UI::HandleKeyboard( *i );
 				break;
-			case MOUSELUP:
-				// release focus if needed
-				if( mouseFocus ) {
-					// Sometimes this will kill the current widget, so keep this last
-					mouseFocus->MouseLUp( x, y );
-
-					mouseFocus = NULL;
-
-					eventWasHandled = true;
-				}
+			case MOUSE:
+				eventWasHandled = UI::HandleMouse( *i );
 				break;
-			case MOUSELDOWN:{
-				Widget *focusedWidget = DetermineMouseFocus( x, y );
-				// did they click a different widget than the one already in focus?
-				if( mouseFocus != focusedWidget ) {
-					// A new widget now has focus
-					if( mouseFocus )
-						mouseFocus->UnfocusMouse();
-					
-					mouseFocus = focusedWidget;
-					
-					if( mouseFocus ) {
-						mouseFocus->FocusMouse( x, y );
-					}
-				}
-				// mouse down also changes keyboard focus (e.g. clicked on a new text field)
-				if( keyboardFocus != focusedWidget ) {
-					if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
-					
-					keyboardFocus = focusedWidget;
-					
-					if( keyboardFocus ) {
-						keyboardFocus->FocusKeyboard();
-					}
-				}
-				
-				// pass the event to the widget
-				if( mouseFocus ) {
-					mouseFocus->MouseLDown( x, y );
-					
-					eventWasHandled = true;				
-				}
-				break;
-			}
-			case MOUSEMDOWN:
-				;
-				break;
-			case MOUSEMUP:
-				;
-				break;
-			case MOUSERDOWN:
-				;
-				break;
-			case MOUSERUP:
-				;
-				break;
-			case MOUSEWDOWN:
-				;
-				break;
-			case MOUSEWUP:
-				;
-				break;
-			default:
-				Log::Warning("Unhandled UI input detected.");
-			}
-			break;
 		}
-
 		if( eventWasHandled ) {
 			i = events.erase( i );
 		} else {
@@ -232,6 +134,115 @@ void UI::HandleInput( list<InputEvent> & events ) {
 		}
 	}
 }
+
+/**\brief Handles UI keyboard events.*/
+bool UI::HandleKeyboard( InputEvent &i ){
+	bool handled=false;
+	switch(i.kstate) {
+		case KEYTYPED:
+			if( keyboardFocus ) {
+				handled = keyboardFocus
+					->KeyPress( i.key );
+			}
+			break;
+		
+		default:
+			break;
+	}
+	return handled;
+}
+
+/**\brief Handles UI mouse events.*/
+bool UI::HandleMouse( InputEvent &i ){
+	int x, y;
+	bool eventWasHandled = false;
+	
+	// mouse coordinates associated with the mouse event
+	x = i.mx;
+	y = i.my;
+
+	switch(i.mstate) {
+	case MOUSEMOTION:
+		// if a widget has mouse focus, we are dragging
+		if( mouseFocus ) {
+			int dx, dy; // original point of click for the drag
+			
+			dx = mouseFocus->GetDragX();
+			dy = mouseFocus->GetDragY();
+
+			mouseFocus->MouseMotion(x,y,dx,dy);
+			eventWasHandled = true;
+		}
+		break;
+	case MOUSELUP:
+		// release focus if needed
+		if( mouseFocus ) {
+			// Sometimes this will kill the current widget, so keep this last
+			mouseFocus->MouseLUp( x, y );
+
+			mouseFocus = NULL;
+
+			eventWasHandled = true;
+		}
+		break;
+	case MOUSELDOWN:{
+		Widget *focusedWidget = DetermineMouseFocus( x, y );
+		// did they click a different widget than the one already in focus?
+		if( mouseFocus != focusedWidget ) {
+			// A new widget now has focus
+			if( mouseFocus )
+				mouseFocus->UnfocusMouse();
+			
+			mouseFocus = focusedWidget;
+			
+			if( mouseFocus ) {
+				mouseFocus->FocusMouse( x, y );
+			}
+		}
+		// mouse down also changes keyboard focus (e.g. clicked on a new text field)
+		if( keyboardFocus != focusedWidget ) {
+			if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
+			
+			keyboardFocus = focusedWidget;
+			
+			if( keyboardFocus ) {
+				keyboardFocus->FocusKeyboard();
+			}
+		}
+		
+		// pass the event to the widget
+		if( mouseFocus ) {
+			mouseFocus->MouseLDown( x, y );
+			
+			eventWasHandled = true;				
+		}
+		break;
+	}
+	case MOUSEMDOWN:
+		;
+		break;
+	case MOUSEMUP:
+		;
+		break;
+	case MOUSERDOWN:
+		;
+		break;
+	case MOUSERUP:
+		;
+		break;
+	case MOUSEWDOWN:
+		;
+		break;
+	case MOUSEWUP:
+		;
+		break;
+	default:
+		Log::Warning("Unhandled UI input detected.");
+	}
+	return eventWasHandled;
+}
+
+
 
 // Clears current input to prevent accidental usage of invalid values
 // Use this whenever the UI removes focusable widgets
@@ -242,19 +253,5 @@ void UI::ResetInput() {
 
 void UI::RegisterKeyboardFocus( Widget *widget ) {
 	keyboardFocus = widget;
-}
-
-void ui_demo( bool in_loop ) {
-	static bool ran_once = false;
-
-	if(ran_once) return;
-	
-	ran_once = true; // don't make more than one window
-
-	Window *wnd = new Window( 200, 100, 400, 300, "User Interface Demo" );
-	UI::Add( wnd );
-	wnd->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
-	wnd->AddChild( new Textbox( 50, 50, 100, 1 ) );
-	wnd->AddChild( new Checkbox( 50, 100, 0, "Toggle This" ) );
 }
 
