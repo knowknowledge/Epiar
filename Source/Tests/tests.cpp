@@ -8,10 +8,12 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "Tests/tests.h"
 // Tests
 #include "Tests/graphics.h"
 #include "Tests/argparser.h"
+#include "Tests/ui.h"
 // Header files for various subsystems
 #include "Audio/audio.h"
 #include "Graphics/font.h"
@@ -25,14 +27,24 @@
 extern XMLFile *optionsfile;
 // main font used throughout the game
 extern Font *SansSerif, *BitType, *Serif, *Mono;
-
+// Test requirements
+#define REQUIRE_OPTIONS		(1L << 0)
+#define REQUIRE_VIDEO		(1L << 1)
+#define REQUIRE_AUDIO		(1L << 2)
+#define REQUIRE_FONTS		(1L << 3)
+#define REQUIRE_INPUT		(1L << 4)
+ 
 /**\class Test
  * \brief Encompasses a single test.*/
 
 /**\brief Initializes a Test.*/
 Test::Test( const string& testname ):testname( testname ){
-	tests["graphics"]=test_graphics;
-	tests["argparser"]=test_argparser;
+	tests["graphics"]=make_pair(test_graphics,
+		REQUIRE_VIDEO|REQUIRE_OPTIONS);
+	tests["argparser"]=make_pair(test_argparser,0);
+	tests["UI"]=make_pair(test_ui,
+		REQUIRE_VIDEO|REQUIRE_OPTIONS|REQUIRE_INPUT)
+
 
 }
 
@@ -40,7 +52,7 @@ Test::Test( const string& testname ):testname( testname ){
 int Test::RunTest( int argc, char **argv){
 	// Check to see if we just want a list of the tests
 	if ( this->testname == "list-tests"){
-		map<string,testFunc>::iterator it;
+		map<string,pair<testFunc,long> >::iterator it;
 		cout<<"Test available-----------------------------------"<<endl;
 		for ( it=this->tests.begin(); it != this->tests.end(); it++ ){
 			cout<<"\t"<<(*it).first<<endl;
@@ -50,8 +62,10 @@ int Test::RunTest( int argc, char **argv){
 	}
 	// Runs the test
 	if( tests.count(testname) > 0 ) {
+		LoadRequirements();
 		cout<<"Running test: "<<this->testname<<"..."<<endl;
-		int retval = tests[this->testname](argc, argv);
+		int retval = tests[this->testname].first(argc, argv);
+		UnloadRequirements();
 		if (retval == 0)
 			cout<<"Result: "<<this->testname<< " test succeeded."<<endl;
 		else
@@ -65,30 +79,55 @@ int Test::RunTest( int argc, char **argv){
 	return -1;
 }
 
-/**\brief Initializes Epiar options.*/
-void Test::InitializeOptions( void ){
-	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
+/**\brief Loads requirements for the Test.*/
+void Test::LoadRequirements( void ){
+	long testreqs = tests[this->testname].second;
+	if( testreqs & REQUIRE_OPTIONS ){
+		cout<<"  Initializing options subsystem..."<<endl;
+		optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
+		// Disable logging output so we can see debug output
+		SETOPTION("options/log/out", 0);
+	}
+	if( testreqs & REQUIRE_VIDEO ){
+		cout<<"  Initializing video subsystem..."<<endl;
+		Video::Initialize();
+		Video::SetWindow( 1024, 768, 32 );
+	}
+	if( testreqs & REQUIRE_AUDIO ){
+		cout<<"  Initializing audio subsystem..."<<endl;
+		Audio::Instance().Initialize();
+		Audio::Instance().SetMusicVol ( 0.5f );
+		Audio::Instance().SetSoundVol ( 0.5f );
+	}
+	if( testreqs & REQUIRE_FONTS ){
+		cout<<"  Initializing font subsystem..."<<endl;
+		SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
+		BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
+		Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
+		Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+	}
 }
 
-/**\brief Initializes Epiar Video.*/
-void Test::InitializeVideo( void ){
-	Video::Initialize();
-	Video::SetWindow( 1024, 768, 32 );
-}
-
-/**\brief Initializes Epiar Audio.*/
-void Test::InitializeAudio( void ){
-	Audio::Instance().Initialize();
-	Audio::Instance().SetMusicVol ( 0.5f );
-	Audio::Instance().SetSoundVol ( 0.5f );
-}
-
-/**\brief Initializes Epiar fonts.*/
-void Test::InitializeFonts( void ){
-	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
-	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
-	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
-	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+void Test::UnloadRequirements( void ){
+	long testreqs = tests[this->testname].second;
+	if( testreqs & REQUIRE_FONTS ){
+		cout<<"  Shutting down font subsystem..."<<endl;		delete SansSerif;
+		delete BitType;
+		delete Serif;
+		delete Mono;
+	}
+	if( testreqs & REQUIRE_AUDIO ){
+		cout<<"  Shutting down audio subsystem..."<<endl;
+		Audio::Instance().Shutdown();
+	}
+	if( testreqs & REQUIRE_VIDEO ){
+		cout<<"  Shutting down video subsystem..."<<endl;
+		Video::Shutdown();
+	}
+	if( testreqs & REQUIRE_OPTIONS ){
+		cout<<"  Shutting down options subsystem..."<<endl;
+		delete optionsfile;
+	}
 }
 
 /**\brief Simple Game loop.*/
