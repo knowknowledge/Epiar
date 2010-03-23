@@ -16,6 +16,13 @@ class Test{
 		int RunTest( int argc, char **argv);
 
 	private:
+		void InitializeOptions( void );
+		void InitializeVideo( void );
+		void InitializeAudio( void );
+		void InitializeFonts( void );
+
+		void GameLoop( void );
+
 		map<string,testFunc> tests;
 		string testname;
 };
