@@ -933,7 +933,7 @@ int Lua::setInfo(lua_State *L) {
 		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
 		//       Militia
-		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,influence,oldPlanet->GetMilitia(), techs);
+		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,influence,techs);
 
 	} else if(kind == "Technology"){
 		list<string>::iterator iter;

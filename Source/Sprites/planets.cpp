@@ -26,18 +26,16 @@ Planet& Planet::operator=(const Planet& other) {
 	traffic = other.traffic;
 	militiaSize = other.militiaSize;
 	sphereOfInfluence = other.sphereOfInfluence;
-	militia = other.militia;
 	technologies = other.technologies;
 	return *this;
 }
 
-Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies):
+Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
 	militiaSize(_militiaSize),
 	sphereOfInfluence(_sphereOfInfluence),
-	militia(_militia),
 	technologies(_technologies)
 {
 	SetName(_name);
