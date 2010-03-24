@@ -466,6 +466,19 @@ void Lua::pushNames(lua_State *L, list<string> *names){
     }
 }
 
+void Lua::pushComponents(lua_State *L, list<Component*> *components){
+    lua_createtable(L, components->size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+    list<Component*>::const_iterator iter = components->begin();
+    while(iter != components->end()) {
+        lua_pushstring(L, (*iter)->GetName().c_str());
+        lua_rawseti(L, newTable, index);
+        ++iter;
+        ++index;
+    }
+}
+
 void Lua::setField(const char* index, int value) {
 	lua_pushstring(L, index);
 	lua_pushinteger(L, value);
@@ -490,7 +503,7 @@ int Lua::getIntField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L,index);
-	val = luaL_checkint(L,index+1);
+	val = luaL_checkint(L,lua_gettop(L));
 	lua_pop(L,1);
 	return val;
 }
@@ -501,7 +514,7 @@ float Lua::getNumField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = static_cast<float>(luaL_checknumber(L,index+1));
+	val = static_cast<float>(luaL_checknumber(L,lua_gettop(L)));
 	lua_pop(L,1);
 	return val;
 }
@@ -512,7 +525,7 @@ string Lua::getStringField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = luaL_checkstring(L,index+1);
+	val = luaL_checkstring(L,lua_gettop(L));
 	lua_pop(L,1);
 	return val;
 }
@@ -533,6 +546,29 @@ list<string> Lua::getStringListField(int index) {
 	return results;
 }
 
+list<string> Lua::getStringListField(int index, const char* name) {
+	list<string> results;
+
+	// Get the value from lua_stack[index][name]
+	lua_pushstring(L, name);
+	lua_gettable(L, index);
+	// This needs to be a list of strings
+	int stringTable = lua_gettop(L);
+	assert(lua_istable(L,stringTable));
+	
+
+	// Go to the nil element of the array
+	lua_pushnil(L);
+	// While there are elements in the array
+	// push the "next" one to the top of the stack
+	while(lua_next(L, stringTable)) {
+		string val =  lua_tostring(L, -1);
+		results.push_back(val);
+		// Pop off this value
+		lua_pop(L, 1);
+	}
+	return results;
+}
 
 //can be found here  http://www.lua.org/pil/24.2.3.html
 void Lua::stackDump (lua_State *L) {
@@ -747,6 +783,10 @@ int Lua::getPlanetInfo(lua_State *L) {
 	setField("Traffic", p->GetTraffic());
 	setField("Militia", p->GetMilitiaSize());
 	setField("Landable", p->GetLandable());
+	setField("Influence", p->GetInfluence());
+	lua_pushstring(L, "Technologies");
+	pushComponents(L, (list<Component*>*) &p->GetTechnologies() );
+	lua_settable(L, -3);
 	return 1;
 }
 
@@ -783,6 +823,7 @@ int Lua::getEngineInfo(lua_State *L) {
 
     lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
+	setField("Picture", engine->GetPicture()->GetPath().c_str());
 	setField("Force", engine->GetForceOutput());
 	setField("Animation", engine->GetFlareAnimation().c_str());
 	setField("MSRP", engine->GetMSRP());
@@ -798,43 +839,23 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	Technology* tech = Technologies::Instance()->GetTechnology(techName);
 	if( tech == NULL)
 		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
+
+    lua_createtable(L, 3, 0);
+    int newTable = lua_gettop(L);
 	
-	// The info for a technology is a nested table:
-
-	// Push the Main Table
-	int i;
-	list<Model*>::iterator iter_m;
-	list<Weapon*>::iterator iter_w;
-	list<Engine*>::iterator iter_e;
-
 	// Push the Models Table
-	list<Model*> models = tech->GetModels();
-    lua_createtable(L,models.size(),0);
-	int modeltable = lua_gettop(L);
-	for(i=1,iter_m=models.begin();iter_m!=models.end();++iter_m,++i) {
-		lua_pushstring(L, (*iter_m)->GetName().c_str() );
-        lua_rawseti(L, modeltable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetModels() );
+	lua_rawseti(L, newTable, 1);
 
 	// Push the Weapons Table
-	list<Weapon*> weapons = tech->GetWeapons();
-    lua_newtable(L);
-	int weapontable = lua_gettop(L);
-	for(i=1,iter_w=weapons.begin();iter_w!=weapons.end();++iter_w,++i) {
-		lua_pushstring(L, (*iter_w)->GetName().c_str() );
-        lua_rawseti(L, weapontable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetWeapons() );
+	lua_rawseti(L, newTable, 2);
 
 	// Push the Engines Table
-	list<Engine*> engines = tech->GetEngines();
-    lua_newtable(L);
-	int enginetable = lua_gettop(L);
-	for(i=1,iter_e=engines.begin();iter_e!=engines.end();++iter_e,++i) {
-		lua_pushstring(L, (*iter_e)->GetName().c_str() );
-        lua_rawseti(L, enginetable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetEngines() );
+	lua_rawseti(L, newTable, 3);
 
-	return 3;
+	return 1;
 }
 
 int Lua::setInfo(lua_State *L) {
@@ -857,6 +878,7 @@ int Lua::setInfo(lua_State *L) {
 
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
+		string picture = getStringField(2,"Picture");
 		int force = getIntField(2,"Force");
 		string flare = getStringField(2,"Animation");
 		int msrp = getIntField(2,"MSRP");
@@ -866,8 +888,7 @@ int Lua::setInfo(lua_State *L) {
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
 		//       Thrust Sound
-		//       Pic (Store Image)
-		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,oldEngine->GetPicture());
+		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
@@ -890,14 +911,25 @@ int Lua::setInfo(lua_State *L) {
 		int traffic = getIntField(2,"Traffic");
 		int militia = getIntField(2,"Militia");
 		int landable = getIntField(2,"Landable");
+		int influence = getIntField(2,"Influence");
+		list<string> techNames = getStringListField(2,"Technologies");
+
+		// Process the Tech List
+		list<Technology*> techs;
+		list<string>::iterator i;
+		for(i = techNames.begin(); i != techNames.end(); ++i) {
+			if( NULL != Technologies::Instance()->GetTechnology(*i) ) {
+				 techs.push_back( Technologies::Instance()->GetTechnology(*i) );
+			} else {
+				return luaL_error(L, "Could not create planet: there is no Technology Group '%s'.",(*i).c_str());
+			}
+		}
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
 		// TODO: Fix attributes that aren't editable
-		//       Technologies
 		//       Militia
-		//       Influence
-		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
+		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,influence,oldPlanet->GetMilitia(), techs);
 
 	} else if(kind == "Technology"){
 		list<string>::iterator iter;
