@@ -877,9 +877,7 @@ int Lua::setInfo(lua_State *L) {
 		
         Alliance* oldAlliance = Alliances::Instance()->GetAlliance(name);
         if(oldAlliance==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       List of Illegal Cargo
-        *oldAlliance = Alliance(name,attack,aggressiveness,currency,oldAlliance->GetIlligalCargos());
+        *oldAlliance = Alliance(name,attack,aggressiveness,currency);
 
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
@@ -931,8 +929,6 @@ int Lua::setInfo(lua_State *L) {
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Militia
 		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,influence,techs);
 
 	} else if(kind == "Technology"){
