@@ -24,7 +24,7 @@ if(WIN32)
 		"http://www.epiar.net" "Epiar Homepage")
 	set(CPACK_PACKAGE_EXECUTABLES "" "")
 	set(CPACK_PACKAGE_FILE_NAME
-		"Epiar-${EPIAR_VERSION}")
+		"Epiar-${EPIAR_VERSION}-${CMAKE_BUILD_TYPE}")
 elseif (UNIX AND NOT APPLE)
 	install(TARGETS EpiarBIN
 		DESTINATION ./share/Epiar)
@@ -36,7 +36,7 @@ elseif (UNIX AND NOT APPLE)
 	# Menu icon
 	install(FILES "${SCRIPT_DIR}/InstallResources/Deb/epiar.png"
 		DESTINATION ./share/pixmaps)
-	set(CPACK_GENERATOR TGZ DEB)
+	set(CPACK_GENERATOR DEB)
 	set(CPACK_DEBIAN_PACKAGE_SECTION "game")
 	set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
 		"Space combat/trading game.
@@ -53,11 +53,10 @@ elseif (UNIX AND NOT APPLE)
 		"libsdl1.2debian,
 		libsdl-image1.2,
 		libsdl-mixer1.2,
-		liblua5.1-0 ,
 		libxml2,
 		libftgl2")
 	set(CPACK_PACKAGE_FILE_NAME
-		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+		"Epiar-${EPIAR_VERSION}-Ubuntu-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}-${CMAKE_BUILD_TYPE}")
 elseif (APPLE)
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Animations" DESTINATION .)
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Audio" DESTINATION .)
@@ -68,7 +67,7 @@ elseif (APPLE)
 	install(DIRECTORY "${Epiar_OUT_DIR}/Resources/Scripts" DESTINATION .)
 	set(CPACK_GENERATOR Bundle)
 	set(CPACK_PACKAGE_FILE_NAME
-		"Epiar-${EPIAR_VERSION}-${CPACK_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+		"Epiar-${EPIAR_VERSION}-MacOSX-${CMAKE_SYSTEM_PROCESSOR}-${CMAKE_BUILD_TYPE}")
 	set(CPACK_BUNDLE_NAME Epiar)
 	set(CPACK_BUNDLE_ICON "${Epiar_OUT_DIR}/Resources/Graphics/Epiar_Icon2.icns")
 	set(CPACK_BUNDLE_PLIST "${SCRIPT_DIR}/InstallResources/Mac/Info.plist")
