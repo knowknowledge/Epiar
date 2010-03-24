@@ -372,6 +372,31 @@ function ImagePicker(name,title)
 	end
 end
 
+function goto(x,y)
+	print (x)
+	print (y)
+	Epiar.focusCamera(x,y)
+end
+
+function gotoButton()
+	goto( gotoX:GetText(), gotoY:GetText() )
+	gotoWin:close()
+	gotoWin = nil
+end
+
+function gotoCommand()
+	if gotoWin~=nil then return end
+	local cx,cy = Epiar.getCamera()
+	gotoWin = UI.newWindow(600,500,150,200,"Go to Location")
+	gotoWin:add(UI.newLabel(10,45,"X"))
+	gotoX = UI.newTextbox(20,30,50,1,cx)
+	gotoWin:add(gotoX)
+	gotoWin:add(UI.newLabel(80,45,"Y"))
+	gotoY = UI.newTextbox(90,30,50,1,cy)
+	gotoWin:add(gotoY)
+	gotoWin:add(UI.newButton(10,60,140,30,"Go","gotoButton()"))
+end
+
 DX,DY = 20,20
 
 debugCommands = {
@@ -382,6 +407,7 @@ debugCommands = {
 	{'up', "Pan Up", "Epiar.moveCamera(0,DY)",KEYPRESSED},
 	{'right', "Pan Right", "Epiar.moveCamera(DX,0)",KEYPRESSED},
 	{'i', "Get Info", "showInfo()",KEYTYPED},
+	{'space', "Go To", "gotoCommand()",KEYTYPED},
 }
 registerCommands(debugCommands)
 
