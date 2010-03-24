@@ -101,6 +101,7 @@ xmlNodePtr Engine::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "foldDrive", BAD_CAST (this->GetFoldDrive()?"1":"0") );
 	xmlNewChild(section, NULL, BAD_CAST "flareAnimation", BAD_CAST this->GetFlareAnimation().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "thrustSound", BAD_CAST this->thrustsound->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST this->GetPicture()->GetPath().c_str() );
 
 	return section;
 }
