@@ -809,6 +809,10 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
 	setField("MSRP", weapon->GetMSRP());
+	setField("Type", weapon->GetType());
+	setField("Ammo Type", weapon->GetAmmoType());
+	setField("Ammo Consumption", weapon->GetAmmoConsumption());
+	setField("Sound", weapon->sound->GetPath().c_str());
 	return 1;
 }
 
@@ -828,6 +832,7 @@ int Lua::getEngineInfo(lua_State *L) {
 	setField("Animation", engine->GetFlareAnimation().c_str());
 	setField("MSRP", engine->GetMSRP());
 	setField("Fold Drive", engine->GetFoldDrive());
+	setField("Sound", engine->thrustsound->GetPath().c_str());
 	return 1;
 }
 
@@ -883,12 +888,11 @@ int Lua::setInfo(lua_State *L) {
 		string flare = getStringField(2,"Animation");
 		int msrp = getIntField(2,"MSRP");
 		int foldDrive = getIntField(2,"Fold Drive");
+		string soundName = getStringField(2,"Sound");
 
 		Engine* oldEngine = Engines::Instance()->GetEngine(name);
 		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Thrust Sound
-		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
+		*oldEngine = Engine(name,Sound::Get(soundName),static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
@@ -972,14 +976,14 @@ int Lua::setInfo(lua_State *L) {
 		int fireDelay = getIntField(2,"FireDelay");
 		int lifetime = getIntField(2,"Lifetime");
 		int msrp = getIntField(2,"MSRP");
+		int type = getIntField(2,"Type");
+		int ammoType = getIntField(2,"Ammo Type");
+		int ammoConsumption = getIntField(2,"Ammo Consumption");
+		string soundName = getStringField(2,"Sound");
 
 		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
 		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Ammo Type
-		//       Ammo Consumption
-		//       Sound
-		*oldWeapon = Weapon(name,Image::Get(imageName),Image::Get(pictureName),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
+		*oldWeapon = Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),msrp);
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());
