@@ -778,6 +778,8 @@ int Lua::getPlanetInfo(lua_State *L) {
 	// Populate the Info Table.
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
+	setField("X", static_cast<float>(p->GetWorldPosition().GetX()));
+	setField("Y", static_cast<float>(p->GetWorldPosition().GetY()));
 	setField("Image", p->GetImage()->GetPath().c_str());
 	setField("Alliance", p->GetAlliance().c_str());
 	setField("Traffic", p->GetTraffic());
@@ -909,6 +911,9 @@ int Lua::setInfo(lua_State *L) {
 
 	} else if(kind == "Planet"){
 		string name = getStringField(2,"Name");
+		int x = getIntField(2,"X");
+		int y = getIntField(2,"Y");
+		string imageName = getStringField(2,"Image");
 		string alliance = getStringField(2,"Alliance");
 		int traffic = getIntField(2,"Traffic");
 		int militia = getIntField(2,"Militia");
@@ -927,9 +932,22 @@ int Lua::setInfo(lua_State *L) {
 			}
 		}
 
+		if(Image::Get(imageName)==NULL){
+			return luaL_error(L, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
+		}
+
+		Planet thisPlanet(name,x,y,Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
+
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
-		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,influence,techs);
+		if(oldPlanet!=NULL) {
+			Log::Message("Saving changes to '%s'",thisPlanet.GetName().c_str());
+			*oldPlanet = thisPlanet;
+		} else {
+			Log::Message("Creating new Planet '%s'",thisPlanet.GetName().c_str());
+			Planet* newPlanet = new Planet(thisPlanet);
+			Planets::Instance()->Add(newPlanet);
+			SpriteManager::Instance()->Add(newPlanet);
+		}
 
 	} else if(kind == "Technology"){
 		list<string>::iterator iter;

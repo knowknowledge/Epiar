@@ -50,6 +50,8 @@ ModelEditorLayout = {
 
 PlanetEditorLayout = {
 	{"Name", "String"},
+	{"X", "Integer"},
+	{"Y", "Integer"},
 	{"Image", "Picture"}, -- Picture Picker
 	{"Alliance", "String"}, -- TODO: Should be Alliance Picker (Dropdown of available Alliances)
 	{"Landable", "Integer"},

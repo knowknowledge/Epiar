@@ -20,6 +20,9 @@
 Planet::Planet(){}
 
 Planet& Planet::operator=(const Planet& other) {
+	// Check the other Sprite
+	assert( other.GetImage() );
+
 	name = other.name;
 	alliance = other.alliance;
 	landable = other.landable;
@@ -27,10 +30,19 @@ Planet& Planet::operator=(const Planet& other) {
 	militiaSize = other.militiaSize;
 	sphereOfInfluence = other.sphereOfInfluence;
 	technologies = other.technologies;
+
+	// Set the Sprite Stuff
+	Coordinate pos;
+	pos.SetX(other.GetWorldPosition().GetX());
+	pos.SetY(other.GetWorldPosition().GetY());
+	SetWorldPosition( pos );
+	SetImage( other.GetImage() );
+	Image::Store(name,GetImage());
+
 	return *this;
 }
 
-Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
+Planet::Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
@@ -38,13 +50,19 @@ Planet::Planet( string _name, string _alliance, bool _landable, int _traffic, in
 	sphereOfInfluence(_sphereOfInfluence),
 	technologies(_technologies)
 {
+	// Check the inputs
+	assert(_image);
+
+	Coordinate pos;
+	pos.SetX(_x);
+	pos.SetY(_y);
+	SetWorldPosition( pos );
 	SetName(_name);
+	SetImage(_image);
+	Image::Store(name,GetImage());
 }
 
 Planet::~Planet() {
-	Image *image = GetImage();
-	if( image )
-		delete image; // planets delete their own images. not all Sprites do
 }
 
 bool Planet::parserCB( string sectionName, string subName, string value ) {
