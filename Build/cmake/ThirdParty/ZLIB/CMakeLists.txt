@@ -9,7 +9,8 @@ endif (NOT ZLIB_SOURCE_NAME)
 set(ZLIB_SRC_FOLDER "${PROJECT_SOURCE_DIR}/${ZLIB_SOURCE_NAME}")
 # Create variables for include and library
 set(ZLIB_INCLUDE_DIR "${ZLIB_SRC_FOLDER}" CACHE STRING "ZLIB include directory" FORCE)
-set(ZLIB_LIBRARIES zlib CACHE STRING "ZLIB libraries" FORCE)
+set(ZLIB_LIBRARY zlib CACHE STRING "ZLIB libraries" FORCE)
+set(ZLIB_LIBRARIES ${ZLIB_LIBRARY} CACHE STRING "ZLIB libraries" FORCE)
 set(zlib_src
 ${ZLIB_SRC_FOLDER}/adler32.c
 ${ZLIB_SRC_FOLDER}/compress.c

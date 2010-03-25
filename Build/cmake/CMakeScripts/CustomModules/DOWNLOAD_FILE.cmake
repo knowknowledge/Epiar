@@ -30,7 +30,7 @@ function(DOWNLOAD_FILE)
 
 	if (DL_WGET_PATH)
 		message(STATUS "Downloading with wget: ${DL_URL}...")
-		execute_process(COMMAND "${DL_WGET_PATH}" -o "${DL_OUT}" "${DL_URL}")
+		execute_process(COMMAND "${DL_WGET_PATH}" -O "${DL_OUT}" "${DL_URL}")
 	elseif (DL_CURL_PATH)
 		message(STATUS "Downloading with curl: ${DL_URL}...")
 		execute_process(COMMAND "${DL_CURL_PATH}" -L -o "${DL_OUT}" "${DL_URL}")

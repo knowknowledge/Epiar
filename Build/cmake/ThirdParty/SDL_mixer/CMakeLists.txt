@@ -58,7 +58,9 @@ endif (TARGET ${SDL_LIBRARY_MAIN})
 include_directories(${SDL_INCLUDE_DIR})
 include_directories(${SDLMIXER_EXTERNAL_INC})
 
-target_link_libraries(${SDLMIXER_LIBRARY} ${SDL_LIBRARY})
+target_link_libraries(${SDLMIXER_LIBRARY} ${SDL_LIBRARY}
+	${VORBIS_LIBRARIES}
+	${MIKMOD_LIBRARIES})
 
 # Some defines
 if (WIN32)

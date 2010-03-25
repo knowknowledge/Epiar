@@ -70,12 +70,21 @@ if (LIBXML2_CONFIG_COMPILER)
 		else (MSVC)
 			set(libxml_compiler mingw)
 		endif (MSVC)
-		execute_process(
-			COMMAND cscript.exe configure.js iconv=no compiler=${libxml_compiler}
-			WORKING_DIRECTORY "${LIBXML_SRC_FOLDER}/win32"
-			OUTPUT_VARIABLE libxml_configure_output
-			ERROR_VARIABLE libxml_configure_output)
-		message(STATUS "${libxml_configure_output}")
+		find_program(CSCRIPT cscript)
+		if(CSCRIPT)
+			execute_process(
+				COMMAND cscript.exe configure.js iconv=no compiler=${libxml_compiler}
+				WORKING_DIRECTORY "${LIBXML_SRC_FOLDER}/win32"
+				ERROR_VARIABLE libxml_configure_output)
+		else(CSCRIPT)
+			message(STATUS "BLAH")
+			configure_file(${PROJECT_SOURCE_DIR}/config.h
+				${LIBXML_SRC_FOLDER}/config.h
+				COPYONLY)
+			configure_file(${PROJECT_SOURCE_DIR}/xmlversion.h
+				${LIBXML2_INCLUDE_DIR}/libxml/xmlversion.h
+				COPYONLY)
+		endif( CSCRIPT )
 	endif (WIN32)
 	message(STATUS "Configuration complete...")
 	set(LIBXML2_CONFIG_COMPILER false CACHE BOOL "Reconfigure libxml2?" FORCE)

@@ -26,10 +26,16 @@ function(EXTRACT_ARCHIVE)
 	if (EXISTS "${ARC_PATH}")
 		if (EX_TAR_PATH AND EX_GZ_PATH)
 			message(STATUS "Extracting to ${ARC_OUT}")
-			execute_process(COMMAND "${EX_GZ_PATH}" -cdv "${ARC_PATH}"
-							COMMAND "${EX_TAR_PATH}" -x
-							WORKING_DIRECTORY "${ARC_OUT}"
-							RESULT_VARIABLE EX_RETURN_CODE)
+			if (WIN32)
+				execute_process(COMMAND "${EX_GZ_PATH}" -cdv "${ARC_PATH}"
+					COMMAND "${EX_TAR_PATH}" -xv
+					WORKING_DIRECTORY "${ARC_OUT}"
+					RESULT_VARIABLE EX_RETURN_CODE)
+			elseif (UNIX)
+				execute_process(COMMAND "${EX_TAR_PATH}" -xvzf "${ARC_PATH}"
+					WORKING_DIRECTORY "${ARC_OUT}"
+					RESULT_VARIABLE EX_RETURN_CODE)
+			endif (WIN32)
 		else (EX_TAR_PATH AND EX_GZ_PATH)
 			message(WARNING "Either tar or gzip was not found in path.")
 			set(EX_RETURN_CODE -1)
