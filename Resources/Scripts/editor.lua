@@ -105,7 +105,7 @@ function showComponent(kind,name,getterFunc)
 	if infoWindows[name] ~= nil then return end
 	local width=250
 	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,width,650,name,
+	local theWin = UI.newWindow(150,100,width,660,name,
 		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	
 	local theFields = {}

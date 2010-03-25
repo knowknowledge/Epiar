@@ -876,10 +876,9 @@ int Lua::setInfo(lua_State *L) {
         int attack = getIntField(2,"AttackSize");
         float aggressiveness = getNumField(2,"Aggressiveness");
         string currency = getStringField(2,"Currency");
-		
-        Alliance* oldAlliance = Alliances::Instance()->GetAlliance(name);
-        if(oldAlliance==NULL) return 0; // If the name changes then the below doesn't work.
-        *oldAlliance = Alliance(name,attack,aggressiveness,currency);
+
+		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency);
+		Alliances::Instance()->AddOrReplace( thisAlliance );
 
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
@@ -890,9 +889,8 @@ int Lua::setInfo(lua_State *L) {
 		int foldDrive = getIntField(2,"Fold Drive");
 		string soundName = getStringField(2,"Sound");
 
-		Engine* oldEngine = Engines::Instance()->GetEngine(name);
-		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldEngine = Engine(name,Sound::Get(soundName),static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
+		Engine* thisEngine = new Engine(name,Sound::Get(soundName),static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
+		Engines::Instance()->AddOrReplace( thisEngine );
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
@@ -904,10 +902,8 @@ int Lua::setInfo(lua_State *L) {
 		int hull = getIntField(2,"MaxHull");
 		int msrp = getIntField(2,"MSRP");
 
-		Model* oldModel = Models::Instance()->GetModel(name);
-		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-		Model newModel(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
-		*oldModel = newModel;
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
+		Models::Instance()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){
 		string name = getStringField(2,"Name");
@@ -975,9 +971,8 @@ int Lua::setInfo(lua_State *L) {
 				engines.push_back( Engines::Instance()->GetEngine(*iter) );
 		}
 
-		Technology* oldTechnology = Technologies::Instance()->GetTechnology(name);
-		if(oldTechnology==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldTechnology = Technology(name,models,engines,weapons);
+		Technology* thisTechnology = new Technology(name,models,engines,weapons);
+		Technologies::Instance()->AddOrReplace( thisTechnology );
 
 		return 0;
 	} else if(kind == "Weapon"){
@@ -995,9 +990,8 @@ int Lua::setInfo(lua_State *L) {
 		int ammoConsumption = getIntField(2,"Ammo Consumption");
 		string soundName = getStringField(2,"Sound");
 
-		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
-		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldWeapon = Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),msrp);
+		Weapon* thisWeaon = new Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),msrp);
+		Weapons::Instance()->AddOrReplace( thisWeaon );
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());
