@@ -14,35 +14,17 @@
 
 class Textbox : public Widget {
 	public:
-		Textbox( int x, int y, int w, int rows );
-		Textbox( int x, int y, int w, int rows, string text );
-		Textbox( int x, int y, int w, int rows, string text, string label );
+		Textbox( int x, int y, int w, int rows, string text = "", string label = "");
 		
-		void Draw( int relx = 0, int rely = 0 );
-
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
-		
-		void FocusKeyboard( void );
-		void UnfocusKeyboard( void );
+		string GetType( void ) {return string("Textbox");}
+		void Draw( int relx, int rely = 0 );
+		bool MouseLUp( int wx, int wy );
+		bool KeyPress( SDLKey key );
 
 		string GetText() { return text; }
 		void SetText(string s) { text = s; }
-	
-		void MouseLDown( int wx, int wy );
-		
-		bool KeyPress( SDLKey key );
-		
-		string GetName( void ) {return string("Textbox_"+text);}
-
-		void DisableEntry( void );
-		void EnableEntry( void );
 	private:
-		void Initialize( int x, int y, int w, int rows, string text = "", string caption = "" );
-		int w, h;
-		string text, label;
-		bool hasKeyboardFocus;
-		bool entryDisabled;
+		string text;
 
 		string lua_callback;
 		void (*clickCallBack)();

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Build configuration
+BUILD="Debug"
+DOXYGEN="OFF"
+TESTS="ON"
+INTERNAL_LUA="ON"
+LUAJIT="OFF"
+
+# Intermedia directory
+IDIR="`pwd`/build"
+
+mkdir "$IDIR"
+cmake-gui -H"`pwd`" -B"$IDIR" -DCMAKE_BUILD_TYPE=$BUILD -DCOMPILE_DOXYGEN=$DOXYGEN -DCOMPILE_TEST=$TESTS -DUSE_INTERNAL_LUA=$INTERNAL_LUA -DUSE_LUAJIT=$LUAJIT
+

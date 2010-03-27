@@ -17,11 +17,12 @@
  * \brief UI picture. */
 
 void Picture::Default( int x, int y, int w, int h ){
-	SetX( x );
-	SetY( y );
+	this->x=x;
+	this->y=y;
 
-	this->w = w;
-	this->h = h;
+	this->w=w;
+	this->h=h;
+	this->name="";
 	rotation=0.;
 	bitmap = NULL;
 }
@@ -55,7 +56,7 @@ void Picture::Draw( int relx, int rely ){
 					1.0,1.0,1.0,0.1 );
 	*/
 	if(bitmap!=NULL)
-		bitmap->DrawFit( GetX()+relx, GetY()+rely, w, h, static_cast<float>(rotation));
+		bitmap->DrawFit( this->x+relx, this->y+rely, w, h, static_cast<float>(rotation));
 }
 
 void Picture::Set( Image *img ){

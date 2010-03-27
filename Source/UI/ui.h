@@ -19,7 +19,10 @@
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_textbox.h"
+#include "ui_picture.h"
 #include "ui_checkbox.h"
+#include "ui_tabs.h"
+#include "ui_slider.h"
 
 // Macro to check if xi, yi point is inside a rectangle x,y,w,h
 #define WITHIN_BOUNDS(xi,yi,x,y,w,h) ( (xi > x) && (yi > y) && (xi < (x+w) ) && (yi < (y+h)) )
@@ -45,11 +48,9 @@ class UI {
 		static bool HandleKeyboard( InputEvent &i );
 		static bool HandleMouse( InputEvent &i );
 
-		static list<Widget *> children;
-		static Widget *mouseFocus, *keyboardFocus; // remembers which widgets last had focus
+		// Use a master widget to handle events,
+		// so we don't need to duplicate code.
+		static Widget master;
 };
-
-// temporary function to test/develop the UI
-void ui_demo( bool in_loop = false );
 
 #endif // __H_UI__

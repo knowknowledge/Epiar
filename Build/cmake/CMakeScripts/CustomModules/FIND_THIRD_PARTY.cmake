@@ -9,10 +9,17 @@
 
 macro (FIND_THIRD_PARTY)
 	# Parse Arguments
-	PARSE_ARGUMENTS(FND "FOUNDVAR" "REQUIRED" ${ARGV})
+	PARSE_ARGUMENTS(FND "FOUNDVAR;COMPONENTS" "REQUIRED" ${ARGV})
 	list(GET FND_DEFAULT_ARGS 0 FND_NAME)
 
-	find_package(${FND_NAME})
+	if(FND_REQUIRED)
+		find_package(${FND_NAME} REQUIRED
+			COMPONENTS ${FND_COMPONENTS})
+	else(FND_REQUIRED)
+		find_package(${FND_NAME}
+			COMPONENTS "${FND_COMPONENTS}")
+	endif(FND_REQUIRED)
+
 	# Sometimes modules use a different found variable than the file name
 	if (FND_FOUNDVAR)
 		set(FND_PKG_FOUND ${${FND_FOUNDVAR}})
@@ -21,7 +28,8 @@ macro (FIND_THIRD_PARTY)
 		set(FND_PKG_FOUND ${${FND_UNAME}_FOUND})
 	endif (FND_FOUNDVAR)
 
-	# Halt cmake if required package is not found
+	# Halt cmake if required package is not found (Since not all FindPackage
+	# respects the REQUIRE option
 	if (NOT FND_PKG_FOUND AND FND_REQUIRED)
 		message(FATAL_ERROR "Unable to find ${FND_NAME}: FindPackage returned ${FND_PKG_FOUND}")
 	endif(NOT FND_PKG_FOUND AND FND_REQUIRED)

@@ -21,16 +21,15 @@
 
 /**\brief Constructs a single tab with caption.
  */
-Tab::Tab( const string& _caption ):
-		caption( string(_caption) ){
-	SetX(0);
-	SetY(TAB_HEADER);
+Tab::Tab( const string& _caption ){
+	this->x=x;
+	this->y=TAB_HEADER;
+	this->h=0;
+	this->w=0;
+	this->name=_caption;
 
 	this->hscrollbar = NULL;
 	this->vscrollbar = NULL;
-
-	this->h=0;
-	this->w=0;
 
 	Rect bounds = SansSerif->BoundingBox( _caption );
 	this->capw = static_cast<int>(bounds.w);
@@ -44,6 +43,34 @@ bool Tab::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();
 	return success;
+}
+
+/**\brief Determines focused widget based on scrolled position.*/
+Widget *Tab::DetermineMouseFocus( int relx, int rely ){
+	list<Widget *>::iterator i;
+
+	int xoffset = this->hscrollbar ? this->hscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+
+
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->Contains(relx+xoffset, rely+yoffset) ) {
+			return (*i);
+		}
+	}
+	return( NULL );
+}
+
+/**\brief Implements scroll wheel up.*/
+bool Tab::MouseWUp( int xi, int yi ){
+	if( this->vscrollbar) this->vscrollbar->ScrollUp();
+	return true;
+}
+
+/**\brief Implements scroll wheel down.*/
+bool Tab::MouseWDown( int xi, int yi ){
+	if( this->vscrollbar ) this->vscrollbar->ScrollDown();
+	return true;
 }
 
 
@@ -103,14 +130,14 @@ void Tab::ResetScrollBars(){
 	list<Widget *>::iterator i;
 	for( i = children.begin(); i != children.end(); ++i ) {
 		widget = *i;
-		widget_width = widget->GetX()+widget->GetWidth();
-		widget_height = widget->GetY()+widget->GetHeight();
+		widget_width = widget->GetX()+widget->GetW();
+		widget_height = widget->GetY()+widget->GetH();
 		if( widget_height > max_height) max_height=widget_height;
 		if( widget_width > max_width) max_width=widget_width;
 	}
 
 	// Add a Horizontal ScrollBar if necessary
-	if ( max_width > GetWidth() || this->hscrollbar != NULL ){
+	if ( max_width > GetW() || this->hscrollbar != NULL ){
 		int v_x = SCROLLBAR_PAD;
 		int v_y = this->h-SCROLLBAR_THICK-SCROLLBAR_PAD;
 		int v_l = this->w-2*SCROLLBAR_PAD;
@@ -131,7 +158,7 @@ void Tab::ResetScrollBars(){
 	}
 
 	// Add a Vertical ScrollBar if necessary
-	if ( max_height > GetHeight() || this->vscrollbar != NULL ){
+	if ( max_height > GetH() || this->vscrollbar != NULL ){
 		int v_x = this->w-SCROLLBAR_THICK-SCROLLBAR_PAD;
 		int v_y = SCROLLBAR_PAD;
 		int v_l = this->h-2*SCROLLBAR_PAD;
@@ -156,18 +183,18 @@ void Tab::ResetScrollBars(){
  * \param name (not shown) Tabs collection don't really have a caption.
  */
 Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
-	w ( _w ), h ( _h ),activetab( NULL ){
-	SetX( x );
-	SetY( y );
-	printf("Creating Tabs at(%d %d) W=%d H=%d\n",x,y,GetWidth(),GetHeight());
-	
-	this->name = name;
+	activetab( NULL ){
+	this->x=x;
+	this->y=y;
+	this->w=_w;
+	this->h=_h;
+	this->name=name;
 }
 
 /**\brief Adds a Tab to the Tabs collection.
  */
 bool Tabs::AddChild( Widget *widget ){
-	if ( widget->GetName().find("Tab_") != 0 ){
+	if ( widget->GetType() != "Tab" ){
 		Log::Error("Error attempted to add non-Tab widget to Tab container: %s",
 				widget->GetName().c_str());
 		return false;
@@ -181,13 +208,19 @@ bool Tabs::AddChild( Widget *widget ){
 		this->activetab = tabwidget;
 
 	// Adjust Scrollbars to this container
-	tabwidget->w = GetWidth();
-	tabwidget->h = GetHeight()-TAB_HEADER;
-	printf("Attaching TAB to Container H=%d W=%d\n",tabwidget->GetHeight(),tabwidget->GetWidth());
+	tabwidget->w = GetW();
+	tabwidget->h = GetH()-TAB_HEADER;
 	tabwidget->ResetScrollBars();
 
 	return true;
 }
+
+/**\brief This just returns the active tab.
+ */
+Widget *Tabs::DetermineMouseFocus( int relx, int rely ) {
+	return this->activetab;
+}
+
 
 /**\brief Goes to next Tab in the container.
  */
@@ -229,7 +262,7 @@ void Tabs::Draw( int relx, int rely ){
 
 		SansSerif->RenderCentered(xo+x+TAB_PAD+currtab->capw/2,
 				y+TAB_HEADER/2,
-				currtab->caption.c_str());
+				currtab->name.c_str());
 		xo += currtab->capw+TAB_PAD*2+1;
 	}
 
@@ -240,44 +273,16 @@ void Tabs::Draw( int relx, int rely ){
 
 /**\brief First check if clicked on one of the Tab, if not, pass it on.
  */
-void Tabs::MouseLDown( int x, int y ) {
+bool Tabs::MouseLDown( int x, int y ) {
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
 	int yr = y - GetY();
 
 	if ( yr < TAB_HEADER ){
 		activetab = this->CheckTabClicked( xr, yr );
-	}else{
-		// Pass events onto Tab contents
-		this->mouseDownOn = activetab;
-		Log::Message("Mouse down on tab %s",activetab->GetName().c_str());
-		activetab->MouseLDown( xr,yr );
+		return true;
 	}
-}
-
-/**\brief Pass on mouse up event to active Tab.
- */
-void Tabs::MouseLUp( int x, int y ){
-	// Relative coordinate - to current widget
-	int xr = x - GetX();
-	int yr = y - GetY();
-
-	if ( yr < TAB_HEADER ){
-		this->UnfocusMouse();
-	} else {
-		// Pass events onto Tab contents
-		activetab->MouseLUp( xr,yr );
-	}
-}
-
-/**\brief This passes the mouse motion to the active tab.
- */
-void Tabs::MouseMotion( int x, int y, int dx, int dy ){
-	// Relative coordinate - to current widget
-	int xr = x - GetX();
-	int yr = y - GetY();
-
-	activetab->MouseMotion( xr,yr,dx,dy);
+	return Widget::MouseLDown( x, y );
 }
 
 /**\brief Checks which Tab was clicked.
@@ -296,10 +301,6 @@ Tab* Tabs::CheckTabClicked( int xr, int yr ){
 }
 
 
-/**\fn Tabs::GetWidth( )
- *  \brief Returns the width of the Tabs collection.
- * \fn Tabs::GetHeight( )
- *  \brief Returns the height of the Tabs collection.
- * \fn Tabs::GetName()
- *  \brief Returns the name of the Tabs collection.
+/** \fn Tabs::GetType
+ *  \brief For Tabs container, it is always "Tabs"
  */

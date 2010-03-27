@@ -17,47 +17,52 @@ endif (WIN32)
 
 macro(CHECK_3RD_PARTY)
 	# First we parse the arguments
-	PARSE_ARGUMENTS(CHK3RD "FNDNAME;FOUNDVAR;INCLUDEVAR;LIBVAR;DEP" "NOADDLIB" ${ARGV})
+	#  - Argument 1			- Include directory to add to search
+	#  - Argument 2			- Download mirror for the library source
+	#  - Argument 3			- Basename for the Package variable
+	#  - FNDNAME			- Find${FNDNAME}.cmake is the module
+	#  - FOUNDVAR			- Variable that is set when the package is found
+	#  - INCLUDEVAR			- Variable that will contain the include directory
+	#  - LIBVAR				- Variable that will contain the library
+	#  - DEP				- Dependencies to add to the Epiar binary
+	#  - COMPONENTS			- Components in the FindPackage command
+	#  - NOADDLIB			- Don't add this to the Epiar dependencies
+	PARSE_ARGUMENTS(CHK3RD "FNDNAME;FOUNDVAR;INCLUDEVAR;LIBVAR;DEP;COMPONENTS" "NOADDLIB" ${ARGV})
 	list(GET CHK3RD_DEFAULT_ARGS 0 3RD_INCLUDE)
 	list(GET CHK3RD_DEFAULT_ARGS 1 3RD_MIRROR)
 	list(GET CHK3RD_DEFAULT_ARGS 2 3RD_BASENAME)
+
 	# Name for the Package name
-	list(LENGTH CHK3RD_FNDNAME _fndncnt)
-	if ( _fndncnt )
-		list(GET CHK3RD_FNDNAME 0 _fndntemp)
-		set(3RD_FNDNAME ${_fndntemp})
-	else ( _fndncnt )
+	set(3RD_FNDNAME ${CHK3RD_FNDNAME})
+	if ( NOT CHK3RD_FNDNAME )
 		set(3RD_FNDNAME ${3RD_BASENAME})
-	endif ( _fndncnt )
-	list(LENGTH CHK3RD_FOUNDVAR _fndcnt)
+	endif ( NOT CHK3RD_FNDNAME )
+
 	# Name for the FOUND variable
-	if ( _fndcnt )
-		list(GET CHK3RD_FOUNDVAR 0 _fndtemp)
-		set(3RD_FOUNDVAR ${_fndtemp})
-	else ( _fndcnt )
+	set(3RD_FOUNDVAR ${CHK3RD_FOUNDVAR})
+	if( NOT CHK3RD_FOUNDVAR )
 		set(3RD_FOUNDVAR ${3RD_BASENAME}_FOUND)
-	endif ( _fndcnt )
+	endif( NOT CHK3RD_FOUNDVAR )
+
 	# Name for the INCLUDE variable
-	list(LENGTH CHK3RD_INCLUDEVAR _inccnt)
-	if ( _inccnt )
-		list(GET CHK3RD_INCLUDEVAR 0 _inctemp)
-		set(3RD_INCVAR ${_inctemp})
-	else ( _inccnt )
+	set(3RD_INCVAR ${CHK3RD_INCLUDEVAR})
+	if ( NOT CHK3RD_INCLUDEVAR )
 		set(3RD_INCVAR ${3RD_BASENAME}_INCLUDE_DIR)
-	endif ( _inccnt )
+	endif ( NOT CHK3RD_INCLUDEVAR )
+
 	# Name for the LIBRARY variable
-	list(LENGTH CHK3RD_LIBVAR _libcnt)
-	if ( _libcnt )
-		list(GET CHK3RD_LIBVAR 0 _libtemp)
-		set(3RD_LIBVAR ${_libtemp})
-	else ( _libcnt )
+	set(3RD_LIBVAR ${CHK3RD_LIBVAR})
+	if( NOT CHK3RD_LIBVAR )
 		set(3RD_LIBVAR ${3RD_BASENAME}_LIBRARIES)
-	endif ( _libcnt )
+	endif( NOT CHK3RD_LIBVAR )
+
+	# We only support tar.gz formats
 	set(3RD_ARCFORMAT "tar.gz")
 
 	# First add include path to search path
 	set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH}
 		"${EPIAR_3RD_PARTY}/${3RD_INCLUDE}")
+
 	# Check if we're downloading
 	if (THIRDPARTY_DOWNLOAD)
 		set(DL_${3RD_BASENAME}_MIRROR "${3RD_MIRROR}")
@@ -65,10 +70,13 @@ macro(CHECK_3RD_PARTY)
 	else (THIRDPARTY_DOWNLOAD)
 		set(TP_REQUIRE "REQUIRED")
 	endif (THIRDPARTY_DOWNLOAD)
+
 	# Find the package
 	if (NOT ${3RD_BASENAME}_BUILD)
-		FIND_THIRD_PARTY(${3RD_FNDNAME} ${TP_REQUIRE} FOUNDVAR ${3RD_FOUNDVAR})
+		FIND_THIRD_PARTY(${3RD_FNDNAME} ${TP_REQUIRE} FOUNDVAR ${3RD_FOUNDVAR}
+			COMPONENTS ${CHK3RD_COMPONENTS})
 	endif (NOT ${3RD_BASENAME}_BUILD)
+
 	# If not found, then we're downloading
 	if (THIRDPARTY_DOWNLOAD AND 3RD_MIRROR)
 		if (NOT ${3RD_FOUNDVAR})
@@ -84,6 +92,7 @@ macro(CHECK_3RD_PARTY)
 				"${EPIAR_3RD_PARTY}/${3RD_FNDNAME}" REQUIRED)
 		endif (NOT ${3RD_FOUNDVAR})
 	endif (THIRDPARTY_DOWNLOAD AND 3RD_MIRROR)
+
 	# Add dependencies (if necessary)
 	if (${3RD_BASENAME}_BUILD)
 		set(${3RD_BASENAME}_STATICLIB_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/lib" CACHE PATH "Output to Epiar's Lib Folder" FORCE)
@@ -152,8 +161,10 @@ if (USE_INTERNAL_LUA)
 else (USE_INTERNAL_LUA)
 	unset(LUA_LIBRARIES CACHE)
 	if (USE_LUAJIT)
+		set(LUAJIT_FIND_STATIC ON)
 		CHECK_3RD_PARTY("LuaJIT/LuaJIT-1.1.5/src"
-			"http://luajit.org/download/LuaJIT-1.1.5.tar.gz" LUAJIT)
+			"http://luajit.org/download/LuaJIT-1.1.5.tar.gz" LUAJIT
+			COMPONENTS STATIC)
 	else (USE_LUAJIT)
 		CHECK_3RD_PARTY("Lua51/lua-5.1.4/src"
 			"http://www.lua.org/ftp/lua-5.1.4.tar.gz" LUA

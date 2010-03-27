@@ -9,6 +9,11 @@ if (NOT "${EXTRA_WARNINGS}" STREQUAL "${EXTRA_WARNINGS_PREV}")
 	set(EXTRA_WARNINGS_PREV ${EXTRA_WARNINGS} CACHE INTERNAL "" FORCE)
 endif (NOT "${EXTRA_WARNINGS}" STREQUAL "${EXTRA_WARNINGS_PREV}")
 
+# Add RC compiler for mingw
+if(MINGW)
+  set(CMAKE_RC_COMPILER "i486-mingw32-windres")
+endif(MINGW)
+
 # set first time options
 option(DEFAULT_EPIAR_OPTIONS "reset epiar options to default?" true)
 # default options on first run

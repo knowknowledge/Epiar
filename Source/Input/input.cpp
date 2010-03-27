@@ -53,6 +53,8 @@ Uint32 Input::lastMouseMove= 0;
  /// \var InputEvent::my
  ///  \brief Mouse y coordinate.
 
+/**\brief Stream to handle InputEvent.
+ */
 ostream& operator<<(ostream &out, const InputEvent&e) {
 	static const char _mouseMeanings[3] = {'M','U','D'};
 	static const char _keyMeanings[4] = {'^','V','P','T'};
@@ -64,10 +66,14 @@ ostream& operator<<(ostream &out, const InputEvent&e) {
 	return out;
 }
 
+/**\brief Input constructor.
+ */
 Input::Input() {
 	memset( heldKeys, 0, sizeof( bool ) * SDLK_LAST );
 }
 
+/**\brief Polls the event queue and sends the list of events to subsystems.
+ */
 bool Input::Update( void ) {
 	SDL_Event event;
 	bool quitSignal = false;
@@ -150,6 +156,8 @@ mouseState Input::_CheckMouseState( Uint8 button, bool up ){
 	return UNHANDLED;
 }
 
+/**\brief Translates mouse movement events to Epiar.
+ */
 void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 	assert( event );
 
@@ -159,40 +167,44 @@ void Input::_UpdateHandleMouseMotion( SDL_Event *event ) {
 	x = event->motion.x;
 	y = event->motion.y;
 	
-	events.push_front( InputEvent( MOUSE, MOUSEMOTION, x, y ) );
+	events.push_back( InputEvent( MOUSE, MOUSEMOTION, x, y ) );
 	Video::EnableMouse();
 	lastMouseMove = Timer::GetTicks();
 }
 
+/**\brief Translates mouse down events to Epiar events.
+ */
 void Input::_UpdateHandleMouseDown( SDL_Event *event ) {
 	assert( event );
 
 	Uint16 x, y;
 	mouseState state=_CheckMouseState(event->button.button,false);
-
 	// translate so (0,0) is lower-left of screen
 	x = event->button.x;
 	y = event->button.y;
 
 
 	if (state)
-		events.push_front( InputEvent( MOUSE, state, x, y ) );
+		events.push_back( InputEvent( MOUSE, state, x, y ) );
 }
 
+/**\brief Translates mouse up events to Epiar events.
+ */
 void Input::_UpdateHandleMouseUp( SDL_Event *event ) {
 	assert( event );
 
 	Uint16 x, y;
 	mouseState state=_CheckMouseState(event->button.button,true);
-	
 	// translate so (0,0) is lower-left of screen					
 	x = event->button.x;
 	y = event->button.y;
 
 	if (state)
-		events.push_front( InputEvent( MOUSE, state, x, y ) );
+		events.push_back( InputEvent( MOUSE, state, x, y ) );
 }
 
+/**\brief Translates key down events to Epiar events.
+ */
 bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 	bool quitSignal = false;
 	
@@ -203,7 +215,7 @@ bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 			quitSignal = true;
 			break;
 		default:
-			events.push_front( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
+			events.push_back( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
 			// typed events go here because SDL will repeat KEYDOWN events for us at the set SDL repeat rate
 			PushTypeEvent( events, event->key.keysym.sym );
 			heldKeys[ event->key.keysym.sym ] = 1;
@@ -213,6 +225,8 @@ bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 	return quitSignal;
 }
 
+/**\brief Translates key up events to Epiar events.
+ */
 bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 	bool quitSignal = false;
 	
@@ -223,7 +237,7 @@ bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 			quitSignal = true;
 			break;
 		default:
-			events.push_front( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
+			events.push_back( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
 			heldKeys[ event->key.keysym.sym ] = 0;
 			break;
 	}
@@ -280,12 +294,13 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 	// DEBUG: Name = int = char -> emitted char
 	//cout<<SDL_GetKeyName(key)<<" = "<<key<<" = '"<<char(key)<<"' -> '"<<char(letter)<<"'"<<endl;
 	
-	events.push_front( InputEvent( KEY, KEYTYPED, letter ) );
+	events.push_back( InputEvent( KEY, KEYTYPED, letter ) );
 }
 
+/**\brief Handle Lua key bindings.
+ */
 void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
-		//cout << *i << endl; // DEBUG code to check which events are actually being generated
 		map<InputEvent,string>::iterator val = eventMappings.find( *i );
 		if( val != eventMappings.end() ){
 			Lua::Run( val->second );
@@ -293,16 +308,22 @@ void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 	}
 }
 
+/**\brief Register Lua events.
+ */
 void Input::RegisterCallBack( InputEvent event, string command ) {
-	cout<<"Registering: "<<event<<" as "<<command<<endl;
+	//cout<<"Registering: "<<event<<" as "<<command<<endl;
 	eventMappings.insert(make_pair(event, command));
 }
 
+/**\brief Unregister Lua events.
+ */
 void Input::UnRegisterCallBack( InputEvent event ) {
-	cout<<"Un-Registering: "<<event<<endl;
+	//cout<<"Un-Registering: "<<event<<endl;
 	eventMappings.erase(event);
 }
 
+/**\brief Lua callable function to register a key.
+ */
 int Input::RegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if(n == 3) {
@@ -321,6 +342,8 @@ int Input::RegisterKey(lua_State *L) {
 	return 0;
 }
 
+/**\brief Lua callable function to unregister a key.
+ */
 int Input::UnRegisterKey(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if(n == 2) {

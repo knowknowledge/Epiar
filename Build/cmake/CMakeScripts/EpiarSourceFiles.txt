@@ -150,9 +150,17 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/xml.cpp
 	)
 if (WIN32)
-	set (Epiar_src ${Epiar_src}
-		${Epiar_SRC_DIR}/epiar.rc
-		)
+  if(MINGW)
+	# resource compilation for mingw
+	ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/epiar_rc.o
+						COMMAND ${CMAKE_RC_COMPILER}
+							-I${CMAKE_CURRENT_SOURCE_DIR}
+							-i${Epiar_SRC_DIR}/epiar.rc
+							-o ${CMAKE_CURRENT_BINARY_DIR}/epiar_rc.o)
+	set(Epiar_src ${Epiar_src} ${CMAKE_CURRENT_BINARY_DIR}/epiar_rc.o)
+  else(MINGW)
+	set (Epiar_src ${Epiar_src} ${Epiar_SRC_DIR}/epiar.rc)
+  endif(MINGW)
 endif (WIN32)
 
 # Add tests

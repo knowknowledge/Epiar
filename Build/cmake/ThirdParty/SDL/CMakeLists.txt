@@ -74,6 +74,7 @@ ${SDL_SRC_FOLDER}/video/SDL_stretch.c
 ${SDL_SRC_FOLDER}/video/SDL_surface.c
 ${SDL_SRC_FOLDER}/video/SDL_video.c
 ${SDL_SRC_FOLDER}/video/SDL_yuv.c
+${SDL_SRC_FOLDER}/video/SDL_yuv_mmx.c
 ${SDL_SRC_FOLDER}/video/SDL_yuv_sw.c
 ${SDL_SRC_FOLDER}/video/dummy/SDL_nullevents.c
 ${SDL_SRC_FOLDER}/video/dummy/SDL_nullmouse.c
@@ -89,7 +90,7 @@ ${SDL_SRC_FOLDER}/video/windx5/SDL_dx5video.c
 ${SDL_SRC_FOLDER}/video/windx5/SDL_dx5yuv.c
 )
 set(sdl_main_src
-	${SDL_SRC_FOLDER}/Main/Win32/SDL_win32_main.c
+	${SDL_SRC_FOLDER}/main/win32/SDL_win32_main.c
 )
 
 # Creates the libraries
@@ -107,6 +108,9 @@ add_dependencies(${SDL_LIBRARY_MAIN} ${SDL_LIBRARY_BULK})
 # Some defines
 if (WIN32)
 	set(sdl_compile_def
+		WIN32
+		_WINDOWS
+		ENABLE_DIRECTX
 		NO_STDIO_REDIRECT
 		)
 	if (MSVC)
@@ -114,10 +118,6 @@ if (WIN32)
 			_CRT_SECURE_NO_WARNINGS)
 	elseif (WATCOM)
 		set(sdl_compile_def ${sdl_compile_def}
-			WIN32
-			_WINDOWS
-			ENABLE_DIRECTX
-			NO_STDIO_REDIRECT
 			_WIN32_WINNT=0x0400)
 	endif (MSVC)
 	target_link_libraries(${SDL_LIBRARY_BULK} winmm dxguid)

@@ -22,17 +22,17 @@ class Scrollbar : public Widget {
 
 		void Draw( int relx=0, int rely = 0 );
 
-		int GetWidth( void ) { return w; }
-		int GetHeight( void ) { return h; }
-
 		// Use these when the encompassing window size changes
-		void SetPosition(int x, int y){ SetX(x);SetY(y); }
+		void SetPosition(int x, int y){this->x=x;this->y=y; }
 		void SetSize(int length);
 
-		void MouseLDown( int x, int y );
-		void MouseMotion( int xi, int yi, int dx, int dy );
+		bool MouseLDown( int xi, int yi );
+		bool MouseDrag( int xi, int yi );
 
-		string GetName( void ) {return string((type==HORIZONTAL)?"Horizontal":"Vertical") + string(" Scrollbar");}
+		string GetType( void ){ return string("Scrollbar");}
+
+		void ScrollUp( int pix=SCROLLBAR_SCROLL );
+		void ScrollDown( int pix=SCROLLBAR_SCROLL );
 
 		int pos,maxpos;
 
@@ -42,7 +42,6 @@ class Scrollbar : public Widget {
 		int MarkerPixelToPos( int xr, int yr );
 		int CheckPos( int newpos );
 
-		int w,h;
 		int markersize;
 		scrollbarType type;
 		Widget *parent;

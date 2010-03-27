@@ -1,13 +1,13 @@
 *.swp
-build/*
+build*/*
 lib/*
 
 ThirdParty/*.tar.gz
-ThirdParty/FreeType/freetype*
+ThirdParty/Freetype/freetype*
 ThirdParty/FTGL/ftgl*
-ThirdParty/LibXML2/libxml2*
+ThirdParty/LibXml2/libxml2*
 ThirdParty/Lua51/lua*
-ThirdParty/LuaJIT/LuaJIT*
+ThirdParty/LUAJIT/LuaJIT*
 ThirdParty/MIKMOD/libmikmod*
 ThirdParty/OGG/libogg*
 ThirdParty/PhysFS/physfs*
@@ -16,6 +16,6 @@ ThirdParty/SDL/SDL*
 ThirdParty/SDL_image/SDL_image*
 ThirdParty/SDL_mixer/SDL_mixer*
 ThirdParty/VORBIS/libvorbis*
-ThirdParty/Zlib/zlib*
+ThirdParty/ZLIB/zlib*
 
 Vim/tags

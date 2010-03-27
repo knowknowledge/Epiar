@@ -10,15 +10,16 @@
 #ifndef __H_INCLUDES__
 #define __H_INCLUDES__
 
-#ifdef _MSC_VER
-// The Microsoft GL header files require windows.h to be included first.
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
+#define _WIN32_WINNT 0x0501
+// The Microsoft GL header files require windows.h to be included first.
 #include <windows.h>
 #define snprintf _snprintf
 // Microsoft's math.h requires this define so that it defines M_PI etc.
 #define _USE_MATH_DEFINES
 
-#endif // _MSC_VER
+#endif // _WIN32
 
 // System includes
 #include <iostream>

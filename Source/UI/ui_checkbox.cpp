@@ -20,10 +20,12 @@
 /**\brief Constructs a new Checkbox.
  */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
-	SetX( x );
-	SetY( y );
+	this->x=x;
+	this->y=y;
+	this->w=CHECKBOX_W;
+	this->h=CHECKBOX_H;
 	
-	this->label = label;
+	this->name = label;
 	this->checked = checked;
 	if(label!=""){
 		this->AddChild( new Label(CHECKBOX_W+5,CHECKBOX_H, label, 0) );
@@ -33,8 +35,8 @@ Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 void Checkbox::Draw( int relx, int rely ) {
 	int x, y;
 	
-	x = GetX() + relx;
-	y = GetY() + rely;
+	x = this->x + relx;
+	y = this->y + rely;
 	
 	Video::DrawRect( x, y, CHECKBOX_W, CHECKBOX_H, 0.4f, 0.4f, 0.4f );
 	Video::DrawRect( x + 1, y + 1, CHECKBOX_W - 2, CHECKBOX_H - 2, 0.15f, 0.15f, 0.15f );
@@ -45,7 +47,8 @@ void Checkbox::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
-void Checkbox::MouseLUp( int wx, int wy ) {
+bool Checkbox::MouseLUp( int xi, int yi ) {
 	if(checked) checked = false;
 	else checked = true;
+	return true;
 }

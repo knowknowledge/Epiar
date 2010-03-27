@@ -22,10 +22,12 @@
  Slider::Slider( int x, int y, int w, int h, const string& label,
 		const string& callback):
 	minval( 0.000f ), maxval( 1.000f ), val ( 0.5f),
-	w ( w ), h ( h ), label ( string(label) ),
 	lua_callback( string(callback) ){
-	SetX( x );
-	SetY( y );
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=h;
+	this->name=label;
 }
 
 /**\fn Slider::GetVal( )
@@ -50,18 +52,18 @@ void Slider::Draw( int relx, int rely ){
 	int markerx = x + markerxr;
 	
 	// Draw slider background
-	Video::DrawRect( x, y+(this->h/2)-SLIDER_H/2, this->w, SLIDER_H,
+	Video::DrawRect( x, y+(GetH()/2)-SLIDER_H/2, GetW(), SLIDER_H,
 			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( x+1, y+(this->h/2)-SLIDER_H/2+1, this->w-2, SLIDER_H-2,
+	Video::DrawRect( x+1, y+(GetH()/2)-SLIDER_H/2+1, GetW()-2, SLIDER_H-2,
 			0.15f, 0.15f, 0.15f);
-	Video::DrawRect( x+3, y+(this->h/2)-SLIDER_H/2+3, 
+	Video::DrawRect( x+3, y+(GetH()/2)-SLIDER_H/2+3, 
 			markerxr-3, SLIDER_H-6,
 			0.4f, 0.4f, 0.4f);
 
 	// Draw marker
-	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, this->h,
+	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, GetH(),
 			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, this->h-2,
+	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, GetH()-2,
 			0.15f, 0.15f, 0.15f);
 
 	// Render the value indicator
@@ -72,7 +74,7 @@ void Slider::Draw( int relx, int rely ){
 
 /**\brief Slider mouse drag call back.
  */
-void Slider::MouseMotion( int xi, int yi, int dx, int dy ){
+bool Slider::MouseDrag( int xi, int yi ){
 	this->SetVal(this->PixelToVal(xi - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call
@@ -82,11 +84,12 @@ void Slider::MouseMotion( int xi, int yi, int dx, int dy ){
 			Log::Error("Bad conversion of float to string");
 		Lua::Run(fullcmd.str());
 	}
+	return true;
 }
 
 /**\brief Slider mouse down call back.
  */
-void Slider::MouseLDown( int wx, int wy ){
+bool Slider::MouseLDown( int wx, int wy ){
 	this->SetVal(this->PixelToVal(wx - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call
@@ -96,13 +99,14 @@ void Slider::MouseLDown( int wx, int wy ){
 			Log::Error("Bad conversion of float to string");
 		Lua::Run(fullcmd.str());
 	}
+	return true;
 }
 
 // Private functions
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
  int Slider::ValToPixel( float value ){
-	return static_cast<int>((this->w - SLIDER_MW) *
+	return static_cast<int>((GetW() - SLIDER_MW) *
 		((this->val - this->minval)/
 		(this->maxval - this->minval)) + SLIDER_MW/2);
  }
@@ -113,11 +117,11 @@ void Slider::MouseLDown( int wx, int wy ){
 	float value;
 	if ( this->maxval < this->minval )
 		value = (TO_FLOAT(pixels - SLIDER_MW/2 ) 
-			/ TO_FLOAT(this->w - SLIDER_MW))
+			/ TO_FLOAT(GetW() - SLIDER_MW))
 			* ( minval - maxval) + maxval;
 	else
 		value = (TO_FLOAT(pixels - SLIDER_MW/2)
-			/ TO_FLOAT(this->w - SLIDER_MW))
+			/ TO_FLOAT(GetW() - SLIDER_MW))
 			* ( maxval - minval) + minval;
 	return value;
  }
