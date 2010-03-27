@@ -20,88 +20,64 @@
  * \brief UI. */
 
 list<Widget *> UI::children;
-Widget *UI::mouseFocus, *UI::keyboardFocus; // remembers which widgets last had focus
+Widget UI::master;
+Widget	*UI::keyboardFocus=NULL,
+		*UI::mouseHover=NULL,
+		*UI::lmouseDown=NULL,
+		*UI::mmouseDown=NULL,
+		*UI::rmouseDown=NULL;
 
+/**\brief This constructor resets the input.
+ */
 UI::UI() {
 	ResetInput();
 }
 
+
+/**\brief Destroys the UI interface and all UI elements.
+ */
 UI::~UI() {
-	list<Widget *>::iterator i;
-
-	for( i = children.begin(); i != children.end(); ++i ) {
-		delete (*i);
-	}
-	
-	children.clear();
 }
 
+/**\brief Checks to see if there are UI elements.
+ */
 bool UI::Active( void ) {
-	if( children.size() ) return true;
-	return false;
+	if( UI::master.IsEmpty() ) return false;
+	return true;
 }
 
+/**\brief Adds a Widget to the base UI.*/
 bool UI::Add( Widget *widget ) {
 	if( !widget ) return false;
 	
-	children.push_back( widget );
+	UI::master.AddChild( widget );
 	
 	return true;
 }
 
+/**\brief Update all widgets.*/
 void UI::Run( void ) {
 	list<Widget *>::iterator i;
 	
-	if( children.size() )
+	if( !UI::master.IsEmpty() ){
 		Video::EnableMouse();
-	
-	// Update all widgets
-	for( i = children.begin(); i != children.end(); ++i ) {
-		(*i)->Update();
+		UI::master.Update();
 	}
 }
 
+/**\brief This removes all widgets from the base.*/
 void UI::Close( void ) {
-	// Free all widgets
-	list<Widget *>::iterator i;
-	for( i = children.begin(); i != children.end(); ++i ) {
-		delete (*i);
-	}
-	children.clear();
+	UI::master.Empty();
 	ResetInput();
 }
 
 void UI::Close( Widget *widget ) {
-	delete widget;
-	children.remove(widget);
+	UI::master.DelChild( widget );
 	ResetInput();
 }
 
 void UI::Draw( void ) {
-	list<Widget *>::iterator i;
-	
-	// Draw all widgets
-	for( i = children.begin(); i != children.end(); ++i ) {
-		(*i)->Draw();
-	}
-}
-
-// Uses the child list and (x,y) to determine over which widget (x,y) is
-// If widgets overlap, the one first added will have priority per behavior of STL list template
-Widget *UI::DetermineMouseFocus( int x, int y ) {
-	list<Widget *>::reverse_iterator i;
-
-	for( i = children.rbegin(); i != children.rend(); ++i ) {
-		if WITHIN_BOUNDS(x,y,
-				(*i)->GetX(),
-				(*i)->GetY(),
-				(*i)->GetWidth(),
-				(*i)->GetHeight()){
-			return (*i);
-		}
-	}
-	
-	return( NULL );
+	UI::master.Draw( );
 }
 
 /**\brief Handles Input Events from the event queue.
@@ -155,91 +131,109 @@ bool UI::HandleKeyboard( InputEvent &i ){
 /**\brief Handles UI mouse events.*/
 bool UI::HandleMouse( InputEvent &i ){
 	int x, y;
-	bool eventWasHandled = false;
 	
 	// mouse coordinates associated with the mouse event
 	x = i.mx;
 	y = i.my;
-
+	// Determine where mouse is on
+	Widget *widgetOn = DetermineMouseFocus( x, y );
+	
 	switch(i.mstate) {
-	case MOUSEMOTION:
-		// if a widget has mouse focus, we are dragging
-		if( mouseFocus ) {
-			int dx, dy; // original point of click for the drag
-			
-			dx = mouseFocus->GetDragX();
-			dy = mouseFocus->GetDragY();
-
-			mouseFocus->MouseMotion(x,y,dx,dy);
-			eventWasHandled = true;
-		}
-		break;
-	case MOUSELUP:
-		// release focus if needed
-		if( mouseFocus ) {
-			// Sometimes this will kill the current widget, so keep this last
-			mouseFocus->MouseLUp( x, y );
-
-			mouseFocus = NULL;
-
-			eventWasHandled = true;
-		}
-		break;
-	case MOUSELDOWN:{
-		Widget *focusedWidget = DetermineMouseFocus( x, y );
-		// did they click a different widget than the one already in focus?
-		if( mouseFocus != focusedWidget ) {
-			// A new widget now has focus
-			if( mouseFocus )
-				mouseFocus->UnfocusMouse();
-			
-			mouseFocus = focusedWidget;
-			
-			if( mouseFocus ) {
-				mouseFocus->FocusMouse( x, y );
+		case MOUSEMOTION:			// Movement of the mouse
+			if ( UI::lmouseDown ){
+				// Mouse button is held down, send drag event
+				UI::lmouseDown->MouseDrag(x,y);
+				return true;
 			}
-		}
-		// mouse down also changes keyboard focus (e.g. clicked on a new text field)
-		if( keyboardFocus != focusedWidget ) {
-			if( keyboardFocus ) keyboardFocus->UnfocusKeyboard();
-			
-			keyboardFocus = focusedWidget;
-			
-			if( keyboardFocus ) {
-				keyboardFocus->FocusKeyboard();
+			// Mouse is moving without button down
+			if ( !widgetOn ){
+				// Not on a widget
+				if ( UI::mouseHover ){
+					// We were on a widget, send leave event
+					UI::mouseHover->MouseLeave();
+					UI::mouseHover=NULL;
+				}
+				return true;
 			}
+			if ( !UI::mouseHover ){
+				// We're on a widget, but nothing was hovered on before
+				// send enter event.
+				widgetOn->MouseEnter(x,y);
+				UI::mouseHover = widgetOn;
+				return true;
+			}
+			// We're on a widget, and leaving another widget
+			// send both enter and leave event
+			UI::mouseHover->MouseLeave();
+			widgetOn->MouseEnter( x,y );
+			UI::mouseHover = widgetOn;
+			return true;
+		case MOUSELUP:			// Left button up
+			if( UI::lmouseDown ){
+				if( UI::lmouseDown == widgetOn )
+				// Mouse up is on the same widget as mouse down, send event
+					widgetOn->MouseLUp( x, y );
+			}
+			UI::lmouseDown = NULL;
+			return true;
+		case MOUSELDOWN:		// Left button down
+			if( !widgetOn ){
+				// Nothing was clicked on
+				if( UI::keyboardFocus )
+					UI::keyboardFocus->KeyboardLeave();
+				UI::keyboardFocus = NULL;
+				return true;
+			}
+			// We clicked on a widget
+			widgetOn->MouseLDown( x,y );
+			UI::lmouseDown = widgetOn;
+			if ( (UI::keyboardFocus) && (UI::keyboardFocus != widgetOn) ){
+				// We changed keyboard focus
+				UI::keyboardFocus->KeyboardLeave();
+				widgetOn->KeyboardEnter();
+			}
+			UI::keyboardFocus = widgetOn;
+			return true;
+		case MOUSEMUP:			// Middle button up
+			if( UI::mmouseDown ){
+				if( UI::mmouseDown == widgetOn )
+				// Mouse up is on the same widget as mouse down, send event
+					widgetOn->MouseMUp( x, y );
+			}
+			UI::mmouseDown = NULL;
+			return true;
+		case MOUSEMDOWN:		// Middle button down
+			if ( widgetOn ){
+				widgetOn->MouseMDown( x,y );
+				UI::mmouseDown = widgetOn;
+			}
+			return true;
+		case MOUSERUP:			// Right button up
+			if( UI::rmouseDown ){
+				if( UI::rmouseDown == widgetOn )
+				// Mouse up is on the same widget as mouse down, send event
+					widgetOn->MouseRUp( x, y );
+			}
+			UI::rmouseDown = NULL;
+			break;
+		case MOUSERDOWN:
+			if ( widgetOn ){	// Right button down
+				widgetOn->MouseRDown( x,y );
+				UI::rmouseDown = widgetOn;
+			}
+			return true;
+		case MOUSEWUP:			// Scroll wheel up
+			if( widgetOn )
+				widgetOn->MouseWUp( x, y );
+			break;
+		case MOUSEWDOWN:		// Scroll wheel down
+			if( widgetOn )
+				widgetOn->MouseWDown( x, y );
+			break;
+		default:
+			Log::Warning("Unhandled UI input detected.");
 		}
-		
-		// pass the event to the widget
-		if( mouseFocus ) {
-			mouseFocus->MouseLDown( x, y );
-			
-			eventWasHandled = true;				
-		}
-		break;
-	}
-	case MOUSEMDOWN:
-		;
-		break;
-	case MOUSEMUP:
-		;
-		break;
-	case MOUSERDOWN:
-		;
-		break;
-	case MOUSERUP:
-		;
-		break;
-	case MOUSEWDOWN:
-		;
-		break;
-	case MOUSEWUP:
-		;
-		break;
-	default:
-		Log::Warning("Unhandled UI input detected.");
-	}
-	return eventWasHandled;
+	return false;
 }
 
 
@@ -247,8 +241,11 @@ bool UI::HandleMouse( InputEvent &i ){
 // Clears current input to prevent accidental usage of invalid values
 // Use this whenever the UI removes focusable widgets
 void UI::ResetInput() {
-	mouseFocus = NULL;
-	keyboardFocus = NULL;
+	keyboardFocus=NULL;
+	mouseHover=NULL;
+	lmouseDown=NULL;
+	mmouseDown=NULL;
+	rmouseDown=NULL;
 }
 
 void UI::RegisterKeyboardFocus( Widget *widget ) {
