@@ -129,11 +129,11 @@ string ArgParser::HaveValue( const string& arg ){
 
 	if( this->valueopts.count( arg ) > 0 ){
 		string optval = this->valueopts[arg];
-		// Set it to false so we know we've checked it.
+		// Clear it so we know we've checked it.
 		this->valueopts[arg].clear();
 		return optval;
 	}
-	return string();
+	return "";
 }
 
 
@@ -189,7 +189,7 @@ list<string> ArgParser::GetUnused( void ){
 	}
 	
 	for ( itv=valueopts.begin(); itv != valueopts.end(); itv++ ){
-		if ( (*itv).second.empty() )
+		if ( !(*itv).second.empty() )
 			unused.push_back((*itv).first);
 	}
 	
@@ -222,10 +222,10 @@ void ArgParser::Parse( int argc, char **argv ){
 				size_t splitpos = currarg.find( '=' );
 				string valuearg = currarg.substr(2,splitpos-2);
 				string valueval;
-				if ( splitpos != currarg.npos )
-					valueval = currarg.substr(splitpos+1);
-				else
-					valueval = "";
+				assert ( splitpos != currarg.npos );
+				valueval = currarg.substr(splitpos+1);
+				if( valueval.empty() )
+					valueval = "NONE";
 				this->valueopts[valuearg] = valueval;
 				cout<<"Found value option: "<<valuearg<<" value:"<<valueval<<endl;
 				break;
