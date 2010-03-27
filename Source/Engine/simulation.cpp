@@ -186,9 +186,6 @@ bool Simulation::Run() {
 			}
 		}
 
-		// Runs only a few loops (even when paused)
-		UI::Run(); 
-
 		// Erase cycle
 		Video::Erase();
 		

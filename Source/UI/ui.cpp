@@ -50,16 +50,6 @@ bool UI::Add( Widget *widget ) {
 	return true;
 }
 
-/**\brief Update all widgets.*/
-void UI::Run( void ) {
-	list<Widget *>::iterator i;
-	
-	if( !UI::master.IsEmpty() ){
-		Video::EnableMouse();
-		UI::master.Update();
-	}
-}
-
 /**\brief This removes all widgets from the base.*/
 void UI::Close( void ) {
 	UI::master.Empty();
