@@ -19,6 +19,8 @@
 /**\class Button
  * \brief UI button. */
 
+/**\brief Convenience function to initialize the button, used to prevent code repetition.
+ */
 void Button::Initialize( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
 	// This cuts down on code duplication so it can be called by multiple constructors.
@@ -42,23 +44,19 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	this->lua_callback = "";
 }
 
-Button::Button( int x, int y, int w, int h, string label ) {
-	// Is this default constructor even useful?
-	// Why would there ever be a button without a callback?
-	Initialize( x, y, w, h, label );
-	this->clickCallBack = debugClick;// TODO: set this to NULL
-}
-
+/**\brief Constructs a button with a C++ callback.*/
 Button::Button( int x, int y, int w, int h, string label, void (*function)(void)) {
 	Initialize( x, y, w, h, label );
 	this->clickCallBack = function;
 }
 
+/**\brief Constructs a button with a Lua callback.*/
 Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	Initialize( x, y, w, h, label );
 	this->lua_callback = lua_code;
 }
 
+/**\brief Draws the button.*/
 void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
@@ -71,10 +69,13 @@ void Button::Draw( int relx, int rely ) {
 	bitmap_current->DrawStretch( x, y, this->w, this->h );
 
 	// draw the label
+	//Video::SetCropRect(x,y,this->w,this->h);
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), this->name.c_str() );
+	//Video::UnsetCropRect();
 }
 
+/**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
 	if(OPTION(int, "options/sound/buttons"))
 		this->sound_click->Play();
@@ -82,7 +83,9 @@ bool Button::MouseLDown( int xi, int yi ) {
 	return true;
 }
 
+/**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
+	bitmap_current = bitmap_normal;
 
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", this->name.c_str() );
@@ -96,11 +99,7 @@ bool Button::MouseLUp( int xi, int yi ) {
 	return true;
 }
 
-bool Button::MouseLeave( int xi, int yi ){
+bool Button::MouseLRelease( void ){
 	bitmap_current = bitmap_normal;
 	return true;
-}
-
-void Button::debugClick(){
-	Log::Message( "DEBUG Click at %d,%d", 18, 20);
 }

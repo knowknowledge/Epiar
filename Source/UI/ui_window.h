@@ -17,7 +17,7 @@ class Window : public Widget {
 	public:
 		Window( int x, int y, int w, int h, string caption );
 		bool AddChild( Widget *widget );
-
+		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	
 		bool MouseDrag( int x, int y );

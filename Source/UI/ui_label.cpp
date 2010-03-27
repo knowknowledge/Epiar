@@ -40,9 +40,9 @@ void Label::Draw(  int relx, int rely ) {
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
 	if(centered){
-		SansSerif->RenderCentered( x, y, (char *)label.c_str() );
+		SansSerif->RenderCentered( x, y, name.c_str() );
 	} else {
-		SansSerif->Render( x, y, (char *)label.c_str() );
+		SansSerif->Render( x, y, name.c_str() );
 	}
 	
 }

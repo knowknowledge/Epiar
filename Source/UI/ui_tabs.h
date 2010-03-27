@@ -14,6 +14,10 @@ class Tab : public Widget {
 	public:
 		Tab( const string& _caption );
 		bool AddChild( Widget *widget );
+		Widget *DetermineMouseFocus( int relx, int rely );
+
+		bool MouseWUp( int xi, int yi );
+		bool MouseWDown( int xi, int yi );
 
 		void Draw( int relx = 0, int rely = 0 );
 
@@ -23,7 +27,6 @@ class Tab : public Widget {
 
 	private:
 		int capw;
-		string caption;
 
 		void ResetScrollBars();
 		Scrollbar *hscrollbar;
@@ -34,18 +37,13 @@ class Tabs : public Widget {
 	public:
 		Tabs( int x, int y, int w, int h, const string& name );
 		bool AddChild( Widget *widget );
-		void TabNext( void );
+		Widget *DetermineMouseFocus( int relx, int rely );
 
 		void Draw( int relx = 0, int rely = 0 );
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
-	
 		bool MouseLDown( int xi, int yi );
-		bool MouseLUp( int xi, int yi );
-		bool MouseMotion( int xi, int yi );
+		string GetType( void ) {return string("Tabs");}
 
-		string GetName( void ) {return string("Tabs_"+name);}
-
+		void TabNext( void );
 	private:
 		Tab* CheckTabClicked( int xr, int yr );
 		Tab* activetab;

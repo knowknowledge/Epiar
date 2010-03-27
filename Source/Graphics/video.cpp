@@ -355,9 +355,28 @@ int Video::GetHalfHeight( void ) {
 /**\brief Set crop rectangle.
  */
 void Video::SetCropRect( int x, int y, int w, int h ){
-	if (cropRects.empty())
+	int xn,yn,wn,hn;
+	if (cropRects.empty()){
 		glEnable(GL_SCISSOR_TEST);
-	cropRects.push(Rect( x, y, w, h ));
+		xn=x;
+		yn=y;
+		wn=w;
+		hn=h;
+	}else{
+		// Need to detect which part of crop rectangle is within previous rectangle
+		// So we don't miss things that needs to be cropped.
+		Rect prevrect = cropRects.top();
+		int rightprev = prevrect.x+prevrect.w;
+		int right = x+w;
+		int botprev = prevrect.y+prevrect.h;
+		int bot = y+h;
+		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	// Left
+		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	// Top
+		wn = rightprev > right ? right-xn : rightprev-xn;// Right
+		hn = botprev > bot ? bot-yn : botprev-yn;		// Bottom
+	}
+
+	cropRects.push(Rect( xn, yn, wn, hn ));
 	// Need to convert top down y-axis
 	glScissor( x, Video::h-(y+h), w, h );
 }

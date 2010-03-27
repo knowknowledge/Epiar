@@ -110,13 +110,25 @@ bool Scrollbar::MouseLDown( int x, int y ){
 
 /**\brief Scroll to position on mouse motion.
  */
-bool Scrollbar::MouseMotion( int xi, int yi ){
+bool Scrollbar::MouseDrag( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - GetX();
 	int yr = yi - GetY();
 
 	this->pos = this->CheckPos(this->MarkerPixelToPos( xr, yr ));
 	return true;
+}
+
+/**\brief Scroll the scrollbar up.*/
+void Scrollbar::ScrollUp( int pix ){
+	int newpos = pos-pix;
+	this->pos = this->CheckPos( newpos );
+}
+
+/**\brief Scroll the scrollbar down.*/
+void Scrollbar::ScrollDown( int pix ){
+	int newpos = pos+pix;
+	this->pos = this->CheckPos( newpos );
 }
 
 /**\brief Calculates marker size based on current dimensions.

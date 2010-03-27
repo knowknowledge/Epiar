@@ -15,15 +15,14 @@
 
 class Button : public Widget {
 	public:
-		Button( int x, int y, int w, int h, string label);
+		Button( int x, int y, int w, int h, string label, string lua_code="");
 		Button( int x, int y, int w, int h, string label, void (*clickCallBack)());
-		Button( int x, int y, int w, int h, string label, string lua_code);
 		
 		void Draw( int relx = 0, int rely = 0 );
 		
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
-		bool MouseLeave( int xi, int yi );
+		bool MouseLRelease( void );
 		virtual string GetType( void ) {return string("Button");}
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
@@ -32,7 +31,6 @@ class Button : public Widget {
 
 		string lua_callback;
 		void (*clickCallBack)();
-		static void debugClick();
 };
 
 #endif // __H_BUTTON__

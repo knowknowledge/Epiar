@@ -22,7 +22,6 @@
  Slider::Slider( int x, int y, int w, int h, const string& label,
 		const string& callback):
 	minval( 0.000f ), maxval( 1.000f ), val ( 0.5f),
-	label ( string(label) ),
 	lua_callback( string(callback) ){
 	this->x=x;
 	this->y=y;
@@ -75,7 +74,7 @@ void Slider::Draw( int relx, int rely ){
 
 /**\brief Slider mouse drag call back.
  */
-bool Slider::MouseMotion( int xi, int yi ){
+bool Slider::MouseDrag( int xi, int yi ){
 	this->SetVal(this->PixelToVal(xi - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call

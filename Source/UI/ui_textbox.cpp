@@ -47,6 +47,7 @@ void Textbox::Draw( int relx, int rely ) {
 	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15f, 0.15f, 0.15f );
 
 	// draw the text
+	Video::SetCropRect(x,y,this->w,this->h);
 	Mono->SetColor( 1., 1., 1. );
 	bbox = Mono->Render( x + 4, y + 13, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
 	                                                              // be updated later to actually reflect font size
@@ -55,9 +56,10 @@ void Textbox::Draw( int relx, int rely ) {
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
 		Video::DrawRect( x + 6 + static_cast<int>(bbox.w), y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
+	Video::UnsetCropRect();
 }
 
-bool Textbox::MouseLDown( int wx, int wy ) {
+bool Textbox::MouseLUp( int wx, int wy ) {
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)text.c_str() );
 		clickCallBack();
@@ -74,8 +76,6 @@ bool Textbox::KeyPress( SDLKey key ) {
 	string keyname = SDL_GetKeyName( key );
 	stringstream key_ss;
 	string key_s;
-
-	if(this->disabled) return false;
 
 	switch(key){
 	// Ignore Modifiers

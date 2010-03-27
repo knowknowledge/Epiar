@@ -19,6 +19,7 @@
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_textbox.h"
+#include "ui_picture.h"
 #include "ui_checkbox.h"
 #include "ui_tabs.h"
 #include "ui_slider.h"
@@ -47,14 +48,9 @@ class UI {
 		static bool HandleKeyboard( InputEvent &i );
 		static bool HandleMouse( InputEvent &i );
 
-		// Use a master widget to handle events, so we don't need to duplicate
-		// so much code.
+		// Use a master widget to handle events,
+		// so we don't need to duplicate code.
 		static Widget master;
-		static list<Widget *> children;
-		static Widget *keyboardFocus;			// remembers which widgets last had focus
-		static Widget *mouseHover;				// remember which widget mouse is hovering over
-		static Widget *lmouseDown,
-			*mmouseDown,*rmouseDown;			// remember which widget was clicked on
 };
 
 #endif // __H_UI__

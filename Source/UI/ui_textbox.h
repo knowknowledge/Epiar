@@ -18,7 +18,7 @@ class Textbox : public Widget {
 		
 		string GetType( void ) {return string("Textbox");}
 		void Draw( int relx, int rely = 0 );
-		bool MouseLDown( int wx, int wy );
+		bool MouseLUp( int wx, int wy );
 		bool KeyPress( SDLKey key );
 
 		string GetText() { return text; }

@@ -20,13 +20,10 @@ class Checkbox : public Widget {
 		
 		void Draw( int relx = 0, int rely = 0 );
 
-		int GetW( void ) { return CHECKBOX_W; };
-		int GetH( void ) { return CHECKBOX_H; };
-
 		bool IsChecked() {return checked;}
 		void Set(bool val) {checked = val;}
 	
-		bool MouseLUp( int wx, int wy );
+		bool MouseLUp( int xi, int yi );
 		string GetType( void ) { return string("Checkbox"); }
 	private:
 		string label;

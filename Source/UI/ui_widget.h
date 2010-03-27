@@ -32,6 +32,7 @@ class Widget {
 		virtual bool AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
+		virtual bool Reset( void );
 		virtual bool Contains( int relx, int rely );
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 		virtual void Draw( int relx = 0, int rely = 0 );
@@ -43,10 +44,13 @@ class Widget {
 		virtual bool MouseLeave( void );
 		virtual bool MouseLUp( int xi, int yi );
 		virtual bool MouseLDown( int xi, int yi );
+		virtual bool MouseLRelease( void );
 		virtual bool MouseMUp( int xi, int yi );
 		virtual bool MouseMDown( int xi, int yi );
+		virtual bool MouseMRelease( void );
 		virtual bool MouseRUp( int xi, int yi );
 		virtual bool MouseRDown( int xi, int yi );
+		virtual bool MouseRRelease( void );
 		virtual bool MouseWUp( int xi, int yi );
 		virtual bool MouseWDown( int xi, int yi );
 		virtual bool KeyboardEnter( void );
@@ -59,10 +63,9 @@ class Widget {
 		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag
 		list<Widget *> children;
 		string name;
-
-	private:
 		bool keyactivated;				// remember if this widget has keyboard activation
 
+	private:
 		Widget *keyboardFocus;			// remembers which child last had focus
 		Widget *mouseHover;				// remember which widget mouse is hovering over
 		Widget *lmouseDown,

@@ -22,6 +22,8 @@
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	this->x=x;
 	this->y=y;
+	this->w=CHECKBOX_W;
+	this->h=CHECKBOX_H;
 	
 	this->name = label;
 	this->checked = checked;

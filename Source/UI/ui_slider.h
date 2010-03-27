@@ -27,7 +27,7 @@ class Slider : public Widget {
 
 		void Draw( int relx=0, int rely = 0 );
 
-		bool MouseMotion( int xi, int yi );
+		bool MouseDrag( int xi, int yi );
 		bool MouseLDown( int xi, int yi );
 		string GetType( void ) {return string("Slider"); }
 
@@ -38,7 +38,6 @@ class Slider : public Widget {
 		void SetVal( float value );
 
 		float minval,maxval,val;
-		string label;
 		
 		// Callback
 		string lua_callback;

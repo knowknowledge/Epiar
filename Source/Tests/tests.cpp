@@ -88,7 +88,7 @@ void Test::LoadRequirements( void ){
 	if( testreqs & REQUIRE_VIDEO ){
 		cout<<"  Initializing video subsystem..."<<endl;
 		Video::Initialize();
-		Video::SetWindow( 1024, 768, 32 );
+		Video::SetWindow( 640, 480, 32 );
 	}
 	if( testreqs & REQUIRE_AUDIO ){
 		cout<<"  Initializing audio subsystem..."<<endl;

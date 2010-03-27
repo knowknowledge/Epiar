@@ -71,6 +71,18 @@ bool Widget::Empty( void ){
 		delete (*i);
 	}
 	this->children.clear();
+	return true;
+}
+
+/**\brief Reset focus and events.*/
+bool Widget::Reset( void ){
+	this->keyactivated = false;
+	this->keyboardFocus=NULL;
+	this->mouseHover=NULL;
+	this->lmouseDown=NULL;
+	this->mmouseDown=NULL;
+	this->rmouseDown=NULL;
+	return true;
 }
 
 /**\brief Tests if point is within a rectangle.
@@ -106,7 +118,6 @@ void Widget::Draw( int relx, int rely ) {
 /**\brief Widget is currently being dragged.
  */
 bool Widget::MouseDrag( int xi,int yi ){
-	Log::Message("Mouse drag detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -119,12 +130,16 @@ bool Widget::MouseDrag( int xi,int yi ){
 /**\brief Mouse is currently moving over the widget, without button down.
  */
 bool Widget::MouseMotion( int xi, int yi ){
-	Log::Message("Mouse motion detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
+
+	if ( this->lmouseDown ){
+		// Mouse button is held down, send drag event
+		this->lmouseDown->MouseDrag(xr,yr);
+	}
 
 	if( !event_on ){
 		// Not on a widget
@@ -142,11 +157,14 @@ bool Widget::MouseMotion( int xi, int yi ){
 		this->mouseHover=event_on;
 		return true;
 	}
-	// We're on a widget, and leaving another widget
-	// send both enter and leave event
-	this->mouseHover->MouseLeave();
-	event_on->MouseEnter( x,y );
-	this->mouseHover=event_on;
+	if( this->mouseHover != event_on ){
+		// We're on a widget, and leaving another widget
+		// send both enter and leave event
+		this->mouseHover->MouseLeave();
+		event_on->MouseEnter( x,y );
+		this->mouseHover=event_on;
+	}
+	event_on->MouseMotion( xr, yr );
 	return true;
 }
 
@@ -170,7 +188,6 @@ bool Widget::MouseLeave( void ){
 /**\brief Generic mouse up function.
  */
 bool Widget::MouseLUp( int xi, int yi ){
-	Log::Message("Mouse Left up detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -178,18 +195,24 @@ bool Widget::MouseLUp( int xi, int yi ){
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( this->lmouseDown ){
-		if( this->lmouseDown == event_on )
-			// Mouse up is on the same widget as the ouse down, send event
+		if (this->lmouseDown == event_on) {
+			// Mouse up is on the same widget as the mouse down, send up event
 			event_on->MouseLUp( xr,yr );
+			this->lmouseDown = NULL;
+			return true;
+		}else{
+			// Mouse up is on a different widget, send release event to old
+			this->lmouseDown->MouseLRelease();
+			this->lmouseDown = NULL;
+		}
 	}
-	this->lmouseDown = NULL;
+	Log::Message("Mouse Left up detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic mouse down function.
  */
 bool Widget::MouseLDown( int xi, int yi ) {
-	Log::Message("Mouse Left down detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -201,6 +224,7 @@ bool Widget::MouseLDown( int xi, int yi ) {
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( !event_on  ){
+		Log::Message("Mouse Left down detect in %s.",this->name.c_str());
 		// Nothing was clicked on
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
@@ -210,8 +234,11 @@ bool Widget::MouseLDown( int xi, int yi ) {
 	// We clicked on a widget
 	event_on->MouseLDown( xr, yr );
 	this->lmouseDown = event_on;
-	if( (this->keyboardFocus) && (this->keyboardFocus != event_on) ){
-		// We changed keyboard focus
+	if( !this->keyboardFocus )
+		// No widget had keyboard focus before
+		event_on->KeyboardEnter();
+	else if( this->keyboardFocus != event_on ){
+		// keyboard focus changed
 		this->keyboardFocus->KeyboardLeave();
 		event_on->KeyboardEnter();
 	}
@@ -219,28 +246,42 @@ bool Widget::MouseLDown( int xi, int yi ) {
 	return true;
 }
 
+/**\brief Generic mouse release function.
+ * \details Unlike the MouseLUp function, this is called when the user releases
+ * the mouse on a different widget.
+ */
+bool Widget::MouseLRelease( void ){
+	// Do nothing by default.
+	return true;
+}
+
 /**\brief Generic middle mouse up function.
  */
 bool Widget::MouseMUp( int xi, int yi ){
-	Log::Message("Mouse Middle up detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
-		if( this->mmouseDown == event_on )
+		if ( this->mmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
+			this->mmouseDown = NULL;
 			event_on->MouseMUp( xr, yr );
+			return true;
+		}else{
+			// Mouse up is on a different widget, send release event to old
+			this->mmouseDown->MouseMRelease( );
+			this->mmouseDown = NULL;
+		}
 	}
-	this->mmouseDown = NULL;
+	Log::Message("Mouse Middle up detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic middle mouse down function.
  */
 bool Widget::MouseMDown( int xi, int yi ){
-	Log::Message("Mouse Middle down detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -249,69 +290,100 @@ bool Widget::MouseMDown( int xi, int yi ){
 	if( event_on ){
 		event_on->MouseMDown( xr, yr );
 		this->mmouseDown=event_on;
+		return true;
 	}
+	Log::Message("Mouse Middle down detect in %s.",this->name.c_str());
+	return true;
+}
+
+/**\brief Generic middle mouse release function.
+ * \details Unlike the MouseMUp function, this is called when the user releases
+ * the mouse on a different widget.
+ */
+bool Widget::MouseMRelease( void ){
+	// Do nothing by default.
 	return true;
 }
 
 /**\brief Generic right mouse up function.
  */
 bool Widget::MouseRUp( int xi, int yi ){
-	Log::Message("Mouse Right up detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
-		if( this->rmouseDown == event_on )
+		if ( this->rmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
+			this->rmouseDown = NULL;
 			event_on->MouseRUp( xr, yr );
+			return true;
+		}else{
+			// Mouse up is on a different widget, send release event to old
+			this->rmouseDown->MouseRRelease();
+			this->rmouseDown = NULL;
+		}
 	}
-	this->mmouseDown = NULL;
+	Log::Message("Mouse Right up detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic right mouse down function.
  */
 bool Widget::MouseRDown( int xi, int yi ){
-	Log::Message("Mouse Right down detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
-		event_on->MouseMDown( xr, yr );
-		this->mmouseDown=event_on;
+		this->rmouseDown=event_on;
+		event_on->MouseRDown( xr, yr );
+		return true;
 	}
+	Log::Message("Mouse Right down detect in %s.",this->name.c_str());
+	return true;
+}
+
+/**\brief Generic right mouse release function.
+ * \details Unlike the MouseRUp function, this is called when the user releases
+ * the mouse on a different widget.
+ */
+bool Widget::MouseRRelease( void ){
+	// Do nothing by default.
 	return true;
 }
 
 /**\brief Generic mouse wheel up function.
  */
 bool Widget::MouseWUp( int xi, int yi ){
-	Log::Message("Mouse Wheel up detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
+	if( event_on ){
 		event_on->MouseWUp( xr,yr );
+		return true;
+	}
+	Log::Message("Mouse Wheel up detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic mouse wheel down function.
  */
 bool Widget::MouseWDown( int xi, int yi ){
-	Log::Message("Mouse Wheel down detect in %s.",this->name.c_str());
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
+	if( event_on ){
 		event_on->MouseWDown( xr,yr );
+		return true;
+	}
+	Log::Message("Mouse Wheel down detect in %s.",this->name.c_str());
 	return true;
 }
 

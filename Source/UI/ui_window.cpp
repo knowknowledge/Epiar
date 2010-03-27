@@ -72,6 +72,22 @@ bool Window::AddChild( Widget *widget ){
 	return Widget::AddChild( widget );
 }
 
+/**\brief Determines focused widget based on scrolled position.*/
+Widget *Window::DetermineMouseFocus( int relx, int rely ){
+	list<Widget *>::iterator i;
+
+	int xoffset = this->hscrollbar ? this->hscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+
+
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->Contains(relx+xoffset, rely+yoffset) ) {
+			return (*i);
+		}
+	}
+	return( NULL );
+}
+
 /**\brief Draws the current window.
  */
 void Window::Draw( int relx, int rely ) {
