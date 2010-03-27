@@ -7,7 +7,6 @@
 
 #include "includes.h"
 #include "common.h"
-#include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
 #include "Utilities/camera.h"
@@ -80,7 +79,7 @@ void SpriteManager::Update() {
 	// Update the sprites inside each quadrant
 	// TODO: Update only the sprites that are in nearby Quadrants
 	list<Sprite *> all_oob;
-	list<QuadTree*> nearby = GetQuadrantsNear( Player::Instance()->GetWorldPosition(), QUADRANTSIZE*4 );
+	list<QuadTree*> nearby = GetQuadrantsNear( Camera::Instance()->GetFocusCoordinate(), QUADRANTSIZE*4 );
 	list<QuadTree*>::iterator iter;
 	for ( iter = nearby.begin(); iter != nearby.end(); ++iter ) {
 		(*iter)->Update();
