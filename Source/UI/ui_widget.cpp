@@ -251,7 +251,10 @@ bool Widget::MouseLDown( int xi, int yi ) {
  * the mouse on a different widget.
  */
 bool Widget::MouseLRelease( void ){
-	// Do nothing by default.
+	// Pass event onto children if needed
+	if( this->lmouseDown )
+		return this->lmouseDown->MouseLRelease();
+	Log::Message("Left Mouse released in %s",this->name.c_str());
 	return true;
 }
 
@@ -267,8 +270,7 @@ bool Widget::MouseMUp( int xi, int yi ){
 		if ( this->mmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->mmouseDown = NULL;
-			event_on->MouseMUp( xr, yr );
-			return true;
+			return event_on->MouseMUp( xr, yr );
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->mmouseDown->MouseMRelease( );
@@ -288,9 +290,8 @@ bool Widget::MouseMDown( int xi, int yi ){
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
-		event_on->MouseMDown( xr, yr );
 		this->mmouseDown=event_on;
-		return true;
+		return event_on->MouseMDown( xr, yr );
 	}
 	Log::Message("Mouse Middle down detect in %s.",this->name.c_str());
 	return true;
@@ -301,7 +302,10 @@ bool Widget::MouseMDown( int xi, int yi ){
  * the mouse on a different widget.
  */
 bool Widget::MouseMRelease( void ){
-	// Do nothing by default.
+	// Pass event onto children if needed
+	if( this->mmouseDown )
+		return this->mmouseDown->MouseMRelease();
+	Log::Message("Middle Mouse released in %s",this->name.c_str());
 	return true;
 }
 
@@ -317,8 +321,7 @@ bool Widget::MouseRUp( int xi, int yi ){
 		if ( this->rmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->rmouseDown = NULL;
-			event_on->MouseRUp( xr, yr );
-			return true;
+			return event_on->MouseRUp( xr, yr );
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->rmouseDown->MouseRRelease();
@@ -339,8 +342,7 @@ bool Widget::MouseRDown( int xi, int yi ){
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->rmouseDown=event_on;
-		event_on->MouseRDown( xr, yr );
-		return true;
+		return event_on->MouseRDown( xr, yr );
 	}
 	Log::Message("Mouse Right down detect in %s.",this->name.c_str());
 	return true;
@@ -351,7 +353,10 @@ bool Widget::MouseRDown( int xi, int yi ){
  * the mouse on a different widget.
  */
 bool Widget::MouseRRelease( void ){
-	// Do nothing by default.
+	// Pass event onto children if needed
+	if( this->rmouseDown )
+		return this->rmouseDown->MouseRRelease();
+	Log::Message("Right Mouse released in %s",this->name.c_str());
 	return true;
 }
 
@@ -363,10 +368,8 @@ bool Widget::MouseWUp( int xi, int yi ){
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on ){
-		event_on->MouseWUp( xr,yr );
-		return true;
-	}
+	if( event_on )
+		return event_on->MouseWUp( xr,yr );
 	Log::Message("Mouse Wheel up detect in %s.",this->name.c_str());
 	return true;
 }
@@ -379,10 +382,8 @@ bool Widget::MouseWDown( int xi, int yi ){
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on ){
-		event_on->MouseWDown( xr,yr );
-		return true;
-	}
+	if( event_on )
+		return event_on->MouseWDown( xr,yr );
 	Log::Message("Mouse Wheel down detect in %s.",this->name.c_str());
 	return true;
 }
@@ -390,27 +391,28 @@ bool Widget::MouseWDown( int xi, int yi ){
 /**\brief Generic keyboard focus function.
  */
 bool Widget::KeyboardEnter( void ){
-	Log::Message("Keyboard enter detect in %s.",this->name.c_str());
 	this->keyactivated=true;
 	if( this->keyboardFocus )
-		this->keyboardFocus->KeyboardEnter();
+		return this->keyboardFocus->KeyboardEnter();
+	Log::Message("Keyboard enter detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic keyboard unfocus function.
  */
 bool Widget::KeyboardLeave( void ){
-	Log::Message("Keyboard leave detect in %s.",this->name.c_str());
 	this->keyactivated=false;
 	if( this->keyboardFocus )
-		this->keyboardFocus->KeyboardLeave();
+		return this->keyboardFocus->KeyboardLeave();
+	Log::Message("Keyboard leave detect in %s.",this->name.c_str());
 	return true;
 }
 
 /**\brief Generic keyboard key press function.
  */
 bool Widget::KeyPress( SDLKey key ) {
+	if( keyboardFocus ) 
+		return keyboardFocus->KeyPress( key );
 	Log::Message("Key press detect in %s.",this->name.c_str());
-	if( keyboardFocus ) return keyboardFocus->KeyPress( key );
 	return false;
 }
