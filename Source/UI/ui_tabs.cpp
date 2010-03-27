@@ -63,13 +63,13 @@ Widget *Tab::DetermineMouseFocus( int relx, int rely ){
 
 /**\brief Implements scroll wheel up.*/
 bool Tab::MouseWUp( int xi, int yi ){
-	this->vscrollbar->ScrollUp();
+	if( this->vscrollbar) this->vscrollbar->ScrollUp();
 	return true;
 }
 
 /**\brief Implements scroll wheel down.*/
 bool Tab::MouseWDown( int xi, int yi ){
-	this->vscrollbar->ScrollDown();
+	if( this->vscrollbar ) this->vscrollbar->ScrollDown();
 	return true;
 }
 
