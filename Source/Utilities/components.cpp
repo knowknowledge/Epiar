@@ -23,6 +23,19 @@ void Components::Add(Component* component) {
 	components[name] = component;
 }
 
+void Components::AddOrReplace(Component* component) {
+	string name = component->GetName();
+	map<string,Component*>::iterator val = components.find( name );
+	if( val == components.end() ) { // new
+		Log::Message("Creating new Component '%s'",component->GetName().c_str());
+		names.push_back( name );
+		components[name] = component;
+	} else { // old
+		Log::Message("Saving changes to Component '%s'",component->GetName().c_str());
+		val->second = component;
+	}
+}
+
 Component* Components::Get(string name) {
 	map<string,Component*>::iterator val = components.find( name );
 	if( val == components.end() ) return NULL;

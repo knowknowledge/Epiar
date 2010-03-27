@@ -33,7 +33,6 @@ Alliance& Alliance::operator= (const Alliance& other){
     attackSize = other.attackSize;
     aggressiveness = other.aggressiveness;
     currency = other.currency;
-    illegalCargos = list<string>(other.illegalCargos);
     return *this;
 }
 
@@ -42,12 +41,11 @@ Alliance& Alliance::operator= (const Alliance& other){
  * \param _attackSize Size of the fleet
  * \param _aggressiveness Aggressiveness
  */
-Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, list<string> _illegalCargos) :
+Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency) :
     attackSize(_attackSize),
     aggressiveness(_aggressiveness),
     currency(_currency)
 {
-    illegalCargos = list<string>(_illegalCargos);
     SetName(_name);
 }
 
@@ -62,8 +60,6 @@ bool Alliance::parserCB( string sectionName, string subName, string value ) {
 		attackSize = (short int)atof( value.c_str() );
 	} else PPA_MATCHES( "currency" ) {
 		currency = value;
-	} else PPA_MATCHES( "illegalCargo" ) {
-		illegalCargos.push_back( value );
 	}
 	
 	return true;
@@ -83,10 +79,6 @@ xmlNodePtr Alliance::ToXMLNode(string componentName){
 	xmlNewChild(section, NULL, BAD_CAST "attackSize", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "currency", BAD_CAST this->GetCurrency().c_str() );
 
-	list<string> illegals = this->GetIlligalCargos();
-	for( list<string>::iterator it = illegals.begin(); it!=illegals.end(); ++it ){
-		xmlNewChild(section, NULL, BAD_CAST "illegalCargo", BAD_CAST (*it).c_str() );
-	}
 	return section;
 }
 /**\fn Alliance::GetAttackSize()

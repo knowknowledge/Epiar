@@ -30,7 +30,7 @@ Sprite::Sprite() {
 	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
 }
 
-Coordinate Sprite::GetWorldPosition( void ) {
+Coordinate Sprite::GetWorldPosition( void ) const {
 	return worldPosition;
 }
 

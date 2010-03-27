@@ -30,7 +30,7 @@ class Sprite {
 		Sprite();
 		virtual ~Sprite() {};
 		
-		Coordinate GetWorldPosition( void );
+		Coordinate GetWorldPosition( void ) const;
 		void SetWorldPosition( Coordinate coord );
 		
 		virtual void Update( void );
@@ -38,19 +38,19 @@ class Sprite {
 		
 		int GetID( void ) { return id; }
 
-		float GetAngle( void ) {
+		float GetAngle( void ) const {
 			return( angle );
 		}
 		void SetAngle( float angle ) {
 			this->angle = angle;
 		}
-		Coordinate GetMomentum( void ) {
+		Coordinate GetMomentum( void ) const {
 			return momentum;
 		}
 		void SetMomentum( Coordinate momentum ) {
 			this->momentum = momentum;
 		}
-		Coordinate GetAcceleration( void ) {
+		Coordinate GetAcceleration( void ) const {
 			return acceleration;
 		}
 		void SetImage( Image *image ) {
@@ -60,7 +60,7 @@ class Sprite {
 		void SetRadarColor( Color col ){
 			this->radarColor = col;
 		}
-		Image *GetImage( void ) {
+		Image *GetImage( void ) const {
 			return image;
 		}
 		int GetRadarSize( void ) { return radarSize; }
