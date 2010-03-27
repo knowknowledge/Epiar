@@ -8,40 +8,42 @@
 
 #include "includes.h"
 #include "common.h"
-#include "Debug/graphics.h"
 #include "Graphics/image.h"
 #include "Graphics/video.h"
 
-void graphics_demo(void) {
-	Video::Erase();
+int test_graphics(int argc, char **argv) {
 
-	// draw a grid
-	// -- draw the horizontal lines
-	for(int j = 50; j < Video::GetHeight(); j += 50) {
-		Video::DrawRect(0, j, Video::GetWidth(), 1, .4, .4, .4);
-	}
-	// -- draw the vertical lines
-	for(int i = 50; i < Video::GetWidth(); i += 50) {
-		Video::DrawRect(i, 0, 1, Video::GetHeight(), .4, .4, .4);
-	}
+	int cnt=5;
+	do{
+		Video::Erase();
 
-	// draw four test circles
-	Video::DrawCircle(50, 50, 50, 1., 1., 1., 1.);
-	Video::DrawCircle(50, 550, 50, 1., 1., 1., 1.);
-	Video::DrawCircle(750, 50, 50, 1., 1., 1., 1.);
-	Video::DrawCircle(750, 550, 50, 1., 1., 1., 1.);
+		// draw a grid
+		// -- draw the horizontal lines
+		for(int j = 50; j < Video::GetHeight(); j += 50) {
+			Video::DrawRect(0, j, Video::GetWidth(), 1, .4, .4, .4);
+		}
+		// -- draw the vertical lines
+		for(int i = 50; i < Video::GetWidth(); i += 50) {
+			Video::DrawRect(i, 0, 1, Video::GetHeight(), .4, .4, .4);
+		}
 
-	// load an image and draw it in the center of the screen
-	Image planet2("planet2.png");
-	planet2.DrawCentered(400, 300, 0.);
+		// draw four test circles
+		Video::DrawCircle(50, 50, 50, 1., 1., 1., 1.);
+		Video::DrawCircle(50, 550, 50, 1., 1., 1., 1.);
+		Video::DrawCircle(750, 50, 50, 1., 1., 1., 1.);
+		Video::DrawCircle(750, 550, 50, 1., 1., 1., 1.);
 
-	Image frigate("terran-frigate.png");
-	frigate.DrawCentered(400, 300, 45.);
+		// load an image and draw it in the center of the screen
+		Image planet2("Resources/Graphics/planet2.png");
+		planet2.DrawCentered(400+cnt*50, 300, 0.);
 
-	Visitor10->Render(10, 50, "Hello world how are you why is this text simply not showing up?!");
+		Image frigate("Resources/Graphics/terran-frigate.png");
+		frigate.DrawCentered(400+cnt*50, 300, 45.);
 
-	Video::Update();
+		Video::Update();
 
-	SDL_Delay(2500);
+		SDL_Delay(1000);
+	}while(cnt--);
+	return 0;
 }
 

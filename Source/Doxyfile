@@ -585,7 +585,7 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = "." \
-                         ../Doxygen
+                         ../Doxygen/ExtraDocs
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -625,6 +625,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = ./IDE \
                          ./Lua/src
+						 ./Tests
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 

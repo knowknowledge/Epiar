@@ -17,20 +17,18 @@ class Alliance : public Component {
 	public:
 		Alliance();
   		Alliance& operator= (const Alliance&);
-		Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, list<string> _illegalCargos);
+		Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency);
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
 
 		short int GetAttackSize(void){ return attackSize; }
 		float GetAggressiveness(void){ return aggressiveness; }
 		string GetCurrency(void){ return currency; }
-		list<string> GetIlligalCargos(void){ return illegalCargos; }
 		
 	private:
 		short int attackSize;
 		float aggressiveness;
 		string currency;
-		list<string> illegalCargos;
 };
 
 // Class that holds list of all planets; manages them

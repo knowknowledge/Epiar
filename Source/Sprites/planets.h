@@ -36,7 +36,7 @@ class Planet : public Sprite, public Component {
 	public:
 		Planet();
 		Planet& operator=(const Planet& other);
-		Planet( string _name, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Sprite*> _militia, list<Technology*> _technologies);
+		Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
 		bool parserCB( string sectionName, string subName, string value );
 		
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
@@ -52,7 +52,6 @@ class Planet : public Sprite, public Component {
 		short int GetMilitiaSize() {return militiaSize;}
 		bool GetLandable() {return landable;}
 		int GetInfluence() {return sphereOfInfluence;}
-		list<Sprite *> GetMilitia() { return militia;}
 		list<Technology*> GetTechnologies() { return technologies;}
 		list<Model*> GetModels();
 		list<Engine*> GetEngines();
@@ -64,7 +63,6 @@ class Planet : public Sprite, public Component {
 		short int traffic;
 		short int militiaSize;
 		int sphereOfInfluence;
-		list<Sprite *> militia;
 		list<Technology*> technologies;
 };
 

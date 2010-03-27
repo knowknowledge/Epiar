@@ -466,6 +466,19 @@ void Lua::pushNames(lua_State *L, list<string> *names){
     }
 }
 
+void Lua::pushComponents(lua_State *L, list<Component*> *components){
+    lua_createtable(L, components->size(), 0);
+    int newTable = lua_gettop(L);
+    int index = 1;
+    list<Component*>::const_iterator iter = components->begin();
+    while(iter != components->end()) {
+        lua_pushstring(L, (*iter)->GetName().c_str());
+        lua_rawseti(L, newTable, index);
+        ++iter;
+        ++index;
+    }
+}
+
 void Lua::setField(const char* index, int value) {
 	lua_pushstring(L, index);
 	lua_pushinteger(L, value);
@@ -490,7 +503,7 @@ int Lua::getIntField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L,index);
-	val = luaL_checkint(L,index+1);
+	val = luaL_checkint(L,lua_gettop(L));
 	lua_pop(L,1);
 	return val;
 }
@@ -501,7 +514,7 @@ float Lua::getNumField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = static_cast<float>(luaL_checknumber(L,index+1));
+	val = static_cast<float>(luaL_checknumber(L,lua_gettop(L)));
 	lua_pop(L,1);
 	return val;
 }
@@ -512,7 +525,7 @@ string Lua::getStringField(int index, const char* name) {
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
 	lua_gettable(L, index);
-	val = luaL_checkstring(L,index+1);
+	val = luaL_checkstring(L,lua_gettop(L));
 	lua_pop(L,1);
 	return val;
 }
@@ -533,6 +546,29 @@ list<string> Lua::getStringListField(int index) {
 	return results;
 }
 
+list<string> Lua::getStringListField(int index, const char* name) {
+	list<string> results;
+
+	// Get the value from lua_stack[index][name]
+	lua_pushstring(L, name);
+	lua_gettable(L, index);
+	// This needs to be a list of strings
+	int stringTable = lua_gettop(L);
+	assert(lua_istable(L,stringTable));
+	
+
+	// Go to the nil element of the array
+	lua_pushnil(L);
+	// While there are elements in the array
+	// push the "next" one to the top of the stack
+	while(lua_next(L, stringTable)) {
+		string val =  lua_tostring(L, -1);
+		results.push_back(val);
+		// Pop off this value
+		lua_pop(L, 1);
+	}
+	return results;
+}
 
 //can be found here  http://www.lua.org/pil/24.2.3.html
 void Lua::stackDump (lua_State *L) {
@@ -742,11 +778,17 @@ int Lua::getPlanetInfo(lua_State *L) {
 	// Populate the Info Table.
     lua_newtable(L);
 	setField("Name", p->GetName().c_str());
+	setField("X", static_cast<float>(p->GetWorldPosition().GetX()));
+	setField("Y", static_cast<float>(p->GetWorldPosition().GetY()));
 	setField("Image", p->GetImage()->GetPath().c_str());
 	setField("Alliance", p->GetAlliance().c_str());
 	setField("Traffic", p->GetTraffic());
 	setField("Militia", p->GetMilitiaSize());
 	setField("Landable", p->GetLandable());
+	setField("Influence", p->GetInfluence());
+	lua_pushstring(L, "Technologies");
+	pushComponents(L, (list<Component*>*) &p->GetTechnologies() );
+	lua_settable(L, -3);
 	return 1;
 }
 
@@ -769,6 +811,10 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
 	setField("MSRP", weapon->GetMSRP());
+	setField("Type", weapon->GetType());
+	setField("Ammo Type", weapon->GetAmmoType());
+	setField("Ammo Consumption", weapon->GetAmmoConsumption());
+	setField("Sound", weapon->sound->GetPath().c_str());
 	return 1;
 }
 
@@ -783,10 +829,12 @@ int Lua::getEngineInfo(lua_State *L) {
 
     lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
+	setField("Picture", engine->GetPicture()->GetPath().c_str());
 	setField("Force", engine->GetForceOutput());
 	setField("Animation", engine->GetFlareAnimation().c_str());
 	setField("MSRP", engine->GetMSRP());
 	setField("Fold Drive", engine->GetFoldDrive());
+	setField("Sound", engine->thrustsound->GetPath().c_str());
 	return 1;
 }
 
@@ -798,43 +846,23 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	Technology* tech = Technologies::Instance()->GetTechnology(techName);
 	if( tech == NULL)
 		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
+
+    lua_createtable(L, 3, 0);
+    int newTable = lua_gettop(L);
 	
-	// The info for a technology is a nested table:
-
-	// Push the Main Table
-	int i;
-	list<Model*>::iterator iter_m;
-	list<Weapon*>::iterator iter_w;
-	list<Engine*>::iterator iter_e;
-
 	// Push the Models Table
-	list<Model*> models = tech->GetModels();
-    lua_createtable(L,models.size(),0);
-	int modeltable = lua_gettop(L);
-	for(i=1,iter_m=models.begin();iter_m!=models.end();++iter_m,++i) {
-		lua_pushstring(L, (*iter_m)->GetName().c_str() );
-        lua_rawseti(L, modeltable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetModels() );
+	lua_rawseti(L, newTable, 1);
 
 	// Push the Weapons Table
-	list<Weapon*> weapons = tech->GetWeapons();
-    lua_newtable(L);
-	int weapontable = lua_gettop(L);
-	for(i=1,iter_w=weapons.begin();iter_w!=weapons.end();++iter_w,++i) {
-		lua_pushstring(L, (*iter_w)->GetName().c_str() );
-        lua_rawseti(L, weapontable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetWeapons() );
+	lua_rawseti(L, newTable, 2);
 
 	// Push the Engines Table
-	list<Engine*> engines = tech->GetEngines();
-    lua_newtable(L);
-	int enginetable = lua_gettop(L);
-	for(i=1,iter_e=engines.begin();iter_e!=engines.end();++iter_e,++i) {
-		lua_pushstring(L, (*iter_e)->GetName().c_str() );
-        lua_rawseti(L, enginetable, i);
-	}
+	pushComponents(L, (list<Component*>*) &tech->GetEngines() );
+	lua_rawseti(L, newTable, 3);
 
-	return 3;
+	return 1;
 }
 
 int Lua::setInfo(lua_State *L) {
@@ -848,26 +876,21 @@ int Lua::setInfo(lua_State *L) {
         int attack = getIntField(2,"AttackSize");
         float aggressiveness = getNumField(2,"Aggressiveness");
         string currency = getStringField(2,"Currency");
-		
-        Alliance* oldAlliance = Alliances::Instance()->GetAlliance(name);
-        if(oldAlliance==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       List of Illegal Cargo
-        *oldAlliance = Alliance(name,attack,aggressiveness,currency,oldAlliance->GetIlligalCargos());
+
+		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency);
+		Alliances::Instance()->AddOrReplace( thisAlliance );
 
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
+		string picture = getStringField(2,"Picture");
 		int force = getIntField(2,"Force");
 		string flare = getStringField(2,"Animation");
 		int msrp = getIntField(2,"MSRP");
 		int foldDrive = getIntField(2,"Fold Drive");
+		string soundName = getStringField(2,"Sound");
 
-		Engine* oldEngine = Engines::Instance()->GetEngine(name);
-		if(oldEngine==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Thrust Sound
-		//       Pic (Store Image)
-		*oldEngine = Engine(name,oldEngine->thrustsound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,oldEngine->GetPicture());
+		Engine* thisEngine = new Engine(name,Sound::Get(soundName),static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
+		Engines::Instance()->AddOrReplace( thisEngine );
 
 	} else if(kind == "Model"){
 		string name = getStringField(2,"Name");
@@ -879,25 +902,48 @@ int Lua::setInfo(lua_State *L) {
 		int hull = getIntField(2,"MaxHull");
 		int msrp = getIntField(2,"MSRP");
 
-		Model* oldModel = Models::Instance()->GetModel(name);
-		if(oldModel==NULL) return 0; // If the name changes then the below doesn't work.
-		Model newModel(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
-		*oldModel = newModel;
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp);
+		Models::Instance()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){
 		string name = getStringField(2,"Name");
+		int x = getIntField(2,"X");
+		int y = getIntField(2,"Y");
+		string imageName = getStringField(2,"Image");
 		string alliance = getStringField(2,"Alliance");
 		int traffic = getIntField(2,"Traffic");
 		int militia = getIntField(2,"Militia");
 		int landable = getIntField(2,"Landable");
+		int influence = getIntField(2,"Influence");
+		list<string> techNames = getStringListField(2,"Technologies");
+
+		// Process the Tech List
+		list<Technology*> techs;
+		list<string>::iterator i;
+		for(i = techNames.begin(); i != techNames.end(); ++i) {
+			if( NULL != Technologies::Instance()->GetTechnology(*i) ) {
+				 techs.push_back( Technologies::Instance()->GetTechnology(*i) );
+			} else {
+				return luaL_error(L, "Could not create planet: there is no Technology Group '%s'.",(*i).c_str());
+			}
+		}
+
+		if(Image::Get(imageName)==NULL){
+			return luaL_error(L, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
+		}
+
+		Planet thisPlanet(name,x,y,Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
-		if(oldPlanet==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Technologies
-		//       Militia
-		//       Influence
-		*oldPlanet = Planet(name,alliance,TO_BOOL(landable),traffic,militia,oldPlanet->GetInfluence(), oldPlanet->GetMilitia(), oldPlanet->GetTechnologies());
+		if(oldPlanet!=NULL) {
+			Log::Message("Saving changes to '%s'",thisPlanet.GetName().c_str());
+			*oldPlanet = thisPlanet;
+		} else {
+			Log::Message("Creating new Planet '%s'",thisPlanet.GetName().c_str());
+			Planet* newPlanet = new Planet(thisPlanet);
+			Planets::Instance()->Add(newPlanet);
+			SpriteManager::Instance()->Add(newPlanet);
+		}
 
 	} else if(kind == "Technology"){
 		list<string>::iterator iter;
@@ -925,9 +971,8 @@ int Lua::setInfo(lua_State *L) {
 				engines.push_back( Engines::Instance()->GetEngine(*iter) );
 		}
 
-		Technology* oldTechnology = Technologies::Instance()->GetTechnology(name);
-		if(oldTechnology==NULL) return 0; // If the name changes then the below doesn't work.
-		*oldTechnology = Technology(name,models,engines,weapons);
+		Technology* thisTechnology = new Technology(name,models,engines,weapons);
+		Technologies::Instance()->AddOrReplace( thisTechnology );
 
 		return 0;
 	} else if(kind == "Weapon"){
@@ -940,14 +985,13 @@ int Lua::setInfo(lua_State *L) {
 		int fireDelay = getIntField(2,"FireDelay");
 		int lifetime = getIntField(2,"Lifetime");
 		int msrp = getIntField(2,"MSRP");
+		int type = getIntField(2,"Type");
+		int ammoType = getIntField(2,"Ammo Type");
+		int ammoConsumption = getIntField(2,"Ammo Consumption");
+		string soundName = getStringField(2,"Sound");
 
-		Weapon* oldWeapon = Weapons::Instance()->GetWeapon(name);
-		if(oldWeapon==NULL) return 0; // If the name changes then the below doesn't work.
-		// TODO: Fix attributes that aren't editable
-		//       Ammo Type
-		//       Ammo Consumption
-		//       Sound
-		*oldWeapon = Weapon(name,Image::Get(imageName),Image::Get(pictureName),oldWeapon->GetType(),payload,velocity,acceleration,oldWeapon->GetAmmoType(),oldWeapon->GetAmmoConsumption(),fireDelay,lifetime,oldWeapon->sound,msrp);
+		Weapon* thisWeaon = new Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),msrp);
+		Weapons::Instance()->AddOrReplace( thisWeaon );
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());

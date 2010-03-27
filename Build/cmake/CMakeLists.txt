@@ -35,11 +35,23 @@ include_directories(${Epiar_SRC_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(EpiarBIN ${EpiarLIBS})
+
+if(WIN32)
+	# On windows, we want to use a script called Epiar.cmd for console mode
+	set_target_properties(EpiarBIN PROPERTIES
+		OUTPUT_NAME	EpiarExe)
+else(WIN32)
+	set_target_properties(EpiarBIN PROPERTIES
+		OUTPUT_NAME	Epiar)
+endif(WIN32)
+
+
 set_target_properties(EpiarBIN PROPERTIES
-	OUTPUT_NAME	Epiar
-	RUNTIME_OUTPUT_DIRECTORY ${Epiar_OUT_DIR}
-#	VERSION "${EPIAR_VERSION}")
-	)
+	DEBUG_OUTPUT_NAME Epiar_debug
+	RUNTIME_OUTPUT_DIRECTORY ${Epiar_OUT_DIR})
+
+# Include tests
+include ("${SCRIPT_DIR}/EpiarTests.txt")
 
 # Footer
 include ("${SCRIPT_DIR}/EpiarFooter.txt")

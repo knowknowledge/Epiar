@@ -30,6 +30,7 @@ AllianceEditorLayout = {
 EngineEditorLayout = {
 	{"Name", "String"},
 	--{"Animation", "Animation"}, -- Animation Picker
+	{"Picture", "Picture"}, -- Picture Picker
 	{"MSRP", "Integer"},
 	{"Force", "Integer"},
 	{"Fold Drive", "Integer"},
@@ -49,11 +50,15 @@ ModelEditorLayout = {
 
 PlanetEditorLayout = {
 	{"Name", "String"},
+	{"X", "Integer"},
+	{"Y", "Integer"},
 	{"Image", "Picture"}, -- Picture Picker
-	--{"Alliance", "Alliance"}, -- Alliance Picker (Dropdown of available Alliances)
+	{"Alliance", "String"}, -- TODO: Should be Alliance Picker (Dropdown of available Alliances)
 	{"Landable", "Integer"},
 	{"Traffic", "Integer"},
 	{"Militia", "Integer"},
+	{"Influence", "Integer"},
+	{"Technologies", "Technologies"},
 	}
 
 WeaponEditorLayout = {
@@ -65,6 +70,10 @@ WeaponEditorLayout = {
 	{"Velocity", "Integer"},
 	{"Lifetime", "Integer"},
 	{"FireDelay", "Integer"},
+	{"Type", "Integer"},
+	{"Ammo Type", "Integer"},
+	{"Ammo Consumption", "Integer"},
+	{"Sound", "String"}, -- TODO: Should be Sound Picker
 	}
 
 EditorLayouts = {
@@ -96,7 +105,7 @@ function showComponent(kind,name,getterFunc)
 	if infoWindows[name] ~= nil then return end
 	local width=250
 	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,width,600,name,
+	local theWin = UI.newWindow(150,100,width,660,name,
 		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	
 	local theFields = {}
@@ -136,6 +145,25 @@ function showComponent(kind,name,getterFunc)
 			yoff = yoff+20
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker('%s','%s')",name,title)))
 			yoff = yoff+20+5
+		elseif fieldType == "Technologies" then
+			theWin:add(UI.newLabel( 10, yoff+25, title..":"))
+			yoff = yoff+35
+			technologies = Epiar.technologies()
+			local knownTechs = {}
+			for i = 1,#technologies do
+				local tech = technologies[i]
+				knownTechs[tech] = 0
+			end
+			for i = 1,#value do
+				knownTechs[value[i]] = 1
+			end
+			field = {}
+			for i = 1,#technologies do
+				local tech = technologies[i]
+				field[tech] = UI.newCheckbox( 10,yoff,knownTechs[tech],tech)
+				theWin:add(field[tech])
+				yoff = yoff+20
+			end
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -188,9 +216,27 @@ function saveInfo(name)
 	local texts = infoWindows[name].texts
 	local win = infoWindows[name].win
 	local kind = infoWindows[name].kind
-	for title, value in pairs(info) do
+	for i,layout in ipairs(EditorLayouts[kind]) do
+		local title,fieldType = layout[1],layout[2]
+		local field = texts[title]
+		local original = info[title]
 		if texts[title]~=nil then
-			info[title] = texts[title]:GetText()
+			if fieldType == "String"
+			or fieldType == "Integer"
+			or fieldType == "Number"
+			or fieldType == "Picture" then
+				info[title] = texts[title]:GetText()
+			elseif fieldType == "Technologies" then
+				local techs = {}
+				for tech, box in pairs(texts[title]) do
+					if box:IsChecked() then
+						table.insert(techs, tech )
+					end
+				end
+				info[title] = techs
+			else
+				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
+			end
 		end
 	end
 	Epiar.setInfo(kind,info)
@@ -217,6 +263,7 @@ function saveTech(name)
 	if infoWindows[name] == nil then return end
 	local win = infoWindows[name].win
 	local boxes = infoWindows[name].boxes
+	local nameField = infoWindows[name].name
 	local models,weapons,engines={},{},{}
 	-- Gather the chosen techs into the correct lists
 	for techGroup,boxset in pairs(boxes) do
@@ -230,7 +277,7 @@ function saveTech(name)
 		end
 	end
 	-- Save these lists
-	Epiar.setInfo('Technology',name,models,weapons,engines)
+	Epiar.setInfo('Technology',nameField:GetText(),models,weapons,engines)
 	win:close()
 	win=nil
 	infoWindows[name]=nil
@@ -242,9 +289,16 @@ function showTechInfo(name)
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()
 	local allengines = Epiar.engines()
-	local models,weapons,engines = Epiar.getTechnologyInfo(name)
+	local techs = Epiar.getTechnologyInfo(name)
+	local models,weapons,engines = techs[1],techs[2],techs[3]
 	local height = 50 + math.max(#allweapons,#allmodels,#allengines)*20
-	local theWin = UI.newWindow(150,100,600,height,name)
+	local width = 400
+	local theWin = UI.newWindow(150,100,width,height,name)
+	theWin:add(UI.newLabel( 15, 45, "Name:"))
+	local nameField= UI.newTextbox( 90, 30, 200, 1, name)
+	theWin:add(nameField)
+	local optionTabs = UI.newTabCont( 10, 65, width-30, height-120,"Options Tabs")
+	theWin:add(optionTabs)
 	local knownTechs = {}
 	checkedTechs = {}
 	for i,t in ipairs({allmodels,allweapons,allengines}) do
@@ -253,22 +307,23 @@ function showTechInfo(name)
 	for i,t in ipairs({models,weapons,engines}) do
 		for j,s in ipairs(t) do knownTechs[s]=1 end
 	end
-	function showTable(techGroup,techList,x)
-		theWin:add(UI.newLabel(x,35,techGroup))
+	function showTable(techGroup,techList)
+		local thisTab = UI.newTab(techGroup)
+		optionTabs:add(thisTab)
 		checkedTechs[techGroup]={}
 		for i,s in ipairs(techList) do
-			checkedTechs[techGroup][s] = UI.newCheckbox( x,30+i*20,knownTechs[s],s)
-			theWin:add(checkedTechs[techGroup][s])
+			checkedTechs[techGroup][s] = UI.newCheckbox(30, i*20,knownTechs[s],s)
+			thisTab:add(checkedTechs[techGroup][s])
 			--print(string.format("%s %d: %s %s",techGroup,i,s,(checkedTechs[techGroup][s]:IsChecked() and "YES" or "NO")))
 			--TODO: Add tiny button to view/edit this technology
 		end
 	end
-	showTable("Models",allmodels,50)
-	showTable("Weapons",allweapons,200)
-	showTable("Engines",allengines,350)
-	infoWindows[name] = {kind='Technology',win=theWin,boxes=checkedTechs}
-	theWin:add( UI.newButton(575,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
-	theWin:add(UI.newButton( 480,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))
+	showTable("Models",allmodels)
+	showTable("Weapons",allweapons)
+	showTable("Engines",allengines)
+	infoWindows[name] = {kind='Technology',win=theWin,name=nameField,boxes=checkedTechs}
+	theWin:add( UI.newButton(width-25,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+	theWin:add(UI.newButton(width-120,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))
 end
 
 --- Show ship information
@@ -331,6 +386,31 @@ function ImagePicker(name,title)
 	end
 end
 
+function goto(x,y)
+	print (x)
+	print (y)
+	Epiar.focusCamera(x,y)
+end
+
+function gotoButton()
+	goto( gotoX:GetText(), gotoY:GetText() )
+	gotoWin:close()
+	gotoWin = nil
+end
+
+function gotoCommand()
+	if gotoWin~=nil then return end
+	local cx,cy = Epiar.getCamera()
+	gotoWin = UI.newWindow(600,500,150,200,"Go to Location")
+	gotoWin:add(UI.newLabel(10,45,"X"))
+	gotoX = UI.newTextbox(20,30,50,1,cx)
+	gotoWin:add(gotoX)
+	gotoWin:add(UI.newLabel(80,45,"Y"))
+	gotoY = UI.newTextbox(90,30,50,1,cy)
+	gotoWin:add(gotoY)
+	gotoWin:add(UI.newButton(10,60,140,30,"Go","gotoButton()"))
+end
+
 DX,DY = 20,20
 
 debugCommands = {
@@ -341,6 +421,7 @@ debugCommands = {
 	{'up', "Pan Up", "Epiar.moveCamera(0,DY)",KEYPRESSED},
 	{'right', "Pan Right", "Epiar.moveCamera(DX,0)",KEYPRESSED},
 	{'i', "Get Info", "showInfo()",KEYTYPED},
+	{'space', "Go To", "gotoCommand()",KEYTYPED},
 }
 registerCommands(debugCommands)
 

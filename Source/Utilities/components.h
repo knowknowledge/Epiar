@@ -27,6 +27,7 @@ class Component {
 class Components {
 	public:
 		void Add(Component* component);
+		void AddOrReplace(Component* component);
 		Component* Get(string name);
 		list<string>* GetNames();
 

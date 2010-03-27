@@ -89,6 +89,7 @@ class Lua {
 		// Lua Stack Helpers
 		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushNames(lua_State *L, list<string> *names);
+		static void pushComponents(lua_State *L, list<Component*> *components);
 		static void setField(const char* index, int value);
 		static void setField(const char* index, float value);
 		static void setField(const char* index, const char* value);
@@ -96,6 +97,7 @@ class Lua {
 		static float getNumField(int index, const char* name);
 		static string getStringField(int index, const char* name);
 		static list<string> getStringListField(int index);
+		static list<string> getStringListField(int index, const char* name);
 		static void stackDump(lua_State *L);
 
 	private:

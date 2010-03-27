@@ -51,7 +51,7 @@ void Projectile::Update( void ) {
 	SpriteManager *sprites = SpriteManager::Instance();
 	
 	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
-	if( impact != NULL && impact->GetID() != ownerID) {
+	if( (impact != NULL) && (impact->GetID() != ownerID) && ((this->GetWorldPosition() - impact->GetWorldPosition()).GetMagnitude() < impact->GetRadarSize() )) {
 		((Ship*)impact)->Damage( weapon->GetPayload() );
 		sprites->Delete( (Sprite*)this );
 		

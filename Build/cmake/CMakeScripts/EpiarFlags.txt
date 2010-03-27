@@ -7,6 +7,12 @@ if (USE_PHYSICSFS)
 		)
 endif (USE_PHYSICSFS)
 
+if (COMPILE_TESTS)
+	set(epiarbin_compile_def ${epiarbin_compile_def}
+		EPIAR_COMPILE_TESTS
+		)
+endif (COMPILE_TESTS)
+
 if (WIN32)
 	set(epiarbin_compile_def ${epiarbin_compile_def}
 		USE_FREETYPE
@@ -25,7 +31,6 @@ endif(WIN32)
 set_target_properties(EpiarBIN PROPERTIES
 	COMPILE_DEFINITIONS_DEBUG _DEBUG
 	COMPILE_DEFINITIONS "${epiarbin_compile_def}"
-	COMPILE_FLAGS "${epiarbin_compile_flag}"
-	DEBUG_POSTFIX "_debug")
+	COMPILE_FLAGS "${epiarbin_compile_flag}")
 
 # vim:ft=cmake

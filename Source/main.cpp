@@ -12,19 +12,21 @@
 
 #include "includes.h"
 #include "common.h"
-#include "ArgParser.h"
 #include "Audio/audio.h"
 #include "Tests/graphics.h"
 #include "Engine/simulation.h"
 #include "Graphics/font.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
+#include "Utilities/argparser.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 
-// parse command line switches
-int parseArgs( int argc, char **argv );
+#ifdef EPIAR_COMPILE_TESTS
+#include "Tests/tests.h"
+#endif // EPIAR_COMPILE_TESTS
+
 
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
@@ -42,8 +44,51 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
  *  - Calls any cleanup code
  */
 int main( int argc, char **argv ) {
-	// Use ".dat" extension for data files
+#ifdef _WIN32
+	// This attaches a console to the parent process if it has a console
+	if(AttachConsole(ATTACH_PARENT_PROCESS)){
+		freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
+		freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
+	}
+#endif //_WIN32
+
+	// Parse command line options first.
+	ArgParser argparser(argc,argv);
+	argparser.SetOpt(SHORTOPT,"h",				"Display help screen");
+	argparser.SetOpt(LONGOPT,"help",			"Display help screen");
+	argparser.SetOpt(SHORTOPT,"v",				"Display program version");
+	argparser.SetOpt(LONGOPT,"version",			"Display program version");
+	argparser.SetOpt(LONGOPT,"editor-mode",		"Puts you in edit mode");
+	argparser.SetOpt(LONGOPT,"no-audio",		"Disables audio");
+	argparser.SetOpt(LONGOPT,"nolog-xml",		"(Default) Disable logging messages to xml files.");
+	argparser.SetOpt(LONGOPT,"log-xml",			"Log messages to xml files.");
+	argparser.SetOpt(LONGOPT,"log-out",			"(Default) Log messages to console.");
+	argparser.SetOpt(LONGOPT,"nolog-out",		"Disable logging messages to console.");
+#ifdef EPIAR_COMPILE_TESTS
+	argparser.SetOpt(VALUEOPT,"run-test",		"Run specified test");
+#endif // EPIAR_COMPILE_TESTS
+
+	// These are immediate options (I.E. they stop the argument processing immediately)
+	if ( argparser.HaveShort("h") || argparser.HaveLong("help") ){
+		argparser.PrintUsage();
+		return 0;
+	}
+	if ( argparser.HaveShort("v") || argparser.HaveLong("version") ){
+		printf("\nEpiar version %s", EPIAR_VERSION_FULL );
+		printf("\n");
+		return 0;
+	}
+
+#ifdef EPIAR_COMPILE_TESTS
+	string testname = argparser.HaveValue("run-test");
+	if ( !(testname.empty()) ) {
+		Test testInst(testname);
+		return testInst.RunTest( argc, argv );
+	}
+#endif // EPIAR_COMPILE_TESTS
+
 #ifdef USE_PHYSICSFS
+	// Use ".dat" extension for data files
 	Filesystem::Init( argv[0], "dat" );
 #endif
 
@@ -56,8 +101,33 @@ int main( int argc, char **argv ) {
 	}
 #endif
 
-	// load the main configuration file (used throughout the tree)
+	// Unfortunately, we need to load the main configuration file (used throughout the tree)
+	// before parsing more options
 	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
+
+	// Following are cumulative options (I.E. you can have multiple of them)
+	if ( argparser.HaveOpt("editor-mode") ){
+			SETOPTION("options/development/editor-mode",1);
+	}
+	if ( argparser.HaveOpt("no-audio") ) {
+			cout<<"turning off sound"<<endl;
+			SETOPTION("options/sound/background",0);
+			SETOPTION("options/sound/weapons",0);
+			SETOPTION("options/sound/engines",0);
+			SETOPTION("options/sound/explosions",0);
+			SETOPTION("options/sound/buttons",0);
+	}
+	if ( argparser.HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
+	else if ( argparser.HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
+	if ( argparser.HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
+	else if ( argparser.HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
+
+	// Print unused options.
+	list<string> unused = argparser.GetUnused();
+	list<string>::iterator it;
+	for ( it=unused.begin() ; it != unused.end(); it++ )
+		cout << "\tUnknown options:\t" << (*it)<<endl;
+
 
 	Log::Start();
 	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );
@@ -84,11 +154,8 @@ int main( int argc, char **argv ) {
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
 	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
 
-	int argpresult = parseArgs( argc, argv );
-	if( argpresult == 0 ) {
-		Simulation debug( "Resources/Definitions/sim-debug.xml" );
-		debug.Run();
-	}
+	Simulation debug( "Resources/Definitions/sim-debug.xml" );
+	debug.Run();
 
 	Video::Shutdown();
 	Audio::Instance().Shutdown();
@@ -111,71 +178,3 @@ int main( int argc, char **argv ) {
 	return( 0 );
 }
 
-/**\brief Parse command line switches.
- * \return -1 if a switch indicates the game should not be run, e.g. --help
- * \details
- * Cmd line args override settings in options.xml (found in data.tgz) 
- * for just this run of the program.
- */
-int parseArgs( int argc, char **argv ) {
-	ArgParser argparser(argc,argv);
-	argparser.SetOpt("h",				"Display help screen");
-	argparser.SetOpt("help",			"Display help screen");
-	argparser.SetOpt("version",			"Display program version");
-	argparser.SetOpt("ui-demo",			"Show a UI demo");
-	argparser.SetOpt("graphics-demo",	"Demo the graphics");
-	argparser.SetOpt("lua-test",		"Test Lua functionality");
-	argparser.SetOpt("editor-mode",		"Puts you in edit mode");
-	argparser.SetOpt("no-audio",		"Disables audio");
-	argparser.SetOpt("nolog-xml",		"(Default) Disable logging messages to xml files.");
-	argparser.SetOpt("log-xml",			"Log messages to xml files.");
-	argparser.SetOpt("log-out",			"(Default) Log messages to console.");
-	argparser.SetOpt("nolog-out",		"Disable logging messages to console.");
-
-	// These are immediate options (I.E. they stop the argument processing immediately)
-	if ( argparser.HaveOpt("h") || argparser.HaveOpt("help") ){
-		argparser.PrintUsage();
-		return -1;
-	}
-	if ( argparser.HaveOpt("version") ){
-		printf("\nEpiar version %s", EPIAR_VERSION_FULL );
-		printf("\n");
-		return( -1 ); // indicates we should quit immediately
-	}
-	if ( argparser.HaveOpt("ui-demo") ) {
-			ui_demo( true ); // temporary function
-			return( 0 );
-	}
-	if ( argparser.HaveOpt("graphics-demo") ) {
-			//graphics_demo(); // temporary function
-			return( -1 );
-	}
-	if ( argparser.HaveOpt("lua-test") ) {
-			//lua_test(); // temporary function
-			return( -1 );
-	}
-	// Following are cumulative options (I.E. you can have multiple of them)
-	if ( argparser.HaveOpt("editor-mode") ){
-			SETOPTION("options/development/editor-mode",1);
-	}
-	if ( argparser.HaveOpt("no-audio") ) {
-			cout<<"turning off sound"<<endl;
-			SETOPTION("options/sound/background",0);
-			SETOPTION("options/sound/weapons",0);
-			SETOPTION("options/sound/engines",0);
-			SETOPTION("options/sound/explosions",0);
-			SETOPTION("options/sound/buttons",0);
-	}
-	if ( argparser.HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
-	else if ( argparser.HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
-	if ( argparser.HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
-	else if ( argparser.HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
-
-	// Print unused options.
-	list<string> unused = argparser.GetUnused();
-	list<string>::iterator it;
-	for ( it=unused.begin() ; it != unused.end(); it++ )
-		cout << "\tUnknown options:\t" << (*it)<<endl;
-
-	return( 0 );
-}
