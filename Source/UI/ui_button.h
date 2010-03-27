@@ -20,20 +20,13 @@ class Button : public Widget {
 		Button( int x, int y, int w, int h, string label, string lua_code);
 		
 		void Draw( int relx = 0, int rely = 0 );
-
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
 		
-		void FocusMouse( int x, int y );
-		void UnfocusMouse( void );
-	
-		void MouseLDown( int wx, int wy );
-		void MouseLUp( int wx, int wy );
-		virtual string GetName( void ) {return string("Button_"+label);}
+		bool MouseLDown( int xi, int yi );
+		bool MouseLUp( int xi, int yi );
+		bool MouseLeave( int xi, int yi );
+		virtual string GetType( void ) {return string("Button");}
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
-		int w, h;
-		string label;
 		Image *bitmap_current, *bitmap_normal, *bitmap_pressed;
 		Sound *sound_click, *sound_hover;
 

@@ -20,14 +20,14 @@ class Checkbox : public Widget {
 		
 		void Draw( int relx = 0, int rely = 0 );
 
-		int GetWidth( void ) { return CHECKBOX_W; };
-		int GetHeight( void ) { return CHECKBOX_H; };
+		int GetW( void ) { return CHECKBOX_W; };
+		int GetH( void ) { return CHECKBOX_H; };
 
 		bool IsChecked() {return checked;}
 		void Set(bool val) {checked = val;}
 	
-		void MouseLUp( int wx, int wy );
-		virtual string GetName( void ) { return string("Checkbox_" + label ); }
+		bool MouseLUp( int wx, int wy );
+		string GetType( void ) { return string("Checkbox"); }
 	private:
 		string label;
 		bool checked;

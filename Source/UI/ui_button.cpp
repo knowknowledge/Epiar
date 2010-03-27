@@ -22,13 +22,12 @@
 void Button::Initialize( int x, int y, int w, int h, string label ) {
 	// This is the main Button Constructor
 	// This cuts down on code duplication so it can be called by multiple constructors.
-	SetX( x );
-	SetY( y );
-
-	this->w = w;
-	this->h = h;
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=h;
 	
-	this->label = label;
+	this->name = label;
 	
 	// Load the bitmaps needed for drawing
 	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
@@ -63,45 +62,43 @@ Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 void Button::Draw( int relx, int rely ) {
 	int x, y;
 	
-	x = GetX() + relx;
-	y = GetY() + rely;
+	x = this->x + relx;
+	y = this->y + rely;
 	
-	Video::DrawRect( x, y, w, h, 1., 1., 1. );
+	Video::DrawRect( x, y, this->w, this->h, 1., 1., 1. );
 
 	// draw the button (loaded image is simply scaled)
-	bitmap_current->DrawStretch( x, y, w, h );
+	bitmap_current->DrawStretch( x, y, this->w, this->h );
 
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), (char *)label.c_str() );
+	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), this->name.c_str() );
 }
 
-void Button::FocusMouse( int x, int y ) {
-
-}
-
-void Button::UnfocusMouse( void ) {
-	bitmap_current = bitmap_normal;
-}
-
-void Button::MouseLDown( int wx, int wy ) {
+bool Button::MouseLDown( int xi, int yi ) {
 	if(OPTION(int, "options/sound/buttons"))
 		this->sound_click->Play();
 	bitmap_current = bitmap_pressed;
+	return true;
 }
 
-void Button::MouseLUp( int wx, int wy ) {
-	this->UnfocusMouse();
+bool Button::MouseLUp( int xi, int yi ) {
 
 	if( clickCallBack ){
-		Log::Message( "Clicked on: '%s'.", (char *)label.c_str() );
+		Log::Message( "Clicked on: '%s'.", this->name.c_str() );
 		clickCallBack();
 	} else if("" != lua_callback){
-		Log::Message("Clicked on '%s'. Running '%s'", (char *)label.c_str(), (char *)lua_callback.c_str() );
+		Log::Message("Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
 		Lua::Run(lua_callback);
 	} else {
-		Log::Warning( "Clicked on: '%s' but there was no function to call.", (char *)label.c_str() );
+		Log::Warning( "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
 	}
+	return true;
+}
+
+bool Button::MouseLeave( int xi, int yi ){
+	bitmap_current = bitmap_normal;
+	return true;
 }
 
 void Button::debugClick(){

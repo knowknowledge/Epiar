@@ -19,20 +19,12 @@ class Window : public Widget {
 		bool AddChild( Widget *widget );
 
 		void Draw( int relx = 0, int rely = 0 );
-
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
 	
-		void MouseMotion( int x, int y, int dx, int dy );
-		//Widget *DetermineMouseFocus( int x, int y );
+		bool MouseDrag( int x, int y );
 
-		//void MouseLDown( int wx, int wy ); // coords of mouse down, relative to widget's upper left (0,0)
-		string GetName( void ) {return string("Window_"+caption);}
+		string GetType( void ){return string("Window");}
 
 	private:
-		int w, h;
-		//int inner_top,inner_left,inner_right,inner_low;
-		string caption;
 		Image *bitmaps[9];
 
 		Scrollbar *hscrollbar;

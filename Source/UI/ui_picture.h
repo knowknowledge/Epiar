@@ -23,13 +23,8 @@ class Picture: public Widget {
 		void Set( Image *img );
 		void Set( string filename );
 
-		// Widget functions
-		int GetWidth( void ) {return w;}
-		int GetHeight( void ) {return h;}
-
-		string GetName( void ) {return string("Picture");}
+		string GetType( void ) {return string("Picture");}
 	private:
-		int w, h;
 		double rotation;
 		Image *bitmap;
 };

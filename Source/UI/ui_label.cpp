@@ -19,23 +19,23 @@
 Label::Label( int x, int y, string label, bool centered) {
 	Rect size;
 	
-	SetX( x );
-	SetY( y );
+	this->x=x;
+	this->y=y;
 
 	// w/h is dependent upon the text given
 	size = SansSerif->BoundingBox( label );
 	this->w = static_cast<int>(size.w);
 	this->h = static_cast<int>(size.h);
 	
-	this->label = label;
+	this->name = label;
 	this->centered = centered;
 }
 
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	
-	x = GetX() + relx;
-	y = GetY() + rely;
+	x = this->x + relx;
+	y = this->y + rely;
 
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );

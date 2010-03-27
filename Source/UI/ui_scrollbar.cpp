@@ -21,8 +21,9 @@ Scrollbar::Scrollbar( int x, int y, int length,
 		pos( 0 ),maxpos( 0 ),
 		type( type ),parent( parent ){
 
-	SetX( x );
-	SetY( y );
+	this->x=x;
+	this->y=y;
+	this->name=(type==HORIZONTAL)?"Horizontal":"Vertical";
 	SetSize(length);
 }
 
@@ -81,7 +82,7 @@ void Scrollbar::Draw( int relx, int rely ){
 
 /**\brief Scroll to position on mouse down.
  */
-void Scrollbar::MouseLDown( int x, int y ){
+bool Scrollbar::MouseLDown( int x, int y ){
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
 	int yr = y - GetY();
@@ -104,16 +105,18 @@ void Scrollbar::MouseLDown( int x, int y ){
 	}
 
 	this->pos = this->CheckPos( newpos );
+	return true;
 }
 
 /**\brief Scroll to position on mouse motion.
  */
-void Scrollbar::MouseMotion( int xi, int yi, int dx, int dy ){
+bool Scrollbar::MouseMotion( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - GetX();
 	int yr = yi - GetY();
 
 	this->pos = this->CheckPos(this->MarkerPixelToPos( xr, yr ));
+	return true;
 }
 
 /**\brief Calculates marker size based on current dimensions.

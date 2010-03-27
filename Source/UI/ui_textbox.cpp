@@ -18,54 +18,23 @@
 /**\class Textbox
  * \brief UI textbox. */
 
-void Textbox::Initialize( int x, int y, int w, int rows, string text, string label ) {
+/**\brief This is used to construct the Textbox.*/
+Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 	// This is the main Button Constructor
 	// This cuts down on code duplication so it can be called by multiple constructors.
-	SetX( x );
-	SetY( y );
-
-	this->w = w;
-	this->h = rows * 20; // 20 is the assumed font height. this code should probably be a bit more intelligent
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=rows * 20; // 20 is the assumed font height. this code should probably be a bit more intelligent
+	this->name = label;
 	
 	this->text = text;
-	this->label = label;
-
-	entryDisabled = false;
-	
-	hasKeyboardFocus = false;
 	
 	clickCallBack = NULL;
 	lua_callback = "";
 }
 
-Textbox::Textbox( int x, int y, int w, int rows ) {
-	// Is this default constructor even useful?
-	// Why would there ever be a button without a callback?
-	
-	// Answer: Because a textbox is usually something that you simply get information
-	//         from when a form is submitted or a window is closed. You wouldn't want a
-	//         callback at all, just merely the ability to collect the information later, e.g.
-	//         a GetValue() (which probably should be in Widget since many widgets can have values).
-	
-	Initialize( x, y, w, rows );
-}
-
-Textbox::Textbox( int x, int y, int w, int rows, string text ) {
-	Initialize( x, y, w, rows, text );
-}
-
-Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
-	Initialize( x, y, w, rows, text, label );
-}
-
-void Textbox::DisableEntry( void ) {
-	entryDisabled = true;
-}
-
-void Textbox::EnableEntry( void ) {
-	entryDisabled = false;
-}
-
+/**\brief Draws the textbox.*/
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
 	Rect bbox; // bounding box of the drawn text
@@ -83,14 +52,12 @@ void Textbox::Draw( int relx, int rely ) {
 	                                                              // be updated later to actually reflect font size
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
-	if( hasKeyboardFocus && ((SDL_GetTicks() % 500) < 300) && !entryDisabled ) {
+	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
 		Video::DrawRect( x + 6 + static_cast<int>(bbox.w), y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
 }
 
-void Textbox::MouseLDown( int wx, int wy ) {
-	if(entryDisabled) return;
-
+bool Textbox::MouseLDown( int wx, int wy ) {
 	if( clickCallBack ){
 		Log::Message( "Clicked on: '%s'.", (char *)text.c_str() );
 		clickCallBack();
@@ -100,18 +67,7 @@ void Textbox::MouseLDown( int wx, int wy ) {
 	} else {
 		Log::Warning( "Clicked on: '%s' but there was no function to call.", (char *)text.c_str() );
 	}
-}
-
-void Textbox::FocusKeyboard( void ) {
-	cout << "textbox keyboard focus!" << endl;
-	
-	hasKeyboardFocus = true;
-}
-
-void Textbox::UnfocusKeyboard( void ) {
-	cout << "textbox keyboard unfocus!" << endl;
-
-	hasKeyboardFocus = false;
+	return true;
 }
 
 bool Textbox::KeyPress( SDLKey key ) {
@@ -119,7 +75,7 @@ bool Textbox::KeyPress( SDLKey key ) {
 	stringstream key_ss;
 	string key_s;
 
-	if(entryDisabled) return false;
+	if(this->disabled) return false;
 
 	switch(key){
 	// Ignore Modifiers

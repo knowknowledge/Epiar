@@ -17,14 +17,11 @@ class Tab : public Widget {
 
 		void Draw( int relx = 0, int rely = 0 );
 
-		int GetWidth( void ) { return w; }
-		int GetHeight( void ) { return h; }
-		string GetName( void ) {return string("Tab_"+caption);}
+		string GetType( void ) {return string("Tab");}
 
 		friend class Tabs;
 
 	private:
-		int w,h;
 		int capw;
 		string caption;
 
@@ -43,17 +40,14 @@ class Tabs : public Widget {
 		int GetWidth( void ) { return w; };
 		int GetHeight( void ) { return h; };
 	
-		void MouseLDown( int x, int y );
-		void MouseLUp( int x, int y );
-		void MouseMotion( int x, int y, int dx, int dy );
+		bool MouseLDown( int xi, int yi );
+		bool MouseLUp( int xi, int yi );
+		bool MouseMotion( int xi, int yi );
 
 		string GetName( void ) {return string("Tabs_"+name);}
 
 	private:
 		Tab* CheckTabClicked( int xr, int yr );
-
-		int w,h;
-		string name;
 		Tab* activetab;
 };
 

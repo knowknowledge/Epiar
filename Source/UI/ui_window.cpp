@@ -18,21 +18,13 @@
 
 /**\brief Creates a new window with specified parameters.
  */
-Window::Window( int x, int y, int w, int h, string caption ) {
-	SetX( x );
-	SetY( y );
-
-	this->w = w;
-	this->h = h;
-	
-	this->caption = caption;
-	this->hscrollbar = NULL;
-	this->vscrollbar = NULL;
-
-	Debug::Set();
-	Debug::Print("new window (%d,%d,%d,%d,%s)\n", x, y, w, h, caption.c_str());
-	Debug::Unset();
-	
+Window::Window( int x, int y, int w, int h, string caption ):
+		hscrollbar( NULL ),vscrollbar( NULL ){
+	this->x=x;
+	this->y=y;
+	this->w=w;
+	this->h=h;
+	this->name=caption;
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
 	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
@@ -43,19 +35,14 @@ Window::Window( int x, int y, int w, int h, string caption ) {
 	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
 	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
 	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
-
-	//inner_top = bitmaps[0]->GetHeight();
-	//inner_left = bitmaps[0]->GetWidth();
-	//inner_right = w - bitmaps[7]->GetWidth();
-	//inner_low = h - bitmaps[7]->GetHeight();
 }
 
 /**\brief Adds a widget to the current Window.
  */
 bool Window::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
-	int hbnd = widget->GetX()+widget->GetWidth();
-	int vbnd = widget->GetY()+widget->GetHeight();
+	int hbnd = widget->GetX()+widget->GetW();
+	int vbnd = widget->GetY()+widget->GetH();
 
 	if ( hbnd > this->w ){
 		if ( !this->hscrollbar ){
@@ -112,7 +99,7 @@ void Window::Draw( int relx, int rely ) {
 
 	// Draw the window title
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), caption.c_str());
+	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name.c_str());
 
 	// Crop when necessary
 	if ( this->hscrollbar || this->vscrollbar )
@@ -145,30 +132,17 @@ void Window::Draw( int relx, int rely ) {
 		Video::UnsetCropRect();
 }
 
-void Window::MouseMotion( int x, int y, int dx, int dy ){
+bool Window::MouseDrag( int x, int y ){
+	int dx=this->dragX;
+	int dy=this->dragY;
 	// Only drag by titlebar
 	if ( dy < bitmaps[1]->GetHeight() ) {
-		this->SetX( x - dx);
-		this->SetY( y - dy);
+		this->x= x - dx;
+		this->y=y - dy;
 	} else {
 	// Pass the event onto widget if not handling it.
-		Widget::MouseMotion( x, y, dx, dy );
+		Widget::MouseDrag( x, y );
 	}
+	return true;
 }
 
-// wx & wy are coords of mouse down, relative to widget's upper left (0,0)
-//void Window::MouseLDown( int wx, int wy ) {
-//	cout << "mouse down event on window, relative at " << wx << ", " << wy << endl;
-//	Widget *down_on = DetermineMouseFocus( wx, wy );
-//	if(down_on) {
-//		cout << "mouse down on child of window widget" << endl;
-//		down_on->MouseLDown(wx,wy);
-//	} else {
-//		cout << "mouse NOT down on child of window widget" << endl;
-//	}
-//}
-
-//Widget *Window::DetermineMouseFocus( int x, int y ) {
-	//cout << "window determine mouse focus" << endl;
-//	return Widget::DetermineMouseFocus(x - inner_left, y - inner_top );
-//}

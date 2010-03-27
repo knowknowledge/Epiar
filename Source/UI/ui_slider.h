@@ -27,12 +27,9 @@ class Slider : public Widget {
 
 		void Draw( int relx=0, int rely = 0 );
 
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
-
-		void MouseMotion( int x, int y, int dx, int dy );
-		void MouseLDown( int wx, int wy );
-		string GetName( void ) {return string("Slider_"+label); }
+		bool MouseMotion( int xi, int yi );
+		bool MouseLDown( int xi, int yi );
+		string GetType( void ) {return string("Slider"); }
 
 	private:
 		// Utility functions to convert between pixel and values
@@ -41,7 +38,6 @@ class Slider : public Widget {
 		void SetVal( float value );
 
 		float minval,maxval,val;
-		int w,h;
 		string label;
 		
 		// Callback

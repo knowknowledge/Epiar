@@ -17,15 +17,11 @@ class Label : public Widget {
 		
 		void Draw(  int relx = 0, int rely = 0 );
 
-		int GetWidth( void ) { return w; };
-		int GetHeight( void ) { return h; };
-		
 		void setText(string text){label=text;}
 	
-		string GetName( void ) {return string("Label_"+label);}
+		string GetType( void ) {return string("Label");}
 	
 	private:
-		int w, h;
 		string label;
 		bool centered;
 };
