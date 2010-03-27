@@ -16,8 +16,21 @@ int test_ui(int argc, char **argv){
 	Timer::Update();
 
 	Window awin(0,0,200,400,"A Window");
-	Button abut(100,100,50,20,"A button");
-	awin.AddChild(&abut);
+	Tabs *tabcont = new Tabs(0,0,180,300,"Tabs");
+	awin.AddChild(tabcont);
+	Tab *tab1 = new Tab("Tab1");
+	tabcont->AddChild(tab1);
+	Tab *tab2 = new Tab("Tab2");
+	tabcont->AddChild(tab2);
+
+	Button *abut = new Button(100,100,50,20,"A button");
+	tab1->AddChild(abut);
+	Slider *aslid = new Slider(0,0,100,20,"Slider");
+	tab2->AddChild(aslid);
+	Textbox *atext = new Textbox(0,40,100,1,"Hello","Label");
+	tab2->AddChild(atext);
+	
+	
 	UI::Add(&awin);
 	while( !quit ) {
 		quit = inputs.Update();

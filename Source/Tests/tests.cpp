@@ -42,7 +42,7 @@ Test::Test( const string& testname ):testname( testname ){
 		REQUIRE_VIDEO|REQUIRE_OPTIONS);
 	tests["argparser"]=make_pair(test_argparser,0);
 	tests["UI"]=make_pair(test_ui,
-		REQUIRE_VIDEO|REQUIRE_OPTIONS|REQUIRE_FONTS);
+		REQUIRE_VIDEO|REQUIRE_AUDIO|REQUIRE_OPTIONS|REQUIRE_FONTS);
 
 
 }
@@ -84,8 +84,6 @@ void Test::LoadRequirements( void ){
 	if( testreqs & REQUIRE_OPTIONS ){
 		cout<<"  Initializing options subsystem..."<<endl;
 		optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
-		// Disable logging output so we can see debug output
-		SETOPTION("options/log/out", 0);
 	}
 	if( testreqs & REQUIRE_VIDEO ){
 		cout<<"  Initializing video subsystem..."<<endl;
