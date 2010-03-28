@@ -287,23 +287,29 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glColor3f(r,g,b);
 	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
-	for(double angle = 0; angle <= 2.5 * M_PI; angle = angle + 0.1)
+	for(double angle = 0; angle <= 2.0 * M_PI; angle = angle + 0.1)
 	{
 		glVertex2d(radius * cos(angle) + x, radius * sin(angle) + y);
 	}
+	// One more point to finish the circle. (ang=0)
+	glVertex2d(radius + x, y);
 	glEnd();
 }
 
 /**\brief Draw a filled circle.
  */
-void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float b) {
-	/// \todo: Make this draw a filled circle.
-	glColor3f(r,g,b);
-	glBegin(GL_LINE_STRIP);
-	for(double ang = 0; ang <= 2.5 * M_PI; ang = ang + 0.1)
+void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float b, float a) {
+	glColor4f(r,g,b,a);
+	glEnable(GL_BLEND);
+	glBegin(GL_TRIANGLE_STRIP);
+	for(double ang = 0; ang <= 2.0 * M_PI; ang = ang + 0.1)
 	{
+		glVertex2d(x,y);
 		glVertex2d(radius * cos(ang) + x, radius * sin(ang) + y);
 	}
+	// One more triangle to finish the circle. (ang=0)
+	glVertex2d(x,y);
+	glVertex2d(radius + x, y);
 	glEnd();
 }
 
