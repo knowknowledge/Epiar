@@ -1,7 +1,6 @@
 -- Use this script for a solar system
 
 
-PLAYER = Epiar.player()
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 

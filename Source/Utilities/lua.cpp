@@ -218,6 +218,9 @@ void Lua::RegisterFunctions() {
 		{"setoption", &Lua::setoption},
 		{"setsoundvol", &Lua::setsoundvol},
 		{"setmusicvol", &Lua::setmusicvol},
+		{"loadPlayer", &Lua::loadPlayer},
+		{"newPlayer", &Lua::newPlayer},
+		{"players", &Lua::getPlayerNames},
 		{"player", &Lua::getPlayer},
 		{"getCamera", &Lua::getCamera},
 		{"moveCamera", &Lua::moveCamera},
@@ -322,6 +325,55 @@ int Lua::setmusicvol(lua_State *L){
 	float volume = TO_FLOAT(luaL_checknumber(L, 1));
 	Audio::Instance().SetMusicVol(volume);
 	SETOPTION("options/sound/musicvolume",volume);
+	return 0;
+}
+
+int Lua::getPlayerNames(lua_State *L) {
+	list<string> *names = Players::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+	return 1;
+}
+
+int Lua::loadPlayer(lua_State *L) {
+    int n = lua_gettop(L);
+	if (n != 1) {
+		return luaL_error(L, "Loading a Player expects a name");
+    }
+	string playerName = (string) luaL_checkstring(L,1);
+	cout<<"Loading Player: "<<playerName<<endl;
+	Player* newPlayer = Players::Instance()->GetPlayer( playerName );
+	if( newPlayer==NULL ) {
+		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
+	}
+	bool alreadyLoaded = Player::IsLoaded();
+	Player::Load(playerName);
+	if(!alreadyLoaded) {
+        // Set player model based on simulation xml file settings
+        SpriteManager::Instance()->Add( Player::Instance() );
+
+        // Focus the camera on the sprite
+        Camera::Instance()->Focus( Player::Instance() );
+	}
+	return 0;
+}
+
+int Lua::newPlayer(lua_State *L) {
+    int n = lua_gettop(L);
+	if (n != 1) {
+		return luaL_error(L, "Loading a Player expects a name");
+    }
+
+	string playerName = (string) luaL_checkstring(L,1);
+	cout<<"Creating Player: "<<playerName<<endl;
+
+	Player::CreateNew(playerName);
+
+	// Set player model based on simulation xml file settings
+	SpriteManager::Instance()->Add( Player::Instance() );
+
+	// Focus the camera on the sprite
+	Camera::Instance()->Focus( Player::Instance() );
 	return 0;
 }
 

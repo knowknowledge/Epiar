@@ -25,26 +25,15 @@ commands = {
 	{'p', "Pause", "togglePause()",KEYTYPED}
 	}
 
---- Register command
-function registerCommand(cmd)
-	table.insert(PreSteps,step)
-end
-
 --- Register multiple commands
 function registerCommands(cmds)
     for i,cmd in ipairs(cmds) do
         table.insert(commands,cmd)
+		keyval, name, code = commands[i][1],commands[i][2],commands[i][3]
+		Epiar.UnRegisterKey(sdlkey(keyval), commands[i][4])
+		Epiar.RegisterKey(sdlkey(keyval), commands[i][4], code)
     end
 end
-
---- Register commands with Epiar
-function registerEpiarCommands()
-	for i=1,#commands do
-		keyval, name, code = commands[i][1],commands[i][2],commands[i][3]
-		Epiar.RegisterKey(sdlkey(keyval), commands[i][4], code)
-	end
-end
-registerInit(registerEpiarCommands)
 
 --- Specify keys configuration
 function chooseKeys()

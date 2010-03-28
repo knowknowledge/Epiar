@@ -52,6 +52,9 @@ class Lua {
 		static int moveCamera(lua_State *L);
 		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
+		static int getPlayerNames(lua_State *L);
+		static int loadPlayer(lua_State *L);
+		static int newPlayer(lua_State *L);
 
 		// Sprite Fetchers
 		static int getPlayer(lua_State *L);

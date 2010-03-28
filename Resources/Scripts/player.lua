@@ -1,6 +1,5 @@
 -- Use this script for code directly to the Players
 
-PLAYER = Epiar.player()
 player_credits = 10000
 
 playerCommands = {
@@ -19,7 +18,13 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED},
 }
-registerCommands(playerCommands)
+
+function playerStart()
+	PLAYER = Epiar.player()
+	createHUD()
+	registerPostStep(updateHUD)
+	registerCommands(playerCommands)
+end
 
 --- Target closest ship
 function targetClosestShip()
@@ -117,7 +122,6 @@ function createHUD()
 	TargetMachine = HUD.newStatus("Machine:",130,1,"")
 	TargetState = HUD.newStatus("State:",130,1,0)
 end
-registerInit(createHUD)
 
 updateHUD = function ()
 	if PLAYER:GetHull() == 0 then return end
@@ -149,5 +153,51 @@ updateHUD = function ()
 		end
 	end
 end
-registerPostStep(updateHUD)
 
+function loadingWindow()
+	if loadingWin~=nil then return end
+	Epiar.pause()
+	width=300
+	height=300
+	loadingWin = UI.newWindow( 300,300,width,height,"Welcome to Epiar" )
+	local players = Epiar.players()
+	for i=1,#players do
+		local player = players[i]
+		-- TODO: show a preview of the player (curret ship, location, equipment)
+		loadingWin:add( UI.newButton(50,30+i*40,100,30,player,string.format("Epiar.loadPlayer('%s'); loadingWin:close(); loadingWin=nil; playerStart(); Epiar.unpause()",player)))
+	end
+	loadingWin:add( UI.newButton(width/2-50,height-40,100,30,"New Player","createNewPlayerWindow()") )
+end
+registerInit(loadingWindow)
+
+function createNewPlayerWindow()
+	if newPlayerWin~=nil then return end
+	newPlayerWin = UI.newWindow( 600,300, 200,200, "New Player")
+
+	-- TODO: show a picture of a the default ship?
+	
+	yoff=40 -- Buffer for the titlebar
+	newPlayerWin:add(UI.newLabel( 10, yoff+15, "Name:"))
+	playerNameField = UI.newTextbox( 90, yoff, 100, 1, "")
+	newPlayerWin:add(playerNameField)
+	yoff = yoff+20
+
+	--newPlayerWin:add(UI.newLabel( 10, yoff+15, "Ship Name"))
+	--playerShipField = UI.newTextbox( 90, yoff, 100, 1, "")
+	--newPlayerWin:add(playerShipField)
+	--yoff = yoff+20
+
+	newPlayerWin:add( UI.newButton( 50,200-40,100,30,"Save", "createNewPlayer()"))
+end
+
+function createNewPlayer()
+	if newPlayerWin==nil then 
+		print( "Oh no! Where did the newPlayerWin go?  We're going to need that!" )
+		return
+	end
+	Epiar.newPlayer(playerNameField:GetText())
+	newPlayerWin:close()
+	loadingWin:close()
+	playerStart();
+	Epiar.unpause()
+end

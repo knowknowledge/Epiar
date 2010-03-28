@@ -16,7 +16,11 @@
 class Player : public Ship , public Component {
 	public:
 		static Player *Instance();
+
+		static bool IsLoaded() { return pInstance!=NULL; }
+		static void CreateNew(string playerName);
 		static void LoadLast();
+		static void Load(string playerName);
 		string GetName() { return name; }
 
 		bool parserCB( string sectionName, string subName, string value );
@@ -39,7 +43,6 @@ class Player : public Ship , public Component {
 
 	private:
 		static Player *pInstance;
-		string name;
 };
 
 class Players : public Components {

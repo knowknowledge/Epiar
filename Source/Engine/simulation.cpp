@@ -109,17 +109,6 @@ bool Simulation::Run() {
 	// Create a spritelist
 	SpriteManager *sprites = SpriteManager::Instance();
 
-    if( 0 == OPTION(int,"options/development/editor-mode") ){
-		Player::LoadLast();
-        Player *player = Player::Instance();
-
-        // Set player model based on simulation xml file settings
-        sprites->Add( player->GetSprite() );
-
-        // Focus the camera on the sprite
-        camera->Focus( player->GetSprite() );
-    }
-
 	Planets *planets = Planets::Instance();
 	list<string>* planetNames = planets->GetNames();
 	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
