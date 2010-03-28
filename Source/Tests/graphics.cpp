@@ -20,11 +20,11 @@ int test_graphics(int argc, char **argv) {
 		// draw a grid
 		// -- draw the horizontal lines
 		for(int j = 50; j < Video::GetHeight(); j += 50) {
-			Video::DrawRect(0, j, Video::GetWidth(), 1, .4, .4, .4);
+			Video::DrawRect(0, j, Video::GetWidth(), 1, .4f, .4f, .4f);
 		}
 		// -- draw the vertical lines
 		for(int i = 50; i < Video::GetWidth(); i += 50) {
-			Video::DrawRect(i, 0, 1, Video::GetHeight(), .4, .4, .4);
+			Video::DrawRect(i, 0, 1, Video::GetHeight(), .4f, .4f, .4f);
 		}
 
 		// draw four test circles
