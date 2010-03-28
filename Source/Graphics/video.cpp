@@ -366,9 +366,9 @@ void Video::SetCropRect( int x, int y, int w, int h ){
 		// Need to detect which part of crop rectangle is within previous rectangle
 		// So we don't miss things that needs to be cropped.
 		Rect prevrect = cropRects.top();
-		int rightprev = prevrect.x+prevrect.w;
+		int rightprev = TO_INT(prevrect.x+prevrect.w);
 		int right = x+w;
-		int botprev = prevrect.y+prevrect.h;
+		int botprev = TO_INT(prevrect.y+prevrect.h);
 		int bot = y+h;
 		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	// Left
 		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	// Top
