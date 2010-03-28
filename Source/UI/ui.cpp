@@ -19,7 +19,7 @@
 /**\class UI
  * \brief UI. */
 
-Widget UI::master;
+UIContainer UI::master=UIContainer(false);
 
 /**\brief This constructor resets the input.
  */
@@ -48,16 +48,6 @@ bool UI::Add( Widget *widget ) {
 	UI::master.AddChild( widget );
 	
 	return true;
-}
-
-/**\brief Update all widgets.*/
-void UI::Run( void ) {
-	list<Widget *>::iterator i;
-	
-	if( !UI::master.IsEmpty() ){
-		Video::EnableMouse();
-		UI::master.Update();
-	}
 }
 
 /**\brief This removes all widgets from the base.*/

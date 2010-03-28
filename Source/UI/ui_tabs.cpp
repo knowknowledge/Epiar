@@ -39,7 +39,7 @@ Tab::Tab( const string& _caption ){
  */
 bool Tab::AddChild( Widget *widget ){
 	bool success;
-	success = Widget::AddChild( widget );
+	success = UIContainer::AddChild( widget );
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();
 	return success;
@@ -148,7 +148,7 @@ void Tab::ResetScrollBars(){
 				v_x, v_y, v_l,
 				HORIZONTAL,
 				this);
-			Widget::AddChild( this->hscrollbar );
+			UIContainer::AddChild( this->hscrollbar );
 		} else {
 			printf("Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 			this->hscrollbar->SetPosition(v_x,v_y);
@@ -169,7 +169,7 @@ void Tab::ResetScrollBars(){
 				v_x, v_y, v_l,
 				VERTICAL,
 				this);
-			Widget::AddChild( this->vscrollbar );
+			UIContainer::AddChild( this->vscrollbar );
 		} else {
 			printf("Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 			this->vscrollbar->SetPosition(v_x,v_y);
@@ -202,7 +202,7 @@ bool Tabs::AddChild( Widget *widget ){
 	Tab* tabwidget = static_cast<Tab*>( widget );
 
 	// Call generic to add the widget
-	Widget::AddChild( widget );
+	UIContainer::AddChild( widget );
 
 	if ( activetab == NULL)
 		this->activetab = tabwidget;
@@ -227,10 +227,10 @@ Widget *Tabs::DetermineMouseFocus( int relx, int rely ) {
 void Tabs::TabNext( void ){
 	list<Widget *>::iterator i;
 
-	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
+	for( i = UIContainer::children.begin(); i != UIContainer::children.end(); ++i ) {
 		if ( static_cast<Tab*>(*i) == activetab ){
-			if ( (++i) == Widget::children.end() )
-				this->activetab = (Tab*) (Widget::children.front());
+			if ( (++i) == UIContainer::children.end() )
+				this->activetab = (Tab*) (UIContainer::children.front());
 			else
 				this->activetab = ((Tab*)*i);
 			break;
@@ -252,7 +252,7 @@ void Tabs::Draw( int relx, int rely ){
 	list<Widget *>::iterator i;
 
 	int xo = 0;
-	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
+	for( i = UIContainer::children.begin(); i != UIContainer::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
 		Video::DrawRect( xo+x,y,
 			currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
@@ -282,7 +282,7 @@ bool Tabs::MouseLDown( int x, int y ) {
 		activetab = this->CheckTabClicked( xr, yr );
 		return true;
 	}
-	return Widget::MouseLDown( x, y );
+	return UIContainer::MouseLDown( x, y );
 }
 
 /**\brief Checks which Tab was clicked.
@@ -290,7 +290,7 @@ bool Tabs::MouseLDown( int x, int y ) {
 Tab* Tabs::CheckTabClicked( int xr, int yr ){
 	list<Widget *>::iterator i;
 	int xo = 0;
-	for( i = Widget::children.begin(); i != Widget::children.end(); ++i ) {
+	for( i = UIContainer::children.begin(); i != UIContainer::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
 		if ( xr < (currtab->capw+xo+TAB_PAD*2) )
 			return currtab;

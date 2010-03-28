@@ -127,7 +127,11 @@ int main( int argc, char **argv ) {
 	list<string>::iterator it;
 	for ( it=unused.begin() ; it != unused.end(); it++ )
 		cout << "\tUnknown options:\t" << (*it)<<endl;
-
+	if ( !unused.empty() ){
+		// free the configuration file data
+		delete optionsfile;
+		return -1;
+	}
 
 	Log::Start();
 	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );

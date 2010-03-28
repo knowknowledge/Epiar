@@ -11,9 +11,8 @@
 
 #include "Graphics/image.h"
 #include "UI/ui.h"
-#include "UI/ui_scrollbar.h"
 
-class Window : public Widget {
+class Window : public UIContainer {
 	public:
 		Window( int x, int y, int w, int h, string caption );
 		bool AddChild( Widget *widget );

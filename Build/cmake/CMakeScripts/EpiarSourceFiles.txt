@@ -89,6 +89,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_button.h
 	${Epiar_SRC_DIR}/UI/ui_checkbox.cpp
 	${Epiar_SRC_DIR}/UI/ui_checkbox.h
+	${Epiar_SRC_DIR}/UI/ui_container.cpp
+	${Epiar_SRC_DIR}/UI/ui_container.h
 	${Epiar_SRC_DIR}/UI/ui.cpp
 	${Epiar_SRC_DIR}/UI/ui.h
 	${Epiar_SRC_DIR}/UI/ui_label.cpp

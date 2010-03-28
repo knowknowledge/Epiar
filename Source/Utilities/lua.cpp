@@ -932,7 +932,7 @@ int Lua::setInfo(lua_State *L) {
 			return luaL_error(L, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
 		}
 
-		Planet thisPlanet(name,x,y,Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
+		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet!=NULL) {

@@ -27,9 +27,6 @@ Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	
 	this->name = label;
 	this->checked = checked;
-	if(label!=""){
-		this->AddChild( new Label(CHECKBOX_W+5,CHECKBOX_H, label, 0) );
-	}
 }
 
 void Checkbox::Draw( int relx, int rely ) {
@@ -44,7 +41,7 @@ void Checkbox::Draw( int relx, int rely ) {
 	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, 0.4f, 0.4f, 0.4f );
 
 	// draw the label
-	Widget::Draw(relx,rely);
+	SansSerif->Render( x+CHECKBOX_W+5, y, name.c_str() );
 }
 
 bool Checkbox::MouseLUp( int xi, int yi ) {

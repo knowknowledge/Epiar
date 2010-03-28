@@ -50,7 +50,7 @@ bool Window::AddChild( Widget *widget ){
 				this->h-SCROLLBAR_THICK-SCROLLBAR_PAD,
 				this->w-2*SCROLLBAR_PAD, HORIZONTAL,
 				this);
-			Widget::AddChild( this->hscrollbar );
+			UIContainer::AddChild( this->hscrollbar );
 		}
 		this->hscrollbar->maxpos = hbnd;
 	}
@@ -64,12 +64,12 @@ bool Window::AddChild( Widget *widget ){
 				-bitmaps[1]->GetHeight()
 				-SCROLLBAR_THICK, VERTICAL,
 				this);
-			Widget::AddChild( this->vscrollbar );
+			UIContainer::AddChild( this->vscrollbar );
 		}
 		this->vscrollbar->maxpos = vbnd;
 	}
 
-	return Widget::AddChild( widget );
+	return UIContainer::AddChild( widget );
 }
 
 /**\brief Determines focused widget based on scrolled position.*/
@@ -157,7 +157,7 @@ bool Window::MouseDrag( int x, int y ){
 		this->y=y - dy;
 	} else {
 	// Pass the event onto widget if not handling it.
-		Widget::MouseDrag( x, y );
+		UIContainer::MouseDrag( x, y );
 	}
 	return true;
 }

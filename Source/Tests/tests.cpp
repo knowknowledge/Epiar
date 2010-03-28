@@ -44,7 +44,6 @@ Test::Test( const string& testname ):testname( testname ){
 	tests["UI"]=make_pair(test_ui,
 		REQUIRE_VIDEO|REQUIRE_AUDIO|REQUIRE_OPTIONS|REQUIRE_FONTS);
 
-
 }
 
 /**\brief Runs the Test.*/
@@ -140,7 +139,6 @@ void Test::GameLoop( void ){
 				// Update cycle
 		}
 
-		UI::Run();
 		Video::Erase();
 		Video::Update();
 		UI::Draw();

@@ -45,7 +45,6 @@ int test_ui(int argc, char **argv){
 		
 		Timer::Update();
 
-		UI::Run();
 		Video::Erase();
 
 		UI::Draw();
