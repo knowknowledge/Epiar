@@ -94,15 +94,16 @@ bool Font::SetFont( string filename ) {
  * \param y Y coordinate
  * \param text C style string pointer to text.
  */
-Rect Font::Render( int x, int y, const char *text ) {
+Rect Font::Render( int x, int y, const char *text,bool centered ) {
 	float llx, lly, llz;
 	float urx, ury, urz;
-
+	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
+	int w = urx - llx;
+	int h = ury - lly;
 	glColor4f( r, g, b, a );
 	glPushMatrix(); // to save the current matrix
-	glScalef(1, -1, 1); 
+	glScalef(1, -1, 1);
 	
-	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
 	
 	FTPoint pt = FTPoint( x, -y, 1);
 	( ( FTTextureFont * ) font )->Render( text, -1, pt );

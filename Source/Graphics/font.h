@@ -20,7 +20,7 @@ class Font {
 			~Font();
 
 			bool SetFont( string filename );
-			Rect Render( int x, int y, const char *text );
+			Rect Render( int x, int y, const char *text,bool centered=false );
 			Rect RenderCentered( int x, int y, const char *text );
 			void SetColor( float r, float g, float b, float a=1.0f );
 			Rect BoundingBox( const char *text );
