@@ -10,7 +10,7 @@
 
 class UIContainer : public Widget {
 	public:
-		UIContainer( void );
+		UIContainer( bool _mouseHandled=true );
 		virtual ~UIContainer( void );
 
 		virtual string GetType( void ) { return string("GenericWidget"); }
@@ -43,6 +43,9 @@ class UIContainer : public Widget {
 
 	protected:
 		list<Widget *> children;
+		// If mouse input is handled - We default to true
+		// On certain occasions we may need to default to false
+		bool mouseHandled;
 
 	private:
 		Widget *keyboardFocus;			// remembers which child last had focus

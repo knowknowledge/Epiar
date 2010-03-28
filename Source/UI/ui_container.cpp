@@ -12,8 +12,8 @@
  */
 
 /**\brief Constructor, initializes default values.*/
-UIContainer::UIContainer( void ):
-	keyboardFocus( NULL ),mouseHover( NULL ),
+UIContainer::UIContainer( bool _mouseHandled ):
+	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
 	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ){
 }
 
@@ -116,7 +116,7 @@ bool UIContainer::MouseMotion( int xi, int yi ){
 			this->mouseHover->MouseLeave();
 			this->mouseHover=NULL;
 		}
-		return true;
+		return this->mouseHandled;
 	}
 	if( !this->mouseHover ){
 		// We're on a widget, but nothing was hovered on before
@@ -158,7 +158,7 @@ bool UIContainer::MouseLUp( int xi, int yi ){
 		}
 	}
 	Log::Message("Mouse Left up detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic mouse down function.
@@ -180,7 +180,7 @@ bool UIContainer::MouseLDown( int xi, int yi ) {
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
 		this->keyboardFocus = NULL;
-		return true;
+		return this->mouseHandled;
 	}
 	// We clicked on a widget
 	event_on->MouseLDown( xr, yr );
@@ -206,7 +206,7 @@ bool UIContainer::MouseLRelease( void ){
 	if( this->lmouseDown )
 		return this->lmouseDown->MouseLRelease();
 	Log::Message("Left Mouse released in %s",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic middle mouse up function.
@@ -229,7 +229,7 @@ bool UIContainer::MouseMUp( int xi, int yi ){
 		}
 	}
 	Log::Message("Mouse Middle up detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic middle mouse down function.
@@ -245,7 +245,7 @@ bool UIContainer::MouseMDown( int xi, int yi ){
 		return event_on->MouseMDown( xr, yr );
 	}
 	Log::Message("Mouse Middle down detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic middle mouse release function.
@@ -257,7 +257,7 @@ bool UIContainer::MouseMRelease( void ){
 	if( this->mmouseDown )
 		return this->mmouseDown->MouseMRelease();
 	Log::Message("Middle Mouse released in %s",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic right mouse up function.
@@ -280,7 +280,7 @@ bool UIContainer::MouseRUp( int xi, int yi ){
 		}
 	}
 	Log::Message("Mouse Right up detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic right mouse down function.
@@ -296,7 +296,7 @@ bool UIContainer::MouseRDown( int xi, int yi ){
 		return event_on->MouseRDown( xr, yr );
 	}
 	Log::Message("Mouse Right down detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic right mouse release function.
@@ -308,7 +308,7 @@ bool UIContainer::MouseRRelease( void ){
 	if( this->rmouseDown )
 		return this->rmouseDown->MouseRRelease();
 	Log::Message("Right Mouse released in %s",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic mouse wheel up function.
@@ -322,7 +322,7 @@ bool UIContainer::MouseWUp( int xi, int yi ){
 	if( event_on )
 		return event_on->MouseWUp( xr,yr );
 	Log::Message("Mouse Wheel up detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic mouse wheel down function.
@@ -336,7 +336,7 @@ bool UIContainer::MouseWDown( int xi, int yi ){
 	if( event_on )
 		return event_on->MouseWDown( xr,yr );
 	Log::Message("Mouse Wheel down detect in %s.",this->name.c_str());
-	return true;
+	return this->mouseHandled;
 }
 
 /**\brief Generic keyboard focus function.
