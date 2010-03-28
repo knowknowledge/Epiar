@@ -10,7 +10,7 @@
 
 #include "Utilities/log.h"
 
-class Tab : public Widget {
+class Tab : public UIContainer {
 	public:
 		Tab( const string& _caption );
 		bool AddChild( Widget *widget );
@@ -33,7 +33,7 @@ class Tab : public Widget {
 		Scrollbar *vscrollbar;
 };
 
-class Tabs : public Widget {
+class Tabs : public UIContainer {
 	public:
 		Tabs( int x, int y, int w, int h, const string& name );
 		bool AddChild( Widget *widget );

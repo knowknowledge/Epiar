@@ -19,7 +19,7 @@
 /**\class UI
  * \brief UI. */
 
-Widget UI::master;
+UIContainer UI::master;
 
 /**\brief This constructor resets the input.
  */

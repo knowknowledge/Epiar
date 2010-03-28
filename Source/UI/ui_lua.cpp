@@ -323,7 +323,7 @@ int UI_Lua::setPicture(lua_State *L){
 int UI_Lua::add(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n >= 2){
-		Widget** ptrOuter = (Widget**)lua_touserdata(L,1);
+		UIContainer** ptrOuter = static_cast<UIContainer**>(lua_touserdata(L,1));
 		for(int i=2; i<=n; i++){
 			Widget** ptrInner = (Widget**)lua_touserdata(L,i);
 			(*ptrOuter)->AddChild(*ptrInner);

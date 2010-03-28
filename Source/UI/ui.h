@@ -12,10 +12,12 @@
 #include "includes.h"
 #include "Input/input.h"
 #include "ui_widget.h"
+#include "ui_container.h"
 
 // Included UI widgets
 #include "ui_lua.h"
 #include "ui_label.h"
+#include "ui_scrollbar.h"
 #include "ui_window.h"
 #include "ui_button.h"
 #include "ui_textbox.h"
@@ -49,7 +51,7 @@ class UI {
 
 		// Use a master widget to handle events,
 		// so we don't need to duplicate code.
-		static Widget master;
+		static UIContainer master;
 };
 
 #endif // __H_UI__
