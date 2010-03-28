@@ -24,10 +24,14 @@ class Widget {
 		virtual string GetType( void ) { return string("GenericWidget"); }
 		string GetName( void ) { return this->name; }
 		bool IsActive( void ){return this->keyactivated;}
-		virtual void Draw( int relx = 0, int rely = 0 ){};
 
+		virtual void Draw( int relx = 0, int rely = 0 ){};
 		bool Contains( int relx, int rely );
 
+		// Only allow UIContainer to send events
+		friend class UIContainer;
+
+	protected:
 		// Input events
 		virtual bool MouseDrag( int xi,int yi );
 		virtual bool MouseMotion( int xi, int yi );
@@ -48,7 +52,6 @@ class Widget {
 		virtual bool KeyboardLeave( void );
 		virtual bool KeyPress( SDLKey key );
 
-	protected:
 		bool hidden,disabled;	// If this widget should be hidden or disabled
 		int x, y, w, h;
 		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag

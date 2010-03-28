@@ -42,12 +42,10 @@ bool UI::Active( void ) {
 }
 
 /**\brief Adds a Widget to the base UI.*/
-bool UI::Add( Widget *widget ) {
+Widget *UI::Add( Widget *widget ) {
 	if( !widget ) return false;
 	
-	UI::master.AddChild( widget );
-	
-	return true;
+	return UI::master.AddChild( widget );
 }
 
 /**\brief This removes all widgets from the base.*/

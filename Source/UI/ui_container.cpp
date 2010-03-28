@@ -30,11 +30,11 @@ UIContainer::~UIContainer( void ){
 
 /**\brief Adds a child to the current container.
  */
-bool UIContainer::AddChild( Widget *widget ) {
+Widget *UIContainer::AddChild( Widget *widget ) {
 	if( !widget)
-		return false;
+		return NULL;
 	children.push_back( widget );
-	return true;
+	return widget;
 }
 
 /**\brief Deletes a child from the current container.

@@ -15,30 +15,19 @@ int test_ui(int argc, char **argv){
 	Input inputs;
 	Timer::Update();
 
-	Window *awin = new Window(0,0,200,400,"A Window");
-	UI::Add(awin);
-	Tabs *tabcont = new Tabs(5,25,180,300,"Tabs");
-	awin->AddChild(tabcont);
-	Tab *tab1 = new Tab("Tab1");
-	tabcont->AddChild(tab1);
-	Tab *tab2 = new Tab("Tab2");
-	tabcont->AddChild(tab2);
+	Window *awin = static_cast<Window*>(UI::Add(new Window(0,0,200,400,"A Window")));
+	Tabs *tabcont = static_cast<Tabs*>(awin->AddChild(new Tabs(5,25,180,300,"Tabs")));
+	Tab *tab1 = static_cast<Tab*>(tabcont->AddChild(new Tab("Tab1")));
+	Tab *tab2 = static_cast<Tab*>(tabcont->AddChild(new Tab("Tab2")));
 
-	Picture *aimg = new Picture(50,100,50,50,"Resources/Graphics/corvet.png");
-	tab1->AddChild(aimg);
-	Checkbox *achk = new Checkbox(10,120,true,"Hello");
-	tab1->AddChild(achk);
-	Button *abut = new Button(100,300,50,20,"A button");
-	tab1->AddChild(abut);
-	Button *abut2 = new Button(100,340,50,20,"A button2");
-	tab1->AddChild(abut2);
+	Widget *aimg = tab1->AddChild(new Picture(50,100,50,50,"Resources/Graphics/corvet.png"));
+	Widget *achk = tab1->AddChild(new Checkbox(10,120,true,"Hello"));
+	Widget *abut = tab1->AddChild(new Button(100,300,50,20,"A button"));
+	Widget *abut2 = tab1->AddChild(new Button(100,340,50,20,"A button2"));
 	
-	Slider *aslid = new Slider(5,20,100,20,"Slider");
-	tab2->AddChild(aslid);
-	Textbox *atext = new Textbox(5,50,100,1,"Hello","Textbox");
-	tab2->AddChild(atext);
-	Label *albl = new Label(5,80,"Hello");
-	tab2->AddChild(albl);
+	Widget *aslid = tab2->AddChild(new Slider(5,20,100,20,"Slider"));
+	Widget *atext = tab2->AddChild(new Textbox(5,50,100,1,"Hello","Textbox"));
+	Widget *albl = tab2->AddChild(new Label(5,80,"Hello"));
 	
 	while( !quit ) {
 		quit = inputs.Update();

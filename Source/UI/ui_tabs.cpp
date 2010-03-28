@@ -37,12 +37,15 @@ Tab::Tab( const string& _caption ){
 
 /**\brief Adds children to the Tab object.
  */
-bool Tab::AddChild( Widget *widget ){
+Widget *Tab::AddChild( Widget *widget ){
 	bool success;
 	success = UIContainer::AddChild( widget );
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();
-	return success;
+	if( success )
+		return widget;
+	else
+		return NULL;
 }
 
 /**\brief Determines focused widget based on scrolled position.*/
@@ -193,11 +196,11 @@ Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
 
 /**\brief Adds a Tab to the Tabs collection.
  */
-bool Tabs::AddChild( Widget *widget ){
+Widget *Tabs::AddChild( Widget *widget ){
 	if ( widget->GetType() != "Tab" ){
 		Log::Error("Error attempted to add non-Tab widget to Tab container: %s",
 				widget->GetName().c_str());
-		return false;
+		return NULL;
 	}
 	Tab* tabwidget = static_cast<Tab*>( widget );
 
@@ -212,7 +215,7 @@ bool Tabs::AddChild( Widget *widget ){
 	tabwidget->h = GetH()-TAB_HEADER;
 	tabwidget->ResetScrollBars();
 
-	return true;
+	return tabwidget;
 }
 
 /**\brief This just returns the active tab.

@@ -34,7 +34,7 @@ class UI {
 		UI();
 		~UI();
 		
-		static bool Add( Widget *widget );
+		static Widget *Add( Widget *widget );
 		static void Draw( void );
 		static void Close( void );
 		static void Close( Widget *widget );
