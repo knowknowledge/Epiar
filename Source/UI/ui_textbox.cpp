@@ -37,7 +37,6 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 /**\brief Draws the textbox.*/
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
-	Rect bbox; // bounding box of the drawn text
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
@@ -49,12 +48,11 @@ void Textbox::Draw( int relx, int rely ) {
 	// draw the text
 	Video::SetCropRect(x,y,this->w,this->h);
 	Mono->SetColor( 1., 1., 1. );
-	bbox = Mono->Render( x + 4, y + 13, (char *)text.c_str() ); // 4 and 12 are "magic numbers" that should
-	                                                              // be updated later to actually reflect font size
+	int tw = Mono->Render( x, y, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
-		Video::DrawRect( x + 6 + static_cast<int>(bbox.w), y + 3, 1, h - 6, .8f, .8f, .8f );
+		Video::DrawRect( x + 6 + tw, y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
 	Video::UnsetCropRect();
 }

@@ -110,16 +110,16 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Title
 	if( !title.empty() ) {
-		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
-		widthRemaining -= static_cast<int>(recTitle.w);
-		x += static_cast<int>(recTitle.w) + 5;
+		int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,LEFT,MIDDLE );
+		widthRemaining -= wTitle;
+		x += wTitle + 5;
 	}
 
 	// Draw Name
 	if( !name.empty() ) {
-		Rect recName = BitType->Render( x, y+13, name.c_str() );
-		widthRemaining -= static_cast<int>(recName.w);
-		x += static_cast<int>(recName.w);
+		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name,LEFT,MIDDLE );
+		widthRemaining -= wName;
+		x += wName;
 	}
 
 	// Draw the Bar
@@ -269,24 +269,23 @@ void Hud::DrawMessages() {
 		} else {
 			BitType->SetColor(1.f,1.f,1.f,1.f);
 		}
-		BitType->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
+		BitType->Render( 15, Video::GetHeight() - (j*BitType->LineHeight()), (*i).message);
 	}
 }
 
 /**\brief Draw the current framerate (calculated in simulation.cpp).
  */
 void Hud::DrawFPS() {
-	const char *frameRate[16] = {0};
-	memset(frameRate, 0, sizeof(char) * 10);
+	char frameRate[16];
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	snprintf((char *)frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
-	snprintf((char *)frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, frameRate );
 
-	snprintf((char *)frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, frameRate );
 }
 
 /**\brief Draws the status bar.

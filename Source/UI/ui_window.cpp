@@ -115,7 +115,7 @@ void Window::Draw( int relx, int rely ) {
 
 	// Draw the window title
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name.c_str());
+	SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, CENTER,MIDDLE);
 
 	// Crop when necessary
 	if ( this->hscrollbar || this->vscrollbar )

@@ -116,7 +116,7 @@ void Console::Draw() {
 		int pos = 8;
 		Mono->SetColor(.9f,.9f,.9f,1.0);
 		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
-			Mono->Render(155, 18 + (pos * 10), (Console::Buffer[i]).c_str());
+			Mono->Render(155, pos * Mono->LineHeight(), Console::Buffer[i]);
 			pos--;
 			if(pos < 0) break;
 		}
