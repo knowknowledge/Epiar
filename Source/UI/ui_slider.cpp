@@ -66,10 +66,9 @@ void Slider::Draw( int relx, int rely ){
 			0.15f, 0.15f, 0.15f);
 
 	// Render the value indicator
-	ostringstream s;
-	s<<this->val;
-	int th = SansSerif->TightHeight();
-	SansSerif->Render( markerx, static_cast<int>(y+th/2 - SLIDER_VALPAD), s.str(),CENTER,MIDDLE );
+	char value[20];
+	snprintf(value,20,"%.2f",this->val);
+	SansSerif->Render( markerx, y, value,CENTER,BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.
