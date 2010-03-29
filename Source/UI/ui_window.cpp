@@ -39,7 +39,7 @@ Window::Window( int x, int y, int w, int h, string caption ):
 
 /**\brief Adds a widget to the current Window.
  */
-bool Window::AddChild( Widget *widget ){
+Widget *Window::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
 	int hbnd = widget->GetX()+widget->GetW();
 	int vbnd = widget->GetY()+widget->GetH();

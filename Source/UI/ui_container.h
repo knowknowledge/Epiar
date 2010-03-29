@@ -16,7 +16,7 @@ class UIContainer : public Widget {
 		virtual string GetType( void ) { return string("GenericWidget"); }
 		bool IsEmpty( void ){return this->children.empty();}
 
-		virtual bool AddChild( Widget *widget );
+		virtual Widget *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
 		virtual bool Reset( void );
@@ -24,6 +24,10 @@ class UIContainer : public Widget {
 
 		virtual void Draw( int relx = 0, int rely = 0 );
 
+		// Only allow UI to send events
+		friend class UI;
+
+	protected:
 		// Input events
 		virtual bool MouseMotion( int xi, int yi );
 		virtual bool MouseLUp( int xi, int yi );
@@ -41,7 +45,6 @@ class UIContainer : public Widget {
 		virtual bool KeyboardLeave( void );
 		virtual bool KeyPress( SDLKey key );
 
-	protected:
 		list<Widget *> children;
 		// If mouse input is handled - We default to true
 		// On certain occasions we may need to default to false

@@ -14,6 +14,7 @@
 #include "Tests/graphics.h"
 #include "Tests/argparser.h"
 #include "Tests/ui.h"
+#include "Tests/font.h"
 // Header files for various subsystems
 #include "Audio/audio.h"
 #include "Graphics/font.h"
@@ -43,6 +44,8 @@ Test::Test( const string& testname ):testname( testname ){
 	tests["argparser"]=make_pair(test_argparser,0);
 	tests["UI"]=make_pair(test_ui,
 		REQUIRE_VIDEO|REQUIRE_AUDIO|REQUIRE_OPTIONS|REQUIRE_FONTS);
+	tests["font"]=make_pair(test_font,
+		REQUIRE_VIDEO|REQUIRE_OPTIONS|REQUIRE_FONTS);
 
 }
 
