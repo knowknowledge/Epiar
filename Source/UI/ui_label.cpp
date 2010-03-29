@@ -23,9 +23,8 @@ Label::Label( int x, int y, string label, bool centered) {
 	this->y=y;
 
 	// w/h is dependent upon the text given
-	size = SansSerif->BoundingBox( label );
-	this->w = static_cast<int>(size.w);
-	this->h = static_cast<int>(size.h);
+	this->w = SansSerif->TextWidth( label);
+	this->h = SansSerif->TightHeight( );
 	
 	this->name = label;
 	this->centered = centered;
@@ -40,9 +39,9 @@ void Label::Draw(  int relx, int rely ) {
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
 	if(centered){
-		SansSerif->RenderCentered( x, y, name.c_str() );
+		SansSerif->Render( x, y, name, CENTER,MIDDLE );
 	} else {
-		SansSerif->Render( x, y, name.c_str() );
+		SansSerif->Render( x, y, name );
 	}
 	
 }

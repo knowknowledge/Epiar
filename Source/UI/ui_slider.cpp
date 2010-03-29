@@ -43,7 +43,6 @@
 
 void Slider::Draw( int relx, int rely ){
 	int x, y;
-	char value[20];
 
 	x = GetX() + relx;
 	y = GetY() + rely;
@@ -67,9 +66,10 @@ void Slider::Draw( int relx, int rely ){
 			0.15f, 0.15f, 0.15f);
 
 	// Render the value indicator
-	snprintf(value,20,"%.2f",this->val);
-	Rect bounds = SansSerif->BoundingBox( value );
-	SansSerif->RenderCentered( markerx, static_cast<int>(y+bounds.h/2 - SLIDER_VALPAD), value );
+	ostringstream s;
+	s<<this->val;
+	int th = SansSerif->TightHeight();
+	SansSerif->Render( markerx, static_cast<int>(y+th/2 - SLIDER_VALPAD), s.str(),CENTER,MIDDLE );
 }
 
 /**\brief Slider mouse drag call back.

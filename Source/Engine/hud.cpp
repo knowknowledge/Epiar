@@ -110,16 +110,16 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Title
 	if( title != "") {
-		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
-		widthRemaining -= static_cast<int>(recTitle.w);
-		x += static_cast<int>(recTitle.w) + 5;
+		BitType->Render( x, y, title );
+		widthRemaining -= BitType->TextWidth(title);
+		x += BitType->TextWidth(title) + 5;
 	}
 
 	// Draw Name
 	if( name != "") {
-		Rect recName = BitType->Render( x, y+13, name.c_str() );
-		widthRemaining -= static_cast<int>(recName.w);
-		x += static_cast<int>(recName.w);
+		int wName = BitType->Render( x, y, name.c_str() );
+		widthRemaining -= wName;
+		x += wName;
 	}
 
 	// Draw the Bar

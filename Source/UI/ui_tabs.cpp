@@ -31,8 +31,7 @@ Tab::Tab( const string& _caption ){
 	this->hscrollbar = NULL;
 	this->vscrollbar = NULL;
 
-	Rect bounds = SansSerif->BoundingBox( _caption );
-	this->capw = static_cast<int>(bounds.w);
+	this->capw = SansSerif->TextWidth( _caption );
 }
 
 /**\brief Adds children to the Tab object.
@@ -263,9 +262,9 @@ void Tabs::Draw( int relx, int rely ){
 			Video::DrawRect( xo+x+1,y+1,
 				currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
 
-		SansSerif->RenderCentered(xo+x+TAB_PAD+currtab->capw/2,
+		SansSerif->Render(xo+x+TAB_PAD+currtab->capw/2,
 				y+TAB_HEADER/2,
-				currtab->name.c_str());
+				currtab->name,CENTER,MIDDLE);
 		xo += currtab->capw+TAB_PAD*2+1;
 	}
 
