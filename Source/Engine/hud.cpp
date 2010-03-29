@@ -109,14 +109,14 @@ void StatusBar::Draw(int x, int y) {
 	BitType->SetColor(1.f,1.f,1.f,1.f);
 
 	// Draw the Title
-	if( title != "") {
+	if( !title.empty() ) {
 		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
 		widthRemaining -= static_cast<int>(recTitle.w);
 		x += static_cast<int>(recTitle.w) + 5;
 	}
 
 	// Draw Name
-	if( name != "") {
+	if( !name.empty() ) {
 		Rect recName = BitType->Render( x, y+13, name.c_str() );
 		widthRemaining -= static_cast<int>(recName.w);
 		x += static_cast<int>(recName.w);
@@ -469,20 +469,29 @@ int Hud::newStatus(lua_State *L) {
 	return 1;
 }
 
+
+StatusBar* Hud::checkStatus(lua_State *L, int index) {
+	StatusBar **barptr = (StatusBar**)luaL_checkudata(L, index, EPIAR_HUD);
+	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected");
+	StatusBar *bar;
+	bar = *barptr;
+	return bar;
+}
+
 /**\brief Set's the status (Lua callable)
  */
 int Hud::setStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
-	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+	StatusBar *bar= checkStatus(L,1);
 
 	if( lua_isnumber(L,2) ) {
 		float ratio = (float)(luaL_checknumber(L,2));
-		(*bar)->SetRatio(ratio);
+		bar->SetRatio(ratio);
 	} else {
 		string name = (string)(luaL_checkstring(L,2));
-		(*bar)->SetName(name);
+		bar->SetName(name);
 	}
 
 	return 0;
@@ -494,8 +503,8 @@ int Hud::closeStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
-	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
-	DeleteStatus(*bar);
+	StatusBar *bar= checkStatus(L,1);
+	DeleteStatus(bar);
 	return 0;
 }
 

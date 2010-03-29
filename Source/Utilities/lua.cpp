@@ -439,6 +439,9 @@ void Lua::pushSprite(lua_State *L,Sprite* s){
 		break;
 	default:
 		Log::Error("Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
+		luaL_getmetatable(L, EPIAR_SHIP);
+		lua_setmetatable(L, -2);
+		assert(0);
 	}
 }
 

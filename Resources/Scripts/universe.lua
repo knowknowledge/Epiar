@@ -107,15 +107,11 @@ function newPlan()
 	return theNewPlan
 end
 
-SHIPS={}
-
 --- Creates a new ship
 function createShip(X,Y,model,engine)
-	
 	plans = {"Hunter","Trader"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(2)])
 	cur_ship:SetRadarColor(0,255,0)
-	SHIPS[ cur_ship:GetID() ] = cur_ship
 	return cur_ship
 end
 
@@ -240,6 +236,20 @@ function planetTraffic()
 		end
 	end
 end
+
+--- This Closure creates more traffic periodically
+function moreTraffic(tickcycle)
+	ticks = tickcycle
+	function traffic()
+		ticks = ticks -1
+		if ticks == 0 then
+			planetTraffic()
+			ticks = tickcycle
+		end
+	end
+	return traffic
+end
+registerPostStep(moreTraffic(1000))
 
 --- Aim at center
 function aimCenter(cur_ship,timeleft)

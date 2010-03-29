@@ -23,12 +23,12 @@ registerCommands(playerCommands)
 
 --- Target closest ship
 function targetClosestShip()
-	x,y = PLAYER:GetPosition()
-	nearby = Epiar.ships(x,y,4096)
+	local x,y = PLAYER:GetPosition()
+	local nearby = Epiar.ships(x,y,4096)
 	if #nearby==0 then return end
 	
-	nextTarget = 1
-	currentTarget = HUD.getTarget()
+	local nextTarget = 1
+	local currentTarget = HUD.getTarget()
 	for s =1,#nearby-1 do
 		if nearby[s]:GetID() == currentTarget then
 			nextTarget = s+1
@@ -43,11 +43,11 @@ end
 --- Try to land
 function attemptLanding()
 	if landingWin ~= nil then return end
-	x,y = PLAYER:GetPosition()
-	planet = Epiar.nearestPlanet(PLAYER,4096)
-	px,py = planet:GetPosition()
-	distance = distfrom( px,py, x,y)
-	message=""
+	local x,y = PLAYER:GetPosition()
+	local planet = Epiar.nearestPlanet(PLAYER,4096)
+	local px,py = planet:GetPosition()
+	local distance = distfrom( px,py, x,y)
+	local message=""
 	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
 		message = string.format("This is %s Landing Control. ",planet:GetName())
 	end
@@ -96,8 +96,8 @@ end
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars
-	x,y = PLAYER:GetPosition()
-	qx,qy = coordinateToQuadrant(x,y)
+	local x,y = PLAYER:GetPosition()
+	local qx,qy = coordinateToQuadrant(x,y)
 	pos = HUD.newStatus("Coordinate:",130,1,string.format("( %d , %d )",x,y))
 	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
 	creditBar = HUD.newStatus("Credits:",130,1,string.format("$%d",player_credits))
@@ -105,7 +105,7 @@ function createHUD()
 	-- Weapon and Armor Status Bars
 	myhull = HUD.newStatus("HULL:",100,0,1.0)
 	myweapons = {}
-	weaponsAndAmmo = PLAYER:GetWeapons()
+	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if 0==ammo then ammo="---" end
 		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. ammo .." ]")

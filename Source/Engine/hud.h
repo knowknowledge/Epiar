@@ -67,6 +67,7 @@ class Hud {
 		static int setVisibity(lua_State *L);
 		static int newAlert(lua_State *L);
 		static int newStatus(lua_State *L);
+		static StatusBar* checkStatus(lua_State *L, int index);
 		static int setStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
 		static int getTarget(lua_State *L);
