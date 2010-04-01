@@ -37,7 +37,7 @@ Tab::Tab( const string& _caption ){
 /**\brief Adds children to the Tab object.
  */
 Widget *Tab::AddChild( Widget *widget ){
-	bool success;
+	Widget *success;
 	success = UIContainer::AddChild( widget );
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();

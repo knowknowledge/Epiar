@@ -160,13 +160,13 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 	// Y coordinates are flipped
 	switch( ypos ){
 		case TOP:
-			yn=-y-h-this->font->Descender();
+			yn=-y-h-TO_INT(floor(this->font->Descender()));
 			break;
 		case MIDDLE:
-			yn=-y-h/2-this->font->Descender();
+			yn=-y-h/2-TO_INT(floor(this->font->Descender()));
 			break;
 		case BOTTOM:
-			yn=-y-this->font->Descender();
+			yn=-y-TO_INT(floor(this->font->Descender()));
 			break;
 		default:
 			Log::Error("Invalid ypos");
