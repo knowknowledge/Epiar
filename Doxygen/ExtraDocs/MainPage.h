@@ -29,7 +29,7 @@
  *
  * In addition to the base subsystem classes, there are some classes that can also be considered part of the engine rather than the game.
  * - \subpage uipage "User Interface" - Creates common user interface widgets.
- * - \ref Xml class - XML parsing and saving for configuration data.
+ * - \ref XMLFile class - XML parsing and saving for configuration data.
  * - \ref Font class - Draws texts to the screen.
  * - \ref Animation class - Creates various effects.
  * - \ref Simulation class - The game loop.
