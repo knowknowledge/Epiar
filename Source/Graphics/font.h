@@ -13,17 +13,17 @@
 #include <FTGL/ftgl.h>
 #include "Graphics/video.h"
 
-typedef enum{LEFT,	/*!< Renders left aligned (default).*/
-	CENTER,			/*!< Renders centered on the point.*/
-	RIGHT			/*!< Renders right aligned.*/
-	} XPos;
-typedef enum{TOP,	/*!< Renders top aligned (default).*/
-	MIDDLE,			/*!< Renders centered on the point.*/
-	BOTTOM			/*!< Renders bottom aligned.*/
-	} YPos;
-
 class Font {
 		public:
+			enum XPos{LEFT,	/**< Renders left aligned (default).*/
+				CENTER,			/**< Renders centered on the point.*/
+				RIGHT			/**< Renders right aligned.*/
+				};
+			enum YPos{TOP,	/**< Renders top aligned (default).*/
+				MIDDLE,			/**< Renders centered on the point.*/
+				BOTTOM			/**< Renders bottom aligned.*/
+				};
+
 			Font();
 			Font( string filename );
 			~Font();
@@ -39,6 +39,7 @@ class Font {
 
 			int Render( int x, int y, const string& text,XPos xpos=LEFT, YPos ypos=TOP );
 			int RenderTight( int x, int y, const string& text,XPos xpos=LEFT, YPos ypos=TOP );
+			int RenderWrapped( int x, int y, const string& text, int w );
 
 		private:
 			int RenderInternal( int x, int y, const string& text, int h, XPos xpos, YPos ypos);

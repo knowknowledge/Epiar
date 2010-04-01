@@ -68,7 +68,7 @@ void Slider::Draw( int relx, int rely ){
 	// Render the value indicator
 	char value[20];
 	snprintf(value,20,"%.2f",this->val);
-	SansSerif->Render( markerx, y, value,CENTER,BOTTOM );
+	SansSerif->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.

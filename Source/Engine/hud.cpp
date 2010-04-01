@@ -110,14 +110,14 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Title
 	if( title != "") {
-		int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,LEFT,MIDDLE );
+		int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,Font::LEFT,Font::MIDDLE );
 		widthRemaining -= wTitle;
 		x += wTitle + 5;
 	}
 
 	// Draw Name
 	if( name != "") {
-		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name,LEFT,MIDDLE );
+		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name,Font::LEFT,Font::MIDDLE );
 		widthRemaining -= wName;
 		x += wName;
 	}

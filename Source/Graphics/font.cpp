@@ -19,27 +19,14 @@
 
 /**\brief Constructs new font (default color white).
  */
-Font::Font() {
-	// Solid White
-	r = 0.;
-	g = 0.;
-	b = 0.;
-	a = 1.;
-	
-	font = NULL;
+Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL){
 }
 
 
 /**\brief Construct new font based on file.
  * \param filename String containing file.
  */
-Font::Font( string filename ) {
-	// Solid White
-	r = 1.;
-	g = 1.;
-	b = 1.;
-	a = 1.;
-	font = NULL;
+Font::Font( string filename ):r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {
 	SetFont( filename );
 }
 
@@ -137,6 +124,14 @@ int Font::Render( int x, int y, const string& text,XPos xpos, YPos ypos ){
 int Font::RenderTight(int x, int y, const string& text,XPos xpos, YPos ypos ){
 	int h= this->TightHeight();
 	return this->RenderInternal(x,y,text,h,xpos,ypos);
+}
+
+/**\brief Renders a string wrapped to a given width.
+ * \return The number of lines used ( multiply by LineHeight to get total height).
+ */
+int Font::RenderWrapped( int x, int y, const string& text, int w ){
+
+
 }
 
 /**\brief Internal rendering function.*/

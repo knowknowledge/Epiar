@@ -71,7 +71,7 @@ void Button::Draw( int relx, int rely ) {
 	// draw the label
 	//Video::SetCropRect(x,y,this->w,this->h);
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, CENTER,MIDDLE );
+	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	//Video::UnsetCropRect();
 }
 

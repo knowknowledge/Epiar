@@ -27,17 +27,17 @@ int test_font(int argc, char **argv){
 	Video::DrawRect(100,100,250,lh,.4f, .4f, 1.f);
 	Video::DrawRect(350,100,250,lh, 1.f, .4f,.4f);
 	SansSerif->Render(100,100,str1);
-	SansSerif->Render(350,100,str2,CENTER);
-	SansSerif->Render(600,100,str3,RIGHT);
+	SansSerif->Render(350,100,str2,Font::CENTER);
+	SansSerif->Render(600,100,str3,Font::RIGHT);
 	
 	Video::DrawRect(100,200,200,100, .4f, .4f, 1.f);
 	Video::DrawRect(100,300,200,100, 1.f, .4f, .4f);
 	Video::DrawRect(100,200,200,lh, .4f, 1.f, .4f);
 	Video::DrawRect(100,300-lh/2,200,lh, 1.f, .4f, 1.f);
 	Video::DrawRect(100,400-lh,200,lh, 1.f, .4f, 1.f);
-	SansSerif->Render(200,200,str4,CENTER,TOP);
-	SansSerif->Render(200,300,str5,CENTER,MIDDLE);
-	SansSerif->Render(200,400,str6,CENTER,BOTTOM);
+	SansSerif->Render(200,200,str4,Font::CENTER,Font::TOP);
+	SansSerif->Render(200,300,str5,Font::CENTER,Font::MIDDLE);
+	SansSerif->Render(200,400,str6,Font::CENTER,Font::BOTTOM);
 
 	Video::DrawRect(450,200,100,th,.3f,.3f,.3f);
 	SansSerif->RenderTight(450,200,str7);

@@ -264,7 +264,7 @@ void Tabs::Draw( int relx, int rely ){
 
 		SansSerif->Render(xo+x+TAB_PAD+currtab->capw/2,
 				y+TAB_HEADER/2,
-				currtab->name,CENTER,MIDDLE);
+				currtab->name,Font::CENTER,Font::MIDDLE);
 		xo += currtab->capw+TAB_PAD*2+1;
 	}
 

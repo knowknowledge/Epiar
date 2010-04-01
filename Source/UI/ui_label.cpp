@@ -39,7 +39,7 @@ void Label::Draw(  int relx, int rely ) {
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
 	if(centered){
-		SansSerif->Render( x, y, name, CENTER,MIDDLE );
+		SansSerif->Render( x, y, name, Font::CENTER,Font::MIDDLE );
 	} else {
 		SansSerif->Render( x, y, name );
 	}
