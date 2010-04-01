@@ -39,7 +39,6 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
  * This function does the following:
  *  - Load options
  *  - Load fonts
- *  - Calls parseArgs to parse command line
  *  - Runs the Simulation routine
  *  - Calls any cleanup code
  */
@@ -128,6 +127,7 @@ int main( int argc, char **argv ) {
 	for ( it=unused.begin() ; it != unused.end(); it++ )
 		cout << "\tUnknown options:\t" << (*it)<<endl;
 	if ( !unused.empty() ){
+		argparser.PrintUsage();
 		// free the configuration file data
 		delete optionsfile;
 		return -1;
