@@ -33,7 +33,7 @@ Font::Font( string filename ):r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {
 /**\brief Destroys the font.*/
 Font::~Font() {
 	delete (FTTextureFont*)this->font;
-	Log::Message( "Font '%s' freed.", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' freed.", fontname.c_str() );
 }
 
 /**\brief Sets the new color and alpha value.
@@ -51,12 +51,12 @@ void Font::SetColor( float r, float g, float b, float a ) {
 bool Font::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
-		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
+		LogMsg(ERROR, "Font '%s' could not be loaded.", fontname.c_str() );
 		return( false );
 	}
 
 	if( this->font != NULL) {
-		Log::Error( "Deleting the old font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Deleting the old font '%s'.\n", fontname.c_str() );
 		delete this->font;
 	}
 
@@ -64,13 +64,13 @@ bool Font::SetFont( string filename ) {
 	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
 	font->FaceSize(12);
 
-	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }
@@ -149,7 +149,7 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 			xn=x-this->TextWidth(text);
 			break;
 		default:
-			Log::Error("Invalid xpos");
+			LogMsg(ERROR,"Invalid xpos");
 			assert(0);
 	}
 	// Y coordinates are flipped
@@ -164,7 +164,7 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 			yn=-y-this->font->Descender();
 			break;
 		default:
-			Log::Error("Invalid ypos");
+			LogMsg(ERROR,"Invalid ypos");
 			assert(0);
 	}
 

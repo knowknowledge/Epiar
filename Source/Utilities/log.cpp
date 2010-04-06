@@ -13,14 +13,25 @@
 /**\class Log
  * \brief Main logging facilities for the code base. */
 
-FILE *Log::fp = NULL;
-char *Log::timestamp = NULL;
-string Log::logFilename = "";
+/**\brief Empty destructor.*/
+Log::~Log(){
+}
 
-void Log::Start(){
+/**\brief Retrieves the current instance of the log class.*/
+Log& Log::Instance( void ){
+	static Log _instance;
+	return _instance;
+}
+
+/**\brief Creates the log facilities.*/
+void Log::Start( const string& _filter, const string& _funfilter){
+	// Initialize default filters
+	this->filter = _filter;
+	this->funfilter = _funfilter;
+
 	time_t rawtime;
-	time( &rawtime );
 
+	time( &rawtime );
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
 
@@ -34,6 +45,46 @@ void Log::Start(){
 	fp = NULL;
 }
 
+/**\brief Allows changing of the log level dynamically (string version).*/
+bool Log::SetLevel( const string& _loglvl ){
+	// Check logging level
+	this->loglvl=this->ReverseLookUp( _loglvl );
+	if( this->loglvl == INVALID ){
+		LogMsg(DEBUG1,"Invalid logging level specified, reverting to default log level.");
+		this->loglvl=this->loglvldefault;
+		return false;
+	}
+	return true;
+}
+
+/**\brief Allows changing of the log level dynamically ( enum version ).*/
+bool Log::SetLevel( Level _loglvl ){
+	this->loglvl=_loglvl;
+	return true;
+}
+
+/**\brief Changes the function filter.*/
+void Log::SetFunFilter( const string& _funfilter ){
+	this->funfilter.clear();
+	// Check function filter
+	if( !_funfilter.empty() ){
+		LogMsg(DEBUG1,"Filtering log by function named: %s.", _funfilter.c_str());
+		this->funfilter = _funfilter;
+	}
+}
+
+/**\brief Changes the message filter.*/
+void Log::SetMsgFilter( const string& msgfilter ){
+	this->filter.clear();
+	// Check message filter
+	if( !msgfilter.empty() ){
+		LogMsg(DEBUG1,"Filter log by message text: %s", msgfilter.c_str());
+		this->filter=msgfilter;
+	}
+}
+
+
+/**\brief Opens the log file.*/
 void Log::Open() {
 	// open the debug file
 	fp = fopen( logFilename.c_str(), "wb" );
@@ -46,6 +97,7 @@ void Log::Open() {
 	}	
 }
 
+/**\brief Frees the handle to the log file.*/
 void Log::Close( void ) {
 	if( fp ) {
 		fprintf(fp, "</debugSession>\n");
@@ -53,46 +105,42 @@ void Log::Close( void ) {
 	}
 }
 
-void Log::realLog( int type, const char *func, const char *message, ... ) {
+/**\brief The real log function.*/
+void Log::realLog( Level lvl, const string& func, const string& message, ... ) {
+	// Check log level
+	if( lvl < this->loglvl )
+		return;
+
+	// Check function filter
+	if( !this->funfilter.empty() ){
+		if( !func.find(this->funfilter) )
+			return;
+	}
+
+	// Check message filter
+	if( !this->filter.empty() ){
+		if( !message.find( this->filter  ) )
+			return;
+	}
+
 	va_list args;
 	time_t rawtime;
-	char *timestamp = NULL;
-	static char logBuffer[ 4096 ] = {0};
-	char logType[8] = {0};
-
+	static char logBuffer[4096];
 
 	time( &rawtime );
 
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
 
-	// Set type for logging
-	switch( type ) {
-		case _logMessage:
-			snprintf( logType, sizeof(logType), "Message" );
-			break;
-		case _logWarning:
-			snprintf( logType, sizeof(logType), "Warning" );
-			break;
-		case _logError:
-			snprintf( logType, sizeof(logType), "Error" );
-			break;
-	}
-
-
 	va_start( args, message );
-
-	vsnprintf( logBuffer, sizeof(logBuffer), message, args );
-
+	vsnprintf( logBuffer, sizeof(logBuffer), message.c_str(), args );
 	va_end( args );
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
 	// Print the message:
-	if( OPTION(int, "options/log/out") == 1 ) {
-		printf( "%s (%s) - ", func, logType );
-		printf( "%s\n", logBuffer );
-	}
+	if( OPTION(int, "options/log/out") == 1 )
+		cout<<func<<" ("<<lvlStrings[lvl]<<") - "<< logBuffer <<endl;;
 	
 	// Save the message to a file
 	if( OPTION(int, "options/log/xml") == 1 ) {
@@ -102,10 +150,40 @@ void Log::realLog( int type, const char *func, const char *message, ... ) {
 		}
 
 		fprintf(fp, "<log>\n");
-		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func, logType, timestamp );
+		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func.c_str(), lvlStrings[lvl].c_str(), timestamp );
 		fprintf(fp, "%s", logBuffer );
 		fprintf(fp, "</message>\n</log>\n" );
 	}
-
-	return;
 }
+
+/**\brief Constructor, used to initialize variables.*/
+Log::Log():loglvldefault(ALERT){
+	lvlStrings[NONE]="None";
+	lvlStrings[FATAL]="Fatal";
+	lvlStrings[CRITICAL]="Critical";
+	lvlStrings[ERROR]="Error";
+	lvlStrings[WARN]="Warn";
+	lvlStrings[ALERT]="Alert";
+	lvlStrings[NOTICE]="Notice";
+	lvlStrings[INFO]="Info";
+	lvlStrings[VERBOSE1]="Verbose1";
+	lvlStrings[VERBOSE2]="Verbose2";
+	lvlStrings[VERBOSE3]="Verbose3";
+	lvlStrings[DEBUG1]="Debug1";
+	lvlStrings[DEBUG2]="Debug2";
+	lvlStrings[DEBUG3]="Debug3";
+	lvlStrings[DEBUG4]="Debug4";
+}
+
+/**\brief Does a reverse lookup of the log level based on a string.*/
+Log::Level Log::ReverseLookUp( const string& _lvl ){
+	// Figure out which log level we're doing.
+	map<Level,string>::iterator it;
+	for ( it=lvlStrings.begin() ; it != lvlStrings.end(); it++ ){
+		if( (*it).second == _lvl )
+			return (*it).first;
+	}
+
+	return INVALID;
+}
+

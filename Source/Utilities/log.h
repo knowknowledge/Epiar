@@ -11,40 +11,71 @@
 
 #include "includes.h"
 
+// Work around for PRETTY_FUNCTIONs
+#ifndef __GNUC__
+	#if defined(_MSC_VER)
+		#define __PRETTY_FUNCTION__ __FUNCSIG__
+	#else
+		#define __PRETTY_FUNCTION__ __FUNCTION__
+	#endif
+#endif
+
+// We use macros to define logging facilities so that we can
+// compile out Logging facilities if needed for performance
+#ifdef DISABLE_LOGGING
+	#define LogMsg(LVL,...)
+#else
+	#define LogMsg(LVL,...) Log::Instance().realLog(Log::LVL,__PRETTY_FUNCTION__,__VA_ARGS__)
+#endif//ENABLE_LOGGING
+
 class Log {
 	public:
-		#define _logMessage 0
-		#define _logWarning 1
-		#define _logError   2
+		typedef enum{INVALID=0,/**< Invalid log level, used for internal purposes.*/
+			NONE,			/**< No logging. */
+			FATAL,			/**< Will kill the program. */
+			CRITICAL,		/**< Will make the program function incorrectly. */
+			ERROR,			/**< Unexpected errors. */
+			WARN,			/**< Expected (but should be noted) problems. */
+			ALERT,			/**< Something that might cause a problem. */
+			NOTICE,			/**< Notify the of an event occurring. */
+			INFO,			/**< (System level) Information that the user might want. */
+			VERBOSE1,		/**< (Subsystem level) Information for the user. */
+			VERBOSE2,		/**< (Method level) Information for the user. */
+			VERBOSE3,		/**< (Function level) Information for the user. */
+			DEBUG1,			/**< Low occurrence debug information. */
+			DEBUG2,			/**< Medium occurrence (Occurs only on user actions).*/
+			DEBUG3,			/**< Medium high occurrence (Occurs regularly).*/
+			DEBUG4			/**< High occurrence (> once per second).*/
+		} Level;
+		~Log();
 
-		// __PRETTY_FUNCTION__ is a GNU extension
-		// __FUNCTION__ is supported by many compilers, including microsoft
-		// if we don't know the compiler, assume we don't have it and revert to __FILE__
-#ifdef __GNUC__
-		#define Message( ... ) realLog( _logMessage, __PRETTY_FUNCTION__, __VA_ARGS__ )
-		#define Warning( ... ) realLog( _logWarning, __PRETTY_FUNCTION__, __VA_ARGS__ )
-		#define Error( ... )   realLog( _logError, __PRETTY_FUNCTION__, __VA_ARGS__ )
-#elif defined(_MSC_VER)
-		#define Message( ... ) realLog( _logMessage, __FUNCTION__, __VA_ARGS__ )
-		#define Warning( ... ) realLog( _logWarning, __FUNCTION__, __VA_ARGS__ )
-		#define Error( ... )   realLog( _logError, __FUNCTION__, __VA_ARGS__ )
-#else
-		#define Message( ... ) realLog( _logMessage, __FILE__ __LINE__, __VA_ARGS__ )
-		#define Warning( ... ) realLog( _logWarning, __FILE__ __LINE__, __VA_ARGS__ )
-		#define Error( ... )   realLog( _logError, __FILE__ __LINE__, __VA_ARGS__ )
-#endif 
+		static Log& Instance(void);
+		void Start( const string& _filter="", const string& _funfilter="" );
+		bool SetLevel( const string& _loglvl );
+		bool SetLevel( Level _loglvl );
+		void SetFunFilter( const string& _funfilter );
+		void SetMsgFilter( const string& msgfilter );
+		void Close( void );
 
-		static void realLog( int type, const char *func, const char *message, ... );
-
-		static void Start( void );
-		static void Close( void );
+		void realLog( Level lvl, const string& func, const string& message, ... );
 
 	private:
-		static void Open( void );
+		Log();
+		Log(Log const&);
+		Log& operator=(Log const&);
+		void Open( void );
+		Log::Level ReverseLookUp( const string& _lvl );
 
-		static char *timestamp;
-		static string logFilename;
-		static FILE *fp; // pointer to the log
+		map<Level,string> lvlStrings;
+		Level loglvl;
+		Level loglvldefault;
+		
+		string filter;				/**< Message filter.*/
+		string funfilter;			/**< Function filter.*/
+
+		char *timestamp;
+		string logFilename;
+		FILE *fp; // pointer to the log
 };
 
 #endif // __H_LOG__

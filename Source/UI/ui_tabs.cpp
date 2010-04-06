@@ -197,7 +197,7 @@ Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
  */
 Widget *Tabs::AddChild( Widget *widget ){
 	if ( widget->GetType() != "Tab" ){
-		Log::Error("Error attempted to add non-Tab widget to Tab container: %s",
+		LogMsg(ERROR,"Error attempted to add non-Tab widget to Tab container: %s",
 				widget->GetName().c_str());
 		return NULL;
 	}

@@ -83,7 +83,7 @@ bool ArgParser::HaveOpt( const string& arg ){
 /**\brief Checks to see if short option exists.*/
 bool ArgParser::HaveShort( const string& arg ){
 	if( this->validopt.count( arg ) == 0 ){
-		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
+		LogMsg(ERROR,"You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
 	if( this->validopttype[ arg ] != SHORTOPT ){
@@ -101,7 +101,7 @@ bool ArgParser::HaveShort( const string& arg ){
 /**\brief Checks to see if long option exists.*/
 bool ArgParser::HaveLong( const string& arg ){
 	if( this->validopt.count( arg ) == 0 ){
-		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
+		LogMsg(ERROR,"You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
 	if( this->validopttype[ arg ] != LONGOPT ){
@@ -119,7 +119,7 @@ bool ArgParser::HaveLong( const string& arg ){
 /**\brief Checks to see if value exists and return its value.*/
 string ArgParser::HaveValue( const string& arg ){
 	if( this->validopt.count( arg ) == 0 ){
-		Log::Error("You tried to access an invalid option, please use SetOpt to define it first!");
+		LogMsg(ERROR,"You tried to access an invalid option, please use SetOpt to define it first!");
 		return false;
 	}
 	if( this->validopttype[ arg ] != VALUEOPT ){
@@ -236,7 +236,7 @@ void ArgParser::Parse( int argc, char **argv ){
 				break;
 			default:
 				// Throw an error
-				Log::Error("An error occurred processing argument: %s",
+				LogMsg(ERROR,"An error occurred processing argument: %s",
 					currarg.c_str());
 		}
 	}

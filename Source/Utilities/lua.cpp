@@ -43,24 +43,24 @@ vector<string> Lua::buffer;
 bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
-			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
+			LogMsg(WARN, "Could not load Lua script. Unable to initialize Lua." );
 			return( false );
 		}
 	}
 
 	// Load the lua script
 	if( 0 != luaL_loadfile(L, filename.c_str()) ) {
-		Log::Error("Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		LogMsg(ERROR,"Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
 
 	// Execute the lua script
 	if( 0 != lua_pcall(L, 0, 0, 0) ) {
-		Log::Error("Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		LogMsg(ERROR,"Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
 
-	Log::Message("Loaded Lua Script '%s'",filename.c_str());
+	LogMsg(INFO,"Loaded Lua Script '%s'",filename.c_str());
 	return( true );
 }
 
@@ -68,17 +68,17 @@ bool Lua::Load( const string& filename ) {
 
 // If the function is known at compile time, use 'Call' instead of 'Run'
 bool Lua::Run( string line ) {
-	//Log::Message("Running '%s'", (char *)line.c_str() );
+	//LogMsg(INFO,"Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
-			Log::Warning( "Could not load Lua script. Unable to initialize Lua." );
+			LogMsg(WARN, "Could not load Lua script. Unable to initialize Lua." );
 			return( false );
 		}
 	}
 
 	if( luaL_dostring(L,line.c_str()) ) {
-		Log::Error("Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
+		LogMsg(ERROR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);  /* pop error message from the stack */
 	}
 
@@ -175,14 +175,14 @@ vector<string> Lua::GetOutput() {
 
 bool Lua::Init() {
 	if( luaInitialized ) {
-		Log::Warning( "Cannot initialize Lua. It is already initialized." );
+		LogMsg(WARN, "Cannot initialize Lua. It is already initialized." );
 		return( false );
 	}
 	
 	L = lua_open();
 
 	if( !L ) {
-		Log::Warning( "Could not initialize Lua VM." );
+		LogMsg(WARN, "Could not initialize Lua VM." );
 		return( false );
 	}
 
@@ -199,7 +199,7 @@ bool Lua::Close() {
 	if( luaInitialized ) {
 		lua_close( L );
 	} else {
-		Log::Warning( "Cannot deinitialize Lua. It is either not initialized or a script is still loaded." );
+		LogMsg(WARN, "Cannot deinitialize Lua. It is either not initialized or a script is still loaded." );
 		return( false );
 	}
 	
@@ -438,7 +438,7 @@ void Lua::pushSprite(lua_State *L,Sprite* s){
 		lua_setmetatable(L, -2);
 		break;
 	default:
-		Log::Error("Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
+		LogMsg(ERROR,"Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
 	}
 }
 
@@ -936,10 +936,10 @@ int Lua::setInfo(lua_State *L) {
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet!=NULL) {
-			Log::Message("Saving changes to '%s'",thisPlanet.GetName().c_str());
+			LogMsg(INFO,"Saving changes to '%s'",thisPlanet.GetName().c_str());
 			*oldPlanet = thisPlanet;
 		} else {
-			Log::Message("Creating new Planet '%s'",thisPlanet.GetName().c_str());
+			LogMsg(INFO,"Creating new Planet '%s'",thisPlanet.GetName().c_str());
 			Planet* newPlanet = new Planet(thisPlanet);
 			Planets::Instance()->Add(newPlanet);
 			SpriteManager::Instance()->Add(newPlanet);

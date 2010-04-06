@@ -134,7 +134,7 @@ bool UI::HandleMouse( InputEvent &i ){
 		case MOUSEWDOWN:		// Scroll wheel down
 			return UI::master.MouseWDown( x,y );
 		default:
-			Log::Warning("Unhandled UI mouse input detected.");
+			LogMsg(WARN,"Unhandled UI mouse input detected.");
 		}
 	return false;
 }

@@ -59,13 +59,13 @@ void Textbox::Draw( int relx, int rely ) {
 
 bool Textbox::MouseLUp( int wx, int wy ) {
 	if( clickCallBack ){
-		Log::Message( "Clicked on: '%s'.", (char *)text.c_str() );
+		LogMsg(INFO, "Clicked on: '%s'.", (char *)text.c_str() );
 		clickCallBack();
 	} else if("" != lua_callback){
-		Log::Message("Clicked on '%s'. Running '%s'", (char *)text.c_str(), (char *)lua_callback.c_str() );
+		LogMsg(INFO,"Clicked on '%s'. Running '%s'", (char *)text.c_str(), (char *)lua_callback.c_str() );
 		Lua::Run(lua_callback);
 	} else {
-		Log::Warning( "Clicked on: '%s' but there was no function to call.", (char *)text.c_str() );
+		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", (char *)text.c_str() );
 	}
 	return true;
 }

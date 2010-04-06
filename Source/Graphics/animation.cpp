@@ -45,7 +45,7 @@ Ani::Ani() {
  * \sa Ani::Load
  */
 Ani::Ani( string& filename ) {
-	Log::Message("New Animation from '%s'", filename.c_str() );
+	LogMsg(INFO,"New Animation from '%s'", filename.c_str() );
 	frames = NULL;
 	delay = 0;
 	numFrames = 0;
@@ -61,18 +61,18 @@ bool Ani::Load( string& filename ) {
 	const char *cName = filename.c_str();
 	File file = File( cName );
 
-	//Log::Message( "Loading animation '%s' ...\n", cName );
+	//LogMsg(INFO, "Loading animation '%s' ...\n", cName );
 
 	file.Read( 1, &byte );
 	//cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
-		Log::Error( "Incorrect ani version" );
+		LogMsg(ERROR, "Incorrect ani version" );
 		return( false );
 	}
 
 	file.Read( 1, &byte );
 	if( byte <= 0 ) {
-		Log::Error( "Cannot have zero or less frames" );
+		LogMsg(ERROR, "Cannot have zero or less frames" );
 		return( false );
 	}
 	numFrames = byte;
@@ -82,7 +82,7 @@ bool Ani::Load( string& filename ) {
 
 	file.Read( 1, &byte );
 	if( byte <= 0 ) {
-		Log::Error( "Cannot have zero or less for a delay" );
+		LogMsg(ERROR, "Cannot have zero or less for a delay" );
 		delete [] frames;
 		frames = NULL;
 		return( false );
@@ -116,7 +116,7 @@ bool Ani::Load( string& filename ) {
 	w = frames[0].GetWidth();
 	h = frames[0].GetHeight();
 
-	//Log::Message( "Animation loading done." );
+	//LogMsg(INFO, "Animation loading done." );
 
 	return( true );
 }

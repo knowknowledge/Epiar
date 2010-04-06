@@ -98,7 +98,7 @@ void Camera::TranslateScreenToWorld( Coordinate &screen, Coordinate &world ) {
 void Camera::GetDelta( double *dx, double *dy ) {
 	if( !dx || !dy ) {
 
-		Log::Warning( "dx/dy are NULL pointers!" );
+		LogMsg(WARN, "dx/dy are NULL pointers!" );
 
 		return;
 	}
