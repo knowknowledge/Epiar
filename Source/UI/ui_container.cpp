@@ -5,6 +5,7 @@
  * \brief			Container object can contain other widgets.
  */
 
+#include "includes.h"
 #include "UI/ui.h"
 
 /**\class UIContainer

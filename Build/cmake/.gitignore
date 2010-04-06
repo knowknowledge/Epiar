@@ -3,11 +3,11 @@ build*/*
 lib/*
 
 ThirdParty/*.tar.gz
-ThirdParty/Freetype/freetype*
+ThirdParty/FreeType/freetype*
 ThirdParty/FTGL/ftgl*
-ThirdParty/LibXml2/libxml2*
+ThirdParty/LibXML2/libxml2*
 ThirdParty/Lua51/lua*
-ThirdParty/LUAJIT/LuaJIT*
+ThirdParty/LuaJIT/LuaJIT*
 ThirdParty/MIKMOD/libmikmod*
 ThirdParty/OGG/libogg*
 ThirdParty/PhysFS/physfs*
@@ -16,6 +16,6 @@ ThirdParty/SDL/SDL*
 ThirdParty/SDL_image/SDL_image*
 ThirdParty/SDL_mixer/SDL_mixer*
 ThirdParty/VORBIS/libvorbis*
-ThirdParty/ZLIB/zlib*
+ThirdParty/Zlib/zlib*
 
 Vim/tags
