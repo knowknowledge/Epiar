@@ -42,7 +42,7 @@ Sound::Sound( const string& filename ):
 {
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
-		Log::Error( "Could not load sound file: %s, Mixer error: %s",
+		LogMsg(ERROR, "Could not load sound file: %s, Mixer error: %s",
 				filename.c_str(), Mix_GetError() );
 }
 
@@ -96,17 +96,17 @@ bool Sound::Play( Coordinate offset ){
 
 	int freechan = Audio::Instance().GetFreeChannel();
 	if( Mix_SetDistance( freechan, sounddist ) == 0 )
-		Log::Error("Set distance %d failed on channel %d.", sounddist, freechan );
+		LogMsg(ERROR,"Set distance %d failed on channel %d.", sounddist, freechan );
 	//else
-	//	Log::Message("Distance set to %d on channel %d.", sounddist, freechan );
+	//	LogMsg(INFO,"Distance set to %d on channel %d.", sounddist, freechan );
 
 	/**\bug SDL_mixer bug possibly: Need to check whether SDL_mixer is getting
 	 * Left/Right speaker switched around.
 	 */
 	if( Mix_SetPanning( freechan, 254 - soundpan, soundpan ) == 0 )
-		Log::Error("Set panning %d failed on channel %d.", soundpan - 127, freechan );
+		LogMsg(ERROR,"Set panning %d failed on channel %d.", soundpan - 127, freechan );
 	//else
-	//	Log::Message("Panning set to %d on channel %d.", soundpan - 127, freechan );
+	//	LogMsg(INFO,"Panning set to %d on channel %d.", soundpan - 127, freechan );
 
 	Mix_Volume( freechan, this->volume );
 	this->channel = Audio::Instance().PlayChannel( freechan, this->sound, 0 );

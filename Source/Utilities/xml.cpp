@@ -30,14 +30,14 @@ bool XMLFile::Open( const string& filename ) {
 	File xmlfile;
 
 	if( xmlfile.OpenRead( filename ) == false ) {
-		Log::Error( "Could not find file %s", filename.c_str() );
+		LogMsg(ERROR, "Could not find file %s", filename.c_str() );
 		return( false );
 	}
 
 	buf = xmlfile.Read();
 	bufSize = xmlfile.GetLength();
 	if( buf == NULL ) {
-		Log::Error( "Could not load XML from archive. Buffer failed to allocate." );
+		LogMsg(ERROR, "Could not load XML from archive. Buffer failed to allocate." );
 		return( NULL );
 	}
 
@@ -65,7 +65,7 @@ string XMLFile::Get( const string& path ) {
 
 	map<string,string>::iterator val = values.find( path );
 	if( val != values.end() ){
-		//Log::Message("Found that key '%s' of XML file '%s' is '%s'",path.c_str(),filename.c_str(),(val->second).c_str());
+		//LogMsg(INFO,"Found that key '%s' of XML file '%s' is '%s'",path.c_str(),filename.c_str(),(val->second).c_str());
 		return val->second;
 	}
 
@@ -88,7 +88,7 @@ string XMLFile::Get( const string& path ) {
 	cur = xmlDocGetRootElement( xmlPtr );
 
 	if( cur == NULL ) {
-		Log::Warning( "XML file (%s) appears to be empty.",filename.c_str() );
+		LogMsg(WARN, "XML file (%s) appears to be empty.",filename.c_str() );
 		values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 		return( string() );
 	}
@@ -111,7 +111,7 @@ string XMLFile::Get( const string& path ) {
 				xmlChar *subKey = xmlNodeListGetString( xmlPtr, cur->xmlChildrenNode, 1 );
 				string result = string( (char *)subKey ); 
 				values.insert(make_pair(path,result)); // Insert dummy value so that we don't need to search for it again
-				//Log::Message("Populating key '%s' of XML file '%s' as '%s'",path.c_str(),filename.c_str(),result.c_str());
+				//LogMsg(INFO,"Populating key '%s' of XML file '%s' as '%s'",path.c_str(),filename.c_str(),result.c_str());
 				return(result);
 			} else {
 				// more path, explore the child tree
@@ -124,7 +124,7 @@ string XMLFile::Get( const string& path ) {
 		cur = cur->next;
 	}
 
-	Log::Warning("Attempted to Get non-existant value '%s' from XML file '%s'",path.c_str(),filename.c_str());
+	LogMsg(WARN,"Attempted to Get non-existant value '%s' from XML file '%s'",path.c_str(),filename.c_str());
 	values.insert(make_pair(path,"")); // Insert dummy value so that we don't need to search for it again
 
 	// didn't find it
@@ -132,7 +132,7 @@ string XMLFile::Get( const string& path ) {
 }
 
 void XMLFile::Set( const string& path, const string& value ) {
-	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
+	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
 	values[path] = value;
 	assert( value == Get(path));
 }
@@ -143,7 +143,7 @@ void XMLFile::Set( const string& path, const float value ) {
 	stringstream val_ss;
 	val_ss << value;
 	val_ss >> stringvalue;
-	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
 	values[path] = stringvalue;
 	assert( stringvalue == Get(path));
 }
@@ -154,7 +154,7 @@ void XMLFile::Set( const string& path, const int value ) {
 	stringstream val_ss;
 	val_ss << value;
 	val_ss >> stringvalue;
-	Log::Message("Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
 	values[path] = stringvalue;
 	assert( stringvalue == Get(path));
 }

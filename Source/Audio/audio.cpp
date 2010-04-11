@@ -39,14 +39,14 @@ bool Audio::Initialize( void ){
 				this->audio_format,
 				this->audio_channels,
 				this->audio_buffers)){
-		Log::Error("Audio initialization failed!");
+		LogMsg(CRITICAL,"Audio initialization failed!");
 		return false;
 	}
 
 	// Load MOD and OGG libraries (If SDL_mixer version supports it)
 	const SDL_version *mix_version=Mix_Linked_Version();
 	if( (mix_version->major>=1) && (mix_version->minor>=2) && (mix_version->patch>=10) ){
-		Log::Message("This SDL_mixer version supports dynamic library loading.");
+		LogMsg(INFO,"This SDL_mixer version supports dynamic library loading.");
 		Mix_Init( MIX_INIT_MOD | MIX_INIT_OGG );
 	}
 
@@ -73,7 +73,7 @@ bool Audio::Shutdown( void ){
 	int freq, chan, ntimes;
 	Uint16 format;
 	if ( (ntimes = Mix_QuerySpec( &freq, &format, &chan )) != 1 )
-		Log::Warning("Audio was initialized multiple times.");
+		LogMsg(WARN,"Audio was initialized multiple times.");
 
 	// Close as many times as opened.
 	for ( int i = 0; i < ntimes; i++ )
@@ -92,11 +92,11 @@ void Audio::HaltAll( void ){
 bool Audio::SetMusicVol( float volume ){
 	bool exceed_bounds = false;
 	if ( volume < 0 ){
-		Log::Warning("Volume (%f) must be >= 0.", volume);
+		LogMsg(WARN,"Volume (%f) must be >= 0.", volume);
 		volume = 0;
 		exceed_bounds = true;
 	} else if ( volume > 1 ){
-		Log::Warning("Volume (%f) must be <= 1.", volume);
+		LogMsg(WARN,"Volume (%f) must be <= 1.", volume);
 		volume = 1;
 		exceed_bounds = true;
 	}
@@ -106,7 +106,7 @@ bool Audio::SetMusicVol( float volume ){
 	Mix_VolumeMusic( volumeint );
 	volumeset = Mix_VolumeMusic( -1 );
 	if ( volumeset != volumeint ){
-		Log::Error("There was an error setting the volume.");
+		LogMsg(ERROR,"There was an error setting the volume.");
 		return false;
 	}
 	if ( exceed_bounds )
@@ -118,11 +118,11 @@ bool Audio::SetMusicVol( float volume ){
  */
 bool Audio::SetSoundVol( float volume ){
 	if ( volume < 0 ){
-		Log::Warning("Volume (%f) must be >= 0.", volume);
+		LogMsg(WARN,"Volume (%f) must be >= 0.", volume);
 		this->sound_vol = 0;
 		return false;
 	} else if ( volume > 1 ){
-		Log::Warning("Volume (%f) must be <= 1.", volume);
+		LogMsg(WARN,"Volume (%f) must be <= 1.", volume);
 		this->sound_vol = 1;
 		return false;
 	}

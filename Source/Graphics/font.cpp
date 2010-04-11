@@ -19,34 +19,21 @@
 
 /**\brief Constructs new font (default color white).
  */
-Font::Font() {
-	// Solid White
-	r = 0.;
-	g = 0.;
-	b = 0.;
-	a = 1.;
-	
-	font = NULL;
+Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL){
 }
 
 
 /**\brief Construct new font based on file.
  * \param filename String containing file.
  */
-Font::Font( string filename ) {
-	// Solid White
-	r = 1.;
-	g = 1.;
-	b = 1.;
-	a = 1.;
-	font = NULL;
+Font::Font( string filename ):r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {
 	SetFont( filename );
 }
 
 /**\brief Destroys the font.*/
 Font::~Font() {
 	delete (FTTextureFont*)this->font;
-	Log::Message( "Font '%s' freed.", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' freed.", fontname.c_str() );
 }
 
 /**\brief Sets the new color and alpha value.
@@ -64,12 +51,12 @@ void Font::SetColor( float r, float g, float b, float a ) {
 bool Font::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
-		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
+		LogMsg(ERROR, "Font '%s' could not be loaded.", fontname.c_str() );
 		return( false );
 	}
 
 	if( this->font != NULL) {
-		Log::Error( "Deleting the old font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Deleting the old font '%s'.\n", fontname.c_str() );
 		delete this->font;
 	}
 
@@ -77,13 +64,13 @@ bool Font::SetFont( string filename ) {
 	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
 	font->FaceSize(12);
 
-	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }
@@ -139,6 +126,14 @@ int Font::RenderTight(int x, int y, const string& text,XPos xpos, YPos ypos ){
 	return this->RenderInternal(x,y,text,h,xpos,ypos);
 }
 
+/**\brief Renders a string wrapped to a given width.
+ * \return The number of lines used ( multiply by LineHeight to get total height).
+ */
+int Font::RenderWrapped( int x, int y, const string& text, int w ){
+
+
+}
+
 /**\brief Internal rendering function.*/
 int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YPos ypos) {
 	int xn;
@@ -154,22 +149,22 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 			xn=x-this->TextWidth(text);
 			break;
 		default:
-			Log::Error("Invalid xpos");
+			LogMsg(ERROR,"Invalid xpos");
 			assert(0);
 	}
 	// Y coordinates are flipped
 	switch( ypos ){
 		case TOP:
-			yn=-y-h-this->font->Descender();
+			yn=-y-h-TO_INT(floor(this->font->Descender()));
 			break;
 		case MIDDLE:
-			yn=-y-h/2-this->font->Descender();
+			yn=-y-h/2-TO_INT(floor(this->font->Descender()));
 			break;
 		case BOTTOM:
-			yn=-y-this->font->Descender();
+			yn=-y-TO_INT(floor(this->font->Descender()));
 			break;
 		default:
-			Log::Error("Invalid ypos");
+			LogMsg(ERROR,"Invalid ypos");
 			assert(0);
 	}
 

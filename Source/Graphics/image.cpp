@@ -91,14 +91,14 @@ bool Image::Load( char *buf, int bufSize ) {
 
 	rw = SDL_RWFromMem( buf, bufSize );
 	if( !rw ) {
-		Log::Warning( "Image loading failed. Could not create RWops" );
+		LogMsg(WARN, "Image loading failed. Could not create RWops" );
 		return( false );
 	}
 
 	s = IMG_Load_RW( rw, 0 );
 
 	if( !s ) {
-		Log::Warning( "Image loading failed. Could not load image from RWops" );
+		LogMsg(WARN, "Image loading failed. Could not load image from RWops" );
 		return( false );
 	}
 
@@ -106,7 +106,7 @@ bool Image::Load( char *buf, int bufSize ) {
 	h = s->h;
 
 	if( ConvertToTexture( s ) == false ) {
-		Log::Warning( "Failed to load image from buffer" );
+		LogMsg(WARN, "Failed to load image from buffer" );
 		SDL_FreeSurface( s );
 		return( false );
 	}
@@ -123,7 +123,7 @@ void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_
 
 	assert(image);
 	if( !image ) {
-		Log::Warning( "Trying to draw without loading an image first." );
+		LogMsg(WARN, "Trying to draw without loading an image first." );
 		return;
 	}
 
@@ -241,7 +241,7 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 		glDeleteTextures( 1, &image );
 		image = 0;
 
-		Log::Warning( "Loading an image after another is loaded already. Deleting old ... " );
+		LogMsg(WARN, "Loading an image after another is loaded already. Deleting old ... " );
 	}
 
 	// Check to see if we need to expand the image
@@ -313,7 +313,7 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 {
 	if( !image ) {
-		Log::Warning( "Trying to draw without loading an image first." );
+		LogMsg(WARN, "Trying to draw without loading an image first." );
 		return;
 	}
 

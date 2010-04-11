@@ -27,11 +27,11 @@ void Components::AddOrReplace(Component* component) {
 	string name = component->GetName();
 	map<string,Component*>::iterator val = components.find( name );
 	if( val == components.end() ) { // new
-		Log::Message("Creating new Component '%s'",component->GetName().c_str());
+		LogMsg(INFO,"Creating new Component '%s'",component->GetName().c_str());
 		names.push_back( name );
 		components[name] = component;
 	} else { // old
-		Log::Message("Saving changes to Component '%s'",component->GetName().c_str());
+		LogMsg(INFO,"Saving changes to Component '%s'",component->GetName().c_str());
 		val->second = component;
 	}
 }
@@ -56,24 +56,24 @@ bool Components::Load(string filename) {
 	delete [] buffer;
 
 	if( doc == NULL ) {
-		Log::Error( "Could not load '%s' for parsing.", filename.c_str() );
+		LogMsg(ERROR, "Could not load '%s' for parsing.", filename.c_str() );
 		return false;
 	}
 	
 	cur = xmlDocGetRootElement( doc );
 	
 	if( cur == NULL ) {
-		Log::Error( "'%s' file appears to be empty.", filename.c_str() );
+		LogMsg(ERROR, "'%s' file appears to be empty.", filename.c_str() );
 		xmlFreeDoc( doc );
 		return false;
 	}
 	
 	if( xmlStrcmp( cur->name, (const xmlChar *)rootName.c_str() ) ) {
-		Log::Error( "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
+		LogMsg(ERROR, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
 		xmlFreeDoc( doc );
 		return false;
 	} else {
-		Log::Message( "'%s' file found and valid, parsing...", filename.c_str() );
+		LogMsg(INFO, "'%s' file found and valid, parsing...", filename.c_str() );
 	}
 	
 	cur = cur->xmlChildrenNode;
@@ -133,7 +133,7 @@ bool Components::Load(string filename) {
 	
 	xmlFreeDoc( doc );
 	
-	Log::Message( "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
+	LogMsg(INFO, "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
 	return true;
 }
 

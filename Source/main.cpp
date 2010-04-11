@@ -39,7 +39,6 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
  * This function does the following:
  *  - Load options
  *  - Load fonts
- *  - Calls parseArgs to parse command line
  *  - Runs the Simulation routine
  *  - Calls any cleanup code
  */
@@ -64,6 +63,10 @@ int main( int argc, char **argv ) {
 	argparser.SetOpt(LONGOPT,"log-xml",			"Log messages to xml files.");
 	argparser.SetOpt(LONGOPT,"log-out",			"(Default) Log messages to console.");
 	argparser.SetOpt(LONGOPT,"nolog-out",		"Disable logging messages to console.");
+	argparser.SetOpt(VALUEOPT,"log-lvl",		"Logging level.(None,Fatal,Critical,Error,"
+			"\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
+	argparser.SetOpt(VALUEOPT,"log-fun",		"Filter log messages by function name.");
+	argparser.SetOpt(VALUEOPT,"log-msg",		"Filter log messages by string content.");
 #ifdef EPIAR_COMPILE_TESTS
 	argparser.SetOpt(VALUEOPT,"run-test",		"Run specified test");
 #endif // EPIAR_COMPILE_TESTS
@@ -122,28 +125,35 @@ int main( int argc, char **argv ) {
 	if ( argparser.HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
 	else if ( argparser.HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
 
+	string funfilt = argparser.HaveValue("log-fun");
+	string msgfilt = argparser.HaveValue("log-msg");
+	string loglvl = argparser.HaveValue("log-lvl");
+
+	Log::Instance().Start(funfilt,msgfilt);
+	Log::Instance().SetLevel( loglvl );
+
 	// Print unused options.
 	list<string> unused = argparser.GetUnused();
 	list<string>::iterator it;
 	for ( it=unused.begin() ; it != unused.end(); it++ )
 		cout << "\tUnknown options:\t" << (*it)<<endl;
 	if ( !unused.empty() ){
+		argparser.PrintUsage();
 		// free the configuration file data
 		delete optionsfile;
 		return -1;
 	}
 
-	Log::Start();
-	Log::Message( "Epiar %s starting up.", EPIAR_VERSION_FULL );
+	LogMsg(INFO, "Epiar %s starting up.", EPIAR_VERSION_FULL );
 
 #ifdef COMP_MSVC
-	Log::Message( "Compiled with MSVC vers: _MSC_VER" );
+	LogMsg(INFO, "Compiled with MSVC vers: _MSC_VER" );
 #endif // COMP_MSVC
 #ifdef COMP_GCC
-	Log::Message( "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
+	LogMsg(INFO, "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
 #endif // COMP_GCC
 
-	Log::Message("Executable Path: %s", argv[0]);
+	LogMsg(INFO,"Executable Path: %s", argv[0]);
 
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
@@ -151,7 +161,7 @@ int main( int argc, char **argv ) {
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
-	Log::Message("Using Font Engine: FreeType");
+	LogMsg(INFO,"Using Font Engine: FreeType");
 	//******** FreeType Rendering ********
 	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
 	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
@@ -164,7 +174,7 @@ int main( int argc, char **argv ) {
 	Video::Shutdown();
 	Audio::Instance().Shutdown();
 
-	Log::Message( "Epiar shutting down." );
+	LogMsg(INFO, "Epiar shutting down." );
 	
 	// free the main font files
 	delete SansSerif;
@@ -177,7 +187,7 @@ int main( int argc, char **argv ) {
 #ifdef USE_PHYSICSFS
 	Filesystem::DeInit();
 #endif
-	Log::Close();
+	Log::Instance().Close();
 
 	return( 0 );
 }

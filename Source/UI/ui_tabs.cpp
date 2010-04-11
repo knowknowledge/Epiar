@@ -37,7 +37,7 @@ Tab::Tab( const string& _caption ){
 /**\brief Adds children to the Tab object.
  */
 Widget *Tab::AddChild( Widget *widget ){
-	bool success;
+	Widget *success;
 	success = UIContainer::AddChild( widget );
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();
@@ -197,7 +197,7 @@ Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
  */
 Widget *Tabs::AddChild( Widget *widget ){
 	if ( widget->GetType() != "Tab" ){
-		Log::Error("Error attempted to add non-Tab widget to Tab container: %s",
+		LogMsg(ERROR,"Error attempted to add non-Tab widget to Tab container: %s",
 				widget->GetName().c_str());
 		return NULL;
 	}
@@ -264,7 +264,7 @@ void Tabs::Draw( int relx, int rely ){
 
 		SansSerif->Render(xo+x+TAB_PAD+currtab->capw/2,
 				y+TAB_HEADER/2,
-				currtab->name,CENTER,MIDDLE);
+				currtab->name,Font::CENTER,Font::MIDDLE);
 		xo += currtab->capw+TAB_PAD*2+1;
 	}
 

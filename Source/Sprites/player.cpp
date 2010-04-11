@@ -29,7 +29,7 @@ Player::Player() {
 
 Player::~Player() {
 	pInstance = NULL;
-	Log::Message( "You have been destroyed..." );
+	LogMsg(INFO, "You have been destroyed..." );
 }
 
 void Player::Update( void ) {

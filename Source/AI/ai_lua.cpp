@@ -113,7 +113,7 @@ int AI_Lua::newShip(lua_State *L){
 	string enginename = luaL_checkstring (L, 4);
 	string statemachine = luaL_checkstring (L, 5);
 
-	//Log::Message("Creating new Ship (%f,%f) (%s) (%s) (%s)",x,y,modelname.c_str(),enginename.c_str(),statemachine.c_str());
+	//LogMsg(INFO,"Creating new Ship (%f,%f) (%s) (%s) (%s)",x,y,modelname.c_str(),enginename.c_str(),statemachine.c_str());
 
 	// Allocate memory for a pointer to object
 	AI* s;
@@ -241,7 +241,7 @@ int AI_Lua::ShipExplode(lua_State* L){
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		Log::Message("A %s Exploded!",(ai)->GetModelName().c_str());
+		LogMsg(INFO,"A %s Exploded!",(ai)->GetModelName().c_str());
 		// Play explode sound
 		Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
 		if(OPTION(int, "options/sound/explosions"))
