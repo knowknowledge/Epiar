@@ -166,7 +166,7 @@ void Ship::Accelerate( void ) {
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
 
-	momentum.EnforceBoundaries(speed,speed,speed,speed);
+	momentum.EnforceMagnitude(speed);
 	
 	SetMomentum( momentum );
 	

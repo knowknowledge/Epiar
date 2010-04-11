@@ -35,9 +35,9 @@ class Trig {
 		double convdr; // conversion factor from degrees to radians
 		double convrd; // conversion factor from radians to degrees
 
-		double sinTable[360];
-		double cosTable[360];
-		double tanTable[360];
+		double sinTable[720];
+		double cosTable[720];
+		double tanTable[720];
 };
 
 // Turns an arbitrary angle into the smallest equivalent angle

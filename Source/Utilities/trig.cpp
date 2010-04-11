@@ -21,10 +21,10 @@ Trig::Trig( void ) {
 	convdr = M_PI / 180.;
 	convrd = 180. / M_PI;
 
-	for( i = 0; i < 360; i++ ) {
-		cosTable[i] = cos( (double)i * convdr );
-		sinTable[i] = sin( (double)i * convdr );
-		tanTable[i] = tan( (double)i * convdr );
+	for( i = -360; i < 360; i++ ) {
+		cosTable[i+360] = cos( (double)i * convdr );
+		sinTable[i+360] = sin( (double)i * convdr );
+		tanTable[i+360] = tan( (double)i * convdr );
 	}
 }
 
@@ -50,7 +50,7 @@ int Trig::RadToDeg( double i ) {
 }
 
 double Trig::GetCos( int ang ) {
-	return( cosTable[ang] );
+	return( cosTable[ang+360] );
 }
 
 double Trig::GetCos( double ang ) {
@@ -58,7 +58,7 @@ double Trig::GetCos( double ang ) {
 }
 
 double Trig::GetSin( int ang ) {
-	return( sinTable[ang] );
+	return( sinTable[ang+360] );
 }
 
 double Trig::GetSin( double ang ) {

@@ -137,3 +137,13 @@ bool Coordinate::ViolatesBoundary( double top, double right, double bottom, doub
 	
 	return( false );
 }
+
+void Coordinate::EnforceMagnitude(double radius) {
+	if( GetMagnitudeSquared() > radius*radius ) {
+		Trig *trig = Trig::Instance();
+		int angle = TO_INT(GetAngle());
+		m_x = trig->GetCos( angle )*radius;
+		m_y = -trig->GetSin( angle )*radius;
+	}
+}
+
