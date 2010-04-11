@@ -89,10 +89,10 @@ bool Video::Initialize( void ) {
 	
 	// initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) != 0 ) {
-		Log::Error( "Could not initialize SDL: %s", SDL_GetError() );
+		LogMsg(ERROR, "Could not initialize SDL: %s", SDL_GetError() );
 		return( false );
 	} else {
-		Log::Message( "SDL video initialized using %s driver.", SDL_VideoDriverName( buf, 31 ) );
+		LogMsg(INFO, "SDL video initialized using %s driver.", SDL_VideoDriverName( buf, 31 ) );
 	}
 
 	atexit( SDL_Quit );
@@ -129,7 +129,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	// hardware surfaces?)
 	videoInfo = SDL_GetVideoInfo();
 	if(! videoInfo )
-		Log::Warning( "SDL_GetVideoInfo() returned NULL" );
+		LogMsg(WARN, "SDL_GetVideoInfo() returned NULL" );
 
 	// enable OpenGL and various other options
 	videoFlags = SDL_OPENGL;
@@ -144,18 +144,18 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	// the video card
 	if( videoInfo->hw_available ) {
 		videoFlags |= SDL_HWSURFACE;
-		Log::Message( "Using hardware surfaces." );
+		LogMsg(INFO, "Using hardware surfaces." );
 	} else {
 		videoFlags |= SDL_SWSURFACE;
-		Log::Message( "Not using hardware surfaces." );
+		LogMsg(INFO, "Not using hardware surfaces." );
 	}
 
 	// using SDL given information, set hardware acceleration if supported
 	if( videoInfo->blit_hw ) {
 		videoFlags |= SDL_HWACCEL;
-		Log::Message( "Using hardware accelerated blitting." );
+		LogMsg(INFO, "Using hardware accelerated blitting." );
 	} else {
-		Log::Message( "Not using hardware accelerated blitting." );
+		LogMsg(INFO, "Not using hardware accelerated blitting." );
 	}
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
@@ -164,14 +164,14 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
 	if( !ret ) {
-		Log::Warning( "Video mode %dx%dx%d not available.", w, h, bpp );
+		LogMsg(WARN, "Video mode %dx%dx%d not available.", w, h, bpp );
 	} else {
-		Log::Message( "Video mode %dx%dx%d supported.", w, h, bpp );
+		LogMsg(INFO, "Video mode %dx%dx%d supported.", w, h, bpp );
 	}
 
 	// finally, set the video mode (creating a window)
 	if( ( screen = SDL_SetVideoMode( w, h, bpp, videoFlags ) ) == NULL ) {
-		Log::Error( "Could not set video mode: %s", SDL_GetError() );
+		LogMsg(ERROR, "Could not set video mode: %s", SDL_GetError() );
 		return( false );
 	}
 
@@ -204,7 +204,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	w2 = w / 2;
 	h2 = h / 2;
 
-	Log::Message( "Video mode initialized at %dx%dx%d\n", screen->w, screen->h, screen->format->BitsPerPixel );
+	LogMsg(INFO, "Video mode initialized at %dx%dx%d\n", screen->w, screen->h, screen->format->BitsPerPixel );
 
 	return( true );
 }
@@ -287,23 +287,29 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glColor3f(r,g,b);
 	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
-	for(double angle = 0; angle <= 2.5 * M_PI; angle = angle + 0.1)
+	for(double angle = 0; angle <= 2.0 * M_PI; angle = angle + 0.1)
 	{
 		glVertex2d(radius * cos(angle) + x, radius * sin(angle) + y);
 	}
+	// One more point to finish the circle. (ang=0)
+	glVertex2d(radius + x, y);
 	glEnd();
 }
 
 /**\brief Draw a filled circle.
  */
-void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float b) {
-	/// \todo: Make this draw a filled circle.
-	glColor3f(r,g,b);
-	glBegin(GL_LINE_STRIP);
-	for(double ang = 0; ang <= 2.5 * M_PI; ang = ang + 0.1)
+void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float b, float a) {
+	glColor4f(r,g,b,a);
+	glEnable(GL_BLEND);
+	glBegin(GL_TRIANGLE_STRIP);
+	for(double ang = 0; ang <= 2.0 * M_PI; ang = ang + 0.1)
 	{
+		glVertex2d(x,y);
 		glVertex2d(radius * cos(ang) + x, radius * sin(ang) + y);
 	}
+	// One more triangle to finish the circle. (ang=0)
+	glVertex2d(x,y);
+	glVertex2d(radius + x, y);
 	glEnd();
 }
 
@@ -387,7 +393,7 @@ void Video::UnsetCropRect( void ){
 	if (!cropRects.empty()) // Shouldn't be empty
 		cropRects.pop();
 	else
-		Log::Warning("You unset the crop rect too many times.");
+		LogMsg(WARN,"You unset the crop rect too many times.");
 
 	if ( cropRects.empty() )
 		glDisable(GL_SCISSOR_TEST);

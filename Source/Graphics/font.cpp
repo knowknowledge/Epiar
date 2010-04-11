@@ -19,19 +19,21 @@
 
 /**\brief Constructs new font (default color white).
  */
-Font::Font() {
-	// Solid White
-	r = 0.;
-	g = 0.;
-	b = 0.;
-	a = 1.;
-	
-	font = NULL;
+Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL){
 }
 
+
+/**\brief Construct new font based on file.
+ * \param filename String containing file.
+ */
+Font::Font( string filename ):r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {
+	SetFont( filename );
+}
+
+/**\brief Destroys the font.*/
 Font::~Font() {
 	delete (FTTextureFont*)this->font;
-	Log::Message( "Font '%s' freed.", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' freed.", fontname.c_str() );
 }
 
 /**\brief Sets the new color and alpha value.
@@ -43,34 +45,18 @@ void Font::SetColor( float r, float g, float b, float a ) {
 	this->a = a;
 }
 
-/**\class FreeFont
- * \brief Implements FTGL font routines.*/
-
-/**\brief Construct new font based on file.
- * \param filename String containing file.
- */
-Font::Font( string filename ) {
-	// Solid White
-	r = 0.;
-	g = 0.;
-	b = 0.;
-	a = 1.;
-	font = NULL;
-	SetFont( filename );
-}
-
 /**\brief Loads the font (uses FTGL Texture Fonts).
  * \param filename Path to font file.
  */
 bool Font::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
-		Log::Error( "Font '%s' could not be loaded.", fontname.c_str() );
+		LogMsg(ERROR, "Font '%s' could not be loaded.", fontname.c_str() );
 		return( false );
 	}
 
 	if( this->font != NULL) {
-		Log::Error( "Deleting the old font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Deleting the old font '%s'.\n", fontname.c_str() );
 		delete this->font;
 	}
 
@@ -78,72 +64,116 @@ bool Font::SetFont( string filename ) {
 	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
-		Log::Error( "Failed to load font '%s'.\n", fontname.c_str() );
+		LogMsg(ERROR, "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
 	font->FaceSize(12);
 
-	Log::Message( "Font '%s' loaded.\n", fontname.c_str() );
+	LogMsg(INFO, "Font '%s' loaded.\n", fontname.c_str() );
 
 	return( true );
 }
 
-/**\brief Renders a string.
- * \param x X coordinate
- * \param y Y coordinate
- * \param text C style string pointer to text.
+/**\brief Set's the size of the font (default is 12).*/
+void Font::SetSize( int size ){
+	this->font->FaceSize( size );
+}
+
+/**\brief Retrieves the size of the font.*/
+unsigned int Font::GetSize( void ){
+	return this->font->FaceSize();
+}
+
+/**\brief Returns the width of the text (no padding).*/
+int Font::TextWidth( const string& text ) {
+	return TO_INT(this->font->Advance(text.c_str()));
+}
+
+/**\brief Returns the recommended line height of the font.
+ * \details
+ * It is recommended that you use the line height for rendering lines
+ * of text as it inserts a natural padding between lines.
  */
-Rect Font::Render( int x, int y, const char *text,bool centered ) {
-	float llx, lly, llz;
-	float urx, ury, urz;
-	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
-	int w = urx - llx;
-	int h = ury - lly;
+int Font::LineHeight( void ){
+	return TO_INT(ceil(this->font->LineHeight()));
+}
+
+/**\brief Returns the complete height of the font, including Ascend and Descend.
+ * \details
+ * Use Outer height to get the tight fitting height of the font.
+ */
+int Font::TightHeight( void ){
+	float asc=this->font->Ascender();
+	float dsc=this->font->Descender();
+	int height=TO_INT(ceil(asc-dsc));
+	return height;
+}
+
+/**\brief Renders a string with natural padding.
+ * \return The consumed width (This includes a small bit of padding on the right)
+ */
+int Font::Render( int x, int y, const string& text,XPos xpos, YPos ypos ){
+	int h= this->LineHeight();
+	return this->RenderInternal(x,y,text,h,xpos,ypos);
+}
+
+/**\brief Renders a string with no padding.
+ * \return The consumed width (This includes a small bit of padding on the right)
+ */
+int Font::RenderTight(int x, int y, const string& text,XPos xpos, YPos ypos ){
+	int h= this->TightHeight();
+	return this->RenderInternal(x,y,text,h,xpos,ypos);
+}
+
+/**\brief Renders a string wrapped to a given width.
+ * \return The number of lines used ( multiply by LineHeight to get total height).
+ */
+int Font::RenderWrapped( int x, int y, const string& text, int w ){
+
+
+}
+
+/**\brief Internal rendering function.*/
+int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YPos ypos) {
+	int xn;
+	int yn;
+	switch( xpos ){
+		case LEFT:
+			xn=x;
+			break;
+		case CENTER:
+			xn=x-this->TextWidth(text)/2;
+			break;
+		case RIGHT:
+			xn=x-this->TextWidth(text);
+			break;
+		default:
+			LogMsg(ERROR,"Invalid xpos");
+			assert(0);
+	}
+	// Y coordinates are flipped
+	switch( ypos ){
+		case TOP:
+			yn=-y-h-TO_INT(floor(this->font->Descender()));
+			break;
+		case MIDDLE:
+			yn=-y-h/2-TO_INT(floor(this->font->Descender()));
+			break;
+		case BOTTOM:
+			yn=-y-TO_INT(floor(this->font->Descender()));
+			break;
+		default:
+			LogMsg(ERROR,"Invalid ypos");
+			assert(0);
+	}
+
+
 	glColor4f( r, g, b, a );
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1);
-	
-	
-	FTPoint pt = FTPoint( x, -y, 1);
-	( ( FTTextureFont * ) font )->Render( text, -1, pt );
+	FTPoint newpoint=this->font->Render( text.c_str(), -1, FTPoint( xn, yn, 1) );
 	glPopMatrix(); // restore the previous matrix
-	
-	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
+	return TO_INT(ceil(newpoint.Xf()))-x;
 }
 
-/**\brief Renders text centered squarely on (x,y).
- * \details
- * Taking the bounding box into account.
- * \sa FreeFont::Render
- */
-Rect Font::RenderCentered( int x, int y, const char *text ) {
-	float llx, lly, llz;
-	float urx, ury, urz;
-
-	( ( FTTextureFont * ) font )->BBox( text, llx, lly, llz, urx, ury, urz );
-
-	Render( x + static_cast<int>( llx - urx) / 2, y - static_cast<int>(lly - ury) / 2, text );
-
-	return Rect( (float)x, (float)y, -(llx - urx), lly - ury );
-}
-
-/**\brief Returns the graphical size of text without rendering it.
- * \details
- * 
- * \sa Font::BoundingBox( string text )
- */
-Rect Font::BoundingBox( const char *text ) {
-	float llx, lly, llz;
-	float urx, ury, urz;
-
-	( (FTTextureFont*)font )->BBox( text, llx, lly, llz, urx, ury, urz );
-
-	return Rect( 0., 0., -(llx - urx), lly - ury );	
-}
-
-/**\brief Returns the graphical size of the text without rendering it.
- */
-Rect Font::BoundingBox( string text ) {
-	return BoundingBox( text.c_str() );
-}

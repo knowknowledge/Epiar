@@ -56,21 +56,21 @@ bool Technology::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "model" ) {
 		Model* model = Models::Instance()->GetModel( value );
 		if(model==NULL) {
-			Log::Error( "Could Not find the technology '%s'.", value.c_str() );
+			LogMsg(ERROR, "Could Not find the technology '%s'.", value.c_str() );
 		} else {
 			models.push_back( model );
 		}
 	} else PPA_MATCHES( "engine" ) {
 		Engine* engine = Engines::Instance()->GetEngine( value );
 		if(engine==NULL) {
-			Log::Error( "Could Not find the technology '%s'.", value.c_str() );
+			LogMsg(ERROR, "Could Not find the technology '%s'.", value.c_str() );
 		} else {
 			engines.push_back( engine );
 		}
 	} else PPA_MATCHES( "weapon" ) {
 		Weapon* weapon = Weapons::Instance()->GetWeapon( value );
 		if(weapon==NULL) {
-			Log::Error( "Could Not find the technology '%s'.", value.c_str() );
+			LogMsg(ERROR, "Could Not find the technology '%s'.", value.c_str() );
 		} else {
 			weapons.push_back( weapon );
 		}

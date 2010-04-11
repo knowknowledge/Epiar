@@ -57,7 +57,7 @@ void Sprite::Draw( void ) {
 	if( image ) {
 		image->DrawCentered( wx, wy, angle );
 	} else {
-		Log::Warning( "Attempt to draw a sprite before an image was assigned." );
+		LogMsg(WARN, "Attempt to draw a sprite before an image was assigned." );
 	}
 }
 

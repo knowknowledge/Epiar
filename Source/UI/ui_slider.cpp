@@ -43,7 +43,6 @@
 
 void Slider::Draw( int relx, int rely ){
 	int x, y;
-	char value[20];
 
 	x = GetX() + relx;
 	y = GetY() + rely;
@@ -67,9 +66,9 @@ void Slider::Draw( int relx, int rely ){
 			0.15f, 0.15f, 0.15f);
 
 	// Render the value indicator
+	char value[20];
 	snprintf(value,20,"%.2f",this->val);
-	Rect bounds = SansSerif->BoundingBox( value );
-	SansSerif->RenderCentered( markerx, static_cast<int>(y+bounds.h/2 - SLIDER_VALPAD), value );
+	SansSerif->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.
@@ -81,7 +80,7 @@ bool Slider::MouseDrag( int xi, int yi ){
 		std::ostringstream fullcmd;
 		fullcmd << lua_callback << "(" << this->GetVal() << ")";
 		if ( !fullcmd )
-			Log::Error("Bad conversion of float to string");
+			LogMsg(ERROR,"Bad conversion of float to string");
 		Lua::Run(fullcmd.str());
 	}
 	return true;
@@ -96,7 +95,7 @@ bool Slider::MouseLDown( int wx, int wy ){
 		std::ostringstream fullcmd;
 		fullcmd << lua_callback << "(" << this->GetVal() << ")";
 		if ( !fullcmd )
-			Log::Error("Bad conversion of float to string");
+			LogMsg(ERROR,"Bad conversion of float to string");
 		Lua::Run(fullcmd.str());
 	}
 	return true;

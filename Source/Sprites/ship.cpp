@@ -127,7 +127,7 @@ void Ship::Rotate( float direction ) {
 	float angle = GetAngle();
 	
 	if( !model ) {
-		Log::Warning( "Attempt to rotate sprite with no model." );
+		LogMsg(WARN, "Attempt to rotate sprite with no model." );
 		return;
 	}
 
@@ -371,8 +371,8 @@ float Ship::directionTowards(Coordinate target){
 	Coordinate position = target - GetWorldPosition();
 
 	theta = position.GetAngle();//trig->RadToDeg(atan2( - position.GetY(), position.GetX()));
-	//Log::Message("Angle towards target (%f,%f) is %f.",target.GetX(),target.GetY(),theta);
-	//Log::Message("Current Angle %f",this->GetAngle());
+	//LogMsg(INFO,"Angle towards target (%f,%f) is %f.",target.GetX(),target.GetY(),theta);
+	//LogMsg(INFO,"Current Angle %f",this->GetAngle());
 	return this->directionTowards(theta);
 }
 
@@ -390,7 +390,7 @@ float Ship::directionTowards(float angle){
 float Ship::getHullIntegrityPct() {
 	assert( model );
 	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
-	//Log::Message("Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
+	//LogMsg(INFO,"Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
 	return(remaining);
 }
 

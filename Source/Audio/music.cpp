@@ -35,7 +35,7 @@ Song::Song( const string& filename ){
 	this->song = NULL;
 	this->song = Mix_LoadMUS( filename.c_str() );
 	if ( this->song == NULL )
-		Log::Error( "Could not load song file: %s, Mixer error: %s",
+		LogMsg(ERROR, "Could not load song file: %s, Mixer error: %s",
 			filename.c_str(), Mix_GetError());
 }
 

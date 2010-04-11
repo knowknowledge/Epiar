@@ -39,7 +39,7 @@ Window::Window( int x, int y, int w, int h, string caption ):
 
 /**\brief Adds a widget to the current Window.
  */
-bool Window::AddChild( Widget *widget ){
+Widget *Window::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
 	int hbnd = widget->GetX()+widget->GetW();
 	int vbnd = widget->GetY()+widget->GetH();
@@ -115,7 +115,7 @@ void Window::Draw( int relx, int rely ) {
 
 	// Draw the window title
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderCentered(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name.c_str());
+	SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
 
 	// Crop when necessary
 	if ( this->hscrollbar || this->vscrollbar )

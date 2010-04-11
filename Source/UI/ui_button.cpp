@@ -71,7 +71,7 @@ void Button::Draw( int relx, int rely ) {
 	// draw the label
 	//Video::SetCropRect(x,y,this->w,this->h);
 	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderCentered( x + (w / 2), y + (h / 2), this->name.c_str() );
+	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	//Video::UnsetCropRect();
 }
 
@@ -88,13 +88,13 @@ bool Button::MouseLUp( int xi, int yi ) {
 	bitmap_current = bitmap_normal;
 
 	if( clickCallBack ){
-		Log::Message( "Clicked on: '%s'.", this->name.c_str() );
+		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
 		clickCallBack();
 	} else if("" != lua_callback){
-		Log::Message("Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
+		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
 		Lua::Run(lua_callback);
 	} else {
-		Log::Warning( "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
+		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
 	}
 	return true;
 }

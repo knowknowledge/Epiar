@@ -109,17 +109,17 @@ void StatusBar::Draw(int x, int y) {
 	BitType->SetColor(1.f,1.f,1.f,1.f);
 
 	// Draw the Title
-	if( title != "") {
-		Rect recTitle = BitType->Render( x, y+13, title.c_str() );
-		widthRemaining -= static_cast<int>(recTitle.w);
-		x += static_cast<int>(recTitle.w) + 5;
+	if( !title.empty() ) {
+		int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,Font::LEFT,Font::MIDDLE );
+		widthRemaining -= wTitle;
+		x += wTitle + 5;
 	}
 
 	// Draw Name
-	if( name != "") {
-		Rect recName = BitType->Render( x, y+13, name.c_str() );
-		widthRemaining -= static_cast<int>(recName.w);
-		x += static_cast<int>(recName.w);
+	if( !name.empty() ) {
+		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name,Font::LEFT,Font::MIDDLE );
+		widthRemaining -= wName;
+		x += wName;
 	}
 
 	// Draw the Bar
@@ -269,24 +269,23 @@ void Hud::DrawMessages() {
 		} else {
 			BitType->SetColor(1.f,1.f,1.f,1.f);
 		}
-		BitType->Render( 15, Video::GetHeight() - (j*15), (*i).message.c_str() );
+		BitType->Render( 15, Video::GetHeight() - (j*BitType->LineHeight()), (*i).message);
 	}
 }
 
 /**\brief Draw the current framerate (calculated in simulation.cpp).
  */
 void Hud::DrawFPS() {
-	const char *frameRate[16] = {0};
-	memset(frameRate, 0, sizeof(char) * 10);
+	char frameRate[16];
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	snprintf((char *)frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
-	snprintf((char *)frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, frameRate );
 
-	snprintf((char *)frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
-	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, (const char *)frameRate );
+	snprintf(frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
+	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, frameRate );
 }
 
 /**\brief Draws the status bar.
@@ -469,20 +468,29 @@ int Hud::newStatus(lua_State *L) {
 	return 1;
 }
 
+
+StatusBar* Hud::checkStatus(lua_State *L, int index) {
+	StatusBar **barptr = (StatusBar**)luaL_checkudata(L, index, EPIAR_HUD);
+	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected");
+	StatusBar *bar;
+	bar = *barptr;
+	return bar;
+}
+
 /**\brief Set's the status (Lua callable)
  */
 int Hud::setStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
-	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
+	StatusBar *bar= checkStatus(L,1);
 
 	if( lua_isnumber(L,2) ) {
 		float ratio = (float)(luaL_checknumber(L,2));
-		(*bar)->SetRatio(ratio);
+		bar->SetRatio(ratio);
 	} else {
 		string name = (string)(luaL_checkstring(L,2));
-		(*bar)->SetName(name);
+		bar->SetName(name);
 	}
 
 	return 0;
@@ -494,8 +502,8 @@ int Hud::closeStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
-	StatusBar **bar= (StatusBar**)lua_touserdata(L,1);
-	DeleteStatus(*bar);
+	StatusBar *bar= checkStatus(L,1);
+	DeleteStatus(bar);
 	return 0;
 }
 

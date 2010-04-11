@@ -17,7 +17,7 @@ Player *Player::pInstance = 0;
 
 Player *Player::Instance( void ) {
 	if( pInstance == NULL ) { // is this the first call?
-		Log::Error("Attempting to use Player information when no player is loaded!");
+		LogMsg(ERROR,"Attempting to use Player information when no player is loaded!");
 		//assert(0);
 		CreateNew("Steve");
 	}
@@ -54,11 +54,11 @@ void Player::Load(string playerName) {
 	Player* newPlayer = Players::Instance()->GetPlayer(playerName);
 	// If the player saved a bad Model or Engine, pick the default
 	if(newPlayer->GetModelName() == "") {
-		Log::Error( "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
+		LogMsg(ERROR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
 		newPlayer->SetModel( Models::Instance()->GetModel( OPTION(string,"options/defaults/playerModel" ) ) );
 	}
 	if(newPlayer->GetEngineName() == "") {
-		Log::Error( "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
+		LogMsg(ERROR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
 		newPlayer->SetEngine( Engines::Instance()->GetEngine( OPTION(string,"options/defaults/playerEngine" ) ) );
 	}
 	// We can't start the game with bad player Information
@@ -75,7 +75,7 @@ Player::Player() {
 
 Player::~Player() {
 	pInstance = NULL;
-	Log::Message( "You have been destroyed..." );
+	LogMsg(INFO, "You have been destroyed..." );
 }
 
 void Player::Update( void ) {

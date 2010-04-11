@@ -42,12 +42,10 @@ bool UI::Active( void ) {
 }
 
 /**\brief Adds a Widget to the base UI.*/
-bool UI::Add( Widget *widget ) {
+Widget *UI::Add( Widget *widget ) {
 	if( !widget ) return false;
 	
-	UI::master.AddChild( widget );
-	
-	return true;
+	return UI::master.AddChild( widget );
 }
 
 /**\brief This removes all widgets from the base.*/
@@ -136,7 +134,7 @@ bool UI::HandleMouse( InputEvent &i ){
 		case MOUSEWDOWN:		// Scroll wheel down
 			return UI::master.MouseWDown( x,y );
 		default:
-			Log::Warning("Unhandled UI mouse input detected.");
+			LogMsg(WARN,"Unhandled UI mouse input detected.");
 		}
 	return false;
 }

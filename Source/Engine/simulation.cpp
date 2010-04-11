@@ -126,19 +126,19 @@ bool Simulation::Run() {
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
 	{
-		Log::Error("Fatal error starting Lua.");
+		LogMsg(ERROR,"Fatal error starting Lua.");
 		quit = true;
 	}
     if( 0 == OPTION(int,"options/development/editor-mode") ){
         if( !( Lua::Load("Resources/Scripts/player.lua") ))
         {
-            Log::Error("Fatal error starting Lua.");
+            LogMsg(ERROR,"Fatal error starting Lua.");
             quit = true;
         }
     } else {
         if( !( Lua::Load("Resources/Scripts/editor.lua") ))
         {
-            Log::Error("Fatal error starting Lua.");
+            LogMsg(ERROR,"Fatal error starting Lua.");
             quit = true;
         }
     }
@@ -204,7 +204,7 @@ bool Simulation::Run() {
 
 	Players::Instance()->Save(playersFilename);
 
-	Log::Message("Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
+	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
 }
 
@@ -229,24 +229,24 @@ bool Simulation::Parse( void ) {
 	delete [] buffer;
 
 	if( doc == NULL ) {
-		Log::Warning( "Could not load '%s' simulation file.", filename.c_str() );
+		LogMsg(WARN, "Could not load '%s' simulation file.", filename.c_str() );
 		return false;
 	}
 
 	cur = xmlDocGetRootElement( doc );
 
 	if( cur == NULL ) {
-		Log::Warning( "'%s' file appears to be empty.", filename.c_str() );
+		LogMsg(WARN, "'%s' file appears to be empty.", filename.c_str() );
 		xmlFreeDoc( doc );
 		return false;
 	}
 	
 	if( xmlStrcmp( cur->name, (const xmlChar *)"simulation" ) ) {
-		Log::Warning( "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
+		LogMsg(WARN, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
 		xmlFreeDoc( doc );
 		return false;
 	} else {
-		Log::Message( "'%s' file found and valid, parsing...", filename.c_str() );
+		LogMsg(INFO, "'%s' file found and valid, parsing...", filename.c_str() );
 	}
 	
 	cur = cur->xmlChildrenNode;
@@ -271,43 +271,43 @@ bool Simulation::Parse( void ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				planetsFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Planets filename is %s.", planetsFilename.c_str() );
+				LogMsg(INFO, "Planets filename is %s.", planetsFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "models" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				modelsFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Models filename is %s.", modelsFilename.c_str() );
+				LogMsg(INFO, "Models filename is %s.", modelsFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "engines" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				enginesFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Engines filename is %s.", enginesFilename.c_str() );
+				LogMsg(INFO, "Engines filename is %s.", enginesFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "weapons" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				weaponsFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Weapons filename is %s.", weaponsFilename.c_str() );
+				LogMsg(INFO, "Weapons filename is %s.", weaponsFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "alliances" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				alliancesFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Alliances filename is %s.", alliancesFilename.c_str() );
+				LogMsg(INFO, "Alliances filename is %s.", alliancesFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "technologies" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				technologiesFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Technologies filename is %s.", technologiesFilename.c_str() );
+				LogMsg(INFO, "Technologies filename is %s.", technologiesFilename.c_str() );
 			}
 			if( !strcmp( sectionName, "players" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				playersFilename = (char *)key;
 				xmlFree( key );
-				Log::Message( "Players filename is %s.", playersFilename.c_str() );
+				LogMsg(INFO, "Players filename is %s.", playersFilename.c_str() );
 			}
 		}
 		
@@ -316,29 +316,29 @@ bool Simulation::Parse( void ) {
 	
 	xmlFreeDoc( doc );
 	
-	Log::Message( "'%s' parsing done. File is version %d.%d.%d.", filename.c_str(), versionMajor, versionMinor, versionMacro );
+	LogMsg(INFO, "'%s' parsing done. File is version %d.%d.%d.", filename.c_str(), versionMajor, versionMinor, versionMacro );
 
 	// Now load the various subsystems
 	if( engines->Load( enginesFilename ) != true ) {
-		Log::Error( "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
+		LogMsg(ERROR, "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
 	}
 	if( models->Load( modelsFilename ) != true ) {
-		Log::Error( "There was an error loading the models from '%s'.", modelsFilename.c_str() );
+		LogMsg(ERROR, "There was an error loading the models from '%s'.", modelsFilename.c_str() );
 	}
 	if( weapons->Load( weaponsFilename ) != true ) {
-		Log::Error( "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		LogMsg(ERROR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
 	if( technologies->Load( technologiesFilename ) != true ) {
-		Log::Error( "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		LogMsg(ERROR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
-		Log::Error( "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
+		LogMsg(ERROR, "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
 	}
 	if( planets->Load( planetsFilename ) != true ) {
-		Log::Warning( "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
+		LogMsg(WARN, "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
 	}
 	if( players->Load( playersFilename ) != true ) {
-		Log::Error( "There was an error loading the players from '%s'.", playersFilename.c_str() );
+		LogMsg(WARN, "There was an error loading the players from '%s'.", playersFilename.c_str() );
 	}
 
 	return true;
