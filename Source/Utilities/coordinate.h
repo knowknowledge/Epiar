@@ -21,6 +21,8 @@ class Coordinate {
 		bool ViolatesBoundary( double top, double right, double bottom, double left );
 	 	void EnforceBoundaries( double top, double right, double bottom, double left );
 		void EnforceMagnitude( double radius);
+		Coordinate RotateBy( float angle );
+		Coordinate RotateTo( float angle );
 	
 		~Coordinate();
 	

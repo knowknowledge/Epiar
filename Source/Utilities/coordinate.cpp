@@ -147,3 +147,18 @@ void Coordinate::EnforceMagnitude(double radius) {
 	}
 }
 
+Coordinate Coordinate::RotateBy( float angle ) {
+	int newangle = TO_INT( normalizeAngle(angle + GetAngle()) );
+	RotateTo( newangle );
+	return *this;
+}
+
+Coordinate Coordinate::RotateTo( float newangle ) {
+	Trig *trig = Trig::Instance();
+	int angle = TO_INT( newangle );
+	float radius = GetMagnitude();
+	m_x = trig->GetCos( angle )*radius;
+	m_y = -trig->GetSin( angle )*radius;
+	return *this;
+}
+
