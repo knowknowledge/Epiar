@@ -53,6 +53,9 @@ Epiar-Log*.xml
 stdout.txt
 stderr.txt
 
+### Epiar Saved Games
+Resources/Definitions/saved-games.xml
+
 .DS_Store
 Epiar.tmproj
 *.swp
