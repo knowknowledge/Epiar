@@ -177,12 +177,12 @@ function createNewPlayerWindow()
 	-- TODO: show a picture of a the default ship?
 	
 	yoff=40 -- Buffer for the titlebar
-	newPlayerWin:add(UI.newLabel( 10, yoff+15, "Name:"))
+	newPlayerWin:add(UI.newLabel( 10, yoff, "Name:"))
 	playerNameField = UI.newTextbox( 90, yoff, 100, 1, "")
 	newPlayerWin:add(playerNameField)
 	yoff = yoff+20
 
-	--newPlayerWin:add(UI.newLabel( 10, yoff+15, "Ship Name"))
+	--newPlayerWin:add(UI.newLabel( 10, yoff, "Ship Name"))
 	--playerShipField = UI.newTextbox( 90, yoff, 100, 1, "")
 	--newPlayerWin:add(playerShipField)
 	--yoff = yoff+20

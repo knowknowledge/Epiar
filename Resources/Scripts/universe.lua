@@ -159,7 +159,7 @@ function options()
 	soundsTab = UI.newTab("Audio")
 	optionTabs:add(soundsTab)
 
-	soundsLabel     = UI.newLabel(20,20,"Sound Options:",0)
+	soundsLabel     = UI.newLabel(20,10,"Sound Options:",0)
 	backgroundSound = UI.newCheckbox(20,  30, ( Epiar.getoption("options/sound/background") ), "Background sounds")
 	weaponsSound    = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
 	enginesSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
@@ -171,9 +171,9 @@ function options()
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
 						--]]
 	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume","Audio.setSoundVolume"),
-					Label = UI.newLabel( 105, 152, "Sound Volume", 0)}
+					Label = UI.newLabel( 105, 140, "Sound Volume", 0)}
 	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume","Audio.setMusicVolume"),
-					Label = UI.newLabel( 105, 182, "Music Volume", 0)}
+					Label = UI.newLabel( 105, 170, "Music Volume", 0)}
 	soundsTab:add(  soundsLabel,
 					backgroundSound,
 					weaponsSound,
@@ -188,10 +188,10 @@ function options()
 	-- Debugging
 	debugTab = UI.newTab("Debugging")
 	optionTabs:add(debugTab)
-	debugLabel      = UI.newLabel(20,200,"Debug Options:",0)
-	xmlfileLogging  = UI.newCheckbox(20, 210, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
-	stdoutLogging   = UI.newCheckbox(20, 230, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 250, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	debugLabel      = UI.newLabel(20,10,"Debug Options:",0)
+	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
+	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
+	quadTreeDisplay = UI.newCheckbox(20, 70, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
 	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
 	
 	function saveOptions()

@@ -130,8 +130,9 @@ int Font::RenderTight(int x, int y, const string& text,XPos xpos, YPos ypos ){
  * \return The number of lines used ( multiply by LineHeight to get total height).
  */
 int Font::RenderWrapped( int x, int y, const string& text, int w ){
-
-
+	cout<<"This isn't implemented yet!!!"<<endl;
+	assert(0);
+	return 0;
 }
 
 /**\brief Internal rendering function.*/

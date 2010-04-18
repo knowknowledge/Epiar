@@ -117,12 +117,12 @@ function showComponent(kind,name,getterFunc)
 		local field = nil
 		local value = theInfo[title]
 		if fieldType == "String" then
-			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
 			field = UI.newTextbox( 90, yoff, 100, 1, value)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Integer" then
-			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
 			field = UI.newTextbox( 90, yoff, 100, 1, value)
 			theWin:add(field)
 			yoff = yoff+20
@@ -130,12 +130,12 @@ function showComponent(kind,name,getterFunc)
 			if math.floor(value) ~= value then
 				value = string.format("%.2f",value)
 			end
-			theWin:add(UI.newLabel( 10, yoff+15, title..":"))
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
 			field = UI.newTextbox( 90, yoff, 100, 1, value)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Picture" then
-			theWin:add(UI.newLabel( 10, yoff+25, title..":"))
+			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
 			local pic = UI.newPicture( 10, yoff, width-20, 100, value)
 			theWin:add(pic)
@@ -147,7 +147,7 @@ function showComponent(kind,name,getterFunc)
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker('%s','%s')",name,title)))
 			yoff = yoff+20+5
 		elseif fieldType == "Technologies" then
-			theWin:add(UI.newLabel( 10, yoff+25, title..":"))
+			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
 			technologies = Epiar.technologies()
 			local knownTechs = {}

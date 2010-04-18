@@ -35,13 +35,15 @@ void Label::Draw(  int relx, int rely ) {
 	
 	x = this->x + relx;
 	y = this->y + rely;
-
+	
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
 	if(centered){
 		SansSerif->Render( x, y, name, Font::CENTER,Font::MIDDLE );
 	} else {
-		SansSerif->Render( x, y, name );
+		//The text should fit into this box
+		//Video::DrawRect( x,y,w,h, 1.0, 0.0, 0.0, .2f );
+		SansSerif->RenderTight( x, y, name, Font::LEFT,Font::TOP );
 	}
-	
+
 }
