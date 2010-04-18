@@ -18,22 +18,34 @@ function sdlkey(k)
 		return k
 	end
 end
-commands = {
+
+--- Commands that are currently registered
+commands = {}
+
+--- Commands that should always be registered
+defaultCommands = {
 	-- Each command should be a table
-	-- { KEY, TITLE, SCRIPT }
+	-- { KEY, TITLE, SCRIPT, KEYMODE }
 	{'?', "Game Options", "options()",KEYTYPED},
 	{'p', "Pause", "togglePause()",KEYTYPED}
 	}
 
 --- Register multiple commands
 function registerCommands(cmds)
-    for i,cmd in ipairs(cmds) do
+    for i,cmd in pairs(cmds) do
+		-- Remember this command for later
         table.insert(commands,cmd)
-		keyval, name, code = commands[i][1],commands[i][2],commands[i][3]
-		Epiar.UnRegisterKey(sdlkey(keyval), commands[i][4])
-		Epiar.RegisterKey(sdlkey(keyval), commands[i][4], code)
+		-- Register this command to the C Engine
+		keyval, name, code, keymode = cmd[1],cmd[2],cmd[3],cmd[4]
+		Epiar.UnRegisterKey(sdlkey(keyval), keymode)
+		Epiar.RegisterKey(sdlkey(keyval), keymode, code)
     end
 end
+
+function registerDefaults()
+	registerCommands(defaultCommands)
+end
+registerInit(registerDefaults)
 
 --- Specify keys configuration
 function chooseKeys()
