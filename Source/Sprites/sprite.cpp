@@ -12,7 +12,8 @@
 #include "Utilities/log.h"
 
 
-int Sprite::sprite_ids = 0;
+// Sprite ID 0 is only used as a NULL
+int Sprite::sprite_ids = 1;
 
 /**\class Sprite
  * \brief Sprite handling. */

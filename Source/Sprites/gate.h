@@ -29,15 +29,18 @@ class Gate : public Sprite {
 		// They modify both this and the partner Gate at the same time
 		void SetAngle(float angle);
 		void SetWorldPosition(Coordinate pos);
+		void SetExit(int SpriteID);
 
 		Gate* GetTop();
 
 		void Update();
 	private:
 		bool top;
-		int partnerID;
+		int partnerID; /// \var The partner is the top/bottom of this gate
+		int exitID; /// \var Ships entering this gate will be transported to the Exit Gate
 
 		void SendToRandomLocation(Sprite* ship);
+		void SendToExit(Sprite* ship);
 		void SendRandomDistance(Sprite* ship);
 
 		Gate(int topID);

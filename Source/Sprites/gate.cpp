@@ -29,6 +29,7 @@ Gate::Gate(Coordinate pos) {
 	// Create the PartnerID Gate
 	Gate* partner = new Gate(this->GetID());
 	partnerID = partner->GetID();
+	exitID = 0;
 	SpriteManager::Instance()->Add((Sprite*)partner);
 
 	// Set both Position and Angle at the same time
@@ -61,6 +62,21 @@ void Gate::SetAngle(float angle) {
 void Gate::SetWorldPosition(Coordinate c) {
 	this->_SetWorldPosition(c);
 	GetPartner()->_SetWorldPosition(c);
+}
+
+/**\brief Set the exit for this Gate
+ */
+
+void Gate::SetExit(int spriteID) {
+	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(spriteID);
+	if (exit == NULL) {
+		exitID = 0;
+	//} else if (exit->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM)){
+	// Only use other Gates as Exits
+	} else {
+		exitID = exit->GetID();
+		assert(exitID == spriteID);
+	}
 }
 
 /**\brief Get the Top Gate
@@ -101,10 +117,13 @@ void Gate::Update() {
 	Sprite* ship = sprites->GetNearestSprite( (Sprite*)this, 50,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 
 	if(ship!=NULL) {
-		if(rand()&1)
+		if(exitID != 0) {
+			SendToExit(ship);
+		} else if(rand()&1) {
 			SendToRandomLocation(ship);
-		else
+		} else {
 			SendRandomDistance(ship);
+		}
 	}
 }
 
@@ -114,6 +133,24 @@ void Gate::Update() {
 void Gate::SendToRandomLocation(Sprite* ship) {
 	Coordinate destination = Coordinate( float(rand()%GATE_RADIUS - GATE_RADIUS/2), float(rand()%GATE_RADIUS - GATE_RADIUS/2));
 	ship->SetWorldPosition( destination );
+}
+
+/**\brief Teleport a ship to the exit gate
+ * The exit point is offset slightly to avoid re-entering the exit
+ */
+
+void Gate::SendToExit(Sprite* ship) {
+	Trig *trig = Trig::Instance();
+	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(exitID);
+	if(exit==NULL) {
+		LogMsg(ERROR,"Gate %d cannot send to non-existant exit (%d)",this->GetID(),exitID);
+		return;
+	}
+	float distance = 50.0f;
+	// The Ship's Angle and Momentum should make it appear like it is exiting the Gate
+	ship->SetWorldPosition( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exit->GetAngle() ) );
+	ship->SetMomentum( ship->GetMomentum().RotateTo( exit->GetAngle() ) );
+	ship->SetAngle( exit->GetAngle() );
 }
 
 /**\brief Teleport a Ship in the direction of the Gate by a random distance
