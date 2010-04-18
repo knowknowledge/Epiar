@@ -45,6 +45,7 @@
     <ammoConsumption>1</ammoConsumption>
     <fireDelay>500</fireDelay>
     <lifetime>3000</lifetime>
+    <tracking>.05</tracking>
     <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
     <msrp>1000</msrp>
   </weapon>
@@ -60,6 +61,7 @@
     <ammoConsumption>1</ammoConsumption>
     <fireDelay>1000</fireDelay>
     <lifetime>30000</lifetime>
+    <tracking>.02</tracking>
     <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
     <msrp>1500</msrp>
   </weapon>

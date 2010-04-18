@@ -17,6 +17,8 @@
 #include "Sprites/effects.h"
 #include "Audio/sound.h"
 
+#include "Engine/hud.h"
+
 /**\class Ship
  * \brief Ship handling. */
 
@@ -297,6 +299,9 @@ FireStatus Ship::Fire() {
 		SpriteManager *sprites = SpriteManager::Instance();
 		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);
 		projectile->SetOwnerID( this->GetID() );
+		if( this->GetDrawOrder() & DRAW_ORDER_PLAYER ) { // TEMP Targeting
+			projectile->SetTargetID( Hud::GetTarget() );
+		}
 		sprites->Add( (Sprite*)projectile );
 
 		//track number of ticks the last fired occured

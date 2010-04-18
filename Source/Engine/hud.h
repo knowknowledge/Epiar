@@ -58,6 +58,7 @@ class Hud {
 		
 		static void Alert( const char *, ... );
 		static void Target(int id);
+		static int GetTarget() {return targetID;}
 		
 		static void AddStatus( StatusBar* bar );
 		static void DeleteStatus( StatusBar* bar );

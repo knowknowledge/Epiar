@@ -21,6 +21,7 @@ public:
 	~Projectile(void);
 	void Update( void );
 	void SetOwnerID(int id) { ownerID = id; }
+	void SetTargetID(int id) { targetID = id; }
 	int GetDrawOrder( void ) {
 			return( DRAW_ORDER_WEAPON );
 	}
@@ -28,6 +29,7 @@ private:
 	Uint32 secondsOfLife; //time to live before projectile blows up
 	Uint32 start;
 	int ownerID;
+	int targetID;
 	Weapon *weapon;
 
 	/*todo Add 

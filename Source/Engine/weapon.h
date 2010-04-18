@@ -22,7 +22,7 @@ class Weapon : public Component {
 	public:
 		Weapon(void);
 		Weapon& operator=(const Weapon& other);
-		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound, int _msrp);
+		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, int _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound, float _tracking, int _msrp);
 		~Weapon(void);
 
 		bool parserCB( string sectionName, string subName, string value );
@@ -40,6 +40,7 @@ class Weapon : public Component {
 		int GetFireDelay(void) {return fireDelay;}
 		int GetMSRP(void) {return msrp;}
 		int GetLifetime(void) {return lifetime;}
+		float GetTracking(void) {return tracking;}
 		Sound *sound; //Sound the weapon makes
 
 	private:
@@ -53,8 +54,8 @@ class Weapon : public Component {
 		int ammoConsumption; //ammount of ammo to consume per shot
 		int fireDelay; //delay between being able to fire agian in ticks
 		int lifetime; //ticks until weapon is destroyed
+		float tracking;
 		int msrp;
-		//TODO tracking factor
 };
 
 #endif

@@ -71,6 +71,7 @@ WeaponEditorLayout = {
 	{"Lifetime", "Integer"},
 	{"FireDelay", "Integer"},
 	{"Type", "Integer"},
+	{"Tracking", "Number"},
 	{"Ammo Type", "Integer"},
 	{"Ammo Consumption", "Integer"},
 	{"Sound", "String"}, -- TODO: Should be Sound Picker

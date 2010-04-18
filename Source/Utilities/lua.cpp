@@ -865,6 +865,7 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("Acceleration", weapon->GetAcceleration());
 	setField("FireDelay", weapon->GetFireDelay());
 	setField("Lifetime", weapon->GetLifetime());
+	setField("Tracking", weapon->GetTracking());
 	setField("MSRP", weapon->GetMSRP());
 	setField("Type", weapon->GetType());
 	setField("Ammo Type", weapon->GetAmmoType());
@@ -1039,13 +1040,14 @@ int Lua::setInfo(lua_State *L) {
 		int acceleration = getIntField(2,"Acceleration");
 		int fireDelay = getIntField(2,"FireDelay");
 		int lifetime = getIntField(2,"Lifetime");
+		float tracking = getNumField(2,"Tracking");
 		int msrp = getIntField(2,"MSRP");
 		int type = getIntField(2,"Type");
 		int ammoType = getIntField(2,"Ammo Type");
 		int ammoConsumption = getIntField(2,"Ammo Consumption");
 		string soundName = getStringField(2,"Sound");
 
-		Weapon* thisWeaon = new Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),msrp);
+		Weapon* thisWeaon = new Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,ammoType,ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),tracking,msrp);
 		Weapons::Instance()->AddOrReplace( thisWeaon );
 
 	} else {

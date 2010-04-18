@@ -27,6 +27,7 @@ Weapon::Weapon(void) :
 	ammoConsumption(0),
 	fireDelay(0),
 	lifetime(0),
+	tracking(0.0f),
 	msrp(0)
 {
 	SetName("dead");
@@ -46,6 +47,7 @@ Weapon& Weapon::operator=(const Weapon& other) {
 	ammoConsumption = other.ammoConsumption;
 	fireDelay = other.fireDelay;
 	lifetime = other.lifetime;
+	tracking = other.tracking;
 	msrp = other.msrp;
 	sound = other.sound;
 	return *this;
@@ -64,11 +66,12 @@ Weapon& Weapon::operator=(const Weapon& other) {
  * \param _fireDelay Delay after firing
  * \param _lifetime Life the ammo
  * \param _sound Sound the weapon makes
+ * \param _tracking Turning rate
  * \param _msrp Price of the weapon
  */
 Weapon::Weapon( string _name, Image* _image, Image* _pic,
 		int _weaponType, int _payload, int _velocity, int _acceleration,
-		int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, int _msrp) :
+		int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
 	sound(_sound),
 	image(_image),
 	pic(_pic),
@@ -80,6 +83,7 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic,
 	ammoConsumption(_ammoConsumption),
 	fireDelay(_fireDelay),
 	lifetime(_lifetime),
+	tracking(_tracking),
 	msrp(_msrp)
 {
 	SetName(_name);
@@ -126,6 +130,11 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "lifetime" ) {
 		if (atoi( value.c_str()) != 0)
 			lifetime = atoi( value.c_str() );
+	} else PPA_MATCHES( "tracking" ) {
+		float _tracking = atof( value.c_str());
+		if (_tracking > 1.0f ) _tracking = 1.0f;
+		if (_tracking < 0.0001f ) _tracking = 0.0f;
+		tracking = _tracking;
 	} else PPA_MATCHES( "msrp" ) {
 		if (atoi( value.c_str()) != 0)
 			msrp = atoi( value.c_str() );
@@ -168,6 +177,8 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "fireDelay", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetLifetime() );
 	xmlNewChild(section, NULL, BAD_CAST "lifetime", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%.4f", this->GetTracking() );
+	xmlNewChild(section, NULL, BAD_CAST "tracking", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "sound", BAD_CAST this->sound->GetPath().c_str() );
 	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );

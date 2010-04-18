@@ -18,7 +18,8 @@
 Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* _weapon)
 {
 	// All Projectiles get these
-	ownerID = -1;
+	ownerID = 0;
+	targetID = 0;
 	start = Timer::GetTicks();
 	SetRadarColor (Color::Get(0x55,0x55,0x55));
 
@@ -49,7 +50,8 @@ Projectile::~Projectile(void)
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	SpriteManager *sprites = SpriteManager::Instance();
-	
+
+	// Check for projectile collisions
 	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 	if( (impact != NULL) && (impact->GetID() != ownerID) && ((this->GetWorldPosition() - impact->GetWorldPosition()).GetMagnitude() < impact->GetRadarSize() )) {
 		((Ship*)impact)->Damage( weapon->GetPayload() );
@@ -62,8 +64,20 @@ void Projectile::Update( void ) {
 		hit->SetMomentum( impact->GetMomentum() );
 		sprites->Add( hit );
 	}
+
+	// Expire the projectile after a time period
 	if (( Timer::GetTicks() > secondsOfLife + start )) {
 		sprites->Delete( (Sprite*)this );
 	}
+
+	// Track the target
+	Sprite* target = sprites->GetSpriteByID( targetID );
+	float tracking = weapon->GetTracking();
+	if( target != NULL && tracking > 0.01f ) {
+		float angleTowards = normalizeAngle( ( target->GetWorldPosition() - this->GetWorldPosition() ).GetAngle() - GetAngle() );
+		SetMomentum( GetMomentum().RotateBy( angleTowards*tracking ) );
+		SetAngle( GetMomentum().GetAngle() );
+	}
+
 }
 
