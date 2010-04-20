@@ -117,6 +117,15 @@ class Coordinate {
 		Coordinate operator-(Vector b){
 			return Coordinate(m_x-b.ipart(),m_y-b.jpart());
 		}//end operator- (Vector conversion)
+
+		Coordinate operator*(double r){
+			return Coordinate(m_x*r,m_y*r);
+		}
+		Coordinate operator*=(double r){
+			m_x*=r;
+			m_y*=r;
+			return *this;
+		}
 	
 		friend ostream& operator<<(ostream & out, const Coordinate &c );
 	
