@@ -14,6 +14,8 @@
 
 /**\class Weapons
  * \brief Collection of Weapon objects
+ *
+ * \see Weapon
  */
 Weapons *Weapons::pInstance = 0; // initialize pointer
 

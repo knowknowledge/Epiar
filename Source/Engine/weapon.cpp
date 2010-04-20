@@ -13,6 +13,11 @@
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
+/**\class Weapon
+ *
+ * \see Weapons
+ */
+
 /**\brief Empty constructor
  */
 Weapon::Weapon(void) :

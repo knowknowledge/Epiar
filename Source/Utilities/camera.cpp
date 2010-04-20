@@ -19,6 +19,8 @@
 
 Camera *Camera::pInstance = 0; // initialize pointer
 
+/**\brief Fetch the current camera Instance
+ */
 Camera *Camera::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Camera; // create the sold instance
@@ -26,6 +28,8 @@ Camera *Camera::Instance( void ) {
 	return( pInstance );
 }
 
+/**\class Camera
+ */
 Camera::Camera( void ) {
 	x = 0;
 	y = 0;
@@ -41,6 +45,8 @@ Camera::Camera( void ) {
 	cameraShakeYDec = 0;
 }
 
+/**\brief Focus on a specific Location
+ */
 void Camera::Focus( double x, double y ) {
 	// calculate the difference (this is used in many conversions)
 	dx = x - this->x;
@@ -60,10 +66,14 @@ void Camera::Focus( double x, double y ) {
 	//}
 }
 
+/**\brief Focus the camera on a Sprite
+ */
 void Camera::Focus( Sprite *sprite ) {
 	focusSprite = sprite;
 }
 
+/**\brief Get the current Camera Coordinate
+ */
 Coordinate Camera::GetFocusCoordinate() {
 	if(focusSprite) {
 		return focusSprite->GetWorldPosition();
@@ -72,7 +82,14 @@ Coordinate Camera::GetFocusCoordinate() {
 	}
 }
 
-// Converts world to screen coordinates
+/**\brief Translate a given World Coordinate into the relative Screen Coordinate
+ * This should be used to answer questions like, "When a ship is located at
+ * a given _world_ position, where should it be drawn on the screen?"
+ *
+ * \param[in] world Coordinate relative to the universe center.
+ * \param[out] screen Coordinate relative to the upper-left of the screen.
+ * \see TranslateScreenToWorld
+ */
 void Camera::TranslateWorldToScreen( Coordinate &world, Coordinate &screen ) {
 	int tx, ty;
 
@@ -83,6 +100,14 @@ void Camera::TranslateWorldToScreen( Coordinate &world, Coordinate &screen ) {
 	screen.SetY( ty );
 }
 
+/**\brief Translate a given Screen Coordinate into the relative World Coordinate
+ * This should be used to answer questions like, "When the user clicks the
+ * _screen_, what is the corresponding _world_ position?"
+ *
+ * \param[in] screen Coordinate relative to the upper-left of the screen.
+ * \param[out] world Coordinate relative to the universe center.
+ * \see TranslateWorldToScreen
+ */
 void Camera::TranslateScreenToWorld( Coordinate &screen, Coordinate &world ) {
 	int tx, ty;
 
@@ -94,7 +119,8 @@ void Camera::TranslateScreenToWorld( Coordinate &screen, Coordinate &world ) {
 }
 
 
-// returns the most recent camera position change
+/**\brief The current Camera position delta
+ */
 void Camera::GetDelta( double *dx, double *dy ) {
 	if( !dx || !dy ) {
 
@@ -107,16 +133,19 @@ void Camera::GetDelta( double *dx, double *dy ) {
 	*dy = this->dy;
 }
 
-// moves the camera by a delta. this is not the recommended way to move the camera
+/**\brief Moves the camera by a delta.
+ * \note This is not the recommended way to move the camera.
+ */
 void Camera::Move( int dx, int dy ) {
-	this->dx = -dx;
-	this->dy = -dy;
+	this->dx -= dx;
+	this->dy -= dy;
 
 	x -= dx;
 	y -= dy;
 }
 
-// updates camera, including currently focused position
+/**\brief Updates camera, including currently focused position
+ */
 void Camera::Update( void ) {
 	dx = 0;
 	dy = 0;
@@ -125,8 +154,7 @@ void Camera::Update( void ) {
 		//get player acceleration
 		cameraLag += Player::Instance()->GetAcceleration();
 		//use the inverase of the acceleration to reduce camer back to center
-		Coordinate cameraCatchup = Coordinate( -cameraLag.GetX()*0.003,-cameraLag.GetY()*0.003 );
-		cameraLag += cameraCatchup;
+		cameraLag = cameraLag*.997;
 		// until the camera lag is cleaned up and only applies during rapid accel, it's just going
 		// to be turned off
 		cameraLag = 0;
@@ -137,7 +165,9 @@ void Camera::Update( void ) {
 	}
 	
 }
-// "Shakes" the camera based on the duration, intensity, source specified
+
+/**\brief "Shakes" the camera based on the duration, intensity, source specified
+ */
 void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 	Trig *trig = Trig::Instance();
 	float angle;
@@ -153,10 +183,10 @@ void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 		cameraShakeXDec = cameraShakeXOffset/(cameraShakeDur/10);
 		cameraShakeYDec = cameraShakeYOffset/(cameraShakeDur/10);
 	}
-
 }
-// "Shakes" the camera 
-//Note: Shakes the camera 
+
+/**\brief "Shakes" the camera 
+*/
 void Camera::UpdateShake() {
 	if (cameraShakeDur < 1) {
 		cameraShakeXOffset = 0;

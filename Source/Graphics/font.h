@@ -15,13 +15,15 @@
 
 class Font {
 		public:
-			enum XPos{LEFT,	/**< Renders left aligned (default).*/
-				CENTER,			/**< Renders centered on the point.*/
-				RIGHT			/**< Renders right aligned.*/
+			enum XPos{
+				LEFT,   /**< Renders left aligned (default).*/
+				CENTER, /**< Renders centered on the point.*/
+				RIGHT   /**< Renders right aligned.*/
 				};
-			enum YPos{TOP,	/**< Renders top aligned (default).*/
-				MIDDLE,			/**< Renders centered on the point.*/
-				BOTTOM			/**< Renders bottom aligned.*/
+			enum YPos{
+				TOP,    /**< Renders top aligned (default).*/
+				MIDDLE, /**< Renders centered on the point.*/
+				BOTTOM  /**< Renders bottom aligned.*/
 				};
 
 			Font();

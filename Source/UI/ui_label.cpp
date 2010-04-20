@@ -16,6 +16,8 @@
 /**\class Label
  * \brief UI label. */
 
+/**\brief Constructor
+ */
 Label::Label( int x, int y, string label, bool centered) {
 	Rect size;
 	
@@ -30,6 +32,8 @@ Label::Label( int x, int y, string label, bool centered) {
 	this->centered = centered;
 }
 
+/**\brief Draw the Label
+ */
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	

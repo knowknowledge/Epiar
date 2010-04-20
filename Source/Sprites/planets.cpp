@@ -17,8 +17,21 @@
 #include "Engine/weapons.h"
 #include "Sprites/spritemanager.h"
 
+/**\class Planet
+ * \brief A Planet.
+ * 
+ * Planets are where ships congregate.  They have things to buy and sell once you land on them.
+ *
+ *\see Planets
+ *\see Planets_Lua
+ */
+
+/**\brief Blank Constructor
+ */
 Planet::Planet(){}
 
+/**\brief Copy Constructor
+ */
 Planet& Planet::operator=(const Planet& other) {
 	// Check the other Sprite
 	assert( other.GetImage() );
@@ -42,6 +55,8 @@ Planet& Planet::operator=(const Planet& other) {
 	return *this;
 }
 
+/**\brief Constructor using a full Full Description
+ */
 Planet::Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
 	alliance(_alliance),
 	landable(_landable),
@@ -61,10 +76,14 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, string _allianc
 	SetImage(_image);
 	Image::Store(name,GetImage());
 }
-
+ 
+/**\brief Destructor
+ */
 Planet::~Planet() {
 }
 
+/**\brief Parse one player out of an xml node.
+ */
 bool Planet::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
@@ -99,10 +118,14 @@ bool Planet::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
+/**\brief Debug Printing
+ */
 void Planet::_dbg_PrintInfo( void ) {
 	//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
 }
 
+/**\brief List of the Models that are available at this Planet
+ */
 list<Model*> Planet::GetModels() {
 	list<Model*> models;
 	list<Technology*>::iterator techiter;
@@ -117,6 +140,8 @@ list<Model*> Planet::GetModels() {
 	return models;
 }
 
+/**\brief List of the Engines that are available at this Planet
+ */
 list<Engine*> Planet::GetEngines() {
 	list<Engine*> engines;
 	list<Technology*>::iterator techiter;
@@ -131,6 +156,8 @@ list<Engine*> Planet::GetEngines() {
 	return engines;
 }
 
+/**\brief List of the Weapons that are available at this Planet
+ */
 list<Weapon*> Planet::GetWeapons() {
 	list<Weapon*> weapons;
 	list<Technology*>::iterator techiter;
@@ -145,7 +172,8 @@ list<Weapon*> Planet::GetWeapons() {
 	return weapons;
 }
 
-
+/**\brief Save this Planet to an xml node
+ */
 xmlNodePtr Planet::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
@@ -173,10 +201,17 @@ xmlNodePtr Planet::ToXMLNode(string componentName) {
 }
 
 /**\class Planets
- * \brief Planets. */
+ * \brief Collection of all Planets
+ *
+ *\see Planet
+ *\see Planets_Lua
+ */
 
 Planets *Planets::pInstance = 0; // initialize pointer
 
+/**\brief Returns or creates the Planets instance.
+ * \return Pointer to the Planets instance
+ */
 Planets *Planets::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
 		pInstance = new Planets; // create the sold instance
@@ -186,6 +221,15 @@ Planets *Planets::Instance( void ) {
 	return( pInstance );
 }
 
+/**\class Planets_Lua
+ * \brief Lua Interface for dealing with Planets
+ *
+ *\see Planet
+ *\see Planets
+ */
+
+/**\brief Load all Planet related Lua functions
+ */
 void Planets_Lua::RegisterPlanets(lua_State *L){
 	static const luaL_Reg PlanetFunctions[] = {
 		// Normally we would put a "new" function here.
@@ -219,7 +263,8 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);  
 }
 
-
+/**\brief Get a planet by name or id
+ */
 int Planets_Lua::Get(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 ){
@@ -255,6 +300,8 @@ Planet **Planets_Lua::pushPlanet(lua_State *L){
 }
 */
 
+/**\brief Check that the a Lua value really is a Planet
+ */
 Planet *Planets_Lua::checkPlanet(lua_State *L, int index){
 	int *idptr;
 	idptr = (int*)luaL_checkudata(L, index, EPIAR_PLANET);
@@ -269,6 +316,8 @@ Planet *Planets_Lua::checkPlanet(lua_State *L, int index){
 	return (Planet*)s;
 }
 
+/**\brief Get the Name of this planet
+ */
 int Planets_Lua::GetName(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -280,6 +329,8 @@ int Planets_Lua::GetName(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the ID of this planet
+ */
 int Planets_Lua::GetID(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -291,6 +342,8 @@ int Planets_Lua::GetID(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Type of this planet
+ */
 int Planets_Lua::GetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -302,6 +355,8 @@ int Planets_Lua::GetType(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Position of this planet
+ */
 int Planets_Lua::GetPosition(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -314,6 +369,8 @@ int Planets_Lua::GetPosition(lua_State* L){
 	return 2;
 }
 
+/**\brief Get the Alliance of this planet
+ */
 int Planets_Lua::GetAlliance(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -325,6 +382,8 @@ int Planets_Lua::GetAlliance(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Traffic of this planet
+ */
 int Planets_Lua::GetTraffic(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -336,6 +395,8 @@ int Planets_Lua::GetTraffic(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Militia Size of this planet
+ */
 int Planets_Lua::GetMilitiaSize(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -347,6 +408,8 @@ int Planets_Lua::GetMilitiaSize(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Sphere of Influence of this planet
+ */
 int Planets_Lua::GetInfluence(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -358,6 +421,8 @@ int Planets_Lua::GetInfluence(lua_State* L){
 	return 1;
 }
 
+/**\brief Get Landable boolean of this planet
+ */
 int Planets_Lua::GetLandable(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -369,6 +434,8 @@ int Planets_Lua::GetLandable(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Models available at this planet
+ */
 int Planets_Lua::GetModels(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -388,6 +455,8 @@ int Planets_Lua::GetModels(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Engines available at this planet
+ */
 int Planets_Lua::GetEngines(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -407,6 +476,8 @@ int Planets_Lua::GetEngines(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Weapons available at this planet
+ */
 int Planets_Lua::GetWeapons(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {

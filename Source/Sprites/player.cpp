@@ -15,16 +15,20 @@
 
 Player *Player::pInstance = 0;
 
+/**\brief Fetch the current player Instance
+ */
 Player *Player::Instance( void ) {
 	if( pInstance == NULL ) { // is this the first call?
 		LogMsg(ERROR,"Attempting to use Player information when no player is loaded!");
-		//assert(0);
-		CreateNew("Steve");
+		assert(0);
 	}
 
 	return( pInstance );
 }
 
+/**\brief Create a new Player
+ * This is used instead of a normal class constructor
+ */
 void Player::CreateNew(string playerName) {
 	pInstance = new Player;
 	pInstance->name = playerName;
@@ -43,12 +47,16 @@ void Player::CreateNew(string playerName) {
 	Players::Instance()->Add((Component*)pInstance);
 }
 
+/**\brief Create a new Player
+ */
 void Player::LoadLast() {
 	list<string>* names = Players::Instance()->GetNames();
 	// TODO: sort by time
 	Player::Load( *(names->begin()) );
 }
 
+/**\brief Load a given Player
+ */
 void Player::Load(string playerName) {
 	
 	Player* newPlayer = Players::Instance()->GetPlayer(playerName);
@@ -69,19 +77,27 @@ void Player::Load(string playerName) {
 }
 
 
+/**\brief Constructor
+ */
 Player::Player() {
 	this->SetRadarColor( Color::Get(0xFF,0xD7,0) );
 }
 
+/**\brief Destructor
+ */
 Player::~Player() {
 	pInstance = NULL;
 	LogMsg(INFO, "You have been destroyed..." );
 }
 
+/**\brief Run the Player Update
+ */
 void Player::Update( void ) {
 	Ship::Update();
 }
 
+/**\brief Parse one player out of an xml node
+ */
 bool Player::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
@@ -104,6 +120,8 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 	return true;
 }
 
+/**\brief Save this Player to an xml node
+ */
 xmlNodePtr Player::ToXMLNode(string componentName) {
 	char buff[256];
     xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());

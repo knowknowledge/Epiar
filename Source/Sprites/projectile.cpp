@@ -15,6 +15,19 @@
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
 
+/**\class Projectile
+ * \brief Projectiles are the missiles, bullets and lasers as they are flying through space.
+ *
+ * Projectiles are always created by a Ship using a specific Weapon.
+ * The Ship decides where and how the Projectile is created.
+ * The Weapon defines the effect of the projectile.
+ *
+ * \see Ship
+ * \see Weapon
+ */
+
+/**\brief Constructor
+ */
 Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* _weapon)
 {
 	// All Projectiles get these
@@ -43,10 +56,24 @@ Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate f
 	SetMomentum( momentum );
 }
 
+/**\brief Destructor
+ */
 Projectile::~Projectile(void)
 {
 }
 
+/**\brief Update the Projectile
+ *
+ * Projectiles do all the normal Sprite things like moving.
+ * Projectiles check for collisions with nearby Ships, and if they collide,
+ * they deal damage to that ship. Note that since each projectile knows which ship fired it and will never collide with them.
+ *
+ * Projectiles have a life time limit (in milli-seconds).  Each tick they need
+ * to check if they've lived to long and need to disappear.
+ *
+ * Projectiles have the ability to track down a specific target.  This only
+ * means that they will turn slightly to head towards their target.
+ */
 void Projectile::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	SpriteManager *sprites = SpriteManager::Instance();
@@ -73,11 +100,10 @@ void Projectile::Update( void ) {
 	// Track the target
 	Sprite* target = sprites->GetSpriteByID( targetID );
 	float tracking = weapon->GetTracking();
-	if( target != NULL && tracking > 0.01f ) {
+	if( target != NULL && tracking > 0.00000001f ) {
 		float angleTowards = normalizeAngle( ( target->GetWorldPosition() - this->GetWorldPosition() ).GetAngle() - GetAngle() );
 		SetMomentum( GetMomentum().RotateBy( angleTowards*tracking ) );
 		SetAngle( GetMomentum().GetAngle() );
 	}
-
 }
 

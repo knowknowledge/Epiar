@@ -11,18 +11,31 @@
 #include "Utilities/file.h"
 #include "Utilities/components.h"
 
+/**\class Component
+ * \brief A generic entity that is loaded and saved to XML
+ */
+
+/**\class Components
+ * \brief A collection for all similar Component Instances
+ */
+
+/**\brief Get the Names of all Components in this collection
+ */
 list<string>* Components::GetNames() {
 	return new list<string>(names);
 }
 
 
-
+/**\brief Add a Component to this collection
+ */
 void Components::Add(Component* component) {
 	string name = component->GetName();
 	names.push_back( name );
 	components[name] = component;
 }
 
+/**\brief Add a Component to this collection
+ */
 void Components::AddOrReplace(Component* component) {
 	string name = component->GetName();
 	map<string,Component*>::iterator val = components.find( name );
@@ -36,12 +49,17 @@ void Components::AddOrReplace(Component* component) {
 	}
 }
 
+/**\brief Fetch a Component by its name
+ * \return Component pointer or NULL
+ */
 Component* Components::Get(string name) {
 	map<string,Component*>::iterator val = components.find( name );
 	if( val == components.end() ) return NULL;
 	return val->second;
 }
 
+/**\brief Load an XML file
+ */
 bool Components::Load(string filename) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
@@ -137,6 +155,8 @@ bool Components::Load(string filename) {
 	return true;
 }
 
+/**\brief Save all Components to an XML file
+ */
 bool Components::Save(string filename) {
     xmlDocPtr doc = NULL;       /* document pointer */
     xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
