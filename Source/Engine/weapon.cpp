@@ -28,7 +28,7 @@ Weapon::Weapon(void) :
 	payload(0),
 	velocity(0),
 	acceleration(0),
-	ammoType(0),
+	ammoType(energy_ammo),
 	ammoConsumption(0),
 	fireDelay(0),
 	lifetime(0),
@@ -76,7 +76,7 @@ Weapon& Weapon::operator=(const Weapon& other) {
  */
 Weapon::Weapon( string _name, Image* _image, Image* _pic,
 		int _weaponType, int _payload, int _velocity, int _acceleration,
-		int _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
+		AmmoType _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
 	sound(_sound),
 	image(_image),
 	pic(_pic),
@@ -125,8 +125,10 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 		if (atoi( value.c_str()) != 0)
 			acceleration = atoi( value.c_str() );
 	} else PPA_MATCHES( "ammoType" ) {
-		if (atoi( value.c_str()) != 0)
-			ammoType = atoi( value.c_str() );
+		ammoType = AmmoNameToType(value);
+		if(ammoType>=max_ammo) {
+			// This is an Error!
+		}
 	} else PPA_MATCHES( "ammoConsumption" ) {
 		ammoConsumption = atoi( value.c_str() );
 	} else PPA_MATCHES( "fireDelay" ) {
@@ -174,8 +176,7 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "velocity", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetAcceleration() );
 	xmlNewChild(section, NULL, BAD_CAST "acceleration", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->GetAmmoType() );
-	xmlNewChild(section, NULL, BAD_CAST "ammoType", BAD_CAST buff );
+	xmlNewChild(section, NULL, BAD_CAST "ammoType", BAD_CAST AmmoTypeToName(this->GetAmmoType()).c_str() );
 	snprintf(buff, sizeof(buff), "%d", this->GetAmmoConsumption() );
 	xmlNewChild(section, NULL, BAD_CAST "ammoConsumption", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetFireDelay() );
@@ -222,4 +223,27 @@ void Weapon::_dbg_PrintInfo( void ) {
  * \var Weapon::sound
  *  \brief Pointer to the Sound object
  */
+
+const string AmmoNames[] = {
+	"Energy",
+	"Bullet",
+	"Missile",
+	"Torpedo",
+};
+
+string Weapon::AmmoTypeToName(AmmoType type) {
+	return AmmoNames[(int)type];
+}
+
+AmmoType Weapon::AmmoNameToType(string typeName ) {
+	int i;
+	for(i=0;i<max_ammo;i++){
+		if(AmmoNames[i]==typeName)
+			return (AmmoType)i;
+	}
+	// Didn't find anything
+	cerr<<"There is no Ammo Type '"<<typeName<<"'"<<endl;
+	return max_ammo;
+}
+
 

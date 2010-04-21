@@ -11,7 +11,7 @@
     <payload>20</payload>
     <velocity>10</velocity>
     <acceleration>2</acceleration>
-    <ammoType>3</ammoType>
+    <ammoType>Energy</ammoType>
     <ammoConsumption>0</ammoConsumption>
     <fireDelay>200</fireDelay>
     <lifetime>1000</lifetime>
@@ -26,7 +26,7 @@
     <payload>2</payload>
     <velocity>10</velocity>
     <acceleration>0</acceleration>
-    <ammoType>5</ammoType>
+    <ammoType>Bullet</ammoType>
     <ammoConsumption>0</ammoConsumption>
     <fireDelay>70</fireDelay>
     <lifetime>1000</lifetime>
@@ -41,7 +41,7 @@
     <payload>300</payload>
     <velocity>10</velocity>
     <acceleration>2</acceleration>
-    <ammoType>1</ammoType>
+    <ammoType>Missile</ammoType>
     <ammoConsumption>1</ammoConsumption>
     <fireDelay>500</fireDelay>
     <lifetime>3000</lifetime>
@@ -57,7 +57,7 @@
     <payload>200</payload>
     <velocity>5</velocity>
     <acceleration>2</acceleration>
-    <ammoType>2</ammoType>
+    <ammoType>Torpedo</ammoType>
     <ammoConsumption>1</ammoConsumption>
     <fireDelay>1000</fireDelay>
     <lifetime>30000</lifetime>
@@ -73,7 +73,7 @@
     <payload>30</payload>
     <velocity>20</velocity>
     <acceleration>2</acceleration>
-    <ammoType>4</ammoType>
+    <ammoType>Energy</ammoType>
     <ammoConsumption>0</ammoConsumption>
     <fireDelay>200</fireDelay>
     <lifetime>500</lifetime>
