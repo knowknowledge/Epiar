@@ -301,6 +301,7 @@ int AI_Lua::ShipChangeWeapon(lua_State* L){
 
 /**\brief Lua callable function to add ammo to a ship's weapon.
  * \sa Ship::addAmmo
+ * \todo This should be passed an Ammo Type, not a weapon name
  */
 int AI_Lua::ShipAddAmmo(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -309,7 +310,12 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 		if(ai==NULL) return 0;
 		string weaponName = luaL_checkstring (L, 2);
 		int qty = (int) luaL_checknumber (L, 3);
-		(ai)->addAmmo(weaponName,qty);
+
+		Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
+		if(weapon==NULL){
+			return luaL_error(L, "There is no such weapon as a '%s'", weaponName.c_str());
+		}
+		(ai)->addAmmo(weapon->GetAmmoType(),qty);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n); 
 	}

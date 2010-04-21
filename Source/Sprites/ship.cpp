@@ -35,6 +35,9 @@ Ship::Ship() : nonplayersound( 0.4f )
 	status.lastWeaponChangeAt = 0;
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
+	for(int a=0;a<max_ammo;a++){
+		ammo[a]=0;
+	}
 
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
@@ -275,7 +278,7 @@ FireStatus Ship::Fire() {
 		return FireNotReady;
 	}
 	// Check that there is sufficient ammo
-	else if( ammo.find(currentWeapon->GetAmmoType())->second < currentWeapon->GetAmmoConsumption() ) { 
+	else if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
 		return FireNoAmmo;
 	} else {
 		//Calculate the offset needed by the ship to fire infront of the ship
@@ -307,7 +310,7 @@ FireStatus Ship::Fire() {
 		//track number of ticks the last fired occured
 		status.lastFiredAt = Timer::GetTicks();
 		//reduce ammo
-		ammo.find(currentWeapon->GetAmmoType())->second -=  currentWeapon->GetAmmoConsumption();
+		ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
 
 		return FireSuccess;
 	}
@@ -350,19 +353,11 @@ void Ship::removeShipWeapon(int pos){
 }
 
 /**\brief Adds ammo to the ship.
- * \param weaponName String naming the weapon
+ * \param AmmoType Type of ammo that should be added.
  * \param qty Quantity to add
  */
-void Ship::addAmmo(string weaponName, int qty){
-	Weapons *weapons = Weapons::Instance();
-	Weapon* currentWeapon = weapons->GetWeapon(weaponName);
-	
-	if (ammo.find(currentWeapon->GetAmmoType()) == ammo.end() ) {
-		ammo.insert ( pair<int,int>(currentWeapon->GetAmmoType(),qty) );
-	} else {
-		ammo.find(currentWeapon->GetAmmoType())->second += qty;
-	}
-	
+void Ship::addAmmo(AmmoType ammoType, int qty){
+	ammo[ammoType] += qty;
 }
 
 /**\brief Get angle to rotate towards target.
@@ -413,7 +408,15 @@ Weapon* Ship::getCurrentWeapon() {
 int Ship::getCurrentAmmo() {
 	if(shipWeapons.size()==0) return 0;
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-	return ammo.find(currentWeapon->GetAmmoType())->second;
+	return ammo[currentWeapon->GetAmmoType()];
+}
+
+/**\brief Gets the ammo of a certain type.
+ * \return Integer count of ammo
+ */
+int Ship::getAmmo(AmmoType type) {
+	assert(type<max_ammo);
+	return ammo[type];
 }
 
 /**\brief Gets a std::map of the current weapon system.
@@ -422,11 +425,9 @@ int Ship::getCurrentAmmo() {
 map<Weapon*,int> Ship::getWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
 	Weapon* thisWeapon;
-	int thisAmmo;
 	for(unsigned int i=0; i<shipWeapons.size(); i++){
 		thisWeapon = this->shipWeapons[i];
-		thisAmmo = this->ammo.find(thisWeapon->GetAmmoType())->second;
-		weaponPack.insert( make_pair(thisWeapon,thisAmmo) );
+		weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
 	}
 	return weaponPack;
 }

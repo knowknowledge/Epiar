@@ -41,7 +41,7 @@ class Ship : public Sprite {
 		void addShipWeapon(Weapon *i);
 		void addShipWeapon(string weaponName);
 		void removeShipWeapon(int pos);
-		void addAmmo(string weaponName, int qty);
+		void addAmmo(AmmoType ammoType, int qty);
 
 		/* Status functions */
 		float directionTowards(Coordinate c);
@@ -49,6 +49,7 @@ class Ship : public Sprite {
 		float getHullIntegrityPct();
 		Weapon* getCurrentWeapon();
 		int getCurrentAmmo();
+		int getAmmo(AmmoType type);
 		map<Weapon*,int> getWeaponsAndAmmo();
 		Engine* GetEngine( void ) const { return engine; }
 		
@@ -73,7 +74,7 @@ class Ship : public Sprite {
 		} status;
 
 		// Weapon Systems
-		multimap <int,int> ammo; //contains the quantity of each ammo type on the ship
+		int ammo[max_ammo]; //contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons;
 		float nonplayersound;	// Ratio for reducing non-player sounds
 };

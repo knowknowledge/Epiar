@@ -115,7 +115,13 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 		SetEngine( Engines::Instance()->GetEngine( value ) );
 	} else PPA_MATCHES( "weapon" ) {
 		addShipWeapon( value );
-		addAmmo( value, 100 );
+	} else if(Weapon::AmmoNameToType(subName)<max_ammo){
+	// Check if this is an Ammo listing
+		addAmmo( Weapon::AmmoNameToType(subName), atoi(value.c_str()) );
+		LogMsg(DEBUG1,"Adding %d Ammo of type %s",atoi(value.c_str()),subName.c_str() );
+	} else {
+		LogMsg(ERROR,"The Player Class cannot understand the XML key '%s'.",subName.c_str() );
+		return false;
 	}
 	return true;
 }
@@ -137,6 +143,12 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	while( it!=weapons.end() ) {
 		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
 		++it;
+	}
+	for(int a=0;a<max_ammo;a++){
+		if(getAmmo(AmmoType(a))){
+			snprintf(buff, sizeof(buff), "%d", getAmmo(AmmoType(a)) );
+			xmlNewChild(section, NULL, BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str(), BAD_CAST buff );
+		}
 	}
 	
 	return section;
