@@ -51,6 +51,7 @@ ModelEditorLayout = {
 	{"Mass", "Number"},
 	{"MaxHull", "Integer"},
 	{"MaxSpeed", "Integer"},
+	{"Cargo", "Integer"},
 	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
 	}
 

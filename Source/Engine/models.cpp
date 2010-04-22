@@ -15,7 +15,16 @@
 
 /**\brief Creates an empty Model object.
  */
-Model::Model(): image(NULL),mass(0.0){
+Model::Model()
+	:image(NULL)
+	,mass(0.0f)
+	,thrustOffset(0)
+	,rotPerSecond(0.0f)
+	,maxSpeed(0.0f)
+	,msrp(0)
+	,cargoSpace(0)
+	,maxEnergyAbsorption(0)
+{
 	SetName("dead");
 }
 
@@ -29,6 +38,7 @@ Model& Model::operator=(const Model& other) {
 	rotPerSecond = other.rotPerSecond;
 	maxSpeed = other.maxSpeed;
 	msrp = other.msrp;
+	cargoSpace = other.cargoSpace;
 	maxEnergyAbsorption = other.maxEnergyAbsorption;
 	return *this;
 }
@@ -42,15 +52,17 @@ Model& Model::operator=(const Model& other) {
  * \param _maxSpeed Maximum speed
  * \param _maxEnergyAbsorption Maximum damage it can take
  * \param _msrp Price
+ * \param _cargoSpace Tons of cargo space
  */
 Model::Model( string _name, Image* _image, float _mass,
-		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp) :
+		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp, int _cargoSpace) :
 	image(_image),
 	mass(_mass),
 	thrustOffset(_thrustOffset),
 	rotPerSecond(_rotPerSecond),
 	maxSpeed(_maxSpeed),
 	msrp(_msrp),
+	cargoSpace(_cargoSpace),
 	maxEnergyAbsorption(_maxEnergyAbsorption)
 {
 	SetName(_name);
@@ -74,6 +86,8 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 		maxSpeed = (float)atof( value.c_str() );
 	} else PPA_MATCHES( "msrp" ) {
 		msrp = atoi( value.c_str() );
+	} else PPA_MATCHES( "cargoSpace" ) {
+		cargoSpace = atoi( value.c_str() );
 	} else PPA_MATCHES( "maxEnergyAbsorption" ) {
 		maxEnergyAbsorption = (short)atoi( value.c_str() );
 	}
@@ -117,6 +131,8 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );
+	xmlNewChild(section, NULL, BAD_CAST "cargoSpace", BAD_CAST buff );
 
 	return section;
 }
