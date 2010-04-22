@@ -5,14 +5,15 @@ componentWins = {}
 --- View components
 function componentDebugger()
 	if componentWindow ~= nil then return end
-	componentWindow = UI.newWindow( 150,10,740,70, "Game Component Debugging",
-		UI.newButton( 10,30,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
-		UI.newButton(110,30,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
-		UI.newButton(210,30,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
-		UI.newButton(310,30,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
-		UI.newButton(410,30,100,30,"Technology","technologyViewer()"),
-		UI.newButton(510,30,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(630,30,100,30,"Save","Epiar.saveComponents()" )
+	componentWindow = UI.newWindow( 50,10,840,70, "Game Component Debugging",
+		UI.newButton(  10,30,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
+		UI.newButton(110,30,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
+		UI.newButton(210,30,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
+		UI.newButton(310,30,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
+		UI.newButton(410,30,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
+		UI.newButton(510,30,100,30,"Technology","technologyViewer()"),
+		UI.newButton(610,30,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
+		UI.newButton(730,30,100,30,"Save","Epiar.saveComponents()" )
 	)
 end
 componentDebugger()
@@ -25,6 +26,11 @@ AllianceEditorLayout = {
 	{"Aggressiveness", "Number"},
 	{"AttackSize", "Integer"},
 	--{"Illegal", "List"},
+	}
+
+CommodityEditorLayout = {
+	{"Name", "String"},
+	{"MSRP", "Number"},
 	}
 
 EngineEditorLayout = {
@@ -79,6 +85,7 @@ WeaponEditorLayout = {
 
 EditorLayouts = {
 	Alliance=AllianceEditorLayout,
+	Commodity=CommodityEditorLayout,
 	Engine=EngineEditorLayout,
 	Model=ModelEditorLayout,
 	Planet=PlanetEditorLayout,

@@ -4,36 +4,35 @@
   <version-minor>7</version-minor>
   <version-macro>0</version-macro>
   <commodity>
-    <name>Gold</name>
-    <MSRP>200</MSRP>
-  </commodity>
-  <commodity>
-    <name>Pork Bellies</name>
-    <MSRP>10</MSRP>
-  </commodity>
-  <commodity>
-    <name>Luxury Items</name>
-    <MSRP>500</MSRP>
-  </commodity>
-  <commodity>
-    <name>Precious Metals</name>
-    <MSRP>80</MSRP>
-  </commodity>
-  <commodity>
     <name>Construction Materials</name>
-    <MSRP>60</MSRP>
-  </commodity>
-  <commodity>
-    <name>Sheep</name>
-    <MSRP>30</MSRP>
+    <msrp>60</msrp>
   </commodity>
   <commodity>
     <name>Energy Crystals</name>
-    <MSRP>70</MSRP>
+    <msrp>70</msrp>
   </commodity>
   <commodity>
     <name>Fuel Cells</name>
-    <MSRP>50</MSRP>
+    <msrp>50</msrp>
   </commodity>
-
+  <commodity>
+    <name>Gold</name>
+    <msrp>200</msrp>
+  </commodity>
+  <commodity>
+    <name>Luxury Items</name>
+    <msrp>500</msrp>
+  </commodity>
+  <commodity>
+    <name>Pork Bellies</name>
+    <msrp>1000</msrp>
+  </commodity>
+  <commodity>
+    <name>Precious Metals</name>
+    <msrp>80</msrp>
+  </commodity>
+  <commodity>
+    <name>Sheep</name>
+    <msrp>30</msrp>
+  </commodity>
 </commodities>

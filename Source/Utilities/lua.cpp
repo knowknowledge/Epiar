@@ -226,6 +226,7 @@ void Lua::RegisterFunctions() {
 		{"moveCamera", &Lua::moveCamera},
 		{"shakeCamera", &Lua::shakeCamera},
 		{"focusCamera", &Lua::focusCamera},
+		{"commodities", &Lua::getCommodityNames},
 		{"alliances", &Lua::getAllianceNames},
 		{"models", &Lua::getModelNames},
 		{"weapons", &Lua::getWeaponNames},
@@ -240,6 +241,7 @@ void Lua::RegisterFunctions() {
 		{"nearestPlanet", &Lua::getNearestPlanet},
 		{"RegisterKey", &Input::RegisterKey},  
 		{"UnRegisterKey", &Input::UnRegisterKey},  
+		{"getCommodityInfo", &Lua::getCommodityInfo},
 		{"getAllianceInfo", &Lua::getAllianceInfo},
 		{"getModelInfo", &Lua::getModelInfo},
 		{"getPlanetInfo", &Lua::getPlanetInfo},
@@ -434,12 +436,20 @@ int Lua::focusCamera(lua_State *L){
 	return 0;
 }
 
+int Lua::getCommodityNames(lua_State *L){
+	list<string> *names = Commodities::Instance()->GetNames();
+	pushNames(L,names);
+	delete names;
+    return 1;
+}
+
 int Lua::getAllianceNames(lua_State *L){
 	list<string> *names = Alliances::Instance()->GetNames();
 	pushNames(L,names);
 	delete names;
     return 1;
 }
+
 int Lua::getWeaponNames(lua_State *L){
 	list<string> *names = Weapons::Instance()->GetNames();
 	pushNames(L,names);
@@ -771,6 +781,20 @@ int Lua::getNearestPlanet(lua_State *L) {
 	return Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
 }
 
+int Lua::getCommodityInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
+	string name = (string)luaL_checkstring(L,1);
+	Commodity *commodity = Commodities::Instance()->GetCommodity(name);
+
+    lua_newtable(L);
+	setField("Name", commodity->GetName().c_str());
+	setField("MSRP", commodity->GetMSRP());
+
+    return 1;
+}
+
 int Lua::getAllianceInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -936,6 +960,18 @@ int Lua::setInfo(lua_State *L) {
 		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency);
 		Alliances::Instance()->AddOrReplace( thisAlliance );
 
+	} else if(kind == "Commodity"){
+        string name = getStringField(2,"Name");
+        int msrp = getIntField(2,"MSRP");
+
+		Commodity* thisCommodity= new Commodity(name,msrp);
+		Commodities::Instance()->AddOrReplace( thisCommodity );
+
+		LogMsg(INFO, "Saved Commodity '%s' at %d Credits per Ton", name.c_str(), msrp);
+		Commodity* com = Commodities::Instance()->GetCommodity(name);
+		LogMsg(INFO, "CHECK:Commodity '%s' at %d Credits per Ton", thisCommodity->GetName().c_str(), thisCommodity->GetMSRP());
+		LogMsg(INFO, "CHECK:Commodity '%s' at %d Credits per Ton", com->GetName().c_str(), com->GetMSRP());
+
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
 		string picture = getStringField(2,"Picture");
@@ -1058,6 +1094,7 @@ int Lua::setInfo(lua_State *L) {
 
 int Lua::saveComponents(lua_State *L) {
     Alliances::Instance()->Save("Resources/Definitions/alliances-default.xml");
+    Commodities::Instance()->Save("Resources/Definitions/commodities-default.xml");
     Models::Instance()->Save("Resources/Definitions/models-default.xml");
     Weapons::Instance()->Save("Resources/Definitions/weapons-default.xml");
     Engines::Instance()->Save("Resources/Definitions/engines-default.xml");

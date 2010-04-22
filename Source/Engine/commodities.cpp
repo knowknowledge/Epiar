@@ -34,7 +34,7 @@ Commodity& Commodity::operator=(const Commodity& other){
 Commodity::Commodity( string _name, int _msrp )
 	:msrp(_msrp)
 {
-	SetName(name);
+	SetName(_name);
 }
 
 /**\brief Parser to parse the XML file.

@@ -67,6 +67,7 @@ class Lua {
 
 
 		// Game Components
+		static int getCommodityNames(lua_State *L);
 		static int getAllianceNames(lua_State *L);
 		static int getEngineNames(lua_State *L);
 		static int getModelNames(lua_State *L);
@@ -79,6 +80,7 @@ class Lua {
 		static int getMSRP(lua_State *L);
 
 		// Editor Commands
+		static int getCommodityInfo(lua_State *L);
 		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
