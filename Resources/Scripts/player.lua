@@ -1,6 +1,5 @@
 -- Use this script for code directly to the Players
 
-player_credits = 10000
 
 playerCommands = {
 	-- Each command should be a table
@@ -105,7 +104,7 @@ function createHUD()
 	local qx,qy = coordinateToQuadrant(x,y)
 	pos = HUD.newStatus("Coordinate:",130,1,string.format("( %d , %d )",x,y))
 	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
-	creditBar = HUD.newStatus("Credits:",130,1,string.format("$%d",player_credits))
+	creditBar = HUD.newStatus("Credits:",130,1,string.format("$%d",0))
 
 	-- Weapon and Armor Status Bars
 	myhull = HUD.newStatus("HULL:",100,0,1.0)
@@ -130,7 +129,7 @@ updateHUD = function ()
 	local qx,qy = coordinateToQuadrant(x,y)
 	pos:setStatus(string.format("( %d , %d )",x,y))
 	quad:setStatus(string.format("( %d , %d )",qx,qy))
-	creditBar:setStatus(string.format("$%d",player_credits))
+	creditBar:setStatus(string.format("$%d", PLAYER:GetCredits()))
 
 	-- Update Weapons and Armor
 	myhull:setStatus(PLAYER:GetHull())

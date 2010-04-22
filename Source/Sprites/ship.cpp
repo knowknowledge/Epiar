@@ -360,6 +360,12 @@ void Ship::addAmmo(AmmoType ammoType, int qty){
 	ammo[ammoType] += qty;
 }
 
+/**\brief Set the number of credits
+ */
+void Ship::SetCredits(unsigned int _credits) {
+	credits = _credits;
+}
+
 /**\brief Get angle to rotate towards target.
  * \param target Coordinate of target
  * \return angle towards target

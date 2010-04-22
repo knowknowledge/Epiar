@@ -265,10 +265,11 @@ registerPlan(aimCenter)
 --- Buys a ship
 function buyShip(model)
 	price = Epiar.getMSRP(model)
+	player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
 		currentModel = PLAYER:GetModelName()
 		if currentModel ~= model then
-			player_credits = player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel))
+			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
 			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
 			PLAYER:SetModel(model)
 			PLAYER:Repair(10000)
@@ -284,8 +285,9 @@ end
 --- Buys a weapon
 function buyWeapon(weapon)
 	price = Epiar.getMSRP(weapon)
+	player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
-		player_credits = player_credits - price
+		PLAYER:SetCredits( player_credits - price )
 		weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[weapon]~=nil then
 			PLAYER:AddAmmo(weapon,100)
@@ -305,8 +307,9 @@ end
 --- Buys an Engine
 function buyEngine(engine)
 	price = Epiar.getMSRP(engine)
+	player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
-		player_credits = player_credits - price
+		PLAYER:SetCredits( player_credits - price )
 		HUD.newAlert("Enjoy your new "..engine.." system for "..price.." credits")
 		PLAYER:SetEngine(engine)
 	else

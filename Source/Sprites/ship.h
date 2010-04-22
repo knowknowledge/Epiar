@@ -42,6 +42,7 @@ class Ship : public Sprite {
 		void addShipWeapon(string weaponName);
 		void removeShipWeapon(int pos);
 		void addAmmo(AmmoType ammoType, int qty);
+		void SetCredits(unsigned int _credits);
 
 		/* Status functions */
 		float directionTowards(Coordinate c);
@@ -52,6 +53,7 @@ class Ship : public Sprite {
 		int getAmmo(AmmoType type);
 		map<Weapon*,int> getWeaponsAndAmmo();
 		Engine* GetEngine( void ) const { return engine; }
+		unsigned int GetCredits() { return credits; }
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
@@ -77,6 +79,10 @@ class Ship : public Sprite {
 		int ammo[max_ammo]; //contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons;
 		float nonplayersound;	// Ratio for reducing non-player sounds
+
+		// Economic Stuff
+		unsigned int credits;
+		// TODO: Commodities
 };
 
 #endif // __H_SHIP__

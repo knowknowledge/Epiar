@@ -44,6 +44,8 @@ void Player::CreateNew(string playerName) {
 	Engine* defaultEngine = Engines::Instance()->GetEngine( "Altaire Corp. NM66 Sublight Thrusters" );
 	pInstance->SetEngine( defaultEngine );
 
+	pInstance->SetCredits(2000);
+
 	Players::Instance()->Add((Component*)pInstance);
 }
 
@@ -115,6 +117,8 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 		SetEngine( Engines::Instance()->GetEngine( value ) );
 	} else PPA_MATCHES( "weapon" ) {
 		addShipWeapon( value );
+	} else PPA_MATCHES( "credits" ) {
+		SetCredits( atoi(value.c_str()) );
 	} else if(Weapon::AmmoNameToType(subName)<max_ammo){
 	// Check if this is an Ammo listing
 		addAmmo( Weapon::AmmoNameToType(subName), atoi(value.c_str()) );
@@ -138,6 +142,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "model", BAD_CAST this->GetModelName().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngineName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
+	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
 	map<Weapon*,int> weapons = this->getWeaponsAndAmmo();
 	map<Weapon*,int>::iterator it = weapons.begin();
 	while( it!=weapons.end() ) {
