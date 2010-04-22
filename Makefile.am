@@ -17,7 +17,7 @@ Epiar_SOURCES = Source/main.cpp Source/AI/ai.cpp Source/AI/ai_lua.cpp Source/Inp
                 Source/Engine/console.cpp Source/Engine/quadrant.cpp Source/UI/ui_textbox.cpp Source/Utilities/quadtree.cpp Source/Sprites/effects.cpp \
                 Source/Utilities/resource.cpp Source/UI/ui_checkbox.cpp Source/Audio/audio.cpp Source/Audio/music.cpp Source/Audio/sound.cpp \
                 Source/Utilities/components.cpp Source/Audio/audio_lua.cpp Source/UI/ui_slider.cpp Source/UI/ui_tabs.cpp Source/Sprites/gate.cpp \
-                Source/UI/ui_scrollbar.cpp Source/Utilities/ArgParser.cpp Source/UI/ui_container.cpp
+                Source/UI/ui_scrollbar.cpp Source/Utilities/ArgParser.cpp Source/UI/ui_container.cpp Source/Engine/commodities.cpp
 
 Epiar_LDADD = Source/Lua/src/liblua.a
 

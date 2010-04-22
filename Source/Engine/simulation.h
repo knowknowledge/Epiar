@@ -9,6 +9,7 @@
 #ifndef __H_SIMULATION__
 #define __H_SIMULATION__
 
+#include "Engine/commodities.h"
 #include "Engine/alliances.h"
 #include "Engine/engines.h"
 #include "Engine/models.h"
@@ -35,8 +36,9 @@ class Simulation {
 		bool Parse( void );
 	
 		string filename;
-		string planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename, technologiesFilename, playersFilename;
+		string commoditiesFilename, planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename, technologiesFilename, playersFilename;
 		
+		Commodities *commodities;
 		Planets *planets;
 		Engines *engines;
 		Models *models;

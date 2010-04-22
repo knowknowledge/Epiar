@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<commodities>
+  <version-major>0</version-major>
+  <version-minor>7</version-minor>
+  <version-macro>0</version-macro>
+  <commodity>
+    <name>Gold</name>
+    <MSRP>200</MSRP>
+  </commodity>
+  <commodity>
+    <name>Pork Bellies</name>
+    <MSRP>10</MSRP>
+  </commodity>
+  <commodity>
+    <name>Luxury Items</name>
+    <MSRP>500</MSRP>
+  </commodity>
+  <commodity>
+    <name>Precious Metals</name>
+    <MSRP>80</MSRP>
+  </commodity>
+  <commodity>
+    <name>Construction Materials</name>
+    <MSRP>60</MSRP>
+  </commodity>
+  <commodity>
+    <name>Sheep</name>
+    <MSRP>30</MSRP>
+  </commodity>
+  <commodity>
+    <name>Energy Crystals</name>
+    <MSRP>70</MSRP>
+  </commodity>
+  <commodity>
+    <name>Fuel Cells</name>
+    <MSRP>50</MSRP>
+  </commodity>
+
+</commodities>

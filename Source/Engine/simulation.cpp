@@ -11,6 +11,7 @@
 #include "Audio/music.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
+#include "Engine/commodities.h"
 #include "Engine/alliances.h"
 #include "Engine/technologies.h"
 #include "Engine/starfield.h"
@@ -36,6 +37,7 @@ bool Simulation::paused = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
+	commodities = Commodities::Instance();
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
@@ -49,6 +51,7 @@ Simulation::Simulation( void ) {
 /**\brief Loads a simulation based on the XML file.
  */
 Simulation::Simulation( string filename ) {
+	commodities = Commodities::Instance();
 	engines = Engines::Instance();
 	planets = Planets::Instance();
 	models = Models::Instance();
@@ -271,6 +274,12 @@ bool Simulation::Parse( void ) {
 		} else {
 			char *sectionName = (char *)cur->name;
 
+			if( !strcmp( sectionName, "commodities" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				commoditiesFilename = (char *)key;
+				xmlFree( key );
+				LogMsg(INFO, "Commodities filename is %s.", commoditiesFilename.c_str() );
+			}
 			if( !strcmp( sectionName, "planets" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				planetsFilename = (char *)key;
@@ -323,6 +332,9 @@ bool Simulation::Parse( void ) {
 	LogMsg(INFO, "'%s' parsing done. File is version %d.%d.%d.", filename.c_str(), versionMajor, versionMinor, versionMacro );
 
 	// Now load the various subsystems
+	if( commodities->Load( commoditiesFilename ) != true ) {
+		LogMsg(ERROR, "There was an error loading the commodities from '%s'.", commoditiesFilename.c_str() );
+	}
 	if( engines->Load( enginesFilename ) != true ) {
 		LogMsg(ERROR, "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
 	}
