@@ -12,6 +12,7 @@
 
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
+#include "Engine/commodities.h"
 #include "Engine/weapon.h"
 #include "Sprites/projectile.h"
 #include <map>
@@ -42,9 +43,14 @@ class Ship : public Sprite {
 		void addShipWeapon(string weaponName);
 		void removeShipWeapon(int pos);
 		void addAmmo(AmmoType ammoType, int qty);
-		void SetCredits(unsigned int _credits);
 
-		/* Status functions */
+		// Economic Functions
+		void SetCredits(unsigned int _credits);
+		map<Commodity*,unsigned int> getCargo();
+		int StoreCommodities(string commodity, unsigned int count);
+		int DiscardCommodities(string commodity, unsigned int count);
+
+		// Status functions
 		float directionTowards(Coordinate c);
 		float directionTowards(float angle);
 		float getHullIntegrityPct();
@@ -54,6 +60,7 @@ class Ship : public Sprite {
 		map<Weapon*,int> getWeaponsAndAmmo();
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
+		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
@@ -70,6 +77,8 @@ class Ship : public Sprite {
 			unsigned int lastWeaponChangeAt; //number of where last weapon change occcured
 			unsigned int lastFiredAt; //number of ticks where last fire event occured
 			unsigned int selectedWeapon;
+
+			unsigned int cargoSpaceUsed; // Tons of cargo space that are currently filled
 			
 			/* Flags */
 			bool isAccelerating; // cleared by update, set by accelerate (so it's always updated twice a loop)
@@ -82,7 +91,7 @@ class Ship : public Sprite {
 
 		// Economic Stuff
 		unsigned int credits;
-		// TODO: Commodities
+		map<Commodity*,unsigned int> commodities;
 };
 
 #endif // __H_SHIP__

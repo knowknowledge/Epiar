@@ -35,6 +35,7 @@ Ship::Ship() : nonplayersound( 0.4f )
 	status.lastWeaponChangeAt = 0;
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
+	status.cargoSpaceUsed = 0;
 	for(int a=0;a<max_ammo;a++){
 		ammo[a]=0;
 	}
@@ -364,6 +365,66 @@ void Ship::addAmmo(AmmoType ammoType, int qty){
  */
 void Ship::SetCredits(unsigned int _credits) {
 	credits = _credits;
+}
+
+/**\brief Set the number of credits
+ */
+map<Commodity*,unsigned int> Ship::getCargo() {
+	map<Commodity*,unsigned int> retMap(commodities);
+	return retMap;
+}
+
+/**\brief Store a number of tons of a commodity
+ */
+int Ship::StoreCommodities(string commodity, unsigned int count) {
+	Commodity* com = Commodities::Instance()->GetCommodity(commodity);
+
+	// Ensure that we have enough space to store this cargo
+	unsigned int cargoSpaceRemaining = (model->GetCargoSpace() - status.cargoSpaceUsed);
+	if( count > cargoSpaceRemaining ) {
+		LogMsg(INFO, "Cannot Store all %d tons of %s. Only enough room for %d", count, commodity.c_str(), cargoSpaceRemaining);
+		count = cargoSpaceRemaining;
+	}
+
+	// Store this cargo with similar cargo
+	map<Commodity*,unsigned int>::iterator iter = commodities.find(com);
+	if(iter!=commodities.end()){
+		iter->second += count;
+	} else {
+		commodities[com] = count;
+	}
+
+	status.cargoSpaceUsed+=count;
+	return count;
+}
+
+/**\brief Discard a number of tons of a commodity
+ */
+int Ship::DiscardCommodities(string commodity, unsigned int count) {
+	Commodity* com = Commodities::Instance()->GetCommodity(commodity);
+
+	// Ensure that we have some of this cargo
+	map<Commodity*,unsigned int>::iterator iter = commodities.find(com);
+	if(iter==commodities.end()){
+		LogMsg(INFO, "This ship does not have any %s to discard", commodity.c_str());
+		return 0;
+	}
+
+	// Never discard more cargo than exists
+	if( iter->second < count ){
+		LogMsg(INFO, "Cannot Discard all %d tons of %s. Only has %d tons.", count, commodity.c_str(), iter->second);
+		count = iter->second;
+	}
+
+	// Remove this many tons of cargo
+	iter->second -= count;
+	status.cargoSpaceUsed-=count;
+
+	if( count == iter->second ) {
+		commodities.erase(com);
+	}
+
+	return count;
 }
 
 /**\brief Get angle to rotate towards target.
