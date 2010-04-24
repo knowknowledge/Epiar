@@ -23,6 +23,16 @@ function playerStart()
 	createHUD()
 	registerPostStep(updateHUD)
 	registerCommands(playerCommands)
+
+	commodities = Epiar.commodities()
+	for i, commodity in pairs(commodities) do
+		PLAYER:StoreCommodities(commodity, i*10)
+	end
+
+	cargo = PLAYER:GetCargo()
+	for commodity,tons in pairs(cargo) do
+		print(commodity,":",tons)
+	end
 end
 
 --- Target closest ship
@@ -123,6 +133,7 @@ function createHUD()
 end
 
 updateHUD = function ()
+	myhull:setStatus(PLAYER:GetHull())
 	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
 	local x,y = PLAYER:GetPosition()
@@ -132,7 +143,6 @@ updateHUD = function ()
 	creditBar:setStatus(string.format("$%d", PLAYER:GetCredits()))
 
 	-- Update Weapons and Armor
-	myhull:setStatus(PLAYER:GetHull())
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	local cur_weapon = PLAYER:GetCurrentWeapon()
 	for weapon,ammo in pairs(weaponsAndAmmo) do

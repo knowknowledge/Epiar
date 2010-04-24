@@ -14,6 +14,7 @@
 #include "Audio/sound.h"
 #include "Utilities/camera.h"
 #include "Utilities/trig.h"
+#include "Engine/commodities.h"
 
 /**\class AI_Lua
  * \brief Lua bridge for AI.*/
@@ -36,7 +37,6 @@ void AI_Lua::RegisterAI(lua_State *L){
 	static const luaL_Reg shipMethods[] = {
 		// Actions
 		{"Accelerate", &AI_Lua::ShipAccelerate},
-
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
 		{"Fire", &AI_Lua::ShipFire},
@@ -45,11 +45,15 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Explode", &AI_Lua::ShipExplode},
 		{"Remove", &AI_Lua::ShipRemove},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
+
+		// Outfit Changes
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		{"SetEngine", &AI_Lua::ShipSetEngine},
 		{"SetCredits", &AI_Lua::ShipSetCredits},
+		{"StoreCommodities", &AI_Lua::ShipStoreCommodities},
+		{"DiscardCommodities", &AI_Lua::ShipDiscardCommodities},
 
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
@@ -68,6 +72,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
 		{"GetState", &AI_Lua::ShipGetState},
 		{"GetCredits", &AI_Lua::ShipGetCredits},
+		{"GetCargo", &AI_Lua::ShipGetCargo},
 
 		{NULL, NULL}
 	};
@@ -134,6 +139,8 @@ int AI_Lua::newShip(lua_State *L){
 }
 
 // Ship Functions
+
+// Ship Actions
 
 /**\brief Lua callable function to accelerate the ship.
  * \sa Ship::Accelerate()
@@ -358,6 +365,7 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 	}
 	return 0;
 }
+
 /**\brief Lua callable function to set the credits for this ship
  * \sa Ship::SetCredits()
  */
@@ -373,6 +381,60 @@ int AI_Lua::ShipSetCredits(lua_State* L){
 	}
 	return 0;
 }
+
+/**\brief Lua callable function to Store a number of Commodities on this ship
+ * \sa Ship::StoreCommodities()
+ */
+int AI_Lua::ShipStoreCommodities(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 3) {
+		return luaL_error(L, "Got %d arguments expected 2 (ship, commodityName, count)", n);
+	}
+
+	// Get the Inputs
+	AI* ai = checkShip(L,1);
+	string commodityName = luaL_checkstring (L, 2);
+	int count = luaL_checkint (L, 3);
+
+	// Check Inputs
+	if(ai==NULL) { return 0; }
+	if(0==Commodities::Instance()->GetCommodity(commodityName)){
+		return luaL_error(L, "There is no Commodity by the name of '%s'", commodityName.c_str());
+	}
+
+	// Store the Commodity
+	int actuallyStored = (ai)->StoreCommodities( commodityName, count );
+	lua_pushinteger(L, actuallyStored );
+	return 1;
+}
+
+/**\brief Lua callable function to Discard a number of Commodities from this ship
+ * \sa Ship::DiscardCommodities()
+ */
+int AI_Lua::ShipDiscardCommodities(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 3) {
+		return luaL_error(L, "Got %d arguments expected 2 (ship, commodityName, count)", n);
+	}
+
+	// Get the Inputs
+	AI* ai = checkShip(L,1);
+	string commodityName = luaL_checkstring (L, 2);
+	int count = luaL_checkint (L, 3);
+
+	// Check Inputs
+	if(ai==NULL) { return 0; }
+	if(0==Commodities::Instance()->GetCommodity(commodityName)){
+		return luaL_error(L, "There is no Commodity by the name of '%s'", commodityName.c_str());
+	}
+
+	// Discard the Commodity
+	int actuallyDiscarded = (ai)->DiscardCommodities( commodityName, count );
+	lua_pushinteger(L, actuallyDiscarded );
+	return 1;
+}
+
+// Current Ship State
 
 int AI_Lua::ShipGetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -655,3 +717,35 @@ int AI_Lua::ShipGetCredits(lua_State* L) {
 	}
 	return 1;
 }
+
+/**\brief Lua callable function to get the ship's stored Commodities.
+ * \sa Ship::getCargo()
+ */
+int AI_Lua::ShipGetCargo(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI* ai = checkShip(L,1);
+	if(ai==NULL){
+		lua_pushnumber(L, 0 );
+		return 1;
+	}
+
+	map<Commodity*,unsigned int> cargo = (ai)->getCargo();
+	map<Commodity*,unsigned int>::iterator it = cargo.begin();
+
+	// Create a Lua table and populate it using the form:
+	// {"Foo": 10, "Bar": 20}
+	lua_createtable(L, cargo.size(), 0);
+	int newTable = lua_gettop(L);
+	while( it!=cargo.end() ) {
+		lua_pushfstring(L, ((*it).first)->GetName().c_str() ); // KEY
+		lua_pushinteger(L, (*it).second ); // Value
+		lua_settable(L,newTable);
+		++it;
+	}
+	return 1;
+}
+
