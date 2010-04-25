@@ -123,6 +123,9 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 	// Check if this is an Ammo listing
 		addAmmo( Weapon::AmmoNameToType(subName), atoi(value.c_str()) );
 		LogMsg(DEBUG1,"Adding %d Ammo of type %s",atoi(value.c_str()),subName.c_str() );
+	} else if(Commodities::Instance()->Get(subName)!=NULL){
+	// Check if this is a Commodity listing
+		StoreCommodities( subName, atoi(value.c_str()) );
 	} else {
 		LogMsg(ERROR,"The Player Class cannot understand the XML key '%s'.",subName.c_str() );
 		return false;
@@ -155,6 +158,13 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 			snprintf(buff, sizeof(buff), "%d", getAmmo(AmmoType(a)) );
 			xmlNewChild(section, NULL, BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str(), BAD_CAST buff );
 		}
+	}
+	map<Commodity*,unsigned int> cargo = this->getCargo();
+	map<Commodity*,unsigned int>::iterator iter = cargo.begin();
+	while( iter!=cargo.end() ) {
+		snprintf(buff, sizeof(buff), "%d", (*iter).second );
+		xmlNewChild(section, NULL, BAD_CAST ((*iter).first)->GetName().c_str(), BAD_CAST buff );
+		++iter;
 	}
 	
 	return section;
