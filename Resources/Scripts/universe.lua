@@ -1,5 +1,5 @@
 -- Use this script for a solar system
-
+math.randomseed(os.time())
 
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
@@ -291,8 +291,7 @@ function buyEngine(engine)
 end
 
 --- Trade a Commodity
-function tradeCommodity(transaction, commodity, count)
-	price = Epiar.getMSRP(commodity)
+function tradeCommodity(transaction, commodity, count, price)
 	player_credits = PLAYER:GetCredits()
 	cargo,stored,storable = PLAYER:GetCargo()
 	print "Trading..."
@@ -306,6 +305,7 @@ function tradeCommodity(transaction, commodity, count)
 			print("ARG! That wasn't supposed to happen!")
 		end
 		PLAYER:SetCredits( player_credits - trueCount*price )
+		HUD.newAlert(string.format("You bought %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
 	elseif transaction=="sell" then
 		print("Tonnage stored:",cargo[commodity] or 0)
 		print("Tonnage requested:",count)
@@ -317,6 +317,7 @@ function tradeCommodity(transaction, commodity, count)
 			print("ARG! That wasn't supposed to happen!")
 		end
 		PLAYER:SetCredits( player_credits + trueCount*price )
+		HUD.newAlert(string.format("You sold %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
 	else
 		error( string.format( "Sorry, trading Commodities doesn't understand transaction '%s'", transaction ) )
 	end
@@ -399,14 +400,17 @@ function landingDialog(id)
 	local currentCargo,stored,storable = PLAYER:GetCargo()
 	for i,commodity in pairs(commodities) do
 		local yoff = 20+i*20
-		local xoff = 10
-		local price = Epiar.getMSRP(commodity)
+		local msrp = Epiar.getMSRP(commodity)
+		local price_offset = math.random(-3,3)
+		local priceMeanings = { "(Very Low)","(Low)","","","","(High)","(Very High)" }
+		local price = msrp + ( price_offset*msrp/10 )
+		print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
-		trade:add( UI.newLabel(xoff,yoff,commodity.." at "..price,0) )
-		tradeCounts[commodity] = UI.newTextbox(xoff+140,yoff,40,1, currentCargo[commodity] or 0)
+		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
+		tradeCounts[commodity] = UI.newTextbox(180,yoff,30,1, currentCargo[commodity] or 0)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(xoff+180,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d)",commodity,count )))
-		trade:add( UI.newButton(xoff+210,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d)",commodity,count )))
+		trade:add( UI.newButton(210,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(240,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
 	storeframe:add(shipyard,armory,outfitting,trade)
