@@ -155,8 +155,6 @@ int main( int argc, char **argv ) {
 
 	LogMsg(INFO,"Executable Path: %s", argv[0]);
 
-	Video::Initialize();
-	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 	Audio::Instance().Initialize();
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
@@ -167,6 +165,25 @@ int main( int argc, char **argv ) {
 	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
 	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+
+	Video::Initialize();
+	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+	string splashScreen[6] = {
+		"Resources/Art/EpiarFleetbig.png",
+		"Resources/Art/gatescene.png",
+		"Resources/Art/fight1.png",
+		"Resources/Art/fight2.png",
+		"Resources/Art/uberdone.png",
+		"Resources/Art/ubertextest.png",
+	};
+	srand ( time(NULL) );
+	Video::Erase();
+	Image::Get(splashScreen[rand()%6])->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+	Serif->SetSize(30);
+	Serif->Render(OPTION( int, "options/video/w" )/2,50,"Welcome to Epiar",Font::CENTER,Font::MIDDLE);
+	Serif->Render(OPTION( int, "options/video/w" )/2,OPTION( int, "options/video/h")-50,"Loading...",Font::CENTER,Font::MIDDLE);
+	Serif->SetSize(12);
+	Video::Update();
 
 	Simulation debug( "Resources/Definitions/sim-debug.xml" );
 	debug.Run();
