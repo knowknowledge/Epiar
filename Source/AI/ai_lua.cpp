@@ -396,6 +396,8 @@ int AI_Lua::ShipStoreCommodities(lua_State* L){
 	string commodityName = luaL_checkstring (L, 2);
 	int count = luaL_checkint (L, 3);
 
+	LogMsg(INFO, "Storing %d tons of %s.", count, commodityName.c_str());
+
 	// Check Inputs
 	if(ai==NULL) { return 0; }
 	if(0==Commodities::Instance()->GetCommodity(commodityName)){
@@ -421,6 +423,8 @@ int AI_Lua::ShipDiscardCommodities(lua_State* L){
 	AI* ai = checkShip(L,1);
 	string commodityName = luaL_checkstring (L, 2);
 	int count = luaL_checkint (L, 3);
+
+	LogMsg(INFO, "Discarding %d tons of %s.", count, commodityName.c_str());
 
 	// Check Inputs
 	if(ai==NULL) { return 0; }
@@ -746,6 +750,11 @@ int AI_Lua::ShipGetCargo(lua_State* L){
 		lua_settable(L,newTable);
 		++it;
 	}
-	return 1;
+
+	// Push Cargo statistics
+	lua_pushinteger(L, (ai)->GetCargoSpaceUsed() ); // Total Tons Stored
+	lua_pushinteger(L, Models::Instance()->GetModel((ai)->GetModelName())->GetCargoSpace() ); // Maximum Tons Storable
+		
+	return 3;
 }
 

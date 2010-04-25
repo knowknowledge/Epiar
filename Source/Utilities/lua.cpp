@@ -726,6 +726,8 @@ int Lua::getMSRP(lua_State *L) {
 		lua_pushinteger(L,((Engine*)comp)->GetMSRP() );
 	else if( (comp = Weapons::Instance()->Get(name)) != NULL )
 		lua_pushinteger(L,((Weapon*)comp)->GetMSRP() );
+	else if( (comp = Commodities::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Commodity*)comp)->GetMSRP() );
 	else {
 		return luaL_error(L, "Couldn't find anything by the name: '%s'", name.c_str());
 	}

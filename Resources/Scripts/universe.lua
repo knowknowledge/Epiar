@@ -249,18 +249,7 @@ function moreTraffic(tickcycle)
 	return traffic
 end
 registerPostStep(moreTraffic(1000))
-
---- Aim at center
-function aimCenter(cur_ship,timeleft)
-	-- direction towards the center or the universe
-	if timeleft%3 ==0 then
-		cur_ship:Rotate( cur_ship:directionTowards(0,0) )
-	end
-	cur_ship:Fire()
-	cur_ship:Accelerate()
-end
 registerInit(planetTraffic)
-registerPlan(aimCenter)
 
 --- Buys a ship
 function buyShip(model)
@@ -317,6 +306,41 @@ function buyEngine(engine)
 	end
 	return 1
 end
+
+--- Trade a Commodity
+function tradeCommodity(transaction, commodity, count)
+	price = Epiar.getMSRP(commodity)
+	player_credits = PLAYER:GetCredits()
+	cargo,stored,storable = PLAYER:GetCargo()
+	print "Trading..."
+	if transaction=="buy" then
+		print("Tonnage available:",storable-stored)
+		print("Tonnage requested:",count)
+		print("Tonnage affordable:",player_credits/price)
+		trueCount = math.min(storable-stored,count,math.floor(player_credits/price)) -- Can't buy more than this
+		stored = PLAYER:StoreCommodities( commodity,trueCount )
+		if(stored ~= trueCount) then
+			print("ARG! That wasn't supposed to happen!")
+		end
+		PLAYER:SetCredits( player_credits - trueCount*price )
+	elseif transaction=="sell" then
+		print("Tonnage stored:",cargo[commodity] or 0)
+		print("Tonnage requested:",count)
+		trueCount = math.min(count,cargo[commodity]) -- Can't sell more than this
+		print("Discarding "..trueCount.." Tonnes")
+		discarded = PLAYER:DiscardCommodities( commodity,trueCount )
+		print("Discarded "..discarded.." Tonnes")
+		if(discarded ~= trueCount) then
+			print("ARG! That wasn't supposed to happen!")
+		end
+		PLAYER:SetCredits( player_credits + trueCount*price )
+	else
+		error( string.format( "Sorry, trading Commodities doesn't understand transaction '%s'", transaction ) )
+	end
+	print "Done Trading..."
+	return 1
+end
+
 
 --- Creates a table
 function createTable(win,w,h,piclist,buttonlist)
@@ -385,7 +409,24 @@ function landingDialog(id)
 	end
 	createTable(outfitting,width-20,height-100,engines,engineButtons)
 
-	storeframe:add(shipyard,armory,outfitting)
+	-- Trade
+	trade = UI.newTab("Trade")
+	tradeCounts = {} -- This global variable
+	local commodities = Epiar.commodities()
+	local currentCargo,stored,storable = PLAYER:GetCargo()
+	for i,commodity in pairs(commodities) do
+	 	local yoff = 20+i*20
+	 	local xoff = 10
+		local price = Epiar.getMSRP(commodity)
+		local count = 10
+	 	trade:add( UI.newLabel(xoff,yoff,commodity.." at "..price,0) )
+		tradeCounts[commodity] = UI.newTextbox(xoff+140,yoff,40,1, currentCargo[commodity] or 0)
+	 	trade:add( tradeCounts[commodity] )
+	 	trade:add( UI.newButton(xoff+180,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d)",commodity,count )))
+	 	trade:add( UI.newButton(xoff+210,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d)",commodity,count )))
+	end
+
+	storeframe:add(shipyard,armory,outfitting,trade)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))

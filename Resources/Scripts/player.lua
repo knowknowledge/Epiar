@@ -23,16 +23,6 @@ function playerStart()
 	createHUD()
 	registerPostStep(updateHUD)
 	registerCommands(playerCommands)
-
-	commodities = Epiar.commodities()
-	for i, commodity in pairs(commodities) do
-		PLAYER:StoreCommodities(commodity, i*10)
-	end
-
-	cargo = PLAYER:GetCargo()
-	for commodity,tons in pairs(cargo) do
-		print(commodity,":",tons)
-	end
 end
 
 --- Target closest ship

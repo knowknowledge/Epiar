@@ -379,6 +379,8 @@ map<Commodity*,unsigned int> Ship::getCargo() {
 int Ship::StoreCommodities(string commodity, unsigned int count) {
 	Commodity* com = Commodities::Instance()->GetCommodity(commodity);
 
+	LogMsg(INFO, "Storing %d tons of %s.", count, commodity.c_str());
+
 	// Ensure that we have enough space to store this cargo
 	unsigned int cargoSpaceRemaining = (model->GetCargoSpace() - status.cargoSpaceUsed);
 	if( count > cargoSpaceRemaining ) {
@@ -403,6 +405,8 @@ int Ship::StoreCommodities(string commodity, unsigned int count) {
 int Ship::DiscardCommodities(string commodity, unsigned int count) {
 	Commodity* com = Commodities::Instance()->GetCommodity(commodity);
 
+	LogMsg(INFO, "Discarding %d tons of %s.", count, commodity.c_str());
+
 	// Ensure that we have some of this cargo
 	map<Commodity*,unsigned int>::iterator iter = commodities.find(com);
 	if(iter==commodities.end()){
@@ -419,6 +423,7 @@ int Ship::DiscardCommodities(string commodity, unsigned int count) {
 	// Remove this many tons of cargo
 	iter->second -= count;
 	status.cargoSpaceUsed-=count;
+	LogMsg(INFO, "Discarding %d tons of %s. %d tons remaining.", count, commodity.c_str(), iter->second);
 
 	if( count == iter->second ) {
 		commodities.erase(com);
