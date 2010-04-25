@@ -6,6 +6,7 @@
  * \details
  */
 
+#include "common.h"
 #include "includes.h"
 #include "AI/ai.h"
 #include "Sprites/player.h"
@@ -45,6 +46,15 @@ void AI::Update(){
 	this->Ship::Update();
 }
 
+void AI::Draw(){
+	this->Ship::Draw();
+	if( OPTION(int,"options/development/debug-ai") ) {
+		SansSerif->SetColor(1.0,1.0,1.0,1.0);
+		Coordinate position = this->GetWorldPosition();
+		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
+		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
+	}
+}
 
 /**\fn AI::SetStateMachine(string _machine)
  * \brief Set's the state machine.

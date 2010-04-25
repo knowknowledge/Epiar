@@ -118,8 +118,6 @@ function createHUD()
 	-- DEBUG Bars
 	TargetName = HUD.newStatus("Target:",130,1,"")
 	TargetHULL = HUD.newStatus("Target:",130,1,0)
-	TargetMachine = HUD.newStatus("Machine:",130,1,"")
-	TargetState = HUD.newStatus("State:",130,1,0)
 end
 
 updateHUD = function ()
@@ -144,11 +142,6 @@ updateHUD = function ()
 	if target~=nil then
 		if ( target:GetType() == 8) or ( target:GetType() == 16) then
 			TargetHULL:setStatus( target:GetHull() )
-		end
-		if ( target:GetType() == 8) then
-			local machine, state = target:GetState()
-			TargetMachine:setStatus(machine)
-			TargetState:setStatus(state)
 		end
 	end
 end

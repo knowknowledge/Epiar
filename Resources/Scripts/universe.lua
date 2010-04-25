@@ -175,7 +175,8 @@ function options()
 	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
 	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
 	quadTreeDisplay = UI.newCheckbox(20, 70, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay)
+	aiStateDisplay  = UI.newCheckbox(20, 90, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay,aiStateDisplay)
 	
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -186,6 +187,7 @@ function options()
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
 	end
 	function closeOptions()
 		optionWindow:close();

@@ -36,6 +36,7 @@
 	<development>
 		<editor-mode>0</editor-mode>
 		<debug-quadtree>0</debug-quadtree>
+		<debug-ai>0</debug-ai>
 		<override-tgz>1</override-tgz>
 	</development>
 	<defaults>
