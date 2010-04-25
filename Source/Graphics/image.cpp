@@ -368,7 +368,7 @@ SDL_Surface *Image::ExpandCanvas( SDL_Surface *s, int w, int h ) {
 	SDL_Surface *original = s;
 	
 	// create the expanded surface
-	expanded = SDL_CreateRGBSurface(original->flags, w, h, original->format->BitsPerPixel, 
+	expanded = SDL_CreateRGBSurface(original->flags, w, h, original->format->BitsPerPixel,
 	                                original->format->Rmask, original->format->Gmask, original->format->Bmask,
 	                                original->format->Amask);
 	assert( expanded );

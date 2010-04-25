@@ -155,7 +155,7 @@ int AI_Lua::ShipAccelerate(lua_State* L){
 		(ai)->Accelerate();
 	}
 	else
-		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n);
 
 	return 0;
 }
@@ -173,7 +173,7 @@ int AI_Lua::ShipRotate(lua_State* L){
 		(ai)->Rotate(dir);
 	}
 	else
-		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (self, direction)", n);
 
 	return 0;
 }
@@ -191,7 +191,7 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 		int blue = (int) luaL_checknumber (L, 4);
 		(ai)->SetRadarColor(Color::Get(red,green,blue));
 	} else {
-		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n); 
+		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n);
 	}
 	return 0;
 }
@@ -208,7 +208,7 @@ int AI_Lua::ShipFire(lua_State* L){
 		lua_pushinteger(L, (int)(result) );
 		return 1;
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
 	return 0;
 }
@@ -224,7 +224,7 @@ int AI_Lua::ShipDamage(lua_State* L){
 		int damage = (int) luaL_checknumber (L, 2);
 		(ai)->Damage( damage );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);
 	}
 	return 0;
 }
@@ -239,7 +239,7 @@ int AI_Lua::ShipRepair(lua_State* L){
 		int damage = luaL_checkint (L, 2);
 		(ai)->Repair( damage );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);
 	}
 	return 0;
 }
@@ -262,7 +262,7 @@ int AI_Lua::ShipExplode(lua_State* L){
 			new Effect((ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 		SpriteManager::Instance()->Delete((Sprite*)(ai));
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
 	return 0;
 }
@@ -290,7 +290,7 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 		string weaponName = luaL_checkstring (L, 2);
 		(ai)->addShipWeapon(weaponName);
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
 	}
 	return 0;
 }	
@@ -305,7 +305,7 @@ int AI_Lua::ShipChangeWeapon(lua_State* L){
 		if(ai==NULL) return 0;
 		(ai)->ChangeWeapon();
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (ship)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
 	return 0;
 }
@@ -328,7 +328,7 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 		}
 		(ai)->addAmmo(weapon->GetAmmoType(),qty);
 	} else {
-		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n); 
+		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n);
 	}
 	return 0;
 }	
@@ -344,7 +344,7 @@ int AI_Lua::ShipSetModel(lua_State* L){
 		string modelname = luaL_checkstring (L, 2);
 		(ai)->SetModel( Models::Instance()->GetModel(modelname) );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, modelname)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, modelname)", n);
 	}
 	return 0;
 
@@ -361,7 +361,7 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 		string engineName = luaL_checkstring (L, 2);
 		(ai)->SetEngine( Engines::Instance()->GetEngine(engineName) );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n);
 	}
 	return 0;
 }
@@ -377,7 +377,7 @@ int AI_Lua::ShipSetCredits(lua_State* L){
 		int credits = luaL_checkint (L, 2);
 		(ai)->SetCredits( credits );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n);
 	}
 	return 0;
 }
@@ -468,7 +468,7 @@ int AI_Lua::ShipGetID(lua_State* L){
 		lua_pushinteger(L, (ai)->GetID() );
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -488,7 +488,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 		lua_pushnumber(L, (double) normalizeAngle( (ai)->GetAngle() ) );
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -510,7 +510,7 @@ int AI_Lua::ShipGetPosition(lua_State* L){
 		}
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 2;
 }
@@ -531,7 +531,7 @@ int AI_Lua::ShipGetMomentumAngle(lua_State* L){
 		}
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -552,7 +552,7 @@ int AI_Lua::ShipGetMomentumSpeed(lua_State* L){
 		}
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -581,7 +581,7 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 		lua_pushnumber(L, (double) (ai)->directionTowards(Coordinate(x,y)) );
 		}
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }

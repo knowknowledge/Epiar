@@ -201,7 +201,7 @@ bool Simulation::Run() {
 		fpsTotal++;
 
 		// Update the fps once per second
-		if( (Timer::GetTicks() - fpsTS) >1000 ) { 
+		if( (Timer::GetTicks() - fpsTS) >1000 ) {
 			Simulation::currentFPS = static_cast<float>(1000.0 *
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();

@@ -26,7 +26,7 @@
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
-#include "Utilities/camera.h" 
+#include "Utilities/camera.h"
 #include "Input/input.h"
 #include "Utilities/file.h"
 #include "Utilities/filesystem.h"
@@ -239,8 +239,8 @@ void Lua::RegisterFunctions() {
 		{"planets", &Lua::getPlanets},
 		{"nearestShip", &Lua::getNearestShip},
 		{"nearestPlanet", &Lua::getNearestPlanet},
-		{"RegisterKey", &Input::RegisterKey},  
-		{"UnRegisterKey", &Input::UnRegisterKey},  
+		{"RegisterKey", &Input::RegisterKey},
+		{"UnRegisterKey", &Input::UnRegisterKey},
 		{"getCommodityInfo", &Lua::getCommodityInfo},
 		{"getAllianceInfo", &Lua::getAllianceInfo},
 		{"getModelInfo", &Lua::getModelInfo},

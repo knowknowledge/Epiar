@@ -21,7 +21,7 @@ playerCommands = {
 function playerStart()
 	PLAYER = Epiar.player()
 	createHUD()
-	registerPostStep(updateHUD)
+	registerStep(updateHUD)
 	registerCommands(playerCommands)
 end
 
@@ -190,7 +190,7 @@ function createNewPlayerWindow()
 end
 
 function createNewPlayer()
-	if newPlayerWin==nil then 
+	if newPlayerWin==nil then
 		print( "Oh no! Where did the newPlayerWin go?  We're going to need that!" )
 		return
 	end

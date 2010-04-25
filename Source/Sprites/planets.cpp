@@ -19,7 +19,7 @@
 
 /**\class Planet
  * \brief A Planet.
- * 
+ *
  * Planets are where ships congregate.  They have things to buy and sell once you land on them.
  *
  *\see Planets
@@ -76,7 +76,7 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, string _allianc
 	SetImage(_image);
 	Image::Store(name,GetImage());
 }
- 
+
 /**\brief Destructor
  */
 Planet::~Planet() {
@@ -260,7 +260,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 
 	luaL_openlib(L, NULL, PlanetMethods,0);
-	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);  
+	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);
 }
 
 /**\brief Get a planet by name or id
@@ -324,7 +324,7 @@ int Planets_Lua::GetName(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushstring(L, planet->GetName().c_str());
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -364,7 +364,7 @@ int Planets_Lua::GetPosition(lua_State* L){
 		lua_pushnumber(L, planet->GetWorldPosition().GetX() );
 		lua_pushnumber(L, planet->GetWorldPosition().GetY() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 2;
 }
@@ -377,7 +377,7 @@ int Planets_Lua::GetAlliance(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushstring(L, planet->GetAlliance().c_str());
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -390,7 +390,7 @@ int Planets_Lua::GetTraffic(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushnumber(L, planet->GetTraffic() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -403,7 +403,7 @@ int Planets_Lua::GetMilitiaSize(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushnumber(L, planet->GetMilitiaSize() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -416,7 +416,7 @@ int Planets_Lua::GetInfluence(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushnumber(L, planet->GetInfluence() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }
@@ -429,7 +429,7 @@ int Planets_Lua::GetLandable(lua_State* L){
 		Planet* planet= checkPlanet(L,1);
 		lua_pushboolean(L, planet->GetLandable() );
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n); 
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }

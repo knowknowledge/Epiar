@@ -51,12 +51,12 @@ registerInit(registerDefaults)
 function chooseKeys()
 	Epiar.pause()
 	if keywin ~=nil then return end
-	-- 
+	--
 	off_x,off_y = 30,30
 	w,h = 300,(#commands*20 + 80)
 	keyinput = {}
 	labels = {}
-	-- 
+	--
 	keywin = UI.newWindow( 400, 100, w, h, "Keyboard commands")
 	for i=1,#commands do
 		keyinput[i] = UI.newTextbox(off_x,off_y,70,1)
@@ -98,7 +98,7 @@ function keyhelp()
 	off_x,off_y = 20,20
 	w,h = 130,50
 	-- This seems to be the only way to count keys in a dictionary.
-	for k,v in pairs(Key) do h=h+20 end 
+	for k,v in pairs(Key) do h=h+20 end
 	-- TODO: Make this a scrollable window
 	keyhelpwin = UI.newWindow( 100, 100, w, 300, "Possible Keys")
 	for k,v in pairs(Key) do

@@ -1,5 +1,6 @@
 --
 -- Basic Scenario
+AIPlans = {}
 
 --- Trader AI
 function Trader(id,x,y,angle,speed,vector,state)

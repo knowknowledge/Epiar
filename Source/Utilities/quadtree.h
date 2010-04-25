@@ -3,7 +3,7 @@
  * Author(s)     : Matt Zweig (thezweig@gmail.com)
  * Date Created  : Tuesday, November 24 2009
  * Last Modified : Tuesday, November 24 2009
- * Purpose       : 
+ * Purpose       :
  * Notes         :
  */
 

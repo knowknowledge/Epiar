@@ -45,7 +45,7 @@ Ship::Ship() : nonplayersound( 0.4f )
 }
 
 /**\brief Ship Destructor
- */ 
+ */
 Ship::~Ship() {
 	if(flareAnimation) {
 		delete flareAnimation;
@@ -143,7 +143,7 @@ void Ship::Rotate( float direction ) {
 	maxturning = static_cast<float>((rotPerSecond * timerDelta) * 360.);
 
 	// Cap the ship rotation
-	if (fabs(direction) > maxturning){ 
+	if (fabs(direction) > maxturning){
 		if (direction > 0 )
 			angle += maxturning;
 		else

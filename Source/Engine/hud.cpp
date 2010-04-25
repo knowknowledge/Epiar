@@ -74,6 +74,18 @@ bool MessageExpired(const AlertMessage& msg){
  * \brief Status bar
  */
 
+StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio)
+	:title(_title)
+	,width(_width)
+	,pos(_pos)
+	,name(_name)
+	,ratio(_ratio)
+{
+	printf("Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), name.c_str(), ratio);
+	assert(pos>=0);
+	assert(pos<=4);
+}
+
 /**\var StatusBar::im_infobar_left
  * \brief Left side image
  */
@@ -303,11 +315,14 @@ void Hud::DrawStatusBars() {
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
 
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	// 
 	list<StatusBar*>::iterator i;
 	for( i= Bars.begin(); i != Bars.end(); ++i ){
 		int pos = (*i)->GetPosition();
-		(*i)->Draw(static_cast<int>(startCoords[pos].GetX()),static_cast<int>(startCoords[pos].GetY()));
+		assert(pos>=0);
+		assert(pos<=4);
+		int x = static_cast<int>(startCoords[pos].GetX());
+		int y = static_cast<int>(startCoords[pos].GetY());
+		(*i)->Draw(x,y);
 		startCoords[pos] += offsetCoords[pos];
 	}
 }

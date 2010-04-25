@@ -13,30 +13,18 @@ end
 --------------------------------------------------------------------------------
 -- Registered Plans for AI to choose from
 
-Plans = {}
---- List of plans for AI
-function registerPlan(plan)
-	table.insert(Plans,plan)
-end
-AIPlans = {}
-
 --------------------------------------------------------------------------------
 -- Steps taken during each Update
 
-PreSteps = {}
-PostSteps = {}
---- Steps before each update
-function registerPreStep(step)
-	table.insert(PreSteps,step)
-end
+Steps = {}
 --- Steps after each update
-function registerPostStep(step)
-	table.insert(PostSteps,step)
+function registerStep(step)
+	table.insert(Steps,step)
 end
 
 --- Run the functions
 function Start()
-	io.write(string.format("\tInit: %d\n\tPlans: %d\n\tPreSteps: %d\n\tPostSteps: %d\n", #Init, #Plans, #PreSteps, #PostSteps ))
+	io.write(string.format("\tInit: %d\n\tSteps: %d\n", #Init, #Steps ))
 	for i,func in ipairs(Init) do
 		func()
 	end
@@ -44,13 +32,8 @@ end
 
 --- Update function
 function Update()
-	if #PreSteps >0 then
-		for i,pre_func in ipairs(PreSteps) do
-			pre_func()
-		end
-	end
-	if #PostSteps >0 then
-		for i,post_func in ipairs(PostSteps) do
+	if #Steps >0 then
+		for i,post_func in ipairs(Steps) do
 			post_func()
 		end
 	end
@@ -86,7 +69,7 @@ function godmode()
 	function heal()
 		PLAYER:Repair(10000)
 	end
-	registerPostStep(heal)
+	registerStep(heal)
 end
 --godmode() -- Uncomment this line to never die
 
@@ -201,7 +184,7 @@ function options()
 		Epiar.setoption("options/sound/explosions", explosionsSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
-		Epiar.setoption("options/log/out",    		stdoutLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
 	end
 	function closeOptions()
@@ -248,7 +231,7 @@ function moreTraffic(tickcycle)
 	end
 	return traffic
 end
-registerPostStep(moreTraffic(1000))
+registerStep(moreTraffic(1000))
 registerInit(planetTraffic)
 
 --- Buys a ship
@@ -415,15 +398,15 @@ function landingDialog(id)
 	local commodities = Epiar.commodities()
 	local currentCargo,stored,storable = PLAYER:GetCargo()
 	for i,commodity in pairs(commodities) do
-	 	local yoff = 20+i*20
-	 	local xoff = 10
+		local yoff = 20+i*20
+		local xoff = 10
 		local price = Epiar.getMSRP(commodity)
 		local count = 10
-	 	trade:add( UI.newLabel(xoff,yoff,commodity.." at "..price,0) )
+		trade:add( UI.newLabel(xoff,yoff,commodity.." at "..price,0) )
 		tradeCounts[commodity] = UI.newTextbox(xoff+140,yoff,40,1, currentCargo[commodity] or 0)
-	 	trade:add( tradeCounts[commodity] )
-	 	trade:add( UI.newButton(xoff+180,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d)",commodity,count )))
-	 	trade:add( UI.newButton(xoff+210,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d)",commodity,count )))
+		trade:add( tradeCounts[commodity] )
+		trade:add( UI.newButton(xoff+180,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d)",commodity,count )))
+		trade:add( UI.newButton(xoff+210,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d)",commodity,count )))
 	end
 
 	storeframe:add(shipyard,armory,outfitting,trade)
