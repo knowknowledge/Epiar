@@ -57,7 +57,6 @@ void UI::Close( void ) {
 /**\brief This removes a single base widget.*/
 void UI::Close( Widget *widget ) {
 	UI::master.DelChild( widget );
-	ResetInput();
 }
 
 /**\brief Drawing function.*/
