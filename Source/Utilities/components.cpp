@@ -74,20 +74,20 @@ bool Components::Load(string filename) {
 	delete [] buffer;
 
 	if( doc == NULL ) {
-		LogMsg(ERROR, "Could not load '%s' for parsing.", filename.c_str() );
+		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
 		return false;
 	}
 	
 	cur = xmlDocGetRootElement( doc );
 	
 	if( cur == NULL ) {
-		LogMsg(ERROR, "'%s' file appears to be empty.", filename.c_str() );
+		LogMsg(ERR, "'%s' file appears to be empty.", filename.c_str() );
 		xmlFreeDoc( doc );
 		return false;
 	}
 	
 	if( xmlStrcmp( cur->name, (const xmlChar *)rootName.c_str() ) ) {
-		LogMsg(ERROR, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
+		LogMsg(ERR, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
 		xmlFreeDoc( doc );
 		return false;
 	} else {

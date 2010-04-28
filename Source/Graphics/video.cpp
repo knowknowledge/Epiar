@@ -89,7 +89,7 @@ bool Video::Initialize( void ) {
 	
 	// initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) != 0 ) {
-		LogMsg(ERROR, "Could not initialize SDL: %s", SDL_GetError() );
+		LogMsg(ERR, "Could not initialize SDL: %s", SDL_GetError() );
 		return( false );
 	} else {
 		LogMsg(INFO, "SDL video initialized using %s driver.", SDL_VideoDriverName( buf, 31 ) );
@@ -171,7 +171,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 
 	// finally, set the video mode (creating a window)
 	if( ( screen = SDL_SetVideoMode( w, h, bpp, videoFlags ) ) == NULL ) {
-		LogMsg(ERROR, "Could not set video mode: %s", SDL_GetError() );
+		LogMsg(ERR, "Could not set video mode: %s", SDL_GetError() );
 		return( false );
 	}
 

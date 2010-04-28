@@ -19,7 +19,7 @@ Player *Player::pInstance = 0;
  */
 Player *Player::Instance( void ) {
 	if( pInstance == NULL ) { // is this the first call?
-		LogMsg(ERROR,"Attempting to use Player information when no player is loaded!");
+		LogMsg(ERR,"Attempting to use Player information when no player is loaded!");
 		assert(0);
 	}
 
@@ -64,11 +64,11 @@ void Player::Load(string playerName) {
 	Player* newPlayer = Players::Instance()->GetPlayer(playerName);
 	// If the player saved a bad Model or Engine, pick the default
 	if(newPlayer->GetModelName() == "") {
-		LogMsg(ERROR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
+		LogMsg(ERR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
 		newPlayer->SetModel( Models::Instance()->GetModel( OPTION(string,"options/defaults/playerModel" ) ) );
 	}
 	if(newPlayer->GetEngineName() == "") {
-		LogMsg(ERROR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
+		LogMsg(ERR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
 		newPlayer->SetEngine( Engines::Instance()->GetEngine( OPTION(string,"options/defaults/playerEngine" ) ) );
 	}
 	// We can't start the game with bad player Information
@@ -127,7 +127,7 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 	// Check if this is a Commodity listing
 		StoreCommodities( subName, atoi(value.c_str()) );
 	} else {
-		LogMsg(ERROR,"The Player Class cannot understand the XML key '%s'.",subName.c_str() );
+		LogMsg(ERR,"The Player Class cannot understand the XML key '%s'.",subName.c_str() );
 		return false;
 	}
 	return true;

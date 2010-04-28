@@ -66,13 +66,13 @@ bool Ani::Load( string& filename ) {
 	file.Read( 1, &byte );
 	//cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
-		LogMsg(ERROR, "Incorrect ani version" );
+		LogMsg(ERR, "Incorrect ani version" );
 		return( false );
 	}
 
 	file.Read( 1, &byte );
 	if( byte <= 0 ) {
-		LogMsg(ERROR, "Cannot have zero or less frames" );
+		LogMsg(ERR, "Cannot have zero or less frames" );
 		return( false );
 	}
 	numFrames = byte;
@@ -82,7 +82,7 @@ bool Ani::Load( string& filename ) {
 
 	file.Read( 1, &byte );
 	if( byte <= 0 ) {
-		LogMsg(ERROR, "Cannot have zero or less for a delay" );
+		LogMsg(ERR, "Cannot have zero or less for a delay" );
 		delete [] frames;
 		frames = NULL;
 		return( false );
