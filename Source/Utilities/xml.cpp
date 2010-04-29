@@ -30,14 +30,14 @@ bool XMLFile::Open( const string& filename ) {
 	File xmlfile;
 
 	if( xmlfile.OpenRead( filename ) == false ) {
-		LogMsg(ERROR, "Could not find file %s", filename.c_str() );
+		LogMsg(ERR, "Could not find file %s", filename.c_str() );
 		return( false );
 	}
 
 	buf = xmlfile.Read();
 	bufSize = xmlfile.GetLength();
 	if( buf == NULL ) {
-		LogMsg(ERROR, "Could not load XML from archive. Buffer failed to allocate." );
+		LogMsg(ERR, "Could not load XML from archive. Buffer failed to allocate." );
 		return( NULL );
 	}
 

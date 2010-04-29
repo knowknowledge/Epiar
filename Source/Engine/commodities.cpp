@@ -6,6 +6,7 @@
  * \details
  */
 
+#include "includes.h"
 #include "Utilities/log.h"
 #include "Utilities/components.h"
 #include "Engine/commodities.h"
@@ -45,7 +46,7 @@ bool Commodity::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "msrp" ) {
 		msrp = atoi(value.c_str());
 	} else {
-		LogMsg(ERROR,"There is no Commodity attribute '%s'",subName.c_str() );
+		LogMsg(ERR,"There is no Commodity attribute '%s'",subName.c_str() );
 		return false;
 	}
 	return true;

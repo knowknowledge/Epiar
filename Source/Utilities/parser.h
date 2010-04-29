@@ -38,20 +38,20 @@ list<T *> Parser<T>::Parse( const string& filename, string rootName, string unit
 	delete [] buffer;
 
 	if( doc == NULL ) {
-		LogMsg(ERROR, "Could not load '%s' for parsing.", filename.c_str() );
+		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
 		return parsedObjs;
 	}
 	
 	cur = xmlDocGetRootElement( doc );
 	
 	if( cur == NULL ) {
-		LogMsg(ERROR, "'%s' file appears to be empty.", filename.c_str() );
+		LogMsg(ERR, "'%s' file appears to be empty.", filename.c_str() );
 		xmlFreeDoc( doc );
 		return parsedObjs;
 	}
 	
 	if( xmlStrcmp( cur->name, (const xmlChar *)rootName.c_str() ) ) {
-		LogMsg(ERROR, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
+		LogMsg(ERR, "'%s' appears to be invalid. Root element was %s.", filename.c_str(), (char *)cur->name );
 		xmlFreeDoc( doc );
 		return parsedObjs;
 	} else {

@@ -1,4 +1,4 @@
-/**\file			ui_container.cpp
+4/**\file			ui_container.cpp
  * \author			Maoserr
  * \date			Created: Saturday, March 27, 2010
  * \date			Modified: Saturday, March 27, 2010
@@ -46,6 +46,7 @@ bool UIContainer::DelChild( Widget *widget ){
 		if( (*i) == widget ){
 			delete (*i);
 			this->children.erase( i );
+			this->Reset();
 			return true;
 		}
 	}
@@ -60,6 +61,7 @@ bool UIContainer::Empty( void ){
 		delete (*i);
 	}
 	this->children.clear();
+	this->Reset();
 	return true;
 }
 

@@ -51,12 +51,12 @@ void Font::SetColor( float r, float g, float b, float a ) {
 bool Font::SetFont( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
-		LogMsg(ERROR, "Font '%s' could not be loaded.", fontname.c_str() );
+		LogMsg(ERR, "Font '%s' could not be loaded.", fontname.c_str() );
 		return( false );
 	}
 
 	if( this->font != NULL) {
-		LogMsg(ERROR, "Deleting the old font '%s'.\n", fontname.c_str() );
+		LogMsg(ERR, "Deleting the old font '%s'.\n", fontname.c_str() );
 		delete this->font;
 	}
 
@@ -64,7 +64,7 @@ bool Font::SetFont( string filename ) {
 	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
-		LogMsg(ERROR, "Failed to load font '%s'.\n", fontname.c_str() );
+		LogMsg(ERR, "Failed to load font '%s'.\n", fontname.c_str() );
 		return( false );
 	}
 
@@ -150,7 +150,7 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 			xn=x-this->TextWidth(text);
 			break;
 		default:
-			LogMsg(ERROR,"Invalid xpos");
+			LogMsg(ERR,"Invalid xpos");
 			assert(0);
 	}
 	// Y coordinates are flipped
@@ -165,7 +165,7 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 			yn=-y-TO_INT(floor(this->font->Descender()));
 			break;
 		default:
-			LogMsg(ERROR,"Invalid ypos");
+			LogMsg(ERR,"Invalid ypos");
 			assert(0);
 	}
 

@@ -34,7 +34,7 @@ class Log {
 			NONE,			/**< No logging. */
 			FATAL,			/**< Will kill the program. */
 			CRITICAL,		/**< Will make the program function incorrectly. */
-			ERROR,			/**< Unexpected errors. */
+			ERR,			/**< Unexpected errors. */
 			WARN,			/**< Expected (but should be noted) problems. */
 			ALERT,			/**< Something that might cause a problem. */
 			NOTICE,			/**< Notify the of an event occurring. */
@@ -57,7 +57,7 @@ class Log {
 		void SetMsgFilter( const string& msgfilter );
 		void Close( void );
 
-		void realLog( Level lvl, const string& func, const string& message, ... );
+		void realLog( Level lvl, const string& func, char *message, ... );
 
 	private:
 		Log();

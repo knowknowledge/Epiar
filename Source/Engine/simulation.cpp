@@ -134,19 +134,19 @@ bool Simulation::Run() {
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
 	{
-		LogMsg(ERROR,"Fatal error starting Lua.");
+		LogMsg(ERR,"Fatal error starting Lua.");
 		quit = true;
 	}
     if( 0 == OPTION(int,"options/development/editor-mode") ){
         if( !( Lua::Load("Resources/Scripts/player.lua") ))
         {
-            LogMsg(ERROR,"Fatal error starting Lua.");
+            LogMsg(ERR,"Fatal error starting Lua.");
             quit = true;
         }
     } else {
         if( !( Lua::Load("Resources/Scripts/editor.lua") ))
         {
-            LogMsg(ERROR,"Fatal error starting Lua.");
+            LogMsg(ERR,"Fatal error starting Lua.");
             quit = true;
         }
     }
@@ -333,22 +333,22 @@ bool Simulation::Parse( void ) {
 
 	// Now load the various subsystems
 	if( commodities->Load( commoditiesFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the commodities from '%s'.", commoditiesFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the commodities from '%s'.", commoditiesFilename.c_str() );
 	}
 	if( engines->Load( enginesFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
 	}
 	if( models->Load( modelsFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the models from '%s'.", modelsFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the models from '%s'.", modelsFilename.c_str() );
 	}
 	if( weapons->Load( weaponsFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
 	if( technologies->Load( technologiesFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
-		LogMsg(ERROR, "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
 	}
 	if( planets->Load( planetsFilename ) != true ) {
 		LogMsg(WARN, "There was an error loading the planets from '%s'.", planetsFilename.c_str() );

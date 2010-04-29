@@ -24,7 +24,7 @@ list<string> Filesystem::paths;
 int Filesystem::Init( const char* argv0 ) {
 	int retval;
 	if ( (retval = PHYSFS_init(argv0)) == 0 )
-		LogMsg(ERROR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+		LogMsg(ERR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
 	return retval;
 }
 
@@ -38,10 +38,10 @@ int Filesystem::Init( const char* argv0 ) {
 int Filesystem::Init( const char* argv0, const string &extension ) {
 	int retval;
 	if ( (retval = PHYSFS_init(argv0)) == 0 )
-		LogMsg(ERROR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+		LogMsg(ERR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
 	if ( (retval = PHYSFS_setSaneConfig("Games","Epiar",
 				extension.c_str(),0,1) == 0) )
-		LogMsg(ERROR,"Error initializing PhysicsFS configuration.\n%s",PHYSFS_getLastError());
+		LogMsg(ERR,"Error initializing PhysicsFS configuration.\n%s",PHYSFS_getLastError());
 	return retval;
 }
 
@@ -51,7 +51,7 @@ int Filesystem::Init( const char* argv0, const string &extension ) {
 int Filesystem::AppendPath( const string& archivename ) {
 	int retval;
 	if ( (retval = PHYSFS_addToSearchPath(archivename.c_str(), 1)) == 0 )
-		LogMsg(ERROR,"Error on appends to search path %s.\n%s",archivename.c_str(),
+		LogMsg(ERR,"Error on appends to search path %s.\n%s",archivename.c_str(),
 				PHYSFS_getLastError());
 	return retval;
 }
@@ -62,7 +62,7 @@ int Filesystem::AppendPath( const string& archivename ) {
 int Filesystem::PrependPath( const string& archivename ) {
 	int retval;
 	if ( (retval = PHYSFS_addToSearchPath(archivename.c_str(), 0)) == 0 )
-		LogMsg(ERROR,"Error on prepends to search path %s.\n%s",archivename.c_str(),
+		LogMsg(ERR,"Error on prepends to search path %s.\n%s",archivename.c_str(),
 				PHYSFS_getLastError());
 	return retval;
 }
@@ -77,7 +77,7 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 
 	rc = PHYSFS_enumerateFiles(path.c_str());
 	if (rc == NULL){
-		LogMsg(ERROR,"Failure to enumerate %s. reason: %s.\n",
+		LogMsg(ERR,"Failure to enumerate %s. reason: %s.\n",
 				path.c_str(),PHYSFS_getLastError());
 	}
 	else
@@ -131,7 +131,7 @@ void Filesystem::OutputArchivers( void ){
 int Filesystem::DeInit() {
 	int retval;
 	if ( (retval = PHYSFS_deinit()) == 0 )
-		LogMsg(ERROR,"Error de-initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+		LogMsg(ERR,"Error de-initializing PhysicsFS.\n%s",PHYSFS_getLastError());
 	return retval;
 }
 

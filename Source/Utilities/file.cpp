@@ -51,7 +51,7 @@ bool File::OpenRead( const string& filename ) {
 	fp = fopen(cName,"rb");
 #endif
 	if( fp == NULL ){
-		LogMsg(ERROR,"Could not open file: %s.\n%s", cName,
+		LogMsg(ERR,"Could not open file: %s.\n%s", cName,
 			PHYSFS_getLastError());
 		return false ;
 	}
@@ -84,7 +84,7 @@ bool File::OpenWrite( const string& filename ) {
 	this->fp = fopen( cName, "wb");
 #endif
 	if( fp == NULL ){
-		LogMsg(ERROR,"Could not open file for writing: %s.\n%s",cName,
+		LogMsg(ERR,"Could not open file for writing: %s.\n%s",cName,
 				PHYSFS_getLastError());
 		return false;
 	}
@@ -110,7 +110,7 @@ bool File::Read( long numBytes, char *buffer ){
 	if ( bytesRead == numBytes ){
 		return true;
 	} else {
-		LogMsg(ERROR,"%s: Unable to read specified number of bytes. %s",
+		LogMsg(ERR,"%s: Unable to read specified number of bytes. %s",
 			validName.c_str(), PHYSFS_getLastError());
 		return false;
 	}
@@ -137,7 +137,7 @@ char *File::Read( void ){
 		return fBuffer;
 	} else {
 		delete [] fBuffer;
-		LogMsg(ERROR,"%s: Unable to read file into memory. %s",
+		LogMsg(ERR,"%s: Unable to read file into memory. %s",
 			validName.c_str(), PHYSFS_getLastError());
 		return NULL;
 	}
@@ -156,7 +156,7 @@ bool File::Write( char *buffer, const long bufsize ){
 	long bytesWritten = fwrite(buffer,1,bufsize,fp);
 #endif
 	if ( bytesWritten != bufsize){
-		LogMsg(ERROR,"%s: Unable to write to file. %s",this->validName.c_str(),
+		LogMsg(ERR,"%s: Unable to write to file. %s",this->validName.c_str(),
 			PHYSFS_getLastError());
 		return false;
 	}
@@ -175,7 +175,7 @@ long File::Tell( void ){
 #endif
 		);
 	if ( offset == -1 ){
-		LogMsg(ERROR,"%s: Error using file tell. %s",
+		LogMsg(ERR,"%s: Error using file tell. %s",
 			validName.c_str(), PHYSFS_getLastError());
 	}
 	return offset;
@@ -192,7 +192,7 @@ bool File::Seek( long pos ){
 	retval = PHYSFS_seek( fp,
 		static_cast<PHYSFS_uint64>( pos ));
 	if ( retval == 0 ){
-		LogMsg(ERROR,"%s: Error using file seek [%d]. %s",
+		LogMsg(ERR,"%s: Error using file seek [%d]. %s",
 		                validName.c_str(), pos, PHYSFS_getLastError());
 		return false;
 	}
@@ -215,7 +215,7 @@ long File::GetLength( void ){
 int File::SetBuffer( int bufSize ){
 #ifdef USE_PHYSICSFS
 	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
-		LogMsg(ERROR,"Could not create internal buffer for file: %s.\n%s",
+		LogMsg(ERR,"Could not create internal buffer for file: %s.\n%s",
 				validName.c_str(),PHYSFS_getLastError());
 		PHYSFS_close( fp );
 		return 0;
@@ -248,7 +248,7 @@ bool File::Close() {
 	if ( retval != 0 )
 #endif
 	{
-		LogMsg(ERROR,"%s: Unable to close file handle.%s",
+		LogMsg(ERR,"%s: Unable to close file handle.%s",
 			validName.c_str(), PHYSFS_getLastError());
 		return false;
 	}
@@ -261,7 +261,7 @@ bool File::Exists( const string& filename ) {
 	cName = filename.c_str();
 #ifdef USE_PHYSICSFS
 	if ( !PHYSFS_exists( cName ) ){
-		LogMsg(ERROR,"File does not exist: %s.", cName);
+		LogMsg(ERR,"File does not exist: %s.", cName);
 		return false;
 	}
 #else
@@ -270,10 +270,10 @@ bool File::Exists( const string& filename ) {
 	if ( stat_ret != 0 ) {
 		printf("Stat for %s: [%d]\n",cName,stat_ret);
 		switch( stat_ret ) {
-			case EACCES:        LogMsg(ERROR,"Epiar cannot access:%s.", cName); break;
-			case EFAULT:        LogMsg(ERROR,"Invalid address: %s.", cName); break;
-			case EIO:           LogMsg(ERROR,"An I/O Error Occured: %s.", cName); break;
-			default:			LogMsg(ERROR,"Unknown error occurred: %s.", cName);
+			case EACCES:        LogMsg(ERR,"Epiar cannot access:%s.", cName); break;
+			case EFAULT:        LogMsg(ERR,"Invalid address: %s.", cName); break;
+			case EIO:           LogMsg(ERR,"An I/O Error Occured: %s.", cName); break;
+			default:			LogMsg(ERR,"Unknown error occurred: %s.", cName);
 		}
 		return false;
 	}

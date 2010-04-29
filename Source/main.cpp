@@ -49,6 +49,13 @@ int main( int argc, char **argv ) {
 		freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
 		freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
 	}
+	#if defined(_MSC_VER) && defined(DEBUG)
+		int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
+		// Turn on leak-checking bit
+		tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
+		// Set flag to the new value
+		_CrtSetDbgFlag( tmpFlag );
+	#endif//_MSC_VER
 #endif //_WIN32
 
 	// Parse command line options first.

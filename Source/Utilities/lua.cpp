@@ -50,13 +50,13 @@ bool Lua::Load( const string& filename ) {
 
 	// Load the lua script
 	if( 0 != luaL_loadfile(L, filename.c_str()) ) {
-		LogMsg(ERROR,"Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		LogMsg(ERR,"Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
 
 	// Execute the lua script
 	if( 0 != lua_pcall(L, 0, 0, 0) ) {
-		LogMsg(ERROR,"Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
+		LogMsg(ERR,"Error Executing '%s': %s", filename.c_str(), lua_tostring(L, -1));
 		return false;
 	}
 
@@ -78,7 +78,7 @@ bool Lua::Run( string line ) {
 	}
 
 	if( luaL_dostring(L,line.c_str()) ) {
-		LogMsg(ERROR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
+		LogMsg(ERR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
 		lua_pop(L, 1);  /* pop error message from the stack */
 	}
 
@@ -492,7 +492,7 @@ void Lua::pushSprite(lua_State *L,Sprite* s){
 		lua_setmetatable(L, -2);
 		break;
 	default:
-		LogMsg(ERROR,"Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
+		LogMsg(ERR,"Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
 		luaL_getmetatable(L, EPIAR_SHIP);
 		lua_setmetatable(L, -2);
 		assert(0);

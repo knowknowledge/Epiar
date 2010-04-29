@@ -142,7 +142,7 @@ void Gate::SendToRandomLocation(Sprite* ship) {
 void Gate::SendToExit(Sprite* ship) {
 	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(exitID);
 	if(exit==NULL) {
-		LogMsg(ERROR,"Gate %d cannot send to non-existant exit (%d)",this->GetID(),exitID);
+		LogMsg(ERR,"Gate %d cannot send to non-existant exit (%d)",this->GetID(),exitID);
 		return;
 	}
 	float distance = 50.0f;

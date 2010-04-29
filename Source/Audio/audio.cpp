@@ -106,7 +106,7 @@ bool Audio::SetMusicVol( float volume ){
 	Mix_VolumeMusic( volumeint );
 	volumeset = Mix_VolumeMusic( -1 );
 	if ( volumeset != volumeint ){
-		LogMsg(ERROR,"There was an error setting the volume.");
+		LogMsg(ERR,"There was an error setting the volume.");
 		return false;
 	}
 	if ( exceed_bounds )

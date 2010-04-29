@@ -42,7 +42,7 @@ Sound::Sound( const string& filename ):
 {
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
-		LogMsg(ERROR, "Could not load sound file: %s, Mixer error: %s",
+		LogMsg(ERR, "Could not load sound file: %s, Mixer error: %s",
 				filename.c_str(), Mix_GetError() );
 }
 
@@ -96,7 +96,7 @@ bool Sound::Play( Coordinate offset ){
 
 	int freechan = Audio::Instance().GetFreeChannel();
 	if( Mix_SetDistance( freechan, sounddist ) == 0 )
-		LogMsg(ERROR,"Set distance %d failed on channel %d.", sounddist, freechan );
+		LogMsg(ERR,"Set distance %d failed on channel %d.", sounddist, freechan );
 	//else
 	//	LogMsg(INFO,"Distance set to %d on channel %d.", sounddist, freechan );
 
@@ -104,7 +104,7 @@ bool Sound::Play( Coordinate offset ){
 	 * Left/Right speaker switched around.
 	 */
 	if( Mix_SetPanning( freechan, 254 - soundpan, soundpan ) == 0 )
-		LogMsg(ERROR,"Set panning %d failed on channel %d.", soundpan - 127, freechan );
+		LogMsg(ERR,"Set panning %d failed on channel %d.", soundpan - 127, freechan );
 	//else
 	//	LogMsg(INFO,"Panning set to %d on channel %d.", soundpan - 127, freechan );
 

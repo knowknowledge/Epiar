@@ -103,7 +103,7 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 void Model::_dbg_PrintInfo( void ) {
 	if( mass <= 0.001 ){
 		// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
-		LogMsg(ERROR,"Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
+		LogMsg(ERR,"Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
 	}
 	if(image!=NULL && name!=""){ 
 		cout<<"Storing Image for "<<name<<endl;
