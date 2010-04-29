@@ -709,6 +709,7 @@ int Lua::getSprites(lua_State *L, int kind){
         ++iter;
         ++index;
     }
+	delete sprites;
     return 1;
 }
 

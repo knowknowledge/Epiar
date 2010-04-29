@@ -107,9 +107,9 @@ bool QuadTree::Delete(Sprite* obj){
 }
 
 list<Sprite *> *QuadTree::GetSprites() {
-	list<Sprite*> *other;
-	list<Sprite*> *full = new list<Sprite*>();
 	if(!isLeaf){ // Node
+		list<Sprite*> *other;
+		list<Sprite*> *full = new list<Sprite*>();
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
 				other = subtrees[t]->GetSprites();

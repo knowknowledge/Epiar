@@ -258,6 +258,7 @@ void Hud::HandleInput( list<InputEvent> & events ) {
 			if( impacts->size() > 0) {
 				Target( (*(impacts->begin()))->GetID());
 			}
+			delete impacts;
 		}
 	}
 }
@@ -590,6 +591,7 @@ void Radar::Draw( void ) {
 			}
 		}
 	}
+	delete spriteList;
 }
 
 /**\brief Gets the radar position based on world coordinate

@@ -139,7 +139,7 @@ void SpriteManager::Draw() {
 		GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
 
 	list<Sprite *>::iterator i;
-	list<Sprite*> *onscreen = new list<Sprite*>();
+	list<Sprite*> *onscreen;
 	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *1.42f;
 	onscreen = GetSpritesNear( Camera::Instance()->GetFocusCoordinate(), r, DRAW_ORDER_ALL);
 
@@ -148,6 +148,7 @@ void SpriteManager::Draw() {
 	for( i = onscreen->begin(); i != onscreen->end(); ++i ) {
 		(*i)->Draw();
 	}
+	delete onscreen;
 }
 
 /**\brief Retrieves a list of the current sprites.
