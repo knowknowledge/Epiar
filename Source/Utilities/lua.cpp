@@ -333,7 +333,6 @@ int Lua::setmusicvol(lua_State *L){
 int Lua::getPlayerNames(lua_State *L) {
 	list<string> *names = Players::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
 	return 1;
 }
 
@@ -439,49 +438,42 @@ int Lua::focusCamera(lua_State *L){
 int Lua::getCommodityNames(lua_State *L){
 	list<string> *names = Commodities::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getAllianceNames(lua_State *L){
 	list<string> *names = Alliances::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getWeaponNames(lua_State *L){
 	list<string> *names = Weapons::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getModelNames(lua_State *L){
 	list<string> *names = Models::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getEngineNames(lua_State *L){
 	list<string> *names = Engines::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getTechnologyNames(lua_State *L){
 	list<string> *names = Technologies::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
 int Lua::getPlanetNames(lua_State *L){
 	list<string> *names = Planets::Instance()->GetNames();
 	pushNames(L,names);
-	delete names;
     return 1;
 }
 
@@ -870,7 +862,8 @@ int Lua::getPlanetInfo(lua_State *L) {
 	setField("Landable", p->GetLandable());
 	setField("Influence", p->GetInfluence());
 	lua_pushstring(L, "Technologies");
-	pushComponents(L, (list<Component*>*) &p->GetTechnologies() );
+	list<Technology*> techs =  p->GetTechnologies();
+	pushComponents(L,  (list<Component*>*)&techs );
 	lua_settable(L, -3);
 	return 1;
 }
@@ -933,17 +926,20 @@ int Lua::getTechnologyInfo(lua_State *L) {
 
     lua_createtable(L, 3, 0);
     int newTable = lua_gettop(L);
-	
+
 	// Push the Models Table
-	pushComponents(L, (list<Component*>*) &tech->GetModels() );
+	list<Model*> models = tech->GetModels();
+	pushComponents(L, (list<Component*>*) &models );
 	lua_rawseti(L, newTable, 1);
 
 	// Push the Weapons Table
-	pushComponents(L, (list<Component*>*) &tech->GetWeapons() );
+	list<Weapon*> weapons = tech->GetWeapons();
+	pushComponents(L, (list<Component*>*) &weapons );
 	lua_rawseti(L, newTable, 2);
 
 	// Push the Engines Table
-	pushComponents(L, (list<Component*>*) &tech->GetEngines() );
+	list<Engine*> engines = tech->GetEngines();
+	pushComponents(L, (list<Component*>*) &engines );
 	lua_rawseti(L, newTable, 3);
 
 	return 1;

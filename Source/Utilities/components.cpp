@@ -22,7 +22,7 @@
 /**\brief Get the Names of all Components in this collection
  */
 list<string>* Components::GetNames() {
-	return new list<string>(names);
+	return &names;
 }
 
 
