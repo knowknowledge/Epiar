@@ -1,4 +1,4 @@
-4/**\file			ui_container.cpp
+/**\file			ui_container.cpp
  * \author			Maoserr
  * \date			Created: Saturday, March 27, 2010
  * \date			Modified: Saturday, March 27, 2010
