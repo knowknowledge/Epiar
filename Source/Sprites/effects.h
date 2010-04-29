@@ -18,6 +18,7 @@
 class Effect : public Sprite {
 	public:
 		Effect(Coordinate pos, string filename, bool looping);
+		~Effect();
 		void Update(void);
 		void Draw(void);
 		virtual int GetDrawOrder( void ) {

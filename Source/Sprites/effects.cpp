@@ -25,6 +25,12 @@ Effect::Effect(Coordinate pos, string filename, bool looping) {
 	visual->SetLooping(looping);
 }
 
+/**\brief Destroy an Effect
+ */
+Effect::~Effect() {
+	delete visual;
+}
+
 /**\brief Updates the Effect
  */
 void Effect::Update( void ) {
