@@ -106,7 +106,7 @@ void Log::Close( void ) {
 }
 
 /**\brief The real log function.*/
-void Log::realLog( Level lvl, const string& func, char *message, ... ) {
+void Log::realLog( Level lvl, const string& func, const string& message, ... ) {
 	// Check log level
 	if( lvl < this->loglvl )
 		return;
@@ -119,7 +119,7 @@ void Log::realLog( Level lvl, const string& func, char *message, ... ) {
 
 	// Check message filter
 	if( !this->filter.empty() ){
-		if( !string(message).find( this->filter  ) )
+		if( !message.find( this->filter  ) )
 			return;
 	}
 
@@ -133,7 +133,7 @@ void Log::realLog( Level lvl, const string& func, char *message, ... ) {
 	timestamp[ strlen(timestamp) - 1 ] = 0;
 
 	va_start( args, message );
-	vsprintf( logBuffer, message, args );
+	vsnprintf( logBuffer, sizeof(logBuffer), message.c_str(), args );
 	va_end( args );
 
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;

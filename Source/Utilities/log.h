@@ -57,7 +57,7 @@ class Log {
 		void SetMsgFilter( const string& msgfilter );
 		void Close( void );
 
-		void realLog( Level lvl, const string& func, char *message, ... );
+		void realLog( Level lvl, const string& func, const string& message, ... );
 
 	private:
 		Log();
