@@ -151,6 +151,8 @@ void Camera::Update( void ) {
 	dy = 0;
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
+		/*
+		 * Turning off any Camera Lag
 		//get player acceleration
 		cameraLag += Player::Instance()->GetAcceleration();
 		//use the inverase of the acceleration to reduce camer back to center
@@ -158,6 +160,7 @@ void Camera::Update( void ) {
 		// until the camera lag is cleaned up and only applies during rapid accel, it's just going
 		// to be turned off
 		cameraLag = 0;
+		*/
 		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
 			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
 
