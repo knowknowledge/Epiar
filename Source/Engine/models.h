@@ -20,7 +20,7 @@ class Model : public Component {
 	public:
 		Model();
   		Model& operator= (const Model&);
-		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp, int _cargoSpace);
+		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _msrp, int _cargoSpace);
 		bool parserCB( string sectionName, string subName, string value );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
@@ -31,7 +31,7 @@ class Model : public Component {
 		float GetMass(void ) { return mass; }
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
-		short int getMaxEnergyAbsorption() { return maxEnergyAbsorption; }
+		int getHullStrength() { return hullStrength; }
 		int GetMSRP() {return msrp;}
 		int GetCargoSpace() { return cargoSpace; }
 		
@@ -43,7 +43,7 @@ class Model : public Component {
 		float maxSpeed;
 		int msrp;
 		int cargoSpace;
-		short int maxEnergyAbsorption; 
+		int hullStrength;
 };
 
 // Class that holds list of all models; manages them

@@ -73,21 +73,20 @@ class Ship : public Sprite {
 
 		struct {
 			/* Related to ship's condition */
-			short int hullEnergyAbsorbed; /* hull health - once the hull absorbs to much energy, your ship blows apart, hooray! :) */
-			unsigned int lastWeaponChangeAt; //number of where last weapon change occcured
-			unsigned int lastFiredAt; //number of ticks where last fire event occured
-			unsigned int selectedWeapon;
-
-			unsigned int cargoSpaceUsed; // Tons of cargo space that are currently filled
+			short int hullDamage; ///< Once the hull takes too much damage, your ship blows apart, hooray! :)
+			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
+			unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
+			unsigned int selectedWeapon; ///< Which weapon is currently selected
+			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
 			
 			/* Flags */
-			bool isAccelerating; // cleared by update, set by accelerate (so it's always updated twice a loop)
+			bool isAccelerating; ///< Cleared by update, set by accelerate (so it's always updated twice a loop)
 		} status;
 
 		// Weapon Systems
-		int ammo[max_ammo]; //contains the quantity of each ammo type on the ship
-		vector<Weapon *> shipWeapons;
-		float nonplayersound;	// Ratio for reducing non-player sounds
+		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
+		vector<Weapon *> shipWeapons; ///< 
+		float nonplayersound; ///< Ratio for reducing non-player sounds
 
 		// Economic Stuff
 		unsigned int credits;

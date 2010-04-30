@@ -23,7 +23,7 @@ Model::Model()
 	,maxSpeed(0.0f)
 	,msrp(0)
 	,cargoSpace(0)
-	,maxEnergyAbsorption(0)
+	,hullStrength(0)
 {
 	SetName("dead");
 }
@@ -39,7 +39,7 @@ Model& Model::operator=(const Model& other) {
 	maxSpeed = other.maxSpeed;
 	msrp = other.msrp;
 	cargoSpace = other.cargoSpace;
-	maxEnergyAbsorption = other.maxEnergyAbsorption;
+	hullStrength = other.hullStrength;
 	return *this;
 }
 
@@ -50,12 +50,12 @@ Model& Model::operator=(const Model& other) {
  * \param _thrustOffset For animation
  * \param _rotPerSecond Rotation per second
  * \param _maxSpeed Maximum speed
- * \param _maxEnergyAbsorption Maximum damage it can take
+ * \param _hullStrength Maximum damage it can take
  * \param _msrp Price
  * \param _cargoSpace Tons of cargo space
  */
 Model::Model( string _name, Image* _image, float _mass,
-		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _maxEnergyAbsorption, int _msrp, int _cargoSpace) :
+		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _msrp, int _cargoSpace) :
 	image(_image),
 	mass(_mass),
 	thrustOffset(_thrustOffset),
@@ -63,7 +63,7 @@ Model::Model( string _name, Image* _image, float _mass,
 	maxSpeed(_maxSpeed),
 	msrp(_msrp),
 	cargoSpace(_cargoSpace),
-	maxEnergyAbsorption(_maxEnergyAbsorption)
+	hullStrength(_hullStrength)
 {
 	SetName(_name);
 	//((Component*)this)->SetName(_name);
@@ -88,8 +88,8 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 		msrp = atoi( value.c_str() );
 	} else PPA_MATCHES( "cargoSpace" ) {
 		cargoSpace = atoi( value.c_str() );
-	} else PPA_MATCHES( "maxEnergyAbsorption" ) {
-		maxEnergyAbsorption = (short)atoi( value.c_str() );
+	} else PPA_MATCHES( "hullStrength" ) {
+		hullStrength = (short)atoi( value.c_str() );
 	}
 	// TODO This is a bad spot for this.
 	if(image!=NULL && name!="dead"){ 
@@ -127,8 +127,8 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%1.1f", this->GetMaxSpeed() );
 	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->getMaxEnergyAbsorption() );
-	xmlNewChild(section, NULL, BAD_CAST "maxEnergyAbsorption", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->getHullStrength() );
+	xmlNewChild(section, NULL, BAD_CAST "hullStrength", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );
@@ -147,8 +147,8 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
  *  \brief Retrieves a pointer to the Image
  * \fn Model::GetThrustOffset()
  *  \brief Retrieves the offset of the thrust from center
- * \fn Model::getMaxEnergyAbsorption()
- *  \brief Retrieves the maximum energy it can absorb
+ * \fn Model::getHullStrength()
+ *  \brief Retrieves the maximum damage the hull can absorb
  * \fn Model::GetMSRP()
  *  \brief Retrieves the price of the Model
  */

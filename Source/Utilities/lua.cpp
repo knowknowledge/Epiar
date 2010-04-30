@@ -821,7 +821,7 @@ int Lua::getModelInfo(lua_State *L) {
 	setField("Thrust", model->GetThrustOffset());
 	setField("Rotation", model->GetRotationsPerSecond());
 	setField("MaxSpeed", model->GetMaxSpeed());
-	setField("MaxHull", model->getMaxEnergyAbsorption());
+	setField("MaxHull", model->getHullStrength());
 	setField("MSRP", model->GetMSRP());
 	setField("Cargo", model->GetCargoSpace());
 

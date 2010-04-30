@@ -31,7 +31,7 @@ Ship::Ship() : nonplayersound( 0.4f )
 	flareAnimation = NULL;
 	
 	/* Initalize ship's condition */
-	status.hullEnergyAbsorbed = 0;
+	status.hullDamage = 0;
 	status.lastWeaponChangeAt = 0;
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
@@ -190,15 +190,15 @@ void Ship::Accelerate( void ) {
 /**\brief Adds damage to hull.
  */
 void Ship::Damage(short int damage) {
-	status.hullEnergyAbsorbed += damage;
+	status.hullDamage += damage;
 }
 
 /**\brief Repairs the ship.
  */
 void Ship::Repair(short int damage) {
-	status.hullEnergyAbsorbed -= damage;
-	if( status.hullEnergyAbsorbed<0 )
-		status.hullEnergyAbsorbed=0;
+	status.hullDamage -= damage;
+	if( status.hullDamage<0 )
+		status.hullDamage=0;
 }
 
 /**\brief Update function on every frame.
@@ -216,7 +216,7 @@ void Ship::Update( void ) {
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
-	if( status.hullEnergyAbsorbed >=  (float)model->getMaxEnergyAbsorption() ) {
+	if( status.hullDamage >=  (float)model->getHullStrength() ) {
 		SpriteManager *sprites = SpriteManager::Instance();
 
 		// Play explode sound
@@ -461,8 +461,8 @@ float Ship::directionTowards(float angle){
  */
 float Ship::getHullIntegrityPct() {
 	assert( model );
-	float remaining =  ( (float)model->getMaxEnergyAbsorption() - (float)status.hullEnergyAbsorbed ) / (float)model->getMaxEnergyAbsorption();
-	//LogMsg(INFO,"Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullEnergyAbsorbed,model->getMaxEnergyAbsorption(),remaining);
+	float remaining =  ( (float)model->getHullStrength() - (float)status.hullDamage ) / (float)model->getHullStrength();
+	//LogMsg(INFO,"Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullDamage,model->getHullStrength(),remaining);
 	return(remaining);
 }
 

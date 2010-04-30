@@ -10,7 +10,7 @@
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>10</thrustOffset>
     <maxSpeed>2.0</maxSpeed>
-    <maxEnergyAbsorption>100</maxEnergyAbsorption>
+    <hullStrength>100</hullStrength>
     <msrp>500</msrp>
     <cargoSpace>0</cargoSpace>
   </model>
@@ -21,7 +21,7 @@
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
-    <maxEnergyAbsorption>700</maxEnergyAbsorption>
+    <hullStrength>700</hullStrength>
     <msrp>3000</msrp>
     <cargoSpace>30</cargoSpace>
   </model>
@@ -32,7 +32,7 @@
     <rotationsPerSecond>0.70</rotationsPerSecond>
     <thrustOffset>35</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>600</maxEnergyAbsorption>
+    <hullStrength>600</hullStrength>
     <msrp>6000</msrp>
     <cargoSpace>80</cargoSpace>
   </model>
@@ -43,7 +43,7 @@
     <rotationsPerSecond>0.15</rotationsPerSecond>
     <thrustOffset>44</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>800</maxEnergyAbsorption>
+    <hullStrength>800</hullStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
   </model>
@@ -54,7 +54,7 @@
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>31</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
-    <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <hullStrength>500</hullStrength>
     <msrp>4000</msrp>
     <cargoSpace>20</cargoSpace>
   </model>
@@ -65,7 +65,7 @@
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>25</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
-    <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <hullStrength>400</hullStrength>
     <msrp>5000</msrp>
     <cargoSpace>10</cargoSpace>
   </model>
@@ -76,7 +76,7 @@
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>20</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
-    <maxEnergyAbsorption>200</maxEnergyAbsorption>
+    <hullStrength>200</hullStrength>
     <msrp>3500</msrp>
     <cargoSpace>10</cargoSpace>
   </model>
@@ -87,7 +87,7 @@
     <rotationsPerSecond>0.55</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
-    <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <hullStrength>400</hullStrength>
     <msrp>6000</msrp>
     <cargoSpace>20</cargoSpace>
   </model>
@@ -98,7 +98,7 @@
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
-    <maxEnergyAbsorption>300</maxEnergyAbsorption>
+    <hullStrength>300</hullStrength>
     <msrp>3000</msrp>
     <cargoSpace>15</cargoSpace>
   </model>
@@ -109,7 +109,7 @@
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>70</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>2500</maxEnergyAbsorption>
+    <hullStrength>2500</hullStrength>
     <msrp>8000</msrp>
     <cargoSpace>500</cargoSpace>
   </model>
@@ -120,7 +120,7 @@
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>800</maxEnergyAbsorption>
+    <hullStrength>800</hullStrength>
     <msrp>4000</msrp>
     <cargoSpace>120</cargoSpace>
   </model>
@@ -131,7 +131,7 @@
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>34</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
-    <maxEnergyAbsorption>700</maxEnergyAbsorption>
+    <hullStrength>700</hullStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
   </model>
@@ -142,7 +142,7 @@
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>50</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>2000</maxEnergyAbsorption>
+    <hullStrength>2000</hullStrength>
     <msrp>8000</msrp>
     <cargoSpace>400</cargoSpace>
   </model>
@@ -153,7 +153,7 @@
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <hullStrength>500</hullStrength>
     <msrp>1500</msrp>
     <cargoSpace>80</cargoSpace>
   </model>
@@ -164,7 +164,7 @@
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <maxEnergyAbsorption>500</maxEnergyAbsorption>
+    <hullStrength>500</hullStrength>
     <msrp>2000</msrp>
     <cargoSpace>40</cargoSpace>
   </model>
@@ -175,7 +175,7 @@
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
-    <maxEnergyAbsorption>600</maxEnergyAbsorption>
+    <hullStrength>600</hullStrength>
     <msrp>1000</msrp>
     <cargoSpace>75</cargoSpace>
   </model>
@@ -186,7 +186,7 @@
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>27</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
-    <maxEnergyAbsorption>400</maxEnergyAbsorption>
+    <hullStrength>400</hullStrength>
     <msrp>2500</msrp>
     <cargoSpace>30</cargoSpace>
   </model>
@@ -197,7 +197,7 @@
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>90</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
-    <maxEnergyAbsorption>5000</maxEnergyAbsorption>
+    <hullStrength>5000</hullStrength>
     <msrp>15000</msrp>
     <cargoSpace>1000</cargoSpace>
   </model>
