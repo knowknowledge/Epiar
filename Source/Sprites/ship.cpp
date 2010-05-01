@@ -36,6 +36,7 @@ Ship::Ship() : nonplayersound( 0.4f )
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
+	status.isAccelerating = false;
 	for(int a=0;a<max_ammo;a++){
 		ammo[a]=0;
 	}

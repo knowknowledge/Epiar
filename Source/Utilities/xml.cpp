@@ -112,6 +112,7 @@ string XMLFile::Get( const string& path ) {
 				string result = string( (char *)subKey ); 
 				values.insert(make_pair(path,result)); // Insert dummy value so that we don't need to search for it again
 				//LogMsg(INFO,"Populating key '%s' of XML file '%s' as '%s'",path.c_str(),filename.c_str(),result.c_str());
+				xmlFree(subKey);
 				return(result);
 			} else {
 				// more path, explore the child tree

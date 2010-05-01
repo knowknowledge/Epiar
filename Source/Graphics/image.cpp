@@ -96,6 +96,7 @@ bool Image::Load( char *buf, int bufSize ) {
 	}
 
 	s = IMG_Load_RW( rw, 0 );
+	SDL_FreeRW(rw);
 
 	if( !s ) {
 		LogMsg(WARN, "Image loading failed. Could not load image from RWops" );
