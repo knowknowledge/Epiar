@@ -32,6 +32,7 @@ class Outfit {
 
 		Outfit& operator= (const Outfit& other);
 		Outfit operator+ (const Outfit& other);
+		Outfit& operator+= (const Outfit& other);
 
 		int GetMSRP() { return msrp; }
 		void SetMSRP( int _msrp ) { msrp = _msrp; }
@@ -39,8 +40,8 @@ class Outfit {
 		Image* GetPicture() { return picture; }
 		void SetPicture( Image* _picture ) { picture = _picture; }
 
-		float GetRotPerSecond() { return rotPerSecond; }
-		void SetRotPerSecond( float _rotPerSecond ) { rotPerSecond = _rotPerSecond; }
+		float GetRotationsPerSecond() { return rotPerSecond; }
+		void SetRotationsPerSecond( float _rotPerSecond ) { rotPerSecond = _rotPerSecond; }
 
 		float GetMaxSpeed() { return maxSpeed; }
 		void SetMaxSpeed( float _maxSpeed ) { maxSpeed = _maxSpeed; }
@@ -63,10 +64,7 @@ class Outfit {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
-		// \1 get_\2() { return \2; }\rvoid set_\2( \1 _\2 ) { \2 = _\2; }
-
-
-	private:
+	protected:
 		int msrp; ///< The cost in credits.
 		Image* picture; ///< The image used in the store.
 
@@ -86,6 +84,7 @@ class Outfit {
 
 		// Offensive Stats
 		//TODO: What would go here?
+	private:
 };
 
 #endif // define __H_OUTFIT__

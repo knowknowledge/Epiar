@@ -87,3 +87,92 @@ Outfit Outfit::operator+ (const Outfit& other)
 	return total;
 }
 
+/**	Add different Outfits together to combine their effectiveness
+ */
+Outfit& Outfit::operator+= (const Outfit& other)
+{
+	msrp += other.msrp;
+	// Don't change the picture
+	rotPerSecond += other.rotPerSecond;
+	maxSpeed += other.maxSpeed;
+	forceOutput += other.forceOutput;
+	mass += other.mass;
+	cargoSpace += other.cargoSpace;
+	surfaceArea += other.surfaceArea;
+	hullStrength += other.hullStrength;
+	shieldStrength += other.shieldStrength;
+	return *this;
+}
+
+
+/**
+ * \function GetMSRP
+ * \brief Get the msrp
+ *
+ * \function SetMSRP
+ * \brief Set the msrp
+ * \param _msrp The new msrp value
+ *
+ * \function GetPicture
+ * \brief Get the picture
+ *
+ * \function SetPicture
+ * \brief Set the picture
+ * \param _picture The new picture value
+ *
+ * \function GetRotPerSecond
+ * \brief Get the rotPerSecond
+ *
+ * \function SetRotPerSecond
+ * \brief Set the rotPerSecond
+ * \param _rotPerSecond The new rotPerSecond value
+ *
+ * \function GetMaxSpeed
+ * \brief Get the maxSpeed
+ *
+ * \function SetMaxSpeed
+ * \brief Set the maxSpeed
+ * \param _maxSpeed The new maxSpeed value
+ *
+ * \function GetForceOutput
+ * \brief Get the forceOutput
+ *
+ * \function SetForceOutput
+ * \brief Set the forceOutput
+ * \param _forceOutput The new forceOutput value
+ *
+ * \function GetMass
+ * \brief Get the mass
+ *
+ * \function SetMass
+ * \brief Set the mass
+ * \param _mass The new mass value
+ *
+ * \function GetCargoSpace
+ * \brief Get the cargoSpace
+ *
+ * \function SetCargoSpace
+ * \brief Set the cargoSpace
+ * \param _cargoSpace The new cargoSpace value
+ *
+ * \function GetSurfaceArea
+ * \brief Get the surfaceArea
+ *
+ * \function SetSurfaceArea
+ * \brief Set the surfaceArea
+ * \param _surfaceArea The new surfaceArea value
+ *
+ * \function GetHullStrength
+ * \brief Get the hullStrength
+ *
+ * \function SetHullStrength
+ * \brief Set the hullStrength
+ * \param _hullStrength The new hullStrength value
+ *
+ * \function GetShieldStrength
+ * \brief Get the shieldStrength
+ *
+ * \function SetShieldStrength
+ * \brief Set the shieldStrength
+ * \param _shieldStrength The new shieldStrength value
+ */

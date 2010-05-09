@@ -41,6 +41,8 @@ Ship::Ship() : nonplayersound( 0.4f )
 		ammo[a]=0;
 	}
 
+	shipStats = Outfit();
+
 	SetRadarColor(Color::Get(255,0,0));
 	SetAngle( float( rand() %360 ) );
 }
@@ -64,6 +66,8 @@ bool Ship::SetModel( Model *model ) {
 		this->model = model;
 		
 		SetImage( model->GetImage() );
+
+		ComputeShipStats();
 		
 		return( true );
 	}
@@ -86,6 +90,8 @@ bool Ship::SetEngine( Engine *engine ) {
 			delete flareAnimation;
 		flareAnimation = new Animation( engine->GetFlareAnimation() );
 		flareAnimation->Reset();
+
+		ComputeShipStats();
 		
 		return( true );
 	}
@@ -139,7 +145,7 @@ void Ship::Rotate( float direction ) {
 	}
 
 	// Compute the maximum amount that the ship can turn
-	rotPerSecond = model->GetRotationsPerSecond();
+	rotPerSecond = shipStats.GetRotationsPerSecond();
 	timerDelta = Timer::GetDelta();
 	maxturning = static_cast<float>((rotPerSecond * timerDelta) * 360.);
 
@@ -166,9 +172,9 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
-	float speed = model->GetMaxSpeed();
+	float speed = shipStats.GetMaxSpeed();
 
-	float acceleration = engine->GetForceOutput() / model->GetMass();
+	float acceleration = shipStats.GetForceOutput() / shipStats.GetMass();
 
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
 	                         -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
@@ -217,7 +223,7 @@ void Ship::Update( void ) {
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
-	if( status.hullDamage >=  (float)model->GetHullStrength() ) {
+	if( status.hullDamage >=  (float)shipStats.GetHullStrength() ) {
 		SpriteManager *sprites = SpriteManager::Instance();
 
 		// Play explode sound
@@ -325,6 +331,8 @@ FireStatus Ship::Fire() {
  */
 void Ship::addShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
+
+	ComputeShipStats();
 }
 
 /**\brief Adds a new weapon to the ship by name.
@@ -383,7 +391,7 @@ int Ship::StoreCommodities(string commodity, unsigned int count) {
 	LogMsg(INFO, "Storing %d tons of %s.", count, commodity.c_str());
 
 	// Ensure that we have enough space to store this cargo
-	unsigned int cargoSpaceRemaining = (model->GetCargoSpace() - status.cargoSpaceUsed);
+	unsigned int cargoSpaceRemaining = (shipStats.GetCargoSpace() - status.cargoSpaceUsed);
 	if( count > cargoSpaceRemaining ) {
 		LogMsg(INFO, "Cannot Store all %d tons of %s. Only enough room for %d", count, commodity.c_str(), cargoSpaceRemaining);
 		count = cargoSpaceRemaining;
@@ -462,8 +470,7 @@ float Ship::directionTowards(float angle){
  */
 float Ship::getHullIntegrityPct() {
 	assert( model );
-	float remaining =  ( (float)model->GetHullStrength() - (float)status.hullDamage ) / (float)model->GetHullStrength();
-	//LogMsg(INFO,"Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullDamage,model->getHullStrength(),remaining);
+	float remaining =  ( (float)shipStats.GetHullStrength() - (float)status.hullDamage ) / (float)shipStats.GetHullStrength();
 	return(remaining);
 }
 
@@ -503,5 +510,23 @@ map<Weapon*,int> Ship::getWeaponsAndAmmo() {
 		weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
 	}
 	return weaponPack;
+}
+
+/**\brief Computes the Ship Statistics based on equiped Outfit.
+ */
+void Ship::ComputeShipStats() {
+	// Start with an empty Outfit
+	shipStats = Outfit();
+
+	// Add the single Outfits
+	// Since there it is possible that a ship doesn't have a model or engine,
+	// only add them if they exist.
+	if(model){ shipStats += *model; }
+	if(engine){ shipStats += *engine; }
+
+	// Add any Outfit Collections
+	for(unsigned int i=0; i<shipWeapons.size(); i++){
+		shipStats += *shipWeapons[i];
+	}
 }
 

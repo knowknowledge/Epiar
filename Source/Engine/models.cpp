@@ -70,6 +70,7 @@ bool Model::parserCB( string sectionName, string subName, string value ) {
 		name = value;
 	} else PPA_MATCHES( "image" ) {
 		image = (Image*)Image::Get( value );
+		SetPicture( image );
 	} else PPA_MATCHES( "mass" ) {
 		mass = (float)atof( value.c_str() );
 	} else PPA_MATCHES( "rotationsPerSecond" ) {

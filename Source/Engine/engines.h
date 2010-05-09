@@ -29,14 +29,12 @@ class Engine : public Component, public Outfit {
 
 		void _dbg_PrintInfo( void );
 		
-		float GetForceOutput( void ) { return forceOutput; }
 		string GetFlareAnimation( void ) { return flareAnimation; }
 		short int GetFoldDrive( void ) { return foldDrive; }
 		
 		Sound *thrustsound;
 
 	private:
-		float forceOutput;
 		bool foldDrive;
 		string flareAnimation;
 };

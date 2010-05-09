@@ -70,6 +70,9 @@ class Ship : public Sprite {
 		Model *model;
 		Engine *engine;
 		Animation *flareAnimation;
+		Outfit shipStats;
+
+		void ComputeShipStats();
 
 		struct {
 			/* Related to ship's condition */

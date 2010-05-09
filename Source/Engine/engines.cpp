@@ -20,7 +20,6 @@
  */
 Engine::Engine() :
 	thrustsound(NULL),
-	forceOutput(0.0),
 	foldDrive(false),
 	flareAnimation("")
 {
@@ -51,13 +50,13 @@ Engine& Engine::operator= (const Engine& other) {
 Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
 		short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic) :
 	thrustsound(_thrustsound),
-	forceOutput(_forceOutput),
 	foldDrive(_foldDrive),
 	flareAnimation(_flareAnimation)
 {
 	SetName(_name);
 	SetMSRP(_msrp);
 	SetPicture(_pic);
+	SetForceOutput(_forceOutput);
 }
 
 /**\brief Parser to parse the XML file
@@ -66,7 +65,7 @@ bool Engine::parserCB( string sectionName, string subName, string value ) {
 	PPA_MATCHES( "name" ) {
 		name = value;
 	} else PPA_MATCHES( "forceOutput" ) {
-		forceOutput = static_cast<float> (atof( value.c_str() ));
+		SetForceOutput( static_cast<float> (atof( value.c_str() )));
 	} else PPA_MATCHES( "msrp" ) {
 		SetMSRP( (short int)atoi( value.c_str() ));
 	} else PPA_MATCHES( "foldDrive" ) {
