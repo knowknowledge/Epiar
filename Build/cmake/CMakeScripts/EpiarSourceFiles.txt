@@ -29,6 +29,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/engines.h
 	${Epiar_SRC_DIR}/Engine/hud.h
 	${Epiar_SRC_DIR}/Engine/models.h
+	${Epiar_SRC_DIR}/Engine/outfit.h
 	${Epiar_SRC_DIR}/Engine/quadrant.h
 	${Epiar_SRC_DIR}/Engine/simulation.h
 	${Epiar_SRC_DIR}/Engine/starfield.h
@@ -41,6 +42,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/engines.cpp
 	${Epiar_SRC_DIR}/Engine/hud.cpp
 	${Epiar_SRC_DIR}/Engine/models.cpp
+	${Epiar_SRC_DIR}/Engine/outfit.cpp
 	${Epiar_SRC_DIR}/Engine/quadrant.cpp
 	${Epiar_SRC_DIR}/Engine/simulation.cpp
 	${Epiar_SRC_DIR}/Engine/starfield.cpp

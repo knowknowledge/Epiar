@@ -12,6 +12,7 @@
 #include "Sprites/sprite.h"
 #include "Audio/sound.h"
 #include "Utilities/components.h"
+#include "Engine/outfit.h"
 
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
@@ -26,7 +27,7 @@ enum AmmoType {
 	max_ammo // This AmmoType is used only for iterating accross the Types
 };
 
-class Weapon : public Component {
+class Weapon : public Component, public Outfit {
 	public:
 		Weapon(void);
 		Weapon& operator=(const Weapon& other);
@@ -41,7 +42,6 @@ class Weapon : public Component {
 		static AmmoType AmmoNameToType(string typeName );
 
 		Image *GetImage(void) {return image;}
-		Image *GetPicture(void) {return pic;}
 		int GetType(void) {return weaponType;}
 		int GetPayload(void) {return payload;}
 		int GetVelocity(void) {return velocity;}
@@ -49,14 +49,12 @@ class Weapon : public Component {
 		AmmoType GetAmmoType(void) {return ammoType;}
 		int GetAmmoConsumption(void) { return ammoConsumption;}
 		int GetFireDelay(void) {return fireDelay;}
-		int GetMSRP(void) {return msrp;}
 		int GetLifetime(void) {return lifetime;}
 		float GetTracking(void) {return tracking;}
 		Sound *sound; //Sound the weapon makes
 
 	private:
 		Image *image;
-		Image *pic;
 		int weaponType; //(energy, explosive, laser, etc)
 		int payload; //intesity of explosion
 		int velocity; //speed of travel
@@ -66,7 +64,6 @@ class Weapon : public Component {
 		int fireDelay; //delay between being able to fire agian in ticks
 		int lifetime; //ticks until weapon is destroyed
 		float tracking;
-		int msrp;
 };
 
 #endif

@@ -17,13 +17,7 @@
  */
 Model::Model()
 	:image(NULL)
-	,mass(0.0f)
 	,thrustOffset(0)
-	,rotPerSecond(0.0f)
-	,maxSpeed(0.0f)
-	,msrp(0)
-	,cargoSpace(0)
-	,hullStrength(0)
 {
 	SetName("dead");
 }
@@ -57,15 +51,15 @@ Model& Model::operator=(const Model& other) {
 Model::Model( string _name, Image* _image, float _mass,
 		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _msrp, int _cargoSpace) :
 	image(_image),
-	mass(_mass),
-	thrustOffset(_thrustOffset),
-	rotPerSecond(_rotPerSecond),
-	maxSpeed(_maxSpeed),
-	msrp(_msrp),
-	cargoSpace(_cargoSpace),
-	hullStrength(_hullStrength)
+	thrustOffset(_thrustOffset)
 {
 	SetName(_name);
+	SetMass(_mass);
+	SetRotationsPerSecond(_rotPerSecond);
+	SetMaxSpeed(_maxSpeed);
+	SetMSRP(_msrp);
+	SetCargoSpace(_cargoSpace);
+	SetHullStrength(_hullStrength);
 	//((Component*)this)->SetName(_name);
 }
 
@@ -127,7 +121,7 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "thrustOffset", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%1.1f", this->GetMaxSpeed() );
 	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->getHullStrength() );
+	snprintf(buff, sizeof(buff), "%d", this->GetHullStrength() );
 	xmlNewChild(section, NULL, BAD_CAST "hullStrength", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );

@@ -16,7 +16,7 @@
 #include "Utilities/components.h"
 
 // Abstraction of a single ship model
-class Model : public Component {
+class Model : public Component, public Outfit {
 	public:
 		Model();
   		Model& operator= (const Model&);
@@ -25,25 +25,12 @@ class Model : public Component {
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 		
-		string GetFlareAnimation( void );
-		float GetRotationsPerSecond( void ) { return rotPerSecond; }
-		float GetMaxSpeed( void ) { return maxSpeed; }
-		float GetMass(void ) { return mass; }
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
-		int getHullStrength() { return hullStrength; }
-		int GetMSRP() {return msrp;}
-		int GetCargoSpace() { return cargoSpace; }
 		
 	private:
-		Image *image;
-		float mass;
-		short int thrustOffset; // engine flare animation offset
-		float rotPerSecond;
-		float maxSpeed;
-		int msrp;
-		int cargoSpace;
-		int hullStrength;
+		Image *image; ///< The Image used when drawing these ships in space.
+		short int thrustOffset; ///< The number of pixels engine flare animation offset
 };
 
 // Class that holds list of all models; manages them

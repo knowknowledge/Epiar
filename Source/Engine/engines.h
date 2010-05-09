@@ -12,12 +12,13 @@
 #include "Audio/sound.h"
 #include "Graphics/animation.h"
 #include "Utilities/components.h"
+#include "Engine/outfit.h"
 #include "includes.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
 // Abstraction of a single engine
-class Engine : public Component {
+class Engine : public Component, public Outfit {
 	public:
 		Engine();
 		Engine& operator= (const Engine&);
@@ -30,18 +31,14 @@ class Engine : public Component {
 		
 		float GetForceOutput( void ) { return forceOutput; }
 		string GetFlareAnimation( void ) { return flareAnimation; }
-		short int GetMSRP( void ) { return msrp; }
 		short int GetFoldDrive( void ) { return foldDrive; }
-		Image* GetPicture( void ) { return pic; }
 		
 		Sound *thrustsound;
 
 	private:
 		float forceOutput;
-		short int msrp;
 		bool foldDrive;
 		string flareAnimation;
-		Image *pic;
 };
 
 // Class that holds list of all planets; manages them

@@ -21,10 +21,8 @@
 Engine::Engine() :
 	thrustsound(NULL),
 	forceOutput(0.0),
-	msrp(0),
 	foldDrive(false),
-	flareAnimation(""),
-	pic(NULL)
+	flareAnimation("")
 {
 	SetName("dead");
 }
@@ -32,13 +30,13 @@ Engine::Engine() :
 /**\brief Assignment constructor - copies all fields.
  */
 Engine& Engine::operator= (const Engine& other) {
+	Outfit(*this) = Outfit(other);
+
 	name = other.name;
 	thrustsound = other.thrustsound;
 	forceOutput = other.forceOutput;
-	msrp = other.msrp;
 	foldDrive = other.foldDrive;
 	flareAnimation = other.flareAnimation;
-	pic = other.pic;
 	return *this;
 }
 
@@ -54,12 +52,12 @@ Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
 		short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic) :
 	thrustsound(_thrustsound),
 	forceOutput(_forceOutput),
-	msrp(_msrp),
 	foldDrive(_foldDrive),
-	flareAnimation(_flareAnimation),
-	pic(_pic)
+	flareAnimation(_flareAnimation)
 {
 	SetName(_name);
+	SetMSRP(_msrp);
+	SetPicture(_pic);
 }
 
 /**\brief Parser to parse the XML file
@@ -70,7 +68,7 @@ bool Engine::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "forceOutput" ) {
 		forceOutput = static_cast<float> (atof( value.c_str() ));
 	} else PPA_MATCHES( "msrp" ) {
-		msrp = (short int)atoi( value.c_str() );
+		SetMSRP( (short int)atoi( value.c_str() ));
 	} else PPA_MATCHES( "foldDrive" ) {
 		foldDrive = (atoi( value.c_str() ) != 0);
 	} else PPA_MATCHES( "flareAnimation" ) {
@@ -78,9 +76,10 @@ bool Engine::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "thrustSound" ){
 		this->thrustsound = Sound::Get( value );
 	} else PPA_MATCHES( "picName" ){
-		pic = Image::Get(value);
+		Image* pic = Image::Get(value);
 		// This can be accessed by either the path or the Engine Name
 		Image::Store(name, pic);
+		SetPicture(pic);
 	}
 
 	return true;

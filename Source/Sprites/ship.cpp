@@ -212,12 +212,12 @@ void Ship::Update( void ) {
 	}
 	flareAnimation->Update();
 
-	// Shiw the hits taken as part of the radar color
+	// Show the hits taken as part of the radar color
 	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
-	if( status.hullDamage >=  (float)model->getHullStrength() ) {
+	if( status.hullDamage >=  (float)model->GetHullStrength() ) {
 		SpriteManager *sprites = SpriteManager::Instance();
 
 		// Play explode sound
@@ -462,7 +462,7 @@ float Ship::directionTowards(float angle){
  */
 float Ship::getHullIntegrityPct() {
 	assert( model );
-	float remaining =  ( (float)model->getHullStrength() - (float)status.hullDamage ) / (float)model->getHullStrength();
+	float remaining =  ( (float)model->GetHullStrength() - (float)status.hullDamage ) / (float)model->GetHullStrength();
 	//LogMsg(INFO,"Ship has taken %d damage out of %d possibile. %02f%% Remaining",status.hullDamage,model->getHullStrength(),remaining);
 	return(remaining);
 }

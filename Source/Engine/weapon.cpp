@@ -10,6 +10,7 @@
 #include "Engine/weapon.h"
 #include "Utilities/trig.h"
 #include "Engine/models.h"
+#include "Engine/outfit.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
@@ -23,7 +24,6 @@
 Weapon::Weapon(void) :
 	sound(NULL),
 	image(NULL),
-	pic(NULL),
 	weaponType(0),
 	payload(0),
 	velocity(0),
@@ -32,8 +32,7 @@ Weapon::Weapon(void) :
 	ammoConsumption(0),
 	fireDelay(0),
 	lifetime(0),
-	tracking(0.0f),
-	msrp(0)
+	tracking(0.0f)
 {
 	SetName("dead");
 }
@@ -41,9 +40,10 @@ Weapon::Weapon(void) :
 /**\brief Assignment operator (Copy fields)
  */
 Weapon& Weapon::operator=(const Weapon& other) {
+	Outfit(*this) = Outfit(other);
+
 	name = other.name;
 	image = other.image;
-	pic = other.pic;
 	weaponType = other.weaponType;
 	payload = other.payload;
 	velocity = other.velocity;
@@ -53,8 +53,8 @@ Weapon& Weapon::operator=(const Weapon& other) {
 	fireDelay = other.fireDelay;
 	lifetime = other.lifetime;
 	tracking = other.tracking;
-	msrp = other.msrp;
 	sound = other.sound;
+
 	return *this;
 }
 
@@ -79,7 +79,6 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic,
 		AmmoType _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
 	sound(_sound),
 	image(_image),
-	pic(_pic),
 	weaponType(_weaponType),
 	payload(_payload),
 	velocity(_velocity),
@@ -88,10 +87,13 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic,
 	ammoConsumption(_ammoConsumption),
 	fireDelay(_fireDelay),
 	lifetime(_lifetime),
-	tracking(_tracking),
-	msrp(_msrp)
+	tracking(_tracking)
 {
 	SetName(_name);
+	SetMSRP( _msrp );
+	SetPicture( _pic );
+	
+	// Generic Outfit stuff
 	//((Component*)this)->SetName(_name);
 }
 
@@ -112,9 +114,10 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 	} else PPA_MATCHES( "imageName" ) {
 		image = Image::Get(value);
 	} else PPA_MATCHES( "picName" ) {
-		pic = Image::Get(value);
+		Image* pic = Image::Get(value);
 		// This can be accessed by either the path or the modelName
 		Image::Store(name, pic);
+		SetPicture(pic);
 	} else PPA_MATCHES( "payload" ) {
 		if (atoi( value.c_str()) != 0)
 			payload = atoi( value.c_str() );
@@ -144,7 +147,7 @@ bool Weapon::parserCB( string sectionName, string subName, string value ) {
 		tracking = _tracking;
 	} else PPA_MATCHES( "msrp" ) {
 		if (atoi( value.c_str()) != 0)
-			msrp = atoi( value.c_str() );
+			SetMSRP( atoi( value.c_str() ));
 	} else PPA_MATCHES( "sound" ) {
 			string pathPrefix = "Resources/Audio/Weapons/";
 			if( value.find(pathPrefix)==0 ) {
