@@ -177,7 +177,7 @@ void Ship::Accelerate( void ) {
 	float acceleration = shipStats.GetForceOutput() / shipStats.GetMass();
 
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
-	                         -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
+	                   -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
 
 	momentum.EnforceMagnitude(speed);
 	

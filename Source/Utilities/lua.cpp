@@ -337,10 +337,10 @@ int Lua::getPlayerNames(lua_State *L) {
 }
 
 int Lua::loadPlayer(lua_State *L) {
-    int n = lua_gettop(L);
+	int n = lua_gettop(L);
 	if (n != 1) {
 		return luaL_error(L, "Loading a Player expects a name");
-    }
+	}
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Loading Player: "<<playerName<<endl;
 	Player* newPlayer = Players::Instance()->GetPlayer( playerName );
@@ -350,20 +350,20 @@ int Lua::loadPlayer(lua_State *L) {
 	bool alreadyLoaded = Player::IsLoaded();
 	Player::Load(playerName);
 	if(!alreadyLoaded) {
-        // Set player model based on simulation xml file settings
-        SpriteManager::Instance()->Add( Player::Instance() );
+		// Set player model based on simulation xml file settings
+		SpriteManager::Instance()->Add( Player::Instance() );
 
-        // Focus the camera on the sprite
-        Camera::Instance()->Focus( Player::Instance() );
+		// Focus the camera on the sprite
+		Camera::Instance()->Focus( Player::Instance() );
 	}
 	return 0;
 }
 
 int Lua::newPlayer(lua_State *L) {
-    int n = lua_gettop(L);
+	int n = lua_gettop(L);
 	if (n != 1) {
 		return luaL_error(L, "Loading a Player expects a name");
-    }
+	}
 
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Creating Player: "<<playerName<<endl;
@@ -384,25 +384,25 @@ int Lua::getPlayer(lua_State *L){
 }
 
 int Lua::getCamera(lua_State *L){
-    int n = lua_gettop(L);
+	int n = lua_gettop(L);
 	if (n != 0) {
 		return luaL_error(L, "Getting the Camera Coordinates didn't expect %d arguments. But thanks anyway", n);
-    }
-    Coordinate c = Camera::Instance()->GetFocusCoordinate();
-    lua_pushinteger(L,static_cast<lua_Integer>(c.GetX()));
-    lua_pushinteger(L,static_cast<lua_Integer>(c.GetY()));
+	}
+	Coordinate c = Camera::Instance()->GetFocusCoordinate();
+	lua_pushinteger(L,static_cast<lua_Integer>(c.GetX()));
+	lua_pushinteger(L,static_cast<lua_Integer>(c.GetY()));
 	return 2;
 }
 
 int Lua::moveCamera(lua_State *L){
-    int n = lua_gettop(L);
+	int n = lua_gettop(L);
 	if (n != 2) {
 		return luaL_error(L, "Moving the Camera needs 2 arguments (X,Y) not %d arguments", n);
-    }
-    int x = luaL_checkinteger(L,1);
-    int y = luaL_checkinteger(L,2);
-    Camera::Instance()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
-    Camera::Instance()->Move(-x,y);
+	}
+	int x = luaL_checkinteger(L,1);
+	int y = luaL_checkinteger(L,2);
+	Camera::Instance()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
+	Camera::Instance()->Move(-x,y);
 	return 0;
 }
 //Allow camera shaking from Lua
@@ -416,65 +416,65 @@ int Lua::shakeCamera(lua_State *L){
 }
 
 int Lua::focusCamera(lua_State *L){
-    int n = lua_gettop(L);
+	int n = lua_gettop(L);
 	if (n == 1) {
 		int id = (int)(luaL_checkint(L,1));
 		SpriteManager *sprites= SpriteManager::Instance();
 		Sprite* target = sprites->GetSpriteByID(id);
 		if(target!=NULL)
-            Camera::Instance()->Focus( target );
+			Camera::Instance()->Focus( target );
 	} else if (n == 2) {
 		double x,y;
-        x = (luaL_checknumber(L,1));
-        y = (luaL_checknumber(L,2));
-        Camera::Instance()->Focus((Sprite*)NULL);
-        Camera::Instance()->Focus(x,y);
-    } else {
+		x = (luaL_checknumber(L,1));
+		y = (luaL_checknumber(L,2));
+		Camera::Instance()->Focus((Sprite*)NULL);
+		Camera::Instance()->Focus(x,y);
+	} else {
 		return luaL_error(L, "Got %d arguments expected 1 (SpriteID) or 2 (X,Y)", n);
-    }
+	}
 	return 0;
 }
 
 int Lua::getCommodityNames(lua_State *L){
 	list<string> *names = Commodities::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getAllianceNames(lua_State *L){
 	list<string> *names = Alliances::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getWeaponNames(lua_State *L){
 	list<string> *names = Weapons::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getModelNames(lua_State *L){
 	list<string> *names = Models::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getEngineNames(lua_State *L){
 	list<string> *names = Engines::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getTechnologyNames(lua_State *L){
 	list<string> *names = Technologies::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 int Lua::getPlanetNames(lua_State *L){
 	list<string> *names = Planets::Instance()->GetNames();
 	pushNames(L,names);
-    return 1;
+	return 1;
 }
 
 void Lua::pushSprite(lua_State *L,Sprite* s){
@@ -511,29 +511,29 @@ Sprite* Lua::checkSprite(lua_State *L,int id ){
 */
 
 void Lua::pushNames(lua_State *L, list<string> *names){
-    lua_createtable(L, names->size(), 0);
-    int newTable = lua_gettop(L);
-    int index = 1;
-    list<string>::const_iterator iter = names->begin();
-    while(iter != names->end()) {
-        lua_pushstring(L, (*iter).c_str());
-        lua_rawseti(L, newTable, index);
-        ++iter;
-        ++index;
-    }
+	lua_createtable(L, names->size(), 0);
+	int newTable = lua_gettop(L);
+	int index = 1;
+	list<string>::const_iterator iter = names->begin();
+	while(iter != names->end()) {
+		lua_pushstring(L, (*iter).c_str());
+		lua_rawseti(L, newTable, index);
+		++iter;
+		++index;
+	}
 }
 
 void Lua::pushComponents(lua_State *L, list<Component*> *components){
-    lua_createtable(L, components->size(), 0);
-    int newTable = lua_gettop(L);
-    int index = 1;
-    list<Component*>::const_iterator iter = components->begin();
-    while(iter != components->end()) {
-        lua_pushstring(L, (*iter)->GetName().c_str());
-        lua_rawseti(L, newTable, index);
-        ++iter;
-        ++index;
-    }
+	lua_createtable(L, components->size(), 0);
+	int newTable = lua_gettop(L);
+	int index = 1;
+	list<Component*>::const_iterator iter = components->begin();
+	while(iter != components->end()) {
+		lua_pushstring(L, (*iter)->GetName().c_str());
+		lua_rawseti(L, newTable, index);
+		++iter;
+		++index;
+	}
 }
 
 void Lua::setField(const char* index, int value) {
@@ -690,19 +690,19 @@ int Lua::getSprites(lua_State *L, int kind){
 	}
 
 	// Populate a Lua table with Sprites
-    lua_createtable(L, sprites->size(), 0);
-    int newTable = lua_gettop(L);
-    int index = 1;
-    list<Sprite *>::const_iterator iter = sprites->begin();
-    while(iter != sprites->end()) {
+	lua_createtable(L, sprites->size(), 0);
+	int newTable = lua_gettop(L);
+	int index = 1;
+	list<Sprite *>::const_iterator iter = sprites->begin();
+	while(iter != sprites->end()) {
 		// push userdata
 		pushSprite(L,(*iter));
-        lua_rawseti(L, newTable, index);
-        ++iter;
-        ++index;
-    }
+		lua_rawseti(L, newTable, index);
+		++iter;
+		++index;
+	}
 	delete sprites;
-    return 1;
+	return 1;
 }
 
 int Lua::getMSRP(lua_State *L) {
@@ -737,13 +737,13 @@ int Lua::getPlanets(lua_State *L){
 	Planets *planets = Planets::Instance();
 	list<string>* planetNames = planets->GetNames();
 
-    lua_createtable(L, planetNames->size(), 0);
-    int newTable = lua_gettop(L);
-    int index = 1;
+	lua_createtable(L, planetNames->size(), 0);
+	int newTable = lua_gettop(L);
+	int index = 1;
 	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
 		pushSprite(L,planets->GetPlanet(*pname));
-        lua_rawseti(L, newTable, index);
-        ++index;
+		lua_rawseti(L, newTable, index);
+		++index;
 	}
 	return 1;
 }
@@ -783,11 +783,11 @@ int Lua::getCommodityInfo(lua_State *L) {
 	string name = (string)luaL_checkstring(L,1);
 	Commodity *commodity = Commodities::Instance()->GetCommodity(name);
 
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", commodity->GetName().c_str());
 	setField("MSRP", commodity->GetMSRP());
 
-    return 1;
+	return 1;
 }
 
 int Lua::getAllianceInfo(lua_State *L) {
@@ -797,13 +797,13 @@ int Lua::getAllianceInfo(lua_State *L) {
 	string name = (string)luaL_checkstring(L,1);
 	Alliance *alliance = Alliances::Instance()->GetAlliance(name);
 
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", alliance->GetName().c_str());
 	setField("AttackSize", alliance->GetAttackSize());
 	setField("Aggressiveness", alliance->GetAggressiveness());
 	setField("Currency", alliance->GetCurrency().c_str() );
 
-    return 1;
+	return 1;
 }
 
 
@@ -814,7 +814,7 @@ int Lua::getModelInfo(lua_State *L) {
 	string modelName = (string)luaL_checkstring(L,1);
 	Model *model = Models::Instance()->GetModel(modelName);
 
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", model->GetName().c_str());
 	setField("Image", model->GetImage()->GetPath().c_str());
 	setField("Mass", model->GetMass());
@@ -851,7 +851,7 @@ int Lua::getPlanetInfo(lua_State *L) {
 	}
 
 	// Populate the Info Table.
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", p->GetName().c_str());
 	setField("X", static_cast<float>(p->GetWorldPosition().GetX()));
 	setField("Y", static_cast<float>(p->GetWorldPosition().GetY()));
@@ -877,7 +877,7 @@ int Lua::getWeaponInfo(lua_State *L) {
 	if( weapon == NULL)
 		return luaL_error(L, "There is no weapon named '%s'.", weaponName.c_str());
 
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", weapon->GetName().c_str());
 	setField("Image", weapon->GetImage()->GetPath().c_str());
 	setField("Picture", weapon->GetPicture()->GetPath().c_str());
@@ -904,7 +904,7 @@ int Lua::getEngineInfo(lua_State *L) {
 	if( engine == NULL)
 		return luaL_error(L, "There is no engine named '%s'.", engineName.c_str());
 
-    lua_newtable(L);
+	lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
 	setField("Picture", engine->GetPicture()->GetPath().c_str());
 	setField("Force", engine->GetForceOutput());
@@ -924,8 +924,8 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	if( tech == NULL)
 		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
 
-    lua_createtable(L, 3, 0);
-    int newTable = lua_gettop(L);
+	lua_createtable(L, 3, 0);
+	int newTable = lua_gettop(L);
 
 	// Push the Models Table
 	list<Model*> models = tech->GetModels();
@@ -952,17 +952,17 @@ int Lua::setInfo(lua_State *L) {
 	string kind = luaL_checkstring(L,1);
 
 	if(kind == "Alliance"){
-        string name = getStringField(2,"Name");
-        int attack = getIntField(2,"AttackSize");
-        float aggressiveness = getNumField(2,"Aggressiveness");
-        string currency = getStringField(2,"Currency");
+		string name = getStringField(2,"Name");
+		int attack = getIntField(2,"AttackSize");
+		float aggressiveness = getNumField(2,"Aggressiveness");
+		string currency = getStringField(2,"Currency");
 
 		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency);
 		Alliances::Instance()->AddOrReplace( thisAlliance );
 
 	} else if(kind == "Commodity"){
-        string name = getStringField(2,"Name");
-        int msrp = getIntField(2,"MSRP");
+		string name = getStringField(2,"Name");
+		int msrp = getIntField(2,"MSRP");
 
 		Commodity* thisCommodity= new Commodity(name,msrp);
 		Commodities::Instance()->AddOrReplace( thisCommodity );
@@ -1094,14 +1094,14 @@ int Lua::setInfo(lua_State *L) {
 }
 
 int Lua::saveComponents(lua_State *L) {
-    Alliances::Instance()->Save("Resources/Definitions/alliances-default.xml");
-    Commodities::Instance()->Save("Resources/Definitions/commodities-default.xml");
-    Models::Instance()->Save("Resources/Definitions/models-default.xml");
-    Weapons::Instance()->Save("Resources/Definitions/weapons-default.xml");
-    Engines::Instance()->Save("Resources/Definitions/engines-default.xml");
-    Planets::Instance()->Save("Resources/Definitions/planets-default.xml");
-    Technologies::Instance()->Save("Resources/Definitions/technologies-default.xml");
-    return 0;
+	Alliances::Instance()->Save("Resources/Definitions/alliances-default.xml");
+	Commodities::Instance()->Save("Resources/Definitions/commodities-default.xml");
+	Models::Instance()->Save("Resources/Definitions/models-default.xml");
+	Weapons::Instance()->Save("Resources/Definitions/weapons-default.xml");
+	Engines::Instance()->Save("Resources/Definitions/engines-default.xml");
+	Planets::Instance()->Save("Resources/Definitions/planets-default.xml");
+	Technologies::Instance()->Save("Resources/Definitions/technologies-default.xml");
+	return 0;
 }
 
 int Lua::listImages(lua_State *L) {
