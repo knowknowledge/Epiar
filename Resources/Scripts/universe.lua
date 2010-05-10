@@ -238,6 +238,11 @@ registerInit(planetTraffic)
 
 --- Buys a ship
 function buyShip(model)
+	if model==nil then
+		model = shipstats["Name"]:GetText()
+		print('Buying ',model)
+	end
+	print('Buying ',model)
 	price = Epiar.getMSRP(model)
 	player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
@@ -254,6 +259,21 @@ function buyShip(model)
 		HUD.newAlert("You can't afford to buy a "..model)
 	end
 	return 1
+end
+
+function buyOutfit(outfit)
+	if outfit==nil then
+		outfit = outfitstats["Name"]:GetText()
+	end
+	if Epiar.getWeaponInfo(outfit) then
+		print("Weapon...")
+		buyWeapon(outfit)
+	elseif Epiar.getEngineInfo(outfit) then
+		print("Engine...")
+		buyEngine(outfit)
+	else
+		print("Unkown Outfit: "..outfit)
+	end
 end
 
 --- Buys a weapon
@@ -394,13 +414,14 @@ function landingDialog(id)
 		{title= "Cost",statname= "MSRP"},
 	}
 	for i,stat in ipairs(statnames) do
-		local yoff = 10+21*(i)
+		yoff = 10+21*(i)
 		title = UI.newLabel(340, yoff,stat.title)
 		value = UI.newLabel(440, yoff,"")
 		shipyard:add(title,value)
 		shipstats[stat.statname] = value
 	end
 	storeView(shipstats,'ship',models[1])
+	shipyard:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyShip()" ))
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
@@ -433,12 +454,18 @@ function landingDialog(id)
 		{title= "Cost",statname= "MSRP"},
 	}
 	for i,stat in ipairs(statnames) do
-		local yoff = 10+21*(i)
+		yoff = 10+21*(i)
 		title = UI.newLabel(340, yoff,stat.title)
 		value = UI.newLabel(440, yoff,"")
 		outfitting:add(title,value)
 		outfitstats[stat.statname] = value
 	end
+	if #weapons then
+		storeView(outfitstats,'weapon',weapons[1])
+	elseif #engines then
+		storeView(outfitstats,'engine',engines[1])
+	end
+	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyOutfit()" ))
 
 	-- Trade
 	trade = UI.newTab("Trade")
@@ -461,7 +488,6 @@ function landingDialog(id)
 	end
 
 	storeframe:add(shipyard,outfitting,trade)
-	--storeframe:add(shipyard,armory,outfitting,trade)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
