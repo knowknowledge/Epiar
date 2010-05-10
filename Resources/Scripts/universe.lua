@@ -327,29 +327,30 @@ function tradeCommodity(transaction, commodity, count, price)
 	return 1
 end
 
-
---- Creates a table
-function createTable(win,w,h,piclist,buttonlist)
-	pad = 10
-	box = 120
-	button_h = 30
-	button_w = 100
-	row,col = 1,1
-	getPos = function(c,r)
-		pos_x = box*(col-1)+20
-		pos_y = box*(row-1)+20
-		return pos_x,pos_y
+function storeView(storestats, itemType, itemName )
+	local getters = {
+		["ship"]=Epiar.getModelInfo,
+		["weapon"]=Epiar.getWeaponInfo,
+		["engine"]=Epiar.getEngineInfo,
+	}
+	local iteminfo = getters[itemType](itemName)
+	print( "viewing "..itemName)
+	for infoname,infovalue in pairs(iteminfo) do
+		print(infoname,infovalue)
 	end
-
-	-- Lay out the buttons with pictures beneath them
-	for i=1,#piclist do
-		pos_x,pos_y = getPos(col,row)
-
-		win:add(UI.newButton( pos_x+(box-button_w)/2+box, pos_y+box/2-button_h/2, button_w,button_h, buttonlist[i][1], buttonlist[i][2]))
-		win:add(UI.newPicture( pos_x, pos_y + button_h, box,box-button_h,piclist[i]))
-
-		row=row+1
+	print('----------')
+	for statname,statlabel in pairs(storestats) do
+		if iteminfo[statname] == nil then
+			iteminfo[statname] = ""
+		end
+		print(statname, iteminfo[statname] )
+		if statname=="Picture"  or statname=="Image" then
+			statlabel:setPicture( iteminfo[statname] )
+		else
+			statlabel:setLabel( iteminfo[statname] )
+		end
 	end
+	print('----------')
 end
 
 --- Land on a planet
@@ -360,40 +361,84 @@ function landingDialog(id)
 	planet = Epiar.getSprite(id)
 	
 	height = 400
-	width = 300
+	width = 600
+	local boxsize=80
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
 	landingWin:add(storeframe)
 
 	-- Shipyard
 	shipyard = UI.newTab("Ship Yard")
+	local yoff = 5
 	local models = planet:GetModels()
-	local modelButtons = {}
-	for m =1,#models do
-		price = Epiar.getMSRP(models[m])
-		modelButtons[m] = {models[m]..": "..price, "buyShip(\""..models[m].."\")"}
+	for i,name in ipairs(models) do
+		shipyard:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
+		yoff = yoff+boxsize
+		shipyard:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(shipstats,'ship','%s')",name)))
+		yoff = yoff+30
 	end
-	createTable(shipyard,width-20,height-100,models,modelButtons)
 
-	-- Armory
-	armory = UI.newTab("Armory")
-	local weapons = planet:GetWeapons()
-	local weaponButtons= {}
-	for i =1,#weapons do
-		price = Epiar.getMSRP(weapons[i])
-		weaponButtons[i] = {weapons[i]..": "..price, "buyWeapon(\""..weapons[i].."\")"}
+	--function label_y(num) num*20+10 end
+	shipstats = {}
+	shipstats["Name"] = UI.newLabel(440, 10+21*(0),"",1)
+	shipstats["Image"] = UI.newPicture(120,10,200,200,"",0,0,0,1)
+	shipyard:add(shipstats["Name"], shipstats["Image"])
+	local statnames = {
+		{title= "Hull Strength",statname= "MaxHull"},
+		{title= "Shield Strength",statname= "MaxShield"},
+		{title= "Mass",statname= "Mass"},
+		{title= "Speed",statname= "MaxSpeed"},
+		{title= "Cargo Space",statname= "Cargo"},
+		{title= "Surface Area",statname= "SurfaceArea"},
+		{title= "Rotation Speed",statname= "Rotation"},
+		{title= "Cost",statname= "MSRP"},
+	}
+	for i,stat in ipairs(statnames) do
+		local yoff = 10+21*(i)
+		title = UI.newLabel(340, yoff,stat.title)
+		value = UI.newLabel(440, yoff,"")
+		shipyard:add(title,value)
+		shipstats[stat.statname] = value
 	end
-	createTable(armory,width-20,height-100,weapons,weaponButtons)
+	storeView(shipstats,'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
+	local weapons = planet:GetWeapons()
 	local engines = planet:GetEngines()
-	local engineButtons= {}
-	for i =1,#engines do
-		price = Epiar.getMSRP(engines[i])
-		engineButtons[i] = {engines[i]..": "..price, "buyEngine(\""..engines[i].."\")"}
+	local yoff = 5
+	for i,name in ipairs(weapons) do
+		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
+		yoff = yoff+boxsize
+		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'weapon','%s')",name)))
+		yoff = yoff+30
 	end
-	createTable(outfitting,width-20,height-100,engines,engineButtons)
+	for i,name in ipairs(engines) do
+		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
+		yoff = yoff+boxsize
+		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'engine','%s')",name)))
+		yoff = yoff+30
+	end
+
+	outfitstats = {}
+	outfitstats["Name"] = UI.newLabel(440, 10+21*(0),"",1)
+	outfitstats["Picture"] = UI.newPicture(120,10,200,200,"",0,0,0,1)
+	outfitting:add(outfitstats["Name"], outfitstats["Picture"])
+	local statnames = {
+		{title= "Payload",statname= "Payload"},
+		{title= "Lifetime",statname= "Lifetime"},
+		{title= "Fire Delay",statname= "FireDelay"},
+		{title= "Tracking",statname= "Tracking"},
+		{title= "Force Output",statname= "Force"},
+		{title= "Cost",statname= "MSRP"},
+	}
+	for i,stat in ipairs(statnames) do
+		local yoff = 10+21*(i)
+		title = UI.newLabel(340, yoff,stat.title)
+		value = UI.newLabel(440, yoff,"")
+		outfitting:add(title,value)
+		outfitstats[stat.statname] = value
+	end
 
 	-- Trade
 	trade = UI.newTab("Trade")
@@ -415,7 +460,8 @@ function landingDialog(id)
 		trade:add( UI.newButton(240,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
-	storeframe:add(shipyard,armory,outfitting,trade)
+	storeframe:add(shipyard,outfitting,trade)
+	--storeframe:add(shipyard,armory,outfitting,trade)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))

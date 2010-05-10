@@ -399,7 +399,7 @@ int UI_Lua::setLabel(lua_State *L){
 
 	Label **label= (Label**)lua_touserdata(L,1);
 	string text = luaL_checkstring(L, 2);
-	(*label)->setText(text);
+	(*label)->SetText(text);
 
 	return 1;
 }
@@ -432,10 +432,18 @@ int UI_Lua::GetText(lua_State *L){
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 
-	Textbox **box= (Textbox**)lua_touserdata(L,1);
-	lua_pushstring(L, (*box)->GetText().c_str() );
-
-	return 1;
+	Widget **widget= (Widget**)lua_touserdata(L,1);
+	string type = (*widget)->GetType();
+	if( type=="Label" ) {
+		lua_pushstring(L, ((Label*)(*widget))->GetText().c_str() );
+		return 1;
+	} else if( type=="Textbox" ) {
+		lua_pushstring(L, ((Textbox*)(*widget))->GetText().c_str() );
+		return 1;
+	} else {
+		return 0;
+	}
+	return 0;
 }
 
 int UI_Lua::GetEdges(lua_State *L){
