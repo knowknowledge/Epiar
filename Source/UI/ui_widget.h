@@ -20,6 +20,11 @@ class Widget {
 		virtual int GetY( void ){ return this->y; }
 		virtual int GetW( void ){ return this->w; }
 		virtual int GetH( void ){ return this->h; }
+
+		virtual void SetX( int _x ){ x = _x; }
+		virtual void SetY( int _y ){ y = _y; }
+		virtual void SetW( int _w ){ w = _w; }
+		virtual void SetH( int _h ){ h = _h; }
 		
 		virtual string GetType( void ) { return string("GenericWidget"); }
 		string GetName( void ) { return this->name; }

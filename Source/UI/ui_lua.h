@@ -44,9 +44,11 @@ class UI_Lua {
 		// Fuctions to get Widget information
 		static int IsChecked(lua_State *L);
 		static int GetText(lua_State *L);
+		static int GetEdges(lua_State *L);
 
 		// Functions to manipulate Widgets
 		static int add(lua_State *L);
+		static int move(lua_State *L);
 		static int close(lua_State *L);
 		static int rotatePicture(lua_State *L);
 		static int setText(lua_State *L);

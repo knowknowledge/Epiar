@@ -45,6 +45,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Widget Getters
 		{"IsChecked", &UI_Lua::IsChecked},
 		{"GetText", &UI_Lua::GetText},
+		{"GetEdges", &UI_Lua::GetEdges},
 
 		// Widget Setters
 		// Windowing Layout
@@ -122,7 +123,7 @@ int UI_Lua::close(lua_State *L){
 int UI_Lua::newButton(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( (n != 5) && (n != 6) )
-		return luaL_error(L, "Got %d arguments expected 5 or 6 (x, y, w, h, caption [Lua_code])", n);
+		return luaL_error(L, "Got %d arguments expected 5 or 6 (x, y, w, h, caption, [Lua_code])", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
@@ -346,6 +347,27 @@ int UI_Lua::add(lua_State *L){
 	return 0;
 }
 
+int UI_Lua::move(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 5)
+		return luaL_error(L, "Got %d arguments expected 1 (self, x,y,w,h)", n);
+	
+	// Get the new postition
+	Widget** widget = (Widget**)lua_touserdata(L,1);
+	int x = luaL_checkinteger(L, 1);
+	int y = luaL_checkinteger(L, 2);
+	int w = luaL_checkinteger(L, 3);
+	int h = luaL_checkinteger(L, 4);
+
+	// Move the widget
+	(*widget)->SetX( x );
+	(*widget)->SetY( y );
+	(*widget)->SetW( w );
+	(*widget)->SetH( h );
+
+	return 0;
+}
+
 int UI_Lua::rotatePicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -414,5 +436,19 @@ int UI_Lua::GetText(lua_State *L){
 	lua_pushstring(L, (*box)->GetText().c_str() );
 
 	return 1;
+}
+
+int UI_Lua::GetEdges(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Widget **box= (Widget**)lua_touserdata(L,1);
+	lua_pushinteger(L, (*box)->GetX() );
+	lua_pushinteger(L, (*box)->GetY() );
+	lua_pushinteger(L, (*box)->GetW() );
+	lua_pushinteger(L, (*box)->GetH() );
+
+	return 4;
 }
 
