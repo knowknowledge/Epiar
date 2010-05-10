@@ -266,20 +266,32 @@ int UI_Lua::newLabel(lua_State *L){
 
 int UI_Lua::newPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 5)
-		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, modelname )", n);
+	if ( (n != 5) && (n != 9))
+		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, modelname, [red,blue,green,alpha] )", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
 	int w = int(luaL_checknumber (L, 3));
 	int h = int(luaL_checknumber (L, 4));
 	string picname = luaL_checkstring (L, 5);
+	
+
+	// Get Background Color
+	float red,blue,green,alpha;
+	red=blue=green=alpha=0.0f; // default is clear black
+	if(n==9) {
+		red   = float(luaL_checknumber (L, 6));
+		blue  = float(luaL_checknumber (L, 7));
+		green = float(luaL_checknumber (L, 8));
+		alpha = float(luaL_checknumber (L, 9));
+	}
 
 	// Allocate memory for a pointer to object
 	Picture **pic= (Picture**)lua_newuserdata(L, sizeof(Picture**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	*pic = new Picture(x,y,w,h, picname );
+	(*pic)->SetColor(red,blue,green,alpha);
 
 	// Note: We're not putting this Label anywhere!
 	//       Lua will have to do that for us.

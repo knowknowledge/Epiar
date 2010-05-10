@@ -22,11 +22,14 @@ class Picture: public Widget {
 		void Rotate( double angle );
 		void Set( Image *img );
 		void Set( string filename );
+		void SetColor( float r, float g, float b, float a );
 
 		string GetType( void ) {return string("Picture");}
 	private:
 		double rotation;
 		Image *bitmap;
+		Color color;
+		float alpha;
 };
 
 #endif // __H_UI_IMAGE 

@@ -25,6 +25,9 @@ void Picture::Default( int x, int y, int w, int h ){
 	this->name="";
 	rotation=0.;
 	bitmap = NULL;
+
+	color = Color::Get(0,0,0);
+	alpha = 0.0f;
 }
 
 Picture::Picture( int x, int y, int w, int h, Image* pic ){
@@ -42,13 +45,13 @@ void Picture::Rotate(double angle){
 }
 
 void Picture::Draw( int relx, int rely ){
-	/*
 	// DEBUG lines to see the difference between the Picture and the Image.
 	Video* vid = Video::Instance();
 	// The Picture size
 	vid->DrawRect( GetX()+relx, GetY()+rely,
 					w,h,
-					0.0,1.0,0.0,0.1 );
+					color.r,color.g,color.b,alpha );
+	/*
 	// The Image
 	if(bitmap!=NULL)
 	vid->DrawRect( GetX()+relx+w/2 - bitmap->GetWidth()/2, GetY()+rely+h/2 - bitmap->GetHeight()/2,
@@ -72,4 +75,9 @@ void Picture::Set( string filename ){
 	// If the previous bitmap was created from new,
 	// then that image is now lost
 	bitmap = Image::Get(filename);
+}
+
+void Picture::SetColor( float r, float g, float b, float a) {
+	color = Color::Get(r,g,b);
+	alpha = a;
 }
