@@ -174,9 +174,10 @@ function options()
 	debugLabel      = UI.newLabel(20,10,"Debug Options:",0)
 	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
 	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	quadTreeDisplay = UI.newCheckbox(20, 70, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
-	aiStateDisplay  = UI.newCheckbox(20, 90, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, quadTreeDisplay,aiStateDisplay)
+	uiSaving        = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
+	quadTreeDisplay = UI.newCheckbox(20, 90, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
+	aiStateDisplay  = UI.newCheckbox(20,120, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiSaving, quadTreeDisplay,aiStateDisplay)
 	
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -186,6 +187,7 @@ function options()
 		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/ui",           uiSaving        :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
 	end
@@ -257,6 +259,7 @@ function buyShip(model)
 		end
 	else
 		HUD.newAlert("You can't afford to buy a "..model)
+		HUD.newAlert(string.format("You only have %d credits, but you need %d.",player_credits,price))
 	end
 	return 1
 end
@@ -264,6 +267,7 @@ end
 function buyOutfit(outfit)
 	if outfit==nil then
 		outfit = outfitstats["Name"]:GetText()
+		print("Buying Outfit ("..outfit..")")
 	end
 	if Epiar.getWeaponInfo(outfit) then
 		print("Weapon...")

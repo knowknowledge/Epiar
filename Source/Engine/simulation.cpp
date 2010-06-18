@@ -207,7 +207,10 @@ bool Simulation::Run() {
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
 
-			UI::Save();
+			if( OPTION(int, "options/log/ui") )
+			{
+				UI::Save();
+			}
 		}
 	}
 
