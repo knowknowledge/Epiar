@@ -13,9 +13,10 @@
  */
 
 /**\brief Constructor, initializes default values.*/
-UIContainer::UIContainer( bool _mouseHandled ):
+UIContainer::UIContainer( string _name, bool _mouseHandled ):
 	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
 	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ){
+	name = _name;
 }
 
 /**\brief Destructor, destroys all children.
@@ -369,5 +370,17 @@ bool UIContainer::KeyPress( SDLKey key ) {
 		return keyboardFocus->KeyPress( key );
 	LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return false;
+}
+
+xmlNodePtr UIContainer::ToNode() {
+	xmlNodePtr thisNode;
+	thisNode = xmlNewNode(NULL, BAD_CAST this->GetType().c_str() );
+	xmlSetProp( thisNode, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		xmlAddChild(thisNode, (*i)->ToNode()  );
+	}
+	return thisNode;
+
 }
 

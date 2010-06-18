@@ -19,7 +19,7 @@
 /**\class UI
  * \brief UI. */
 
-UIContainer UI::master=UIContainer(false);
+UIContainer UI::master=UIContainer("Master", false);
 
 /**\brief This constructor resets the input.
  */
@@ -62,6 +62,20 @@ void UI::Close( Widget *widget ) {
 /**\brief Drawing function.*/
 void UI::Draw( void ) {
 	UI::master.Draw( );
+}
+
+void UI::Save( void ) {
+    xmlDocPtr doc = NULL;       /* document pointer */
+    xmlNodePtr root_node = NULL;/* node pointers */
+
+    doc = xmlNewDoc(BAD_CAST "1.0");
+    root_node = xmlNewNode(NULL, BAD_CAST "UI" );
+    xmlDocSetRootElement(doc, root_node);
+
+	xmlAddChild( root_node, UI::master.ToNode() );
+
+	xmlSaveFormatFileEnc( "Master_UI.xml" , doc, "ISO-8859-1", 1);
+	xmlFreeDoc( doc );
 }
 
 /**\brief Handles Input Events from the event queue.

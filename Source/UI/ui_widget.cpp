@@ -157,3 +157,26 @@ bool Widget::KeyPress( SDLKey key ) {
 	LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return true;
 }
+
+
+xmlNodePtr Widget::ToNode() {
+	xmlNodePtr thisNode;
+	char buff[256];
+
+	thisNode = xmlNewNode(NULL, BAD_CAST this->GetType().c_str() );
+
+	xmlSetProp( thisNode, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", this->GetX() );
+	xmlSetProp( thisNode, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetY() );
+	xmlSetProp( thisNode, BAD_CAST "y", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetW() );
+	xmlSetProp( thisNode, BAD_CAST "w", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetH() );
+	xmlSetProp( thisNode, BAD_CAST "h", BAD_CAST buff );
+
+	if(hidden) xmlSetProp( thisNode, BAD_CAST "hidden", BAD_CAST "true" );
+	if(disabled) xmlSetProp( thisNode, BAD_CAST "disabled", BAD_CAST "true" );
+	
+	return thisNode;
+}

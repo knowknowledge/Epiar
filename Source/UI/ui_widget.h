@@ -10,6 +10,8 @@
 #ifndef __H_UI_WIDGET__
 #define __H_UI_WIDGET__
 
+#include "includes.h"
+
 class Widget {
 	public:
 		Widget( void );
@@ -32,6 +34,8 @@ class Widget {
 
 		virtual void Draw( int relx = 0, int rely = 0 ){};
 		bool Contains( int relx, int rely );
+
+		virtual xmlNodePtr ToNode();
 
 		// Only allow UIContainer to send events
 		friend class UIContainer;

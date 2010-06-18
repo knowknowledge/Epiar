@@ -10,10 +10,10 @@
 
 class UIContainer : public Widget {
 	public:
-		UIContainer( bool _mouseHandled=true );
+		UIContainer(string _name="UnspecifiedContainer", bool _mouseHandled=true );
 		virtual ~UIContainer( void );
 
-		virtual string GetType( void ) { return string("GenericWidget"); }
+		virtual string GetType( void ) { return string("Container"); }
 		bool IsEmpty( void ){return this->children.empty();}
 
 		virtual Widget *AddChild( Widget *widget );
@@ -23,6 +23,8 @@ class UIContainer : public Widget {
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 
 		virtual void Draw( int relx = 0, int rely = 0 );
+
+		xmlNodePtr ToNode();
 
 		// Only allow UI to send events
 		friend class UI;

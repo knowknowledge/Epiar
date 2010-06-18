@@ -206,6 +206,8 @@ bool Simulation::Run() {
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
+
+			UI::Save();
 		}
 	}
 

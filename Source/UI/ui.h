@@ -44,6 +44,8 @@ class UI {
 		
 		static void RegisterKeyboardFocus( Widget *widget );
 		static Widget *DetermineMouseFocus( int x, int y );
+
+		static void Save( void );
 		
 	private:
 		static bool HandleKeyboard( InputEvent &i );
