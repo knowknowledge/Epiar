@@ -34,6 +34,8 @@ class SpriteManager {
 		int GetNumQuadrants() { return trees.size(); }
 		int GetNumSprites();
 
+		void Save();
+
 	protected:
 		SpriteManager();
 	private:

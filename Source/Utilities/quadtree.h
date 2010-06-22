@@ -43,6 +43,8 @@ class QuadTree {
 		void Draw(Coordinate root);
 		void ReBallance();
 
+		xmlNodePtr ToNode();
+
 	private:
 		QuadPosition SubTreeThatContains(Coordinate point);
 		void CreateSubTree(QuadPosition pos);

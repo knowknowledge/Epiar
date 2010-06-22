@@ -366,3 +366,66 @@ void QuadTree::ReBallance(){
 	isDirty=false;
 	assert(numObjects == this->Count()); // ReBallancing should never change the total number of elements
 }
+
+xmlNodePtr QuadTree::ToNode() {
+	xmlNodePtr thisNode, objNode;
+	char buff[256];
+	list<Sprite*>::iterator i;
+
+	thisNode = xmlNewNode(NULL, BAD_CAST "QuadTree" );
+
+	snprintf(buff, sizeof(buff), "%d", (int) center.GetX() );
+	xmlSetProp( thisNode, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", (int) center.GetY() );
+	xmlSetProp( thisNode, BAD_CAST "y", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", (int) this->radius );
+	xmlSetProp( thisNode, BAD_CAST "r", BAD_CAST buff );
+	
+	if(!isLeaf){ // Node
+		for(int t=0;t<4;t++){
+			if(NULL != (subtrees[t])){
+				xmlAddChild(thisNode, subtrees[t]->ToNode() );
+			}
+		}
+	} else { // Leaf
+		for( i = objects->begin(); i != objects->end(); ++i ) {
+			switch((*i)->GetDrawOrder()) {
+				case DRAW_ORDER_PLANET:
+					snprintf(buff, sizeof(buff), "%s", "Planet" );
+					break;
+				case DRAW_ORDER_WEAPON:
+					snprintf(buff, sizeof(buff), "%s", "Weapon" );
+					break;
+				case DRAW_ORDER_SHIP:
+					snprintf(buff, sizeof(buff), "%s", "Ship" );
+					break;
+				case DRAW_ORDER_PLAYER:
+					snprintf(buff, sizeof(buff), "%s", "Player" );
+					break;
+				case DRAW_ORDER_GATE_TOP:
+					snprintf(buff, sizeof(buff), "%s", "Gate" );
+					break;
+				case DRAW_ORDER_EFFECT:
+					snprintf(buff, sizeof(buff), "%s", "Effect" );
+					break;
+				case DRAW_ORDER_GATE_BOTTOM: // Ignore
+					continue;
+				default:
+					LogMsg(ERR,"Unknown Sprite Type: %d",(*i)->GetDrawOrder());
+					assert(0);
+					break;
+			}
+			objNode = xmlNewNode(NULL, BAD_CAST buff);
+			snprintf(buff, sizeof(buff), "%d", (int) (*i)->GetWorldPosition().GetX() );
+			xmlSetProp( objNode, BAD_CAST "x", BAD_CAST buff );
+			snprintf(buff, sizeof(buff), "%d", (int) (*i)->GetWorldPosition().GetY() );
+			xmlSetProp( objNode, BAD_CAST "y", BAD_CAST buff );
+			snprintf(buff, sizeof(buff), "%d", (int) (*i)->GetAngle() );
+			xmlSetProp( objNode, BAD_CAST "angle", BAD_CAST buff );
+			xmlAddChild(thisNode, objNode);
+		}
+	}
+
+	return thisNode;
+}
+

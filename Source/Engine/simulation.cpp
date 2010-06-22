@@ -211,6 +211,11 @@ bool Simulation::Run() {
 			{
 				UI::Save();
 			}
+
+			if( OPTION(int, "options/log/sprites") )
+			{
+				sprites->Save();
+			}
 		}
 	}
 

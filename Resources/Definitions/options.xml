@@ -7,6 +7,7 @@
 		<xml>0</xml>
 		<out>1</out>
 		<ui>1</ui>
+		<sprites>1</sprites>
 	</log>
 	<video>
 		<w>1024</w>
