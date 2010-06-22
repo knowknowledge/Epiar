@@ -102,6 +102,12 @@ Normally the pointer is null.
 #define V_PI4 M_PI_4
 #endif
 
+#ifndef M_SQRT2
+#define V_SQRT2  1.41421356237309504880168872420969807856967187537694807
+#else
+#define V_SQRT2 M_SQRT2
+#endif
+
 class Vector{
 
 	double i,j; // i and j parts of vector in rectangular notation

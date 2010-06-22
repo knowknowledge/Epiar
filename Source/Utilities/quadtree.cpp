@@ -126,7 +126,7 @@ list<Sprite *> *QuadTree::GetSprites() {
 void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
-	const float maxrange = 1.42f*radius + distance;
+	const float maxrange = V_SQRT2*radius + distance;
 
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
@@ -154,7 +154,7 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
 	//   Root-2 of the radius + the distance
-	const float maxrange = 1.42f*radius + distance;
+	const float maxrange = V_SQRT2*radius + distance;
 	Sprite* closest=NULL;
 	Sprite* possible=NULL;
 	float tmpdist;

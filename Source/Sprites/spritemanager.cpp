@@ -140,7 +140,7 @@ void SpriteManager::Draw() {
 
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen;
-	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *1.42f;
+	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *V_SQRT2;
 	onscreen = GetSpritesNear( Camera::Instance()->GetFocusCoordinate(), r, DRAW_ORDER_ALL);
 
 	onscreen->sort(compareSpritePtrs);
