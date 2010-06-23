@@ -94,6 +94,10 @@ Gate* Gate::GetTop() {
 	}
 }
 
+Sprite* Gate::GetExit() {
+		return SpriteManager::Instance()->GetSpriteByID(exitID);
+}
+
 /**\brief Get the Partner Gate
  * \return Pointer to the Partner Gate
  */

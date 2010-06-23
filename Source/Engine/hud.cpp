@@ -13,6 +13,7 @@
 #include "Engine/simulation.h"
 #include "Graphics/video.h"
 #include "Sprites/player.h"
+#include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
@@ -240,6 +241,8 @@ void Hud::Draw( void ) {
 	Console::Draw();
 	Hud::DrawFPS();
 	Hud::DrawStatusBars();
+	if( OPTION(int,"options/development/map") )
+		Hud::DrawMap();
 }
 
 
@@ -358,6 +361,78 @@ void Hud::DrawTarget( void ) {
 	
 		Video::DrawTarget(x,y,r,r,5,c.r,c.g,c.b);
 	}
+}
+
+void Hud::DrawMap( void ) {
+	//Video::GetHeight()
+	float size, halfsize;
+	float scale;
+	list<Sprite*> *sprites;
+	list<Sprite*>::iterator iter;
+	int startx, starty;
+	int posx, posy;
+	int posx2, posy2;
+	Color col;
+	int i;
+	float alpha;
+
+	// Configurable Settings
+	size = 400.0f;
+	halfsize = size/2;
+	startx = 100;
+	starty = 100;
+	scale = (size) / (10*GATE_RADIUS);
+	alpha = .7;
+
+	sprites = SpriteManager::Instance()->GetSprites(
+		DRAW_ORDER_PLAYER   |
+		DRAW_ORDER_PLANET   |
+		DRAW_ORDER_GATE_TOP );
+
+	// The Backdrop
+	Video::DrawRect( startx,starty,size,size,  0,0,0,alpha);
+	Video::DrawLine( startx        , starty        , startx + size , starty        , .3f,.0f,.0f ,alpha ); // Top
+	Video::DrawLine( startx        , starty + size , startx + size , starty + size , .3f,.0f,.0f ,alpha );
+	Video::DrawLine( startx        , starty        , startx        , starty + size , .3f,.0f,.0f ,alpha );
+	Video::DrawLine( startx + size , starty + size , startx + size , starty        , .3f,.0f,.0f ,alpha );
+
+	// The Quadrant Lines
+	for( i=static_cast<int>(QUADRANTSIZE); i<5*GATE_RADIUS; i+= 2*static_cast<int>(QUADRANTSIZE) )
+	{
+		Video::DrawLine( startx                          , starty + int( i*scale+halfsize) , startx + (int)size              , starty + int( i*scale+halfsize) , .3f,.3f,.3f ,alpha );
+		Video::DrawLine( startx                          , starty + int(-i*scale+halfsize) , startx + (int)size              , starty + int(-i*scale+halfsize) , .3f,.3f,.3f ,alpha );
+		Video::DrawLine( startx + int( i*scale+halfsize) ,starty                           , startx + int( i*scale+halfsize) , starty + (int)size              , .3f,.3f,.3f ,alpha );
+		Video::DrawLine( startx + int(-i*scale+halfsize) ,starty                           , startx + int(-i*scale+halfsize) , starty + (int)size              , .3f,.3f,.3f ,alpha );
+	}
+
+	// The Sprites
+	for( iter = sprites->begin(); iter != sprites->end(); ++iter )
+	{
+		col = (*iter)->GetRadarColor();
+		posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
+		posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
+
+		switch( (*iter)->GetDrawOrder() ) {
+			case DRAW_ORDER_PLAYER:
+				Video::DrawFilledCircle( posx, posy, 2, col.r,col.g,col.b, alpha );
+				break;
+			case DRAW_ORDER_PLANET:
+				Video::DrawFilledCircle( posx, posy, ((Planet*)(*iter))->GetInfluence()*scale, 0,0,.8, alpha*.5f );
+				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
+				break;
+			case DRAW_ORDER_GATE_TOP:
+				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
+				posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
+				posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
+				Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+				break;
+			default:
+				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
+		}
+	}
+
+	delete sprites;
+	sprites = NULL;
 }
 
 /**\brief Adds a new AlertMessage.

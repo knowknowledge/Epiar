@@ -32,6 +32,7 @@ class Gate : public Sprite {
 		void SetExit(int SpriteID);
 
 		Gate* GetTop();
+		Sprite* GetExit();
 
 		void Update();
 	private:

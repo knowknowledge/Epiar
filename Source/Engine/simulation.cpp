@@ -123,8 +123,10 @@ bool Simulation::Run() {
 	Gate* g;
 	Gate* G;
 	for(int i=0; i<100; i++){
-		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
-		G = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS), float(rand()%(10*GATE_RADIUS) - GATE_RADIUS/20)) );
+		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS),
+		                          float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS)) );
+		G = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS),
+		                          float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS)) );
 		sprites->Add(g);
 		sprites->Add(G);
 		g->SetExit(G->GetID());

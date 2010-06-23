@@ -81,6 +81,7 @@ class Hud {
 		static void DrawFPS();
 		static void DrawStatusBars();
 		static void DrawTarget();
+		static void DrawMap( void );
 	
 		static Hud *pInstance;
 		
