@@ -68,11 +68,12 @@ class Video {
 
 		static void DrawPoint( int x, int y, float r, float g, float b );
 		static void DrawPoint( Coordinate c, Color col );
+		static void DrawLine( int x1, int y1, int b2, int y2, float r, float g, float b, float a = 1.0f );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b );
 		static void DrawRect( int x, int y, int w, int h, float r, float g, float b, float a );
-		static void DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b);
-		static void DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b);
-		static void DrawCircle( Coordinate c, int radius, float line_width, Color col);
+		static void DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b, float a = 1.0f);
+		static void DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b, float a = 1.0f);
+		static void DrawCircle( Coordinate c, int radius, float line_width, Color col, float a = 1.0f);
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b, float a);
 		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b );
 

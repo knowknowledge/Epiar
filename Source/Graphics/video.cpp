@@ -250,6 +250,14 @@ void Video::DrawPoint( Coordinate c, Color col ) {
 	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
 }
 
+void Video::DrawLine( int x1, int y1, int x2, int y2, float r, float g, float b, float a ) {
+	glColor4f( r, g, b, a );
+	glBegin(GL_LINES);
+	glVertex2d(x1,y1);
+	glVertex2d(x2,y2);
+	glEnd();
+}
+
 /**\brief Draws a rectangle
  */
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
@@ -270,21 +278,21 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, flo
 
 /**\brief Draws a circle.
  */
-void Video::DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b) {
-	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, r, g, b );
+void Video::DrawCircle( Coordinate c, int radius, float line_width, float r, float g, float b, float a) {
+	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, r, g, b, a );
 }
 
 /**\brief Draws a circle with Color
  */
-void Video::DrawCircle( Coordinate c, int radius, float line_width, Color col) {
-	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, col.r, col.g, col.b );
+void Video::DrawCircle( Coordinate c, int radius, float line_width, Color col, float a) {
+	DrawCircle( (int)c.GetX(), (int)c.GetY(), radius, line_width, col.r, col.g, col.b, a);
 }
 
 /**\brief Draws a circle
  */
-void Video::DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b) {
+void Video::DrawCircle( int x, int y, int radius, float line_width, float r, float g, float b, float a) {
 	glDisable(GL_TEXTURE_2D);
-	glColor3f(r,g,b);
+	glColor4f( r, g, b, a );
 	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
 	for(double angle = 0; angle <= 2.0 * M_PI; angle = angle + 0.1)
