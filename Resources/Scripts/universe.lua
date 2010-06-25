@@ -215,6 +215,27 @@ end
 -- Execute the current plan of each AI
 -- Necessary functions for now.
 
+function createPlanet()
+	local alliances = Epiar.alliances()
+	local technologies = Epiar.technologies()
+	local r = 200000
+	for p=1,100 do
+		local alliance = alliances[ math.random(#alliances) ]
+		local tech = technologies[ math.random(#technologies) ]
+		local x = math.random(r)-r/2
+		local y = math.random(r)-r/2
+		Planet.NewPlanet(
+			"Vespian Outpost "..p,
+			x,y,
+			"Resources/Graphics/station1.png",
+			alliance,
+			1,2,0,200,
+			tech
+			)
+	end
+end
+registerInit(createPlanet)
+
 --- Create Some ships around the planets
 function planetTraffic()
 	planets = Epiar.planets()

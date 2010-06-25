@@ -15,6 +15,7 @@
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
+#include "Engine/alliances.h"
 #include "Sprites/spritemanager.h"
 
 /**\class Planet
@@ -28,7 +29,9 @@
 
 /**\brief Blank Constructor
  */
-Planet::Planet(){}
+Planet::Planet(){
+	SetRadarColor(Color::Get(48, 160, 255));
+}
 
 /**\brief Copy Constructor
  */
@@ -75,6 +78,7 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, string _allianc
 	SetName(_name);
 	SetImage(_image);
 	Image::Store(name,GetImage());
+	SetRadarColor(Color::Get(48, 160, 255));
 }
 
 /**\brief Destructor
@@ -114,7 +118,6 @@ bool Planet::parserCB( string sectionName, string subName, string value ) {
 		technologies.push_back(tech);
 		technologies.unique();
 	}
-	SetRadarColor(Color::Get(48, 160, 255));
 	return true;
 }
 
@@ -235,6 +238,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		// Normally we would put a "new" function here.
 		// Lua may not ever need to create planets though.
 		{"Get", &Planets_Lua::Get},
+		{"NewPlanet", &Planets_Lua::NewPlanet},
 		{NULL, NULL}
 	};
 
@@ -288,6 +292,79 @@ int Planets_Lua::Get(lua_State* L){
     }
     Lua::pushSprite(L,p);
     return 1;
+}
+
+/**\brief Create a new Planet
+ */
+int Planets_Lua::NewPlanet(lua_State* L){
+	int i,n = lua_gettop(L);  // Number of arguments
+
+	// Temporary intermediatary variables
+	string imageName, techName;
+	Technology* tech;
+
+	// The new planet object and vital attributes
+	Planet *p;
+	string _name;
+	float _x;
+	float _y;
+	Image* _image;
+	string _alliance;
+	bool _landable;
+	int _traffic;
+	int _militiaSize;
+	int _sphereOfInfluence;
+	list<Technology*> _technologies;
+
+	if(n<9) {
+		return luaL_error(L, "Got %d arguments expected at least 9 (name, x, y, image_name, alliance, landable, traffic, militia, influence, [techs...])", n);
+	}
+
+	// Capture the required arguments
+	_name = (string)luaL_checkstring(L,1);
+	_x = luaL_checknumber(L, 2 );
+	_y = luaL_checknumber(L, 3 );
+	imageName = (string)luaL_checkstring(L,4);
+	_image = Image::Get( imageName );
+	_alliance = (string)luaL_checkstring(L,5);
+	_landable = (bool)luaL_checkint(L, 6 );
+	_traffic = luaL_checkint(L, 7 );
+	_militiaSize = luaL_checkint(L, 8 );
+	_sphereOfInfluence = luaL_checkint(L, 9 );
+
+	// Capture all other arguments as technologies
+	for(i=10;i<=n;i++) {
+		techName = (string)luaL_checkstring(L, 10 );
+		tech = Technologies::Instance()->GetTechnology( techName );
+		if(tech==NULL) {
+			return luaL_error(L, "No Technology '%s'", techName.c_str());
+		}
+		_technologies.push_back( tech );
+	}
+
+	if(_image==NULL) {
+		return luaL_error(L, "No image '%s'", imageName.c_str());
+	}
+
+	p = new Planet(
+		_name,
+		_x,
+		_y,
+		_image,
+		_alliance,
+		_landable,
+		_traffic,
+		_militiaSize,
+		_sphereOfInfluence,
+		_technologies
+		);
+
+	// Save the Planet!
+	Image::Store(_name,_image);
+	SpriteManager::Instance()->Add((Sprite*)p);
+	Planets::Instance()->AddOrReplace((Component*)p);
+    Lua::pushSprite(L,p);
+	return 1;
 }
 
 /*

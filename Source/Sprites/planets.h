@@ -88,6 +88,7 @@ class Planets_Lua {
 		//static Planet **pushPlanet(lua_State *L);
 		static Planet *checkPlanet(lua_State *L, int index);
 		static int Get(lua_State* L);
+		static int NewPlanet(lua_State* L);
 
 		static int GetName(lua_State* L);
 		static int GetType(lua_State* L);
