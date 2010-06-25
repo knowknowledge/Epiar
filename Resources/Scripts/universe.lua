@@ -54,6 +54,14 @@ function togglePause()
 	end
 end
 
+function toggleMap()
+	if Epiar.getoption("options/development/map")=="0" then
+		Epiar.setoption("options/development/map",1)
+	else
+		Epiar.setoption("options/development/map",0)
+	end
+end
+
 --- Pause the Game with a given message
 function pauseMessage(message)
 	if 1 == Epiar.ispaused() then return end
@@ -178,7 +186,8 @@ function options()
 	spriteLogging   = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
 	quadTreeDisplay = UI.newCheckbox(20,110, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
 	aiStateDisplay  = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, quadTreeDisplay, aiStateDisplay)
+	mapDisplay      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/map") ), "Display Map Overlay")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, quadTreeDisplay, aiStateDisplay, mapDisplay)
 	
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -189,9 +198,10 @@ function options()
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/ui",           uiLogging       :IsChecked() and 1 or 0 )
-		Epiar.setoption("options/log/sprites",       spriteLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/sprites",      spriteLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/map",  mapDisplay :IsChecked() and 1 or 0 )
 	end
 	function closeOptions()
 		optionWindow:close();

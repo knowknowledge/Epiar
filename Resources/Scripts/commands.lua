@@ -27,7 +27,8 @@ defaultCommands = {
 	-- Each command should be a table
 	-- { KEY, TITLE, SCRIPT, KEYMODE }
 	{'?', "Game Options", "options()",KEYTYPED},
-	{'p', "Pause", "togglePause()",KEYTYPED}
+	{'p', "Pause", "togglePause()",KEYTYPED},
+	{'m', "Map", "toggleMap()",KEYTYPED},
 	}
 
 --- Register multiple commands

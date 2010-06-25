@@ -377,10 +377,10 @@ void Hud::DrawMap( void ) {
 	float alpha;
 
 	// Configurable Settings
-	size = 400.0f;
+	size = 700.0f;
 	halfsize = size/2;
-	startx = 100;
-	starty = 100;
+	startx = Video::GetHalfWidth()-halfsize;
+	starty = Video::GetHalfHeight()-halfsize;
 	scale = (size) / (10*GATE_RADIUS);
 	alpha = .7;
 
