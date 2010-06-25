@@ -212,10 +212,17 @@ function options()
 	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 
--- Execute the current plan of each AI
--- Necessary functions for now.
+function createGates()
+	local r = 200000
+	for p=1,100 do
+		local x1,y1 = math.random(r)-r/2, math.random(r)-r/2
+		local x2,y2 = math.random(r)-r/2, math.random(r)-r/2
+		Epiar.NewGatePair(x1,y1,x2,y2)
+	end
+end
+registerInit(createGates)
 
-function createPlanet()
+function createPlanets()
 	local alliances = Epiar.alliances()
 	local technologies = Epiar.technologies()
 	local r = 200000
@@ -234,7 +241,7 @@ function createPlanet()
 			)
 	end
 end
-registerInit(createPlanet)
+registerInit(createPlanets)
 
 --- Create Some ships around the planets
 function planetTraffic()

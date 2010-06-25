@@ -56,6 +56,8 @@ class Lua {
 		static int loadPlayer(lua_State *L);
 		static int newPlayer(lua_State *L);
 
+		static int NewGatePair(lua_State *L);
+
 		// Sprite Fetchers
 		static int getPlayer(lua_State *L);
 		static int getSpriteByID(lua_State *L);

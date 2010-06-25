@@ -118,21 +118,6 @@ bool Simulation::Run() {
 		sprites->Add(  planets->GetPlanet(*pname) );
 	}
 
-	// Gates!
-	// TODO: These are random for now, but they should be set up in a structured network based on the planet locations at some point
-	Gate* g;
-	Gate* G;
-	for(int i=0; i<100; i++){
-		g = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS),
-		                          float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS)) );
-		G = new Gate( Coordinate( float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS),
-		                          float(rand()%(10*GATE_RADIUS) - 5*GATE_RADIUS)) );
-		sprites->Add(g);
-		sprites->Add(G);
-		g->SetExit(G->GetID());
-		G->SetExit(g->GetID());
-	}
-
 	// Start the Lua Universe
 	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
 	{

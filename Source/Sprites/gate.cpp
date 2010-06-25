@@ -70,6 +70,7 @@ void Gate::SetWorldPosition(Coordinate c) {
 void Gate::SetExit(int spriteID) {
 	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(spriteID);
 	if (exit == NULL) {
+		LogMsg(WARN,"Gate %d cannot exit at non-existant exit (%d)",this->GetID(),exitID);
 		exitID = 0;
 	//} else if (exit->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM)){
 	// Only use other Gates as Exits

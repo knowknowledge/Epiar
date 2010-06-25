@@ -26,6 +26,7 @@
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
+#include "Sprites/gate.h"
 #include "Utilities/camera.h"
 #include "Input/input.h"
 #include "Utilities/file.h"
@@ -222,6 +223,7 @@ void Lua::RegisterFunctions() {
 		{"newPlayer", &Lua::newPlayer},
 		{"players", &Lua::getPlayerNames},
 		{"player", &Lua::getPlayer},
+		{"NewGatePair", &Lua::NewGatePair},
 		{"getCamera", &Lua::getCamera},
 		{"moveCamera", &Lua::moveCamera},
 		{"shakeCamera", &Lua::shakeCamera},
@@ -381,6 +383,23 @@ int Lua::newPlayer(lua_State *L) {
 int Lua::getPlayer(lua_State *L){
 	Lua::pushSprite(L,Player::Instance() );
 	return 1;
+}
+
+int Lua::NewGatePair(lua_State *L){
+	int n = lua_gettop(L);
+	if (n != 4) {
+		return luaL_error(L, "Only %d arguments. Gates require two x,y pairs (x1,y1,x2,y2)", n);
+	}
+
+	Gate* gate_1 = new Gate( Coordinate( luaL_checkinteger(L,1), luaL_checkinteger(L,2)));
+	Gate* gate_2 = new Gate( Coordinate( luaL_checkinteger(L,3), luaL_checkinteger(L,4)));
+	SpriteManager::Instance()->Add((Sprite*)gate_1);
+	SpriteManager::Instance()->Add((Sprite*)gate_2);
+	// Note that we need to set the exit _after_ adding to the SpriteManager since SetExit checks that the Sprite exists.
+	gate_1->SetExit(gate_2->GetID());
+	gate_2->SetExit(gate_1->GetID());
+
+	return 0;
 }
 
 int Lua::getCamera(lua_State *L){
@@ -877,7 +896,7 @@ int Lua::getWeaponInfo(lua_State *L) {
 	string weaponName = (string)luaL_checkstring(L,1);
 	Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
 	if( weapon == NULL)
-		return luaL_error(L, "There is no weapon named '%s'.", weaponName.c_str());
+		return 0;
 
 	lua_newtable(L);
 	setField("Name", weapon->GetName().c_str());
