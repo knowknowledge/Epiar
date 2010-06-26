@@ -33,6 +33,7 @@ class SpriteManager {
 		Coordinate GetQuadrantCenter( Coordinate point );
 		int GetNumQuadrants() { return trees.size(); }
 		int GetNumSprites();
+		void GetBoundaries(float *northEdge, float *southEdge, float *eastEdge, float *westEdge);
 
 		void Save();
 
@@ -48,10 +49,14 @@ class SpriteManager {
 		
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
+
+		float northEdge, southEdge, eastEdge, westEdge;
+
 		bool DeleteSprite( Sprite *sprite );
 		void DeleteEmptyQuadrants( void );
 		QuadTree* GetQuadrant( Coordinate point );
 		list<QuadTree*> GetQuadrantsNear( Coordinate c, float r);
+		void AdjustBoundaries();
 };
 
 #endif // __H_SPRITEMANAGER__

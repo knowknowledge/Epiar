@@ -375,14 +375,22 @@ void Hud::DrawMap( void ) {
 	Color col;
 	int i;
 	float alpha;
+	float n,s,e,w, edge;
 
 	// Configurable Settings
 	size = 700.0f;
 	halfsize = size/2;
 	startx = Video::GetHalfWidth()-halfsize;
 	starty = Video::GetHalfHeight()-halfsize;
-	scale = (size) / (10*GATE_RADIUS);
 	alpha = .7;
+
+	// Strech the Map so that it covers all QuadTrees
+	SpriteManager::Instance()->GetBoundaries(&n,&s,&e,&w);
+	// edge is the maximum distance from zero of n,s,e, and w
+	edge = (n>-s)?n:-s;
+	edge = (edge>-w)?edge:-w;
+	edge = (edge>e)?edge:e;
+	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
 
 	sprites = SpriteManager::Instance()->GetSprites(
 		DRAW_ORDER_PLAYER   |
@@ -397,7 +405,7 @@ void Hud::DrawMap( void ) {
 	Video::DrawLine( startx + size , starty + size , startx + size , starty        , .3f,.0f,.0f ,alpha );
 
 	// The Quadrant Lines
-	for( i=static_cast<int>(QUADRANTSIZE); i<5*GATE_RADIUS; i+= 2*static_cast<int>(QUADRANTSIZE) )
+	for( i=static_cast<int>(QUADRANTSIZE); i<=edge; i+= 2*static_cast<int>(QUADRANTSIZE) )
 	{
 		Video::DrawLine( startx                          , starty + int( i*scale+halfsize) , startx + (int)size              , starty + int( i*scale+halfsize) , .3f,.3f,.3f ,alpha );
 		Video::DrawLine( startx                          , starty + int(-i*scale+halfsize) , startx + (int)size              , starty + int(-i*scale+halfsize) , .3f,.3f,.3f ,alpha );

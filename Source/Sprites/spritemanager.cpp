@@ -130,6 +130,9 @@ void SpriteManager::DeleteEmptyQuadrants() {
 		trees.erase((*emptyIter)->GetCenter());
 		delete (*emptyIter);
 	}
+	if( emptyTrees.size() ) {
+		AdjustBoundaries();
+	}
 }
 
 /**\brief Draws the current sprites
@@ -304,11 +307,36 @@ QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
 	assert(treeCenter == newTree->GetCenter() );
 	assert(newTree->Contains(point));
 	trees.insert(make_pair(treeCenter, newTree));
+	AdjustBoundaries();
 
 	// Debug
 	//cout<<"A Tree at "<<treeCenter<<" was created to contain "<<point<<". "<<trees.size()<<" Quadrants exist now."<<endl;
 
 	return newTree;
+}
+
+
+void SpriteManager::GetBoundaries(float *_northEdge, float *_southEdge, float *_eastEdge, float *_westEdge)
+{
+	*_northEdge = northEdge;
+	*_southEdge = southEdge;
+	*_eastEdge  = eastEdge;
+	*_westEdge  = westEdge;
+}
+
+void SpriteManager::AdjustBoundaries()
+{
+	Coordinate c;
+	map<Coordinate,QuadTree*>::iterator iter;
+
+	northEdge = southEdge = eastEdge = westEdge = 0;
+	for ( iter = trees.begin(); iter != trees.end(); ++iter ) { 
+		c = iter->first;
+		if( c.GetY() > northEdge) northEdge = c.GetY();
+		if( c.GetY() < southEdge) southEdge = c.GetY();
+		if( c.GetX() > eastEdge)  eastEdge  = c.GetX();
+		if( c.GetX() < westEdge)  westEdge  = c.GetX();
+	}
 }
 
 void SpriteManager::Save() {
