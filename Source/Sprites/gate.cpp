@@ -151,10 +151,11 @@ void Gate::SendToExit(Sprite* ship) {
 		return;
 	}
 	float distance = 50.0f;
+	float exitAngle = normalizeAngle( exit->GetAngle()+180 );
 	// The Ship's Angle and Momentum should make it appear like it is exiting the Gate
-	ship->SetWorldPosition( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exit->GetAngle() ) );
-	ship->SetMomentum( ship->GetMomentum().RotateTo( exit->GetAngle() ) );
-	ship->SetAngle( exit->GetAngle() );
+	ship->SetWorldPosition( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exitAngle ) );
+	ship->SetMomentum( ship->GetMomentum().RotateTo( exitAngle ) );
+	ship->SetAngle( exitAngle );
 }
 
 /**\brief Teleport a Ship in the direction of the Gate by a random distance

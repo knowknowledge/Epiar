@@ -390,6 +390,7 @@ int Lua::NewGatePair(lua_State *L){
 	if (n != 4) {
 		return luaL_error(L, "Only %d arguments. Gates require two x,y pairs (x1,y1,x2,y2)", n);
 	}
+	float angle;
 
 	Gate* gate_1 = new Gate( Coordinate( luaL_checkinteger(L,1), luaL_checkinteger(L,2)));
 	Gate* gate_2 = new Gate( Coordinate( luaL_checkinteger(L,3), luaL_checkinteger(L,4)));
@@ -398,6 +399,9 @@ int Lua::NewGatePair(lua_State *L){
 	// Note that we need to set the exit _after_ adding to the SpriteManager since SetExit checks that the Sprite exists.
 	gate_1->SetExit(gate_2->GetID());
 	gate_2->SetExit(gate_1->GetID());
+	angle = (gate_1->GetWorldPosition() - gate_2->GetWorldPosition()).GetAngle();
+	gate_1->SetAngle(angle+180);
+	gate_2->SetAngle(angle);
 
 	return 0;
 }
