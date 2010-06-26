@@ -212,36 +212,109 @@ function options()
 	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 
-function createGates()
-	local r = 200000
-	for p=1,100 do
-		local x1,y1 = math.random(r)-r/2, math.random(r)-r/2
-		local x2,y2 = math.random(r)-r/2, math.random(r)-r/2
-		Epiar.NewGatePair(x1,y1,x2,y2)
-	end
-end
-registerInit(createGates)
+function about(r) return math.random(r)-r/2 end
 
-function createPlanets()
+function createSystems()
 	local alliances = Epiar.alliances()
 	local technologies = Epiar.technologies()
 	local r = 200000
-	for p=1,100 do
+	local stationGraphic = "Resources/Graphics/station1.png"
+	local planetGraphics = {}
+	for p=1,21 do
+		table.insert(planetGraphics, "Resources/Graphics/planet"..p..".png" )
+	end
+	local starSystems = {
+		"Xen", "Artegga", "Vazzen", "Rilburn", "Burasu",
+		"Garor", "Hushaw", "Chenal", "Siana", "Hyanallophos",
+		"Allyphos", "Eorith", "Hanacal", "Tyeosur", "Mosalia",
+		"Untania", "Tonulia", "Anusia", "Denacia",
+	}
+	local system = {}
+	for s=1,#starSystems do
+		local x = about(r)
+		local y = about(r)
 		local alliance = alliances[ math.random(#alliances) ]
-		local tech = technologies[ math.random(#technologies) ]
-		local x = math.random(r)-r/2
-		local y = math.random(r)-r/2
-		Planet.NewPlanet(
-			"Vespian Outpost "..p,
-			x,y,
-			"Resources/Graphics/station1.png",
-			alliance,
-			1,2,0,200,
-			tech
-			)
+		local numPlanets = math.random(3)
+		local numStations = math.random(3) -1
+		local numGates = math.random(3)-1
+		system[s] = { ["x"]=x,
+		              ["y"]=y,
+		              ["alliance"]=alliance,
+		              ["numPlanets"]=numPlanets,
+		              ["numStations"]=numStations,
+		              ["numGates"]=numGates}
+	end
+
+	-- Create a system at 0,0 so that new players are attached to the gate grid
+	table.insert( system, { ["x"]=0,
+		              ["y"]=0,
+		              ["alliance"]=alliances[1],
+		              ["numPlanets"]=0,
+		              ["numStations"]=0,
+		              ["numGates"]=0})
+	for g=1,3 do
+		local other = math.random(#starSystems)
+		if other==systemNum then
+			other=other+((other==#starSystems) and 1 or -1 )
+		end
+		local otherSystem = system[ other ]
+		local gx = about(5000)
+		local gy = about(5000)
+		local ox = otherSystem.x + about(5000)
+		local oy = otherSystem.y + about(5000)
+		Epiar.NewGatePair(gx,gy,ox,oy)
+	end
+
+	for systemNum= 1,#starSystems do
+		local systemName = starSystems[systemNum]
+		local s = system[systemNum]
+
+		-- Create the Planets
+		for p=1,s.numPlanets do
+			local px = s.x + about(30000)
+			local py = s.y + about(30000)
+			local name = systemName .." "..p
+			Planet.NewPlanet(
+				name,
+				px,py,
+				planetGraphics[ math.random(#planetGraphics) ],
+				s.alliance,
+				1,math.random(3)-1,math.random(3)-1,math.random(10)*100,
+				technologies[ math.random(#technologies) ]
+				)
+		end
+
+		-- Create the Stations
+		if s.numStations>0 then
+			for n=1,s.numStations do
+				local px = s.x + about(10000)
+				local py = s.y + about(10000)
+				local name = systemName .." Outpost "..n
+				Planet.NewPlanet(
+					name,
+					px,py,
+					stationGraphic,
+					s.alliance,
+					1,0,0,math.random(100)*100,
+					technologies[ math.random(#technologies) ]
+					)
+			end
+		end
+
+		-- Create the Gates
+		if s.numGates>0 then
+			for g=1,s.numGates do
+				local otherSystem = system[ math.random(#starSystems) ]
+				local gx = s.x + about(10000)
+				local gy = s.y + about(10000)
+				local ox = otherSystem.x + about(10000)
+				local oy = otherSystem.y + about(10000)
+				Epiar.NewGatePair(gx,gy,ox,oy)
+			end
+		end
 	end
 end
-registerInit(createPlanets)
+registerInit(createSystems)
 
 --- Create Some ships around the planets
 function planetTraffic()
