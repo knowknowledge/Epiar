@@ -484,7 +484,11 @@ function storeView(storestats, itemType, itemName )
 		if statname=="Picture"  or statname=="Image" then
 			statlabel:setPicture( iteminfo[statname] )
 		else
-			statlabel:setLabel( iteminfo[statname] )
+			value = iteminfo[statname]
+			if type(value)=="number" and math.floor(value) ~= value then
+				value = string.format("%.2f", value )
+			end
+			statlabel:setLabel( value )
 		end
 	end
 	print('----------')
