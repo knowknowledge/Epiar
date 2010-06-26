@@ -247,12 +247,19 @@ void Ship::Update( void ) {
  */
 void Ship::Draw( void ) {
 	Trig *trig = Trig::Instance();
-	
+	Coordinate position = GetWorldPosition();
+
+	/*
+    // Shields
+	Video::DrawFilledCircle(
+			position.GetScreenX(), position.GetScreenY(),
+			static_cast<float>(GetRadarSize()), 0.0f,0.0f,0.3f,0.3f);
+	*/
+
 	Sprite::Draw();
 	
 	// Draw the flare animation, if required
 	if( status.isAccelerating ) {
-		Coordinate position = GetWorldPosition();
 		float direction = GetAngle();
 		float tx, ty;
 		

@@ -11,6 +11,7 @@
 #include "Graphics/video.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
+#include "Utilities/trig.h"
 
 /**\class Color
  * \brief Wrapper for RGB color.
@@ -295,9 +296,10 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glColor4f( r, g, b, a );
 	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
-	for(double angle = 0; angle <= 2.0 * M_PI; angle = angle + 0.1)
+	Trig* t = Trig::Instance();
+	for(int angle = 0; angle < 360; angle += 5)
 	{
-		glVertex2d(radius * cos(angle) + x, radius * sin(angle) + y);
+		glVertex2d(radius * t->GetCos(angle) + x, radius * t->GetSin(angle) + y);
 	}
 	// One more point to finish the circle. (ang=0)
 	glVertex2d(radius + x, y);
@@ -310,10 +312,11 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 	glColor4f(r,g,b,a);
 	glEnable(GL_BLEND);
 	glBegin(GL_TRIANGLE_STRIP);
-	for(double ang = 0; ang <= 2.0 * M_PI; ang = ang + 0.1)
+	Trig* t = Trig::Instance();
+	for(int angle = 0; angle < 360; angle += 5)
 	{
 		glVertex2d(x,y);
-		glVertex2d(radius * cos(ang) + x, radius * sin(ang) + y);
+		glVertex2d(radius * t->GetCos(angle) + x, radius * t->GetSin(angle) + y);
 	}
 	// One more triangle to finish the circle. (ang=0)
 	glVertex2d(x,y);
