@@ -503,7 +503,6 @@ int Lua::getPlanetNames(lua_State *L){
 void Lua::pushSprite(lua_State *L,Sprite* s){
 	int* id = (int*)lua_newuserdata(L, sizeof(int*));
 	*id = s->GetID();
-	assert(s->GetDrawOrder() & (DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET) );
 	switch(s->GetDrawOrder()){
 	case DRAW_ORDER_SHIP:
 	case DRAW_ORDER_PLAYER:
@@ -516,9 +515,9 @@ void Lua::pushSprite(lua_State *L,Sprite* s){
 		break;
 	default:
 		LogMsg(ERR,"Accidentally pushing sprite #%d with invalid kind: %d",s->GetID(),s->GetDrawOrder());
+		//assert(s->GetDrawOrder() & (DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET) );
 		luaL_getmetatable(L, EPIAR_SHIP);
 		lua_setmetatable(L, -2);
-		assert(0);
 	}
 }
 
