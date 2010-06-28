@@ -1,24 +1,15 @@
 --
--- Basic Scenario
-AIPlans = {}
+-- Basic AI
+AIData = {}
 
 --- Trader AI
-function Trader(id,x,y,angle,speed,vector,state)
-	local cur_ship = Epiar.getSprite(id)
-	local newstate = state
-	local target,px,py,dist
-	-- Pre Action setup --
-	if AIPlans[id]==nil then
-		state="reset" -- reset
-	else
-		px = AIPlans[id].x
-		py = AIPlans[id].y
-		target = AIPlans[id].planet
-		dist = distfrom(px,py,x,y)
-	end
-	-- Act on the State --
-	if state=="Docking" then
+Trader = {
+	Docking = function(id,x,y,angle,speed,vector)
 		-- Stop on this planet
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		local dist = distfrom(px,py,x,y)
 		if speed > 0.5 then
 			cur_ship:Rotate( - cur_ship:directionTowards( cur_ship:GetMomentumAngle() ) )
 			if dist>100 and math.abs(180 - math.abs(cur_ship:GetMomentumAngle() - cur_ship:GetAngle())) <= 10 then
@@ -27,90 +18,106 @@ function Trader(id,x,y,angle,speed,vector,state)
 		end
 		-- If we drift away, then find a new planet
 		if dist > 800 then
-			newstate="Find New"
+			return "New_Planet"
 		end
-	elseif state=="Travelling" then
+	end,
+	Travelling = function(id,x,y,angle,speed,vector)
 		-- Get to the planet
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
-		if dist < 800 then
-			newstate = "Docking"
+		if distfrom(px,py,x,y) < 800 then
+			return "New_Planet"
 		end
-	else
+	end,
+	New_Planet = function(id,x,y,angle,speed,vector)
 		-- Choose a planet
+		local cur_ship = Epiar.getSprite(id)
 		local planetNames = Epiar.planetNames()
-		local target = Planet.Get(planetNames[ math.random(#planetNames) ])
-		local px,py = target:GetPosition()
-		AIPlans[id] = {x=px,y=py,planet=target}
-		newstate="Travelling"
-	end
-	return newstate
-end
+		local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
+		AIData[id] = {destination= destination:GetID()}
+		return "Travelling"
+	end,
+	default = function(id,x,y,angle,speed,vector,state)
+		return "New_Planet"
+	end,
+}
 
 --- Hunter AI
-function Hunter(id,x,y,angle,speed,vector,state)
-	local cur_ship = Epiar.getSprite(id)
-	local newstate = state
-	local target,tx,ty,dist
-	-- Pre Action setup --
-	if AIPlans[id]==nil then
-		state="reset" -- reset
-	else
-		target = Epiar.getSprite( AIPlans[id].target )
+Hunter = {
+	default = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		return "New_Planet"
+	end,
+
+	Hunting = function(id,x,y,angle,speed,vector)
+		-- Approach the target
+		local cur_ship = Epiar.getSprite(id)
+		local tx,ty,dist
+		local target = Epiar.getSprite( AIData[id].target )
 		if target~=nil then
 			tx,ty = target:GetPosition()
-			AIPlans[id] = {x=tx,y=ty,target=target:GetID()}
 			dist = distfrom(tx,ty,x,y)
 		else
-			-- The Target is dead
-			state = "Finding New Target"
+			return "Searching"
 		end
-	end
-	-- Act on the State --
-	if state=="Killing" then
+		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
+		cur_ship:Accelerate()
+		if dist<300 then
+			return "Killing"
+		end
+		if dist>1000 then
+			return "Searching"
+		end
+	end,
+	Killing = function(id,x,y,angle,speed,vector)
+		-- Attack the target
+		local cur_ship = Epiar.getSprite(id)
+		local tx,ty,dist
+		local target = Epiar.getSprite( AIData[id].target )
+		if target==nil or target:GetHull()==0 then
+			HUD.newAlert(string.format("%s #%d:Victory is Mine!",cur_ship:GetModelName(),id))
+			return "Searching"
+		else
+			tx,ty = target:GetPosition()
+			dist = distfrom(tx,ty,x,y)
+		end
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 		cur_ship:Fire()
 		if dist>100 then
 			cur_ship:Accelerate()
 		end
 		if dist>300 then
-			newstate="Hunting"
+			return "Hunting"
 		end
-		if target==nil or target:GetHull()==0 then
-			HUD.newAlert(string.format("%s #%d:Victory is Mine!",cur_ship:GetModelName(),id))
-			newstate="Killed It!"
-		end
-	elseif state=="Hunting" then
-		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
-		cur_ship:Accelerate()
-		if dist<300 then
-			newstate="Killing"
-		end
-	elseif state=="Wandering" then
-		-- Head to the planet
-		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
-		cur_ship:Accelerate()
-		-- If anything gets within 1000 clicks of me, hunt it
+	end,
+
+	Searching = function(id,x,y,angle,speed,vector)
+		-- Find a new target
+		local cur_ship = Epiar.getSprite(id)
 		local ship= Epiar.nearestShip(cur_ship,1000)
 		if ship~=nil then
 			tx,ty = ship:GetPosition()
-			AIPlans[id] = {x=tx,y=ty,target=ship:GetID()}
-			newstate="Hunting"
+			AIData[id] = {target=ship:GetID()}
+			return "Hunting"
 		end
-	else
-		newstate="Wandering"
-		-- Head to a planet.
-		-- That's where all of the Victims usually are
-		local p = Epiar.nearestPlanet(cur_ship,1000)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
+		cur_ship:Accelerate()
+	end,
+	New_Planet = function(id,x,y,angle,speed,vector)
+		local p = Epiar.nearestPlanet(cur_ship,2000)
 		if p==nil then
 			-- Choose a random planet
 			local planetNames = Epiar.planetNames()
 			p = Planet.Get(planetNames[ math.random(#planetNames) ])
 		end
-		tx,ty = p:GetPosition()
-		AIPlans[id] = {x=tx,y=ty,target=p:GetID()}
-	end
-	return newstate
-end
+		AIData[id] = {destination=p:GetID()}
+		return "Searching"
+	end,
+}
 
 

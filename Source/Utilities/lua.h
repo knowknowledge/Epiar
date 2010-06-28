@@ -33,6 +33,7 @@ class Lua {
 
 		static vector<string> GetOutput();
 
+		static lua_State* CurrentState() { return L;}
 
 		static void RegisterFunctions();
 

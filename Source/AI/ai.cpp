@@ -18,7 +18,7 @@
 
 AI::AI(string machine) :
 	stateMachine(machine),
-	state("")
+	state("default")
 {
 	
 }
@@ -28,19 +28,59 @@ AI::AI(string machine) :
  */
 void AI::Update(){
 	// Decide
-	string newstate;
+	lua_State *L = Lua::CurrentState();
+	lua_settop(L,0);
+
+	// Get the current state machine
+	lua_getglobal(L, stateMachine.c_str() );
+	if( ! lua_istable(L,lua_gettop(L)) )
+	{
+		LogMsg(ERR, "There is no State Machine named '%s'!", stateMachine.c_str() );
+		return; // This ship will just sit idle...
+	}
+
+	// Get the current state
+	lua_pushstring(L, state.c_str() );
+	lua_gettable(L,1);
+	if( ! lua_isfunction(L,lua_gettop(L)) )
+	{
+		LogMsg(WARN, "The State Machine '%s' has no state '%s'.", stateMachine.c_str(), state.c_str() );
+		lua_getglobal(L, stateMachine.c_str() );
+		lua_pushstring(L, "default" );
+		lua_gettable(L,1);
+		if( !lua_isfunction(L,lua_gettop(L)) )
+		{
+			LogMsg(ERR, "The State Machine '%s' has no default state.", stateMachine.c_str() );
+			lua_settop(L,0);
+			return; // This ship will just sit idle...
+		}
+	}
+
+	// Push Current AI Variables
+	lua_pushinteger( L, this->GetID() );
+	lua_pushnumber( L, this->GetWorldPosition().GetX() );
+	lua_pushnumber( L, this->GetWorldPosition().GetY() );
+	lua_pushnumber( L, this->GetAngle() );
+	lua_pushnumber( L, this->GetMomentum().GetMagnitude() ); // Speed
+	lua_pushnumber( L, this->GetMomentum().GetAngle() ); // Vector
+
+	// Run the current AI state
+	//printf("Call:"); Lua::stackDump(L); // DEBUG
+	if( lua_pcall(L, 6, 1, 0) != 0)
+	{
+		printf("Failed to run %s(%s): %s\n", stateMachine.c_str(), state.c_str(), lua_tostring(L, -1));
+		lua_settop(L,0);
+		return;
+	}
+	//printf("Return:"); Lua::stackDump(L); // DEBUG
 	
-	Lua::Call(this->stateMachine.c_str(), "iddddds>s",
-		this->GetID(),
-		this->GetWorldPosition().GetX(),
-		this->GetWorldPosition().GetY(),
-		this->GetAngle(),
-		this->GetMomentum().GetMagnitude(), // Speed
-		this->GetMomentum().GetAngle(), // Vector
-		this->state.c_str()
-		,&(newstate)
-		);
-	state= newstate;
+	if( lua_isstring( L, lua_gettop(L) ) )
+	{
+		state = (string)luaL_checkstring(L, lua_gettop(L));
+	}
+
+	//printf("Complete:");Lua::stackDump(L); // DEBUG
+	lua_settop(L,0);
 
 	// Now act like a normal ship
 	this->Ship::Update();
