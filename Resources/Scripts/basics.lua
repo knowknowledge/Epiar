@@ -1,6 +1,27 @@
 --
 -- Basic AI
+--[[
+
+An AI StateMachine must have the form:
+StateMachine = {
+	State = function(id,x,y,angle,speed,vector) ... end,
+	...
+}
+
+All StateMachines must have a "default" state.  This is their initial state.
+
+--]]
+
 AIData = {}
+
+function FindADestination(id,x,y,angle,speed,vector)
+	-- Choose a planet
+	local cur_ship = Epiar.getSprite(id)
+	local planetNames = Epiar.planetNames()
+	local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
+	AIData[id] = {destination= destination:GetID()}
+	return "Travelling"
+end
 
 --- Trader AI
 Trader = {
@@ -32,14 +53,7 @@ Trader = {
 			return "New_Planet"
 		end
 	end,
-	New_Planet = function(id,x,y,angle,speed,vector)
-		-- Choose a planet
-		local cur_ship = Epiar.getSprite(id)
-		local planetNames = Epiar.planetNames()
-		local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
-		AIData[id] = {destination= destination:GetID()}
-		return "Travelling"
-	end,
+	New_Planet = FindADestination,
 	default = function(id,x,y,angle,speed,vector,state)
 		return "New_Planet"
 	end,
@@ -48,9 +62,9 @@ Trader = {
 --- Hunter AI
 Hunter = {
 	default = function(id,x,y,angle,speed,vector)
-		local cur_ship = Epiar.getSprite(id)
 		return "New_Planet"
 	end,
+	New_Planet = FindADestination,
 
 	Hunting = function(id,x,y,angle,speed,vector)
 		-- Approach the target
@@ -61,7 +75,7 @@ Hunter = {
 			tx,ty = target:GetPosition()
 			dist = distfrom(tx,ty,x,y)
 		else
-			return "Searching"
+			return "default"
 		end
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 		cur_ship:Accelerate()
@@ -69,7 +83,7 @@ Hunter = {
 			return "Killing"
 		end
 		if dist>1000 then
-			return "Searching"
+			return "default"
 		end
 	end,
 	Killing = function(id,x,y,angle,speed,vector)
@@ -79,7 +93,7 @@ Hunter = {
 		local target = Epiar.getSprite( AIData[id].target )
 		if target==nil or target:GetHull()==0 then
 			HUD.newAlert(string.format("%s #%d:Victory is Mine!",cur_ship:GetModelName(),id))
-			return "Searching"
+			return "default"
 		else
 			tx,ty = target:GetPosition()
 			dist = distfrom(tx,ty,x,y)
@@ -94,7 +108,7 @@ Hunter = {
 		end
 	end,
 
-	Searching = function(id,x,y,angle,speed,vector)
+	Travelling = function(id,x,y,angle,speed,vector)
 		-- Find a new target
 		local cur_ship = Epiar.getSprite(id)
 		local ship= Epiar.nearestShip(cur_ship,1000)
@@ -108,16 +122,57 @@ Hunter = {
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
 	end,
-	New_Planet = function(id,x,y,angle,speed,vector)
-		local p = Epiar.nearestPlanet(cur_ship,2000)
-		if p==nil then
-			-- Choose a random planet
-			local planetNames = Epiar.planetNames()
-			p = Planet.Get(planetNames[ math.random(#planetNames) ])
-		end
-		AIData[id] = {destination=p:GetID()}
-		return "Searching"
-	end,
 }
 
-
+Patrol = {
+	default = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		destination = Epiar.nearestPlanet(cur_ship,4096)
+		AIData[id] = {destination= destination:GetID()}
+		return "Travelling"
+	end,
+	Travelling = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
+		cur_ship:Accelerate()
+		if distfrom(px,py,x,y) < 1000 then
+			return "Orbiting"
+		end
+	end,
+	Orbiting = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		local dist = distfrom(px,py,x,y)
+		if dist > 1500 then
+			return "TooFar"
+		end
+		if dist < 500 then
+			return "TooClose"
+		end
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) +90)
+		cur_ship:Accelerate()
+	end,
+	TooClose = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		cur_ship:Rotate( 180 - cur_ship:directionTowards(px,py) )
+		cur_ship:Accelerate()
+		if distfrom(px,py,x,y) > 800 then
+			return "Orbiting"
+		end
+	end,
+	TooFar = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
+		cur_ship:Accelerate()
+		if distfrom(px,py,x,y) < 1300 then
+			return "Orbiting"
+		end
+	end,
+}

@@ -99,7 +99,7 @@ end
 
 --- Creates a new ship
 function createShip(X,Y,model,engine)
-	plans = {"Hunter","Trader"}
+	plans = {"Hunter","Trader","Patrol"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
 	cur_ship:SetRadarColor(0,255,0)
 	return cur_ship
