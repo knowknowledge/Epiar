@@ -99,7 +99,7 @@ end
 
 --- Creates a new ship
 function createShip(X,Y,model,engine)
-	plans = {"Hunter","Trader","Patrol"}
+	plans = {"Hunter","Trader","Patrol","Bully"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
 	cur_ship:SetRadarColor(0,255,0)
 	return cur_ship
@@ -651,8 +651,8 @@ end
 --------------------------------------------------------------------------------
 -- Load Scenarios
 
+dofile "Resources/Scripts/commands.lua"
 dofile "Resources/Scripts/basics.lua"
 --dofile "Resources/Scripts/tag.lua"
 --dofile "Resources/Scripts/swarm.lua"
-dofile "Resources/Scripts/commands.lua"
 

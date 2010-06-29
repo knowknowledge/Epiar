@@ -9,6 +9,8 @@ StateMachine = {
 }
 
 All StateMachines must have a "default" state.  This is their initial state.
+States transition by returning a string of the new State's name.
+States that do not return new state names will stay in the same state.
 
 --]]
 
@@ -19,7 +21,7 @@ function FindADestination(id,x,y,angle,speed,vector)
 	local cur_ship = Epiar.getSprite(id)
 	local planetNames = Epiar.planetNames()
 	local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
-	AIData[id] = {destination= destination:GetID()}
+	AIData[id].destination = destination:GetID()
 	return "Travelling"
 end
 
@@ -55,6 +57,7 @@ Trader = {
 	end,
 	New_Planet = FindADestination,
 	default = function(id,x,y,angle,speed,vector,state)
+		AIData[id] = {}
 		return "New_Planet"
 	end,
 }
@@ -62,6 +65,7 @@ Trader = {
 --- Hunter AI
 Hunter = {
 	default = function(id,x,y,angle,speed,vector)
+		AIData[id] = {}
 		return "New_Planet"
 	end,
 	New_Planet = FindADestination,
@@ -114,7 +118,7 @@ Hunter = {
 		local ship= Epiar.nearestShip(cur_ship,1000)
 		if ship~=nil then
 			tx,ty = ship:GetPosition()
-			AIData[id] = {target=ship:GetID()}
+			AIData[id].target = ship:GetID()
 			return "Hunting"
 		end
 		local p = Epiar.getSprite( AIData[id].destination )
@@ -127,10 +131,17 @@ Hunter = {
 Patrol = {
 	default = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
+		AIData[id] = {}
 		destination = Epiar.nearestPlanet(cur_ship,4096)
-		AIData[id] = {destination= destination:GetID()}
+		if destination==nil then
+			return "New_Planet"
+		end
+	  	AIData[id].destination = destination:GetID()
 		return "Travelling"
 	end,
+	New_Planet = FindADestination,
+	Hunting = Hunter.Hunting,
+	Killing = Hunter.Killing,
 	Travelling = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
@@ -146,20 +157,28 @@ Patrol = {
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
+		cur_ship:Accelerate()
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) +90)
 		if dist > 1500 then
 			return "TooFar"
 		end
 		if dist < 500 then
 			return "TooClose"
 		end
-		cur_ship:Rotate( cur_ship:directionTowards(px,py) +90)
-		cur_ship:Accelerate()
+		local ship= Epiar.nearestShip(cur_ship,l000)
+		if ship~=nil then
+			local machine, state = ship:GetState()
+			if machine=="Hunter" then
+				AIData[id].target = ship:GetID()
+				return "Hunting"
+			end
+		end
 	end,
 	TooClose = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
-		cur_ship:Rotate( 180 - cur_ship:directionTowards(px,py) )
+		cur_ship:Rotate( 180 + cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
 		if distfrom(px,py,x,y) > 800 then
 			return "Orbiting"
@@ -176,3 +195,37 @@ Patrol = {
 		end
 	end,
 }
+
+
+Bully = {
+	default = Patrol.default,
+	Travelling = Patrol.Travelling,
+	TooClose = Patrol.TooClose,
+	TooFar = Patrol.TooFar,
+	TooFar = Patrol.Orbiting,
+	Hunting = Hunter.Hunting,
+	Killing = Hunter.Killing,
+
+	Orbiting = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		local dist = distfrom(px,py,x,y)
+
+		local ship= Epiar.nearestShip(cur_ship,900)
+		if (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) then
+			AIData[id].target = ship:GetID()
+			return "Hunting"
+		end
+
+		if dist > 1500 then
+			return "TooFar"
+		end
+		if dist < 500 then
+			return "TooClose"
+		end
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) +90)
+		cur_ship:Accelerate()
+	end,
+}
+
