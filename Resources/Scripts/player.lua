@@ -149,18 +149,32 @@ end
 function loadingWindow()
 	if loadingWin~=nil then return end
 	Epiar.pause()
-	width=300
-	height=300
+	local width=300
+	local height=300
 	loadingWin = UI.newWindow( 300,300,width,height,"Welcome to Epiar" )
 	local players = Epiar.players()
 	for i=1,#players do
 		local player = players[i]
 		-- TODO: show a preview of the player (curret ship, location, equipment)
-		loadingWin:add( UI.newButton(50,30+i*40,100,30,player,string.format("Epiar.loadPlayer('%s'); loadingWin:close(); loadingWin=nil; playerStart(); Epiar.unpause()",player)))
+		loadingWin:add( UI.newButton(50,30+i*40,100,30,player,string.format("loadPlayer('%s')",player)))
 	end
 	loadingWin:add( UI.newButton(width/2-50,height-40,100,30,"New Player","createNewPlayerWindow()") )
 end
 registerInit(loadingWindow)
+
+function loadPlayer(playerName)
+	Epiar.loadPlayer(playerName)
+	if loadingWin~=nil then
+		loadingWin:close()
+		loadingWin=nil
+	end
+	if newPlayerWin~=nil then
+		newPlayerWin:close()
+		newPlayerWin=nil
+	end
+	playerStart()
+	Epiar.unpause()
+end
 
 function createNewPlayerWindow()
 	if newPlayerWin~=nil then return end

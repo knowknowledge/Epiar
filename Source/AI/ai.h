@@ -18,6 +18,7 @@ class AI : public Ship{
 		AI(string machine);
 		void Update();
 		void Draw();
+		void Decide();
 		void SetStateMachine(string _machine) { stateMachine = _machine; }
 		void SetState(string _state)  { state = _state; }
 		string GetStateMachine() { return stateMachine; }

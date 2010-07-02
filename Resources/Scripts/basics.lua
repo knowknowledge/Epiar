@@ -178,7 +178,7 @@ Patrol = {
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
-		cur_ship:Rotate( 180 + cur_ship:directionTowards(px,py) )
+		cur_ship:Rotate( - cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
 		if distfrom(px,py,x,y) > 800 then
 			return "Orbiting"
@@ -213,7 +213,7 @@ Bully = {
 		local dist = distfrom(px,py,x,y)
 
 		local ship= Epiar.nearestShip(cur_ship,900)
-		if (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) then
+		if (ship~=nil) and (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) then
 			AIData[id].target = ship:GetID()
 			return "Hunting"
 		end

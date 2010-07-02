@@ -23,10 +23,7 @@ AI::AI(string machine) :
 	
 }
 
-/**\brief Updates the AI controlled ship by first calling the Lua function
- * and then calling Ship::Update()
- */
-void AI::Update(){
+void AI::Decide() {
 	string newstate;
 	// Decide
 	lua_State *L = Lua::CurrentState();
@@ -94,7 +91,13 @@ void AI::Update(){
 
 	//printf("Complete:");Lua::stackDump(L); // DEBUG
 	lua_settop(L,0);
+}
 
+/**\brief Updates the AI controlled ship by first calling the Lua function
+ * and then calling Ship::Update()
+ */
+void AI::Update(){
+	this->Decide();
 	// Now act like a normal ship
 	this->Ship::Update();
 }
