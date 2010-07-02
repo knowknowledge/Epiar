@@ -45,7 +45,8 @@ class Log {
 			DEBUG1,			/**< Low occurrence debug information. */
 			DEBUG2,			/**< Medium occurrence (Occurs only on user actions).*/
 			DEBUG3,			/**< Medium high occurrence (Occurs regularly).*/
-			DEBUG4			/**< High occurrence (> once per second).*/
+			DEBUG4,			/**< High occurrence (> once per second).*/
+			ALL             /**< This is always the highest Logging level.*/
 		} Level;
 		~Log();
 

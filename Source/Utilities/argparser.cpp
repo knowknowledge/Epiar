@@ -83,7 +83,7 @@ bool ArgParser::HaveOpt( const string& arg ){
 /**\brief Checks to see if short option exists.*/
 bool ArgParser::HaveShort( const string& arg ){
 	if( this->validopt.count( arg ) == 0 ){
-		LogMsg(ERR,"You tried to access an invalid option, please use SetOpt to define it first!");
+		LogMsg(ERR,"You tried to access an invalid option ('%s'), please use SetOpt to define it first!", arg.c_str());
 		return false;
 	}
 	if( this->validopttype[ arg ] != SHORTOPT ){
@@ -120,11 +120,11 @@ bool ArgParser::HaveLong( const string& arg ){
 string ArgParser::HaveValue( const string& arg ){
 	if( this->validopt.count( arg ) == 0 ){
 		LogMsg(ERR,"You tried to access an invalid option, please use SetOpt to define it first!");
-		return false;
+		return "";
 	}
 	if( this->validopttype[ arg ] != VALUEOPT ){
 		// Option exists, but it's the wrong type
-		return false;
+		return "";
 	}
 
 	if( this->valueopts.count( arg ) > 0 ){

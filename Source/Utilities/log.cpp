@@ -59,6 +59,7 @@ bool Log::SetLevel( const string& _loglvl ){
 
 /**\brief Allows changing of the log level dynamically ( enum version ).*/
 bool Log::SetLevel( Level _loglvl ){
+	LogMsg(DEBUG1,"Changing Log Level from '%s' to '%s'.", lvlStrings[loglvl].c_str(), lvlStrings[_loglvl].c_str());
 	this->loglvl=_loglvl;
 	return true;
 }
@@ -157,7 +158,9 @@ void Log::realLog( Level lvl, const string& func, const string& message, ... ) {
 }
 
 /**\brief Constructor, used to initialize variables.*/
-Log::Log():loglvldefault(ALERT){
+Log::Log()
+	:loglvldefault(ALL)
+{
 	lvlStrings[NONE]="None";
 	lvlStrings[FATAL]="Fatal";
 	lvlStrings[CRITICAL]="Critical";
