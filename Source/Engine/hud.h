@@ -32,6 +32,7 @@ class StatusBar {
 		static Image *im_infobar_left,
 				*im_infobar_right,
 				*im_infobar_middle;
+		string GetTitle() { return title; }
 		void SetName( string n ) { name = n; }
 		string GetName() { return name; }
 		void SetRatio(float _ratio ) { ratio = _ratio; }

@@ -35,7 +35,7 @@ list<AlertMessage> Hud::AlertMessages;
 list<StatusBar*> Hud::Bars;
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
-int Radar::visibility = 7000;
+int Radar::visibility = 4096;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -570,7 +570,8 @@ int Hud::newStatus(lua_State *L) {
 
 StatusBar* Hud::checkStatus(lua_State *L, int index) {
 	StatusBar **barptr = (StatusBar**)luaL_checkudata(L, index, EPIAR_HUD);
-	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected");
+	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected. Got NULL Pointer");
+	luaL_argcheck(L, *barptr != NULL, index, "`EPIAR_HUD' expected. Got pointer to NULL.");
 	StatusBar *bar;
 	bar = *barptr;
 	return bar;
