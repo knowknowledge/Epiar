@@ -27,7 +27,7 @@ enum AmmoType {
 	max_ammo // This AmmoType is used only for iterating accross the Types
 };
 
-class Weapon : public Component, public Outfit {
+class Weapon : public Outfit {
 	public:
 		Weapon(void);
 		Weapon& operator=(const Weapon& other);

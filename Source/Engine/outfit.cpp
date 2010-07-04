@@ -8,6 +8,7 @@
 
 #include "Engine/outfit.h"
 #include "Graphics/image.h"
+#include "Utilities/components.h"
 
 /** Default Constructor
  */
@@ -104,6 +105,76 @@ Outfit& Outfit::operator+= (const Outfit& other)
 	return *this;
 }
 
+/**\brief Parses weapon information
+ */
+bool Outfit::parserCB( string sectionName, string subName, string value ) {
+	PPA_MATCHES( "name" ) {
+		name = value;
+	} else PPA_MATCHES( "picName" ) {
+		Image* pic = Image::Get(value);
+		// This can be accessed by either the path or the modelName
+		Image::Store(name, pic);
+		SetPicture(pic);
+	} else PPA_MATCHES( "msrp" ) {
+		if (atoi( value.c_str()) != 0)
+			SetMSRP( atoi( value.c_str() ));
+	} else PPA_MATCHES( "rotationsPerSecond" ) {
+			SetRotationsPerSecond( atof( value.c_str() ));
+	} else PPA_MATCHES( "maxSpeed" ) {
+			SetMaxSpeed( atof( value.c_str() ));
+	} else PPA_MATCHES( "forceOutput" ) {
+			SetForceOutput( atof( value.c_str() ));
+	} else PPA_MATCHES( "mass" ) {
+			SetMass( atoi( value.c_str() ));
+	} else PPA_MATCHES( "hullStrength" ) {
+			SetHullStrength( atoi( value.c_str() ));
+	} else PPA_MATCHES( "shieldStength" ) {
+			SetShieldStrength( atoi( value.c_str() ));
+	} else PPA_MATCHES( "cargoSpace" ) {
+			SetCargoSpace( atoi( value.c_str() ));
+	}
+	return true;
+}
+
+/** \brief Converts the Outfit object to an XML node.
+ */
+xmlNodePtr Outfit::ToXMLNode(string componentName) {
+	char buff[256];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
+	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
+
+	xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST this->GetPicture()->GetPath().c_str() );
+
+	snprintf(buff, sizeof(buff), "%f", this->GetRotationsPerSecond() );
+	xmlNewChild(section, NULL, BAD_CAST "rotsPerSecond", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%f", this->GetMaxSpeed() );
+	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%f", this->GetForceOutput() );
+	xmlNewChild(section, NULL, BAD_CAST "force", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%f", this->GetMass() );
+	xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetHullStrength() );
+	xmlNewChild(section, NULL, BAD_CAST "hull", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetShieldStrength() );
+	xmlNewChild(section, NULL, BAD_CAST "shield", BAD_CAST buff );
+
+	return section;
+}
+
+/**\brief Prints debugging information (not implemented)
+ */
+void Outfit::_dbg_PrintInfo( void ) {
+	cout << "Outfit: " << name << endl;
+}
 
 /**
  * \function GetMSRP
@@ -120,10 +191,10 @@ Outfit& Outfit::operator+= (const Outfit& other)
  * \brief Set the picture
  * \param _picture The new picture value
  *
- * \function GetRotPerSecond
+ * \function GetRotationsPerSecond
  * \brief Get the rotPerSecond
  *
- * \function SetRotPerSecond
+ * \function SetRotationsPerSecond
  * \brief Set the rotPerSecond
  * \param _rotPerSecond The new rotPerSecond value
  *
@@ -175,4 +246,31 @@ Outfit& Outfit::operator+= (const Outfit& other)
  * \function SetShieldStrength
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
+ */
+
+/**\class Outfits
+ * \brief Collection of Outfit objects
+ */
+Outfits *Outfits::pInstance = 0; // initialize pointer
+
+/**\brief Returns or creates the Outfit instance.
+ * \return Pointer to the Outfit instance
+ */
+Outfits *Outfits::Instance( void ) {
+	if( pInstance == 0 ) { // is this the first call?
+		pInstance = new Outfits; // create the sold instance
+		pInstance->rootName = "outfits";
+		pInstance->componentName = "outfit";
+	}
+	return( pInstance );
+}
+
+/**\fn Outfits::GetOutfit(string name)
+ *  \brief Retrieves the Outfit by name
+ * \fn Outfits::newComponent()
+ *  \brief Creates a new Outfit
+ * \fn Outfits::Outfits(const Outfits&)
+ *  \brief An empty constructor.
+ * \fn Outfits::operator= (const Outfits&)
+ *  \brief An empty assignment operator.
  */

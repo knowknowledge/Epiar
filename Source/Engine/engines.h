@@ -18,7 +18,7 @@
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
 // Abstraction of a single engine
-class Engine : public Component, public Outfit {
+class Engine : public Outfit {
 	public:
 		Engine();
 		Engine& operator= (const Engine&);

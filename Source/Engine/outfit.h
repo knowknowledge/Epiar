@@ -11,8 +11,9 @@
 
 #include "Engine/outfit.h"
 #include "Graphics/image.h"
+#include "Utilities/components.h"
 
-class Outfit {
+class Outfit : public Component {
 	public:
 
 		Outfit();
@@ -33,6 +34,10 @@ class Outfit {
 		Outfit& operator= (const Outfit& other);
 		Outfit operator+ (const Outfit& other);
 		Outfit& operator+= (const Outfit& other);
+
+		bool parserCB( string sectionName, string subName, string value );
+		xmlNodePtr ToXMLNode(string componentName);
+		void _dbg_PrintInfo( void );
 
 		int GetMSRP() { return msrp; }
 		void SetMSRP( int _msrp ) { msrp = _msrp; }
@@ -85,6 +90,22 @@ class Outfit {
 		// Offensive Stats
 		//TODO: What would go here?
 	private:
+};
+
+// Class that holds list of all models; manages them
+class Outfits : public Components {
+	public:
+		static Outfits *Instance();
+		Outfit* GetOutfit(string name) { return (Outfit*) this->Get(name); }
+		Component* newComponent() { return new Outfit(); }
+
+	protected:
+		Outfits() {};
+		Outfits( const Outfits & );
+		Outfits& operator= (const Outfits&);
+
+	private:
+		static Outfits *pInstance;
 };
 
 #endif // define __H_OUTFIT__

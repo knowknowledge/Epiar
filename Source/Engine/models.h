@@ -16,7 +16,7 @@
 #include "Utilities/components.h"
 
 // Abstraction of a single ship model
-class Model : public Component, public Outfit {
+class Model : public Outfit {
 	public:
 		Model();
   		Model& operator= (const Model&);
