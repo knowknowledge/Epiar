@@ -36,7 +36,15 @@ class Simulation {
 		bool Parse( void );
 	
 		string filename;
-		string commoditiesFilename, planetsFilename, modelsFilename, enginesFilename,weaponsFilename, alliancesFilename, technologiesFilename, playersFilename;
+		string commoditiesFilename;
+		string planetsFilename;
+		string modelsFilename;
+		string enginesFilename;
+		string weaponsFilename;
+		string outfitsFilename;
+		string alliancesFilename;
+		string technologiesFilename;
+		string playersFilename;
 		
 		Commodities *commodities;
 		Planets *planets;
@@ -45,6 +53,7 @@ class Simulation {
 		Weapons *weapons;
 		Alliances *alliances;
 		Technologies *technologies;
+		Outfits *outfits;
 		Players *players;
 		
 		static float currentFPS;

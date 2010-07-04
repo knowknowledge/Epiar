@@ -44,6 +44,7 @@ Simulation::Simulation( void ) {
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	technologies = Technologies::Instance();
+	outfits = Outfits::Instance();
 	players = Players::Instance();
 	currentFPS = 0.;
 }
@@ -58,6 +59,7 @@ Simulation::Simulation( string filename ) {
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
 	technologies = Technologies::Instance();
+	outfits = Outfits::Instance();
 	players = Players::Instance();
 	currentFPS = 0.;
 
@@ -301,6 +303,12 @@ bool Simulation::Parse( void ) {
 				xmlFree( key );
 				LogMsg(INFO, "Weapons filename is %s.", weaponsFilename.c_str() );
 			}
+			if( !strcmp( sectionName, "outfits" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				outfitsFilename = (char *)key;
+				xmlFree( key );
+				LogMsg(INFO, "Outfits filename is %s.", outfitsFilename.c_str() );
+			}
 			if( !strcmp( sectionName, "alliances" ) ) {
 				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 				alliancesFilename = (char *)key;
@@ -341,8 +349,11 @@ bool Simulation::Parse( void ) {
 	if( weapons->Load( weaponsFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
 	}
+	if( outfits->Load( outfitsFilename ) != true ) {
+		LogMsg(ERR, "There was an error loading the outfits from '%s'.", outfitsFilename.c_str() );
+	}
 	if( technologies->Load( technologiesFilename ) != true ) {
-		LogMsg(ERR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		LogMsg(ERR, "There was an error loading the technologies from '%s'.", technologiesFilename.c_str() );
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );

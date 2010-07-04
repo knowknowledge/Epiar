@@ -10,7 +10,7 @@
 	<alliances>Resources/Definitions/alliances-default.xml</alliances>
 	<weapons>Resources/Definitions/weapons-default.xml</weapons>
 	<technologies>Resources/Definitions/technologies-default.xml</technologies>
+	<outfits>Resources/Definitions/outfits-default.xml</outfits>
 	<players>Resources/Definitions/saved-games.xml</players>
 	<armor></armor>
-	<outfits></outfits>
 </simulation>
