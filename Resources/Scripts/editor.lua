@@ -5,7 +5,7 @@ componentWins = {}
 --- View components
 function componentDebugger()
 	if componentWindow ~= nil then return end
-	componentWindow = UI.newWindow( 50,10,840,70, "Game Component Debugging",
+	componentWindow = UI.newWindow( 50,10,820,70, "Game Component Debugging",
 		UI.newButton(  10,30,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
 		UI.newButton(110,30,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
 		UI.newButton(210,30,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
@@ -13,8 +13,11 @@ function componentDebugger()
 		UI.newButton(410,30,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
 		UI.newButton(510,30,100,30,"Technology","technologyViewer()"),
 		UI.newButton(610,30,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(730,30,100,30,"Save","Epiar.saveComponents()" )
+		UI.newButton(710,30,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
 	)
+    UI.newWindow( 452, 700,120,70, "Save Components",
+		UI.newButton(10,30,100,30,"Save","Epiar.saveComponents()" )
+    )
 end
 componentDebugger()
 
@@ -84,6 +87,20 @@ WeaponEditorLayout = {
 	{"Sound", "String"}, -- TODO: Should be Sound Picker
 	}
 
+OutfitEditorLayout = {
+	{"Name", "String"},
+	{"Picture", "Picture"}, -- Picture Picker
+	{"MSRP", "Integer"},
+	{"MaxSpeed", "Number"},
+	{"Force", "Number"},
+	{"Rotation", "Number"},
+	{"MaxHull", "Integer"},
+	{"MaxShield", "Integer"},
+	{"Cargo", "Integer"},
+	{"SurfaceArea", "Integer"},
+	{"Mass", "Number"},
+	}
+
 EditorLayouts = {
 	Alliance=AllianceEditorLayout,
 	Commodity=CommodityEditorLayout,
@@ -91,6 +108,7 @@ EditorLayouts = {
 	Model=ModelEditorLayout,
 	Planet=PlanetEditorLayout,
 	Weapon=WeaponEditorLayout,
+	Outfit=OutfitEditorLayout,
 }
 
 --- Creates a generic list of Component buttons
@@ -112,9 +130,10 @@ function showComponent(kind,name,getterFunc)
         Epiar.focusCamera(planet:GetID())
     end
 	if infoWindows[name] ~= nil then return end
+	local height=400
 	local width=250
 	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,width,660,name,
+	local theWin = UI.newWindow(150,100,width,height,name,
 		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	
 	local theFields = {}
@@ -273,20 +292,25 @@ function saveTech(name)
 	local win = infoWindows[name].win
 	local boxes = infoWindows[name].boxes
 	local nameField = infoWindows[name].name
-	local models,weapons,engines={},{},{}
+	local models,weapons,engines,outfits={},{},{},{}
 	-- Gather the chosen techs into the correct lists
 	for techGroup,boxset in pairs(boxes) do
+        print(techGroup)
 		for tech,box in pairs(boxset) do
+            print(tech,box:IsChecked())
 			if box:IsChecked() then
 				if     techGroup=="Models"  then table.insert(models,tech)
 				elseif techGroup=="Weapons" then table.insert(weapons,tech)
 				elseif techGroup=="Engines" then table.insert(engines,tech)
+				elseif techGroup=="Outfits" then table.insert(outfits,tech)
 				end
 			end
 		end
 	end
 	-- Save these lists
-	Epiar.setInfo('Technology',nameField:GetText(),models,weapons,engines)
+	print("Saving")
+	Epiar.setInfo('Technology',nameField:GetText(),models,weapons,engines,outfits)
+	print("Done")
 	win:close()
 	win=nil
 	infoWindows[name]=nil
@@ -298,9 +322,10 @@ function showTechInfo(name)
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()
 	local allengines = Epiar.engines()
+	local alloutfits = Epiar.outfits()
 	local techs = Epiar.getTechnologyInfo(name)
 	local models,weapons,engines = techs[1],techs[2],techs[3]
-	local height = 50 + math.max(#allweapons,#allmodels,#allengines)*20
+	local height = 50 + math.max(#allweapons,#allmodels,#allengines,#alloutfits)*20
 	local width = 400
 	local theWin = UI.newWindow(150,100,width,height,name)
 	theWin:add(UI.newLabel( 15, 45, "Name:"))
@@ -310,7 +335,7 @@ function showTechInfo(name)
 	theWin:add(optionTabs)
 	local knownTechs = {}
 	checkedTechs = {}
-	for i,t in ipairs({allmodels,allweapons,allengines}) do
+	for i,t in ipairs({allmodels,allweapons,allengines,alloutfits}) do
 		for j,s in ipairs(t) do knownTechs[s]=0 end
 	end
 	for i,t in ipairs({models,weapons,engines}) do
@@ -330,6 +355,7 @@ function showTechInfo(name)
 	showTable("Models",allmodels)
 	showTable("Weapons",allweapons)
 	showTable("Engines",allengines)
+	showTable("Outfits",alloutfits)
 	infoWindows[name] = {kind='Technology',win=theWin,name=nameField,boxes=checkedTechs}
 	theWin:add( UI.newButton(width-25,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
 	theWin:add(UI.newButton(width-120,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))

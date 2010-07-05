@@ -43,6 +43,8 @@ class Ship : public Sprite {
 		void addShipWeapon(string weaponName);
 		void removeShipWeapon(int pos);
 		void addAmmo(AmmoType ammoType, int qty);
+		void addOutfit(Outfit *outfit);
+		void addOutfit(string outfitName);
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);
@@ -58,6 +60,7 @@ class Ship : public Sprite {
 		int getCurrentAmmo();
 		int getAmmo(AmmoType type);
 		map<Weapon*,int> getWeaponsAndAmmo();
+		list<Outfit*>* GetOutfits() { return &outfits; }
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
 		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
@@ -90,6 +93,8 @@ class Ship : public Sprite {
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons; ///< 
 		float nonplayersound; ///< Ratio for reducing non-player sounds
+
+		list<Outfit *> outfits;
 
 		// Economic Stuff
 		unsigned int credits;

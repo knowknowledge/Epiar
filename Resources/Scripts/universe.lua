@@ -62,16 +62,6 @@ function toggleMap()
 	end
 end
 
---- Pause the Game with a given message
-function pauseMessage(message)
-	if 1 == Epiar.ispaused() then return end
-	pauseWin= UI.newWindow( 400,100,320,150,"Paused",
-		UI.newLabel(160,40,message,1),
-		UI.newButton(110,80,100,30,"Unpause","Epiar.unpause();pauseWin:close()")
-		)
-	Epiar.pause()
-end
-
 --- For debugging
 function godmode()
 	function heal()
@@ -382,51 +372,39 @@ function buyOutfit(outfit)
 		outfit = outfitstats["Name"]:GetText()
 		print("Buying Outfit ("..outfit..")")
 	end
+	local price = Epiar.getMSRP(outfit)
+	local player_credits = PLAYER:GetCredits()
+	if player_credits < price then
+		print("Account overdrawn...")
+		HUD.newAlert("You can't afford to buy a "..outfit)
+		return
+	end
+
+	print("Debiting your account...")
+
+	PLAYER:SetCredits( player_credits - price )
+	HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+
+	print("Installing Outfit...")
+	
 	if Epiar.getWeaponInfo(outfit) then
 		print("Weapon...")
-		buyWeapon(outfit)
+		local weaponsAndAmmo = PLAYER:GetWeapons()
+		if weaponsAndAmmo[outfit]==nil then
+			PLAYER:AddWeapon(outfit)
+			myweapons[outfit] = HUD.newStatus(outfit..":",130,0,"[ ".. 100 .." ]")
+		end
+		PLAYER:AddAmmo(outfit,100)
 	elseif Epiar.getEngineInfo(outfit) then
 		print("Engine...")
-		buyEngine(outfit)
+		PLAYER:SetEngine(outfit)
+	elseif Epiar.getOutfitInfo(outfit) then
+		print("Outfit...")
+		PLAYER:AddOutfit(outfit)
 	else
-		print("Unkown Outfit: "..outfit)
+		print("Unknown Outfit: "..outfit)
 	end
-end
-
---- Buys a weapon
-function buyWeapon(weapon)
-	price = Epiar.getMSRP(weapon)
-	player_credits = PLAYER:GetCredits()
-	if player_credits >= price then
-		PLAYER:SetCredits( player_credits - price )
-		weaponsAndAmmo = PLAYER:GetWeapons()
-		if weaponsAndAmmo[weapon]~=nil then
-			PLAYER:AddAmmo(weapon,100)
-			return 0
-		else
-			HUD.newAlert("Enjoy your new "..weapon.." system for "..price.." credits")
-			PLAYER:AddWeapon(weapon)
-			PLAYER:AddAmmo(weapon,100)
-			myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. 100 .." ]")
-		end
-	else
-		HUD.newAlert("You can't afford to buy a "..weapon)
-	end
-	return 1
-end
-
---- Buys an Engine
-function buyEngine(engine)
-	price = Epiar.getMSRP(engine)
-	player_credits = PLAYER:GetCredits()
-	if player_credits >= price then
-		PLAYER:SetCredits( player_credits - price )
-		HUD.newAlert("Enjoy your new "..engine.." system for "..price.." credits")
-		PLAYER:SetEngine(engine)
-	else
-		HUD.newAlert("You can't afford to buy a "..engine)
-	end
-	return 1
+	print("Outfit Purchase complete")
 end
 
 --- Trade a Commodity
@@ -469,6 +447,7 @@ function storeView(storestats, itemType, itemName )
 		["ship"]=Epiar.getModelInfo,
 		["weapon"]=Epiar.getWeaponInfo,
 		["engine"]=Epiar.getEngineInfo,
+		["outfit"]=Epiar.getOutfitInfo,
 	}
 	local iteminfo = getters[itemType](itemName)
 	print( "viewing "..itemName)
@@ -548,6 +527,7 @@ function landingDialog(id)
 	outfitting = UI.newTab("Outfitting")
 	local weapons = planet:GetWeapons()
 	local engines = planet:GetEngines()
+	local outfits = planet:GetOutfits()
 	local yoff = 5
 	for i,name in ipairs(weapons) do
 		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
@@ -561,6 +541,12 @@ function landingDialog(id)
 		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'engine','%s')",name)))
 		yoff = yoff+30
 	end
+	for i,name in ipairs(outfits) do
+		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
+		yoff = yoff+boxsize
+		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'outfit','%s')",name)))
+		yoff = yoff+30
+	end
 
 	outfitstats = {}
 	outfitstats["Name"] = UI.newLabel(440, 10+21*(0),"",1)
@@ -571,7 +557,13 @@ function landingDialog(id)
 		{title= "Lifetime",statname= "Lifetime"},
 		{title= "Fire Delay",statname= "FireDelay"},
 		{title= "Tracking",statname= "Tracking"},
+		{title= "Speed",statname= "MaxSpeed"},
 		{title= "Force Output",statname= "Force"},
+		{title= "Rotation Speed",statname= "Rotation"},
+		{title= "Hull",statname= "MaxHull"},
+		{title= "Shield",statname= "MaxShield"},
+		{title= "Mass",statname= "Mass"},
+		{title= "Cargo Space",statname= "Cargo"},
 		{title= "Cost",statname= "MSRP"},
 	}
 	for i,stat in ipairs(statnames) do
@@ -585,6 +577,8 @@ function landingDialog(id)
 		storeView(outfitstats,'weapon',weapons[1])
 	elseif #engines then
 		storeView(outfitstats,'engine',engines[1])
+	elseif #outfits then
+		storeView(outfitstats,'outfit',outfits[1])
 	end
 	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyOutfit()" ))
 

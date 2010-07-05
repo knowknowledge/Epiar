@@ -117,6 +117,8 @@ bool Player::parserCB( string sectionName, string subName, string value ) {
 		SetEngine( Engines::Instance()->GetEngine( value ) );
 	} else PPA_MATCHES( "weapon" ) {
 		addShipWeapon( value );
+	} else PPA_MATCHES( "outfit" ) {
+		addOutfit( value );
 	} else PPA_MATCHES( "credits" ) {
 		SetCredits( atoi(value.c_str()) );
 	} else if(Weapon::AmmoNameToType(subName)<max_ammo){
@@ -165,6 +167,10 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		snprintf(buff, sizeof(buff), "%d", (*iter).second );
 		xmlNewChild(section, NULL, BAD_CAST ((*iter).first)->GetName().c_str(), BAD_CAST buff );
 		++iter;
+	}
+	list<Outfit*> *outfits = this->GetOutfits();
+	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){
+		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
 	}
 	
 	return section;

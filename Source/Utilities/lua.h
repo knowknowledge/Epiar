@@ -76,6 +76,7 @@ class Lua {
 		static int getModelNames(lua_State *L);
 		static int getPlanets(lua_State *L);
 		static int getWeaponNames(lua_State *L);
+		static int getOutfitNames(lua_State *L);
 		static int getTechnologyNames(lua_State *L);
 		static int getPlanetNames(lua_State *L);
 
@@ -89,6 +90,7 @@ class Lua {
 		static int getPlanetInfo(lua_State *L);
 		static int getWeaponInfo(lua_State *L);
 		static int getEngineInfo(lua_State *L);
+		static int getOutfitInfo(lua_State *L);
 		static int getTechnologyInfo(lua_State *L);
 		static int setInfo(lua_State *L);
 		static int saveComponents(lua_State *L);

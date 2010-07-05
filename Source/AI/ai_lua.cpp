@@ -51,6 +51,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		{"SetEngine", &AI_Lua::ShipSetEngine},
+		{"AddOutfit", &AI_Lua::ShipAddOutfit},
 		{"SetCredits", &AI_Lua::ShipSetCredits},
 		{"StoreCommodities", &AI_Lua::ShipStoreCommodities},
 		{"DiscardCommodities", &AI_Lua::ShipDiscardCommodities},
@@ -362,6 +363,20 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 		(ai)->SetEngine( Engines::Instance()->GetEngine(engineName) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, engineName)", n);
+	}
+	return 0;
+}
+
+int AI_Lua::ShipAddOutfit(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string outfitName = luaL_checkstring (L, 2);
+		(ai)->addOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+		printf("Adding outfit: %s\n",outfitName.c_str());
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
 	}
 	return 0;
 }

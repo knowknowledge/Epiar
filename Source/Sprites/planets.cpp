@@ -175,6 +175,20 @@ list<Weapon*> Planet::GetWeapons() {
 	return weapons;
 }
 
+list<Outfit*> Planet::GetOutfits() {
+	list<Outfit*> outfits;
+	list<Technology*>::iterator techiter;
+	list<Outfit*>::iterator listiter;
+	for(techiter=technologies.begin(); techiter!=technologies.end(); ++techiter) {
+		list<Outfit*> outfit_list = (*techiter)->GetOutfits();
+		for(listiter=outfit_list.begin(); listiter!=outfit_list.end(); ++listiter) {
+			outfits.push_back( *listiter );
+		}
+	}
+	outfits.unique();
+	return outfits;
+}
+
 /**\brief Save this Planet to an xml node
  */
 xmlNodePtr Planet::ToXMLNode(string componentName) {
@@ -255,6 +269,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetModels", &Planets_Lua::GetModels},
 		{"GetEngines", &Planets_Lua::GetEngines},
 		{"GetWeapons", &Planets_Lua::GetWeapons},
+		{"GetOutfits", &Planets_Lua::GetOutfits},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -574,3 +589,23 @@ int Planets_Lua::GetWeapons(lua_State* L){
 	return 1;
 }
 
+/**\brief Get the Outfits available at this planet
+ */
+int Planets_Lua::GetOutfits(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		list<Outfit*> outfits = planet->GetOutfits();
+		list<Outfit*>::iterator iter;
+		lua_createtable(L, outfits.size(), 0);
+		int newTable = lua_gettop(L);
+		int index = 1;
+		for(iter=outfits.begin();iter!=outfits.end();++iter,++index){
+			lua_pushstring(L, (*iter)->GetName().c_str() );
+			lua_rawseti(L, newTable, index);
+		}
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}

@@ -20,7 +20,7 @@ class Technology : public Component {
 	public:
 		Technology();
   		Technology& operator= (const Technology&);
-		Technology( string _name, list<Model*> _models, list<Engine*>_engines, list<Weapon*>_weapons);
+		Technology( string _name, list<Model*> _models, list<Engine*>_engines, list<Weapon*>_weapons, list<Outfit*>_outfits);
 		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
 		xmlNodePtr ToXMLNode(string componentName);
@@ -28,11 +28,13 @@ class Technology : public Component {
 		list<Model*> GetModels() { return models; }
 		list<Engine*> GetEngines() { return engines; }
 		list<Weapon*> GetWeapons() { return weapons; }
+		list<Outfit*> GetOutfits() { return outfits; }
 
 	private:
 		list<Model*> models;
 		list<Engine*> engines;
 		list<Weapon*> weapons;
+		list<Outfit*> outfits;
 };
 
 // Class that holds list of all technologies; manages them

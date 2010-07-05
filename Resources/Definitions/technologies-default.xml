@@ -12,6 +12,9 @@
     <weapon>Strong Laser</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <engine>Ion Engines</engine>
+    <outfit>Directional Thrusters</outfit>
+    <outfit>Organic Plating</outfit>
+    <outfit>Shield Generator</outfit>
   </technology>
   <technology>
     <name>Solaran Outpost</name>
@@ -20,6 +23,8 @@
     <weapon>Strong Laser</weapon>
     <weapon>Slow Missile</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Directional Thrusters</outfit>
+    <outfit>Booster</outfit>
   </technology>
   <technology>
     <name>Terran Defence</name>
@@ -29,6 +34,8 @@
     <model>Terran Corvert Mark II</model>
     <weapon>Missile</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Copper Plating</outfit>
+    <outfit>Booster</outfit>
   </technology>
   <technology>
     <name>Terran Medium-Scale Commerce</name>
@@ -36,6 +43,10 @@
     <model>Terran Explorer</model>
     <weapon>Laser</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Copper Plating</outfit>
+    <outfit>Steel Plating</outfit>
+    <outfit>Shipping License</outfit>
+    <outfit>Mass Shipping License</outfit>
   </technology>
   <technology>
     <name>Terran Small-Scale Commerce</name>
@@ -44,7 +55,12 @@
     <model>Terran Assist</model>
     <model>Terran FV-5 Frigate</model>
     <weapon>Minigun</weapon>
+    <weapon>Plasma Beam</weapon>
+    <weapon>Magnetic Mine</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Shipping License</outfit>
+    <outfit>Carbon Plating</outfit>
+    <outfit>Steel Plating</outfit>
   </technology>
   <technology>
     <name>Terran War Fleet</name>
@@ -53,6 +69,9 @@
     <weapon>Missile</weapon>
     <weapon>Slow Missile</weapon>
     <engine>Ion Engines</engine>
+    <outfit>Steel Plating</outfit>
+    <outfit>Titanium Plating</outfit>
+    <outfit>Directional Thrusters</outfit>
   </technology>
   <technology>
     <name>Vespian</name>
@@ -62,5 +81,8 @@
     <weapon>Strong Laser</weapon>
     <weapon>Missile</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Organic Plating</outfit>
+    <outfit>Booster</outfit>
+    <outfit>Booster</outfit>
   </technology>
 </technologies>

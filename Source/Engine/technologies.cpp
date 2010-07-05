@@ -30,6 +30,7 @@ Technology& Technology::operator= (const Technology& other)
 	models = other.models;
 	engines = other.engines;
 	weapons = other.weapons;
+	outfits = other.outfits;
 	return *this;
 }
 
@@ -38,12 +39,17 @@ Technology& Technology::operator= (const Technology& other)
  * \param _models std::list of Model objects
  * \param _engines std::list of Engine objects
  * \param _weapon std::list of Weapon objects
+ * \param _outfit std::list of outfit objects
  */
-Technology::Technology( string _name, list<Model*> _models, 
-		list<Engine*>_engines, list<Weapon*>_weapons) :
+Technology::Technology( string _name,
+		list<Model*> _models,
+		list<Engine*>_engines,
+		list<Weapon*>_weapons,
+		list<Outfit*>_outfits) :
 	models (_models ),
 	engines(_engines),
-	weapons(_weapons)
+	weapons(_weapons),
+	outfits(_outfits)
 {
 	SetName(_name);
 }
@@ -74,6 +80,13 @@ bool Technology::parserCB( string sectionName, string subName, string value ) {
 		} else {
 			weapons.push_back( weapon );
 		}
+	} else PPA_MATCHES( "outfit" ) {
+		Outfit* outfit = Outfits::Instance()->GetOutfit( value );
+		if(outfit==NULL) {
+			LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+		} else {
+			outfits.push_back( outfit );
+		}
 	}
 	return true;
 }
@@ -103,6 +116,11 @@ xmlNodePtr Technology::ToXMLNode(string componentName) {
 		list<Engine*> engines = this->GetEngines();
 		for( list<Engine*>::iterator it_e = engines.begin(); it_e!=engines.end(); ++it_e ){
 			xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST (*it_e)->GetName().c_str() );
+		}
+
+		list<Outfit*> outfits = this->GetOutfits();
+		for( list<Outfit*>::iterator it_w = outfits.begin(); it_w!=outfits.end(); ++it_w ){
+			xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
 		}
 
 	return section;

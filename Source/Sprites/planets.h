@@ -56,6 +56,7 @@ class Planet : public Sprite, public Component {
 		list<Model*> GetModels();
 		list<Engine*> GetEngines();
 		list<Weapon*> GetWeapons();
+		list<Outfit*> GetOutfits();
 		
 	private:
 		string alliance;
@@ -102,6 +103,7 @@ class Planets_Lua {
 		static int GetModels(lua_State* L);
 		static int GetEngines(lua_State* L);
 		static int GetWeapons(lua_State* L);
+		static int GetOutfits(lua_State* L);
 	private:
 };
 

@@ -232,6 +232,7 @@ void Lua::RegisterFunctions() {
 		{"alliances", &Lua::getAllianceNames},
 		{"models", &Lua::getModelNames},
 		{"weapons", &Lua::getWeaponNames},
+		{"outfits", &Lua::getOutfitNames},
 		{"engines", &Lua::getEngineNames},
 		{"technologies", &Lua::getTechnologyNames},
 		{"planetNames", &Lua::getPlanetNames},
@@ -249,6 +250,7 @@ void Lua::RegisterFunctions() {
 		{"getPlanetInfo", &Lua::getPlanetInfo},
 		{"getWeaponInfo", &Lua::getWeaponInfo},
 		{"getEngineInfo", &Lua::getEngineInfo},
+		{"getOutfitInfo", &Lua::getOutfitInfo},
 		{"getTechnologyInfo", &Lua::getTechnologyInfo},
 		{"setInfo", &Lua::setInfo},
 		{"saveComponents", &Lua::saveComponents},
@@ -472,6 +474,12 @@ int Lua::getAllianceNames(lua_State *L){
 
 int Lua::getWeaponNames(lua_State *L){
 	list<string> *names = Weapons::Instance()->GetNames();
+	pushNames(L,names);
+	return 1;
+}
+
+int Lua::getOutfitNames(lua_State *L){
+	list<string> *names = Outfits::Instance()->GetNames();
 	pushNames(L,names);
 	return 1;
 }
@@ -743,6 +751,8 @@ int Lua::getMSRP(lua_State *L) {
 		lua_pushinteger(L,((Weapon*)comp)->GetMSRP() );
 	else if( (comp = Commodities::Instance()->Get(name)) != NULL )
 		lua_pushinteger(L,((Commodity*)comp)->GetMSRP() );
+	else if( (comp = Outfits::Instance()->Get(name)) != NULL )
+		lua_pushinteger(L,((Outfit*)comp)->GetMSRP() );
 	else {
 		return luaL_error(L, "Couldn't find anything by the name: '%s'", name.c_str());
 	}
@@ -922,11 +932,11 @@ int Lua::getWeaponInfo(lua_State *L) {
 int Lua::getEngineInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
-		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
+		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
 	string engineName = (string)luaL_checkstring(L,1);
 	Engine* engine = Engines::Instance()->GetEngine(engineName);
 	if( engine == NULL)
-		return luaL_error(L, "There is no engine named '%s'.", engineName.c_str());
+		return 0;
 
 	lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
@@ -936,6 +946,30 @@ int Lua::getEngineInfo(lua_State *L) {
 	setField("MSRP", engine->GetMSRP());
 	setField("Fold Drive", engine->GetFoldDrive());
 	setField("Sound", engine->thrustsound->GetPath().c_str());
+	return 1;
+}
+
+int Lua::getOutfitInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
+	string outfitName = (string)luaL_checkstring(L,1);
+	Outfit* outfit = Outfits::Instance()->GetOutfit(outfitName);
+	if( outfit == NULL)
+		return 0;
+
+	lua_newtable(L);
+	setField("Name", outfit->GetName().c_str());
+	setField("Picture", outfit->GetPicture()->GetPath().c_str());
+	setField("Force", outfit->GetForceOutput());
+	setField("Mass", outfit->GetMass());
+	setField("Rotation", outfit->GetRotationsPerSecond());
+	setField("MaxSpeed", outfit->GetMaxSpeed());
+	setField("MaxHull", outfit->GetHullStrength());
+	setField("MaxShield", outfit->GetShieldStrength());
+	setField("MSRP", outfit->GetMSRP());
+	setField("Cargo", outfit->GetCargoSpace());
+	setField("SurfaceArea", outfit->GetSurfaceArea());
 	return 1;
 }
 
@@ -966,12 +1000,17 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	pushComponents(L, (list<Component*>*) &engines );
 	lua_rawseti(L, newTable, 3);
 
+	// Push the Outfits Table
+	list<Outfit*> outfits = tech->GetOutfits();
+	pushComponents(L, (list<Component*>*) &outfits );
+	lua_rawseti(L, newTable, 3);
+
 	return 1;
 }
 
 int Lua::setInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if( !(n==2||n==5)  )
+	if( !(n==2||n==6)  )
 		return luaL_error(L, "Got %d arguments expected 1 (infoType,infoTable)", n);
 	string kind = luaL_checkstring(L,1);
 
@@ -1067,6 +1106,7 @@ int Lua::setInfo(lua_State *L) {
 		list<Model*> models;
 		list<Weapon*> weapons;
 		list<Engine*> engines;
+		list<Outfit*> outfits;
 
 		string name = luaL_checkstring(L,2);
 
@@ -1088,7 +1128,13 @@ int Lua::setInfo(lua_State *L) {
 				engines.push_back( Engines::Instance()->GetEngine(*iter) );
 		}
 
-		Technology* thisTechnology = new Technology(name,models,engines,weapons);
+		list<string> outfitNames = getStringListField(6);
+		for(iter=outfitNames.begin();iter!=outfitNames.end();++iter){
+			if(Outfits::Instance()->GetOutfit(*iter))
+				outfits.push_back( Outfits::Instance()->GetOutfit(*iter) );
+		}
+
+		Technology* thisTechnology = new Technology(name,models,engines,weapons,outfits);
 		Technologies::Instance()->AddOrReplace( thisTechnology );
 
 		return 0;

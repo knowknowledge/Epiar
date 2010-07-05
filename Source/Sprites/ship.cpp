@@ -377,6 +377,17 @@ void Ship::addAmmo(AmmoType ammoType, int qty){
 	ammo[ammoType] += qty;
 }
 
+void Ship::addOutfit(Outfit *outfit){
+	outfits.push_back(outfit);
+	ComputeShipStats();
+}
+
+void Ship::addOutfit(string outfitName){
+	if( Outfits::Instance()->GetOutfit(outfitName) ){
+		addOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+	}
+}
+
 /**\brief Set the number of credits
  */
 void Ship::SetCredits(unsigned int _credits) {
@@ -534,6 +545,12 @@ void Ship::ComputeShipStats() {
 	// Add any Outfit Collections
 	for(unsigned int i=0; i<shipWeapons.size(); i++){
 		shipStats += *shipWeapons[i];
+	}
+
+	list<Outfit*>::iterator iter;
+	for(iter=outfits.begin(); iter!=outfits.end(); ++iter)
+	{
+		shipStats += *(*iter);
 	}
 }
 
