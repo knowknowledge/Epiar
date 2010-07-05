@@ -41,15 +41,14 @@ void Console::HandleInput( list<InputEvent> & events ) {
 
 		switch( i->type ) {
 		case KEY:
-			if( i->kstate == KEYUP ) {
-				if( i->key == SDLK_BACKQUOTE) {
-					if( enabled ) {
-						enabled = false;
-					} else {
-						enabled = true;
-					}
-				}
-			} else if( i->kstate == KEYTYPED) {
+            if( (i->key == SDLK_BACKQUOTE) && (i->kstate == KEYTYPED)) {
+                if( enabled ) {
+                    enabled = false;
+                } else {
+                    enabled = true;
+                }
+            }
+			else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
 					string back = Console::Buffer.back();
 					back.erase(back.size() - 1);
