@@ -572,11 +572,17 @@ int Hud::newStatus(lua_State *L) {
 
 
 StatusBar* Hud::checkStatus(lua_State *L, int index) {
+	StatusBar *bar = NULL;
+	list<StatusBar*>::iterator result;
 	StatusBar **barptr = (StatusBar**)luaL_checkudata(L, index, EPIAR_HUD);
 	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected. Got NULL Pointer");
 	luaL_argcheck(L, *barptr != NULL, index, "`EPIAR_HUD' expected. Got pointer to NULL.");
-	StatusBar *bar;
 	bar = *barptr;
+	result = find(Bars.begin(), Bars.end(), bar);
+	if(result == Bars.end()) {
+		assert(0);
+		return NULL;
+	}
 	return bar;
 }
 

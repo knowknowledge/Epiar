@@ -78,6 +78,12 @@ function attemptLanding()
 	end
 end
 
+--- Teleport to any location via a new gate
+function goto(x,y)
+	local px,py = PLAYER:GetPosition()
+	Epiar.NewGatePair(x,y,px,py)
+end
+
 --- Register the player functions
 function radarZoomKeys()
 	for k =1,9 do
@@ -132,11 +138,17 @@ updateHUD = function ()
 
 	-- Update Weapons and Armor
 	local weaponsAndAmmo = PLAYER:GetWeapons()
+	if myweapons==nil and (weaponsAndAmmo~=nil) then
+		print ("ERROR: Attempting to update the player stats before the player has been loaded!")
+		return
+	end
 	local cur_weapon = PLAYER:GetCurrentWeapon()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if cur_weapon == weapon then star=" ARMED" else star="" end
 		if 0==ammo then ammo="---" end
-		myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+		if myweapons[weapon] ~= nil then
+			myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+		end
 	end
 	local target = Epiar.getSprite( HUD.getTarget() )
 	if target~=nil then

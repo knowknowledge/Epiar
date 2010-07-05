@@ -130,7 +130,7 @@ function showComponent(kind,name,getterFunc)
         Epiar.focusCamera(planet:GetID())
     end
 	if infoWindows[name] ~= nil then return end
-	local height=400
+	local height=700
 	local width=250
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,width,height,name,
@@ -295,9 +295,7 @@ function saveTech(name)
 	local models,weapons,engines,outfits={},{},{},{}
 	-- Gather the chosen techs into the correct lists
 	for techGroup,boxset in pairs(boxes) do
-        print(techGroup)
 		for tech,box in pairs(boxset) do
-            print(tech,box:IsChecked())
 			if box:IsChecked() then
 				if     techGroup=="Models"  then table.insert(models,tech)
 				elseif techGroup=="Weapons" then table.insert(weapons,tech)
@@ -308,9 +306,7 @@ function saveTech(name)
 		end
 	end
 	-- Save these lists
-	print("Saving")
 	Epiar.setInfo('Technology',nameField:GetText(),models,weapons,engines,outfits)
-	print("Done")
 	win:close()
 	win=nil
 	infoWindows[name]=nil
@@ -422,8 +418,6 @@ function ImagePicker(name,title)
 end
 
 function goto(x,y)
-	print (x)
-	print (y)
 	Epiar.focusCamera(x,y)
 end
 

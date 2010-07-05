@@ -55,10 +55,17 @@ function togglePause()
 end
 
 function toggleMap()
-	if Epiar.getoption("options/development/map")=="0" then
+	local universe = Epiar.getoption("options/development/map")
+	local quad = Epiar.getoption("options/development/debug-quadtree")
+	if (universe=="0") and (quad=="0") then
 		Epiar.setoption("options/development/map",1)
+		Epiar.setoption("options/development/debug-quadtree",0)
+	elseif (universe=="1") and (quad=="0") then
+		Epiar.setoption("options/development/map",0)
+		Epiar.setoption("options/development/debug-quadtree",1)
 	else
 		Epiar.setoption("options/development/map",0)
+		Epiar.setoption("options/development/debug-quadtree",0)
 	end
 end
 
