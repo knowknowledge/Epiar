@@ -438,6 +438,9 @@ void Hud::DrawMap( void ) {
 				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
 		}
 	}
+	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;
+	posy = starty + Camera::Instance()->GetFocusCoordinate().GetY() * scale + halfsize;
+	Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
 
 	delete sprites;
 	sprites = NULL;
