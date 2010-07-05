@@ -20,6 +20,38 @@
     <msrp>100</msrp>
   </weapon>
   <weapon>
+    <name>Magnetic Mine</name>
+    <weaponType>0</weaponType>
+    <imageName>Resources/Graphics/marker_red.png</imageName>
+    <picName>Resources/new/SpaceBomb.png</picName>
+    <payload>100</payload>
+    <velocity>0</velocity>
+    <acceleration>2</acceleration>
+    <ammoType>Energy</ammoType>
+    <ammoConsumption>1</ammoConsumption>
+    <fireDelay>1000</fireDelay>
+    <lifetime>6000</lifetime>
+    <tracking>1.0000</tracking>
+    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <msrp>1000</msrp>
+  </weapon>
+  <weapon>
+    <name>Mine</name>
+    <weaponType>0</weaponType>
+    <imageName>Resources/Graphics/marker_blue.png</imageName>
+    <picName>Resources/new/SpaceBomb.png</picName>
+    <payload>250</payload>
+    <velocity>0</velocity>
+    <acceleration>0</acceleration>
+    <ammoType>Energy</ammoType>
+    <ammoConsumption>1</ammoConsumption>
+    <fireDelay>1000</fireDelay>
+    <lifetime>60000</lifetime>
+    <tracking>0.0000</tracking>
+    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <msrp>1000</msrp>
+  </weapon>
+  <weapon>
     <name>Minigun</name>
     <weaponType>0</weaponType>
     <imageName>Resources/Graphics/laser_grey.png</imageName>
@@ -50,6 +82,38 @@
     <tracking>0.0500</tracking>
     <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
     <msrp>1000</msrp>
+  </weapon>
+  <weapon>
+    <name>Neon Flares</name>
+    <weaponType>0</weaponType>
+    <imageName>Resources/Graphics/gate_gun.png</imageName>
+    <picName>Resources/Graphics/turret.png</picName>
+    <payload>30</payload>
+    <velocity>10</velocity>
+    <acceleration>2</acceleration>
+    <ammoType>Energy</ammoType>
+    <ammoConsumption>0</ammoConsumption>
+    <fireDelay>200</fireDelay>
+    <lifetime>1000</lifetime>
+    <tracking>0.0100</tracking>
+    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <msrp>600</msrp>
+  </weapon>
+  <weapon>
+    <name>Plasma Cannon</name>
+    <weaponType>0</weaponType>
+    <imageName>Resources/Graphics/solcatian_laser.png</imageName>
+    <picName>Resources/Graphics/turret.png</picName>
+    <payload>40</payload>
+    <velocity>10</velocity>
+    <acceleration>2</acceleration>
+    <ammoType>Energy</ammoType>
+    <ammoConsumption>0</ammoConsumption>
+    <fireDelay>300</fireDelay>
+    <lifetime>1000</lifetime>
+    <tracking>0.0100</tracking>
+    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <msrp>2000</msrp>
   </weapon>
   <weapon>
     <name>Slow Missile</name>
