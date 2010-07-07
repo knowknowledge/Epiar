@@ -1003,7 +1003,7 @@ int Lua::getTechnologyInfo(lua_State *L) {
 	// Push the Outfits Table
 	list<Outfit*> outfits = tech->GetOutfits();
 	pushComponents(L, (list<Component*>*) &outfits );
-	lua_rawseti(L, newTable, 3);
+	lua_rawseti(L, newTable, 4);
 
 	return 1;
 }

@@ -320,7 +320,7 @@ function showTechInfo(name)
 	local allengines = Epiar.engines()
 	local alloutfits = Epiar.outfits()
 	local techs = Epiar.getTechnologyInfo(name)
-	local models,weapons,engines = techs[1],techs[2],techs[3]
+	local models,weapons,engines,outfits = techs[1],techs[2],techs[3],techs[4]
 	local height = 50 + math.max(#allweapons,#allmodels,#allengines,#alloutfits)*20
 	local width = 400
 	local theWin = UI.newWindow(150,100,width,height,name)
@@ -334,7 +334,7 @@ function showTechInfo(name)
 	for i,t in ipairs({allmodels,allweapons,allengines,alloutfits}) do
 		for j,s in ipairs(t) do knownTechs[s]=0 end
 	end
-	for i,t in ipairs({models,weapons,engines}) do
+	for i,t in ipairs({models,weapons,engines,outfits}) do
 		for j,s in ipairs(t) do knownTechs[s]=1 end
 	end
 	function showTable(techGroup,techList)
