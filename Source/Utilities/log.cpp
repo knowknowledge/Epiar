@@ -23,28 +23,6 @@ Log& Log::Instance( void ){
 	return _instance;
 }
 
-/**\brief Creates the log facilities.*/
-void Log::Start( const string& _filter, const string& _funfilter){
-	// Initialize default filters
-	this->filter = _filter;
-	this->funfilter = _funfilter;
-
-	time_t rawtime;
-
-	time( &rawtime );
-	timestamp = ctime( &rawtime );
-	timestamp[ strlen(timestamp) - 1 ] = 0;
-
-	// Need to replace ":" with "_" because windows can't handle it
-	timestamp[ 13 ] ='_';
-	timestamp[ 16 ] ='_';
-
-	// generate the log's filename based on the time
-	logFilename = string("Epiar-Log-") + string(timestamp) + string(".xml");
-
-	fp = NULL;
-}
-
 /**\brief Allows changing of the log level dynamically (string version).*/
 bool Log::SetLevel( const string& _loglvl ){
 	// Check logging level
@@ -161,6 +139,8 @@ void Log::realLog( Level lvl, const string& func, const string& message, ... ) {
 Log::Log()
 	:loglvldefault(ALL)
 {
+	time_t rawtime;
+
 	lvlStrings[NONE]="None";
 	lvlStrings[FATAL]="Fatal";
 	lvlStrings[CRITICAL]="Critical";
@@ -176,6 +156,20 @@ Log::Log()
 	lvlStrings[DEBUG2]="Debug2";
 	lvlStrings[DEBUG3]="Debug3";
 	lvlStrings[DEBUG4]="Debug4";
+
+	time( &rawtime );
+	timestamp = ctime( &rawtime );
+	timestamp[ strlen(timestamp) - 1 ] = 0;
+
+	// Need to replace ":" with "_" because windows can't handle it
+	timestamp[ 13 ] ='_';
+	timestamp[ 16 ] ='_';
+
+	// generate the log's filename based on the time
+	logFilename = string("Epiar-Log-") + string(timestamp) + string(".xml");
+	printf("Logging to: '%s'\n",logFilename.c_str());
+
+	fp = NULL;
 }
 
 /**\brief Does a reverse lookup of the log level based on a string.*/

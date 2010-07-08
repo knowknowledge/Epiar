@@ -136,7 +136,8 @@ int main( int argc, char **argv ) {
 	string msgfilt = argparser.HaveValue("log-msg");
 	string loglvl = argparser.HaveValue("log-lvl");
 
-	Log::Instance().Start(funfilt,msgfilt);
+	Log::Instance().SetFunFilter(funfilt);
+	Log::Instance().SetMsgFilter(msgfilt);
 	Log::Instance().SetLevel( loglvl );
 
 	// Print unused options.
