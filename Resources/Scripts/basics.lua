@@ -165,7 +165,7 @@ Patrol = {
 		if dist < 500 then
 			return "TooClose"
 		end
-		local ship= Epiar.nearestShip(cur_ship,l000)
+		local ship= Epiar.nearestShip(cur_ship,1000)
 		if ship~=nil then
 			local machine, state = ship:GetState()
 			if machine=="Hunter" then
@@ -199,6 +199,7 @@ Patrol = {
 
 Bully = {
 	default = Patrol.default,
+	New_Planet = FindADestination,
 	Travelling = Patrol.Travelling,
 	TooClose = Patrol.TooClose,
 	TooFar = Patrol.TooFar,
