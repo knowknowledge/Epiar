@@ -814,6 +814,7 @@ int Lua::getCommodityInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
 	string name = (string)luaL_checkstring(L,1);
 	Commodity *commodity = Commodities::Instance()->GetCommodity(name);
+	if(commodity==NULL){ commodity = new Commodity(); }
 
 	lua_newtable(L);
 	setField("Name", commodity->GetName().c_str());
@@ -828,6 +829,7 @@ int Lua::getAllianceInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
 	string name = (string)luaL_checkstring(L,1);
 	Alliance *alliance = Alliances::Instance()->GetAlliance(name);
+	if(alliance==NULL){ alliance = new Alliance(); }
 
 	lua_newtable(L);
 	setField("Name", alliance->GetName().c_str());
@@ -845,10 +847,13 @@ int Lua::getModelInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (modelName)", n);
 	string modelName = (string)luaL_checkstring(L,1);
 	Model *model = Models::Instance()->GetModel(modelName);
+	if(model==NULL){ model = new Model(); }
 
 	lua_newtable(L);
 	setField("Name", model->GetName().c_str());
-	setField("Image", model->GetImage()->GetPath().c_str());
+	setField("Image", (model->GetImage()!=NULL)
+	                ? (model->GetImage()->GetPath().c_str())
+	                : "" );
 	setField("Mass", model->GetMass());
 	setField("Thrust", model->GetThrustOffset());
 	setField("Rotation", model->GetRotationsPerSecond());
@@ -878,18 +883,17 @@ int Lua::getPlanetInfo(lua_State *L) {
 	} else if( lua_isstring(L,1)){
 		string name = luaL_checkstring(L,1);
 		p = Planets::Instance()->GetPlanet(name);
-		if( p == NULL )
-			return luaL_error(L, "Cannot get Info for nonexistant Planet named '%s'", name.c_str() );
-	} else {
-		return luaL_error(L, "Cannot get Info Planet because of bad arguments.  Expected Name or ID" );
 	}
+	if(p==NULL){ p = new Planet(); }
 
 	// Populate the Info Table.
 	lua_newtable(L);
 	setField("Name", p->GetName().c_str());
 	setField("X", static_cast<float>(p->GetWorldPosition().GetX()));
 	setField("Y", static_cast<float>(p->GetWorldPosition().GetY()));
-	setField("Image", p->GetImage()->GetPath().c_str());
+	setField("Image", (p->GetImage()!=NULL)
+	                ? (p->GetImage()->GetPath().c_str())
+	                : "" );
 	setField("Alliance", p->GetAlliance().c_str());
 	setField("Traffic", p->GetTraffic());
 	setField("Militia", p->GetMilitiaSize());
@@ -908,13 +912,16 @@ int Lua::getWeaponInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
 	string weaponName = (string)luaL_checkstring(L,1);
 	Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
-	if( weapon == NULL)
-		return 0;
+	if(weapon==NULL){ weapon = new Weapon(); }
 
 	lua_newtable(L);
 	setField("Name", weapon->GetName().c_str());
-	setField("Image", weapon->GetImage()->GetPath().c_str());
-	setField("Picture", weapon->GetPicture()->GetPath().c_str());
+	setField("Image", (weapon->GetImage()!=NULL)
+	                ? (weapon->GetImage()->GetPath().c_str())
+	                : "" );
+	setField("Picture", (weapon->GetPicture()!=NULL)
+	                  ? (weapon->GetPicture()->GetPath().c_str())
+	                  : "" );
 	setField("Payload", weapon->GetPayload());
 	setField("Velocity", weapon->GetVelocity());
 	setField("Acceleration", weapon->GetAcceleration());
@@ -925,7 +932,9 @@ int Lua::getWeaponInfo(lua_State *L) {
 	setField("Type", weapon->GetType());
 	setField("Ammo Type", Weapon::AmmoTypeToName(weapon->GetAmmoType()).c_str() );
 	setField("Ammo Consumption", weapon->GetAmmoConsumption());
-	setField("Sound", weapon->sound->GetPath().c_str());
+	setField("Sound", (weapon->sound!=NULL)
+	                ? weapon->sound->GetPath().c_str()
+	                : "" );
 	return 1;
 }
 
@@ -935,17 +944,20 @@ int Lua::getEngineInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
 	string engineName = (string)luaL_checkstring(L,1);
 	Engine* engine = Engines::Instance()->GetEngine(engineName);
-	if( engine == NULL)
-		return 0;
+	if(engine==NULL){ engine = new Engine(); }
 
 	lua_newtable(L);
 	setField("Name", engine->GetName().c_str());
-	setField("Picture", engine->GetPicture()->GetPath().c_str());
+	setField("Picture", (engine->GetPicture()!=NULL)
+	                  ? (engine->GetPicture()->GetPath().c_str())
+	                  : "" );
 	setField("Force", engine->GetForceOutput());
 	setField("Animation", engine->GetFlareAnimation().c_str());
 	setField("MSRP", engine->GetMSRP());
 	setField("Fold Drive", engine->GetFoldDrive());
-	setField("Sound", engine->thrustsound->GetPath().c_str());
+	setField("Sound", (engine->thrustsound!=NULL)
+	                ? (engine->thrustsound->GetPath().c_str())
+	                : "");
 	return 1;
 }
 
@@ -955,12 +967,13 @@ int Lua::getOutfitInfo(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
 	string outfitName = (string)luaL_checkstring(L,1);
 	Outfit* outfit = Outfits::Instance()->GetOutfit(outfitName);
-	if( outfit == NULL)
-		return 0;
+	if(outfit==NULL){ outfit = new Outfit(); }
 
 	lua_newtable(L);
 	setField("Name", outfit->GetName().c_str());
-	setField("Picture", outfit->GetPicture()->GetPath().c_str());
+	setField("Picture", (outfit->GetPicture()!=NULL)
+	                  ? (outfit->GetPicture()->GetPath().c_str())
+	                  : "" );
 	setField("Force", outfit->GetForceOutput());
 	setField("Mass", outfit->GetMass());
 	setField("Rotation", outfit->GetRotationsPerSecond());
@@ -974,16 +987,34 @@ int Lua::getOutfitInfo(lua_State *L) {
 }
 
 int Lua::getTechnologyInfo(lua_State *L) {
+	int newTable;
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (techName)", n);
 	string techName = (string)luaL_checkstring(L,1);
 	Technology* tech = Technologies::Instance()->GetTechnology(techName);
 	if( tech == NULL)
-		return luaL_error(L, "There is no technology named '%s'.", techName.c_str());
+	{
+		lua_createtable(L, 4, 0);
+		newTable = lua_gettop(L);
 
-	lua_createtable(L, 3, 0);
-	int newTable = lua_gettop(L);
+		lua_createtable(L, 0, 0);
+		lua_rawseti(L, newTable, 1);
+
+		lua_createtable(L, 0, 0);
+		lua_rawseti(L, newTable, 2);
+
+		lua_createtable(L, 0, 0);
+		lua_rawseti(L, newTable, 3);
+
+		lua_createtable(L, 0, 0);
+		lua_rawseti(L, newTable, 4);
+
+		return 1;
+	}
+
+	lua_createtable(L, 4, 0);
+	newTable = lua_gettop(L);
 
 	// Push the Models Table
 	list<Model*> models = tech->GetModels();
@@ -1030,21 +1061,25 @@ int Lua::setInfo(lua_State *L) {
 		Commodity* thisCommodity= new Commodity(name,msrp);
 		Commodities::Instance()->AddOrReplace( thisCommodity );
 
-		LogMsg(INFO, "Saved Commodity '%s' at %d Credits per Ton", name.c_str(), msrp);
-		Commodity* com = Commodities::Instance()->GetCommodity(name);
-		LogMsg(INFO, "CHECK:Commodity '%s' at %d Credits per Ton", thisCommodity->GetName().c_str(), thisCommodity->GetMSRP());
-		LogMsg(INFO, "CHECK:Commodity '%s' at %d Credits per Ton", com->GetName().c_str(), com->GetMSRP());
-
 	} else if(kind == "Engine"){
 		string name = getStringField(2,"Name");
-		string picture = getStringField(2,"Picture");
+		string pictureName = getStringField(2,"Picture");
 		int force = getIntField(2,"Force");
 		string flare = getStringField(2,"Animation");
 		int msrp = getIntField(2,"MSRP");
 		int foldDrive = getIntField(2,"Fold Drive");
 		string soundName = getStringField(2,"Sound");
 
-		Engine* thisEngine = new Engine(name,Sound::Get(soundName),static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,Image::Get(picture));
+		Sound *sound = Sound::Get(soundName);
+		Image *picture = Image::Get(pictureName);
+		if(sound==NULL)
+			LogMsg(NOTICE, "Could not create engine: there is no sound file '%s'.",soundName.c_str());
+		if(picture==NULL)
+			LogMsg(NOTICE, "Could not create engine: there is no image file '%s'.",pictureName.c_str());
+		if((sound==NULL) || (picture==NULL))
+			return 0;
+
+		Engine* thisEngine = new Engine(name,sound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,picture);
 		Engines::Instance()->AddOrReplace( thisEngine );
 
 	} else if(kind == "Model"){
@@ -1057,6 +1092,13 @@ int Lua::setInfo(lua_State *L) {
 		int hull = getIntField(2,"MaxHull");
 		int msrp = getIntField(2,"MSRP");
 		int cargo = getIntField(2,"Cargo");
+
+		Image *image = Image::Get(imageName);
+		if(image==NULL)
+		{
+			LogMsg(NOTICE, "Could not create engine: there is no image file '%s'.",imageName.c_str());
+			return 0;
+		}
 
 		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp,cargo);
 		Models::Instance()->AddOrReplace(thisModel);
@@ -1080,12 +1122,14 @@ int Lua::setInfo(lua_State *L) {
 			if( NULL != Technologies::Instance()->GetTechnology(*i) ) {
 				 techs.push_back( Technologies::Instance()->GetTechnology(*i) );
 			} else {
-				return luaL_error(L, "Could not create planet: there is no Technology Group '%s'.",(*i).c_str());
+				LogMsg(NOTICE, "Could not create planet: there is no Technology Group '%s'.",(*i).c_str());
+				return 0;
 			}
 		}
 
 		if(Image::Get(imageName)==NULL){
-			return luaL_error(L, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
+			 LogMsg(NOTICE, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
+			 return 0;
 		}
 
 		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
@@ -1137,7 +1181,6 @@ int Lua::setInfo(lua_State *L) {
 		Technology* thisTechnology = new Technology(name,models,engines,weapons,outfits);
 		Technologies::Instance()->AddOrReplace( thisTechnology );
 
-		return 0;
 	} else if(kind == "Weapon"){
 		string name = getStringField(2,"Name");
 		string imageName = getStringField(2,"Image");
@@ -1154,7 +1197,19 @@ int Lua::setInfo(lua_State *L) {
 		int ammoConsumption = getIntField(2,"Ammo Consumption");
 		string soundName = getStringField(2,"Sound");
 
-		Weapon* thisWeaon = new Weapon(name,Image::Get(imageName),Image::Get(pictureName),type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,Sound::Get(soundName),tracking,msrp);
+		Image *picture = Image::Get(pictureName);
+		if(picture==NULL)
+			return luaL_error(L, "Could not create weapon: there is no image file '%s'.",pictureName.c_str());
+		Image *image = Image::Get(imageName);
+		if(image==NULL)
+			return luaL_error(L, "Could not create weapon: there is no image file '%s'.",imageName.c_str());
+		if(Weapon::AmmoNameToType(ammoTypeName)==max_ammo)
+			return luaL_error(L, "Could not create weapon: there is no ammo type '%s'.",ammoTypeName.c_str());
+		Sound *sound = Sound::Get(soundName);
+		if(sound==NULL)
+			return luaL_error(L, "Could not create weapon: there is no sound file '%s'.",soundName.c_str());
+
+		Weapon* thisWeaon = new Weapon(name,image,picture,type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,sound,tracking,msrp);
 		Weapons::Instance()->AddOrReplace( thisWeaon );
 
 	} else {

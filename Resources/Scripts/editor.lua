@@ -116,16 +116,17 @@ EditorLayouts = {
 function componentViewer(kind,listFunc,getStr)
 	if componentWins[kind] ~= nil then return end
 	list = listFunc()
-	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+50,kind)
+	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+90,kind)
 	for i = 1,#list do
 		s = list[i]
 		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent('%s','%s',%s)",kind,s,getStr)))
 	end
+    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent('%s','%s',%s)",kind,'',getStr)))
 	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",kind,kind)))
 end
 
 function showComponent(kind,name,getterFunc)
-    if kind=="Planet" then
+    if kind=="Planet" and name~="" then
         planet = Planet.Get(name)
         Epiar.focusCamera(planet:GetID())
     end
@@ -278,11 +279,12 @@ end
 function technologyViewer()
 	if technologiesWindow ~= nil then return end
 	technologies = Epiar.technologies()
-	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+50,"technologies")
+	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+90,"technologies")
 	for i = 1,#technologies do
 		name = technologies[i]
 		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo('%s')",name)))
 	end
+    technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
 	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
 end
 
