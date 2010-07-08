@@ -24,7 +24,16 @@ Sound *Sound::Get( const string& filename ){
 	value = (Sound*) Resource::Get( filename );
 	if( value == NULL ){
 		value = new Sound( filename );
-		Resource::Store( filename, (Resource*) value );
+		// If the sound couldn't be loaded, then abort
+		if(value->sound == NULL )
+		{
+				delete value;
+				return NULL;
+		}
+		else
+		{
+				Resource::Store( filename, (Resource*) value );
+		}
 	}
 	return value;
 }
@@ -42,7 +51,7 @@ Sound::Sound( const string& filename ):
 {
 	this->sound = Mix_LoadWAV( filename.c_str() );
 	if( this->sound == NULL )
-		LogMsg(ERR, "Could not load sound file: %s, Mixer error: %s",
+		LogMsg(ERR, "Could not load sound file: '%s', Mixer error: %s",
 				filename.c_str(), Mix_GetError() );
 }
 

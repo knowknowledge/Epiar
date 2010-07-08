@@ -57,6 +57,7 @@ Image* Image::Get( string filename ) {
 		if(value->Load(filename)){
 			Resource::Store(filename,(Resource*)value);
 		} else {
+			LogMsg(DEBUG1,"Couldn't Find Image '%s'",filename.c_str());
 			delete value;
 			return NULL;
 		}
