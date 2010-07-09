@@ -279,7 +279,7 @@ end
 function technologyViewer()
 	if technologiesWindow ~= nil then return end
 	technologies = Epiar.technologies()
-	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+90,"technologies")
+	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+90,"Technologies")
 	for i = 1,#technologies do
 		name = technologies[i]
 		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo('%s')",name)))

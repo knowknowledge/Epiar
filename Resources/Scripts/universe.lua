@@ -78,6 +78,14 @@ function godmode()
 end
 --godmode() -- Uncomment this line to never die
 
+--- Convert a list of strings/numbers into an table with those values as keys
+-- Code from: http://www.lua.org/pil/11.5.html
+function Set (list)
+  local set = {}
+  for _, l in ipairs(list) do set[l] = true end
+  return set
+end
+
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	x_diff = (pt1_x - pt2_x)
@@ -394,7 +402,7 @@ function buyOutfit(outfit)
 
 	print("Installing Outfit...")
 	
-	if Epiar.getWeaponInfo(outfit) then
+	if ( Set(Epiar.weapons())[outfit] ) then
 		print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]==nil then
@@ -402,10 +410,10 @@ function buyOutfit(outfit)
 			myweapons[outfit] = HUD.newStatus(outfit..":",130,0,"[ ".. 100 .." ]")
 		end
 		PLAYER:AddAmmo(outfit,100)
-	elseif Epiar.getEngineInfo(outfit) then
+	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
-	elseif Epiar.getOutfitInfo(outfit) then
+	elseif ( Set(Epiar.outfits())[outfit] ) then
 		print("Outfit...")
 		PLAYER:AddOutfit(outfit)
 	else
