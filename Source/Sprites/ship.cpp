@@ -348,7 +348,11 @@ void Ship::addShipWeapon(Weapon *i){
  */
 void Ship::addShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
-	addShipWeapon(weapons->GetWeapon(weaponName));	
+	if(weapons->GetWeapon(weaponName)){
+		addShipWeapon(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to add weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
 }
 
 /**\brief Changes the ship's weapon.
@@ -378,6 +382,7 @@ void Ship::addAmmo(AmmoType ammoType, int qty){
 }
 
 void Ship::addOutfit(Outfit *outfit){
+	assert(outfit!=NULL);
 	outfits.push_back(outfit);
 	ComputeShipStats();
 }
@@ -385,6 +390,8 @@ void Ship::addOutfit(Outfit *outfit){
 void Ship::addOutfit(string outfitName){
 	if( Outfits::Instance()->GetOutfit(outfitName) ){
 		addOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+	} else {
+		LogMsg(INFO, "Failed to Attach outfit '%s', it doesn't exist.", outfitName.c_str());
 	}
 }
 
