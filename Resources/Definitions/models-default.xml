@@ -12,7 +12,7 @@
     <maxSpeed>2.0</maxSpeed>
     <hullStrength>100</hullStrength>
     <msrp>500</msrp>
-    <cargoSpace>0</cargoSpace>
+    <cargoSpace>10</cargoSpace>
   </model>
   <model>
     <name>Fleet Guard</name>
@@ -61,13 +61,13 @@
   <model>
     <name>Large Vesper</name>
     <image>Resources/Graphics/trans2.png</image>
-    <mass>0.70</mass>
+    <mass>0.80</mass>
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>25</thrustOffset>
-    <maxSpeed>7.0</maxSpeed>
+    <maxSpeed>7.5</maxSpeed>
     <hullStrength>400</hullStrength>
     <msrp>5000</msrp>
-    <cargoSpace>10</cargoSpace>
+    <cargoSpace>30</cargoSpace>
   </model>
   <model>
     <name>Mid Vesper</name>
@@ -101,6 +101,17 @@
     <hullStrength>300</hullStrength>
     <msrp>3000</msrp>
     <cargoSpace>15</cargoSpace>
+  </model>
+  <model>
+    <name>Shuttle</name>
+    <image>Resources/Graphics/shuttle.png</image>
+    <mass>1.00</mass>
+    <rotationsPerSecond>0.20</rotationsPerSecond>
+    <thrustOffset>15</thrustOffset>
+    <maxSpeed>4.0</maxSpeed>
+    <hullStrength>300</hullStrength>
+    <msrp>1000</msrp>
+    <cargoSpace>50</cargoSpace>
   </model>
   <model>
     <name>Solaran Battle Cuiser</name>
@@ -166,7 +177,7 @@
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>500</hullStrength>
     <msrp>2000</msrp>
-    <cargoSpace>40</cargoSpace>
+    <cargoSpace>60</cargoSpace>
   </model>
   <model>
     <name>Terran Miner</name>
@@ -200,5 +211,16 @@
     <hullStrength>5000</hullStrength>
     <msrp>15000</msrp>
     <cargoSpace>1000</cargoSpace>
+  </model>
+  <model>
+    <name>Vespan Carrier</name>
+    <image>Resources/Graphics/Fighter.png</image>
+    <mass>3.00</mass>
+    <rotationsPerSecond>0.25</rotationsPerSecond>
+    <thrustOffset>35</thrustOffset>
+    <maxSpeed>5.0</maxSpeed>
+    <hullStrength>2250</hullStrength>
+    <msrp>10000</msrp>
+    <cargoSpace>400</cargoSpace>
   </model>
 </models>

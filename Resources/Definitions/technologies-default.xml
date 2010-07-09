@@ -4,85 +4,114 @@
   <version-minor>7</version-minor>
   <version-macro>0</version-macro>
   <technology>
-    <name>Solaran Defence</name>
+    <name>Questionable Legality</name>
+    <model>Gate Enforcer</model>
+    <model>Patitu</model>
     <model>Kartanal</model>
+    <weapon>Neon Flares</weapon>
+    <weapon>Magnetic Mine</weapon>
+    <weapon>Plasma Cannon</weapon>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Organic Plating</outfit>
+  </technology>
+  <technology>
+    <name>Solaran Defence</name>
     <model>Solaran Battle Cuiser</model>
     <model>Patitu</model>
-    <weapon>Minigun</weapon>
+    <model>Kartanal</model>
+    <weapon>Slow Missile</weapon>
+    <weapon>Plasma Cannon</weapon>
     <weapon>Strong Laser</weapon>
-    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <engine>Ion Engines</engine>
     <outfit>Directional Thrusters</outfit>
-    <outfit>Organic Plating</outfit>
+    <outfit>Copper Plating</outfit>
     <outfit>Shield Generator</outfit>
+    <outfit>Organic Plating</outfit>
   </technology>
   <technology>
     <name>Solaran Outpost</name>
-    <model>Raven</model>
     <model>Gate Enforcer</model>
+    <model>Raven</model>
     <weapon>Strong Laser</weapon>
-    <weapon>Slow Missile</weapon>
-    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <engine>Ion Engines</engine>
     <outfit>Directional Thrusters</outfit>
     <outfit>Booster</outfit>
+    <outfit>Copper Plating</outfit>
   </technology>
   <technology>
     <name>Terran Defence</name>
-    <model>Uber</model>
-    <model>Fleet Guard</model>
     <model>Terran Corvert Mark I</model>
+    <model>Uber</model>
     <model>Terran Corvert Mark II</model>
+    <model>Fleet Guard</model>
     <weapon>Missile</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Steel Plating</outfit>
     <outfit>Copper Plating</outfit>
-    <outfit>Booster</outfit>
   </technology>
   <technology>
     <name>Terran Medium-Scale Commerce</name>
-    <model>Hammer Freighter</model>
+    <model>Terran Assist</model>
+    <model>Terran Miner</model>
+    <model>Terran FV-5 Frigate</model>
     <model>Terran Explorer</model>
+    <model>Hammer Freighter</model>
     <weapon>Laser</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
-    <outfit>Copper Plating</outfit>
-    <outfit>Steel Plating</outfit>
-    <outfit>Shipping License</outfit>
     <outfit>Mass Shipping License</outfit>
+    <outfit>Carbon Plating</outfit>
+    <outfit>Shipping License</outfit>
   </technology>
   <technology>
     <name>Terran Small-Scale Commerce</name>
-    <model>Escape Pod</model>
+    <model>Shuttle</model>
     <model>Terran Miner</model>
-    <model>Terran Assist</model>
     <model>Terran FV-5 Frigate</model>
+    <model>Terran Explorer</model>
     <weapon>Minigun</weapon>
-    <weapon>Plasma Beam</weapon>
-    <weapon>Magnetic Mine</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Copper Plating</outfit>
     <outfit>Shipping License</outfit>
-    <outfit>Carbon Plating</outfit>
-    <outfit>Steel Plating</outfit>
   </technology>
   <technology>
     <name>Terran War Fleet</name>
     <model>Uber</model>
     <model>Terran Corvert Mark II</model>
-    <weapon>Missile</weapon>
     <weapon>Slow Missile</weapon>
+    <weapon>Missile</weapon>
     <engine>Ion Engines</engine>
-    <outfit>Steel Plating</outfit>
     <outfit>Titanium Plating</outfit>
-    <outfit>Directional Thrusters</outfit>
+    <outfit>Steel Plating</outfit>
   </technology>
   <technology>
     <name>Vespian</name>
     <model>Terran XV</model>
+    <model>Mid Vesper</model>
+    <weapon>Plasma Cannon</weapon>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Directional Thrusters</outfit>
+    <outfit>Booster</outfit>
+    <outfit>Organic Plating</outfit>
+  </technology>
+  <technology>
+    <name>Vespian Exploration</name>
+    <model>Terran XV</model>
     <model>Large Vesper</model>
     <model>Mid Vesper</model>
-    <weapon>Strong Laser</weapon>
-    <weapon>Missile</weapon>
+    <weapon>Neon Flares</weapon>
+    <weapon>Plasma Cannon</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Directional Thrusters</outfit>
+    <outfit>Booster</outfit>
+  </technology>
+  <technology>
+    <name>Vespian Guard</name>
+    <model>Vespan Carrier</model>
+    <model>Mid Vesper</model>
+    <weapon>Missile</weapon>
+    <weapon>Plasma Cannon</weapon>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Booster</outfit>
     <outfit>Organic Plating</outfit>
-    <outfit>Booster</outfit>
-    <outfit>Booster</outfit>
   </technology>
 </technologies>

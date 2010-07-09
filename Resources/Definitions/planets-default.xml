@@ -6,8 +6,8 @@
   <planet>
     <name>Alexandria</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>-40</x>
-    <y>-135</y>
+    <x>-380</x>
+    <y>-900</y>
     <landable>1</landable>
     <traffic>6</traffic>
     <image>Resources/Graphics/planet2.png</image>
@@ -24,19 +24,19 @@
     <traffic>3</traffic>
     <image>Resources/Graphics/planet1.png</image>
     <militia>20</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
+    <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
   </planet>
   <planet>
     <name>Bersia</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>4640</x>
+    <x>6640</x>
     <y>-735</y>
     <landable>1</landable>
     <traffic>6</traffic>
     <image>Resources/Graphics/planet6.png</image>
     <militia>7</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
+    <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
     <technology>Terran Medium-Scale Commerce</technology>
   </planet>
@@ -49,37 +49,72 @@
     <traffic>2</traffic>
     <image>Resources/Graphics/planet3.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>500</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Terran Medium-Scale Commerce</technology>
   </planet>
   <planet>
     <name>Destinaria</name>
-    <alliance>Inter-Terran Conjunctive</alliance>
+    <alliance>Venusian Union</alliance>
     <x>15600</x>
-    <y>-4000</y>
+    <y>-7500</y>
     <landable>1</landable>
     <traffic>3</traffic>
     <image>Resources/Graphics/planet4.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
-    <technology>Terran Medium-Scale Commerce</technology>
-    <technology>Terran Defence</technology>
+    <sphereOfInfluence>4000</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <technology>Vespian</technology>
   </planet>
   <planet>
     <name>Exudusous</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>-8325</x>
-    <y>-4350</y>
+    <x>-11400</x>
+    <y>-6200</y>
     <landable>1</landable>
-    <traffic>3</traffic>
+    <traffic>5</traffic>
     <image>Resources/Graphics/planet5.png</image>
-    <militia>1</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
+    <militia>4</militia>
+    <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
     <technology>Terran Medium-Scale Commerce</technology>
     <technology>Terran War Fleet</technology>
+  </planet>
+  <planet>
+    <name>Facility 10</name>
+    <alliance>Venusian Union</alliance>
+    <x>30200</x>
+    <y>-19750</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>500</sphereOfInfluence>
+    <technology>Vespian</technology>
+  </planet>
+  <planet>
+    <name>Facility 17</name>
+    <alliance>Venusian Union</alliance>
+    <x>46000</x>
+    <y>-25000</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>1</militia>
+    <sphereOfInfluence>2000</sphereOfInfluence>
+    <technology>Vespian</technology>
+    <technology>Questionable Legality</technology>
+  </planet>
+  <planet>
+    <name>Facility 33</name>
+    <alliance>Venusian Union</alliance>
+    <x>42000</x>
+    <y>-7600</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>1</militia>
+    <sphereOfInfluence>700</sphereOfInfluence>
+    <technology>Vespian</technology>
   </planet>
   <planet>
     <name>Fon`te Ral</name>
@@ -88,50 +123,137 @@
     <y>550</y>
     <landable>1</landable>
     <traffic>3</traffic>
-    <image>Resources/Graphics/planet5.png</image>
+    <image>Resources/Graphics/planet4.png</image>
     <militia>1</militia>
     <sphereOfInfluence>6000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
-    <technology>Terran Medium-Scale Commerce</technology>
     <technology>Terran Defence</technology>
   </planet>
   <planet>
     <name>Fonral</name>
-    <alliance>Inter-Terran Conjunctive</alliance>
+    <alliance>Solar Colonies</alliance>
     <x>-38725</x>
     <y>23000</y>
     <landable>1</landable>
     <traffic>3</traffic>
-    <image>Resources/Graphics/planet7.png</image>
+    <image>Resources/Graphics/planet10.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
+    <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Solaran Outpost</technology>
   </planet>
   <planet>
     <name>Galaphrain</name>
-    <alliance>Inter-Terran Conjunctive</alliance>
+    <alliance>Solar Colonies</alliance>
     <x>-52725</x>
     <y>21300</y>
     <landable>1</landable>
     <traffic>3</traffic>
     <image>Resources/Graphics/planet7.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>0</sphereOfInfluence>
-    <technology>Vespian</technology>
+    <sphereOfInfluence>8000</sphereOfInfluence>
     <technology>Solaran Outpost</technology>
     <technology>Solaran Defence</technology>
   </planet>
   <planet>
+    <name>Malche</name>
+    <alliance>Solar Colonies</alliance>
+    <x>-54300</x>
+    <y>13300</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/planet16.png</image>
+    <militia>1</militia>
+    <sphereOfInfluence>3500</sphereOfInfluence>
+    <technology>Solaran Outpost</technology>
+  </planet>
+  <planet>
+    <name>Maule</name>
+    <alliance>Venusian Union</alliance>
+    <x>19050</x>
+    <y>-13000</y>
+    <landable>1</landable>
+    <traffic>3</traffic>
+    <image>Resources/Graphics/planet9.png</image>
+    <militia>1</militia>
+    <sphereOfInfluence>4000</sphereOfInfluence>
+    <technology>Vespian</technology>
+  </planet>
+  <planet>
     <name>Outpost 1</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>620</x>
-    <y>390</y>
+    <x>1350</x>
+    <y>1900</y>
     <landable>1</landable>
     <traffic>0</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>0</sphereOfInfluence>
+    <sphereOfInfluence>500</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
+  </planet>
+  <planet>
+    <name>Outpost 11</name>
+    <alliance>Solar Colonies</alliance>
+    <x>14400</x>
+    <y>40500</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>2000</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <technology>Terran Medium-Scale Commerce</technology>
+  </planet>
+  <planet>
+    <name>Sirth</name>
+    <alliance>Inter-Terran Conjunctive</alliance>
+    <x>12850</x>
+    <y>19885</y>
+    <landable>1</landable>
+    <traffic>3</traffic>
+    <image>Resources/Graphics/planet17.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>4000</sphereOfInfluence>
+    <technology>Terran Medium-Scale Commerce</technology>
+    <technology>Terran Small-Scale Commerce</technology>
+  </planet>
+  <planet>
+    <name>The Guild Hall</name>
+    <alliance>Solar Colonies</alliance>
+    <x>-16040</x>
+    <y>-32500</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>1000</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <technology>Terran Medium-Scale Commerce</technology>
+  </planet>
+  <planet>
+    <name>Usian</name>
+    <alliance>Venusian Union</alliance>
+    <x>24500</x>
+    <y>-9450</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/planet12.png</image>
+    <militia>1</militia>
+    <sphereOfInfluence>6000</sphereOfInfluence>
+    <technology>Vespian</technology>
+    <technology>Vespian Exploration</technology>
+  </planet>
+  <planet>
+    <name>Ves</name>
+    <alliance>Venusian Union</alliance>
+    <x>33050</x>
+    <y>-13900</y>
+    <landable>1</landable>
+    <traffic>10</traffic>
+    <image>Resources/Graphics/planet13.png</image>
+    <militia>5</militia>
+    <sphereOfInfluence>8000</sphereOfInfluence>
+    <technology>Vespian</technology>
+    <technology>Vespian Guard</technology>
+    <technology>Vespian Exploration</technology>
   </planet>
 </planets>

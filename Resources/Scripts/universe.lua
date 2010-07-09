@@ -319,7 +319,7 @@ function createSystems()
 		end
 	end
 end
-registerInit(createSystems)
+--registerInit(createSystems)
 
 --- Create Some ships around the planets
 function planetTraffic()
