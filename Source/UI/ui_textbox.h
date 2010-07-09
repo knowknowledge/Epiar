@@ -25,6 +25,7 @@ class Textbox : public Widget {
 		void SetText(string s) { text = s; }
 	private:
 		string text;
+		int rowPad; ///< The padding around each row of text
 
 		string lua_callback;
 		void (*clickCallBack)();

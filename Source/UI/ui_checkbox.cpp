@@ -22,8 +22,11 @@
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 	this->x=x;
 	this->y=y;
-	this->w=CHECKBOX_W;
-	this->h=CHECKBOX_H;
+	this->w=SansSerif->TextWidth(label) + CHECKBOX_W + 5;
+	this->h=( SansSerif->LineHeight() > CHECKBOX_H )
+	       ? SansSerif->LineHeight()
+	       : CHECKBOX_H;
+	this->w=CHECKBOX_W?w:CHECKBOX_W;
 	
 	this->name = label;
 	this->checked = checked;

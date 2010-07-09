@@ -77,11 +77,14 @@ bool UIContainer::Reset( void ){
 }
 
 /**\brief Checks to see if point is inside a child
+ *
+ * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
 Widget *UIContainer::DetermineMouseFocus( int relx, int rely ) {
-	list<Widget *>::iterator i;
+	list<Widget *>::reverse_iterator i;
 
-	for( i = children.begin(); i != children.end(); ++i ) {
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.rbegin(); i != children.rend(); ++i ) {
 		if( (*i)->Contains(relx, rely) ) {
 			return (*i);
 		}

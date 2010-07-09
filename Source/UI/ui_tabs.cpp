@@ -137,6 +137,7 @@ void Tab::ResetScrollBars(){
 		if( widget_height > max_height) max_height=widget_height;
 		if( widget_width > max_width) max_width=widget_width;
 	}
+	max_height += SCROLLBAR_THICK + SCROLLBAR_PAD;
 
 	// Add a Horizontal ScrollBar if necessary
 	if ( max_width > GetW() || this->hscrollbar != NULL ){
