@@ -62,6 +62,7 @@ Ship::~Ship() {
  * \sa Model
  */
 bool Ship::SetModel( Model *model ) {
+	assert( model );
 	if( model ) {
 		this->model = model;
 		
@@ -82,7 +83,7 @@ bool Ship::SetModel( Model *model ) {
  */
 bool Ship::SetEngine( Engine *engine ) {
 	assert( engine );
-	{
+	if( engine ){
 		this->engine = engine;
 		
 		// Creates a new Flare Animation specific for this Ship

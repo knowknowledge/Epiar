@@ -54,6 +54,7 @@ class Sprite {
 			return acceleration;
 		}
 		void SetImage( Image *image ) {
+			assert(image);
 			this->image = image;
 			this->radarSize = ( image->GetWidth() + image->GetHeight() ) /(2);
 		}
