@@ -339,30 +339,39 @@ bool Simulation::Parse( void ) {
 	// Now load the various subsystems
 	if( commodities->Load( commoditiesFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the commodities from '%s'.", commoditiesFilename.c_str() );
+		return false;
 	}
 	if( engines->Load( enginesFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the engines from '%s'.", enginesFilename.c_str() );
+		return false;
 	}
 	if( models->Load( modelsFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the models from '%s'.", modelsFilename.c_str() );
+		return false;
 	}
 	if( weapons->Load( weaponsFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the technologies from '%s'.", weaponsFilename.c_str() );
+		return false;
 	}
 	if( outfits->Load( outfitsFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the outfits from '%s'.", outfitsFilename.c_str() );
+		return false;
 	}
 	if( technologies->Load( technologiesFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the technologies from '%s'.", technologiesFilename.c_str() );
+		return false;
 	}
 	if( alliances->Load( alliancesFilename ) != true ) {
 		LogMsg(ERR, "There was an error loading the alliances from '%s'.", alliancesFilename.c_str() );
+		return false;
 	}
 	if( planets->Load( planetsFilename ) != true ) {
 		LogMsg(WARN, "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
+		return false;
 	}
 	if( players->Load( playersFilename ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", playersFilename.c_str() );
+		return false;
 	}
 
 	return true;

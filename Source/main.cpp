@@ -193,8 +193,14 @@ int main( int argc, char **argv ) {
 	Serif->SetSize(12);
 	Video::Update();
 
-	Simulation debug( "Resources/Definitions/sim-debug.xml" );
-	debug.Run();
+	string simName = "Resources/Definitions/sim-debug.xml";
+	Simulation debug;
+	if(	debug.Load( simName ) )
+	{
+		debug.Run();
+	} else {
+		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+	}
 
 	Video::Shutdown();
 	Audio::Instance().Shutdown();

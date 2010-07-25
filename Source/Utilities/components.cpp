@@ -190,7 +190,6 @@ bool Components::Load(string filename) {
 			xmlFree( key );
 		} else if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
 			// Parse a Component
-			LogMsg(INFO, "Found a node ('%s') in '%s' at line %d.", componentName.c_str(), filename.c_str(), xmlGetLineNo(cur) );
 			success = ParseXMLNode( doc, cur );
 			assert(success);
 			if(success) numObjs++;
