@@ -12,6 +12,7 @@ playerCommands = {
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'i', "Player Info", "playerInformation()",KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
@@ -126,7 +127,7 @@ function createHUD()
 	TargetHULL = HUD.newStatus("Target:",130,1,0)
 end
 
-updateHUD = function ()
+function updateHUD()
 	myhull:setStatus(PLAYER:GetHull())
 	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
@@ -218,4 +219,54 @@ function createNewPlayer()
 	loadingWin:close()
 	playerStart();
 	Epiar.unpause()
+end
+
+function playerInformation()
+	if infoWin~=nil then
+		infoWin:close()
+		infoWin = nil
+		return
+	end
+	local height = 500
+	local width = 300
+	infoWin = UI.newWindow( 600,200, width,height, "Player Info")
+	local y = 30
+
+	local model = PLAYER:GetModelName()
+	local engine = PLAYER:GetEngine()
+	local credits = PLAYER:GetCredits()
+	infoWin:add( UI.newLabel(20, y, "Model:    ".. model) )
+	local y = y+20
+	infoWin:add( UI.newLabel(20, y, "Engine:   ".. engine) )
+	local y = y+20
+	infoWin:add( UI.newLabel(20, y, "Credits:   ".. credits) )
+	local y = y+20
+	infoWin:add( UI.newPicture( 20, y, width-40,100, model ,0,0,0,1) )
+	local y = y+100
+
+	y = y+40
+	infoWin:add( UI.newLabel(20, y, "Weapons:") )
+	local weaponsAndAmmo = PLAYER:GetWeapons()
+	for weapon,ammo in pairs(weaponsAndAmmo) do
+		y = y+20
+		infoWin:add( UI.newLabel(30, y, weapon) )
+		infoWin:add( UI.newLabel(230, y, ammo) )
+	end
+
+	y = y+40
+	infoWin:add( UI.newLabel(20, y, "Outfit:") )
+	local outfits = PLAYER:GetOutfits()
+	for i,outfit in pairs(outfits) do
+		y = y+20
+		infoWin:add( UI.newLabel(30, y, outfit) )
+	end
+
+	y = y+40
+	infoWin:add( UI.newLabel(20, y, "Cargo:") )
+	local cargo = PLAYER:GetCargo()
+	for cargoName,cargoAmount in pairs(cargo) do
+		y = y+20
+		infoWin:add( UI.newLabel(30, y, cargoName) )
+		infoWin:add( UI.newLabel(230, y, cargoAmount) )
+	end
 end

@@ -69,11 +69,13 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
+		{"GetEngine", &AI_Lua::ShipGetEngine},
 		{"GetHull", &AI_Lua::ShipGetHull},
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
 		{"GetState", &AI_Lua::ShipGetState},
 		{"GetCredits", &AI_Lua::ShipGetCredits},
 		{"GetCargo", &AI_Lua::ShipGetCargo},
+		{"GetOutfits", &AI_Lua::ShipGetOutfits},
 
 		{NULL, NULL}
 	};
@@ -681,6 +683,20 @@ int AI_Lua::ShipGetModelName(lua_State* L){
 	return 1;
 }
 
+int AI_Lua::ShipGetEngine(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI* ai = checkShip(L,1);
+	if(ai==NULL){
+		lua_pushnumber(L, 0 );
+		return 1;
+	}
+	lua_pushfstring(L, ((ai)->GetEngine())->GetName().c_str() );
+	return 1;
+}
+
 /**\brief Lua callable function to get the hull status (in %).
  * \sa Ship::getHullIntegrityPct
  */
@@ -773,3 +789,35 @@ int AI_Lua::ShipGetCargo(lua_State* L){
 	return 3;
 }
 
+/**\brief Lua callable function to get the ship's Outfits.
+ *
+ * Outfits are returned to Lua as a table of outfit names.
+ *
+ * \sa Ship::getOutfit()
+ */
+int AI_Lua::ShipGetOutfits(lua_State* L){
+	list<Outfit*>::iterator iter;
+	int newTable, tableIndex;
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI* ai = checkShip(L,1);
+	if(ai==NULL){
+		lua_pushnumber(L, 0 );
+		return 1;
+	}
+
+	list<Outfit*>* outfits = (ai)->GetOutfits();
+	lua_createtable(L, outfits->size(), 0);
+	newTable = lua_gettop(L);
+	for(iter=outfits->begin(), tableIndex=1; iter!=outfits->end(); ++iter, ++tableIndex)
+	{
+		lua_pushinteger(L, tableIndex ); // Key
+		lua_pushfstring(L, (*iter)->GetName().c_str() ); // Value
+		lua_settable(L,newTable);
+	}
+
+	return 1;
+}
