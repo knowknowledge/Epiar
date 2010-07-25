@@ -61,25 +61,39 @@ Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
 
 /**\brief Parser to parse the XML file
  */
-bool Engine::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "forceOutput" ) {
+bool Engine::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"forceOutput")) ){
+		value = NodeToString(doc,attr);
 		SetForceOutput( static_cast<float> (atof( value.c_str() )));
-	} else PPA_MATCHES( "msrp" ) {
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"msrp")) ){
+		value = NodeToString(doc,attr);
 		SetMSRP( (short int)atoi( value.c_str() ));
-	} else PPA_MATCHES( "foldDrive" ) {
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"foldDrive")) ){
+		value = NodeToString(doc,attr);
 		foldDrive = (atoi( value.c_str() ) != 0);
-	} else PPA_MATCHES( "flareAnimation" ) {
-		flareAnimation = value;
-	} else PPA_MATCHES( "thrustSound" ){
-		this->thrustsound = Sound::Get( value );
-	} else PPA_MATCHES( "picName" ){
-		Image* pic = Image::Get(value);
-		// This can be accessed by either the path or the Engine Name
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"flareAnimation")) ){
+		flareAnimation = NodeToString(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"thrustSound")) ){
+		thrustsound = Sound::Get( NodeToString(doc,attr) );
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"picName")) ){
+		Image* pic = Image::Get( NodeToString(doc,attr) );
+		// This image can be accessed by either the path or the Engine Name
 		Image::Store(name, pic);
 		SetPicture(pic);
-	}
+	} else return false;
 
 	return true;
 }

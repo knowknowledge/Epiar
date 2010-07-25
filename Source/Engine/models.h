@@ -21,7 +21,7 @@ class Model : public Outfit {
 		Model();
   		Model& operator= (const Model&);
 		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _msrp, int _cargoSpace);
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 		

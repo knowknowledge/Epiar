@@ -107,32 +107,67 @@ Outfit& Outfit::operator+= (const Outfit& other)
 
 /**\brief Parses weapon information
  */
-bool Outfit::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "picName" ) {
-		Image* pic = Image::Get(value);
-		// This can be accessed by either the path or the modelName
+bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"msrp")) ){
+		value = NodeToString(doc,attr);
+		SetMSRP( atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"picName")) ){
+		Image* pic = Image::Get( NodeToString(doc,attr) );
+		// This image can be accessed by either the path or the Engine Name
 		Image::Store(name, pic);
 		SetPicture(pic);
-	} else PPA_MATCHES( "msrp" ) {
-		if (atoi( value.c_str()) != 0)
-			SetMSRP( atoi( value.c_str() ));
-	} else PPA_MATCHES( "rotationsPerSecond" ) {
-			SetRotationsPerSecond( atof( value.c_str() ));
-	} else PPA_MATCHES( "maxSpeed" ) {
-			SetMaxSpeed( atof( value.c_str() ));
-	} else PPA_MATCHES( "forceOutput" ) {
-			SetForceOutput( atof( value.c_str() ));
-	} else PPA_MATCHES( "mass" ) {
-			SetMass( atoi( value.c_str() ));
-	} else PPA_MATCHES( "hullStrength" ) {
-			SetHullStrength( atoi( value.c_str() ));
-	} else PPA_MATCHES( "shieldStength" ) {
-			SetShieldStrength( atoi( value.c_str() ));
-	} else PPA_MATCHES( "cargoSpace" ) {
-			SetCargoSpace( atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"rotationsPerSecond")) ){
+		value = NodeToString(doc,attr);
+		SetRotationsPerSecond( static_cast<float>(atof( value.c_str() )));
 	}
+
+	if( (attr = FirstChildNamed(node,"maxSpeed")) ){
+		value = NodeToString(doc,attr);
+		SetMaxSpeed( static_cast<float>(atof( value.c_str() )));
+	}
+
+	if( (attr = FirstChildNamed(node,"forceOutput")) ){
+		value = NodeToString(doc,attr);
+		SetForceOutput( static_cast<float> (atof( value.c_str() )));
+	}
+
+	if( (attr = FirstChildNamed(node,"mass")) ){
+		value = NodeToString(doc,attr);
+		SetMass( static_cast<float> (atof( value.c_str() )));
+	}
+
+	if( (attr = FirstChildNamed(node,"cargoSpace")) ){
+		value = NodeToString(doc,attr);
+		SetCargoSpace( atoi( value.c_str() ));
+	}
+
+	if( (attr = FirstChildNamed(node,"surfaceArea")) ){
+		value = NodeToString(doc,attr);
+		SetSurfaceArea( atoi( value.c_str() ));
+	}
+
+	if( (attr = FirstChildNamed(node,"cargoSpace")) ){
+		value = NodeToString(doc,attr);
+		SetCargoSpace( atoi( value.c_str() ));
+	}
+
+	if( (attr = FirstChildNamed(node,"hullStrength")) ){
+		value = NodeToString(doc,attr);
+		SetHullStrength( atoi( value.c_str() ));
+	}
+
+	if( (attr = FirstChildNamed(node,"shildStrength")) ){
+		value = NodeToString(doc,attr);
+		SetShieldStrength( (short)atoi( value.c_str() ));
+	}
+
 	return true;
 }
 

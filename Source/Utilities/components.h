@@ -11,13 +11,20 @@
 #include "includes.h"
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
+#define NodeNameIs( node, text ) ( !xmlStrcmp( ((node)->name), (const xmlChar *)(text) ) )
+
+xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text );
+xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text );
+string NodeToString( xmlDocPtr doc, xmlNodePtr node );
+int NodeToInt( xmlDocPtr doc, xmlNodePtr node );
+float NodeToFloat( xmlDocPtr doc, xmlNodePtr node );
 
 class Component {
 	public:
 		Component() {};
 		string GetName() const { return name; }
 		void SetName(string _name) { name = _name; }
-		virtual bool parserCB( string sectionName, string subName, string value ) = 0;
+		virtual bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) = 0;
 		virtual xmlNodePtr ToXMLNode(string componentName) = 0;
 	protected:
 		string name;
@@ -40,6 +47,7 @@ class Components {
 		Components& operator= (const Components&);
 
 		virtual Component* newComponent() = 0;
+		bool ParseXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		string rootName;
 		string componentName;
 		map<string,Component*> components;

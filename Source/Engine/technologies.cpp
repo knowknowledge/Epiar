@@ -56,36 +56,46 @@ Technology::Technology( string _name,
 
 /**\brief Parses the XML file for Technology fields
  */
-bool Technology::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "model" ) {
-		Model* model = Models::Instance()->GetModel( value );
-		if(model==NULL) {
-			LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+bool Technology::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  tech;
+	string value;
+
+	for( tech=node->xmlChildrenNode; tech!=NULL; tech = tech->next )
+	{
+		if( NodeNameIs( tech, "model" )) {
+			value = NodeToString(doc,tech);
+			Model* model = Models::Instance()->GetModel( value );
+			if(model==NULL) {
+				LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+			} else {
+				models.push_back( model );
+			}
+		} else if( NodeNameIs( tech, "engine" )) {
+			value = NodeToString(doc,tech);
+			Engine* engine = Engines::Instance()->GetEngine( value );
+			if(engine==NULL) {
+				LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+			} else {
+				engines.push_back( engine );
+			}
+		} else if( NodeNameIs( tech, "weapon" )) {
+			value = NodeToString(doc,tech);
+			Weapon* weapon = Weapons::Instance()->GetWeapon( value );
+			if(weapon==NULL) {
+				LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+			} else {
+				weapons.push_back( weapon );
+			}
+		} else if( NodeNameIs( tech, "outfit" )) {
+			value = NodeToString(doc,tech);
+			Outfit* outfit = Outfits::Instance()->GetOutfit( value );
+			if(outfit==NULL) {
+				LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
+			} else {
+				outfits.push_back( outfit );
+			}
 		} else {
-			models.push_back( model );
-		}
-	} else PPA_MATCHES( "engine" ) {
-		Engine* engine = Engines::Instance()->GetEngine( value );
-		if(engine==NULL) {
-			LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
-		} else {
-			engines.push_back( engine );
-		}
-	} else PPA_MATCHES( "weapon" ) {
-		Weapon* weapon = Weapons::Instance()->GetWeapon( value );
-		if(weapon==NULL) {
-			LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
-		} else {
-			weapons.push_back( weapon );
-		}
-	} else PPA_MATCHES( "outfit" ) {
-		Outfit* outfit = Outfits::Instance()->GetOutfit( value );
-		if(outfit==NULL) {
-			LogMsg(ERR, "Could Not find the technology '%s'.", value.c_str() );
-		} else {
-			outfits.push_back( outfit );
+
 		}
 	}
 	return true;

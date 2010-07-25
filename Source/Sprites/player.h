@@ -23,7 +23,7 @@ class Player : public Ship , public Component {
 		static void Load(string playerName);
 		string GetName() { return name; }
 
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
 		friend class Players;

@@ -37,12 +37,12 @@ class Planet : public Sprite, public Component {
 		Planet();
 		Planet& operator=(const Planet& other);
 		Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
-		bool parserCB( string sectionName, string subName, string value );
 		
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
 		void _dbg_PrintInfo( void );
 
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		
 		~Planet();

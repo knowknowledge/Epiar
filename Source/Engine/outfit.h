@@ -35,7 +35,7 @@ class Outfit : public Component {
 		Outfit operator+ (const Outfit& other);
 		Outfit& operator+= (const Outfit& other);
 
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 

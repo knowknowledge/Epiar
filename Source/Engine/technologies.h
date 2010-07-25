@@ -21,8 +21,8 @@ class Technology : public Component {
 		Technology();
   		Technology& operator= (const Technology&);
 		Technology( string _name, list<Model*> _models, list<Engine*>_engines, list<Weapon*>_weapons, list<Outfit*>_outfits);
-		bool parserCB( string sectionName, string subName, string value );
 		void _dbg_PrintInfo( void );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
 		list<Model*> GetModels() { return models; }

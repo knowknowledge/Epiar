@@ -106,57 +106,80 @@ Weapon::~Weapon(void)
 
 /**\brief Parses weapon information
  */
-bool Weapon::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "weaponType" ) {
-		weaponType = atoi( value.c_str() );
-	} else PPA_MATCHES( "imageName" ) {
-		image = Image::Get(value);
-	} else PPA_MATCHES( "picName" ) {
-		Image* pic = Image::Get(value);
-		// This can be accessed by either the path or the modelName
+bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"weaponType")) ){
+		weaponType = (short int)NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"imageName")) ){
+		image = Image::Get( NodeToString(doc,attr) );
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"picName")) ){
+		Image* pic = Image::Get( NodeToString(doc,attr) );
+		// This image can be accessed by either the path or the Weapon Name
 		Image::Store(name, pic);
 		SetPicture(pic);
-	} else PPA_MATCHES( "payload" ) {
-		if (atoi( value.c_str()) != 0)
-			payload = atoi( value.c_str() );
-	} else PPA_MATCHES( "velocity" ) {
-		if (atoi( value.c_str()) != 0)
-			velocity = atoi( value.c_str() );
-	} else PPA_MATCHES( "acceleration" ) {
-		if (atoi( value.c_str()) != 0)
-			acceleration = atoi( value.c_str() );
-	} else PPA_MATCHES( "ammoType" ) {
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"payload")) ){
+		payload = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"velocity")) ){
+		velocity = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"acceleration")) ){
+		acceleration = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"ammoType")) ){
+		value = NodeToString(doc,attr);
 		ammoType = AmmoNameToType(value);
 		if(ammoType>=max_ammo) {
-			// This is an Error!
+			return false;
 		}
-	} else PPA_MATCHES( "ammoConsumption" ) {
-		ammoConsumption = atoi( value.c_str() );
-	} else PPA_MATCHES( "fireDelay" ) {
-		if (atoi( value.c_str()) != 0)
-			fireDelay = atoi( value.c_str() );
-	} else PPA_MATCHES( "lifetime" ) {
-		if (atoi( value.c_str()) != 0)
-			lifetime = atoi( value.c_str() );
-	} else PPA_MATCHES( "tracking" ) {
-		float _tracking = atof( value.c_str());
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"ammoConsumption")) ){
+		ammoConsumption = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"fireDelay")) ){
+		fireDelay = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"lifetime")) ){
+		lifetime = NodeToInt(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"tracking")) ){
+		float _tracking = NodeToInt(doc,attr);
 		if (_tracking > 1.0f ) _tracking = 1.0f;
 		if (_tracking < 0.0001f ) _tracking = 0.0f;
 		tracking = _tracking;
-	} else PPA_MATCHES( "msrp" ) {
-		if (atoi( value.c_str()) != 0)
-			SetMSRP( atoi( value.c_str() ));
-	} else PPA_MATCHES( "sound" ) {
-			string pathPrefix = "Resources/Audio/Weapons/";
-			if( value.find(pathPrefix)==0 ) {
-				this->sound = Sound::Get( value );
-			} else {
-				this->sound = Sound::Get( value.insert(0,pathPrefix) );
-			}
-	}
-	//	SetRadarColor(Color::Get(255, 0, 0));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"msrp")) ){
+		value = NodeToString(doc,attr);
+		SetMSRP( (short int)atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"sound")) ){
+		string pathPrefix = "Resources/Audio/Weapons/";
+		value = NodeToString(doc,attr);
+		if( value.find(pathPrefix)==0 ) {
+			this->sound = Sound::Get( value );
+		} else {
+			this->sound = Sound::Get( value.insert(0,pathPrefix) );
+		}
+		if( this->sound==NULL) return false;
+	} else return false;
+
 	return true;
 }
 

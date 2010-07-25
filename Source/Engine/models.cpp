@@ -65,31 +65,51 @@ Model::Model( string _name, Image* _image, float _mass,
 
 /**\brief For parsing XML file into fields.
  */
-bool Model::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "image" ) {
-		image = (Image*)Image::Get( value );
-		SetPicture( image );
-	} else PPA_MATCHES( "mass" ) {
-		mass = (float)atof( value.c_str() );
-	} else PPA_MATCHES( "rotationsPerSecond" ) {
-		rotPerSecond = static_cast<float>(atof( value.c_str() ));
-	} else PPA_MATCHES( "thrustOffset" ) {
-		thrustOffset = (short)atoi( value.c_str() );
-	} else PPA_MATCHES( "maxSpeed" ) {
-		maxSpeed = (float)atof( value.c_str() );
-	} else PPA_MATCHES( "msrp" ) {
-		msrp = atoi( value.c_str() );
-	} else PPA_MATCHES( "cargoSpace" ) {
-		cargoSpace = atoi( value.c_str() );
-	} else PPA_MATCHES( "hullStrength" ) {
-		hullStrength = (short)atoi( value.c_str() );
-	}
-	// TODO This is a bad spot for this.
-	if(image!=NULL && name!="dead"){ 
-		Image::Store(name,(Resource*)image);
-	}
+bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"image")) ){
+		image = Image::Get( NodeToString(doc,attr) );
+		Image::Store(name, image);
+		SetPicture(image);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"mass")) ){
+		value = NodeToString(doc,attr);
+		SetMass( static_cast<float> (atof( value.c_str() )));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"rotationsPerSecond")) ){
+		value = NodeToString(doc,attr);
+		SetRotationsPerSecond( static_cast<float>(atof( value.c_str() )));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"thrustOffset")) ){
+		value = NodeToString(doc,attr);
+		thrustOffset = static_cast<short>(atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"maxSpeed")) ){
+		value = NodeToString(doc,attr);
+		SetMaxSpeed( static_cast<float>(atof( value.c_str() )));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"msrp")) ){
+		value = NodeToString(doc,attr);
+		SetMSRP( (short int)atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"cargoSpace")) ){
+		value = NodeToString(doc,attr);
+		SetCargoSpace( atoi( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"hullStrength")) ){
+		value = NodeToString(doc,attr);
+		SetHullStrength( (short)atoi( value.c_str() ));
+	} else return false;
+
 	return true;
 }
 

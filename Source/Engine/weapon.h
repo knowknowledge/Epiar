@@ -34,7 +34,7 @@ class Weapon : public Outfit {
 		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, AmmoType _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound, float _tracking, int _msrp);
 		~Weapon(void);
 
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 

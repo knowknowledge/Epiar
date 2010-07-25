@@ -19,7 +19,7 @@ class Commodity : public Component {
 		Commodity(string _name, int _msrp);
 		~Commodity(void);
 
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 

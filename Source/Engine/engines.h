@@ -24,7 +24,7 @@ class Engine : public Outfit {
 		Engine& operator= (const Engine&);
 		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic);
 
-		bool parserCB( string sectionName, string subName, string value );
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
 		void _dbg_PrintInfo( void );

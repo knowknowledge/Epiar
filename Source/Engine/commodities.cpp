@@ -40,15 +40,14 @@ Commodity::Commodity( string _name, int _msrp )
 
 /**\brief Parser to parse the XML file.
  */
-bool Commodity::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		SetName(value);
-	} else PPA_MATCHES( "msrp" ) {
-		msrp = atoi(value.c_str());
-	} else {
-		LogMsg(ERR,"There is no Commodity attribute '%s'",subName.c_str() );
-		return false;
-	}
+bool Commodity::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"msrp")) ){
+		msrp = atoi(NodeToString(doc,attr).c_str());
+	} else return false;
+
 	return true;
 }
 

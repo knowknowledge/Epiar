@@ -51,16 +51,23 @@ Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, 
 
 /**\brief Parser to parse the XML file.
  */
-bool Alliance::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "aggressiveness" ) {
+bool Alliance::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+
+	if( (attr = FirstChildNamed(node,"aggressiveness")) ){
+		value = NodeToString(doc,attr);
 		aggressiveness = static_cast<float>(atof( value.c_str() ) / 10.);
-	} else PPA_MATCHES( "attackSize" ) {
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"attackSize")) ) {
+		value = NodeToString(doc,attr);
 		attackSize = (short int)atof( value.c_str() );
-	} else PPA_MATCHES( "currency" ) {
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"currency")) ) {
 		currency = value;
-	}
+	} else return false;
 	
 	return true;
 }
@@ -122,3 +129,4 @@ Alliances *Alliances::Instance( void ) {
 /**\fn Alliances::newComponent()
  * \brief Creates a new Alliance object.
  */
+

@@ -11,6 +11,65 @@
 #include "Utilities/file.h"
 #include "Utilities/components.h"
 
+xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
+{
+	xmlNodePtr child = node->xmlChildrenNode;
+	while( child != NULL )
+	{
+		if( !xmlStrcmp( child->name, (const xmlChar *)text ) )
+		{
+			return child;
+		}
+		child = child->next;
+	}
+	return (xmlNodePtr )NULL;
+}
+
+xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
+{
+	child = child->next;
+	while( child != NULL )
+	{
+		if( !xmlStrcmp( child->name, (const xmlChar *)text ) )
+		{
+			return child;
+		}
+		child = child->next;
+	}
+	
+	return (xmlNodePtr )NULL;
+}
+
+string NodeToString( xmlDocPtr doc, xmlNodePtr node )
+{
+	string value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = (const char *)xmlString;
+	xmlFree( xmlString );
+	return value;
+}
+
+int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
+{
+	int value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = atoi( (const char *)xmlString );
+	xmlFree( xmlString );
+	return value;
+}
+
+float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
+{
+	float value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = atof( (const char *)xmlString );
+	xmlFree( xmlString );
+	return value;
+}
+
 /**\class Component
  * \brief A generic entity that is loaded and saved to XML
  */
@@ -58,14 +117,34 @@ Component* Components::Get(string name) {
 	return val->second;
 }
 
+bool Components::ParseXMLNode( xmlDocPtr doc, xmlNodePtr node )
+{
+	xmlNodePtr  attr;
+	Component* component = newComponent();
+
+	// All Compoents must have names!
+	if( (attr = FirstChildNamed(node,"name")) ){
+		component->SetName(NodeToString(doc,attr));
+	} else {
+		LogMsg(ERR,"Failed to find a name attribute for the %s node at line %d.\n", NodeToString(doc,attr).c_str(), xmlGetLineNo(node) );
+		return false;
+	}
+
+	if( component->FromXMLNode(doc, node) ){
+		Add( component );
+		return true;
+	}
+	return false;
+}
+
 /**\brief Load an XML file
  */
 bool Components::Load(string filename) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
-	Component *obj = NULL;
 	int numObjs = 0;
+	bool success = true;
 	
 	File xmlfile = File (filename);
 	long filelen = xmlfile.GetLength();
@@ -95,55 +174,26 @@ bool Components::Load(string filename) {
 	}
 	
 	cur = cur->xmlChildrenNode;
-	while( cur != NULL ) {
+	while( success && cur != NULL ) {
 		// Parse for the version information and any children nodes
-		if( ( !xmlStrcmp( cur->name, (const xmlChar *)"version-major" ) ) ) {
+		if( ( !xmlStrcmp( cur->name, BAD_CAST "version-major" ) ) ) {
 			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 			versionMajor = atoi( (char *)key );
 			xmlFree( key );
-		} else if( ( !xmlStrcmp( cur->name, (const xmlChar *)"version-minor" ) ) ) {
+		} else if( ( !xmlStrcmp( cur->name, BAD_CAST "version-minor" ) ) ) {
 			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 			versionMinor = atoi( (char *)key );
 			xmlFree( key );
-		} else if( ( !xmlStrcmp( cur->name, (const xmlChar *)"version-macro" ) ) ) {
+		} else if( ( !xmlStrcmp( cur->name, BAD_CAST "version-macro" ) ) ) {
 			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
 			versionMacro = atoi( (char *)key );
 			xmlFree( key );
-		} else {
-			// Any node here is a child of <rootNode> and therefore is a section, i.e. <ui>
-			char *sectionName = (char *)cur->name;
-			xmlNodePtr subCur = cur->xmlChildrenNode;
-
-			if( strcmp( sectionName, "text" ) ) {
-				assert( obj == NULL );
-				obj = newComponent();
-				
-				// Parse the children of a section
-				while( subCur != NULL ) {
-					char *subName = (char *)subCur->name;
-					
-					// Every opening/closing parent tag for libxml2 is called 'text', but we don't care about those
-					if( strcmp( subName, "text" ) ) {
-						// Extract the key's value
-						xmlChar *subKey = xmlNodeListGetString( doc, subCur->xmlChildrenNode, 1 );
-						
-						// On cases (comments?) subKey will be NULL
-						if( subKey )					
-						{
-							obj->parserCB( sectionName, subName, (const char*) subKey );
-							//cout<<"["<<sectionName<<"] ["<<subName<<"] = "<<((const char*) subKey)<<endl;
-						}
-						
-						xmlFree( subKey );
-					}
-					
-					subCur = subCur->next;
-				}
-				
-				Add(obj);
-				obj = NULL;
-				numObjs++;
-			}
+		} else if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
+			// Parse a Component
+			LogMsg(INFO, "Found a node ('%s') in '%s' at line %d.", componentName.c_str(), filename.c_str(), xmlGetLineNo(cur) );
+			success = ParseXMLNode( doc, cur );
+			assert(success);
+			if(success) numObjs++;
 		}
 		
 		cur = cur->next;
@@ -152,7 +202,7 @@ bool Components::Load(string filename) {
 	xmlFreeDoc( doc );
 	
 	LogMsg(INFO, "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
-	return true;
+	return success;
 }
 
 /**\brief Save all Components to an XML file

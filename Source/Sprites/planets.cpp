@@ -88,36 +88,60 @@ Planet::~Planet() {
 
 /**\brief Parse one player out of an xml node.
  */
-bool Planet::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "alliance" ) {
-		alliance = value;
-	} else PPA_MATCHES( "x" ) {
-		Coordinate pos = GetWorldPosition();
-		pos.SetX( (double)atof( value.c_str() ) );
-		SetWorldPosition( pos );
-	} else PPA_MATCHES( "y" ) {
-		Coordinate pos = GetWorldPosition();
-		pos.SetY( (double)atof( value.c_str() ) );
-		SetWorldPosition( pos );
-	} else PPA_MATCHES( "landable" ) {
-		landable = (atoi( value.c_str() ) !=0);
-	} else PPA_MATCHES( "traffic" ) {
-		traffic = (short int)atoi( value.c_str() );
-	} else PPA_MATCHES( "image" ) {
-		Image *image = Image::Get( value );
-		Image::Store(name,Image::Get(value));
-		SetImage( image );
-	} else PPA_MATCHES( "militia" ) {
-		militiaSize = (short int)atoi( value.c_str() );
-	} else PPA_MATCHES( "sphereOfInfluence" ) {
+bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+	Coordinate pos;
+
+	if( (attr = FirstChildNamed(node,"alliance")) ){
+		alliance = NodeToString(doc,attr);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"x")) ){
+		value = NodeToString(doc,attr);
+		pos.SetX( atof( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"y")) ){
+		value = NodeToString(doc,attr);
+		pos.SetY( atof( value.c_str() ));
+	} else return false;
+
+	SetWorldPosition( pos );
+
+	if( (attr = FirstChildNamed(node,"landable")) ){
+		value = NodeToString(doc,attr);
+		landable = ( atoi( value.c_str() ) != 0);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"traffic")) ){
+		value = NodeToString(doc,attr);
+		traffic = (short int) atoi( value.c_str() );
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"image")) ){
+		Image* image = Image::Get( NodeToString(doc,attr) );
+		Image::Store(name, image);
+		SetImage(image);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"militia")) ){
+		value = NodeToString(doc,attr);
+		militiaSize = (short int) atoi( value.c_str() );
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"sphereOfInfluence")) ){
+		value = NodeToString(doc,attr);
 		sphereOfInfluence = atoi( value.c_str() );
-	} else PPA_MATCHES( "technology" ) {
+	} else return false;
+
+	for( attr = FirstChildNamed(node,"technology"); attr!=NULL; attr = NextSiblingNamed(node,"technology") ){
+		value = NodeToString(doc,attr);
 		Technology *tech = Technologies::Instance()->GetTechnology( value );
 		technologies.push_back(tech);
-		technologies.unique();
 	}
+	technologies.unique();
+
 	return true;
 }
 

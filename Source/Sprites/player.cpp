@@ -100,38 +100,79 @@ void Player::Update( void ) {
 
 /**\brief Parse one player out of an xml node
  */
-bool Player::parserCB( string sectionName, string subName, string value ) {
-	PPA_MATCHES( "name" ) {
-		name = value;
-	} else PPA_MATCHES( "x" ) {
-		Coordinate pos = GetWorldPosition();
-		pos.SetX( (double)atof( value.c_str() ) );
-		SetWorldPosition( pos );
-	} else PPA_MATCHES( "y" ) {
-		Coordinate pos = GetWorldPosition();
-		pos.SetY( (double)atof( value.c_str() ) );
-		SetWorldPosition( pos );
-	} else PPA_MATCHES( "model" ) {
-		SetModel( Models::Instance()->GetModel( value ) );
-	} else PPA_MATCHES( "engine" ) {
-		SetEngine( Engines::Instance()->GetEngine( value ) );
-	} else PPA_MATCHES( "weapon" ) {
-		addShipWeapon( value );
-	} else PPA_MATCHES( "outfit" ) {
-		addOutfit( value );
-	} else PPA_MATCHES( "credits" ) {
+bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+	Coordinate pos;
+
+	if( (attr = FirstChildNamed(node,"x")) ){
+		value = NodeToString(doc,attr);
+		pos.SetX( atof( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"y")) ){
+		value = NodeToString(doc,attr);
+		pos.SetY( atof( value.c_str() ));
+	} else return false;
+
+	SetWorldPosition( pos );
+
+	if( (attr = FirstChildNamed(node,"model")) ){
+		value = NodeToString(doc,attr);
+		Model* model = Models::Instance()->GetModel( value );
+		if( NULL!=model) {
+			SetModel( model );
+		} else {
+			LogMsg(ERR,"No such model as '%s'", value.c_str());
+			return false;
+		}
+	} else return false;
+	
+	if( (attr = FirstChildNamed(node,"engine")) ){
+		value = NodeToString(doc,attr);
+		Engine* engine = Engines::Instance()->GetEngine( value );
+		if( NULL!=engine) {
+			SetEngine( engine );
+		} else {
+			LogMsg(ERR,"No such engine as '%s'", value.c_str());
+			return false;
+		}
+	} else return false;
+
+
+	if( (attr = FirstChildNamed(node,"credits")) ){
+		value = NodeToString(doc,attr);
 		SetCredits( atoi(value.c_str()) );
-	} else if(Weapon::AmmoNameToType(subName)<max_ammo){
-	// Check if this is an Ammo listing
-		addAmmo( Weapon::AmmoNameToType(subName), atoi(value.c_str()) );
-		LogMsg(DEBUG1,"Adding %d Ammo of type %s",atoi(value.c_str()),subName.c_str() );
-	} else if(Commodities::Instance()->Get(subName)!=NULL){
-	// Check if this is a Commodity listing
-		StoreCommodities( subName, atoi(value.c_str()) );
-	} else {
-		LogMsg(ERR,"The Player Class cannot understand the XML key '%s'.",subName.c_str() );
-		return false;
+	} else return false;
+
+	for( attr = FirstChildNamed(node,"weapon"); attr!=NULL; attr = NextSiblingNamed(attr,"weapon") ){
+		addShipWeapon( NodeToString(doc,attr) );
 	}
+
+	for( attr = FirstChildNamed(node,"outfit"); attr!=NULL; attr = NextSiblingNamed(attr,"outfit") ){
+		addOutfit( NodeToString(doc,attr) );
+	}
+
+	for( attr = FirstChildNamed(node,"cargo"); attr!=NULL; attr = NextSiblingNamed(attr,"cargo") ){
+		xmlNodePtr type = FirstChildNamed(attr,"type");
+		xmlNodePtr ammt = FirstChildNamed(attr,"amount");
+		if(!type || !ammt)
+			return false;
+		StoreCommodities( NodeToString(doc,type), NodeToInt(doc,ammt) );
+	}
+
+	for( attr = FirstChildNamed(node,"ammo"); attr!=NULL; attr = NextSiblingNamed(attr,"ammo") ){
+		xmlNodePtr type = FirstChildNamed(attr,"type");
+		xmlNodePtr ammt = FirstChildNamed(attr,"amount");
+		if(!type || !ammt)
+			return false;
+		AmmoType ammoType = Weapon::AmmoNameToType( NodeToString(doc,type) );
+		int ammoCount = NodeToInt(doc,ammt);
+		if( ammoType < max_ammo ) {
+			addAmmo( ammoType, ammoCount );
+		} else return false;
+	}
+
 	return true;
 }
 
@@ -158,14 +199,20 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	for(int a=0;a<max_ammo;a++){
 		if(getAmmo(AmmoType(a))){
 			snprintf(buff, sizeof(buff), "%d", getAmmo(AmmoType(a)) );
-			xmlNewChild(section, NULL, BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str(), BAD_CAST buff );
+			xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "ammo");
+			xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str() );
+			xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
+			xmlAddChild(section, ammo);
 		}
 	}
 	map<Commodity*,unsigned int> cargo = this->getCargo();
 	map<Commodity*,unsigned int>::iterator iter = cargo.begin();
 	while( iter!=cargo.end() ) {
 		snprintf(buff, sizeof(buff), "%d", (*iter).second );
-		xmlNewChild(section, NULL, BAD_CAST ((*iter).first)->GetName().c_str(), BAD_CAST buff );
+		xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "cargo");
+		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter).first)->GetName().c_str() );
+		xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
+		xmlAddChild(section, ammo);
 		++iter;
 	}
 	list<Outfit*> *outfits = this->GetOutfits();
