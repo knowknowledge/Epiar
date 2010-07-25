@@ -1,5 +1,5 @@
 /**\file			ui_checkbox.h
- * \author			Christopher Thielen (chris@luethy.net)
+ * \author			Christopher Thielen (chris@epiar.net)
  * \date			Created: Monday, December 28, 2009
  * \brief
  * \details

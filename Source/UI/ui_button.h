@@ -1,5 +1,5 @@
 /**\file			ui_button.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Friday, April 25, 2008
  * \date			Modified: Friday, April 25, 2008
  * \brief

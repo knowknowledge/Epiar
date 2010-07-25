@@ -1,5 +1,5 @@
 /**\file			debug.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Saturday, Ocotober 4, 2008
  * \date			Modified: Saturday, October 4, 2008
  * \brief

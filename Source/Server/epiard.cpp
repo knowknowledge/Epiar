@@ -1,5 +1,5 @@
 /**\file			main.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Sunday, June 4, 2006
  * \date			Modified: Wednesday, January 9, 2008
  * \brief			Main entry point of epiard (server) codebase

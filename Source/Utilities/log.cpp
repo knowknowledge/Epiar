@@ -1,5 +1,5 @@
 /**\file			log.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Sunday, June 4, 2006
  * \date			Modified: Sunday, November 22, 2009
  * \brief			Main logging facilities for the codebase

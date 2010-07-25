@@ -1,5 +1,5 @@
 /**\file			ui_widget.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Sunday, December 27, 2009
  * \brief

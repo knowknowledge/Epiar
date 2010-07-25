@@ -1,5 +1,5 @@
 /**\file			file.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Monday, April 21, 2008
  * \date			Modified: Saturday, November 21, 2009
  * \brief			Low level interface for file access.

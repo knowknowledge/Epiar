@@ -1,5 +1,5 @@
 /**\file			ship.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Friday, November 14, 2009
  * \brief

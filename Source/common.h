@@ -1,5 +1,5 @@
 /**\file		common.h
- * \author		Chris Thielen (chris@luethy.net)
+ * \author		Chris Thielen (chris@epiar.net)
  * \author		and others.
  * \date		Created:	Saturday, January 5, 2008
  * \date		Modified:	Thursday, November 19, 2009

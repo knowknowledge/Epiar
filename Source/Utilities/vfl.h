@@ -1,5 +1,5 @@
 /**\file			vfl.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Tuesday, October 14, 2008
  * \date			Modified: Tuesday, October 14, 2008
  * \brief			Filesystem abstraction translator for multi-platform data file placement

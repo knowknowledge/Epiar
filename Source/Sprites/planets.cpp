@@ -1,5 +1,5 @@
 /**\file			planets.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Monday, November 16 2009
  * \brief

@@ -1,5 +1,5 @@
 /**\file			player.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Wednesday, July 5, 2006
  * \date			Modified: Saturday, January 5, 2008
  * \brief			Main player-specific functions and handle

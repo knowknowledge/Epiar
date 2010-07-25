@@ -1,5 +1,5 @@
 /**\file			string_convert.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Monday, April 21, 2008
  * \date			Modified: Monday, April 21, 2008
  * \brief			Converts a std::string into the template type (such as an int)

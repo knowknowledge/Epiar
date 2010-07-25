@@ -1,5 +1,5 @@
 /**\file		main.cpp
- * \author		Chris Thielen (chris@luethy.net)
+ * \author		Chris Thielen (chris@epiar.net)
  * \author		and others.
  * \date		Created:	Sunday, June 4, 2006
  * \date		Modified:	Thursday, November 19, 2009
