@@ -10,6 +10,7 @@
 #ifndef __H_VIDEO__
 #define __H_VIDEO__
 
+#include "includes.h"
 #include "Utilities/coordinate.h"
 
 class Color {
@@ -31,6 +32,21 @@ class Color {
 		clr.r = r;
 		clr.g = g;
 		clr.b = b;
+
+		return clr;
+	}
+	static Color Get( string str ) {
+		// string must be in hex format.
+		int n;
+		Color clr;
+
+		stringstream ss;
+		ss << std::hex << str;
+		ss >> n;
+
+		clr.r = ((n >> 16) & 0xFF ) / 255.0f;
+		clr.g = ((n >>  8) & 0xFF ) / 255.0f;
+		clr.b = ((n      ) & 0xFF ) / 255.0f;
 
 		return clr;
 	}
