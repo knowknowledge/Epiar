@@ -1,5 +1,5 @@
 /**\file			ui_window.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Sunday, November 22, 2009
  * \brief

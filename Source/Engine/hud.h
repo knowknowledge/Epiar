@@ -1,5 +1,5 @@
 /**\file			hud.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created  : Sunday, July 23, 2006
  * \date			Modified: Sunday, November 22, 2009
  * \brief			Handles the Heads-Up-Display

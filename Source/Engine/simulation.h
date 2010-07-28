@@ -1,5 +1,5 @@
 /**\filename		simulation.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: July 2006
  * \date			Modified: Tuesday, June 23, 2009
  * \brief			Contains the main game loop

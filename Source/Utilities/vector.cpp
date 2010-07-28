@@ -1,5 +1,5 @@
 /**\file			vector.cpp
- * \author			Douglas Moyes (dbmoyes@gmail.com), Chris Thielen (chris@luethy.net)
+ * \author			Douglas Moyes (dbmoyes@gmail.com), Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \date			Modified: Saturday, January 5, 2008
  * \brief

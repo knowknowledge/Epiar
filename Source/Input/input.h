@@ -1,5 +1,5 @@
 /**\file			input.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Sunday, June 4, 2006
  * \date			Modified: Saturday, January 5, 2008
  * \brief

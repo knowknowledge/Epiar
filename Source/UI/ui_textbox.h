@@ -1,5 +1,5 @@
 /**\file			ui_textbox.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Monday, November 9, 2009
  * \date			Modified: Monday, November 9, 2009
  * \brief

@@ -1,5 +1,5 @@
 /**\file			hashtbl.cpp
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Friday, June 9, 2006
  * \date			Modified: Friday, June 9, 2006
  * \brief			Implementation of a quadratic probing hash table

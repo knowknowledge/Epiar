@@ -1,5 +1,5 @@
 /**\file			console.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Saturday, February 21, 2009
  * \date			Modified: Sunday, November 22, 2009
  * \brief			Handles the Heads-Up-Display

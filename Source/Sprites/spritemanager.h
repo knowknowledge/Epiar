@@ -1,5 +1,5 @@
 /**\file			spritemanager.h
- * \author			Chris Thielen (chris@luethy.net)
+ * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
  * \brief
  * \details

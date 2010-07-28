@@ -11,8 +11,8 @@
 #define __H_VERSION__
 
 #define EPIAR_VERSION_MAJOR 0
-#define EPIAR_VERSION_MINOR 7
+#define EPIAR_VERSION_MINOR 4
 #define EPIAR_VERSION_MICRO 0
-#define EPIAR_VERSION_FULL "0.7.0"
+#define EPIAR_VERSION_FULL "0.4.0"
 
 #endif // __H_VERSION__
