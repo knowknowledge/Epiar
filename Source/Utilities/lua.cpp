@@ -827,15 +827,21 @@ int Lua::getAllianceInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
+	Color color;
+	char color_buffer[9];
 	string name = (string)luaL_checkstring(L,1);
 	Alliance *alliance = Alliances::Instance()->GetAlliance(name);
 	if(alliance==NULL){ alliance = new Alliance(); }
+
+	color = alliance->GetColor();
+	snprintf(color_buffer, sizeof(color_buffer), "0x%02X%02X%02X", int(0xFF*color.r), int(0xFF*color.g), int(0xFF*color.b) );
 
 	lua_newtable(L);
 	setField("Name", alliance->GetName().c_str());
 	setField("AttackSize", alliance->GetAttackSize());
 	setField("Aggressiveness", alliance->GetAggressiveness());
 	setField("Currency", alliance->GetCurrency().c_str() );
+	setField("Color", color_buffer );
 
 	return 1;
 }
@@ -1050,8 +1056,9 @@ int Lua::setInfo(lua_State *L) {
 		int attack = getIntField(2,"AttackSize");
 		float aggressiveness = getNumField(2,"Aggressiveness");
 		string currency = getStringField(2,"Currency");
+		Color color = Color::Get( getStringField(2,"Color") );
 
-		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency);
+		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency,color);
 		Alliances::Instance()->AddOrReplace( thisAlliance );
 
 	} else if(kind == "Commodity"){

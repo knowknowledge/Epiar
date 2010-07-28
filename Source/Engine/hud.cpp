@@ -373,6 +373,7 @@ void Hud::DrawMap( void ) {
 	int posx, posy;
 	int posx2, posy2;
 	Color col;
+	Color field;
 	int i;
 	float alpha;
 	float n,s,e,w, edge;
@@ -425,7 +426,8 @@ void Hud::DrawMap( void ) {
 				Video::DrawFilledCircle( posx, posy, 2, col.r,col.g,col.b, alpha );
 				break;
 			case DRAW_ORDER_PLANET:
-				Video::DrawFilledCircle( posx, posy, ((Planet*)(*iter))->GetInfluence()*scale, 0,0,.8, alpha*.5f );
+				field = ((Planet*)(*iter))->GetAlliance()->GetColor();
+				Video::DrawFilledCircle( posx, posy, ((Planet*)(*iter))->GetInfluence()*scale, field.r, field.g, field.b, alpha*.5f );
 				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
 				break;
 			case DRAW_ORDER_GATE_TOP:

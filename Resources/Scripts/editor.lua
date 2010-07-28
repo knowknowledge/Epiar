@@ -28,6 +28,7 @@ AllianceEditorLayout = {
 	{"Name", "String"},
 	{"Aggressiveness", "Number"},
 	{"AttackSize", "Integer"},
+	{"Color", "String"},
 	--{"Illegal", "List"},
 	}
 

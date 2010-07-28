@@ -24,6 +24,7 @@
 Alliance::Alliance() : attackSize(0),aggressiveness(0.0),currency("Credits")
 {
 	SetName("dead");
+	color = Color::Get(0xFF,0xFF,0xFF);
 }
 
 /**\brief Assignment constructor, copies field values.
@@ -33,6 +34,7 @@ Alliance& Alliance::operator= (const Alliance& other){
     attackSize = other.attackSize;
     aggressiveness = other.aggressiveness;
     currency = other.currency;
+	color = other.color;
     return *this;
 }
 
@@ -41,10 +43,11 @@ Alliance& Alliance::operator= (const Alliance& other){
  * \param _attackSize Size of the fleet
  * \param _aggressiveness Aggressiveness
  */
-Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency) :
+Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, Color _color) :
     attackSize(_attackSize),
     aggressiveness(_aggressiveness),
-    currency(_currency)
+    currency(_currency),
+	color(_color)
 {
     SetName(_name);
 }
@@ -66,7 +69,13 @@ bool Alliance::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"currency")) ) {
+		value = NodeToString(doc,attr);
 		currency = value;
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"color")) ) {
+		value = NodeToString(doc,attr);
+		color = Color::Get(value);
 	} else return false;
 	
 	return true;
@@ -85,6 +94,8 @@ xmlNodePtr Alliance::ToXMLNode(string componentName){
 	snprintf(buff, sizeof(buff), "%d", this->GetAttackSize() );
 	xmlNewChild(section, NULL, BAD_CAST "attackSize", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "currency", BAD_CAST this->GetCurrency().c_str() );
+	snprintf(buff, sizeof(buff), "0x%02X%02X%02X", int(0xFF*color.r), int(0xFF*color.g), int(0xFF*color.b) );
+	xmlNewChild(section, NULL, BAD_CAST "color", BAD_CAST buff );
 
 	return section;
 }

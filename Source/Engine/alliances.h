@@ -11,24 +11,27 @@
 
 #include "includes.h"
 #include "Utilities/components.h"
+#include "Graphics/video.h"
 
 // Abstraction of a single planet
 class Alliance : public Component {
 	public:
 		Alliance();
   		Alliance& operator= (const Alliance&);
-		Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency);
+		Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, Color _color);
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
 		short int GetAttackSize(void){ return attackSize; }
 		float GetAggressiveness(void){ return aggressiveness; }
 		string GetCurrency(void){ return currency; }
+		Color GetColor(void){ return color; }
 		
 	private:
 		short int attackSize;
 		float aggressiveness;
 		string currency;
+		Color color;
 };
 
 // Class that holds list of all planets; manages them
