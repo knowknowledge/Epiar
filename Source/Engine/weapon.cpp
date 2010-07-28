@@ -158,7 +158,7 @@ bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"tracking")) ){
-		float _tracking = NodeToInt(doc,attr);
+		float _tracking = NodeToFloat(doc,attr);
 		if (_tracking > 1.0f ) _tracking = 1.0f;
 		if (_tracking < 0.0001f ) _tracking = 0.0f;
 		tracking = _tracking;

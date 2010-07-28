@@ -143,7 +143,7 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		sphereOfInfluence = atoi( value.c_str() );
 	} else return false;
 
-	for( attr = FirstChildNamed(node,"technology"); attr!=NULL; attr = NextSiblingNamed(node,"technology") ){
+	for( attr = FirstChildNamed(node,"technology"); attr!=NULL; attr = NextSiblingNamed(attr,"technology") ){
 		value = NodeToString(doc,attr);
 		Technology *tech = Technologies::Instance()->GetTechnology( value );
 		technologies.push_back(tech);
