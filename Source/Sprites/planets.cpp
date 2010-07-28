@@ -38,6 +38,7 @@ Planet::Planet(){
 Planet& Planet::operator=(const Planet& other) {
 	// Check the other Sprite
 	assert( other.GetImage() );
+	assert( other.GetAlliance() );
 
 	name = other.name;
 	alliance = other.alliance;
@@ -60,7 +61,7 @@ Planet& Planet::operator=(const Planet& other) {
 
 /**\brief Constructor using a full Full Description
  */
-Planet::Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
+Planet::Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
@@ -70,6 +71,7 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, string _allianc
 {
 	// Check the inputs
 	assert(_image);
+	assert(_alliance);
 
 	Coordinate pos;
 	pos.SetX(_x);
@@ -94,7 +96,13 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	Coordinate pos;
 
 	if( (attr = FirstChildNamed(node,"alliance")) ){
-		alliance = NodeToString(doc,attr);
+		value = NodeToString(doc,attr);
+		alliance = Alliances::Instance()->GetAlliance(value);
+		if(alliance==NULL)
+		{
+			LogMsg(ERR, "Could not create Planet '%s'. Unknown Alliance '%s'.", this->GetName().c_str(), value.c_str());
+			return false;
+		}
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"x")) ){
@@ -220,7 +228,7 @@ xmlNodePtr Planet::ToXMLNode(string componentName) {
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
-	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST this->GetAlliance().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST this->GetAlliance()->GetName().c_str() );
 	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
 	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
@@ -348,7 +356,8 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	float _x;
 	float _y;
 	Image* _image;
-	string _alliance;
+	string _allianceName;
+	Alliance* _alliance;
 	bool _landable;
 	int _traffic;
 	int _militiaSize;
@@ -365,7 +374,8 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	_y = luaL_checknumber(L, 3 );
 	imageName = (string)luaL_checkstring(L,4);
 	_image = Image::Get( imageName );
-	_alliance = (string)luaL_checkstring(L,5);
+	_allianceName = (string)luaL_checkstring(L,5);
+	_alliance = Alliances::Instance()->GetAlliance(_allianceName);
 	_landable = (bool)luaL_checkint(L, 6 );
 	_traffic = luaL_checkint(L, 7 );
 	_militiaSize = luaL_checkint(L, 8 );
@@ -383,6 +393,9 @@ int Planets_Lua::NewPlanet(lua_State* L){
 
 	if(_image==NULL) {
 		return luaL_error(L, "No image '%s'", imageName.c_str());
+	}
+	if(_alliance==NULL) {
+		return luaL_error(L, "No alliance '%s'", _allianceName.c_str());
 	}
 
 	p = new Planet(
@@ -491,7 +504,7 @@ int Planets_Lua::GetAlliance(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
 		Planet* planet= checkPlanet(L,1);
-		lua_pushstring(L, planet->GetAlliance().c_str());
+		lua_pushstring(L, planet->GetAlliance()->GetName().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}

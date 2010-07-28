@@ -30,13 +30,14 @@ extern "C" {
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
+#include "Engine/alliances.h"
 
 // Abstraction of a single planet
 class Planet : public Sprite, public Component {
 	public:
 		Planet();
 		Planet& operator=(const Planet& other);
-		Planet( string _name, float _x, float _y, Image* _image, string _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
+		Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
 		
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
@@ -47,19 +48,19 @@ class Planet : public Sprite, public Component {
 		
 		~Planet();
 
-		string GetAlliance() {return alliance;}
-		short int GetTraffic() {return traffic;}
-		short int GetMilitiaSize() {return militiaSize;}
-		bool GetLandable() {return landable;}
-		int GetInfluence() {return sphereOfInfluence;}
-		list<Technology*> GetTechnologies() { return technologies;}
 		list<Model*> GetModels();
 		list<Engine*> GetEngines();
 		list<Weapon*> GetWeapons();
 		list<Outfit*> GetOutfits();
+		Alliance* GetAlliance() const {return alliance;}
+		short int GetTraffic() const {return traffic;}
+		short int GetMilitiaSize() const {return militiaSize;}
+		bool GetLandable() const {return landable;}
+		int GetInfluence() const {return sphereOfInfluence;}
+		list<Technology*> GetTechnologies() const { return technologies;}
 		
 	private:
-		string alliance;
+		Alliance* alliance;
 		bool landable;
 		short int traffic;
 		short int militiaSize;

@@ -894,7 +894,7 @@ int Lua::getPlanetInfo(lua_State *L) {
 	setField("Image", (p->GetImage()!=NULL)
 	                ? (p->GetImage()->GetPath().c_str())
 	                : "" );
-	setField("Alliance", p->GetAlliance().c_str());
+	setField("Alliance", p->GetAlliance()->GetName().c_str());
 	setField("Traffic", p->GetTraffic());
 	setField("Militia", p->GetMilitiaSize());
 	setField("Landable", p->GetLandable());
@@ -1108,7 +1108,7 @@ int Lua::setInfo(lua_State *L) {
 		int x = getIntField(2,"X");
 		int y = getIntField(2,"Y");
 		string imageName = getStringField(2,"Image");
-		string alliance = getStringField(2,"Alliance");
+		string allianceName = getStringField(2,"Alliance");
 		int traffic = getIntField(2,"Traffic");
 		int militia = getIntField(2,"Militia");
 		int landable = getIntField(2,"Landable");
@@ -1132,7 +1132,12 @@ int Lua::setInfo(lua_State *L) {
 			 return 0;
 		}
 
-		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),alliance,TO_BOOL(landable),traffic,militia,influence,techs);
+		if(Alliances::Instance()->GetAlliance(allianceName)==NULL){
+			 LogMsg(NOTICE, "Could not create planet: there is no Alliance named '%s'.",allianceName.c_str());
+			 return 0;
+		}
+
+		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),Alliances::Instance()->GetAlliance(allianceName),TO_BOOL(landable),traffic,militia,influence,techs);
 
 		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
 		if(oldPlanet!=NULL) {
