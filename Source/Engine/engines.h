@@ -31,10 +31,10 @@ class Engine : public Outfit {
 		
 		string GetFlareAnimation( void ) { return flareAnimation; }
 		short int GetFoldDrive( void ) { return foldDrive; }
-		
-		Sound *thrustsound;
+		Sound* GetSound() { return thrustsound; }
 
 	private:
+		Sound *thrustsound;
 		bool foldDrive;
 		string flareAnimation;
 };

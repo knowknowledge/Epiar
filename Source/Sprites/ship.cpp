@@ -19,12 +19,14 @@
 
 #include "Engine/hud.h"
 
+#define NON_PLAYER_SOUND_RATIO 0.4f
+
 /**\class Ship
  * \brief Ship handling. */
 
 /**\brief Ship constructor that initializes default values.
  */
-Ship::Ship() : nonplayersound( 0.4f )
+Ship::Ship()
 {
 	model = NULL;
 	engine = NULL;
@@ -189,9 +191,9 @@ void Ship::Accelerate( void ) {
 	float engvol = OPTION(float,"options/sound/engines");
 	Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
 	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-		engvol = engvol * this->nonplayersound;
-	this->engine->thrustsound->SetVolume( engvol );
-	this->engine->thrustsound->PlayNoRestart( offset );
+		engvol = engvol * NON_PLAYER_SOUND_RATIO ;
+	this->engine->GetSound()->SetVolume( engvol );
+	this->engine->GetSound()->PlayNoRestart( offset );
 }
 
 
@@ -307,7 +309,7 @@ FireStatus Ship::Fire() {
 		//Play weapon sound
 		float weapvol = OPTION(float,"options/sound/weapons");
 		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-			currentWeapon->sound->SetVolume( weapvol * this->nonplayersound );
+			currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
 		else
 			currentWeapon->sound->SetVolume( weapvol );
 		currentWeapon->sound->Play(

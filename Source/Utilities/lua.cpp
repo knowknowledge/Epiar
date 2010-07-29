@@ -961,8 +961,8 @@ int Lua::getEngineInfo(lua_State *L) {
 	setField("Animation", engine->GetFlareAnimation().c_str());
 	setField("MSRP", engine->GetMSRP());
 	setField("Fold Drive", engine->GetFoldDrive());
-	setField("Sound", (engine->thrustsound!=NULL)
-	                ? (engine->thrustsound->GetPath().c_str())
+	setField("Sound", (engine->GetSound() != NULL)
+	                ? (engine->GetSound()->GetPath().c_str())
 	                : "");
 	return 1;
 }

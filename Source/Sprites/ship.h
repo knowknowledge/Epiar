@@ -92,7 +92,6 @@ class Ship : public Sprite {
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
 		vector<Weapon *> shipWeapons; ///< 
-		float nonplayersound; ///< Ratio for reducing non-player sounds
 
 		list<Outfit *> outfits;
 
