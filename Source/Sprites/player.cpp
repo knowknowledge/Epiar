@@ -158,7 +158,10 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		xmlNodePtr ammt = FirstChildNamed(attr,"amount");
 		if(!type || !ammt)
 			return false;
-		StoreCommodities( NodeToString(doc,type), NodeToInt(doc,ammt) );
+		if( NodeToInt(doc,ammt) > 0 )
+		{
+			StoreCommodities( NodeToString(doc,type), NodeToInt(doc,ammt) );
+		}
 	}
 
 	for( attr = FirstChildNamed(node,"ammo"); attr!=NULL; attr = NextSiblingNamed(attr,"ammo") ){
@@ -198,6 +201,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	}
 	for(int a=0;a<max_ammo;a++){
 		if(getAmmo(AmmoType(a))){
+			if( getAmmo(AmmoType(a)) )
+				continue; // Don't save empty ammo Nodes
 			snprintf(buff, sizeof(buff), "%d", getAmmo(AmmoType(a)) );
 			xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "ammo");
 			xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str() );
@@ -206,14 +211,17 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		}
 	}
 	map<Commodity*,unsigned int> cargo = this->getCargo();
-	map<Commodity*,unsigned int>::iterator iter = cargo.begin();
-	while( iter!=cargo.end() ) {
+	map<Commodity*,unsigned int>::iterator iter;
+	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
+		if( (*iter).second )
+		{
+			continue; // Don't Save empty cargo Nodes
+		}
 		snprintf(buff, sizeof(buff), "%d", (*iter).second );
 		xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "cargo");
 		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter).first)->GetName().c_str() );
 		xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
 		xmlAddChild(section, ammo);
-		++iter;
 	}
 	list<Outfit*> *outfits = this->GetOutfits();
 	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){

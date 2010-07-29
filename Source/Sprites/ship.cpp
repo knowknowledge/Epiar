@@ -462,7 +462,7 @@ int Ship::DiscardCommodities(string commodity, unsigned int count) {
 	status.cargoSpaceUsed-=count;
 	LogMsg(INFO, "Discarding %d tons of %s. %d tons remaining.", count, commodity.c_str(), iter->second);
 
-	if( count == iter->second ) {
+	if( iter->second == 0 ) {
 		commodities.erase(com);
 	}
 
