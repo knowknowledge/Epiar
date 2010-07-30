@@ -16,7 +16,7 @@ playerCommands = {
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
-	{'space', "Fire", "PLAYER:Fire()",KEYPRESSED},
+	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )",KEYPRESSED},
 }
 
 function playerStart()

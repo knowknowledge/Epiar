@@ -297,7 +297,7 @@ void Ship::Draw( void ) {
 /**\brief Fire's ship current weapon.
  * \return FireStatus
  */
-FireStatus Ship::Fire() {
+FireStatus Ship::Fire( int target ) {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
 		return FireNoWeapons;
@@ -336,9 +336,7 @@ FireStatus Ship::Fire() {
 		SpriteManager *sprites = SpriteManager::Instance();
 		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);
 		projectile->SetOwnerID( this->GetID() );
-		if( this->GetDrawOrder() & DRAW_ORDER_PLAYER ) { // TEMP Targeting
-			projectile->SetTargetID( Hud::GetTarget() );
-		}
+		projectile->SetTargetID( target );
 		sprites->Add( (Sprite*)projectile );
 
 		//track number of ticks the last fired occured

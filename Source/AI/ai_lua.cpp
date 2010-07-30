@@ -204,14 +204,19 @@ int AI_Lua::ShipRadarColor(lua_State* L){
  */
 int AI_Lua::ShipFire(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n == 1) {
+	int target = -1;
+	if( (n == 1) || (n == 2) ) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		FireStatus result = (ai)->Fire();
+		if(n == 2)
+		{
+			target = luaL_checkinteger(L,2);
+		}
+		FireStatus result = (ai)->Fire(target);
 		lua_pushinteger(L, (int)(result) );
 		return 1;
 	} else {
-		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
+		luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
 	}
 	return 0;
 }
