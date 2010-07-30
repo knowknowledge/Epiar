@@ -141,9 +141,6 @@ bool Simulation::Run() {
     }
     Lua::Call("Start");
 
-	// Create the hud
-	Hud::Hud();
-
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("-----------------------------------");
 	Hud::Alert("Please Report all bugs to epiar.net");
