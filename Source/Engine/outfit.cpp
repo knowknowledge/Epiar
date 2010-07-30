@@ -212,73 +212,73 @@ void Outfit::_dbg_PrintInfo( void ) {
 }
 
 /**
- * \function GetMSRP
+ * \fn GetMSRP
  * \brief Get the msrp
  *
- * \function SetMSRP
+ * \fn SetMSRP
  * \brief Set the msrp
  * \param _msrp The new msrp value
  *
- * \function GetPicture
+ * \fn GetPicture
  * \brief Get the picture
  *
- * \function SetPicture
+ * \fn SetPicture
  * \brief Set the picture
  * \param _picture The new picture value
  *
- * \function GetRotationsPerSecond
+ * \fn GetRotationsPerSecond
  * \brief Get the rotPerSecond
  *
- * \function SetRotationsPerSecond
+ * \fn SetRotationsPerSecond
  * \brief Set the rotPerSecond
  * \param _rotPerSecond The new rotPerSecond value
  *
- * \function GetMaxSpeed
+ * \fn GetMaxSpeed
  * \brief Get the maxSpeed
  *
- * \function SetMaxSpeed
+ * \fn SetMaxSpeed
  * \brief Set the maxSpeed
  * \param _maxSpeed The new maxSpeed value
  *
- * \function GetForceOutput
+ * \fn GetForceOutput
  * \brief Get the forceOutput
  *
- * \function SetForceOutput
+ * \fn SetForceOutput
  * \brief Set the forceOutput
  * \param _forceOutput The new forceOutput value
  *
- * \function GetMass
+ * \fn GetMass
  * \brief Get the mass
  *
- * \function SetMass
+ * \fn SetMass
  * \brief Set the mass
  * \param _mass The new mass value
  *
- * \function GetCargoSpace
+ * \fn GetCargoSpace
  * \brief Get the cargoSpace
  *
- * \function SetCargoSpace
+ * \fn SetCargoSpace
  * \brief Set the cargoSpace
  * \param _cargoSpace The new cargoSpace value
  *
- * \function GetSurfaceArea
+ * \fn GetSurfaceArea
  * \brief Get the surfaceArea
  *
- * \function SetSurfaceArea
+ * \fn SetSurfaceArea
  * \brief Set the surfaceArea
  * \param _surfaceArea The new surfaceArea value
  *
- * \function GetHullStrength
+ * \fn GetHullStrength
  * \brief Get the hullStrength
  *
- * \function SetHullStrength
+ * \fn SetHullStrength
  * \brief Set the hullStrength
  * \param _hullStrength The new hullStrength value
  *
- * \function GetShieldStrength
+ * \fn GetShieldStrength
  * \brief Get the shieldStrength
  *
- * \function SetShieldStrength
+ * \fn SetShieldStrength
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
  */

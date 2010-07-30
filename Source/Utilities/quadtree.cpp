@@ -12,6 +12,40 @@
 
 const char* PositionNames[4] = { "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", "LOWER_RIGHT"};
 
+/**\class QuadTree
+ * \brief The QuadTree is a recursive datastructure that makes it possible to query for 2 Dimensional points and areas.
+ *
+ * Like a more traditional tree, each part of the QuadTree is either a Leaf or a Node.
+ * Each Node has 4 branches: "UPPER_LEFT", "UPPER_RIGHT", "LOWER_LEFT", and "LOWER_RIGHT".
+ * All of the objects are stored in the Leaves.  (In our case the QuadTree stores Sprite pointers.)
+ * Once a Leaf contains a certain threshold of Objects, it transforms into a Node and push it's objects into new leaves.
+ *
+ * There are two important QuadTree uses:
+ *   -# Get the Sprite that is nearest a point.
+ *   -# Get all the Sprites that are within a given radius of a point.
+ *
+ * Here is an example QuadTree.
+ * Notice that it split twice.
+ * \verbatim
+   +---+----+--------+
+   | o | ooo|        |
+   +---+----+        |
+   |o  |    |        |
+   +---+----+--------+
+   |        |        |
+   |        |        |
+   |        |    o   |
+   +--------+--------+
+   \endverbatim
+ *
+ * \see GetNearestSprite
+ * \see GetSpritesNear
+ *
+ */
+
+/** \brief Constructor
+ * By default there are no instantiated subtrees.
+ */
 
 QuadTree::QuadTree(Coordinate _center, float _radius){
 	// cout<<"New QT at "<<_center<<" has R="<<_radius<<endl;
@@ -27,6 +61,9 @@ QuadTree::QuadTree(Coordinate _center, float _radius){
 	this->isDirty = false;
 }
 
+/** \brief Destructor
+ */
+
 QuadTree::~QuadTree(){
 	this->objects->clear();
 	delete objects;
@@ -38,6 +75,10 @@ QuadTree::~QuadTree(){
 		}
 	}
 }
+
+/** \brief The number of Sprites within this QuadTree.
+ *
+ */
 
 unsigned int QuadTree::Count(){
 	return objectcount;
@@ -55,13 +96,26 @@ unsigned int QuadTree::Count(){
 	*/
 }
 
+/** \brief Check if a point is inside this QuadTree.
+ * \arg point The point that we want to check.
+ * \returns True if the point is inside the QuadTree.
+ */
+
 bool QuadTree::Contains(Coordinate point){
 	bool insideLeftBorder = (center.GetX()-radius) <= point.GetX();
 	bool insideRightBorder = (center.GetX()+radius) >= point.GetX();
-	bool insideTopBorder = 	(center.GetY()+radius) >= point.GetY();
+	bool insideTopBorder = (center.GetY()+radius) >= point.GetY();
 	bool insideBottomBorder = (center.GetY()-radius) <= point.GetY();
 	return insideLeftBorder && insideRightBorder && insideTopBorder && insideBottomBorder;
 }
+
+/** \brief Add a Sprite to this Tree
+ *
+ * The Tree is marked as dirty if the Sprite is added to a Leaf.
+ *
+ * \arg obj The Sprite to delete.
+ * \returns TRUE if the Sprite is found and successfully removed.
+ */
 
 void QuadTree::Insert(Sprite *obj){
 	if(! isLeaf ){ // Node
@@ -73,6 +127,14 @@ void QuadTree::Insert(Sprite *obj){
 	}
 	objectcount++;
 }
+
+/** \brief Remove a Sprite from this Tree
+ *
+ * The Tree is marked as dirty if the Sprite if successfully found and removed.
+ *
+ * \arg obj The Sprite to delete.
+ * \returns TRUE if the Sprite is found and successfully removed.
+ */
 
 bool QuadTree::Delete(Sprite* obj){
 	if(0 == this->Count())
@@ -106,6 +168,11 @@ bool QuadTree::Delete(Sprite* obj){
 	}
 }
 
+/** \brief Get all Sprites in this QuadTree
+ *
+ * \returns A list of Sprite pointers.
+ */
+
 list<Sprite *> *QuadTree::GetSprites() {
 	if(!isLeaf){ // Node
 		list<Sprite*> *other;
@@ -122,6 +189,19 @@ list<Sprite *> *QuadTree::GetSprites() {
 		return new list<Sprite*>(*objects);
 	}
 }
+
+/** \brief Get all Sprites within a certain radius.
+ *
+ * \arg point The center of the search radius.
+ * \arg distance The maximum search radius.
+ * \arg nearby [out] The list of all Sprites found within the search radius.
+ * \arg type A DRAW_ORDER mask used to filter for desired Sprite types.
+ *
+ * The nearby list is passed down the recursive call-stack rather than returned at by each call.
+ * This limits the malloc calls.
+ *
+ * \returns nothing.
+ */
 
 void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *nearby, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
@@ -150,6 +230,19 @@ void QuadTree::GetSpritesNear(Coordinate point, float distance, list<Sprite*> *n
 		}
 	}
 }
+
+/**\brief Find the Sprite that is closest to a known point.
+ *
+ * \arg obj The Sprite at the center of the search radius.
+ *          This Sprite is ignored while searching.
+ *          Otherwise, a Sprite wouldn't be able to find other Sprites near them, they would always find themselves. )
+ * \arg distance A Max radius to use while searching.
+ *      	     Sprites outside of this radius are ignored.
+ *               Each recurse of this function will use the smallest new radius.
+ * \arg type A DRAW_ORDER mask used to filter for desired Sprite types.
+ *
+ * \returns A pointer to the Sprite nearest the obj Sprite, within a certain distance, and of the correct type.
+ */
 
 Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance, int type){
 	// The Maximum range is when the center and point are on a 45 degree angle.
@@ -197,6 +290,15 @@ Sprite* QuadTree::GetNearestSprite(Sprite* obj, float distance, int type){
 	return closest;
 }
 
+/** \brief  Check and remove any Sprites are not contained in this QuadTree.
+ *
+ * This check for Sprites that are out of bounds of the children subtrees.
+ * Any Sprites that can be re-inserted into this QuadTree will be re-inserted.
+ * Sprites that are outside of this this QuadTree are removed and forgotten.
+ *
+ * \returns List of all Sprites outside of this QuadTree.
+ */
+
 list<Sprite*> *QuadTree::FixOutOfBounds(){
 	list<Sprite*>::iterator i;
 	list<Sprite*> *other;
@@ -241,6 +343,8 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 	return outofbounds;
 }
 
+/** \brief Update all Sprites in this QuadTree
+ */
 
 void QuadTree::Update(){
 	list<Sprite*>::iterator i;
@@ -257,6 +361,13 @@ void QuadTree::Update(){
 		}
 	}
 }
+
+/**  Draw the QuadTree
+ *
+ * /arg root The center coordinate for the root of this QuadTree.
+ *
+ * (Useful for debugging.)
+ */
 
 void QuadTree::Draw(Coordinate root){
 	// The QuadTree is scaled so that it always fits on the screen.
@@ -287,6 +398,11 @@ void QuadTree::Draw(Coordinate root){
 	}
 }
 
+/** \brief Get the QuadTree Position that would contain a point
+ * \arg point The point that we're checking.
+ * \returns The QuadTree Position.
+ */
+
 QuadPosition QuadTree::SubTreeThatContains(Coordinate point){
 	bool rightOfCenter = point.GetX() > center.GetX();
 	bool aboveCenter = point.GetY() > center.GetY();
@@ -295,12 +411,16 @@ QuadPosition QuadTree::SubTreeThatContains(Coordinate point){
 	return QuadPosition(pos);
 }
 
+/** \brief Build a new subtree at the given QuadPosition
+ * \arg pos The QuadPosition that should be created.
+ */
+
 void QuadTree::CreateSubTree(QuadPosition pos){
 	float half = radius/2;
 	// Each subtree has a specific new center
 	Coordinate offset;
 	switch(pos){
-	//                                           (  X  ,  Y  )
+		// Center of this QuadPosition:      (  X  ,  Y  )
 		case UPPER_LEFT:  offset = Coordinate(-half,+half); break;
 		case UPPER_RIGHT: offset = Coordinate(+half,+half); break;
 		case LOWER_LEFT:  offset = Coordinate(-half,-half); break;
@@ -312,6 +432,12 @@ void QuadTree::CreateSubTree(QuadPosition pos){
 	assert(subtrees[pos]!=NULL);
 }
 
+/** \brief Insert an object into a SubTree
+ *  If the associated QuadTree subtree doesn't exist, this creates it.
+ *  This is used for moving Sprites around internally.
+ *  It doesn't do any accounting for this Tree.
+ */
+
 void QuadTree::InsertSubTree(Sprite *obj){
 	QuadPosition pos = SubTreeThatContains( obj->GetWorldPosition() );
 	if(subtrees[pos]==NULL)
@@ -319,6 +445,15 @@ void QuadTree::InsertSubTree(Sprite *obj){
 	assert(subtrees[pos]!=NULL);
 	subtrees[pos]->Insert(obj);
 }
+
+/** \brief Ballance the QuadTree by splitting and merging subtrees
+ *
+ * If this is a Leaf that contains more than QUADMAXOBJECTS Sprites, it splits itself.
+ *
+ * If this is a Node that contains fewer than QUADMAXOBJECTS Sprites, it merges all subtrees into itself.
+ *
+ * (Leaf Trees smaller than a specific size will not split.)
+ */
 
 void QuadTree::ReBallance(){
 	unsigned int numObjects = this->Count();
@@ -366,6 +501,13 @@ void QuadTree::ReBallance(){
 	isDirty=false;
 	assert(numObjects == this->Count()); // ReBallancing should never change the total number of elements
 }
+
+/** \brief Generate an XML Node of this QuadTree.
+ *
+ * (Useful for debugging.)
+ *
+ * \returns xmlNodePtr of this QuadTree
+ */
 
 xmlNodePtr QuadTree::ToNode() {
 	xmlNodePtr thisNode, objNode;

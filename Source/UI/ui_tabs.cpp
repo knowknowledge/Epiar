@@ -182,6 +182,10 @@ void Tab::ResetScrollBars(){
 	}
 }
 
+/**\class Tab
+ * \brief A grouping of tabs including a tab selection bar.
+ */
+
 /**\brief Constructs a tab collection (no caption), you could add a label though.
  * \param name (not shown) Tabs collection don't really have a caption.
  */

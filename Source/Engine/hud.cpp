@@ -102,6 +102,8 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name,
 /**\brief Draws the StatusBar
  * \param x x-coordinate
  * \param y y-coordinate
+ *
+ * \bug This can segfault with an empty title.
  */
 void StatusBar::Draw(int x, int y) {
 	int widthRemaining = this->width;

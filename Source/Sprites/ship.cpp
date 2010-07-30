@@ -24,6 +24,22 @@
 /**\class Ship
  * \brief Ship handling. */
 
+/**\fn GetOutfits
+ * \return A List of all Outfits on this Ship.
+ */
+
+/**\fn GetEngine
+ * \return The Engine Attached to this Ship.
+ */
+
+/**\fn GetCredits
+ * \return The Credits held by this Ship.
+ */
+
+/**\fn GetCargoSpaceUsed
+ * \return The total tonnage of cargo space consumed.
+ */
+
 /**\brief Ship constructor that initializes default values.
  */
 Ship::Ship()

@@ -111,8 +111,8 @@ xmlNodePtr Alliance::ToXMLNode(string componentName){
  * \brief Returns the type of currency used.
  */
 
-/**\fn Alliance::GetIlligalCargos()
- * \brief Returns illegal cargo for this Alliance
+/**\fn Alliance::GetColor()
+ * \brief Returns the banner color of this Alliance.
  */
 
 

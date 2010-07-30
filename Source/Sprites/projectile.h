@@ -31,12 +31,5 @@ private:
 	int ownerID;
 	int targetID;
 	Weapon *weapon;
-
-	/*todo Add 
- -graphics:
-	 firing graphic
-	 travel graphic
-	 explode graphic
-*/
 };
 #endif // __h_PROJECTILE__
