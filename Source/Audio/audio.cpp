@@ -43,7 +43,8 @@ bool Audio::Initialize( void ){
 		return false;
 	}
 
-#ifdef SDL_MIXER_MAJOR_VERSION && SDL_MIXER_MAJOR_VERSION > 1 && SDL_MIXER_MINOR_VERSON > 2 && SDL_MIXER_PATCHLEVEL >= 10
+#if defined(SDL_MIXER_MAJOR_VERSION) && (SDL_MIXER_MAJOR_VERSION>1) \
+	&& (SDL_MIXER_MINOR_VERSON>2) && (SDL_MIXER_PATCHLEVEL>=10)
 	// Load MOD and OGG libraries (If SDL_mixer version supports it)
 	const SDL_version *mix_version=Mix_Linked_Version();
 	if( (mix_version->major >= 1) && (mix_version->minor >= 2) && (mix_version->patch >= 10) ){
@@ -66,7 +67,8 @@ bool Audio::Shutdown( void ){
 	this->HaltAll();
 
 
-#ifdef SDL_MIXER_MAJOR_VERSION && SDL_MIXER_MAJOR_VERSION > 1 && SDL_MIXER_MINOR_VERSON > 2 && SDL_MIXER_PATCHLEVEL >= 10
+#if defined(SDL_MIXER_MAJOR_VERSION) && (SDL_MIXER_MAJOR_VERSION>1) \
+	&& (SDL_MIXER_MINOR_VERSON>2) && (SDL_MIXER_PATCHLEVEL>=10)
 	// Free every library loaded
 	const SDL_version *mix_version=Mix_Linked_Version();
 	if( (mix_version->major>=1) && (mix_version->minor>=2) && (mix_version->patch>=10) ){
