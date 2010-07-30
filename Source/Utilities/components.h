@@ -38,7 +38,7 @@ class Components {
 		Component* Get(string name);
 		list<string>* GetNames();
 
-		bool Load(string filename);
+		bool Load(string filename, bool optional=false);
 		bool Save(string filename);
 	protected:
 

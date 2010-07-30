@@ -138,8 +138,10 @@ bool Components::ParseXMLNode( xmlDocPtr doc, xmlNodePtr node )
 }
 
 /**\brief Load an XML file
+ * \arg filename The XML file that should be parsed.
+ * \arg optional  If this is true, an error is not returned if the file doesn't exist.
  */
-bool Components::Load(string filename) {
+bool Components::Load(string filename, bool optional) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
@@ -154,7 +156,7 @@ bool Components::Load(string filename) {
 
 	if( doc == NULL ) {
 		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
-		return false;
+		return optional;
 	}
 	
 	cur = xmlDocGetRootElement( doc );

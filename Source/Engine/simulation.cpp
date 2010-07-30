@@ -369,7 +369,7 @@ bool Simulation::Parse( void ) {
 		LogMsg(WARN, "There was an error loading the planets from '%s'.", planetsFilename.c_str() );
 		return false;
 	}
-	if( players->Load( playersFilename ) != true ) {
+	if( players->Load( playersFilename, true ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", playersFilename.c_str() );
 		return false;
 	}
