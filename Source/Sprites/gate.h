@@ -7,8 +7,8 @@
  * Notes         : A gate is a two-part Sprite that ships can move through
  */
 
-#ifndef __H_EFFECT__
-#define __H_EFFECT__
+#ifndef __H_GATE__
+#define __H_GATE__
 
 #include "Graphics/animation.h"
 #include "Sprites/sprite.h"
@@ -51,5 +51,5 @@ class Gate : public Sprite {
 		Gate* GetPartner();
 };
 
-#endif // __H_EFFECT__
+#endif // __H_GATE__
 
