@@ -33,16 +33,17 @@ class StatusBar {
 				*im_infobar_right,
 				*im_infobar_middle;
 		string GetTitle() { return title; }
-		void SetName( string n ) { name = n; }
-		string GetName() { return name; }
+		void SetName( string n );
+		string GetName() { return std::string (name.begin(), name.end()); }
 		void SetRatio(float _ratio ) { ratio = _ratio; }
 		float GetRatio() { return ratio; }
 		QuadPosition GetPosition(){ return pos; }
+		void print ();
 	protected:
-		string title;
+		string title;	    //we do not need to change title to a vector<char> as it is never re-assigned
 		int width;
 		QuadPosition pos;
-		string name; // TODO: the name 'name' is bad
+		vector<char> name; // TODO: the name 'name' is bad
 		float ratio;
 };
 

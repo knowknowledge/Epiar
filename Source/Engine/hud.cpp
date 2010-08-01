@@ -79,13 +79,19 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name,
 	:title(_title)
 	,width(_width)
 	,pos(_pos)
-	,name(_name)
 	,ratio(_ratio)
 {
-	printf("Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), name.c_str(), ratio);
+	name.assign (_name.begin(), _name.end());
+	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), GetName().c_str(), ratio);
 	assert(pos>=0);
 	assert(pos<=4);
 }
+
+void StatusBar::print ()
+{
+    LogMsg (DEBUG4, "PRINTOUT OF STATUSBAR AT 0x%X\n\ttitle = %s\n\twidth=%d\n\tpos=%d\n\tname=%s\n\tratio=%f\n", this, title.c_str(), width, pos, GetName().c_str(), ratio);
+}
+
 
 /**\var StatusBar::im_infobar_left
  * \brief Left side image
@@ -132,7 +138,7 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw Name
 	if( !name.empty() ) {
-		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name,Font::LEFT,Font::MIDDLE );
+		int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), GetName() ,Font::LEFT,Font::MIDDLE );
 		widthRemaining -= wName;
 		x += wName;
 	}
@@ -159,6 +165,10 @@ void StatusBar::Draw(int x, int y) {
 /**\fn StatusBar::SetName(string n)
  * \brief Sets the name of the StatusBar
  */
+void StatusBar::SetName( string n )
+{
+    name.assign (n.begin(), n.end());
+}
 
 /**\fn StatusBar::GetName
  * \brief Returns the name of the StatusBar
@@ -550,8 +560,8 @@ int Hud::newStatus(lua_State *L) {
 
 	// Allocate memory for a pointer to object
 	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar**));
-    luaL_getmetatable(L, EPIAR_HUD);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_HUD);
+	lua_setmetatable(L, -2);
 
 	// Create the Status Bar
 	string title = (string)luaL_checkstring(L,1);
@@ -593,11 +603,14 @@ StatusBar* Hud::checkStatus(lua_State *L, int index) {
 /**\brief Set's the status (Lua callable)
  */
 int Hud::setStatus(lua_State *L) {
+	LogMsg (DEBUG4, "setStatus called");
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
 	StatusBar *bar= checkStatus(L,1);
-
+	LogMsg (DEBUG4, "after call to checkStatus, address = 0x%X", bar);
+	LogMsg (DEBUG4, "    GetName = %s, GetRatio = %f", bar->GetName().c_str(), bar->GetRatio());
+	
 	if( lua_isnumber(L,2) ) {
 		float ratio = (float)(luaL_checknumber(L,2));
 		bar->SetRatio(ratio);
@@ -605,6 +618,7 @@ int Hud::setStatus(lua_State *L) {
 		string name = (string)(luaL_checkstring(L,2));
 		bar->SetName(name);
 	}
+	LogMsg (DEBUG4, "End of setStatus");
 
 	return 0;
 }
