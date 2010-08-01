@@ -19,24 +19,22 @@
 
 #include "Engine/hud.h"
 
-#define NON_PLAYER_SOUND_RATIO 0.4f
+#define NON_PLAYER_SOUND_RATIO 0.4f ///< Ratio used to quiet NON-PLAYER Ship Sounds.
 
 /**\class Ship
- * \brief Ship handling. */
-
-/**\fn GetOutfits
+ * \brief A Ship Sprite that moves, Fires Weapons, has cargo, and ultimately explodes.
+ * \sa Player, AI
+ *
+ * \fn Ship::GetOutfits
  * \return A List of all Outfits on this Ship.
- */
-
-/**\fn GetEngine
+ *
+ * \fn Ship::GetEngine
  * \return The Engine Attached to this Ship.
- */
-
-/**\fn GetCredits
+ *
+ * \fn Ship::GetCredits
  * \return The Credits held by this Ship.
- */
-
-/**\fn GetCargoSpaceUsed
+ *
+ * \fn Ship::GetCargoSpaceUsed
  * \return The total tonnage of cargo space consumed.
  */
 

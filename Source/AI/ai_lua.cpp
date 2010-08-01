@@ -275,6 +275,10 @@ int AI_Lua::ShipExplode(lua_State* L){
 	return 0;
 }
 
+/**\brief Lua callable function to remove this ship
+ *
+ *  This does not create an explosion, the ship is simply removed instantly.
+ */
 int AI_Lua::ShipRemove(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
@@ -374,6 +378,9 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 	return 0;
 }
 
+/**\brief Lua callable function to add an Outfit to a ship.
+ * \sa Ship::addOutfit(Outfit*)
+ */
 int AI_Lua::ShipAddOutfit(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
@@ -460,7 +467,12 @@ int AI_Lua::ShipDiscardCommodities(lua_State* L){
 	return 1;
 }
 
-// Current Ship State
+/**\brief Lua callable function to get the Type of this ship
+ *
+ * This is usually used by Lua prior to casting a generic sprite as a Ship.
+ *
+ * \sa Sprite::GetDrawOrder()
+ */
 
 int AI_Lua::ShipGetType(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -688,6 +700,9 @@ int AI_Lua::ShipGetModelName(lua_State* L){
 	return 1;
 }
 
+/**\brief Lua callable function to get the ship's engine name.
+ * \sa Ship::GetEngine()
+ */
 int AI_Lua::ShipGetEngine(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)

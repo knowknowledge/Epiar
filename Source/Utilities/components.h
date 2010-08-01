@@ -42,9 +42,9 @@ class Components {
 		bool Save(string filename);
 	protected:
 
-		Components() {};
-		Components( const Components & );
-		Components& operator= (const Components&);
+		Components() {};  ///< Protected default constuctor
+		Components( const Components & ); ///< Protected copy constuctor
+		Components& operator= (const Components&); ///< Protected copy constuctor
 
 		virtual Component* newComponent() = 0;
 		bool ParseXMLNode( xmlDocPtr doc, xmlNodePtr node );

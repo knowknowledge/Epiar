@@ -124,16 +124,8 @@ void Engine::_dbg_PrintInfo( void ) {
 	//cout << "Engine called " << name << ", priced at " << msrp << " with force of " << forceOutput << " and fold capability set to " << foldDrive << endl;
 }
 
-/**\fn Engine::GetForceOutput()
- * \brief Returns the force output.
- */
-
 /**\fn Engine::GetFlareAnimation()
  * \brief Gets the animation.
- */
-
-/**\fn Engine::GetMSRP()
- * \brief Retrieves the price
  */
 
 /**\fn Engine::GetFoldDrive()

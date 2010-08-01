@@ -11,6 +11,22 @@
 #include "Utilities/file.h"
 #include "Utilities/components.h"
 
+/**\brief Find the first child node that matches a specific name
+ * \param node The parent node that we are searching.
+ * \param text The text name that we are searching for.
+ * \sa NextSiblingNamed
+ * \Example
+ * \code
+ * xmlNodePtr parent,node;
+ * ... // get the parent node that contains the children we want to iterate over.
+ * for(node = FirstChildNamed(parent,"FOO"); node != NULL; node = NextSiblingNamed(node, "FOO"))
+ * {
+ * ...
+ * }
+ * \endcode
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+
 xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
 {
 	xmlNodePtr child = node->xmlChildrenNode;
@@ -25,6 +41,12 @@ xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
 	return (xmlNodePtr )NULL;
 }
 
+/**\brief Find the first sibliing node that matches a specific name
+ * \param child The previous child node that we are searching.
+ * \param text The text name that we are searching for.
+ * \sa FirstChildNamed
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
 xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
 {
 	child = child->next;
@@ -40,6 +62,15 @@ xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
 	return (xmlNodePtr )NULL;
 }
 
+/**\brief Extract the text from a XML Node as a String.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * 
+ * It's easier to deal with C++ strings than xmlStrings, since the C++ strings have destructors.
+ *
+ * \sa NodeToInt, NodeToFloat
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
 string NodeToString( xmlDocPtr doc, xmlNodePtr node )
 {
 	string value;
@@ -50,6 +81,12 @@ string NodeToString( xmlDocPtr doc, xmlNodePtr node )
 	return value;
 }
 
+/**\brief Extract the text from a XML Node as an int.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * \sa NodeToString, NodeToFloat
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
 int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
 {
 	int value;
@@ -60,6 +97,12 @@ int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
 	return value;
 }
 
+/**\brief Extract the text from a XML Node as a float.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * \sa NodeToString, NodeToInt
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
 float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 {
 	float value;
@@ -72,10 +115,53 @@ float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 
 /**\class Component
  * \brief A generic entity that is loaded and saved to XML
+ *
+ **\var name 
+ * \brief The unique name of this Component.
+ * \details The name is used to identify and fetch a Component.
+ *          It may be sent to Lua as the sole identifier.
+ *          It will likely be visible to a player.
+ *
+ **\fn SetName
+ * \brief Change the Name of this Component.
+ * \warn This may not be safe.
+ *       It may not play well with the Components class list of names.
+ *       If the name is set after the Component is added to the Components
+ *       collection, this Component may become lost.
+ * \todo Make this Private
+ *
+ **\fn GetName
+ * \brief Get the name of this Component
+ *
+ **\fn FromXMLNode
+ * \brief Parse an XML Node into a Component.
+ *
+ **\fn ToXMLNode
+ * \brief Create an XML Node from this Component.
  */
 
 /**\class Components
  * \brief A collection for all similar Component Instances
+ *
+ * \var rootName
+ * \brief The name of the expected root node in an XML document for this kind of Component.
+ *
+ * \var componentName
+ * \brief The name of the expected subnode that designates this kind of Component.
+ *
+ * \var components
+ * \brief A hash table of Components indexed by the name of the Component.
+ *
+ * \var names
+ * \brief A list of all of the names of the Components that are in the components hashtable.
+ * \todo Is there a fast way to get this information out of the hash table rather than storing it explicitely?
+ *
+ * \fn newComponent
+ * \brief A virtual constuctor for the Component Class being stored in this Components Instance.
+ * \details This virtual function is used while parseing an XML file.
+ *          We use this rather than "new Component()" because the actual
+ *          Component class being stored is not going to be the same size as a
+ *          pure Component.
  */
 
 /**\brief Get the Names of all Components in this collection
@@ -116,6 +202,17 @@ Component* Components::Get(string name) {
 	if( val == components.end() ) return NULL;
 	return val->second;
 }
+
+/**\brief Attempt to parse an XML Node into a Component.
+ * \details This will do some basic validation to check that the XML Node is
+ * the right type.
+ *
+ * \todo Some Components instances should override this function to allow
+ *       multiple Component types to be parsed depending on some
+ *       characteristic.  For example, the planets xml might want to contain
+ *       planets, stations, and gates.
+ *
+ */
 
 bool Components::ParseXMLNode( xmlDocPtr doc, xmlNodePtr node )
 {

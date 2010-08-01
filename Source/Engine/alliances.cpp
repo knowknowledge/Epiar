@@ -42,6 +42,8 @@ Alliance& Alliance::operator= (const Alliance& other){
  * \param _name Name of the alliance.
  * \param _attackSize Size of the fleet
  * \param _aggressiveness Aggressiveness
+ * \param _currency The kind of currency used by this Alliance.
+ * \param _color The flag color for this Alliance.
  */
 Alliance::Alliance( string _name, short int _attackSize, float _aggressiveness, string _currency, Color _color) :
     attackSize(_attackSize),

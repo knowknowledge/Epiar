@@ -10,6 +10,14 @@
 #include "Graphics/image.h"
 #include "Utilities/components.h"
 
+/** \class Outfit
+ * \brief A piece of Ship Equipment.
+ * \details There are two basic types of Outfit objects:
+ *          -# Generic Outfit objects that only affect Ship stats (Tougher armor).
+ *          -# Specific Ship equipments that require their own classes. (Engines, Weapons, Models)
+ * \sa Engine, Model, Weapon
+ */
+
 /** Default Constructor
  */
 Outfit::Outfit()
@@ -212,73 +220,73 @@ void Outfit::_dbg_PrintInfo( void ) {
 }
 
 /**
- * \fn GetMSRP
+ * \fn Outfit::GetMSRP()
  * \brief Get the msrp
  *
- * \fn SetMSRP
+ * \fn Outfit::SetMSRP(int _msrp)
  * \brief Set the msrp
  * \param _msrp The new msrp value
  *
- * \fn GetPicture
+ * \fn Outfit::GetPicture()
  * \brief Get the picture
  *
- * \fn SetPicture
+ * \fn Outfit::SetPicture(Image* _picture)
  * \brief Set the picture
  * \param _picture The new picture value
  *
- * \fn GetRotationsPerSecond
+ * \fn Outfit::GetRotationsPerSecond()
  * \brief Get the rotPerSecond
  *
- * \fn SetRotationsPerSecond
+ * \fn Outfit::SetRotationsPerSecond(float _rotPerSecond)
  * \brief Set the rotPerSecond
  * \param _rotPerSecond The new rotPerSecond value
  *
- * \fn GetMaxSpeed
+ * \fn Outfit::GetMaxSpeed()
  * \brief Get the maxSpeed
  *
- * \fn SetMaxSpeed
+ * \fn Outfit::SetMaxSpeed(float _maxSpeed)
  * \brief Set the maxSpeed
  * \param _maxSpeed The new maxSpeed value
  *
- * \fn GetForceOutput
+ * \fn Outfit::GetForceOutput()
  * \brief Get the forceOutput
  *
- * \fn SetForceOutput
+ * \fn Outfit::SetForceOutput(float _forceOutput)
  * \brief Set the forceOutput
  * \param _forceOutput The new forceOutput value
  *
- * \fn GetMass
+ * \fn Outfit::GetMass()
  * \brief Get the mass
  *
- * \fn SetMass
+ * \fn Outfit::SetMass(float _mass)
  * \brief Set the mass
  * \param _mass The new mass value
  *
- * \fn GetCargoSpace
+ * \fn Outfit::GetCargoSpace()
  * \brief Get the cargoSpace
  *
- * \fn SetCargoSpace
+ * \fn Outfit::SetCargoSpace(int _cargoSpace)
  * \brief Set the cargoSpace
  * \param _cargoSpace The new cargoSpace value
  *
- * \fn GetSurfaceArea
+ * \fn Outfit::GetSurfaceArea()
  * \brief Get the surfaceArea
  *
- * \fn SetSurfaceArea
+ * \fn Outfit::SetSurfaceArea(int _surfaceArea)
  * \brief Set the surfaceArea
  * \param _surfaceArea The new surfaceArea value
  *
- * \fn GetHullStrength
+ * \fn Outfit::GetHullStrength()
  * \brief Get the hullStrength
  *
- * \fn SetHullStrength
+ * \fn Outfit::SetHullStrength(int _hullStrength)
  * \brief Set the hullStrength
  * \param _hullStrength The new hullStrength value
  *
- * \fn GetShieldStrength
+ * \fn Outfit::GetShieldStrength()
  * \brief Get the shieldStrength
  *
- * \fn SetShieldStrength
+ * \fn Outfit::SetShieldStrength(int _shieldStrength)
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
  */
@@ -300,12 +308,12 @@ Outfits *Outfits::Instance( void ) {
 	return( pInstance );
 }
 
-/**\fn Outfits::GetOutfit(string name)
+/**\fn Outfits::GetOutfit(string name)()
  *  \brief Retrieves the Outfit by name
- * \fn Outfits::newComponent()
+ * \fn Outfits::newComponent()()
  *  \brief Creates a new Outfit
- * \fn Outfits::Outfits(const Outfits&)
+ * \fn Outfits::Outfits(const Outfits&)()
  *  \brief An empty constructor.
- * \fn Outfits::operator= (const Outfits&)
+ * \fn Outfits::operator= (const Outfits&)()
  *  \brief An empty assignment operator.
  */
