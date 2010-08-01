@@ -226,8 +226,6 @@ void Weapon::_dbg_PrintInfo( void ) {
 
 /**\fn Weapon::GetImage( )
  *  \brief Returns the image of the fired weapon
- * \fn Weapon::GetPicture( )
- *  \brief Returns the image of the weapon as seen in ship
  * \fn Weapon::GetType( )
  *  \brief Retrieves the type of Weapon
  * \fn Weapon::GetPayload( )
@@ -242,8 +240,6 @@ void Weapon::_dbg_PrintInfo( void ) {
  *  \brief Retrieves the ammo consumption
  * \fn Weapon::GetFireDelay( )
  *  \brief Retrieves the firing delay
- * \fn Weapon::GetMSRP( )
- *  \brief Retrieves the price
  * \fn Weapon::GetLifetime( )
  *  \brief Retrieves the ammo life time
  * \var Weapon::sound

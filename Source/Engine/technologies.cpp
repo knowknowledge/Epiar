@@ -142,6 +142,8 @@ xmlNodePtr Technology::ToXMLNode(string componentName) {
  *  \brief Returns the list of Engine objects
  * \fn Technology::GetWeapons()
  *  \brief Returns the list of Weapon objects
+ * \fn Technology::GetOutfits()
+ *  \brief Returns the list of Weapon objects
  */
 
 /**\class Technologies

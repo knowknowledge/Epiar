@@ -16,12 +16,18 @@
 /**\class AI
  * \brief AI controls the non-player shipts.*/
 
+/** \brief AI Constructor
+ */
+
 AI::AI(string machine) :
 	stateMachine(machine),
 	state("default")
 {
 	
 }
+
+/** \brief Run the Lua Statemachine to act and possibly change state.
+ */
 
 void AI::Decide() {
 	string newstate;
@@ -102,6 +108,13 @@ void AI::Update(){
 	this->Ship::Update();
 }
 
+/**\brief Draw the AI Ship, and possibly debugging information.
+ *
+ * When the "options/development/debug-ai" flag is set, this will display the
+ * current stateMachine and state below the Ship Spite.
+ *
+ * \see OPTION
+ */
 void AI::Draw(){
 	this->Ship::Draw();
 	if( OPTION(int,"options/development/debug-ai") ) {

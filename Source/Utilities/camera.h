@@ -47,8 +47,8 @@ class Camera {
 
 	protected:
 		Camera();
-		Camera( const Camera & );
-		Camera& operator= (const Camera&);
+		Camera( const Camera & ); ///< Protected Copy Constructor
+		Camera& operator= (const Camera&); ///< Protected Copy constructor
 
 	private:
 		static Camera *pInstance;

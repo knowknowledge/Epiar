@@ -36,9 +36,9 @@ class Gate : public Sprite {
 
 		void Update();
 	private:
-		bool top;
-		int partnerID; /// \var The partner is the top/bottom of this gate
-		int exitID; /// \var Ships entering this gate will be transported to the Exit Gate
+		bool top; ///< True if this Sprite is on Top.
+		int partnerID; ///< The partner is the top/bottom of this gate
+		int exitID; ///< Ships entering this gate will be transported to the Exit Gate
 
 		void SendToRandomLocation(Sprite* ship);
 		void SendToExit(Sprite* ship);

@@ -15,9 +15,24 @@
 #include "Utilities/coordinate.h"
 
 /**\class Camera
- * \brief Camera handling. */
+ * \brief The Camera designates where the user is currently looking.
+ */
 
 Camera *Camera::pInstance = 0; // initialize pointer
+
+/**\fn GetFocus
+ * \brief Get the sprite that is currently being watched by the camera.
+ *
+ * \fn setZoom
+ * \brief Set the zoom factor
+ * \todo Zooming is not currently enabled.
+ *
+ * \fn getZoom
+ * \brief Get the zoom factor
+ * \todo Zooming is not currently enabled.
+ *
+ */
+
 
 /**\brief Fetch the current camera Instance
  */
@@ -28,7 +43,7 @@ Camera *Camera::Instance( void ) {
 	return( pInstance );
 }
 
-/**\class Camera
+/**\brief Camera default constructor
  */
 Camera::Camera( void ) {
 	x = 0;

@@ -16,8 +16,26 @@
 int Sprite::sprite_ids = 1;
 
 /**\class Sprite
- * \brief Sprite handling. */
+ * \brief Supertype for all objects in the world.
+ * \details Sprites are the objects that move around the universe.
+ *          They may be created and destroyed.
+ *          Each Sprite has a Unique ID.
+ *
+ *          Only the SpriteManager should ever store pointers to Sprite
+ *          objects.  This is because only the SpriteManager is informed when a
+ *          Sprite is removed, so a Sprite object may or may not be valid from
+ *          one point to the next.
+ *
+ * \warn NEVER STORE SPRITE POINTERS (unless you are the SpriteManager).
+ * \sa SpriteManager
+ */
 
+
+
+/**\brief Default Sprite Constructor
+ * \details Gets a unique ID.
+ *          Sets the radarColor as Grey.
+ */
 Sprite::Sprite() {
 	id = sprite_ids++;
 
@@ -39,6 +57,9 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 	worldPosition = coord;
 }
 
+/**\brief Move this Sprite in the direction of their current momentum.
+ * \details Since this is a space simulation, there is no Friction; momentum does not decrease over time.
+ */
 void Sprite::Update( void ) {
 	// Apply their momentum to change their coordinates
 	worldPosition += momentum;
@@ -48,7 +69,12 @@ void Sprite::Update( void ) {
 	lastMomentum = momentum;
 }
 
-// sprites are drawn centered on wx,wy by design of Image
+/**\brief Draw
+ * \details The Sprite is drawn centered on wx,wy.
+ *          This will attempt to Draw the sprite even if wx,wy are completely off the Screen.
+ *          Avoid drawing sprites that are too far off the Screen.
+ * \sa SpriteManager::Draw
+ */
 void Sprite::Draw( void ) {
 	int wx, wy;
 
@@ -61,6 +87,20 @@ void Sprite::Draw( void ) {
 		LogMsg(WARN, "Attempt to draw a sprite before an image was assigned." );
 	}
 }
+
+/** \brief Comparator function for ordering Sprites
+ *
+ * \details The goal here is to order the sprites in a deterministic way.
+ *          We also need the Sprites to be ordered by their DRAW_ORDER.
+ *          Since the Sprite ID is unique, and monotonically increasing, this
+ *          will sort older sprites below newer sprites.
+ *
+ * \param a A pointer to a Sprite.
+ * \param b A pointer to another Sprite.
+ * \returns True if Sprite a should be below Sprite b.
+ *
+ * \relates Sprite
+ */
 
 bool compareSpritePtrs(Sprite* a, Sprite* b){
 	if(a->GetDrawOrder() != b->GetDrawOrder()) {

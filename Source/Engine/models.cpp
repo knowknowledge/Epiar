@@ -152,20 +152,10 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	return section;
 }
 
-/**\fn Model::GetRotationsPerSecond()
- *  \brief Retrieves the rotation per second of the model.
- * \fn Model::GetMaxSpeed()
- *  \brief Retrieves the maximum speed
- * \fn Model::GetMass()
- *  \brief Retrieves the mass of the Model
- * \fn Model::GetImage()
+/**\fn Model::GetImage()
  *  \brief Retrieves a pointer to the Image
  * \fn Model::GetThrustOffset()
  *  \brief Retrieves the offset of the thrust from center
- * \fn Model::getHullStrength()
- *  \brief Retrieves the maximum damage the hull can absorb
- * \fn Model::GetMSRP()
- *  \brief Retrieves the price of the Model
  */
 
 

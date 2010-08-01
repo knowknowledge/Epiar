@@ -12,8 +12,8 @@
 #include "AI/ai.h"
 #include "Utilities/lua.h"
 
-#define EPIAR_SHIP_TABLE "Epiar.Ship"
-#define EPIAR_SHIP "Ship"
+#define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship
+#define EPIAR_SHIP "Ship" ///< The Lua tag used to identify the Library for a Ship.
 
 class AI_Lua{
 	public:
