@@ -11,7 +11,8 @@ playerCommands = {
 	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
-	{'tab', "Target Ship", "targetClosestShip()",KEYTYPED},
+	{'tab', "Target Ship", "targetShip()",KEYTYPED},
+	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
 	{'i', "Player Info", "playerInformation()",KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
@@ -26,14 +27,16 @@ function playerStart()
 	registerCommands(playerCommands)
 end
 
---- Target closest ship
-function targetClosestShip()
+--- Target ship
+function targetShip()
 	local x,y = PLAYER:GetPosition()
 	local nearby = Epiar.ships(x,y,4096)
 	if #nearby==0 then return end
 	
 	local nextTarget = 1
 	local currentTarget = HUD.getTarget()
+	local lastdist = 0
+
 	for s =1,#nearby-1 do
 		if nearby[s]:GetID() == currentTarget then
 			nextTarget = s+1
@@ -45,6 +48,30 @@ function targetClosestShip()
 	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
 
+---Target closest ship
+function targetClosestShip()
+	local x,y = PLAYER:GetPosition()
+	local nearby = Epiar.ships(x,y,4096)
+	if #nearby==1 then return end
+	local shipx, shipy = nearby[1]:GetPosition()
+	print("#nearby=" .. #nearby .. '\n')
+	local closest =  { index = 1 , dist = math.sqrt( ( shipx - x) ^ 2 + ( shipy - y) ^ 2) }
+	print(closest.dist .. '\n')
+	print( "\nclosest.index= " .. closest.index .. " closest.dist= " .. closest.dist .. '\n')
+	for i=2,#nearby do
+		shipx, shipy = nearby[i]:GetPosition()
+		newDist = math.sqrt (( shipx - x) ^ 2 + ( shipy - y) ^ 2)
+		print("i=" ..i.. " newdist= " .. newDist .. "closest.dist= " .. closest.dist .. '\n')
+		if closest.dist > newDist then
+			closest.dist = newDist
+			closest.index=i
+		end		
+	end
+	nextTarget = closest.index
+	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
+	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
+	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
+end
 --- Try to land
 function attemptLanding()
 	if landingWin ~= nil then return end
