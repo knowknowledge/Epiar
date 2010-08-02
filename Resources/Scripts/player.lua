@@ -54,14 +54,14 @@ function targetClosestShip()
 	local nearby = Epiar.ships(x,y,4096)
 	if #nearby==1 then return end
 	local shipx, shipy = nearby[1]:GetPosition()
-	print("#nearby=" .. #nearby .. '\n')
+	---print("#nearby=" .. #nearby .. '\n')
 	local closest =  { index = 1 , dist = math.sqrt( ( shipx - x) ^ 2 + ( shipy - y) ^ 2) }
-	print(closest.dist .. '\n')
-	print( "\nclosest.index= " .. closest.index .. " closest.dist= " .. closest.dist .. '\n')
+
+	---print( "\nclosest.index= " .. closest.index .. " closest.dist= " .. closest.dist .. '\n')
 	for i=2,#nearby do
 		shipx, shipy = nearby[i]:GetPosition()
 		newDist = math.sqrt (( shipx - x) ^ 2 + ( shipy - y) ^ 2)
-		print("i=" ..i.. " newdist= " .. newDist .. "closest.dist= " .. closest.dist .. '\n')
+		---print("i=" ..i.. " newdist= " .. newDist .. "closest.dist= " .. closest.dist .. '\n')
 		if closest.dist > newDist then
 			closest.dist = newDist
 			closest.index=i
