@@ -82,14 +82,14 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name,
 	,ratio(_ratio)
 {
 	name.assign (_name.begin(), _name.end());
-	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), GetName().c_str(), ratio);
+	//LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), GetName().c_str(), ratio);
 	assert(pos>=0);
 	assert(pos<=4);
 }
 
 void StatusBar::print ()
 {
-    LogMsg (DEBUG4, "PRINTOUT OF STATUSBAR AT 0x%X\n\ttitle = %s\n\twidth=%d\n\tpos=%d\n\tname=%s\n\tratio=%f\n", this, title.c_str(), width, pos, GetName().c_str(), ratio);
+	//LogMsg (DEBUG4, "PRINTOUT OF STATUSBAR AT 0x%X\n\ttitle = %s\n\twidth=%d\n\tpos=%d\n\tname=%s\n\tratio=%f\n", this, title.c_str(), width, pos, GetName().c_str(), ratio);
 }
 
 
@@ -603,13 +603,13 @@ StatusBar* Hud::checkStatus(lua_State *L, int index) {
 /**\brief Set's the status (Lua callable)
  */
 int Hud::setStatus(lua_State *L) {
-	LogMsg (DEBUG4, "setStatus called");
+	//LogMsg (DEBUG4, "setStatus called");
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, [newName, newRatio])", n);
 	StatusBar *bar= checkStatus(L,1);
-	LogMsg (DEBUG4, "after call to checkStatus, address = 0x%X", bar);
-	LogMsg (DEBUG4, "    GetName = %s, GetRatio = %f", bar->GetName().c_str(), bar->GetRatio());
+	//LogMsg (DEBUG4, "after call to checkStatus, address = 0x%X", bar);
+	//LogMsg (DEBUG4, "    GetName = %s, GetRatio = %f", bar->GetName().c_str(), bar->GetRatio());
 	
 	if( lua_isnumber(L,2) ) {
 		float ratio = (float)(luaL_checknumber(L,2));
