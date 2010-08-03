@@ -28,7 +28,8 @@ defaultCommands = {
 	-- { KEY, TITLE, SCRIPT, KEYMODE }
 	{'?', "Game Options", "options()",KEYTYPED},
 	{'p', "Pause", "togglePause()",KEYTYPED},
-	{'m', "Map", "toggleMap()",KEYTYPED},
+	{'m', "Universe Map", "toggleUniverseMap()",KEYTYPED},
+	{'M', "Quadrant Map", "toggleQuadrantMap()",KEYTYPED},
 	}
 
 --- Register multiple commands
