@@ -142,9 +142,12 @@ function options()
 		closeOptions()
 		return
 	end
+	local width=220
 	local height=400
-	optionWindow = UI.newWindow( 30,100,220,height,"Options")
-	optionTabs = UI.newTabCont( 10, 30, 200, height-100,"Options Tabs")
+	local tabwidth=width-20
+	local tabheight=height-100
+	optionWindow = UI.newWindow( 30,100,width,height,"Options")
+	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
 	optionWindow:add(optionTabs)
 
 	-- Sounds
@@ -189,7 +192,22 @@ function options()
 	aiStateDisplay  = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
 	mapDisplay      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/map") ), "Display Map Overlay")
 	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, quadTreeDisplay, aiStateDisplay, mapDisplay)
-	
+
+	-- Command Keys
+	keyTab = UI.newTab( "Keyboard")
+	optionTabs:add(keyTab)
+	local off_x,off_y = 20,30
+	keyinput = {} -- Global. We'll need this later.
+	labels = {}
+	for i=1,#commands do
+		keyinput[i] = UI.newTextbox(off_x,off_y,70,1)
+		keyinput[i]:setText(commands[i][1])
+		labels[i] = UI.newLabel(off_x+80,off_y+5,commands[i][2])
+		off_y = off_y +20
+		keyTab:add(keyinput[i])
+		keyTab:add(labels[i])
+	end
+
 	function saveOptions()
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/weapons",    weaponsSound    :IsChecked() and 1 or 0 )
@@ -203,13 +221,22 @@ function options()
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/map",  mapDisplay :IsChecked() and 1 or 0 )
+
+		for i=1,#commands do
+			keyval = keyinput[i]:GetText()
+			if keyval ~= commands[i][1] then
+				Epiar.UnRegisterKey(sdlkey(commands[i][1]), commands[i][4])
+				Epiar.RegisterKey(sdlkey(keyval), commands[i][4], commands[i][3])
+				HUD.newAlert(string.format("Registered '%s' to %s", keyval, commands[i][2]))
+				commands[i][1] = keyinput[i]:GetText()
+			end
+		end
 	end
 	function closeOptions()
 		optionWindow:close();
 		optionWindow=nil;
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton(20, height-50, 100, 30,"Customize Keys","chooseKeys()") )
 	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
 end
 

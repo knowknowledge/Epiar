@@ -51,47 +51,17 @@ registerInit(registerDefaults)
 
 --- Specify keys configuration
 function chooseKeys()
-	Epiar.pause()
-	if keywin ~=nil then return end
-	--
 	off_x,off_y = 30,30
 	w,h = 300,(#commands*20 + 80)
 	keyinput = {}
 	labels = {}
 	--
-	keywin = UI.newWindow( 400, 100, w, h, "Keyboard commands")
-	for i=1,#commands do
-		keyinput[i] = UI.newTextbox(off_x,off_y,70,1)
-		keyinput[i]:setText(commands[i][1])
-		labels[i] = UI.newLabel(off_x+100,off_y+15,commands[i][2])
-		off_y = off_y +20
-		keywin:add(keyinput[i])
-		keywin:add(labels[i])
-	end
 	if keyhelpwin ~=nil then return end
 	keywin:add(UI.newButton(w/2-120/2, h-38, 120, 30, "Save Changes", "processKeyWin(commands)"))
 	keywin:add(UI.newButton(10, h-38, 30, 30, "?", "keyhelp()"))
 end
 
 --- Process the key configuration
-function processKeyWin(commands)
-	for i=1,#commands do
-		keyval = keyinput[i]:GetText()
-		if keyval ~= commands[i][1] then
-			Epiar.UnRegisterKey(sdlkey(commands[i][1]), commands[i][4])
-			Epiar.RegisterKey(sdlkey(keyval), commands[i][4], commands[i][3])
-			HUD.newAlert(string.format("Registered '%s' to %s", keyval, commands[i][2]))
-			commands[i][1] = keyinput[i]:GetText()
-		end
-	end
-	Epiar.unpause()
-	keywin:close()
-	keywin=nil
-	if keyhelpwin then
-		keyhelpwin:close()
-		keyhelpwin=nil
-	end
-end
 
 --- Help window
 function keyhelp()
