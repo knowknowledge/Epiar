@@ -32,7 +32,7 @@
 #define RADAR_HEIGHT       122
 
 list<AlertMessage> Hud::AlertMessages;
-list<StatusBar*> Hud::Bars;
+StatusBar* Hud::Bars[MAX_STATUS_BARS] = {};
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
 int Radar::visibility = 4096;
@@ -76,13 +76,14 @@ bool MessageExpired(const AlertMessage& msg){
  */
 
 StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio)
-	:title(_title)
-	,width(_width)
+	:width(_width)
 	,pos(_pos)
 	,ratio(_ratio)
 {
+	strncpy(title,_title.c_str(),40);
+	title[39] = '\0';
 	name.assign (_name.begin(), _name.end());
-	//LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title.c_str(), GetName().c_str(), ratio);
+	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title, GetName().c_str(), ratio);
 	assert(pos>=0);
 	assert(pos<=4);
 }
@@ -130,11 +131,9 @@ void StatusBar::Draw(int x, int y) {
 	BitType->SetColor(1.f,1.f,1.f,1.f);
 
 	// Draw the Title
-	if( !title.empty() ) {
-		int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,Font::LEFT,Font::MIDDLE );
-		widthRemaining -= wTitle;
-		x += wTitle + 5;
-	}
+	int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,Font::LEFT,Font::MIDDLE );
+	widthRemaining -= wTitle;
+	x += wTitle + 5;
 
 	// Draw Name
 	if( !name.empty() ) {
@@ -211,16 +210,6 @@ void StatusBar::SetName( string n )
 
 /**\class Hud
  * \brief Heads-Up-Display. */
-Hud *Hud::pInstance = 0; // initialize pointer
-
-/**\brief Gets or initializes the current instance.
- */
-Hud *Hud::Instance( void ) {
-	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Hud; // create the sold instance
-	}
-	return( pInstance );
-}
 
 /**\brief Empty constructor
  */
@@ -331,14 +320,17 @@ void Hud::DrawStatusBars() {
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
 
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	list<StatusBar*>::iterator i;
-	for( i= Bars.begin(); i != Bars.end(); ++i ){
-		int pos = (*i)->GetPosition();
+	int i;
+	StatusBar* bar;
+	for( i= 0; i < MAX_STATUS_BARS; ++i ){
+		bar = Bars[i];
+		if( bar == NULL ) continue;
+		int pos = bar->GetPosition();
 		assert(pos>=0);
 		assert(pos<=4);
 		int x = static_cast<int>(startCoords[pos].GetX());
 		int y = static_cast<int>(startCoords[pos].GetY());
-		(*i)->Draw(x,y);
+		bar->Draw(x,y);
 		startCoords[pos] += offsetCoords[pos];
 	}
 }
@@ -490,13 +482,29 @@ void Hud::Target(int id) {
  * \param bar Pointer to a new StatusBar
  */
 void Hud::AddStatus( StatusBar* bar) {
-	Bars.push_back(bar);
+	int i;
+	for(i = 0; i< MAX_STATUS_BARS; i++)
+	{
+		if( Bars[i]== NULL )
+		{
+			Bars[i] = bar;
+			break;
+		}
+	}
 }
 
 /**\brief Deletes a StatusBar.
  */
 void Hud::DeleteStatus( StatusBar* bar ) {
-	Bars.remove(bar);
+	int i;
+	for(i = 0; i< MAX_STATUS_BARS; i++)
+	{
+		if( Bars[i]==bar )
+		{
+			Bars[i] = NULL;
+			delete bar;
+		}
+	}
 }
 
 /**\brief Register Lua functions for HUD related updates.
@@ -555,8 +563,8 @@ int Hud::newAlert(lua_State *L) {
  */
 int Hud::newStatus(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 4)
-		return luaL_error(L, "Got %d arguments expected 4 (title, width, postition, [name | ratio] )", n);
+	if ( (n < 3) )
+		return luaL_error(L, "Got %d arguments expected 4 (title, width, postition )", n);
 
 	// Allocate memory for a pointer to object
 	StatusBar **bar = (StatusBar**)lua_newuserdata(L, sizeof(StatusBar**));
@@ -570,13 +578,7 @@ int Hud::newStatus(lua_State *L) {
 	if(pos<0||pos>3){
 		return luaL_error(L, "Invalid Position %d. Valid Options are: UPPER_LEFT=0, UPPER_RIGHT=1, LOWER_LEFT=2, LOWER_RIGHT=3", pos);
 	}
-	if( lua_isnumber(L,4) ) {
-		float ratio = (float)(luaL_checknumber(L,4));
-		*bar= new StatusBar(title,width,pos,"",ratio);
-	} else {
-		string name = (string)(luaL_checkstring(L,4));
-		*bar= new StatusBar(title,width,pos,name,0.0f);
-	}
+	*bar= new StatusBar(title,width,pos,"",0.0f);
 
 	// Add the Bar to the Hud
 	AddStatus(*bar);
@@ -592,11 +594,6 @@ StatusBar* Hud::checkStatus(lua_State *L, int index) {
 	luaL_argcheck(L, barptr != NULL, index, "`EPIAR_HUD' expected. Got NULL Pointer");
 	luaL_argcheck(L, *barptr != NULL, index, "`EPIAR_HUD' expected. Got pointer to NULL.");
 	bar = *barptr;
-	result = find(Bars.begin(), Bars.end(), bar);
-	if(result == Bars.end()) {
-		assert(0);
-		return NULL;
-	}
 	return bar;
 }
 
@@ -618,7 +615,7 @@ int Hud::setStatus(lua_State *L) {
 		string name = (string)(luaL_checkstring(L,2));
 		bar->SetName(name);
 	}
-	LogMsg (DEBUG4, "End of setStatus");
+	//LogMsg (DEBUG4, "End of setStatus");
 
 	return 0;
 }
@@ -631,6 +628,7 @@ int Hud::closeStatus(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	StatusBar *bar= checkStatus(L,1);
 	DeleteStatus(bar);
+	assert(0);
 	return 0;
 }
 

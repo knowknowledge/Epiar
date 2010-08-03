@@ -136,22 +136,22 @@ function createHUD()
 	-- Location Status Bars
 	local x,y = PLAYER:GetPosition()
 	local qx,qy = coordinateToQuadrant(x,y)
-	pos = HUD.newStatus("Coordinate:",130,1,string.format("( %d , %d )",x,y))
-	quad = HUD.newStatus("Quadrant:",130,1,string.format("( %d , %d )",qx,qy))
-	creditBar = HUD.newStatus("Credits:",130,1,string.format("$%d",0))
+	pos = HUD.newStatus("Coordinate:",130,1)
+	quad = HUD.newStatus("Quadrant:",130,1)
+	creditBar = HUD.newStatus("Credits:",130,1)
 
 	-- Weapon and Armor Status Bars
-	myhull = HUD.newStatus("HULL:",100,0,1.0)
+	myhull = HUD.newStatus("HULL:",100,0)
 	myweapons = {}
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		if 0==ammo then ammo="---" end
-		myweapons[weapon] = HUD.newStatus(weapon..":",130,0,"[ ".. ammo .." ]")
+		myweapons[weapon] = HUD.newStatus(weapon..":",130,0)
 	end
 
 	-- DEBUG Bars
-	TargetName = HUD.newStatus("Target:",130,1,"")
-	TargetHULL = HUD.newStatus("Target:",130,1,0)
+	TargetName = HUD.newStatus("Target:",130,1)
+	TargetHULL = HUD.newStatus("Target:",130,1)
 end
 
 function updateHUD()

@@ -16,6 +16,7 @@
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
+#define MAX_STATUS_BARS 20
 
 class AlertMessage {
 	public:
@@ -32,7 +33,7 @@ class StatusBar {
 		static Image *im_infobar_left,
 				*im_infobar_right,
 				*im_infobar_middle;
-		string GetTitle() { return title; }
+		string GetTitle() { return string(title); }
 		void SetName( string n );
 		string GetName() { return std::string (name.begin(), name.end()); }
 		void SetRatio(float _ratio ) { ratio = _ratio; }
@@ -40,9 +41,9 @@ class StatusBar {
 		QuadPosition GetPosition(){ return pos; }
 		void print ();
 	protected:
-		string title;	    //we do not need to change title to a vector<char> as it is never re-assigned
-		int width;
-		QuadPosition pos;
+		char title[40];
+		const int width;
+		const QuadPosition pos;
 		vector<char> name; // TODO: the name 'name' is bad
 		float ratio;
 };
@@ -50,8 +51,6 @@ class StatusBar {
 class Hud {
 	public:
 		Hud( void );
-
-		static Hud *Instance();
 
 		static void Update( void );
 		static void Draw( void );
@@ -85,11 +84,9 @@ class Hud {
 		static void DrawTarget();
 		static void DrawMap( void );
 	
-		static Hud *pInstance;
-		
 		static list<AlertMessage> AlertMessages;
 
-		static list<StatusBar*> Bars;
+		static StatusBar* Bars[MAX_STATUS_BARS];
 		static int targetID;
 		static int timeTargeted;
 };
