@@ -106,6 +106,14 @@ function attemptLanding()
 	end
 end
 
+
+---Adds to the player's credits
+function addcredits( credits )
+	--print("adding " .. credits)
+	playerCredits=PLAYER:GetCredits( )
+	PLAYER:SetCredits( credits + playerCredits )
+end
+
 --- Teleport to any location via a new gate
 function goto(x,y)
 	local px,py = PLAYER:GetPosition()
