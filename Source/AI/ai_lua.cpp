@@ -300,7 +300,7 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string weaponName = luaL_checkstring (L, 2);
-		(ai)->addShipWeapon(weaponName);
+		(ai)->AddShipWeapon(weaponName);
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
 	}
@@ -338,7 +338,7 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 		if(weapon==NULL){
 			return luaL_error(L, "There is no such weapon as a '%s'", weaponName.c_str());
 		}
-		(ai)->addAmmo(weapon->GetAmmoType(),qty);
+		(ai)->AddAmmo(weapon->GetAmmoType(),qty);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (ship, weaponName, qty)", n);
 	}
@@ -387,7 +387,7 @@ int AI_Lua::ShipAddOutfit(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
-		(ai)->addOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+		(ai)->AddOutfit( Outfits::Instance()->GetOutfit(outfitName) );
 		printf("Adding outfit: %s\n",outfitName.c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
@@ -602,7 +602,7 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 			lua_pushnumber(L, 0 );
 		} else {
 		float angle = static_cast<float>( luaL_checknumber(L, 2) );
-		lua_pushnumber(L, (double) (ai)->directionTowards(angle) );
+		lua_pushnumber(L, (double) (ai)->GetDirectionTowards(angle) );
 		}
 	}
 	else if(n==3){ // Coordinate
@@ -612,7 +612,7 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 		} else {
 		double x = static_cast<float>( luaL_checknumber(L, 2) );
 		double y = static_cast<float>( luaL_checknumber(L, 3) );
-		lua_pushnumber(L, (double) (ai)->directionTowards(Coordinate(x,y)) );
+		lua_pushnumber(L, (double) (ai)->GetDirectionTowards(Coordinate(x,y)) );
 		}
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
@@ -634,7 +634,7 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 		return 1;
 	}
 
-	map<Weapon*,int> weaponPack = (ai)->getWeaponsAndAmmo();
+	map<Weapon*,int> weaponPack = (ai)->GetWeaponsAndAmmo();
 	map<Weapon*,int>::iterator it = weaponPack.begin();
 
 	lua_createtable(L, weaponPack.size(), 0);
@@ -661,7 +661,7 @@ int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
 		lua_pushnumber(L, 0 );
 		return 1;
 	}
-	Weapon* cur = (ai)->getCurrentWeapon();
+	Weapon* cur = (ai)->GetCurrentWeapon();
 	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
 	return 1;
 }
@@ -679,7 +679,7 @@ int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
 		lua_pushnumber(L, 0 );
 		return 1;
 	}
-	lua_pushnumber(L, (ai)->getCurrentAmmo() );
+	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
 	return 1;
 }
 
@@ -729,7 +729,7 @@ int AI_Lua::ShipGetHull(lua_State* L){
 			lua_pushnumber(L, 0 );
 			return 1;
 		}
-		lua_pushnumber(L, (double) (ai)->getHullIntegrityPct() );
+		lua_pushnumber(L, (double) (ai)->GetHullIntegrityPct() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
@@ -794,7 +794,7 @@ int AI_Lua::ShipGetCargo(lua_State* L){
 		return 1;
 	}
 
-	map<Commodity*,unsigned int> cargo = (ai)->getCargo();
+	map<Commodity*,unsigned int> cargo = (ai)->GetCargo();
 	map<Commodity*,unsigned int>::iterator it = cargo.begin();
 
 	// Create a Lua table and populate it using the form:

@@ -146,11 +146,11 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else return false;
 
 	for( attr = FirstChildNamed(node,"weapon"); attr!=NULL; attr = NextSiblingNamed(attr,"weapon") ){
-		addShipWeapon( NodeToString(doc,attr) );
+		AddShipWeapon( NodeToString(doc,attr) );
 	}
 
 	for( attr = FirstChildNamed(node,"outfit"); attr!=NULL; attr = NextSiblingNamed(attr,"outfit") ){
-		addOutfit( NodeToString(doc,attr) );
+		AddOutfit( NodeToString(doc,attr) );
 	}
 
 	for( attr = FirstChildNamed(node,"cargo"); attr!=NULL; attr = NextSiblingNamed(attr,"cargo") ){
@@ -172,7 +172,7 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		AmmoType ammoType = Weapon::AmmoNameToType( NodeToString(doc,type) );
 		int ammoCount = NodeToInt(doc,ammt);
 		if( ammoType < max_ammo ) {
-			addAmmo( ammoType, ammoCount );
+			AddAmmo( ammoType, ammoCount );
 		} else return false;
 	}
 
@@ -193,24 +193,24 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngineName().c_str() );
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
-	map<Weapon*,int> weapons = this->getWeaponsAndAmmo();
+	map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
 	map<Weapon*,int>::iterator it = weapons.begin();
 	while( it!=weapons.end() ) {
 		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
 		++it;
 	}
 	for(int a=0;a<max_ammo;a++){
-		if(getAmmo(AmmoType(a))){
-			if( getAmmo(AmmoType(a)) )
+		if(GetAmmo(AmmoType(a))){
+			if( GetAmmo(AmmoType(a)) )
 				continue; // Don't save empty ammo Nodes
-			snprintf(buff, sizeof(buff), "%d", getAmmo(AmmoType(a)) );
+			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
 			xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "ammo");
 			xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str() );
 			xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
 			xmlAddChild(section, ammo);
 		}
 	}
-	map<Commodity*,unsigned int> cargo = this->getCargo();
+	map<Commodity*,unsigned int> cargo = this->GetCargo();
 	map<Commodity*,unsigned int>::iterator iter;
 	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
 		if( (*iter).second )

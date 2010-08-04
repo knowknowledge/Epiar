@@ -39,27 +39,27 @@ class Ship : public Sprite {
 		bool ChangeWeapon( void );
 
 		// Outfitting Functions
-		void addShipWeapon(Weapon *i);
-		void addShipWeapon(string weaponName);
-		void removeShipWeapon(int pos);
-		void addAmmo(AmmoType ammoType, int qty);
-		void addOutfit(Outfit *outfit);
-		void addOutfit(string outfitName);
+		void AddShipWeapon(Weapon *i);
+		void AddShipWeapon(string weaponName);
+		void RemoveShipWeapon(int pos);
+		void AddAmmo(AmmoType ammoType, int qty);
+		void AddOutfit(Outfit *outfit);
+		void AddOutfit(string outfitName);
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);
-		map<Commodity*,unsigned int> getCargo();
+		map<Commodity*,unsigned int> GetCargo();
 		int StoreCommodities(string commodity, unsigned int count);
 		int DiscardCommodities(string commodity, unsigned int count);
 
 		// Status functions
-		float directionTowards(Coordinate c);
-		float directionTowards(float angle);
-		float getHullIntegrityPct();
-		Weapon* getCurrentWeapon();
-		int getCurrentAmmo();
-		int getAmmo(AmmoType type);
-		map<Weapon*,int> getWeaponsAndAmmo();
+		float GetDirectionTowards(Coordinate c);
+		float GetDirectionTowards(float angle);
+		float GetHullIntegrityPct();
+		Weapon* GetCurrentWeapon();
+		int GetCurrentAmmo();
+		int GetAmmo(AmmoType type);
+		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }

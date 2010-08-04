@@ -236,7 +236,7 @@ void Ship::Update( void ) {
 	flareAnimation->Update();
 
 	// Show the hits taken as part of the radar color
-	SetRadarColor(Color::Get(int(255 *getHullIntegrityPct()),0 ,0));
+	SetRadarColor(Color::Get(int(255 *GetHullIntegrityPct()),0 ,0));
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
@@ -351,7 +351,7 @@ FireStatus Ship::Fire( int target ) {
  * \param i Pointer to Weapon instance
  * \sa Weapon
  */
-void Ship::addShipWeapon(Weapon *i){
+void Ship::AddShipWeapon(Weapon *i){
 	shipWeapons.push_back(i);
 
 	ComputeShipStats();
@@ -361,10 +361,10 @@ void Ship::addShipWeapon(Weapon *i){
  * \param weaponName Name of the Weapon
  * \sa Weapon
  */
-void Ship::addShipWeapon(string weaponName){
+void Ship::AddShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	if(weapons->GetWeapon(weaponName)){
-		addShipWeapon(weapons->GetWeapon(weaponName));
+		AddShipWeapon(weapons->GetWeapon(weaponName));
 	} else {
 		LogMsg(INFO, "Failed to add weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
@@ -384,7 +384,7 @@ bool Ship::ChangeWeapon() {
 /**\brief Removes a weapon from the ship.
  * \param pos Index of the weapon
  */
-void Ship::removeShipWeapon(int pos){
+void Ship::RemoveShipWeapon(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 
@@ -392,19 +392,19 @@ void Ship::removeShipWeapon(int pos){
  * \param AmmoType Type of ammo that should be added.
  * \param qty Quantity to add
  */
-void Ship::addAmmo(AmmoType ammoType, int qty){
+void Ship::AddAmmo(AmmoType ammoType, int qty){
 	ammo[ammoType] += qty;
 }
 
-void Ship::addOutfit(Outfit *outfit){
+void Ship::AddOutfit(Outfit *outfit){
 	assert(outfit!=NULL);
 	outfits.push_back(outfit);
 	ComputeShipStats();
 }
 
-void Ship::addOutfit(string outfitName){
+void Ship::AddOutfit(string outfitName){
 	if( Outfits::Instance()->GetOutfit(outfitName) ){
-		addOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+		AddOutfit( Outfits::Instance()->GetOutfit(outfitName) );
 	} else {
 		LogMsg(INFO, "Failed to Attach outfit '%s', it doesn't exist.", outfitName.c_str());
 	}
@@ -418,7 +418,7 @@ void Ship::SetCredits(unsigned int _credits) {
 
 /**\brief Set the number of credits
  */
-map<Commodity*,unsigned int> Ship::getCargo() {
+map<Commodity*,unsigned int> Ship::GetCargo() {
 	map<Commodity*,unsigned int> retMap(commodities);
 	return retMap;
 }
@@ -486,7 +486,7 @@ int Ship::DiscardCommodities(string commodity, unsigned int count) {
  * \return angle towards target
  * \sa directionTowards(float)
  */
-float Ship::directionTowards(Coordinate target){
+float Ship::GetDirectionTowards(Coordinate target){
 	float theta;
 	//Trig *trig = Trig::Instance();
 	Coordinate position = target - GetWorldPosition();
@@ -494,21 +494,21 @@ float Ship::directionTowards(Coordinate target){
 	theta = position.GetAngle();//trig->RadToDeg(atan2( - position.GetY(), position.GetX()));
 	//LogMsg(INFO,"Angle towards target (%f,%f) is %f.",target.GetX(),target.GetY(),theta);
 	//LogMsg(INFO,"Current Angle %f",this->GetAngle());
-	return this->directionTowards(theta);
+	return GetDirectionTowards(theta);
 }
 
 /**\brief Returns the best direction to turn in order to aim in a certain direction.
  * \param angle Angle of target
  * \return angle towards target
  */
-float Ship::directionTowards(float angle){
+float Ship::GetDirectionTowards(float angle){
 	return normalizeAngle(angle - this->GetAngle());
 }
 
 /**\brief Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%).
  * \return Hull remaining
  */
-float Ship::getHullIntegrityPct() {
+float Ship::GetHullIntegrityPct() {
 	assert( model );
 	float remaining =  ( (float)shipStats.GetHullStrength() - (float)status.hullDamage ) / (float)shipStats.GetHullStrength();
 	return(remaining);
@@ -517,7 +517,7 @@ float Ship::getHullIntegrityPct() {
 /**\brief Gets the current weapon.
  * \return Pointer to Weapon object.
  */
-Weapon* Ship::getCurrentWeapon() {
+Weapon* Ship::GetCurrentWeapon() {
 	if(shipWeapons.size()==0) return (Weapon*)NULL;
 	return shipWeapons.at(status.selectedWeapon);
 }
@@ -525,7 +525,7 @@ Weapon* Ship::getCurrentWeapon() {
 /**\brief Gets the current ammo left.
  * \return Integer count of ammo
  */
-int Ship::getCurrentAmmo() {
+int Ship::GetCurrentAmmo() {
 	if(shipWeapons.size()==0) return 0;
 	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
 	return ammo[currentWeapon->GetAmmoType()];
@@ -534,7 +534,7 @@ int Ship::getCurrentAmmo() {
 /**\brief Gets the ammo of a certain type.
  * \return Integer count of ammo
  */
-int Ship::getAmmo(AmmoType type) {
+int Ship::GetAmmo(AmmoType type) {
 	assert(type<max_ammo);
 	return ammo[type];
 }
@@ -542,7 +542,7 @@ int Ship::getAmmo(AmmoType type) {
 /**\brief Gets a std::map of the current weapon system.
  * \return std:map with pointer to weapon as the key, ammo quantity as the data
  */
-map<Weapon*,int> Ship::getWeaponsAndAmmo() {
+map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
 	Weapon* thisWeapon;
 	for(unsigned int i=0; i<shipWeapons.size(); i++){
