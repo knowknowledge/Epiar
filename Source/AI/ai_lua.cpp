@@ -746,9 +746,15 @@ int AI_Lua::ShipGetState(lua_State* L) {
 		if(ai==NULL){
 			lua_pushnumber(L, 0 );
 			return 1;
+		} else if( ai->GetDrawOrder() & DRAW_ORDER_PLAYER ) {
+			// We need to do this since the Player doesn't have a StateMachine.
+			// Warning! these are not actually valid States or StateMachines
+			lua_pushstring(L, "Player" ); // State Machine
+			lua_pushstring(L, "Playing" ); // State
+		} else {
+			lua_pushstring(L, (ai)->GetStateMachine().c_str() );
+			lua_pushstring(L, (ai)->GetState().c_str() );
 		}
-		lua_pushstring(L, (ai)->GetStateMachine().c_str() );
-		lua_pushstring(L, (ai)->GetState().c_str() );
 	} else {
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
