@@ -404,10 +404,11 @@ void Hud::DrawMap( void ) {
 	edge = (edge>-w)?edge:-w;
 	edge = (edge>e)?edge:e;
 	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
-
+	
 	sprites = SpriteManager::Instance()->GetSprites(
-		DRAW_ORDER_PLAYER   |
-		DRAW_ORDER_PLANET   |
+		DRAW_ORDER_PLAYER	|
+		DRAW_ORDER_SHIP		|
+		DRAW_ORDER_PLANET	|
 		DRAW_ORDER_GATE_TOP );
 
 	// The Backdrop
@@ -442,6 +443,10 @@ void Hud::DrawMap( void ) {
 				Video::DrawFilledCircle( posx, posy, ((Planet*)(*iter))->GetInfluence()*scale, field.r, field.g, field.b, alpha*.5f );
 				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
 				break;
+			case DRAW_ORDER_SHIP:
+				Video::DrawFilledCircle( posx, posy, 2, col.r,col.g,col.b, alpha );
+				break;
+
 			case DRAW_ORDER_GATE_TOP:
 				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
 				posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
