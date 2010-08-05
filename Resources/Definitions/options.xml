@@ -28,6 +28,7 @@
 	<simulation>
 		<starfield-density>750</starfield-density>
 		<bgmusic>Resources/Audio/Music/beyond_the_network.it</bgmusic>
+		<update-all>1</update-all>
 	</simulation>
 	<timing>
 		<mouse-fade>500</mouse-fade>

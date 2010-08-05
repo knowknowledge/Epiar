@@ -77,15 +77,32 @@ bool SpriteManager::Delete( Sprite *sprite ) {
  */
 void SpriteManager::Update() {
 	// Update the sprites inside each quadrant
-	// TODO: Update only the sprites that are in nearby Quadrants
 	list<Sprite *> all_oob;
-	list<QuadTree*> nearby = GetQuadrantsNear( Camera::Instance()->GetFocusCoordinate(), QUADRANTSIZE*4 );
-	list<QuadTree*>::iterator iter;
-	for ( iter = nearby.begin(); iter != nearby.end(); ++iter ) {
-		(*iter)->Update();
-		list<Sprite *>* oob = (*iter)->FixOutOfBounds();
-		all_oob.splice(all_oob.end(), *oob );
-		delete oob;
+	list<QuadTree*>::iterator list_iter;
+	map<Coordinate,QuadTree*>::iterator map_iter;
+	list<QuadTree*> nearby;
+	list<Sprite *>* oob = NULL;
+
+	if( 0 == OPTION(int,"options/simulation/update-all") )
+	{
+		// Update nearby Quadrants
+		nearby = GetQuadrantsNear( Camera::Instance()->GetFocusCoordinate(), QUADRANTSIZE*4 );
+		for ( list_iter = nearby.begin(); list_iter != nearby.end(); ++list_iter ) {
+			(*list_iter)->Update();
+			oob = (*list_iter)->FixOutOfBounds();
+			all_oob.splice(all_oob.end(), *oob );
+			delete oob;
+			oob = NULL;
+		}
+	} else {
+		// Update all Quadrants
+		for ( map_iter = trees.begin(); map_iter != trees.end(); ++map_iter ) {
+			map_iter->second->Update();
+			oob = map_iter->second->FixOutOfBounds();
+			all_oob.splice(all_oob.end(), *oob );
+			delete oob;
+			oob = NULL;
+		}
 	}
 
 	// Move sprites to adjacent Quadrants as they cross boundaries
@@ -103,8 +120,14 @@ void SpriteManager::Update() {
 		spritesToDelete.clear();
 	}
 
-	for ( iter = nearby.begin(); iter != nearby.end(); ++iter ) {
-		(*iter)->ReBallance();
+	if( 0 == OPTION(int,"options/simulation/update-all") ) {
+		for ( list_iter = nearby.begin(); list_iter != nearby.end(); ++list_iter ) {
+			(*list_iter)->ReBallance();
+		}
+	} else {
+		for ( map_iter = trees.begin(); map_iter != trees.end(); ++map_iter ) { 
+			map_iter->second->ReBallance();
+		}
 	}
 
 	DeleteEmptyQuadrants();
