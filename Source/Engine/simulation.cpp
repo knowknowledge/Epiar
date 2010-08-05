@@ -192,6 +192,14 @@ bool Simulation::Run() {
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
+			if( currentFPS < 1.0f )
+			{
+				// The game has effectively stopped..
+				LogMsg(ERR,"Sorry, the framerate has dropped to zero. Please report this as a bug to 'epiar-devel@epiar.net'");
+				UI::Save();
+				sprites->Save();
+				quit = true;
+			}
 
 			if( OPTION(int, "options/log/ui") )
 			{
