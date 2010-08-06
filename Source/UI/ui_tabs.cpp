@@ -56,7 +56,8 @@ Widget *Tab::DetermineMouseFocus( int relx, int rely ){
 
 
 	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i)->Contains(relx+xoffset, rely+yoffset) ) {
+		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() != "Tab") ) // Tabs
+		    || (*i)->Contains(relx+xoffset, rely+yoffset) ) { // Non-Tabs
 			return (*i);
 		}
 	}
