@@ -142,7 +142,7 @@ function options()
 		closeOptions()
 		return
 	end
-	local width=220
+	local width=300
 	local height=400
 	local tabwidth=width-20
 	local tabheight=height-100
@@ -200,12 +200,13 @@ function options()
 	keyinput = {} -- Global. We'll need this later.
 	labels = {}
 	for i=1,#commands do
-		keyinput[i] = UI.newTextbox(off_x,off_y,70,1)
-		keyinput[i]:setText(commands[i][1])
-		labels[i] = UI.newLabel(off_x+80,off_y+5,commands[i][2])
+		local key, name = commands[i][1], commands[i][2]
+		keyinput[name] = UI.newTextbox(off_x,off_y,70,1)
+		keyinput[name]:setText(key)
+		labels[name] = UI.newLabel(off_x+80,off_y+5,name)
 		off_y = off_y +20
-		keyTab:add(keyinput[i])
-		keyTab:add(labels[i])
+		keyTab:add(keyinput[name])
+		keyTab:add(labels[name])
 	end
 
 	function saveOptions()
@@ -223,12 +224,15 @@ function options()
 		Epiar.setoption("options/development/map",  mapDisplay :IsChecked() and 1 or 0 )
 
 		for i=1,#commands do
-			keyval = keyinput[i]:GetText()
-			if keyval ~= commands[i][1] then
-				Epiar.UnRegisterKey(sdlkey(commands[i][1]), commands[i][4])
-				Epiar.RegisterKey(sdlkey(keyval), commands[i][4], commands[i][3])
-				HUD.newAlert(string.format("Registered '%s' to %s", keyval, commands[i][2]))
-				commands[i][1] = keyinput[i]:GetText()
+			local oldkey, name = commands[i][1], commands[i][2]
+			if keyinput[name] ~= nil then
+				newkey = keyinput[name]:GetText()
+				if newkey ~= oldkey then
+					Epiar.UnRegisterKey(sdlkey(oldkey), commands[i][4])
+					Epiar.RegisterKey(sdlkey(newkey), commands[i][4], commands[i][3])
+					HUD.newAlert(string.format("Registered '%s' to %s", newkey, name))
+					commands[i][1] = keyinput[name]:GetText()
+				end
 			end
 		end
 	end
@@ -488,16 +492,16 @@ function storeView(storestats, itemType, itemName )
 		["outfit"]=Epiar.getOutfitInfo,
 	}
 	local iteminfo = getters[itemType](itemName)
-	print( "viewing "..itemName)
-	for infoname,infovalue in pairs(iteminfo) do
-		print(infoname,infovalue)
-	end
-	print('----------')
+	--print( "viewing "..itemName)
+	--for infoname,infovalue in pairs(iteminfo) do
+	--	print(infoname,infovalue)
+	--end
+	--print('----------')
 	for statname,statlabel in pairs(storestats) do
 		if iteminfo[statname] == nil then
 			iteminfo[statname] = ""
 		end
-		print(statname, iteminfo[statname] )
+		--print(statname, iteminfo[statname] )
 		if statname=="Picture"  or statname=="Image" then
 			statlabel:setPicture( iteminfo[statname] )
 		else
@@ -508,7 +512,7 @@ function storeView(storestats, itemType, itemName )
 			statlabel:setLabel( value )
 		end
 	end
-	print('----------')
+	--print('----------')
 end
 
 --- Land on a planet
@@ -631,7 +635,7 @@ function landingDialog(id)
 		local price_offset = math.random(-3,3)
 		local priceMeanings = { "(Very Low)","(Low)","","","","(High)","(Very High)" }
 		local price = msrp + ( price_offset*msrp/10 )
-		print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
+		--print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
 		tradeCounts[commodity] = UI.newTextbox(180,yoff,30,1, currentCargo[commodity] or 0)
