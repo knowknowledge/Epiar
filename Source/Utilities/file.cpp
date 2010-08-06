@@ -268,7 +268,7 @@ bool File::Exists( const string& filename ) {
 	struct stat fileStatus;
 	int stat_ret = stat(cName, &fileStatus );
 	if ( stat_ret != 0 ) {
-		printf("Stat for %s: [%d]\n",cName,stat_ret);
+		//LogMsg(INFO, "Stat for %s: [%d]\n",cName,stat_ret);
 		switch( stat_ret ) {
 			case EACCES:        LogMsg(ERR,"Epiar cannot access:%s.", cName); break;
 			case EFAULT:        LogMsg(ERR,"Invalid address: %s.", cName); break;

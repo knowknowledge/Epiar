@@ -68,12 +68,17 @@ Image* Image::Get( string filename ) {
 /**\brief Load image from file
  */
 bool Image::Load( const string& filename ) {
-	File file = File( filename );
+	File file = File();
+	if( !file.OpenRead(filename ) ) {
+		return NULL; // File could not be opened or found.
+	}
+
 	char* buffer = file.Read();
 	int bytesread = file.GetLength();
 
-	if ( buffer == NULL )
-		return NULL;
+	if ( buffer == NULL ) {
+		return NULL; // File could not be Read.
+	}
 
 	int retval = Load( buffer, bytesread );
 	delete [] buffer;
@@ -81,7 +86,7 @@ bool Image::Load( const string& filename ) {
         filepath=filename;
 		return true;
 	}
-	return NULL;
+	return NULL; // Image could not be loaded. (It might not be an Image)
 }
 
 /**\brief Load image from buffer
