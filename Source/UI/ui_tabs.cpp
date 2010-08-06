@@ -146,18 +146,18 @@ void Tab::ResetScrollBars(){
 		int v_y = this->h-SCROLLBAR_THICK-SCROLLBAR_PAD;
 		int v_l = this->w-2*SCROLLBAR_PAD;
 		// Only add a Scrollbar when it doesn't already exist
-		if ( !this->hscrollbar ){
-			printf("Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			this->hscrollbar = new Scrollbar(
-				v_x, v_y, v_l,
-				HORIZONTAL,
-				this);
-			UIContainer::AddChild( this->hscrollbar );
-		} else {
+		if ( this->hscrollbar ){
+			UIContainer::DelChild( this->hscrollbar );
+			this->hscrollbar = NULL;
 			printf("Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			this->hscrollbar->SetPosition(v_x,v_y);
-			this->hscrollbar->SetSize(v_l);
+		} else {
+			printf("Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}
+		this->hscrollbar = new Scrollbar(
+			v_x, v_y, v_l,
+			HORIZONTAL,
+			this);
+		UIContainer::AddChild( this->hscrollbar );
 		this->hscrollbar->maxpos = max_width;
 	}
 
@@ -167,18 +167,19 @@ void Tab::ResetScrollBars(){
 		int v_y = SCROLLBAR_PAD;
 		int v_l = this->h-2*SCROLLBAR_PAD;
 		// Only add a Scrollbar when it doesn't already exist
-		if ( !this->vscrollbar ){
-			printf("Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			this->vscrollbar = new Scrollbar(
-				v_x, v_y, v_l,
-				VERTICAL,
-				this);
-			UIContainer::AddChild( this->vscrollbar );
-		} else {
+		if ( this->vscrollbar ){
+			UIContainer::DelChild( this->vscrollbar );
+			this->vscrollbar = NULL;
 			printf("Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			this->vscrollbar->SetPosition(v_x,v_y);
-			this->vscrollbar->SetSize(v_l);
+			
+		} else {
+			printf("Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}
+		this->vscrollbar = new Scrollbar(
+			v_x, v_y, v_l,
+			VERTICAL,
+			this);
+		UIContainer::AddChild( this->vscrollbar );
 		this->vscrollbar->maxpos = max_height;
 	}
 }
