@@ -397,11 +397,15 @@ void Hud::DrawMap( void ) {
 	edge = (edge>e)?edge:e;
 	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
 	
-	sprites = SpriteManager::Instance()->GetSprites(
-		DRAW_ORDER_PLAYER	|
-		DRAW_ORDER_SHIP		|
-		DRAW_ORDER_PLANET	|
-		DRAW_ORDER_GATE_TOP );
+	int retrieveSprites=(
+						 DRAW_ORDER_PLAYER	|
+						 DRAW_ORDER_PLANET	|
+						 DRAW_ORDER_GATE_TOP );
+	
+	if( OPTION(int,"options/development/ships-worldmap") )
+		retrieveSprites= retrieveSprites | DRAW_ORDER_SHIP;
+	
+	sprites = SpriteManager::Instance()->GetSprites( retrieveSprites );
 
 	// The Backdrop
 	Video::DrawRect( startx,starty,size,size,  0,0,0,alpha);

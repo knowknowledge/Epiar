@@ -37,6 +37,7 @@
 		<alert-fade>2500</alert-fade>
 	</timing>
 	<development>
+        <ships-worldmap>0</ships-worldmap>
 		<editor-mode>0</editor-mode>
 		<debug-quadtree>0</debug-quadtree>
 		<debug-ai>0</debug-ai>
