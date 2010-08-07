@@ -48,14 +48,29 @@ class SpriteManager {
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;
 
+				//counts number of ticks to track updates to quadrants
+				//max value is the number of ticks to update all quadrants
+		int tickCount;
+		const int semiRegularPeriod;		//the period at which every semi-regular quadrant is updated
+		const int fullUpdatePeriod;			//the period at which every quadrant is updated regardless of distance
+
+		const int numRegularBands;			//the number of bands surrounding the centre point that are updated every tick
+		const int numSemiRegularBands;		//the number of bands surrounding the centre point that are updated semi-regularly
+		map<int, int> ticksToBandNum;		//the key is the tick# that the value band# will be updated at
+
+
 		float northEdge, southEdge, eastEdge, westEdge;
 
 		bool DeleteSprite( Sprite *sprite );
 		void DeleteEmptyQuadrants( void );
 		QuadTree* GetQuadrant( Coordinate point );
 		list<QuadTree*> GetQuadrantsNear( Coordinate c, float r);
+		list<QuadTree*> GetQuadrantsInBand ( Coordinate c, int bandIndex);
 		void AdjustBoundaries();
+		void UpdateTickCount();
+
+		void GetAllQuadrants (list<QuadTree*> *newTree);
 };
 
 #endif // __H_SPRITEMANAGER__
-
+	
