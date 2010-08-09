@@ -12,5 +12,5 @@
 	<technologies>Resources/Definitions/technologies-default.xml</technologies>
 	<outfits>Resources/Definitions/outfits-default.xml</outfits>
 	<players>Resources/Definitions/saved-games.xml</players>
-	<armor></armor>
+	<music>Resources/Audio/Music/beyond_the_network.it</music>
 </simulation>

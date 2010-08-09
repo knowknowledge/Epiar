@@ -17,6 +17,7 @@
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
+#include "Audio/music.h"
 
 class Simulation {
 	public:
@@ -55,6 +56,7 @@ class Simulation {
 		Technologies *technologies;
 		Outfits *outfits;
 		Players *players;
+		Song* bgmusic;
 		
 		static float currentFPS;
 		static bool paused;

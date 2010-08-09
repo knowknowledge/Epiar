@@ -149,8 +149,7 @@ bool Simulation::Run() {
 	fpsTS = Timer::GetTicks();
 
 	// Load sample game music
-	Song* bgmusic = Song::Get( OPTION(string,"options/simulation/bgmusic") );
-	if(OPTION(int, "options/sound/background"))
+	if(bgmusic && OPTION(int, "options/sound/background"))
 		bgmusic->Play();
 
 	// main game loop
@@ -332,6 +331,12 @@ bool Simulation::Parse( void ) {
 				playersFilename = (char *)key;
 				xmlFree( key );
 				LogMsg(INFO, "Players filename is %s.", playersFilename.c_str() );
+			}
+			if( !strcmp( sectionName, "music" ) ) {
+				xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
+				bgmusic = Song::Get( (char*)key );
+				LogMsg(INFO, "Background Music: '%s'.", (char*)key );
+				xmlFree( key );
 			}
 		}
 		
