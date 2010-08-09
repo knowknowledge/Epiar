@@ -29,12 +29,11 @@ class XMLFile {
 
 	private:
 		xmlDocPtr xmlPtr;
-		map<string,string> values;
+		map<string,xmlNodePtr> values;
 		string filename;
 
 		queue<string> TokenizedPath(const string& path);
-		xmlNodePtr FindNode( const string& path );
-		void InsertNode( const string& path, const string& value );
+		xmlNodePtr FindNode( const string& path, bool createIfMissing=false );
 };
 
 #endif // __H_XML__
