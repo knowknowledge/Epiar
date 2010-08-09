@@ -128,6 +128,17 @@ bool Simulation::Run() {
 	Hud::Alert("Please Report all bugs to epiar.net");
 	Hud::Alert("Epiar is currently under development.");
 
+	// Load the player
+	if( OPTION(int,"options/simulation/automatic-load") ) {
+		if( players->LoadLast()!=NULL ) {
+			Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
+			Lua::Call("playerStart");
+		}
+	}
+	if( !Player::IsLoaded() ) {
+		Lua::Call("loadingWindow");
+	}
+
 	fpsTS = Timer::GetTicks();
 
 	// Load sample game music

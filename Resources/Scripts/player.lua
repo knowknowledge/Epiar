@@ -208,7 +208,6 @@ function loadingWindow()
 	end
 	loadingWin:add( UI.newButton(width/2-50,height-40,100,30,"New Player","createNewPlayerWindow()") )
 end
-registerInit(loadingWindow)
 
 function loadPlayer(playerName)
 	Epiar.loadPlayer(playerName)

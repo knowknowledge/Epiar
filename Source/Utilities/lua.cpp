@@ -351,15 +351,7 @@ int Lua::loadPlayer(lua_State *L) {
 	if( newPlayer==NULL ) {
 		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
 	}
-	bool alreadyLoaded = Player::IsLoaded();
-	Player::Load(playerName);
-	if(!alreadyLoaded) {
-		// Set player model based on simulation xml file settings
-		SpriteManager::Instance()->Add( Player::Instance() );
-
-		// Focus the camera on the sprite
-		Camera::Instance()->Focus( Player::Instance() );
-	}
+	Players::Instance()->LoadPlayer(playerName);
 	return 0;
 }
 
@@ -372,13 +364,8 @@ int Lua::newPlayer(lua_State *L) {
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Creating Player: "<<playerName<<endl;
 
-	Player::CreateNew(playerName);
+	Players::Instance()->CreateNew(playerName);
 
-	// Set player model based on simulation xml file settings
-	SpriteManager::Instance()->Add( Player::Instance() );
-
-	// Focus the camera on the sprite
-	Camera::Instance()->Focus( Player::Instance() );
 	return 0;
 }
 

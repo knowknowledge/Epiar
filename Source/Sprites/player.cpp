@@ -9,6 +9,8 @@
 #include "includes.h"
 #include "common.h"
 #include "Sprites/player.h"
+#include "Utilities/camera.h"
+#include "Sprites/spritemanager.h"
 
 /**\class Player
  * \brief Main player-specific functions and handle. */
@@ -26,50 +28,6 @@ Player *Player::Instance( void ) {
 	return( pInstance );
 }
 
-/**\brief Create a new Player
- * This is used instead of a normal class constructor
- */
-void Player::CreateNew(string playerName) {
-	pInstance = new Player;
-
-	pInstance->name = playerName;
-
-	pInstance->SetModel( Players::Instance()->GetDefaultModel() );
-	pInstance->SetEngine( Players::Instance()->GetDefaultEngine() );
-	pInstance->SetCredits( Players::Instance()->GetDefaultCredits() );
-	pInstance->SetWorldPosition( Players::Instance()->GetDefaultLocation() );
-
-	Players::Instance()->Add((Component*)pInstance);
-}
-
-/**\brief Create a new Player
- */
-void Player::LoadLast() {
-	list<string>* names = Players::Instance()->GetNames();
-	// TODO: sort by time
-	Player::Load( *(names->begin()) );
-}
-
-/**\brief Load a given Player
- */
-void Player::Load(string playerName) {
-	
-	Player* newPlayer = Players::Instance()->GetPlayer(playerName);
-	// If the player saved a bad Model or Engine, pick the default
-	if(newPlayer->GetModelName() == "") {
-		LogMsg(ERR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
-		newPlayer->SetModel( Players::Instance()->GetDefaultModel() );
-	}
-	if(newPlayer->GetEngineName() == "") {
-		LogMsg(ERR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
-		newPlayer->SetEngine( Players::Instance()->GetDefaultEngine() );
-	}
-	// We can't start the game with bad player Information
-	assert( newPlayer->GetModelName() != "" );
-	assert( newPlayer->GetEngineName() != "" );
-
-	pInstance = newPlayer;
-}
 
 
 /**\brief Constructor
@@ -169,6 +127,12 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		} else return false;
 	}
 
+	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
+		lastLoadTime = NodeToInt(doc,attr);
+	} else {
+		lastLoadTime = (time_t)0;
+	}
+
 	return true;
 }
 
@@ -220,6 +184,9 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){
 		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
 	}
+
+	snprintf(buff, sizeof(buff), "%d", (int)lastLoadTime );
+	xmlNewChild(section, NULL, BAD_CAST "lastLoadTime", BAD_CAST buff );
 	
 	return section;
 }
@@ -240,6 +207,80 @@ Players *Players::Instance( void ) {
 		pInstance->componentName = "player";
 	}
 	return( pInstance );
+}
+
+/**\brief Create a new Player
+ * This is used instead of a normal class constructor
+ */
+Player* Players::CreateNew(string playerName) {
+	Player* newPlayer = new Player;
+
+	newPlayer->name = playerName;
+
+	newPlayer->SetModel( defaultModel );
+	newPlayer->SetEngine( defaultEngine );
+	newPlayer->SetCredits( defaultCredits );
+	newPlayer->SetWorldPosition( defaultLocation );
+
+	newPlayer->lastLoadTime = time(NULL);
+
+	// Focus the camera on the sprite
+	Camera::Instance()->Focus( newPlayer );
+	Add((Component*)newPlayer);
+	SpriteManager::Instance()->Add(newPlayer);
+	Player::pInstance = newPlayer;
+
+	return newPlayer;
+}
+
+/**\brief Create a new Player
+ */
+Player* Players::LoadLast() {
+	list<string>* names = GetNames();
+	list<string>::iterator i = names->begin();
+	Player* latest;
+
+	if( names->empty() ){
+		return false;
+	}
+
+	latest = GetPlayer(*i);
+	i++;
+	for(; i != names->end(); ++i )
+	{
+		if( latest->lastLoadTime < GetPlayer(*i)->lastLoadTime )
+			latest = GetPlayer(*i);
+	}
+	return LoadPlayer( latest->GetName() );
+}
+
+/**\brief Load a given Player
+ */
+Player* Players::LoadPlayer(string playerName) {
+	Player* newPlayer = GetPlayer(playerName);
+	// If the player saved a bad Model or Engine, pick the default
+	if(newPlayer->GetModelName() == "") {
+		LogMsg(ERR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
+		newPlayer->SetModel( defaultModel );
+	}
+	if(newPlayer->GetEngineName() == "") {
+		LogMsg(ERR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
+		newPlayer->SetEngine( defaultEngine );
+	}
+
+	// We can't start the game with bad player Information
+	assert( newPlayer->GetModelName() != "" );
+	assert( newPlayer->GetEngineName() != "" );
+
+	// Remeber this Player
+	newPlayer->lastLoadTime = time(NULL);
+	SpriteManager::Instance()->Add( newPlayer );
+	Camera::Instance()->Focus( newPlayer );
+
+	Player::pInstance = newPlayer;
+
+	LogMsg(ERR, "Loaded the Player '%s'.",newPlayer->GetName().c_str() );
+	return newPlayer;
 }
 
 /**\brief Set Default values for new Players

@@ -18,9 +18,6 @@ class Player : public Ship , public Component {
 		static Player *Instance();
 
 		static bool IsLoaded() { return pInstance!=NULL; }
-		static void CreateNew(string playerName);
-		static void LoadLast();
-		static void Load(string playerName);
 		string GetName() { return name; }
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
@@ -43,6 +40,8 @@ class Player : public Ship , public Component {
 
 	private:
 		static Player *pInstance;
+
+		time_t lastLoadTime; // TODO This may need to be renamed
 };
 
 class Players : public Components {
@@ -50,6 +49,10 @@ class Players : public Components {
 		static Players *Instance();
 		Player* GetPlayer(string name) { return (Player*) this->Get(name); }
 		Component* newComponent() { return new Player(); }
+
+		Player* CreateNew(string playerName);
+		Player* LoadLast();
+		Player* LoadPlayer(string playerName);
 
 		void SetDefaults(
 			Model *_defaultModel,

@@ -28,6 +28,7 @@
 	<simulation>
 		<starfield-density>750</starfield-density>
 		<update-all>1</update-all>
+		<automatic-load>0</automatic-load>
 	</simulation>
 	<timing>
 		<mouse-fade>500</mouse-fade>
