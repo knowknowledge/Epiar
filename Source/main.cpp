@@ -115,7 +115,12 @@ int main( int argc, char **argv ) {
 
 	// Unfortunately, we need to load the main configuration file (used throughout the tree)
 	// before parsing more options
-	optionsfile = new XMLFile( "Resources/Definitions/options.xml" );
+	optionsfile = new XMLFile();
+	if( !optionsfile->Open("Resources/Definitions/options.xml") )
+	{
+		printf("Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
+		return -1;
+	}
 
 	// Following are cumulative options (I.E. you can have multiple of them)
 	if ( argparser.HaveOpt("editor-mode") ){
