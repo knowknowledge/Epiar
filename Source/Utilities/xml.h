@@ -27,10 +27,12 @@ class XMLFile {
 		void Set( const string& path, const float value ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const int value ); // cast/convert this to whatever return value you need
 
+	protected:
+		string filename;
+
 	private:
 		xmlDocPtr xmlPtr;
 		map<string,xmlNodePtr> values;
-		string filename;
 
 		queue<string> TokenizedPath(const string& path);
 		xmlNodePtr FindNode( const string& path, bool createIfMissing=false );

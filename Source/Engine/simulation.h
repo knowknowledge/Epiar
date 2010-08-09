@@ -19,12 +19,12 @@
 #include "Sprites/player.h"
 #include "Audio/music.h"
 
-class Simulation {
+class Simulation : public XMLFile {
 	public:
 		Simulation();
-		Simulation( string filename );
 		
 		bool Load( string filename );
+		bool Save();
 		bool Run();
 
 		static float GetFPS();
@@ -36,17 +36,6 @@ class Simulation {
 	private:
 		bool Parse( void );
 	
-		string filename;
-		string commoditiesFilename;
-		string planetsFilename;
-		string modelsFilename;
-		string enginesFilename;
-		string weaponsFilename;
-		string outfitsFilename;
-		string alliancesFilename;
-		string technologiesFilename;
-		string playersFilename;
-		
 		Commodities *commodities;
 		Planets *planets;
 		Engines *engines;
