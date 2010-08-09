@@ -51,6 +51,16 @@ class Players : public Components {
 		Player* GetPlayer(string name) { return (Player*) this->Get(name); }
 		Component* newComponent() { return new Player(); }
 
+		void SetDefaults(
+			Model *_defaultModel,
+			Engine *_defaultEngine,
+			int _defaultCredits,
+			Coordinate _defaultLocation);
+		Model* GetDefaultModel() { return defaultModel; }
+		Engine* GetDefaultEngine() { return defaultEngine; }
+		int GetDefaultCredits() { return defaultCredits; }
+		Coordinate GetDefaultLocation() { return defaultLocation; }
+
 	protected:
 		Players() {};
 		Players( const Players & );
@@ -58,6 +68,10 @@ class Players : public Components {
 
 	private:
 		static Players *pInstance;
+		Model *defaultModel;
+		Engine *defaultEngine;
+		int defaultCredits;
+		Coordinate defaultLocation;
 };
 
 #endif // __H_PLAYER__

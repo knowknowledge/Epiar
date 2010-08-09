@@ -256,6 +256,20 @@ bool Simulation::Parse( void ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
 	}
 
+	Coordinate startPos(0,0);
+	string startPlanet = Get("defaultPlayer/start");
+	if( planets->GetPlanet( startPlanet ) ) {
+		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
+	} else {
+		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
+	}
+	players->SetDefaults(
+		models->GetModel( Get("defaultPlayer/model") ),
+		engines->GetEngine( Get("defaultPlayer/engine") ),
+		convertTo<int>( Get("defaultPlayer/credits")),
+		startPos
+	);
+
 	return true;
 }
 

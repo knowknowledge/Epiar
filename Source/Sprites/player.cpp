@@ -31,20 +31,13 @@ Player *Player::Instance( void ) {
  */
 void Player::CreateNew(string playerName) {
 	pInstance = new Player;
+
 	pInstance->name = playerName;
 
-	//Model* defaultModel = Models::Instance()->GetModel( OPTION(string,"options/defaults/playerModel" ) );
-	//Engine* defaultEngine = Engines::Instance()->GetEngine( OPTION(string,"options/defaults/playerEngine" ) );
-
-	//cout<<"Default Model: ["<<OPTION(string,"options/defaults/playerModel")<<"]"<<endl;
-	Model* defaultModel = Models::Instance()->GetModel( "Terran FV-5 Frigate"  );
-	pInstance->SetModel( defaultModel );
-	
-	//cout<<"Default Engine: ["<<OPTION(string,"options/defaults/playerEngine")<<"]"<<endl;
-	Engine* defaultEngine = Engines::Instance()->GetEngine( "Altaire Corp. NM66 Sublight Thrusters" );
-	pInstance->SetEngine( defaultEngine );
-
-	pInstance->SetCredits(2000);
+	pInstance->SetModel( Players::Instance()->GetDefaultModel() );
+	pInstance->SetEngine( Players::Instance()->GetDefaultEngine() );
+	pInstance->SetCredits( Players::Instance()->GetDefaultCredits() );
+	pInstance->SetWorldPosition( Players::Instance()->GetDefaultLocation() );
 
 	Players::Instance()->Add((Component*)pInstance);
 }
@@ -65,11 +58,11 @@ void Player::Load(string playerName) {
 	// If the player saved a bad Model or Engine, pick the default
 	if(newPlayer->GetModelName() == "") {
 		LogMsg(ERR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
-		newPlayer->SetModel( Models::Instance()->GetModel( OPTION(string,"options/defaults/playerModel" ) ) );
+		newPlayer->SetModel( Players::Instance()->GetDefaultModel() );
 	}
 	if(newPlayer->GetEngineName() == "") {
 		LogMsg(ERR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
-		newPlayer->SetEngine( Engines::Instance()->GetEngine( OPTION(string,"options/defaults/playerEngine" ) ) );
+		newPlayer->SetEngine( Players::Instance()->GetDefaultEngine() );
 	}
 	// We can't start the game with bad player Information
 	assert( newPlayer->GetModelName() != "" );
@@ -249,4 +242,20 @@ Players *Players::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Set Default values for new Players
+ */
+void Players::SetDefaults(
+	Model *_defaultModel,
+	Engine *_defaultEngine,
+	int _defaultCredits,
+	Coordinate _defaultLocation)
+{
+	assert(_defaultModel);
+	assert(_defaultEngine);
+	assert(_defaultCredits > 0);
+	defaultModel = _defaultModel;
+	defaultEngine = _defaultEngine;
+	defaultCredits = _defaultCredits;
+	defaultLocation = _defaultLocation;
+}
 

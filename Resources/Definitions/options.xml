@@ -43,8 +43,4 @@
 		<map>0</map>
 		<override-tgz>1</override-tgz>
 	</development>
-	<defaults>
-		<playerModel>Terran FV-5 Frigate</playerModel>
-		<playerEngine>Altaire Corp. NM66 Sublight Thrusters</playerEngine>
-	</defaults>
 </options>
