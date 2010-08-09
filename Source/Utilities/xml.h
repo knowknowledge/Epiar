@@ -20,6 +20,7 @@ class XMLFile {
 		XMLFile( const string& filename );
 		~XMLFile();
 		bool Open( const string& filename );
+		bool Save( void );
 		bool Close();
 		string Get( const string& path ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const string& value ); // cast/convert this to whatever return value you need
@@ -30,6 +31,10 @@ class XMLFile {
 		xmlDocPtr xmlPtr;
 		map<string,string> values;
 		string filename;
+
+		queue<string> TokenizedPath(const string& path);
+		xmlNodePtr FindNode( const string& path );
+		void InsertNode( const string& path, const string& value );
 };
 
 #endif // __H_XML__

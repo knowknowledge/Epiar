@@ -192,7 +192,7 @@ bool Simulation::Run() {
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
-			if( currentFPS < 1.0f )
+			if( currentFPS < 0.1f )
 			{
 				// The game has effectively stopped..
 				LogMsg(ERR,"Sorry, the framerate has dropped to zero. Please report this as a bug to 'epiar-devel@epiar.net'");
@@ -214,6 +214,7 @@ bool Simulation::Run() {
 	}
 
 	Players::Instance()->Save(playersFilename);
+	optionsfile->Save();
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
