@@ -8,15 +8,9 @@
 
 #include "includes.h"
 #include "common.h"
-#include "Engine/console.h"
 #include "Input/input.h"
-#include "Sprites/player.h"
-#include "UI/ui.h"
 #include "Utilities/log.h"
 #include "Graphics/video.h"
-#include "Engine/simulation.h"
-#include "Engine/hud.h"
-#include "Utilities/lua.h"
 #include "Utilities/timer.h"
 
 map<InputEvent, string> Input::eventMappings;
@@ -74,9 +68,10 @@ Input::Input() {
 
 /**\brief Polls the event queue and sends the list of events to subsystems.
  */
-bool Input::Update( void ) {
+list<InputEvent> Input::Update( bool &quitSignal ) {
 	SDL_Event event;
-	bool quitSignal = false;
+	quitSignal = false;
+	events.clear();
 
 	while( SDL_PollEvent( &event ) ) {
 		switch( event.type ) {
@@ -102,12 +97,12 @@ bool Input::Update( void ) {
 			}
 			case SDL_MOUSEBUTTONUP:
 			{
-				_UpdateHandleMouseUp( &event );				
+				_UpdateHandleMouseUp( &event );
 				break;
 			}
 			case SDL_MOUSEBUTTONDOWN:
 			{
-				_UpdateHandleMouseDown( &event );				
+				_UpdateHandleMouseDown( &event );
 				break;
 			}
 			default:
@@ -120,21 +115,15 @@ bool Input::Update( void ) {
 		if(heldKeys[k])
 			events.push_back( InputEvent( KEY, KEYPRESSED, k ) );
 	}
-	
-	// the list of sub-input systems that handle events
-	UI::HandleInput( events ); // anything the UI doesn't care about will be left in the list for the next subsystem
-	Console::HandleInput( events );
-	Hud::HandleInput( events );
+
 	HandleLuaCallBacks( events );
 
-	if((Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")) && !UI::Active()){
+	if((Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")) ){
 		Video::DisableMouse();
 	}
-
-	events.clear();
 	
 	// this could be false - returning quitSignal doesn't imply quitting
-	return quitSignal;
+	return events;
 }
 
 /**\brief Converts SDL_MouseButtonEvent to Epiar's Input model.
@@ -261,7 +250,7 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 			case SDLK_QUOTE:
 				letter = '"'; break;
 			case SDLK_SEMICOLON:
-				letter = ';'; break;
+				letter = ':'; break;
 			case SDLK_BACKQUOTE:
 				letter = '~'; break;
 			case SDLK_MINUS:
@@ -337,7 +326,7 @@ int Input::RegisterKey(lua_State *L) {
 		string command = (string)luaL_checkstring(L,3);
 		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
 	} else {
-		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n); 
+		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n);
 	}
 	return 0;
 }
@@ -356,7 +345,7 @@ int Input::UnRegisterKey(lua_State *L) {
 		keyState triggerState = (keyState)(luaL_checkint(L,2));
 		UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n); 
+		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n);
 	}
 	return 0;
 }

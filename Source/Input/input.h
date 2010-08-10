@@ -98,9 +98,8 @@ ostream& operator<<(ostream &out, const InputEvent&e);
 class Input {
 	public:
 		Input();
-		bool Update( void );
+		list<InputEvent> Update( bool &quitSignal );
 
-		static void HandleLuaCallBacks( list<InputEvent> & events );
 		static void RegisterCallBack( InputEvent key, string command );
 		static void UnRegisterCallBack( InputEvent key );
 		static int RegisterKey(lua_State *L);
@@ -113,8 +112,9 @@ class Input {
 		void _UpdateHandleMouseDown( SDL_Event *event );
 		void _UpdateHandleMouseUp( SDL_Event *event );
 		void _UpdateHandleMouseMotion( SDL_Event *event );
-		void HandlePlayerInput( list<InputEvent> & events );
+
 		void PushTypeEvent( list<InputEvent> & events, SDLKey key );
+		void HandleLuaCallBacks( list<InputEvent> & events );
 
 		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems

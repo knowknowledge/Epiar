@@ -15,8 +15,8 @@
 #include "Engine/alliances.h"
 #include "Engine/technologies.h"
 #include "Engine/starfield.h"
+#include "Engine/console.h"
 #include "Graphics/video.h"
-#include "Input/input.h"
 #include "Sprites/player.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
@@ -77,7 +77,6 @@ void Simulation::unpause(){
  */
 bool Simulation::Run() {
 	bool quit = false;
-	Input inputs;
 	int fpsCount = 0; // for FPS calculations
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
@@ -147,7 +146,7 @@ bool Simulation::Run() {
 
 	// main game loop
 	while( !quit ) {
-		quit = inputs.Update();
+		quit = HandleInput();
 		
 		int logicLoops = Timer::Update();
 		if( !paused ) {
@@ -282,6 +281,24 @@ bool Simulation::Parse( void ) {
 	);
 
 	return true;
+}
+
+/**\brief Handle User Input
+ * \return true if the player wants to quit
+ */
+bool Simulation::HandleInput() {
+	list<InputEvent> events;
+	bool quitSignal;
+
+	// Collect user input events
+	events = inputs.Update( quitSignal );
+
+	// Pass the Events to the systems that handle them.
+	UI::HandleInput( events );
+	Console::HandleInput( events );
+	Hud::HandleInput( events );
+
+	return quitSignal;
 }
 
 /**\fn Simulation::isPaused()

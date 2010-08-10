@@ -18,6 +18,7 @@
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
 #include "Audio/music.h"
+#include "Input/input.h"
 
 class Simulation : public XMLFile {
 	public:
@@ -26,6 +27,8 @@ class Simulation : public XMLFile {
 		bool Load( string filename );
 		bool Save();
 		bool Run();
+
+		bool HandleInput();
 
 		static float GetFPS();
 		
@@ -47,6 +50,8 @@ class Simulation : public XMLFile {
 		Players *players;
 		Song* bgmusic;
 		
+		Input inputs;
+
 		static float currentFPS;
 		static bool paused;
 };
