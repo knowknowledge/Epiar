@@ -31,8 +31,6 @@ class Simulation : public XMLFile {
 
 		bool HandleInput();
 
-		static float GetFPS();
-		
 		static void pause();
 		static void unpause();
 		static bool isPaused() {return paused;}
@@ -54,7 +52,7 @@ class Simulation : public XMLFile {
 		Input inputs;
 		Console console;
 
-		static float currentFPS;
+		float currentFPS;
 		static bool paused;
 };
 

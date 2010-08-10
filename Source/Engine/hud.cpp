@@ -232,12 +232,12 @@ void Hud::Update( void ) {
 
 /**\brief Draws the Hud
  */
-void Hud::Draw( void ) {
+void Hud::Draw( float fps ) {
 	Hud::DrawTarget();
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav();
 	Hud::DrawMessages();
-	Hud::DrawFPS();
+	Hud::DrawFPS( fps );
 	Hud::DrawStatusBars();
 	if( OPTION(int,"options/development/map") )
 		Hud::DrawMap();
@@ -289,10 +289,10 @@ void Hud::DrawMessages() {
 
 /**\brief Draw the current framerate (calculated in simulation.cpp).
  */
-void Hud::DrawFPS() {
+void Hud::DrawFPS( float fps ) {
 	char frameRate[16];
 	BitType->SetColor(1.f,1.f,1.f,1.f);
-	snprintf(frameRate, sizeof(frameRate), "%f fps", Simulation::GetFPS());
+	snprintf(frameRate, sizeof(frameRate), "%f fps", fps );
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
 	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());

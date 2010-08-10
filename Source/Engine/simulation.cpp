@@ -31,7 +31,6 @@
 /**\class Simulation
  * \brief Handles main game loop. */
 
-float Simulation::currentFPS = 0.;
 bool Simulation::paused = false;
 
 /**\brief Loads an empty Simulation.
@@ -166,7 +165,7 @@ bool Simulation::Run() {
 		// Draw cycle
 		starfield.Draw();
 		sprites->Draw();
-		Hud::Draw();
+		Hud::Draw( currentFPS );
 		UI::Draw();
 		console.Draw();
 		Video::Update();
@@ -180,7 +179,7 @@ bool Simulation::Run() {
 
 		// Update the fps once per second
 		if( (Timer::GetTicks() - fpsTS) >1000 ) {
-			Simulation::currentFPS = static_cast<float>(1000.0 *
+			currentFPS = static_cast<float>(1000.0 *
 					((float)fpsCount / (Timer::GetTicks() - fpsTS)));
 			fpsTS = Timer::GetTicks();
 			fpsCount = 0;
@@ -210,12 +209,6 @@ bool Simulation::Run() {
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
-}
-
-/**\brief Returns the current frames per second
- */
-float Simulation::GetFPS() {
-	return Simulation::currentFPS;
 }
 
 /**\brief Parses an XML simulation file

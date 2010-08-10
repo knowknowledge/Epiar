@@ -53,7 +53,7 @@ class Hud {
 		Hud( void );
 
 		static void Update( void );
-		static void Draw( void );
+		static void Draw( float fps );
 
 		static void HandleInput( list<InputEvent> & events );
 		
@@ -79,7 +79,7 @@ class Hud {
 		static void DrawShieldIntegrity();
 		static void DrawRadarNav( void );
 		static void DrawMessages();
-		static void DrawFPS();
+		static void DrawFPS( float fps );
 		static void DrawStatusBars();
 		static void DrawTarget();
 		static void DrawMap( void );
