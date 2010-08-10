@@ -168,6 +168,7 @@ bool Simulation::Run() {
 		sprites->Draw();
 		Hud::Draw();
 		UI::Draw();
+		console.Draw();
 		Video::Update();
 		
 		// Don't kill the CPU (play nice)
@@ -295,7 +296,7 @@ bool Simulation::HandleInput() {
 
 	// Pass the Events to the systems that handle them.
 	UI::HandleInput( events );
-	Console::HandleInput( events );
+	console.HandleInput( events );
 	Hud::HandleInput( events );
 
 	return quitSignal;

@@ -211,7 +211,7 @@ void Lua::RegisterFunctions() {
 	// Register these functions to the lua global namespace
 
 	static const luaL_Reg EngineFunctions[] = {
-		{"echo", &Lua::console_echo},
+		//{"echo", &Lua::console_echo},
 		{"pause", &Lua::pause},
 		{"unpause", &Lua::unpause},
 		{"ispaused", &Lua::ispaused},
@@ -268,6 +268,7 @@ void Lua::RegisterFunctions() {
 	Hud::RegisterHud(L);
 }
 
+/*
 int Lua::console_echo(lua_State *L) {
 	const char *str = lua_tostring(L, 1); // get argument
 
@@ -278,6 +279,7 @@ int Lua::console_echo(lua_State *L) {
 
 	return 0;
 }
+*/
 
 int Lua::pause(lua_State *L){
 		Simulation::pause();

@@ -8,7 +8,6 @@
 
 #include "includes.h"
 #include "common.h"
-#include "Engine/console.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Graphics/video.h"
@@ -229,7 +228,6 @@ void Hud::Update( void ) {
 	for( i= toDelete.begin(); i != toDelete.end(); ++i ){
 		AlertMessages.remove(*i);
 	}
-	Console::Update();
 }
 
 /**\brief Draws the Hud
@@ -239,7 +237,6 @@ void Hud::Draw( void ) {
 	Hud::DrawShieldIntegrity();
 	Hud::DrawRadarNav();
 	Hud::DrawMessages();
-	Console::Draw();
 	Hud::DrawFPS();
 	Hud::DrawStatusBars();
 	if( OPTION(int,"options/development/map") )

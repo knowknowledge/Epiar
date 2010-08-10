@@ -19,6 +19,7 @@
 #include "Sprites/player.h"
 #include "Audio/music.h"
 #include "Input/input.h"
+#include "Engine/console.h"
 
 class Simulation : public XMLFile {
 	public:
@@ -51,6 +52,7 @@ class Simulation : public XMLFile {
 		Song* bgmusic;
 		
 		Input inputs;
+		Console console;
 
 		static float currentFPS;
 		static bool paused;

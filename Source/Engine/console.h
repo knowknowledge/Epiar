@@ -14,17 +14,17 @@
 
 class Console {
 	public:
-		static void Initialize();
+		Console();
 
-		static void HandleInput( list<InputEvent> & events );
-		static void Draw();
-		static void Update();
+		void HandleInput( list<InputEvent> & events );
+		void Draw();
+		void Update();
 
-		static void InsertResult(string result); // used by lua functions, eg echo
+		void InsertResult(string result); // used by lua functions, eg echo
 
 	private:
-		static vector<string> Buffer;
-		static bool enabled, initialized;
+		vector<string> Buffer;
+		bool enabled;
 };
 
 #endif // __h_console__

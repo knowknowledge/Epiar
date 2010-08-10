@@ -17,25 +17,20 @@
 /**\class Console
  * \brief Handles the Heads-Up-Display. */
 
-vector<string> Console::Buffer;
-bool Console::enabled = false;
-bool Console::initialized = false;
-
 /**\brief Initialize Console instance.
  */
-void Console::Initialize() {
-	Console::Buffer.push_back("Console initialized.");
-	Console::Buffer.push_back("> _");
-	Console::initialized = true;
+Console::Console() {
+	Buffer.push_back("Console initialized.");
+	Buffer.push_back("> _");
+	enabled = false;
 }
 
 /**\brief Handles a list of Input events.
  * \param events A list of events
  */
 void Console::HandleInput( list<InputEvent> & events ) {
-	if(Console::initialized == false) Console::Initialize();
 
-	// look for the bcakquote (`) key to toggle the console
+	// look for the backquote (`) key to toggle the console
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ) {
 		bool skipIncrement = false;
 
@@ -50,9 +45,9 @@ void Console::HandleInput( list<InputEvent> & events ) {
             }
 			else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
-					string back = Console::Buffer.back();
+					string back = Buffer.back();
 					back.erase(back.size() - 1);
-					Console::Buffer.pop_back();
+					Buffer.pop_back();
 
 					switch(i->key) {
 					// Ignore Modifiers
@@ -73,7 +68,7 @@ void Console::HandleInput( list<InputEvent> & events ) {
 					case SDLK_DOWN:
 						break;
 					case '\n':
-						Console::Buffer.push_back(back);
+						Buffer.push_back(back);
 						Lua::Run(back.substr(2));
 						back = "> ";
 					break;
@@ -85,7 +80,7 @@ void Console::HandleInput( list<InputEvent> & events ) {
 					break;
 					}
 					back += "_";
-					Console::Buffer.push_back(back);
+					Buffer.push_back(back);
 
 					// remove it from the queue
 					i = events.erase( i );
@@ -114,8 +109,8 @@ void Console::Draw() {
 
 		int pos = 8;
 		Mono->SetColor(.9f,.9f,.9f,1.0);
-		for(int i = Console::Buffer.size() - 1; i >= 0; i--) {
-			Mono->Render(155, pos * Mono->LineHeight(), Console::Buffer[i]);
+		for(int i = Buffer.size() - 1; i >= 0; i--) {
+			Mono->Render(155, pos * Mono->LineHeight(), Buffer[i]);
 			pos--;
 			if(pos < 0) break;
 		}
@@ -140,7 +135,7 @@ void Console::InsertResult(string result) {
 	//Console::Buffer.pop_back();
 
 	// insert result into buffer
-	Console::Buffer.push_back(result);
+	Buffer.push_back(result);
 
 	// insert prompt back into buffer
 	//Console::Buffer.push_back(back);
