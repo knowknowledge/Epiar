@@ -146,7 +146,7 @@ bool Simulation::Run() {
 				// Update cycle
 				starfield.Update( camera );
 				sprites->Update();
-				camera->Update();
+				camera->Update( sprites );
 				Hud::Update();
 			}
 		}

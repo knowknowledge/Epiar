@@ -50,7 +50,7 @@ Camera::Camera( void ) {
 	y = 0;
 	dx = 0;
 	dy = 0;
-	focusSprite = NULL;
+	focusID = 0;
 	zoom = 1.;
 	hasZoomed = true;
 	cameraShakeDur = 0;
@@ -84,17 +84,13 @@ void Camera::Focus( double x, double y ) {
 /**\brief Focus the camera on a Sprite
  */
 void Camera::Focus( Sprite *sprite ) {
-	focusSprite = sprite;
+	focusID = sprite->GetID();
 }
 
 /**\brief Get the current Camera Coordinate
  */
 Coordinate Camera::GetFocusCoordinate() {
-	if(focusSprite) {
-		return focusSprite->GetWorldPosition();
-	} else {
-		return Coordinate(x,y);
-	}
+	return Coordinate(x,y);
 }
 
 /**\brief Translate a given World Coordinate into the relative Screen Coordinate
@@ -161,9 +157,11 @@ void Camera::Move( int dx, int dy ) {
 
 /**\brief Updates camera, including currently focused position
  */
-void Camera::Update( void ) {
+void Camera::Update( SpriteManager *sprites ) {
+	Sprite* focusSprite;
 	dx = 0;
 	dy = 0;
+	focusSprite = sprites->GetSpriteByID( focusID );
 	if( focusSprite ) {
 		Coordinate pos = focusSprite->GetWorldPosition();
 		/*
@@ -177,7 +175,7 @@ void Camera::Update( void ) {
 		cameraLag = 0;
 		*/
 		Focus( pos.GetX() + cameraShakeXOffset - (cameraLag.GetX() * 10), 
-			pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
+		       pos.GetY() + cameraShakeYOffset - (cameraLag.GetY() * 10));
 
 		UpdateShake();
 	}
@@ -189,7 +187,8 @@ void Camera::Update( void ) {
 void Camera::Shake( Uint32 duration, int intensity, Coordinate* source ) {
 	Trig *trig = Trig::Instance();
 	float angle;
-	Coordinate position = focusSprite->GetWorldPosition() - *source;
+	//Coordinate position = focusSprite->GetWorldPosition() - *source;
+	Coordinate position = *source;
 	angle = position.GetAngle();
 
 	cameraShakeXOffset = (int)(intensity * trig->GetCos(angle));

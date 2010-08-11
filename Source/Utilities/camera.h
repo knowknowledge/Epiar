@@ -12,7 +12,7 @@
 #include "includes.h"
 #include "Sprites/sprite.h"
 #include "Utilities/coordinate.h"
-
+#include "Sprites/spritemanager.h"
 
 class Camera {
 	public:
@@ -26,10 +26,9 @@ class Camera {
 		void TranslateScreenToWorld( Coordinate &world, Coordinate &screen );
 		// gives the most recent change in camera coordinates
 		void GetDelta( double *dx, double *dy );
-		Sprite* GetFocus() {return focusSprite;}
 		Coordinate GetFocusCoordinate();
 
-		void Update( void );
+		void Update( SpriteManager *sprites );
 	
 		// moves the camera given a delta. this is not the common method to
 		// move the camera, you should use Focus()
@@ -57,7 +56,7 @@ class Camera {
 		int cameraShakeYOffset;
 		int cameraShakeXDec;
 		int cameraShakeYDec;
-		Sprite *focusSprite; // focused on sprite - always favored, use NULL to set camera to static locations
+		int focusID; // focused on sprite - always favored, use NULL to set camera to static locations
 		double x, y; // point where camera is looking
 		double dx, dy; // the difference in the current and last camera position
 		               // (this is used by Starfield)
