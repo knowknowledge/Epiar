@@ -682,13 +682,3 @@ function ui_demo()
 	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
 	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
 end
-
-
---------------------------------------------------------------------------------
--- Load Scenarios
-
-dofile "Resources/Scripts/commands.lua"
-dofile "Resources/Scripts/basics.lua"
---dofile "Resources/Scripts/tag.lua"
---dofile "Resources/Scripts/swarm.lua"
-

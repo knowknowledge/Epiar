@@ -77,6 +77,7 @@ void Simulation::unpause(){
  */
 bool Simulation::Run() {
 	bool quit = false;
+	bool luaLoad = true;
 	int fpsCount = 0; // for FPS calculations
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
@@ -93,25 +94,17 @@ bool Simulation::Run() {
 	}
 
 	// Start the Lua Universe
-	if( !( Lua::Load("Resources/Scripts/universe.lua") ))
-	{
+	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
+	       && Lua::Load("Resources/Scripts/commands.lua")
+	       && Lua::Load("Resources/Scripts/basics.lua")
+	       && (OPTION(int,"options/development/editor-mode")
+	          ? Lua::Load("Resources/Scripts/editor.lua")
+	          : Lua::Load("Resources/Scripts/player.lua") );
+	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
-		quit = true;
+		return false;
 	}
-    if( 0 == OPTION(int,"options/development/editor-mode") ){
-        if( !( Lua::Load("Resources/Scripts/player.lua") ))
-        {
-            LogMsg(ERR,"Fatal error starting Lua.");
-            quit = true;
-        }
-    } else {
-        if( !( Lua::Load("Resources/Scripts/editor.lua") ))
-        {
-            LogMsg(ERR,"Fatal error starting Lua.");
-            quit = true;
-        }
-    }
-    Lua::Call("Start");
+	Lua::Call("Start");
 
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("-----------------------------------");
