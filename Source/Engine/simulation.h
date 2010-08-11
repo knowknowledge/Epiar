@@ -18,6 +18,7 @@
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
 #include "Audio/music.h"
+#include "Utilities/camera.h"
 #include "Input/input.h"
 #include "Engine/console.h"
 
@@ -37,7 +38,10 @@ class Simulation : public XMLFile {
 
 	private:
 		bool Parse( void );
-	
+
+		// Pointers to Singletons
+		// TODO: These should all be rewritten to not be singletons
+		SpriteManager *sprites;
 		Commodities *commodities;
 		Planets *planets;
 		Engines *engines;
@@ -47,8 +51,10 @@ class Simulation : public XMLFile {
 		Technologies *technologies;
 		Outfits *outfits;
 		Players *players;
+		Camera *camera;
+
+		// Simulation specific variables
 		Song* bgmusic;
-		
 		Input inputs;
 		Console console;
 

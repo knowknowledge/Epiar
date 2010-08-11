@@ -21,7 +21,6 @@
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
-#include "Utilities/camera.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
@@ -36,6 +35,7 @@ bool Simulation::paused = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
+	sprites = SpriteManager::Instance();
 	commodities = Commodities::Instance();
 	engines = Engines::Instance();
 	planets = Planets::Instance();
@@ -45,6 +45,7 @@ Simulation::Simulation( void ) {
 	technologies = Technologies::Instance();
 	outfits = Outfits::Instance();
 	players = Players::Instance();
+	camera = Camera::Instance();
 	currentFPS = 0.;
 }
 
@@ -81,20 +82,11 @@ bool Simulation::Run() {
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 
 	Timer::Update(); // Start the Timer
-
-	// Grab the camera and give it coordinates
-	Camera *camera = Camera::Instance();
-	camera->Focus(0, 0);
-	
 	Timer::Initialize();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
-	// Create a spritelist
-	SpriteManager *sprites = SpriteManager::Instance();
-
-	Planets *planets = Planets::Instance();
 	list<string>* planetNames = planets->GetNames();
 	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
 		sprites->Add(  planets->GetPlanet(*pname) );
