@@ -6,6 +6,8 @@
  * \details
  */
 
+#include "Utilities/camera.h"
+
 #ifndef __h_starfield__
 #define __h_starfield__
 
@@ -15,7 +17,7 @@ class Starfield {
 		~Starfield( void );
 
 		void Draw( void );
-		void Update( void );
+		void Update( Camera *camera );
 		void drawStar( float x, float y, float brightness);
 
 	private:

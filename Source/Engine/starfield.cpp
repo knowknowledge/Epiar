@@ -61,10 +61,9 @@ void Starfield::Draw( void ) {
 
 /**\brief Updates the Starfield
  */
-void Starfield::Update( void ) {
+void Starfield::Update( Camera *camera ) {
 	int i;
 	double dx, dy;
-	Camera *camera = Camera::Instance();
 	float w, h;
 
 	camera->GetDelta( &dx, &dy );

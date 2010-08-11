@@ -144,7 +144,7 @@ bool Simulation::Run() {
 			while(logicLoops--) {
 				Lua::Call("Update");
 				// Update cycle
-				starfield.Update();
+				starfield.Update( camera );
 				sprites->Update();
 				camera->Update();
 				Hud::Update();
