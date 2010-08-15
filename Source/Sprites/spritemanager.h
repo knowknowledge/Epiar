@@ -22,6 +22,7 @@ class SpriteManager {
 		
 		void Update();
 		void Draw();
+		void DrawQuadrantMap();
 
 		Sprite *GetSpriteByID(int id);
 		list<Sprite*> *GetSprites(int type = DRAW_ORDER_ALL);

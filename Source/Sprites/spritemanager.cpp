@@ -190,9 +190,6 @@ void SpriteManager::DeleteEmptyQuadrants() {
 /**\brief Draws the current sprites
  */
 void SpriteManager::Draw() {
-	if( OPTION(int,"options/development/debug-quadtree") )
-		GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
-
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen;
 	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *V_SQRT2;
@@ -204,6 +201,12 @@ void SpriteManager::Draw() {
 		(*i)->Draw();
 	}
 	delete onscreen;
+}
+
+/**\brief Draws the current sprites
+ */
+void SpriteManager::DrawQuadrantMap() {
+	GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
 }
 
 /**\brief Retrieves a list of the current sprites.

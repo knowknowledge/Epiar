@@ -239,8 +239,12 @@ void Hud::Draw( float fps ) {
 	Hud::DrawMessages();
 	Hud::DrawFPS( fps );
 	Hud::DrawStatusBars();
-	if( OPTION(int,"options/development/map") )
+	if( OPTION(int,"options/development/map") ) {
 		Hud::DrawMap();
+	}
+	if( OPTION(int,"options/development/debug-quadtree") ) {
+		SpriteManager::Instance()->DrawQuadrantMap();
+	}
 }
 
 
