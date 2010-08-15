@@ -115,6 +115,7 @@ class Lua {
 
 		static bool Init();
 		static bool Close();
+		static int ErrorCatch(lua_State *L);
 
 		// Internal variables
 		static lua_State *L;

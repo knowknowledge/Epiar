@@ -259,6 +259,7 @@ void Lua::RegisterFunctions() {
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
 
+	lua_atpanic(L, &Lua::ErrorCatch);
 
 	// Register these functions to their own lua namespaces
 	AI_Lua::RegisterAI(L);
@@ -266,6 +267,12 @@ void Lua::RegisterFunctions() {
 	Audio_Lua::RegisterAudio(L);
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
+}
+
+int Lua::ErrorCatch(lua_State *L) {
+	LogMsg(ERR,"Fatal Error in Lua '%s'", lua_tostring(L, lua_gettop(L)));
+	assert(0);
+	exit( -500 );
 }
 
 /*
