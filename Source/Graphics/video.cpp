@@ -259,22 +259,29 @@ void Video::DrawLine( int x1, int y1, int x2, int y2, float r, float g, float b,
 	glEnd();
 }
 
-/**\brief Draws a rectangle
- */
-void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b ) {
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);
-	glColor3f( r, g, b );
-	glRecti( x, y, x + w, y + h );
-}
-
-/**\brief Draws a rectangle with transparency
+/**\brief Draws a filled rectangle
  */
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, float a ) {
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glColor4f( r, g, b, a );
 	glRecti( x, y, x + w, y + h );
+}
+
+/**\brief Draws an unfilled rectangle
+ */
+void Video::DrawBox( int x, int y, int w, int h, float r, float g, float b, float a ) {
+	glDisable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glColor4f( r, g, b, a );
+	glBegin(GL_LINE_STRIP);
+	glVertex2d(x,y);
+	glVertex2d(x+w,y);
+	glVertex2d(x+w,y+h);
+	glVertex2d(x,y+h);
+	glVertex2d(x,y);
+	glEnd();
+
 }
 
 /**\brief Draws a circle.
