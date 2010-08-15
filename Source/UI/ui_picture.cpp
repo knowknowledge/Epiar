@@ -33,11 +33,15 @@ void Picture::Default( int x, int y, int w, int h ){
 Picture::Picture( int x, int y, int w, int h, Image* pic ){
 	Default(x,y,w,h);
 	bitmap = pic;
+	name = bitmap->GetPath();
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
 Picture::Picture( int x, int y, int w, int h, string filename ){
 	Default(x,y,w,h);
 	bitmap = Image::Get(filename);
+	name = filename;
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
 void Picture::Rotate(double angle){
@@ -67,6 +71,8 @@ void Picture::Set( Image *img ){
 	// then that image is now lost.
 	// We can't delete it though, since it could be shared (eg, Ship Model).
 	bitmap = img;
+	name = img->GetPath();
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
 void Picture::Set( string filename ){
@@ -74,6 +80,8 @@ void Picture::Set( string filename ){
 	// If the previous bitmap was created from new,
 	// then that image is now lost
 	bitmap = Image::Get(filename);
+	name = bitmap->GetPath();
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
 void Picture::SetColor( float r, float g, float b, float a) {

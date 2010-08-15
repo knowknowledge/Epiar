@@ -25,7 +25,7 @@ Label::Label( int x, int y, string label, bool centered) {
 	this->y=y;
 
 	// w/h is dependent upon the text given
-	this->w = SansSerif->TextWidth( label);
+	this->w = SansSerif->TextWidth( label );
 	this->h = SansSerif->TightHeight( );
 	
 	this->name = label;
@@ -51,4 +51,9 @@ void Label::Draw(  int relx, int rely ) {
 	}
 
 	Widget::Draw(relx,rely);
+}
+
+void Label::SetText(string text) {
+	name = text;
+	this->w = SansSerif->TextWidth( name );
 }
