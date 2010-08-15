@@ -88,10 +88,6 @@ bool Simulation::Run() {
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
-	list<string>* planetNames = planets->GetNames();
-	for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
-		sprites->Add(  planets->GetPlanet(*pname) );
-	}
 
 	// Start the Lua Universe
 	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
@@ -103,6 +99,14 @@ bool Simulation::Run() {
 	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
 		return false;
+	}
+	if( OPTION(int, "options/simulation/random-universe") ) {
+		Lua::Call("createSystems");
+	} else {
+	    list<string>* planetNames = planets->GetNames();
+	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+		    sprites->Add(  planets->GetPlanet(*pname) );
+	    }
 	}
 	Lua::Call("Start");
 
@@ -231,9 +235,11 @@ bool Simulation::Parse( void ) {
 		LogMsg(ERR, "There was an error loading the alliances from '%s'.", Get("alliances").c_str() );
 		return false;
 	}
-	if( planets->Load( Get("planets") ) != true ) {
-		LogMsg(WARN, "There was an error loading the planets from '%s'.", Get("planets").c_str() );
-		return false;
+	if( 0 == OPTION(int, "options/simulation/random-universe")) {
+		if( planets->Load( Get("planets") ) != true ) {
+		    LogMsg(WARN, "There was an error loading the planets from '%s'.", Get("planets").c_str() );
+		    return false;
+	    }
 	}
 	if( players->Load( Get("players"), true ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
