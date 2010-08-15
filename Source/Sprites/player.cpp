@@ -279,7 +279,7 @@ Player* Players::LoadPlayer(string playerName) {
 
 	Player::pInstance = newPlayer;
 
-	LogMsg(ERR, "Loaded the Player '%s'.",newPlayer->GetName().c_str() );
+	LogMsg(INFO, "Loaded the Player '%s'.",newPlayer->GetName().c_str() );
 	return newPlayer;
 }
 
