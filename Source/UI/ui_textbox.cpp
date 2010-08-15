@@ -57,6 +57,8 @@ void Textbox::Draw( int relx, int rely ) {
 		Video::DrawRect( x + 6 + tw, y + 3, 1, h - 6, .8f, .8f, .8f );
 	}
 	Video::UnsetCropRect();
+
+	Widget::Draw(relx,rely);
 }
 
 bool Textbox::MouseLUp( int wx, int wy ) {

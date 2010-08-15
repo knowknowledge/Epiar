@@ -73,6 +73,8 @@ void Button::Draw( int relx, int rely ) {
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	//Video::UnsetCropRect();
+
+	Widget::Draw(relx,rely);
 }
 
 /**\brief When Left mouse is down on the button.*/

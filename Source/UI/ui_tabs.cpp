@@ -113,6 +113,8 @@ void Tab::Draw( int relx, int rely ){
 	
 	if ( this->hscrollbar || this->vscrollbar )
 		Video::UnsetCropRect();
+	
+	//Widget::Draw(relx,rely);
 }
 
 
@@ -278,6 +280,8 @@ void Tabs::Draw( int relx, int rely ){
 	if (activetab){
 		activetab->Draw( x, y );
 	}
+
+	Widget::Draw(relx,rely);
 }
 
 /**\brief First check if clicked on one of the Tab, if not, pass it on.

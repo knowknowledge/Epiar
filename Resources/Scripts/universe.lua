@@ -190,8 +190,9 @@ function options()
 	spriteLogging   = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
 	quadTreeDisplay = UI.newCheckbox(20,110, ( Epiar.getoption("options/development/debug-quadtree") ), "Display QuadTree")
 	aiStateDisplay  = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
-	mapDisplay      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/map") ), "Display Map Overlay")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, quadTreeDisplay, aiStateDisplay, mapDisplay)
+	uiDebugging     = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
+	mapDisplay      = UI.newCheckbox(20,170, ( Epiar.getoption("options/development/map") ), "Display Map Overlay")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, quadTreeDisplay, aiStateDisplay, uiDebugging, mapDisplay)
 
 	-- Command Keys
 	keyTab = UI.newTab( "Keyboard")
@@ -221,6 +222,7 @@ function options()
 		Epiar.setoption("options/log/sprites",      spriteLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-quadtree", quadTreeDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/debug-ui", uiDebugging :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/map",  mapDisplay :IsChecked() and 1 or 0 )
 
 		for i=1,#commands do

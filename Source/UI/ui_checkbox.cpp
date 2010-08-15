@@ -45,6 +45,8 @@ void Checkbox::Draw( int relx, int rely ) {
 
 	// draw the label
 	SansSerif->RenderTight( x+CHECKBOX_W+5, y, name );
+
+	Widget::Draw(relx,rely);
 }
 
 bool Checkbox::MouseLUp( int xi, int yi ) {

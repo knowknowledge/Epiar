@@ -32,7 +32,7 @@ class Widget {
 		string GetName( void ) { return this->name; }
 		bool IsActive( void ){return this->keyactivated;}
 
-		virtual void Draw( int relx = 0, int rely = 0 ){};
+		virtual void Draw( int relx = 0, int rely = 0 );
 		bool Contains( int relx, int rely );
 
 		virtual xmlNodePtr ToNode();
@@ -61,7 +61,7 @@ class Widget {
 		virtual bool KeyboardLeave( void );
 		virtual bool KeyPress( SDLKey key );
 
-		bool hidden,disabled;	// If this widget should be hidden or disabled
+		bool hovering, hidden,disabled;	// If this widget should be hidden or disabled
 		int x, y, w, h;
 		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag
 		string name;

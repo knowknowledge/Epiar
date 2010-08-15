@@ -45,21 +45,20 @@ void Picture::Rotate(double angle){
 }
 
 void Picture::Draw( int relx, int rely ){
+	int x, y;
+	x = this->x + relx;
+	y = this->y + rely;
+	
 	// DEBUG lines to see the difference between the Picture and the Image.
 	Video* vid = Video::Instance();
 	// The Picture size
-	vid->DrawRect( GetX()+relx, GetY()+rely,
-					w,h,
-					color.r,color.g,color.b,alpha );
-	/*
-	// The Image
+	vid->DrawRect( x, y,
+	               w, h,
+	               color.r,color.g,color.b,alpha );
 	if(bitmap!=NULL)
-	vid->DrawRect( GetX()+relx+w/2 - bitmap->GetWidth()/2, GetY()+rely+h/2 - bitmap->GetHeight()/2,
-					bitmap->GetWidth(), bitmap->GetHeight(),
-					1.0,1.0,1.0,0.1 );
-	*/
-	if(bitmap!=NULL)
-		bitmap->DrawFit( this->x+relx, this->y+rely, w, h, static_cast<float>(rotation));
+		bitmap->DrawFit( x, y, w, h, static_cast<float>(rotation));
+
+	Widget::Draw(relx,rely);
 }
 
 void Picture::Set( Image *img ){

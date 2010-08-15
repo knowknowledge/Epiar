@@ -50,4 +50,5 @@ void Label::Draw(  int relx, int rely ) {
 		SansSerif->RenderTight( x, y, name, Font::LEFT,Font::TOP );
 	}
 
+	Widget::Draw(relx,rely);
 }

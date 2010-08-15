@@ -6,9 +6,11 @@
  * \details
  */
 
+#include "common.h"
 #include "includes.h"
 #include "ui.h"
 #include "Utilities/log.h"
+#include "Graphics/video.h"
 
 /**\class Widget
  * \brief A user interface widget, widgets do not have children.
@@ -22,10 +24,32 @@
 /**\brief Constructor.
  */
 Widget::Widget( void ):
-	hidden( false ), disabled( false ),
+	hovering( false ), hidden( false ), disabled( false ),
 	x( 0 ),y( 0 ),w( 0 ),h( 0 ),
 	dragX( 0 ),dragY( 0 ),
 	name( "UnspecifiedWidget" ),keyactivated( false ){
+}
+
+void Widget::Draw( int relx, int rely ) {
+	if( hovering && OPTION(int,"options/development/debug-ui") ) {
+		int x, y;
+		char xbuff[6];
+		char ybuff[6];
+		x = this->x + relx;
+		y = this->y + rely;
+		Video::DrawBox(x,y,w,h,0,1,0,1);
+		Video::DrawLine(relx,y,x,y,1,0,0,1);
+		Video::DrawLine(x,rely,x,y,1,0,0,1);
+
+		snprintf( xbuff, sizeof(xbuff), "%d", this->x );
+		snprintf( ybuff, sizeof(xbuff), "%d", this->y );
+
+		Video::DrawRect(relx+this->x/2, y, 30, SansSerif->LineHeight(), 0,0,0,1);
+		SansSerif->RenderTight( relx + this->x/2, y, xbuff );
+
+		Video::DrawRect(x, rely+this->y/2, 30, SansSerif->LineHeight(), 0,0,0,1);
+		SansSerif->RenderTight( x, rely + this->y/2, ybuff );
+	}
 }
 
 /**\brief Tests if point is within a rectangle.
@@ -49,6 +73,7 @@ bool Widget::MouseMotion( int xi, int yi ){
 /**\brief Event is triggered on mouse enter.
  */
 bool Widget::MouseEnter( int xi,int yi ){
+	hovering = true;
 	LogMsg(INFO,"Mouse enter detect in %s.",this->name.c_str());
 	return true;
 }
@@ -56,6 +81,7 @@ bool Widget::MouseEnter( int xi,int yi ){
 /**\brief Event is triggered on mouse leave.
  */
 bool Widget::MouseLeave( void ){
+	hovering = false;
 	LogMsg(INFO,"Mouse leave detect in %s.",this->name.c_str());
 	return true;
 }

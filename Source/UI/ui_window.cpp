@@ -146,6 +146,8 @@ void Window::Draw( int relx, int rely ) {
 	
 	if ( this->hscrollbar || this->vscrollbar )
 		Video::UnsetCropRect();
+
+	Widget::Draw(relx,rely);
 }
 
 bool Window::MouseDrag( int x, int y ){
