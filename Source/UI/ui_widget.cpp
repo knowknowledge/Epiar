@@ -167,6 +167,7 @@ bool Widget::MouseWDown( int xi, int yi ){
  */
 bool Widget::KeyboardEnter( void ){
 	LogMsg(INFO,"Keyboard enter detect in %s.",this->name.c_str());
+	keyactivated = true;
 	return true;
 }
 
@@ -174,6 +175,7 @@ bool Widget::KeyboardEnter( void ){
  */
 bool Widget::KeyboardLeave( void ){
 	LogMsg(INFO,"Keyboard leave detect in %s.",this->name.c_str());
+	keyactivated = false;
 	return true;
 }
 
