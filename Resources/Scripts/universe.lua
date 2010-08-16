@@ -198,7 +198,8 @@ function options()
 	spriteLogging   = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
 	aiStateDisplay  = UI.newCheckbox(20,110, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
 	uiDebugging     = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging )
+	spritesMap      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/ships-worldmap") ), "Display Ships on the Universe Map")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging, spritesMap )
 
 	-- Command Keys
 	keyTab = UI.newTab( "Keyboard")
@@ -228,6 +229,7 @@ function options()
 		Epiar.setoption("options/log/sprites",      spriteLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ui", uiDebugging :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/ships-worldmap", spritesMap :IsChecked() and 1 or 0 )
 
 		for i=1,#commands do
 			local oldkey, name = commands[i][1], commands[i][2]
