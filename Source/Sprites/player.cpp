@@ -141,6 +141,8 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 xmlNodePtr Player::ToXMLNode(string componentName) {
 	char buff[256];
     xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
+
+	// Player Stats
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
 	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
 	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
@@ -150,6 +152,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngineName().c_str() );
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
+
+	// Ammo
 	map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
 	map<Weapon*,int>::iterator it = weapons.begin();
 	while( it!=weapons.end() ) {
@@ -157,9 +161,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		++it;
 	}
 	for(int a=0;a<max_ammo;a++){
-		if(GetAmmo(AmmoType(a))){
-			if( GetAmmo(AmmoType(a)) )
-				continue; // Don't save empty ammo Nodes
+		if(GetAmmo(AmmoType(a)) != 0 ){
 			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
 			xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "ammo");
 			xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str() );
@@ -167,6 +169,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 			xmlAddChild(section, ammo);
 		}
 	}
+
+	// Cargo
 	map<Commodity*,unsigned int> cargo = this->GetCargo();
 	map<Commodity*,unsigned int>::iterator iter;
 	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
@@ -185,9 +189,16 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
 	}
 
+	// Last Load Time
 	snprintf(buff, sizeof(buff), "%d", (int)lastLoadTime );
 	xmlNewChild(section, NULL, BAD_CAST "lastLoadTime", BAD_CAST buff );
-	
+
+	// Save a Human readable comment to explain the Last Load time
+	strcpy( buff, "Last Load: " );
+	ctime_r( &lastLoadTime, &buff[ strlen(buff) ] );
+	buff[strlen(buff)-1] = '\0';
+	xmlAddChild( section, xmlNewComment( BAD_CAST buff ));
+
 	return section;
 }
 
