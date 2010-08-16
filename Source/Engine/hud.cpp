@@ -35,6 +35,7 @@ StatusBar* Hud::Bars[MAX_STATUS_BARS] = {};
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
 int Radar::visibility = 4096;
+HudMap Hud::mapDisplay = NoMap;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -239,11 +240,16 @@ void Hud::Draw( float fps ) {
 	Hud::DrawMessages();
 	Hud::DrawFPS( fps );
 	Hud::DrawStatusBars();
-	if( OPTION(int,"options/development/map") ) {
+	switch( mapDisplay ) {
+	case UniverseMap:
 		Hud::DrawMap();
-	}
-	if( OPTION(int,"options/development/debug-quadtree") ) {
+		break;
+	case QuadrantMap:
 		SpriteManager::Instance()->DrawQuadrantMap();
+		break;
+	case NoMap:
+	default:
+		break;
 	}
 }
 
@@ -517,6 +523,12 @@ void Hud::DeleteStatus( StatusBar* bar ) {
 	}
 }
 
+/**\brief Select what kind of Map is displayed
+ */
+void Hud::SetMapDisplay( HudMap _newMapDisplay ) {
+	mapDisplay = _newMapDisplay;
+}
+
 /**\brief Register Lua functions for HUD related updates.
  */
 void Hud::RegisterHud(lua_State *L) {
@@ -527,6 +539,8 @@ void Hud::RegisterHud(lua_State *L) {
 		{"newAlert", &Hud::newAlert},
 		{"getTarget", &Hud::getTarget},
 		{"setTarget", &Hud::setTarget},
+		{"setMapDisplay", &Hud::setMapDisplay},
+		{"getMapDisplay", &Hud::getMapDisplay},
 		{NULL, NULL}
 	};
 
@@ -649,7 +663,7 @@ int Hud::getTarget(lua_State *L) {
 	return 1;
 }
 
-/**\brief Set's the target (Lua callable).
+/**\brief Sets the target (Lua callable).
  */
 int Hud::setTarget(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
@@ -657,6 +671,49 @@ int Hud::setTarget(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
 	Target( luaL_checkint(L,1) );
 	return 0;
+}
+
+/**\brief Set the kind of Hud Display
+ */
+int Hud::setMapDisplay(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "setMapDisplay got %d arguments expected 1.   Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'.", n);
+	string maptype = (string)luaL_checkstring(L,1);
+
+	printf( "Setting Map Display to '%s'\n", maptype.c_str() );
+
+	if( maptype == "NONE" ) {
+		SetMapDisplay( NoMap );
+	} else if( maptype == "QUADRANT" ) {
+		SetMapDisplay( QuadrantMap );
+	} else if( maptype == "UNIVERSE" ) {
+		SetMapDisplay( UniverseMap );
+	} else {
+		LogMsg( ERR, "The Hud does not understand the Map Type '%s'.  Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'." );
+		SetMapDisplay( NoMap );
+	}
+	return 0;
+}
+
+/**\brief Get the kind of Hud Display
+ */
+int Hud::getMapDisplay(lua_State *L) {
+	switch( mapDisplay ) {
+	case UniverseMap:
+		lua_pushstring(L,"UNIVERSE");
+		break;
+	case QuadrantMap:
+		lua_pushstring(L,"QUADRANT");
+		break;
+	case NoMap:
+		lua_pushstring(L,"NONE");
+		break;
+	default:
+		assert(0); // This should never happen.
+		lua_pushstring(L,"NONE");
+	}
+	return 1;
 }
 
 /**\class Radar

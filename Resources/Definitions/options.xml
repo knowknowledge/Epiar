@@ -6,8 +6,8 @@
 	<log>
 		<xml>0</xml>
 		<out>1</out>
-		<ui>1</ui>
-		<sprites>1</sprites>
+		<ui>0</ui>
+		<sprites>0</sprites>
 	</log>
 	<video>
 		<w>1024</w>
@@ -40,10 +40,8 @@
 	<development>
         <ships-worldmap>0</ships-worldmap>
 		<editor-mode>0</editor-mode>
-		<debug-quadtree>0</debug-quadtree>
 		<debug-ai>0</debug-ai>
 		<debug-ui>0</debug-ui>
-		<map>0</map>
 		<override-tgz>1</override-tgz>
 	</development>
 </options>

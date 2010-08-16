@@ -18,6 +18,12 @@
 #define EPIAR_HUD "HUD"
 #define MAX_STATUS_BARS 20
 
+enum HudMap{
+	NoMap, ///< Do not display any kind of Map.
+	QuadrantMap, ///< Draw a Map of the Sprites in this Quadrant.
+	UniverseMap, ///< Draw a Map of all the Sprite in the Universe.
+	};
+
 class AlertMessage {
 	public:
 		AlertMessage( string message, Uint32 start );
@@ -64,6 +70,8 @@ class Hud {
 		static void AddStatus( StatusBar* bar );
 		static void DeleteStatus( StatusBar* bar );
 
+		static void SetMapDisplay( HudMap _newMapDisplay );
+
 		// Lua functionality
 		static void RegisterHud(lua_State *L);
 		static int setVisibity(lua_State *L);
@@ -74,6 +82,8 @@ class Hud {
 		static int closeStatus(lua_State *L);
 		static int getTarget(lua_State *L);
 		static int setTarget(lua_State *L);
+		static int setMapDisplay(lua_State *L);
+		static int getMapDisplay(lua_State *L);
 
 	private:
 		static void DrawShieldIntegrity();
@@ -89,6 +99,7 @@ class Hud {
 		static StatusBar* Bars[MAX_STATUS_BARS];
 		static int targetID;
 		static int timeTargeted;
+		static HudMap mapDisplay;
 };
 
 class Radar {
