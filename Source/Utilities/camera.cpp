@@ -84,7 +84,11 @@ void Camera::Focus( double x, double y ) {
 /**\brief Focus the camera on a Sprite
  */
 void Camera::Focus( Sprite *sprite ) {
-	focusID = sprite->GetID();
+	if( sprite != NULL ) {
+		focusID = sprite->GetID();
+	} else {
+		focusID = 0;
+	}
 }
 
 /**\brief Get the current Camera Coordinate
