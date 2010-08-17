@@ -140,6 +140,7 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
  */
 xmlNodePtr Player::ToXMLNode(string componentName) {
 	char buff[256];
+	char *timestamp;
     xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
 
 	// Player Stats
@@ -195,9 +196,9 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 
 	// Save a Human readable comment to explain the Last Load time
 	strcpy( buff, "Last Load: " );
-	ctime_r( &lastLoadTime, &buff[ strlen(buff) ] );
-	buff[strlen(buff)-1] = '\0';
-	xmlAddChild( section, xmlNewComment( BAD_CAST buff ));
+	timestamp = ctime( &lastLoadTime );
+	timestamp[strlen(timestamp)-1] = '\0';
+	xmlAddChild( section, xmlNewComment( BAD_CAST timestamp));
 
 	return section;
 }

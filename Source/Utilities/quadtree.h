@@ -72,7 +72,7 @@ inline bool QuadTree::PossiblyNear(Coordinate point, float distance) {
 	// If the distance to the point is greater than the max range,
 	//   then no collisions are possible
 	// Math should be done in square-space to save time.
-	const float maxrange = V_SQRT2*radius + distance;
+	const float maxrange = static_cast<float>(V_SQRT2)*radius + distance;
 	return( (point-center).GetMagnitudeSquared() <= maxrange*maxrange );
 }
 

@@ -52,7 +52,7 @@ end
 function targetClosestShip()
 	local x,y = PLAYER:GetPosition()
 	local nearby = Epiar.ships(x,y,4096)
-	if #nearby==1 then return end
+	if #nearby<=1 then return end
 	local shipx, shipy = nearby[1]:GetPosition()
 	---print("#nearby=" .. #nearby .. '\n')
 	local closest =  { index = 1 , dist = math.sqrt( ( shipx - x) ^ 2 + ( shipy - y) ^ 2) }

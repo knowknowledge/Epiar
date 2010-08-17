@@ -6,8 +6,8 @@
  * \details
  */
 
-#include "common.h"
 #include "includes.h"
+#include "common.h"
 #include "ui.h"
 #include "Utilities/log.h"
 #include "Graphics/video.h"
