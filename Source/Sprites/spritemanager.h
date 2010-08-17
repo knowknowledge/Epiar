@@ -20,7 +20,7 @@ class SpriteManager {
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
-		void Update();
+		void Update(bool lowFps);
 		void Draw();
 		void DrawQuadrantMap();
 

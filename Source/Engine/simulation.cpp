@@ -135,6 +135,7 @@ bool Simulation::Run() {
 		bgmusic->Play();
 
 	// main game loop
+	bool lowFps = false;
 	while( !quit ) {
 		quit = HandleInput();
 		
@@ -144,7 +145,7 @@ bool Simulation::Run() {
 				Lua::Call("Update");
 				// Update cycle
 				starfield.Update( camera );
-				sprites->Update();
+				sprites->Update( lowFps );
 				camera->Update( sprites );
 				Hud::Update();
 			}
@@ -182,6 +183,8 @@ bool Simulation::Run() {
 				sprites->Save();
 				quit = true;
 			}
+
+			lowFps = (currentFPS < 15);			//if FPS has dropped below 15 then switch to wave-update method
 
 			if( OPTION(int, "options/log/ui") )
 			{

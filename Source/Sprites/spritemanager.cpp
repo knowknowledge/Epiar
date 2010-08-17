@@ -86,16 +86,17 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 }
 
 /**\brief SpriteManager update function.
+ * \param lowFps If true, forces the wave-update method to be used rather than the full-update
  */
-void SpriteManager::Update() {
+void SpriteManager::Update(bool lowFps) {
 	// Update the sprites inside each quadrant
 	list<QuadTree*> quadList;		//this will contain every quadrant that we will potentially want to update
 	
 			//if update-all is given then we update every quadrant
 			//we do the same if tickCount == 0 even if update-all is not given
 			// (in wave update mode, tickCount == 0 is when we want to update all quadrants)
-	if( 0 != OPTION(int,"options/simulation/update-all") || tickCount == 0) {
-			GetAllQuadrants(&quadList);			//need to get all of the quadrants in our map
+	if( (0 != OPTION(int,"options/simulation/update-all") && ! lowFps) || tickCount == 0) {
+		GetAllQuadrants(&quadList);			//need to get all of the quadrants in our map
 	}
 	else {				//wave update mode with tickCount != 0 -- update some quadrants
 		Coordinate currentPoint (Camera::Instance()->GetFocusCoordinate());				//always update centered on where we're at
