@@ -5,30 +5,32 @@ Written by Chris Thielen, others (see AUTHORS)
 http://www.epiar.net/
 
 Copyright (C) 2002-2009 Christopher Thielen.
-Licensed under GNU GPL version 2. Some parts (eg fonts) licensed differently and indicated where appropriate.
+Licensed under GNU GPL version 2. Some parts (eg fonts) licensed differently
+and indicated where appropriate.
 
 ----------------------
 -       NOTICE       -
 ----------------------
-This document and source code are under heavy development and may contain inaccurate information, bugs, and
-other issues. Use at your own risk!
+This document and source code are under heavy development and may contain
+inaccurate information, bugs, and other issues. Use at your own risk!
 
 Contents
 --------
 1. What is Epiar?
 2. System Requirements
 3. Playing Epiar
-	i. Single Player Epiar
-	ii. Multi-Player Epiar
+	i. Controls
+	ii. Single Player Epiar
+	iii. Multi-Player Epiar
 4. Epiar Editor
 5. Reporting Problems
 6. Credits
 
 1. What is Epiar?
 -----------------
-Epiar is a space exploration/combat/trading game .  The Escape
-Velocity (EV) series for the Mac was the major point of inspiration for this game.
-Other notable games of this genre include:
+Epiar is a space exploration/combat/trading game .  The Escape Velocity (EV)
+series for the Mac was the major point of inspiration for this game.  Other
+notable games of this genre include:
 
 - Elite (the original game EV was based on)
 - Star control 1/2 (and it's now open source successor Ur-Quan masters)
@@ -39,14 +41,73 @@ Other notable games of this genre include:
 
 3. Playing Epiar
 ----------------
-	i. Single Player Epiar
-	-----------------------
 
-	ii. Multi-Player Epiar
-	----------------------
+i. Controls
+-----------
+The Escape key will quit Epiar.  When Epiar quits it saves your current game
+settings and player progress.
+
+You can open the settings window by hitting Question Mark (?).  This is where
+you can adjust the Sounds volumes, change the key layout, or turn on Debugger
+information.
+
+Manuever your ship with the Arrow keys.  The Left and Right Arrows will turn
+your ship and the Up Arrow will accelerate your ship in the direction that it's
+currently pointing.  The Down arrow will spin the ship to point in the opposite
+direction that it is currently moving.  This can be useful for
+slowing down and stopping your ship when you want to land.  The 'C' Key will
+turn you towards the center of the universe (0,0).
+
+SPACE - Fire the weapon that you currently have armed.  If nothing happens then you might be out of ammo or not have a weapon attached.
+TAB - Cycle through all the nearby Ships.
+t - Target the closest ship.
+SHIFT - Cycle through your different Weapons.
+P - Pause or Un-Pause the game.
+m - Display a map of the entire universe.
+M - Display a map of the current Quadrant.
+i - Display player information.
+l - Land on a planet.
+w - Watch your target.
+q - Quit watching your target.
+
+ii. Single Player Epiar
+-----------------------
+
+
+iii. Multi-Player Epiar
+-----------------------
+We don't have any Multi-Player right now.  Sorry.
 
 4. Epiar Editor
 ---------------
+You can start the Editor by opening Epiar with the command line option
+"--editor-mode".  You can also change the <editor-mode>0</editor-mode> option
+in the settings file (Resources/Definitions/options.xml).
+
+The controls in Editor Mode are a bit different than in the Normal mode.  The
+Options (?), Pause(?), Map (m or M), Radar (0 through 9) keys all work
+exactly the same.  Escape will still quit the game, but unlike in the Normal
+mode, it will only save your game settings but does NOT automatically save your
+Game changes.
+
+The arrow keys pan the camera relative to the Radar
+visibility, so use visibility '1' to do fine grained movement and visibility
+'9' to zoom across the universe.
+
+The Space-bar will open up a "goto" window so that you can jump to any point that you want.
+
+The 'i' key will give you more information about whatever Sprite is currently
+being targetted.  The camera will also lock on to that sprite and follow it
+around.
+
+
+The Editor allows you to customize the Game Components (Alliances, Commodities,
+Engines, Models, Planets, Technologies, and Weapons) however you want.  You can
+add new Components or you can duplicate components simply by picking a new
+name for an existing.
+
+When you're done, hit the "Save" button to save all of your changes.
+
 
 5. Reporting Problems
 ---------------------
