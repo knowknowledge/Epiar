@@ -13,7 +13,7 @@
 
 // Sprites have an AI object which is used to manipulate their attributes
 // to run an AI simulation
-class AI : public Ship{
+class AI : public Ship {
 	public:
 		AI(string machine);
 		void Update();

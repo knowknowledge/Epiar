@@ -76,6 +76,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetCredits", &AI_Lua::ShipGetCredits},
 		{"GetCargo", &AI_Lua::ShipGetCargo},
 		{"GetOutfits", &AI_Lua::ShipGetOutfits},
+		{"IsDisabled", &AI_Lua::ShipIsDisabled},
 
 		{NULL, NULL}
 	};
@@ -847,3 +848,22 @@ int AI_Lua::ShipGetOutfits(lua_State* L){
 
 	return 1;
 }
+
+/**\brief Lua callable function to determine if ship is disabled.
+ * \sa Ship::IsDisabled
+ */
+int AI_Lua::ShipIsDisabled(lua_State* L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+		} else {
+			lua_pushnumber(L, (ai)->IsDisabled() );
+		}
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+

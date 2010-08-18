@@ -64,6 +64,7 @@ class Ship : public Sprite {
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
 		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
+		bool IsDisabled() { return status.isDisabled; }
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
@@ -87,6 +88,7 @@ class Ship : public Sprite {
 			
 			/* Flags */
 			bool isAccelerating; ///< Cleared by update, set by accelerate (so it's always updated twice a loop)
+			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
 
 		// Weapon Systems

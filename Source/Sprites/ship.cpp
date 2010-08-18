@@ -53,6 +53,7 @@ Ship::Ship()
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
+	status.isDisabled = false;
 	for(int a=0;a<max_ammo;a++){
 		ammo[a]=0;
 	}
@@ -215,14 +216,22 @@ void Ship::Accelerate( void ) {
  */
 void Ship::Damage(short int damage) {
 	status.hullDamage += damage;
+
+	if( GetHullIntegrityPct() < .15 ) {
+		status.isDisabled = true;
+	}
 }
 
 /**\brief Repairs the ship.
  */
 void Ship::Repair(short int damage) {
 	status.hullDamage -= damage;
-	if( status.hullDamage<0 )
-		status.hullDamage=0;
+	if( status.hullDamage < 0 )
+		status.hullDamage = 0;
+
+	if( GetHullIntegrityPct() >= .15 ) {
+		status.isDisabled = false;
+	}
 }
 
 /**\brief Update function on every frame.

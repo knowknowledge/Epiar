@@ -102,8 +102,11 @@ void AI::Decide() {
 /**\brief Updates the AI controlled ship by first calling the Lua function
  * and then calling Ship::Update()
  */
-void AI::Update(){
-	this->Decide();
+void AI::Update() {
+	if( !this->IsDisabled() ) {
+		this->Decide();
+	}
+
 	// Now act like a normal ship
 	this->Ship::Update();
 }

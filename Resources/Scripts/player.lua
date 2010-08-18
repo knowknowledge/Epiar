@@ -11,13 +11,14 @@ playerCommands = {
 	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
-	{'tab', "Target Ship", "targetShip()",KEYTYPED},
+	{'tab', "Target Ship", "targetShip()", KEYTYPED},
 	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
-	{'i', "Player Info", "playerInformation()",KEYTYPED},
-	{'l', "Land on Planet", "attemptLanding()",KEYTYPED},
-	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())",KEYTYPED},
-	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())",KEYTYPED},
-	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )",KEYPRESSED},
+	{'i', "Player Info", "playerInformation()", KEYTYPED},
+	{'l', "Land on Planet", "attemptLanding()", KEYTYPED},
+	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())", KEYTYPED},
+	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
+	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
+	{'b', "Board", "boardShip()", KEYTYPED},
 }
 
 function playerStart()
@@ -72,9 +73,46 @@ function targetClosestShip()
 	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
 	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
+
+---Board closest ship if possible
+function boardShip()
+	local x, y = PLAYER:GetPosition()
+	local targettedShip = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+
+	if targettedShip == nil then
+		HUD.newAlert("Cannot board - no target.")
+		return
+	end
+
+	local targettedX, targettedY = targettedShip:GetPosition()
+	local dist = distfrom( x, y, targettedX, targettedY ) -- calculate distance to target
+
+	if (dist < 200) and (targettedShip:IsDisabled() == 1) then
+		HUD.newAlert("Boarding ship...")
+
+		-- show the boarding dialog
+		boardingDialog = UI.newWindow(100, 100, 300, 150, "Boarding Ship")
+		boardingDialog:add( UI.newButton(50, 110, 200, 30, "That was easy! Monies!", "doBoarding()") )
+
+	else
+		HUD.newAlert("Cannot board target -- too far away")
+	end
+end
+
+--- Callback for the UI button in boarding ship dialog (see above)
+function doBoarding()
+	if boardingDialog == nil then return end --- this should never happen
+
+	addcredits( 10000 )
+
+	boardingDialog:close()
+	boardingDialog = nil
+end
+
 --- Try to land
 function attemptLanding()
 	if landingWin ~= nil then return end
+
 	local x,y = PLAYER:GetPosition()
 	local planet = Epiar.nearestPlanet(PLAYER,4096)
 	local px,py = planet:GetPosition()
