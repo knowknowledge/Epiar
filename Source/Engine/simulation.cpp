@@ -136,6 +136,7 @@ bool Simulation::Run() {
 
 	// main game loop
 	bool lowFps = false;
+	int lowFpsFrameCount = 0;
 	while( !quit ) {
 		quit = HandleInput();
 		
@@ -144,6 +145,8 @@ bool Simulation::Run() {
 		int logicLoops = Timer::Update();
 		if( !paused ) {
 			while(logicLoops--) {
+				if (lowFps)
+					lowFpsFrameCount --;
 				Timer::IncrementFrameCount();
 				Lua::Call("Update");
 				// Update cycle
@@ -187,7 +190,30 @@ bool Simulation::Run() {
 				quit = true;
 			}
 
-			lowFps = (currentFPS < 15);			//if FPS has dropped below 15 then switch to wave-update method
+
+				/**************************
+				 * Low FPS calculation
+				 *  - if fps goes below 15, set lowFps to true for 600 logical frames
+				 *  - after 600 frames, either turn it off or leave it on for another 600
+				 **************************/
+			if (lowFps)
+			{
+				if (lowFpsFrameCount <= 0)
+				{
+					LogMsg (DEBUG4, "Turning off wave-updates for sprites as 600 frames have passed");
+					lowFps = false;
+				}
+			}
+			
+			if (!lowFps && currentFPS < 15)
+			{
+				LogMsg (DEBUG4, "Turning on wave-updates for sprites as FPS has gone below 15");
+				lowFps = true;			//if FPS has dropped below 15 then switch to wave-update method for 600 frames
+				lowFpsFrameCount = 600;
+			}
+				/************************
+				 * End Low FPS calculation
+				 ************************/
 
 			if( OPTION(int, "options/log/ui") )
 			{

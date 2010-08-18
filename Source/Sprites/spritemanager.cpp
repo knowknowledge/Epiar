@@ -95,7 +95,7 @@ void SpriteManager::Update(bool lowFps) {
 			//if update-all is given then we update every quadrant
 			//we do the same if tickCount == 0 even if update-all is not given
 			// (in wave update mode, tickCount == 0 is when we want to update all quadrants)
-	if( (0 != OPTION(int,"options/simulation/update-all") && ! lowFps) || tickCount == 0) {
+	if( ! lowFps || tickCount == 0) {
 		GetAllQuadrants(&quadList);			//need to get all of the quadrants in our map
 	}
 	else {				//wave update mode with tickCount != 0 -- update some quadrants
