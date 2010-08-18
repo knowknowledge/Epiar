@@ -245,7 +245,8 @@ void Ship::Update( void ) {
 	flareAnimation->Update();
 
 	// Show the hits taken as part of the radar color
-	SetRadarColor(Color::Get(int(255 *GetHullIntegrityPct()),0 ,0));
+	if(IsDisabled()) SetRadarColor( Color::Get( 128, 128, 128 ) );
+	else SetRadarColor( Color::Get(int(255 *GetHullIntegrityPct()), 0, 0) );
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!
