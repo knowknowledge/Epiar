@@ -139,9 +139,12 @@ bool Simulation::Run() {
 	while( !quit ) {
 		quit = HandleInput();
 		
+			//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
+			//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
 		if( !paused ) {
 			while(logicLoops--) {
+				Timer::IncrementFrameCount();
 				Lua::Call("Update");
 				// Update cycle
 				starfield.Update( camera );
