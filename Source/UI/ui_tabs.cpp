@@ -151,9 +151,9 @@ void Tab::ResetScrollBars(){
 		if ( this->hscrollbar ){
 			UIContainer::DelChild( this->hscrollbar );
 			this->hscrollbar = NULL;
-			printf("Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			LogMsg(INFO, "Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		} else {
-			printf("Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			LogMsg(INFO, "Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}
 		this->hscrollbar = new Scrollbar(
 			v_x, v_y, v_l,
@@ -172,10 +172,10 @@ void Tab::ResetScrollBars(){
 		if ( this->vscrollbar ){
 			UIContainer::DelChild( this->vscrollbar );
 			this->vscrollbar = NULL;
-			printf("Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			LogMsg(INFO, "Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 			
 		} else {
-			printf("Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}
 		this->vscrollbar = new Scrollbar(
 			v_x, v_y, v_l,

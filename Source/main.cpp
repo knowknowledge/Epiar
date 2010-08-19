@@ -197,7 +197,7 @@ int main( int argc, char **argv ) {
 	Video::Erase();
 	Image::Get(splashScreen[rand()%6])->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
 	Serif->SetSize(30);
-	Serif->Render(OPTION( int, "options/video/w" )/2,50,"Welcome to Epiar",Font::CENTER,Font::MIDDLE);
+	Serif->Render(OPTION( int, "options/video/w" )/2,50,"Epiar",Font::CENTER,Font::MIDDLE);
 	Serif->Render(OPTION( int, "options/video/w" )/2,OPTION( int, "options/video/h")-50,"Loading...",Font::CENTER,Font::MIDDLE);
 	Serif->SetSize(12);
 	Video::Update();

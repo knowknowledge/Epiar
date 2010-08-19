@@ -15,6 +15,7 @@ playerCommands = {
 	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
 	{'i', "Player Info", "playerInformation()", KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()", KEYTYPED},
+	{'L', "Land on Planet", "attemptLanding()", KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())", KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},

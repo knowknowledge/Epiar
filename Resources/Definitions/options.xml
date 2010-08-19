@@ -5,7 +5,7 @@
 	<version-macro>0</version-macro>
 	<log>
 		<xml>0</xml>
-		<out>1</out>
+		<out>0</out>
 		<ui>0</ui>
 		<sprites>0</sprites>
 	</log>

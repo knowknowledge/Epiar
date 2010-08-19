@@ -59,7 +59,7 @@ end
 
 --- Run the functions
 function Start()
-	io.write(string.format("\tInit: %d\n\tSteps: %d\n", #Init, #Steps ))
+	--io.write(string.format("\tInit: %d\n\tSteps: %d\n", #Init, #Steps ))
 	for i,func in ipairs(Init) do
 		func()
 	end
@@ -590,8 +590,8 @@ function landingDialog(id)
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
-	height = 400
-	width = 600
+	local height = 500
+	local width = 600
 	local boxsize=80
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
