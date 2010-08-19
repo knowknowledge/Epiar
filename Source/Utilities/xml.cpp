@@ -107,19 +107,18 @@ void XMLFile::Set( const string& path, const int value ) {
 	assert( stringvalue == Get(path));
 }
 
-queue<string> XMLFile::TokenizedPath( const string& path ) {
-	string partialPath;
+vector<string> TokenizedString( const string& path, const char* tokens ) {
+	string partialString;
 	size_t pos, prevpos, len;
-	const char* tokens = "/";
-	queue<string> tokenized;
+	vector<string> tokenized;
 
-	// Tokenize the path
+	// Tokenize the string
 	prevpos = 0;
 	do {
 		pos = path.find_first_of(tokens, prevpos); // Get the next token position.
 		len = (pos==string::npos)?pos:pos-prevpos;
-		partialPath = path.substr(prevpos, len); // Get the substring until the next token.
-		tokenized.push( partialPath ); // Record the substring
+		partialString = path.substr(prevpos, len); // Get the substring until the next token.
+		tokenized.push_back( partialString ); // Record the substring
 		//printf("Path: '%s'\n", partialPath.c_str() );
 		prevpos = pos+1; // record where to start next time.
 	} while ( pos != string::npos );
@@ -129,7 +128,8 @@ queue<string> XMLFile::TokenizedPath( const string& path ) {
 
 xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 	xmlNodePtr cur,parent;
-	queue<string> tokenized;
+	vector<string> tokenized;
+	vector<string>::iterator iter;
 	string partialPath;
 
 	// Check previously memoized values
@@ -149,19 +149,19 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 		return( (xmlNodePtr)NULL );
 	}
 	
-	tokenized = TokenizedPath(path);
+	tokenized = TokenizedString(path, "/");
+	iter = tokenized.begin();
 
 	// The root is optional since it isn't a Child.
 	if( !xmlStrcmp(cur->name, (const xmlChar *)(tokenized.front().c_str()) ) ) {
-		tokenized.pop();
+		++iter;
 	}
 
 	// Walk the tokenized path
 	// If FirstChildNamed() doesn't find the path, it will return NULL
-	while( !tokenized.empty() && cur != NULL) {
-		partialPath = tokenized.front();
+	for(; iter != tokenized.end(); ++iter) {
+		partialPath = *iter;
 		//printf("XML: '%s' @ '%s'\n", partialPath.c_str(), cur->name);
-		tokenized.pop();
 		parent = cur;
 		cur = FirstChildNamed(parent, partialPath.c_str());
 		if( (createIfMissing) && (cur==NULL) )

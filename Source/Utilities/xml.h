@@ -34,8 +34,9 @@ class XMLFile {
 		xmlDocPtr xmlPtr;
 		map<string,xmlNodePtr> values;
 
-		queue<string> TokenizedPath(const string& path);
 		xmlNodePtr FindNode( const string& path, bool createIfMissing=false );
 };
+
+vector<string> TokenizedString(const string& path, const char* tokens);
 
 #endif // __H_XML__
