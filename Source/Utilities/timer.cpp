@@ -18,6 +18,7 @@ Uint32 Timer::lastLoopTick = SDL_GetTicks();
 Uint32 Timer::ticksPerFrame = 0;
 float Timer::logicFPS = LOGIC_FPS;
 double Timer::virtualTime = 0;
+Uint32 Timer::logicalFrameCount = 0;
 
 void Timer::Initialize( void ) {
 	lastLoopLength = 0;
@@ -27,13 +28,13 @@ void Timer::Initialize( void ) {
 
 int Timer::Update( void ) {
 	Uint32 tick = SDL_GetTicks();
-	
+
 	lastLoopLength = tick - lastLoopTick;
 	lastLoopTick = tick;
-	
+
 	float dt = lastLoopLength * 0.001f;
 	float frames = dt * Timer::logicFPS;
-	
+
 	int i = static_cast<int>(floor(virtualTime + frames) - floor(virtualTime));
 	virtualTime += frames;
 	
@@ -62,5 +63,16 @@ void Timer::Delay( void ) {
 float Timer::GetDelta( void ) {
 	return 1.f / Timer::logicFPS;
 	//return( static_cast<float>(lastLoopLength / 1000. ));
+}
+
+Uint32 Timer::GetLogicalFrameCount( void )
+{
+	return logicalFrameCount;
+}
+
+void Timer::IncrementFrameCount ( void )
+{
+			//we don't mind if it wraps - up to whoever's using it to deal with it
+	++ logicalFrameCount;
 }
 

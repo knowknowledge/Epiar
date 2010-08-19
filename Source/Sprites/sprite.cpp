@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Sprites/sprite.h"
 #include "Utilities/log.h"
+#include "Utilities/timer.h"
 
 
 // Sprite ID 0 is only used as a NULL
@@ -47,6 +48,8 @@ Sprite::Sprite() {
 	
 	radarSize = 1;
 	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
+
+	lastUpdateFrame = 0;
 }
 
 Coordinate Sprite::GetWorldPosition( void ) const {
@@ -57,14 +60,23 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 	worldPosition = coord;
 }
 
+
 /**\brief Move this Sprite in the direction of their current momentum.
  * \details Since this is a space simulation, there is no Friction; momentum does not decrease over time.
  */
 void Sprite::Update( void ) {
-	// Apply their momentum to change their coordinates
-	worldPosition += momentum;
+	Uint32 currentFrame = Timer::GetLogicalFrameCount();
+
+	Uint32 framesSinceUpdate = (currentFrame > lastUpdateFrame) 
+						? (currentFrame - lastUpdateFrame) 
+						: (lastUpdateFrame - currentFrame);
+
+	lastUpdateFrame = currentFrame;
+
+	// Apply their momentum to change their coordinates - apply it as often as the num frames that we've skipped
+	worldPosition += (momentum * framesSinceUpdate);
 	
-	// update acceleration
+	// update acceleration - we do not care about the framesSinceUpdate for updating these
 	acceleration = lastMomentum - momentum; 
 	lastMomentum = momentum;
 }

@@ -28,7 +28,6 @@
 	<simulation>
 		<intro>0</intro>
 		<starfield-density>750</starfield-density>
-		<update-all>1</update-all>
 		<automatic-load>0</automatic-load>
 		<random-universe>0</random-universe>
 	</simulation>

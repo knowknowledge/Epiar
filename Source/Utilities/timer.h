@@ -21,11 +21,15 @@ class Timer {
 		static Uint32 GetTicks( void );
 		
 		static float GetDelta( void );
+
+		static Uint32 GetLogicalFrameCount( void );
+		static void IncrementFrameCount ( void );
 	
   	private:
   		static Uint32 lastLoopLength;
   		static Uint32 lastLoopTick;
 		static Uint32 ticksPerFrame;
+		static Uint32 logicalFrameCount;
 		static int frame;
 		static double virtualTime;
 		static float logicFPS;
