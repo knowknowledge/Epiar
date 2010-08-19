@@ -33,7 +33,7 @@
 
 float Simulation::currentFPS = 0.;
 bool Simulation::paused = false;
-
+bool Simulation::willsave = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
@@ -61,8 +61,7 @@ Simulation::Simulation( string filename ) {
 	technologies = Technologies::Instance();
 	outfits = Outfits::Instance();
 	players = Players::Instance();
-	currentFPS = 0.;
-
+	currentFPS = 0.;	
 	this->filename = filename;
 	
 	Parse();
@@ -84,6 +83,9 @@ void Simulation::pause(){
 	paused = true;
 }
 
+void Simulation::save(){
+	willsave=true;
+}
 /**\brief Unpauses the simulation
  */
 void Simulation::unpause(){
@@ -203,9 +205,13 @@ bool Simulation::Run() {
 				sprites->Save();
 			}
 		}
+		if(willsave){
+			Players::Instance()->Save(playersFilename);
+			willsave=false;
+		}
 	}
-
-	Players::Instance()->Save(playersFilename);
+	
+	
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;

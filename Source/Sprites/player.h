@@ -21,6 +21,7 @@ class Player : public Ship , public Component {
 		static void CreateNew(string playerName);
 		static void LoadLast();
 		static void Load(string playerName);
+		static void setLastPlanet( string planetName);
 		string GetName() { return name; }
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
@@ -43,6 +44,7 @@ class Player : public Ship , public Component {
 
 	private:
 		static Player *pInstance;
+		static string lastPlanet;
 };
 
 class Players : public Components {

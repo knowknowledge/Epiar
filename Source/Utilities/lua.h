@@ -54,7 +54,9 @@ class Lua {
 		static int focusCamera(lua_State *L);
 		static int shakeCamera(lua_State *L);
 		static int getPlayerNames(lua_State *L);
+		static int setLastPlanet(lua_State *L);
 		static int loadPlayer(lua_State *L);
+		static int savePlayer(lua_State *L);
 		static int newPlayer(lua_State *L);
 
 		static int NewGatePair(lua_State *L);

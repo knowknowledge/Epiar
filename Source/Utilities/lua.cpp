@@ -220,9 +220,11 @@ void Lua::RegisterFunctions() {
 		{"setsoundvol", &Lua::setsoundvol},
 		{"setmusicvol", &Lua::setmusicvol},
 		{"loadPlayer", &Lua::loadPlayer},
+		{"savePlayer", &Lua::savePlayer},
 		{"newPlayer", &Lua::newPlayer},
 		{"players", &Lua::getPlayerNames},
 		{"player", &Lua::getPlayer},
+		{"setLastPlanet", &Lua::setLastPlanet},
 		{"NewGatePair", &Lua::NewGatePair},
 		{"getCamera", &Lua::getCamera},
 		{"moveCamera", &Lua::moveCamera},
@@ -363,6 +365,11 @@ int Lua::loadPlayer(lua_State *L) {
 	return 0;
 }
 
+int Lua::savePlayer(lua_State *L){
+	Simulation::save();
+	return 0;
+}
+
 int Lua::newPlayer(lua_State *L) {
 	int n = lua_gettop(L);
 	if (n != 1) {
@@ -387,6 +394,16 @@ int Lua::getPlayer(lua_State *L){
 	return 1;
 }
 
+int Lua::setLastPlanet(lua_State *L){
+	int n=lua_gettop(L);
+	if(n!=1){
+		return luaL_error(L, "%d arguments expected 1 argument the planet's name");
+	}
+	string planetName=(string) luaL_checkstring(L,1);
+	Player::setLastPlanet(planetName);
+	return 0;
+}
+	
 int Lua::NewGatePair(lua_State *L){
 	int n = lua_gettop(L);
 	if (n != 4) {

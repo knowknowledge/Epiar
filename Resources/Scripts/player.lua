@@ -102,6 +102,8 @@ function attemptLanding()
 		else
 			HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
 			landingDialog( planet:GetID() )
+			Epiar.setLastPlanet( planet:GetName() )
+			Epiar.savePlayer()
 		end
 	end
 end

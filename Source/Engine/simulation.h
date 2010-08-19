@@ -27,13 +27,14 @@ class Simulation {
 		bool Run();
 
 		static float GetFPS();
-		
+		static void save();
 		static void pause();
 		static void unpause();
 		static bool isPaused() {return paused;}
 
 	private:
 		bool Parse( void );
+	
 	
 		string filename;
 		string commoditiesFilename;
@@ -58,6 +59,8 @@ class Simulation {
 		
 		static float currentFPS;
 		static bool paused;
+		static bool willsave;
+
 };
 
 #endif // __H_SIMULATION__
