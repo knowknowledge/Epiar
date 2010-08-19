@@ -57,6 +57,7 @@ class AI_Lua{
 		static int ShipGetCredits(lua_State* L);
 		static int ShipGetCargo(lua_State* L);
 		static int ShipGetOutfits(lua_State* L);
+		static int ShipGetTotalCost(lua_State* L);
 		static int ShipIsDisabled(lua_State* L);
 
 		// Ship Properties

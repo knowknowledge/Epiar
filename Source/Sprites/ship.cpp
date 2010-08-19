@@ -219,6 +219,7 @@ void Ship::Damage(short int damage) {
 
 	if( GetHullIntegrityPct() < .15 ) {
 		status.isDisabled = true;
+		SetMomentum( GetMomentum() * .75 );
 	}
 }
 

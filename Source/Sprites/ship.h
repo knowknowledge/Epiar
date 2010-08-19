@@ -65,6 +65,7 @@ class Ship : public Sprite {
 		unsigned int GetCredits() { return credits; }
 		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
 		bool IsDisabled() { return status.isDisabled; }
+		int GetTotalCost() {  return shipStats.GetMSRP();  }
 		
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );

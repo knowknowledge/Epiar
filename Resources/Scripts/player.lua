@@ -77,6 +77,8 @@ end
 
 ---Board closest ship if possible
 function boardShip()
+	if boardingDialog ~= nil then return end -- Abort if the player is already boarding something.
+
 	local x, y = PLAYER:GetPosition()
 	local targettedShip = Epiar.getSprite( HUD.getTarget() ) -- acquire target
 
@@ -90,10 +92,13 @@ function boardShip()
 
 	if (dist < 200) and (targettedShip:IsDisabled() == 1) then
 		HUD.newAlert("Boarding ship...")
+		Epiar.pause()
 
 		-- show the boarding dialog
+		local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits()
 		boardingDialog = UI.newWindow(100, 100, 300, 150, "Boarding Ship")
-		boardingDialog:add( UI.newButton(50, 110, 200, 30, "That was easy! Monies!", "doBoarding()") )
+		boardingDialog:add( UI.newLabel(50, 30, "That was easy!") )
+		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Take the Monies!", string.format("doBoarding(%d)", moneyOnBoard ) ) )
 
 	else
 		HUD.newAlert("Cannot board target -- too far away")
@@ -101,11 +106,12 @@ function boardShip()
 end
 
 --- Callback for the UI button in boarding ship dialog (see above)
-function doBoarding()
+function doBoarding( reward )
 	if boardingDialog == nil then return end --- this should never happen
 
-	addcredits( 10000 )
+	addcredits( reward )
 
+	Epiar.unpause()
 	boardingDialog:close()
 	boardingDialog = nil
 end

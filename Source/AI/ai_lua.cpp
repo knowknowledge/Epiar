@@ -76,6 +76,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetCredits", &AI_Lua::ShipGetCredits},
 		{"GetCargo", &AI_Lua::ShipGetCargo},
 		{"GetOutfits", &AI_Lua::ShipGetOutfits},
+		{"GetTotalCost", &AI_Lua::ShipGetTotalCost},
 		{"IsDisabled", &AI_Lua::ShipIsDisabled},
 
 		{NULL, NULL}
@@ -846,6 +847,24 @@ int AI_Lua::ShipGetOutfits(lua_State* L){
 		lua_settable(L,newTable);
 	}
 
+	return 1;
+}
+
+/**\brief Lua callable function to get the total cost of the ship.
+ * \sa Ship::GetTotalCost
+ */
+int AI_Lua::ShipGetTotalCost(lua_State* L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+		} else {
+			lua_pushnumber(L, (ai)->GetTotalCost() );
+		}
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
 	return 1;
 }
 
