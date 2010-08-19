@@ -23,7 +23,9 @@ class Label : public Widget {
 		string GetType( void ) {return string("Label");}
 	
 	private:
+		vector<string> splitBy( const string& s, const char* tokens );
 		bool centered;
+		vector<string> lines;
 };
 
 #endif // __H_LABEL__

@@ -30,24 +30,26 @@ Label::Label( int x, int y, string label, bool centered) {
 	
 	this->name = label;
 	this->centered = centered;
+	lines = TokenizedString( label, "\n" );
 }
 
 /**\brief Draw the Label
  */
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
+	vector<string>::iterator iter;
 	
 	x = this->x + relx;
 	y = this->y + rely;
 	
 	// draw the label
 	SansSerif->SetColor( 1., 1., 1. );
-	if(centered){
-		SansSerif->Render( x, y, name, Font::CENTER,Font::MIDDLE );
-	} else {
-		//The text should fit into this box
-		//Video::DrawRect( x,y,w,h, 1.0, 0.0, 0.0, .2f );
-		SansSerif->RenderTight( x, y, name, Font::LEFT,Font::TOP );
+	Font::XPos xpositioning = (centered) ? (Font::CENTER) : (Font::LEFT);
+	Font::YPos ypositioning = (centered) ? (Font::MIDDLE) : (Font::TOP);
+
+	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += SansSerif->TightHeight() )
+	{
+		SansSerif->Render( x, y, *iter, xpositioning, ypositioning );
 	}
 
 	Widget::Draw(relx,rely);
