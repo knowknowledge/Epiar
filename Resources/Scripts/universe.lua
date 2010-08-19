@@ -193,11 +193,23 @@ function options()
 	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
 	optionWindow:add(optionTabs)
 
+	-- General Game Options
+	-- ( No developer stuff here. )
+	gameTab = UI.newTab("Game")
+	optionTabs:add(gameTab)
+	gameLabel      = UI.newLabel(20, 5, "Game Options:", 0)
+	fullScreen      = UI.newCheckbox(20,  30, ( Epiar.getoption("options/video/fullscreen") ), "Run as Full Screen")
+	showIntro       = UI.newCheckbox(20,  50, ( Epiar.getoption("options/simulation/intro") ), "Show Intro Screen")
+	randomUniverse  = UI.newCheckbox(20,  70, ( Epiar.getoption("options/simulation/random-universe") ), "Create a Random Universe")
+	autoLoad        = UI.newCheckbox(20,  90, ( Epiar.getoption("options/simulation/automatic-load") ), "Automatically Load the last Player")
+	editorMode      = UI.newCheckbox(20, 110, ( Epiar.getoption("options/development/editor-mode") ), "Run in Editor Mode")
+	gameTab:add( gameLabel, fullScreen, showIntro, randomUniverse, autoLoad, editorMode )
+
 	-- Sounds
 	soundsTab = UI.newTab("Audio")
 	optionTabs:add(soundsTab)
 
-	soundsLabel     = UI.newLabel(20,10,"Sound Options:",0)
+	soundsLabel     = UI.newLabel(20, 5, "Sound Options:", 0)
 	backgroundSound = UI.newCheckbox(20,  30, ( Epiar.getoption("options/sound/background") ), "Background sounds")
 	weaponsSound    = UI.newCheckbox(20,  50, ( Epiar.getoption("options/sound/weapons")    ), "Weapons sounds")
 	enginesSound    = UI.newCheckbox(20,  70, ( Epiar.getoption("options/sound/engines")    ), "Engines sounds")
@@ -224,9 +236,9 @@ function options()
 					musicVolume.Label)
 
 	-- Debugging
-	debugTab = UI.newTab("Debugging")
+	debugTab = UI.newTab("Developer")
 	optionTabs:add(debugTab)
-	debugLabel      = UI.newLabel(20,10,"Debug Options:",0)
+	debugLabel      = UI.newLabel(20, 5, "Debug Options:", 0)
 	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
 	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
 	uiLogging       = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
@@ -239,6 +251,8 @@ function options()
 	-- Command Keys
 	keyTab = UI.newTab( "Keyboard")
 	optionTabs:add(keyTab)
+	keyLabel = UI.newLabel(20, 5, "Keyboard Options:", 0)
+	keyTab:add(keyLabel)
 	local off_x,off_y = 20,30
 	keyinput = {} -- Global. We'll need this later.
 	labels = {}
@@ -246,18 +260,28 @@ function options()
 		local key, name = commands[i][1], commands[i][2]
 		keyinput[name] = UI.newTextbox(off_x,off_y,70,1)
 		keyinput[name]:setText(key)
-		labels[name] = UI.newLabel(off_x+80,off_y+5,name)
+		labels[name] = UI.newLabel(off_x+80,off_y-3,name)
 		off_y = off_y +20
 		keyTab:add(keyinput[name])
 		keyTab:add(labels[name])
 	end
 
 	function saveOptions()
+		-- General Game Options
+		Epiar.setoption("options/video/fullscreen",           fullScreen      :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/simulation/intro" ,     showIntro       :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/simulation/random-universe", randomUniverse  :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/simulation/automatic-load",  autoLoad        :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/development/editor-mode",    editorMode      :IsChecked() and 1 or 0 )
+
+		-- Sound Options
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/weapons",    weaponsSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/engines",    enginesSound    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/explosions", explosionsSound :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/sound/buttons",    buttonsSound    :IsChecked() and 1 or 0 )
+
+		-- Developer Options
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/ui",           uiLogging       :IsChecked() and 1 or 0 )
@@ -266,6 +290,7 @@ function options()
 		Epiar.setoption("options/development/debug-ui", uiDebugging :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/ships-worldmap", spritesMap :IsChecked() and 1 or 0 )
 
+		-- Keyboard Options
 		for i=1,#commands do
 			local oldkey, name = commands[i][1], commands[i][2]
 			if keyinput[name] ~= nil then
