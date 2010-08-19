@@ -128,6 +128,12 @@ bool Simulation::Run() {
 		}
 	}
 
+	if( OPTION(int,"options/simulation/intro") )
+	{
+		LogMsg(INFO, "Loading Epiar for the first time!\n");
+		Lua::Call("intro");
+	}
+
 	fpsTS = Timer::GetTicks();
 
 	// Load sample game music

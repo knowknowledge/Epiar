@@ -1,6 +1,41 @@
 -- Use this script for a solar system
 math.randomseed(os.time())
 
+-- This is the Introduction Message that greets new players.
+-- Notice that we use spaces here since Label can't parse tabs.
+welcomeMessage = [[
+                                                  Welcome to Epiar
+
+We hope you like it. We're still working on it.
+
+
+The Epiar controls in a nutshell:
+    - Move the ship with the Arrow keys.
+    - Land on a Planet by hitting L when you are near it.
+
+    - Fire with the Spacebar once you buy a gun.
+    - To target ships
+          - Hit TAB to cycle through nearby ships.
+          - Hit t (select the closest ship
+          - Click on the ship.
+    - To board a disabled target hit B while you are near it.
+
+    - View the map by hitting m or M.
+    - To change the keyboard layout or volume controls, press ?.
+
+    - Quit by hitting escape.
+
+For more information about Epiar, please visit:
+
+                                                  epiar.net
+
+If you have any questions, comments, or bug reports please send us email at:
+
+                                                  epiar-devel@epiar.net
+
+Thanks for playing!
+]]
+
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
 
@@ -656,6 +691,30 @@ function landingDialog(id)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.unpause();landingWin:close();landingWin=nil" ))
+end
+
+function intro()
+	local height = 550
+	local width = 600
+	introWin = UI.newWindow( 200, 100, width, height, "Welcome to Epiar")
+	neverShowAgain = UI.newCheckbox(width/2-90, height-30, 1, "Don't show me this intro again.")
+	
+	introWin:add(
+		UI.newLabel( 50, 50, welcomeMessage),
+		neverShowAgain,
+		UI.newButton( width/2-50, height-70, 100, 30, "I'm Ready!", "introComplete()")
+	)
+
+	Epiar.pause()
+end
+
+function introComplete()
+	if introWin == nil then return end
+	Epiar.setoption("options/simulation/intro", neverShowAgain:IsChecked() and 1 or 0 )
+	introWin:close()
+	introWin = nil
+	-- Unpause if the player loading screen isn't active
+	if PLAYER ~= nil then Epiar.unpause() end
 end
 
 --- UI demo
