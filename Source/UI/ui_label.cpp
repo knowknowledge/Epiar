@@ -25,12 +25,9 @@ Label::Label( int x, int y, string label, bool centered) {
 	this->y=y;
 
 	// w/h is dependent upon the text given
-	this->w = SansSerif->TextWidth( label );
-	this->h = SansSerif->TightHeight( );
 	
-	this->name = label;
 	this->centered = centered;
-	lines = TokenizedString( label, "\n" );
+	SetText( label );
 }
 
 /**\brief Draw the Label
@@ -56,6 +53,16 @@ void Label::Draw(  int relx, int rely ) {
 }
 
 void Label::SetText(string text) {
-	name = text;
-	this->w = SansSerif->TextWidth( name );
+	int maxwidth = 0;
+	vector<string>::iterator iter;
+
+	this->lines = TokenizedString( text, "\n" );
+	for(iter = lines.begin(); iter != lines.end() ; ++iter ) {
+		int linelength = SansSerif->TextWidth( *iter );
+		if( linelength > maxwidth ) maxwidth = linelength;
+	}
+
+	this->name = text;
+	this->w = maxwidth;
+	this->h = lines.size() * SansSerif->TightHeight( );
 }
