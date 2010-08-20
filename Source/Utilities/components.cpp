@@ -240,7 +240,7 @@ bool Components::ParseXMLNode( xmlDocPtr doc, xmlNodePtr node )
  */
 bool Components::Load(string filename, bool optional) {
 	xmlDocPtr doc;
-	xmlNodePtr cur;
+	xmlNodePtr cur, ver;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
 	int numObjs = 0;
 	bool success = true;
@@ -272,22 +272,30 @@ bool Components::Load(string filename, bool optional) {
 		LogMsg(INFO, "'%s' file found and valid, parsing...", filename.c_str() );
 	}
 	
+	// Get the version number
+	if( (ver = FirstChildNamed(cur, "version-major")) != NULL ) {
+		versionMajor = NodeToInt(doc,ver);
+	}
+	if( (ver = FirstChildNamed(cur, "version-minor")) != NULL ) {
+		versionMinor = NodeToInt(doc,ver);
+	}
+	if( (ver = FirstChildNamed(cur, "version-macro")) != NULL ) {
+		versionMacro = NodeToInt(doc,ver);
+	}
+	if( ( versionMajor != EPIAR_VERSION_MAJOR ) ||
+	    ( versionMinor != EPIAR_VERSION_MINOR ) ||
+	    ( versionMacro != EPIAR_VERSION_MICRO ) ) {
+		LogMsg(WARN, "File '%s' is version %d.%d.%d. This may cause problems since it does not match the current version %d.%d.%d.",
+			filename.c_str(),
+			versionMajor, versionMinor, versionMacro,
+			EPIAR_VERSION_MAJOR, EPIAR_VERSION_MINOR, EPIAR_VERSION_MICRO );
+	}
+	
+	// Get the components
 	cur = cur->xmlChildrenNode;
 	while( success && cur != NULL ) {
 		// Parse for the version information and any children nodes
-		if( ( !xmlStrcmp( cur->name, BAD_CAST "version-major" ) ) ) {
-			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-			versionMajor = atoi( (char *)key );
-			xmlFree( key );
-		} else if( ( !xmlStrcmp( cur->name, BAD_CAST "version-minor" ) ) ) {
-			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-			versionMinor = atoi( (char *)key );
-			xmlFree( key );
-		} else if( ( !xmlStrcmp( cur->name, BAD_CAST "version-macro" ) ) ) {
-			xmlChar *key = xmlNodeListGetString( doc, cur->xmlChildrenNode, 1 );
-			versionMacro = atoi( (char *)key );
-			xmlFree( key );
-		} else if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
+		if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
 			// Parse a Component
 			success = ParseXMLNode( doc, cur );
 			assert(success);
@@ -306,6 +314,7 @@ bool Components::Load(string filename, bool optional) {
 /**\brief Save all Components to an XML file
  */
 bool Components::Save(string filename) {
+	char buff[10];
     xmlDocPtr doc = NULL;       /* document pointer */
     xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
 
@@ -313,9 +322,12 @@ bool Components::Save(string filename) {
     root_node = xmlNewNode(NULL, BAD_CAST rootName.c_str() );
     xmlDocSetRootElement(doc, root_node);
 
-	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST "0");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST "7");
-	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST "0");
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
 
 	for( map<string,Component*>::iterator i = components.begin(); i != components.end(); ++i ) {
 		section = i->second->ToXMLNode(componentName);
