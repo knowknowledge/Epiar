@@ -26,7 +26,7 @@
 		<buttons>1</buttons>
 	</sound>
 	<simulation>
-		<intro>0</intro>
+		<intro>1</intro>
 		<starfield-density>750</starfield-density>
 		<automatic-load>0</automatic-load>
 		<random-universe>0</random-universe>
