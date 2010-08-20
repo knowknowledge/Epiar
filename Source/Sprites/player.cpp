@@ -11,12 +11,14 @@
 #include "Sprites/player.h"
 #include "Utilities/camera.h"
 #include "Sprites/spritemanager.h"
+#include "Sprites/planets.h"
+#include "Utilities/components.h"
 
 /**\class Player
  * \brief Main player-specific functions and handle. */
 
 Player *Player::pInstance = 0;
-
+string Player::lastPlanet="";
 /**\brief Fetch the current player Instance
  */
 Player *Player::Instance( void ) {
@@ -29,6 +31,12 @@ Player *Player::Instance( void ) {
 }
 
 
+
+/**\brief set name of last planet visited
+ */
+void Player::setLastPlanet( string planetName){
+	lastPlanet=planetName;
+}
 
 /**\brief Constructor
  */
@@ -55,17 +63,36 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	xmlNodePtr  attr;
 	string value;
 	Coordinate pos;
-
-	if( (attr = FirstChildNamed(node,"x")) ){
-		value = NodeToString(doc,attr);
-		pos.SetX( atof( value.c_str() ));
-	} else return false;
-
-	if( (attr = FirstChildNamed(node,"y")) ){
-		value = NodeToString(doc,attr);
-		pos.SetY( atof( value.c_str() ));
-	} else return false;
-
+	if( (attr = FirstChildNamed(node, "planet"))){
+		string temp;
+		xmlNodePtr name = FirstChildNamed(attr,"name");
+		value = NodeToString(doc,name);
+		
+		xmlNodePtr xPos = FirstChildNamed(attr,"x");
+		temp = NodeToString(doc,xPos);
+		float x = atof( temp.c_str() );
+		xmlNodePtr yPos = FirstChildNamed(attr,"y");
+		temp = NodeToString(doc,yPos);
+		float y = atof( temp.c_str() );
+		
+		list<Sprite*> *sprites;
+		list<Sprite*>::iterator iter;
+		sprites = SpriteManager::Instance()->GetSprites(DRAW_ORDER_PLANET);
+		for(iter = sprites->begin(); iter!= sprites->end(); ++iter){
+			Planet *p=(Planet*) (*iter);
+			if((p)->GetName()==value){
+				pos=(p)->GetWorldPosition();
+				break;
+			}
+		}
+	
+		if(iter == sprites->end()){
+			LogMsg(ERR,"No Planet found with name %s", value.c_str());
+			pos.SetX(x);
+			pos.SetY(y);
+		}
+	}else return false;
+			
 	SetWorldPosition( pos );
 
 	if( (attr = FirstChildNamed(node,"model")) ){
@@ -145,10 +172,15 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 
 	// Player Stats
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+
+	xmlNodePtr planet = xmlNewNode(NULL, BAD_CAST "planet" );
+	xmlNewChild(planet, NULL, BAD_CAST "name", BAD_CAST lastPlanet.c_str()); 
 	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
-	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
+	xmlNewChild(planet, NULL, BAD_CAST "x", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
-	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
+	xmlNewChild(planet, NULL, BAD_CAST "y", BAD_CAST buff );
+	xmlAddChild(section,planet);
+	
 	xmlNewChild(section, NULL, BAD_CAST "model", BAD_CAST this->GetModelName().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetEngineName().c_str() );
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
@@ -162,8 +194,9 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		++it;
 	}
 	for(int a=0;a<max_ammo;a++){
-		if(GetAmmo(AmmoType(a)) != 0 ){
+		if(GetAmmo(AmmoType(a)) != 0 ){ // Don't save empty ammo Nodes
 			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
+
 			xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "ammo");
 			xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST Weapon::AmmoTypeToName((AmmoType)a).c_str() );
 			xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
@@ -175,7 +208,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	map<Commodity*,unsigned int> cargo = this->GetCargo();
 	map<Commodity*,unsigned int>::iterator iter;
 	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
-		if( (*iter).second )
+		if( !(*iter).second )
 		{
 			continue; // Don't Save empty cargo Nodes
 		}

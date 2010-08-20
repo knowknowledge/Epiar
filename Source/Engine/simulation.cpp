@@ -31,7 +31,7 @@
  * \brief Handles main game loop. */
 
 bool Simulation::paused = false;
-
+bool Simulation::willsave = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
@@ -66,6 +66,9 @@ void Simulation::pause(){
 	paused = true;
 }
 
+void Simulation::save(){
+	willsave=true;
+}
 /**\brief Unpauses the simulation
  */
 void Simulation::unpause(){
@@ -231,9 +234,11 @@ bool Simulation::Run() {
 				sprites->Save();
 			}
 		}
+		if(willsave){
+			Players::Instance()->Save( Get("players").c_str()  );
+			willsave=false;
+		}
 	}
-
-	Players::Instance()->Save(Get("players"));
 	optionsfile->Save();
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );

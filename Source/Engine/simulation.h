@@ -27,11 +27,12 @@ class Simulation : public XMLFile {
 		Simulation();
 		
 		bool Load( string filename );
-		bool Save();
+		//bool Save();
 		bool Run();
 
 		bool HandleInput();
 
+		static void save();
 		static void pause();
 		static void unpause();
 		static bool isPaused() {return paused;}
@@ -42,6 +43,7 @@ class Simulation : public XMLFile {
 		// Pointers to Singletons
 		// TODO: These should all be rewritten to not be singletons
 		SpriteManager *sprites;
+		
 		Commodities *commodities;
 		Planets *planets;
 		Engines *engines;
@@ -60,6 +62,8 @@ class Simulation : public XMLFile {
 
 		float currentFPS;
 		static bool paused;
+		static bool willsave;
+
 };
 
 #endif // __H_SIMULATION__

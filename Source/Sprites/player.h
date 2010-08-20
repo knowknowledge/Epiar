@@ -18,6 +18,7 @@ class Player : public Ship , public Component {
 		static Player *Instance();
 
 		static bool IsLoaded() { return pInstance!=NULL; }
+		static void setLastPlanet( string planetName);
 		string GetName() { return name; }
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
@@ -40,8 +41,8 @@ class Player : public Ship , public Component {
 
 	private:
 		static Player *pInstance;
-
 		time_t lastLoadTime; // TODO This may need to be renamed
+		static string lastPlanet;
 };
 
 class Players : public Components {
