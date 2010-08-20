@@ -396,7 +396,7 @@ int Lua::setLastPlanet(lua_State *L){
 		return luaL_error(L, "%d arguments expected 1 argument the planet's name");
 	}
 	string planetName=(string) luaL_checkstring(L,1);
-	Player::setLastPlanet(planetName);
+	Player::Instance()->setLastPlanet(planetName);
 	return 0;
 }
 	

@@ -18,7 +18,6 @@
  * \brief Main player-specific functions and handle. */
 
 Player *Player::pInstance = 0;
-string Player::lastPlanet="";
 /**\brief Fetch the current player Instance
  */
 Player *Player::Instance( void ) {
@@ -66,34 +65,12 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	if( (attr = FirstChildNamed(node, "planet"))){
 		string temp;
 		xmlNodePtr name = FirstChildNamed(attr,"name");
-		value = NodeToString(doc,name);
-		
-		xmlNodePtr xPos = FirstChildNamed(attr,"x");
-		temp = NodeToString(doc,xPos);
-		float x = atof( temp.c_str() );
-		xmlNodePtr yPos = FirstChildNamed(attr,"y");
-		temp = NodeToString(doc,yPos);
-		float y = atof( temp.c_str() );
-		
-		list<Sprite*> *sprites;
-		list<Sprite*>::iterator iter;
-		sprites = SpriteManager::Instance()->GetSprites(DRAW_ORDER_PLANET);
-		for(iter = sprites->begin(); iter!= sprites->end(); ++iter){
-			Planet *p=(Planet*) (*iter);
-			if((p)->GetName()==value){
-				pos=(p)->GetWorldPosition();
-				break;
-			}
-		}
-	
-		if(iter == sprites->end()){
-			LogMsg(ERR,"No Planet found with name %s", value.c_str());
-			pos.SetX(x);
-			pos.SetY(y);
+		lastPlanet = NodeToString(doc,name);
+		Planet* p = Planets::Instance()->GetPlanet( lastPlanet );
+		if( p != NULL ) {
+			SetWorldPosition( p->GetWorldPosition() );
 		}
 	}else return false;
-			
-	SetWorldPosition( pos );
 
 	if( (attr = FirstChildNamed(node,"model")) ){
 		value = NodeToString(doc,attr);
@@ -313,11 +290,20 @@ Player* Players::LoadPlayer(string playerName) {
 		newPlayer->SetEngine( defaultEngine );
 	}
 
+	// We check the planet location at loadtime in case the planet has moved or the lastPlanet has changed.
+	// This happens with the --random-universe option.
+	Planet* p = Planets::Instance()->GetPlanet( newPlayer->lastPlanet );
+	if( p != NULL ) {
+		newPlayer->SetWorldPosition( p->GetWorldPosition() );
+	} else {
+		newPlayer->SetWorldPosition( defaultLocation );
+	}
+
 	// We can't start the game with bad player Information
 	assert( newPlayer->GetModelName() != "" );
 	assert( newPlayer->GetEngineName() != "" );
 
-	// Remeber this Player
+	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
 	SpriteManager::Instance()->Add( newPlayer );
 	Camera::Instance()->Focus( newPlayer );
