@@ -246,14 +246,32 @@ function loadingWindow()
 	Epiar.pause()
 	local width=300
 	local height=300
-	loadingWin = UI.newWindow( 300,300,width,height,"Welcome to Epiar" )
 	local players = Epiar.players()
-	for i=1,#players do
-		local player = players[i]
-		-- TODO: show a preview of the player (curret ship, location, equipment)
-		loadingWin:add( UI.newButton(50,30+i*40,100,30,player,string.format("loadPlayer('%s')",player)))
+
+	loadingWin = UI.newWindow( 300,300,width,height,"Load a Player" )
+
+	--- Load an old Player
+	yoff = 30
+	if #players > 0 then
+		loadingWin:add( UI.newLabel( 30, yoff, "Load one of your old saved games:" ) )
+		yoff = yoff + 30
+		for i=1,#players do
+			local player = players[i]
+			-- TODO: show a preview of the player (curret ship, location, equipment)
+			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer('%s')",player)))
+			yoff = yoff + 40
+		end
+		yoff = yoff + 30
 	end
-	loadingWin:add( UI.newButton(width/2-50,height-40,100,30,"New Player","createNewPlayerWindow()") )
+
+	--- Create a new Player
+	loadingWin:add( UI.newLabel( 30, yoff, "Create a new Player:" ) )
+	yoff = yoff + 30
+	loadingWin:add(UI.newLabel( 50, yoff, "Name:"))
+	playerNameField = UI.newTextbox( 100, yoff, 100, 1, "")
+	loadingWin:add(playerNameField)
+	yoff = yoff + 30
+	loadingWin:add( UI.newButton( width/2-50,yoff,100,30,"Create", "createNewPlayer()"))
 end
 
 function loadPlayer(playerName)
@@ -262,41 +280,12 @@ function loadPlayer(playerName)
 		loadingWin:close()
 		loadingWin=nil
 	end
-	if newPlayerWin~=nil then
-		newPlayerWin:close()
-		newPlayerWin=nil
-	end
 	playerStart()
 	Epiar.unpause()
 end
 
-function createNewPlayerWindow()
-	if newPlayerWin~=nil then return end
-	newPlayerWin = UI.newWindow( 600,300, 200,200, "New Player")
-
-	-- TODO: show a picture of a the default ship?
-	
-	yoff=40 -- Buffer for the titlebar
-	newPlayerWin:add(UI.newLabel( 10, yoff, "Name:"))
-	playerNameField = UI.newTextbox( 90, yoff, 100, 1, "")
-	newPlayerWin:add(playerNameField)
-	yoff = yoff+20
-
-	--newPlayerWin:add(UI.newLabel( 10, yoff, "Ship Name"))
-	--playerShipField = UI.newTextbox( 90, yoff, 100, 1, "")
-	--newPlayerWin:add(playerShipField)
-	--yoff = yoff+20
-
-	newPlayerWin:add( UI.newButton( 50,200-40,100,30,"Save", "createNewPlayer()"))
-end
-
 function createNewPlayer()
-	if newPlayerWin==nil then
-		print( "Oh no! Where did the newPlayerWin go?  We're going to need that!" )
-		return
-	end
 	Epiar.newPlayer(playerNameField:GetText())
-	newPlayerWin:close()
 	loadingWin:close()
 	playerStart();
 	Epiar.unpause()
