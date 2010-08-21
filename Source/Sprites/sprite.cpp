@@ -49,7 +49,7 @@ Sprite::Sprite() {
 	radarSize = 1;
 	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
 
-	lastUpdateFrame = 0;
+	lastUpdateFrame = Timer::GetLogicalFrameCount();
 }
 
 Coordinate Sprite::GetWorldPosition( void ) const {
