@@ -1110,6 +1110,7 @@ int Lua::setInfo(lua_State *L) {
 		float rot = getNumField(2,"Rotation");
 		float speed = getNumField(2,"MaxSpeed");
 		int hull = getIntField(2,"MaxHull");
+		int shield = getIntField(2,"MaxShield");
 		int msrp = getIntField(2,"MSRP");
 		int cargo = getIntField(2,"Cargo");
 
@@ -1120,7 +1121,7 @@ int Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,msrp,cargo);
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
 		Models::Instance()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){

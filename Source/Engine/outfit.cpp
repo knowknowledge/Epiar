@@ -171,7 +171,7 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetHullStrength( atoi( value.c_str() ));
 	}
 
-	if( (attr = FirstChildNamed(node,"shildStrength")) ){
+	if( (attr = FirstChildNamed(node,"shieldStrength")) ){
 		value = NodeToString(doc,attr);
 		SetShieldStrength( (short)atoi( value.c_str() ));
 	}

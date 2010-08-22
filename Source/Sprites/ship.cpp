@@ -48,6 +48,7 @@ Ship::Ship()
 	
 	/* Initalize ship's condition */
 	status.hullDamage = 0;
+	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
@@ -215,7 +216,10 @@ void Ship::Accelerate( void ) {
 /**\brief Adds damage to hull.
  */
 void Ship::Damage(short int damage) {
-	status.hullDamage += damage;
+	if(status.shieldDamage >=  (float)shipStats.GetShieldStrength())
+		status.hullDamage += damage;
+	else
+		status.shieldDamage+=damage;
 
 	if( GetHullIntegrityPct() < .15 ) {
 		status.isDisabled = true;
