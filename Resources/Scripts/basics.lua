@@ -203,7 +203,6 @@ Bully = {
 	Travelling = Patrol.Travelling,
 	TooClose = Patrol.TooClose,
 	TooFar = Patrol.TooFar,
-	TooFar = Patrol.Orbiting,
 	Hunting = Hunter.Hunting,
 	Killing = Hunter.Killing,
 
