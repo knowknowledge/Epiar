@@ -25,7 +25,6 @@ playerCommands = {
 function playerStart()
 	PLAYER = Epiar.player()
 	createHUD()
-	registerStep(updateHUD)
 	registerCommands(playerCommands)
 end
 
@@ -45,9 +44,7 @@ function targetShip()
 		end
 	end
 	
-	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
 	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
-	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
 
 ---Target closest ship
@@ -72,7 +69,6 @@ function targetClosestShip()
 	nextTarget = closest.index
 	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
 	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
-	TargetName:setStatus(nearby[nextTarget]:GetModelName() )
 end
 
 ---Board closest ship if possible
@@ -131,7 +127,6 @@ function attemptLanding()
 	
 	-- Check if the ship is close enough and moving slowly enough to land on the planet.
 	HUD.setTarget(planet:GetID())
-	TargetName:setStatus(planet:GetName() )
 	-- TODO make this distance check based off of the planet size.
 	if distance > 200 then
 		if message~="" then
@@ -189,56 +184,64 @@ end
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars
-	local x,y = PLAYER:GetPosition()
-	local qx,qy = coordinateToQuadrant(x,y)
-	pos = HUD.newStatus("Coordinate:",130,1)
-	quad = HUD.newStatus("Quadrant:",130,1)
-	creditBar = HUD.newStatus("Credits:",130,1)
+	HUD.newStatus("Coordinate:",130,1, "string.format('(%d,%d)',PLAYER:GetPosition())")
+	HUD.newStatus("Quadrant:",130,1, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
+	HUD.newStatus("Credits:",130,1, "string.format('$%d',PLAYER:GetCredits())")
 
 	-- Weapon and Armor Status Bars
-	myhull = HUD.newStatus("HULL:",100,0)
+	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
 	myweapons = {}
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
-		if 0==ammo then ammo="---" end
-		myweapons[weapon] = HUD.newStatus(weapon..":",130,0)
+		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('')",weapon))
 	end
 
 	-- DEBUG Bars
-	TargetName = HUD.newStatus("Target:",130,1)
-	TargetHULL = HUD.newStatus("Target:",130,1)
+	HUD.newStatus("Target (N):",130,1, "HudTargetName()")
+	HUD.newStatus("Target (H):",130,1, "HudTargetHull()")
 end
 
-function updateHUD()
-	myhull:setStatus(PLAYER:GetHull())
-	if PLAYER:GetHull() == 0 then return end
-	-- Update Positions
-	local x,y = PLAYER:GetPosition()
-	local qx,qy = coordinateToQuadrant(x,y)
-	pos:setStatus(string.format("( %d , %d )",x,y))
-	quad:setStatus(string.format("( %d , %d )",qx,qy))
-	creditBar:setStatus(string.format("$%d", PLAYER:GetCredits()))
-
-	-- Update Weapons and Armor
+function playerAmmo(weaopnName)
 	local weaponsAndAmmo = PLAYER:GetWeapons()
-	if myweapons==nil and (weaponsAndAmmo~=nil) then
-		print ("ERROR: Attempting to update the player stats before the player has been loaded!")
-		return
+	if weaponsAndAmmo[weaopnName] ~= nil then
+		return string.format('%d',weaponsAndAmmo[weaopnName])
+	else
+		return '---'
 	end
-	local cur_weapon = PLAYER:GetCurrentWeapon()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		if cur_weapon == weapon then star=" ARMED" else star="" end
-		if 0==ammo then ammo="---" end
-		if myweapons[weapon] ~= nil then
-			myweapons[weapon]:setStatus("[ ".. ammo .." ]".. star)
+end
+
+function HudTargetName()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+	if targettedSprite ~= nil then
+		local spritetype = targettedSprite:GetType()
+		if spritetype == 0x01 then -- Planet
+			return targettedSprite:GetName()
+		elseif spritetype == 0x02 then -- Gate Bottom
+			return "Jump Gate"
+		elseif spritetype == 0x04 then -- Projectile
+		elseif spritetype == 0x08 then -- Ship
+			return targettedSprite:GetModelName()
+		elseif spritetype == 0x10 then -- Player
+			return "You"
+		elseif spritetype == 0x20 then -- Gate Top
+			return "Jump Gate"
+		elseif spritetype == 0x40 then -- Effect
+		else -- Nothing?
+		end
+	else -- The Sprite doesn't exist
+	end
+	return ""
+end
+
+function HudTargetHull()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+	if targettedSprite ~= nil then
+		local spritetype = targettedSprite:GetType()
+		if (spritetype == 0x08) or (spritetype == 0x10) then -- Ship or Player
+			return targettedSprite:GetHull()
 		end
 	end
-	local target = Epiar.getSprite( HUD.getTarget() )
-	if target~=nil then
-		if ( target:GetType() == 8) or ( target:GetType() == 16) then
-			TargetHULL:setStatus( target:GetHull() )
-		end
-	end
+	return ""
 end
 
 function loadingWindow()

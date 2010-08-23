@@ -34,24 +34,26 @@ class AlertMessage {
 
 class StatusBar {
 	public:
-		StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio);
+		StatusBar(string _title, int _width, QuadPosition _pos, string _updater);
+		void Update();
 		void Draw(int x, int y);
-		static Image *im_infobar_left,
-				*im_infobar_right,
-				*im_infobar_middle;
-		string GetTitle() { return string(title); }
+
 		void SetName( string n );
-		string GetName() { return std::string (name.begin(), name.end()); }
 		void SetRatio(float _ratio ) { ratio = _ratio; }
+
+		string GetTitle() { return string(title); }
+		string GetName() { return string(name); }
 		float GetRatio() { return ratio; }
 		QuadPosition GetPosition(){ return pos; }
+
 		void print ();
 	protected:
 		char title[40];
 		const int width;
 		const QuadPosition pos;
-		vector<char> name; // TODO: the name 'name' is bad
+		char name[100]; // TODO: the name 'name' is bad
 		float ratio;
+		string lua_updater;
 };
 
 class Hud {
@@ -68,7 +70,8 @@ class Hud {
 		static int GetTarget() {return targetID;}
 		
 		static void AddStatus( StatusBar* bar );
-		static void DeleteStatus( StatusBar* bar );
+		static bool DeleteStatus( StatusBar* bar );
+		static bool DeleteStatus( string deleteTitle );
 
 		static void SetMapDisplay( HudMap _newMapDisplay );
 
@@ -77,8 +80,6 @@ class Hud {
 		static int setVisibity(lua_State *L);
 		static int newAlert(lua_State *L);
 		static int newStatus(lua_State *L);
-		static StatusBar* checkStatus(lua_State *L, int index);
-		static int setStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
 		static int getTarget(lua_State *L);
 		static int setTarget(lua_State *L);

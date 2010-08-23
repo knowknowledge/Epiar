@@ -152,6 +152,7 @@ bool Simulation::Run() {
 			//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
 			//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
+		bool anyUpdate = (logicLoops>0);
 		if( !paused ) {
 			while(logicLoops--) {
 				if (lowFps)
@@ -159,13 +160,17 @@ bool Simulation::Run() {
 				Timer::IncrementFrameCount();
 				Lua::Call("Update");
 				// Update cycle
-				starfield.Update( camera );
 				sprites->Update( lowFps );
-				camera->Update( sprites );
-				Hud::Update();
 			}
 		}
-
+		
+		// These only need to be updated once pre Draw cycle, but they can be skipped if there are no Sprite update cycles.
+		if( anyUpdate ) {
+			starfield.Update( camera );
+			camera->Update( sprites );
+			Hud::Update();
+		}
+		
 		// Erase cycle
 		Video::Erase();
 		
