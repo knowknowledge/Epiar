@@ -146,6 +146,7 @@ void SpriteManager::Update(bool lowFps) {
 
 	//Delete all sprites queued to be deleted
 	if (!spritesToDelete.empty()) {
+		spritesToDelete.sort(); // The list has to be sorted or unique doesn't work correctly.
 		spritesToDelete.unique();
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);

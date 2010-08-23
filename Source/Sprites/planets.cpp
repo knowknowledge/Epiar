@@ -148,6 +148,7 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		Technology *tech = Technologies::Instance()->GetTechnology( value );
 		technologies.push_back(tech);
 	}
+	technologies.sort();
 	technologies.unique();
 
 	return true;
@@ -171,6 +172,7 @@ list<Model*> Planet::GetModels() {
 			models.push_back( *listiter );
 		}
 	}
+	models.sort();
 	models.unique();
 	return models;
 }
@@ -187,6 +189,7 @@ list<Engine*> Planet::GetEngines() {
 			engines.push_back( *listiter );
 		}
 	}
+	engines.sort();
 	engines.unique();
 	return engines;
 }
@@ -203,10 +206,13 @@ list<Weapon*> Planet::GetWeapons() {
 			weapons.push_back( *listiter );
 		}
 	}
+	weapons.sort();
 	weapons.unique();
 	return weapons;
 }
 
+/**\brief List of the Outfits that are available at this Planet
+ */
 list<Outfit*> Planet::GetOutfits() {
 	list<Outfit*> outfits;
 	list<Technology*>::iterator techiter;
@@ -217,6 +223,7 @@ list<Outfit*> Planet::GetOutfits() {
 			outfits.push_back( *listiter );
 		}
 	}
+	outfits.sort();
 	outfits.unique();
 	return outfits;
 }
