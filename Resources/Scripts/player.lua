@@ -197,6 +197,7 @@ function createHUD()
 
 	-- Weapon and Armor Status Bars
 	myhull = HUD.newStatus("HULL:",100,0)
+	myshield = HUD.newStatus("Shield:",100,0)
 	myweapons = {}
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
@@ -211,6 +212,7 @@ end
 
 function updateHUD()
 	myhull:setStatus(PLAYER:GetHull())
+	myshield:setStatus(PLAYER:GetShield())
 	if PLAYER:GetHull() == 0 then return end
 	-- Update Positions
 	local x,y = PLAYER:GetPosition()

@@ -64,6 +64,7 @@ class AI_Lua{
 		static int ShipGetModelName(lua_State* L);
 		static int ShipGetEngine(lua_State* L);
 		static int ShipGetHull(lua_State* L);
+		static int ShipGetShield(lua_State* L);
 	private:
 };
 

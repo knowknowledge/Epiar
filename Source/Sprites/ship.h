@@ -56,6 +56,7 @@ class Ship : public Sprite {
 		float GetDirectionTowards(Coordinate c);
 		float GetDirectionTowards(float angle);
 		float GetHullIntegrityPct();
+		float GetShieldIntegrityPct();
 		Weapon* GetCurrentWeapon();
 		int GetCurrentAmmo();
 		int GetAmmo(AmmoType type);
