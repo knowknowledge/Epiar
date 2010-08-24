@@ -48,6 +48,7 @@ Ship::Ship()
 	
 	/* Initalize ship's condition */
 	status.hullDamage = 0;
+	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
 	status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
@@ -215,7 +216,10 @@ void Ship::Accelerate( void ) {
 /**\brief Adds damage to hull.
  */
 void Ship::Damage(short int damage) {
-	status.hullDamage += damage;
+	if(status.shieldDamage >=  (float)shipStats.GetShieldStrength())
+		status.hullDamage += damage;
+	else
+		status.shieldDamage+=damage;
 
 	if( GetHullIntegrityPct() < .15 ) {
 		status.isDisabled = true;
@@ -223,12 +227,21 @@ void Ship::Damage(short int damage) {
 	}
 }
 
+
 /**\brief Repairs the ship.
  */
 void Ship::Repair(short int damage) {
-	status.hullDamage -= damage;
-	if( status.hullDamage < 0 )
+	if( damage >= status.hullDamage) {
+		damage -= status.hullDamage;
 		status.hullDamage = 0;
+		status.shieldDamage -= damage;
+		if( status.shieldDamage < 0 )
+			status.shieldDamage = 0;
+	} else {
+		status.hullDamage -= damage;
+		if( status.hullDamage < 0 )
+			status.hullDamage = 0;
+	}
 
 	if( GetHullIntegrityPct() >= .15 ) {
 		status.isDisabled = false;
@@ -265,7 +278,7 @@ void Ship::Update( void ) {
 		sprites->Add(
 			new Effect(this->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 
-		// Remove this Sprite from the
+		// Remove this Sprite from the SpriteManager
 		sprites->Delete( (Sprite*)this );
 	}
 }
@@ -516,12 +529,19 @@ float Ship::GetDirectionTowards(float angle){
 	return normalizeAngle(angle - this->GetAngle());
 }
 
-/**\brief Returns the ship's integrity as a percentage (0.0-1.0, where 1.0 = 100%).
+/**\brief Returns the ship's shield integrity as a percentage (0.0-1.0, where 1.0 = 100%).
  * \return Hull remaining
  */
 float Ship::GetHullIntegrityPct() {
-	assert( model );
 	float remaining =  ( (float)shipStats.GetHullStrength() - (float)status.hullDamage ) / (float)shipStats.GetHullStrength();
+	return(remaining);
+}
+
+/**\brief Returns the ship's shield integrity as a percentage (0.0-1.0, where 1.0 = 100%).
+ * \return Shield remaining
+ */
+float Ship::GetShieldIntegrityPct() {
+	float remaining =  ( (float)shipStats.GetShieldStrength() - (float)status.shieldDamage ) / (float)shipStats.GetShieldStrength();
 	return(remaining);
 }
 

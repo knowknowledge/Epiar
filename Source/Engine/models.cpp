@@ -34,6 +34,7 @@ Model& Model::operator=(const Model& other) {
 	msrp = other.msrp;
 	cargoSpace = other.cargoSpace;
 	hullStrength = other.hullStrength;
+	shieldStrength = other.shieldStrength;
 	return *this;
 }
 
@@ -45,11 +46,12 @@ Model& Model::operator=(const Model& other) {
  * \param _rotPerSecond Rotation per second
  * \param _maxSpeed Maximum speed
  * \param _hullStrength Maximum damage it can take
+ * \param _shieldStrength Maximum damage it can take
  * \param _msrp Price
  * \param _cargoSpace Tons of cargo space
  */
 Model::Model( string _name, Image* _image, float _mass,
-		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _msrp, int _cargoSpace) :
+		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
 	image(_image),
 	thrustOffset(_thrustOffset)
 {
@@ -60,6 +62,7 @@ Model::Model( string _name, Image* _image, float _mass,
 	SetMSRP(_msrp);
 	SetCargoSpace(_cargoSpace);
 	SetHullStrength(_hullStrength);
+	SetShieldStrength(_shieldStrength);
 	//((Component*)this)->SetName(_name);
 }
 
@@ -110,6 +113,11 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetHullStrength( (short)atoi( value.c_str() ));
 	} else return false;
 
+	if( (attr = FirstChildNamed(node,"shieldStrength")) ){
+		value = NodeToString(doc,attr);
+		SetShieldStrength( (short)atoi( value.c_str() ));
+	} else return false;
+
 	return true;
 }
 
@@ -144,6 +152,8 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "maxSpeed", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetHullStrength() );
 	xmlNewChild(section, NULL, BAD_CAST "hullStrength", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetShieldStrength() );
+	xmlNewChild(section, NULL, BAD_CAST "shieldStrength", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetMSRP() );
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );

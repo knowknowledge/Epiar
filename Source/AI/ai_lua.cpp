@@ -71,6 +71,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetEngine", &AI_Lua::ShipGetEngine},
 		{"GetHull", &AI_Lua::ShipGetHull},
+		{"GetShield", &AI_Lua::ShipGetShield},
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
 		{"GetState", &AI_Lua::ShipGetState},
 		{"GetCredits", &AI_Lua::ShipGetCredits},
@@ -732,6 +733,25 @@ int AI_Lua::ShipGetHull(lua_State* L){
 			return 1;
 		}
 		lua_pushnumber(L, (double) (ai)->GetHullIntegrityPct() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the shield status (in %).
+ * \sa Ship::GetShieldIntegrityPct
+ */
+int AI_Lua::ShipGetShield(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			// The ship doesn't exist (anymore?) so it's probably dead
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushnumber(L, (double) (ai)->GetShieldIntegrityPct() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}

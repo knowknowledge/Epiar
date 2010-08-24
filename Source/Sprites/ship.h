@@ -56,6 +56,7 @@ class Ship : public Sprite {
 		float GetDirectionTowards(Coordinate c);
 		float GetDirectionTowards(float angle);
 		float GetHullIntegrityPct();
+		float GetShieldIntegrityPct();
 		Weapon* GetCurrentWeapon();
 		int GetCurrentAmmo();
 		int GetAmmo(AmmoType type);
@@ -82,6 +83,7 @@ class Ship : public Sprite {
 		struct {
 			/* Related to ship's condition */
 			short int hullDamage; ///< Once the hull takes too much damage, your ship blows apart, hooray! :)
+			short int shieldDamage; ///< Your hull doesn`t take damage untill the shield is down
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
 			unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
 			unsigned int selectedWeapon; ///< Which weapon is currently selected

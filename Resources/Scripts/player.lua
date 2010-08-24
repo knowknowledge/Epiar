@@ -190,15 +190,17 @@ function createHUD()
 
 	-- Weapon and Armor Status Bars
 	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
+	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
 	myweapons = {}
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('')",weapon))
 	end
 
-	-- DEBUG Bars
+	-- Target Bars
 	HUD.newStatus("Target (N):",130,1, "HudTargetName()")
 	HUD.newStatus("Target (H):",130,1, "HudTargetHull()")
+	HUD.newStatus("Target (S):",130,1, "HudTargetShield()")
 end
 
 function playerAmmo(weaopnName)
@@ -241,7 +243,18 @@ function HudTargetHull()
 			return targettedSprite:GetHull()
 		end
 	end
-	return ""
+	return 0
+end
+
+function HudTargetShield()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+	if targettedSprite ~= nil then
+		local spritetype = targettedSprite:GetType()
+		if (spritetype == 0x08) or (spritetype == 0x10) then -- Ship or Player
+			return targettedSprite:GetShield()
+		end
+	end
+	return 0
 end
 
 function loadingWindow()
