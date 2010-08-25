@@ -752,14 +752,8 @@ function ui_demo()
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
 	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
-	demo_check = UI.newCheckbox(50, 100, ( Epiar.getoption("options/development/debug-quadtree") ), "Toggle This")
 
 	-- Modify the Widgets
-	demo_trigger = function ()
-		Epiar.setoption("options/development/debug-quadtree", demo_check:IsChecked() and 1 or 0 )
-		demo_win:close()
-		demo_win = nil;
-	end
 	demo_swap = function()
 		s1 = demo_text1:GetText()
 		s2 = demo_text2:GetText()
@@ -770,8 +764,9 @@ function ui_demo()
 	-- Attach the widgets to the window
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
-	demo_win:add(demo_check)
 	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
 	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
 	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
+
+	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end

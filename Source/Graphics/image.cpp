@@ -155,7 +155,7 @@ void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float a
 
 	// calculate the coordinates of the quad	
 	// avoid trig when you can
-	if( angle != 0. ) {
+	if( angle != 0.f ) {
 		Trig *trig = Trig::Instance();
 		float a = (float)trig->DegToRad( angle );
 		// ax/ay are the coordinate to rotate "about", hence "about points", "about x", "about y"
@@ -323,9 +323,13 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	return( true );
 }
 
+void Image::DrawTiledAlpha( int x, int y, int fill_w, int fill_h, float alpha ) {
+	DrawTiled( x, y, fill_w, fill_h, alpha );
+}
+
 /**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
  */
-void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
+void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 {
 	if( !image ) {
 		LogMsg(WARN, "Trying to draw without loading an image first." );
@@ -340,7 +344,7 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 	glDisable(GL_DEPTH_TEST);
 
 	// draw it
-	glColor3f(1, 1, 1);
+	glColor4f(1, 1, 1, alpha);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);

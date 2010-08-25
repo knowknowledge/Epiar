@@ -32,6 +32,7 @@ class UI_Lua {
 
 		// Functions to create new Widgets
 		static int newWindow(lua_State *L);
+		static int newFrame(lua_State *L);
 		static int newButton(lua_State *L);
 		static int newTextbox(lua_State *L);
 		static int newLabel(lua_State *L);

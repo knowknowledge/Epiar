@@ -27,6 +27,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 	static const luaL_Reg uiFunctions[] = {
 		// Creation
 		{"newWindow", &UI_Lua::newWindow},
+		{"newFrame", &UI_Lua::newFrame},
 		{"newButton", &UI_Lua::newButton},
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
@@ -87,18 +88,46 @@ int UI_Lua::newWindow(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Window **win = (Window**)lua_newuserdata(L, sizeof(Window**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	*win = new Window(x,y,w,h,caption);
-	//(*win)->AddChild( new Button( 152, 262, 96, 25, "OK" ) );
 
 	// Add this Window
 	UI::Add(*win);
 
 	// Collect 'extra' widgets and Add them as children
-	for(arg=6; arg<=n;arg++){
+	for(arg=6; arg <= n;arg++){
 		Widget** widget= (Widget**)lua_touserdata(L,arg);
 		(*win)->AddChild(*widget);
+	}
+	
+	return 1;
+}
+
+int UI_Lua::newFrame(lua_State *L){
+	int arg;
+	int n = lua_gettop(L);  // Number of arguments
+	if (n < 4)
+		return luaL_error(L, "Got %d arguments expected 4 (x, y, w, h, [ Widgets ... ])", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+
+	// Allocate memory for a pointer to object
+	Frame **frame = (Frame**)lua_newuserdata(L, sizeof(Frame**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+	*frame = new Frame(x, y, w, h);
+
+	// Add this Frame
+	UI::Add(*frame);
+
+	// Collect 'extra' widgets and Add them as children
+	for(arg=5; arg <= n;arg++){
+		Widget** widget= (Widget**)lua_touserdata(L,arg);
+		(*frame)->AddChild(*widget);
 	}
 	
 	return 1;
