@@ -254,7 +254,7 @@ bool Simulation::Run() {
  * \return true if successful
  */
 bool Simulation::Parse( void ) {
-	LogMsg(INFO, "Simulation version %d.%d.%d.", Get("version-major").c_str(), Get("version-minor").c_str(),  Get("version-macro").c_str());
+	LogMsg(INFO, "Simulation version %s.%s.%s.", Get("version-major").c_str(), Get("version-minor").c_str(),  Get("version-macro").c_str());
 
 	// Now load the various subsystems
 	if( commodities->Load( Get("commodities") ) != true ) {
