@@ -298,7 +298,7 @@ bool Components::Load(string filename, bool optional) {
 		if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
 			// Parse a Component
 			success = ParseXMLNode( doc, cur );
-			assert(success);
+			assert(success || optional);
 			if(success) numObjs++;
 		}
 		
