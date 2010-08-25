@@ -236,19 +236,13 @@ void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
 /**\brief Returns the next highest power of two if num is not a power of two
  */
 int Image::PowerOfTwo(int num) {
-	float q = (float)num;
-
-	if(q != 1.)
-		while( !((int)( q /= 2. ) % 2) && q != 1. );
-
-	if(q != 1.) {
+	if (!(num & (num - 1)) && num) {
+		return num;
+	} else {
 		// num is not a power of two
 		int c = 1;
 		while(c < num) c *= 2;
 		return(c);
-	} else {
-		// num is a power of two
-		return(num);
 	}
 }
 
