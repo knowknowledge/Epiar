@@ -735,7 +735,7 @@ end
 
 function introComplete()
 	if introWin == nil then return end
-	Epiar.setoption("options/simulation/intro", neverShowAgain:IsChecked() and 1 or 0 )
+	Epiar.setoption("options/simulation/intro", neverShowAgain:IsChecked() and 0 or 1 )
 	introWin:close()
 	introWin = nil
 	-- Unpause if the player loading screen isn't active
