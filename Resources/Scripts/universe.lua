@@ -587,12 +587,13 @@ end
 function landingDialog(id)
 	-- Create the Planet Landing Screen
 	if landingWin ~= nil then return end
+
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
 	local height = 500
 	local width = 600
-	local boxsize=80
+	local boxsize = 80
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
 	landingWin:add(storeframe)
