@@ -301,7 +301,13 @@ function loadPlayer(playerName)
 end
 
 function createNewPlayer()
-	Epiar.newPlayer(playerNameField:GetText())
+	if FailureWindow ~= nil then return end
+	local name = trim( playerNameField:GetText() )
+	if name == "" then
+		NewFailureWindow("Bad Player Name", "You can't use an empty string for a player name.")
+		return
+	end
+	Epiar.newPlayer(name)
 	loadingWin:close()
 	playerStart();
 	Epiar.unpause()
