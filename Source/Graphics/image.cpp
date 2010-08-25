@@ -124,7 +124,19 @@ bool Image::Load( char *buf, int bufSize ) {
 
 /**\brief Draw the image (angle is in degrees)
  */
-void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_ratio_h) {
+void Image::Draw( int x, int y, float angle ) {
+	_Draw( x, y, 1.f, 1.f, 1.f, 1.f, angle );
+}
+
+/**\brief Draw the image (angle is in degrees, alpha is between 0.0 and 1.0)
+ */
+void Image::DrawAlpha( int x, int y, float alpha ) {
+	_Draw( x, y, 1.f, 1.f, 1.f, alpha );
+}
+
+/**\brief Draw the image (angle is in degrees)
+ */
+void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float angle, float resize_ratio_w, float resize_ratio_h) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
@@ -143,7 +155,7 @@ void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_
 
 	// calculate the coordinates of the quad	
 	// avoid trig when you can
-	if( angle != 0. ) {
+	if( angle != 0.f ) {
 		Trig *trig = Trig::Instance();
 		float a = (float)trig->DegToRad( angle );
 		// ax/ay are the coordinate to rotate "about", hence "about points", "about x", "about y"
@@ -166,7 +178,7 @@ void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_
 	}
 
 	// draw!
-	glColor3f(1, 1, 1);
+	glColor4f(r, g, b, alpha);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
@@ -206,7 +218,8 @@ void Image::DrawCentered( int x, int y, float angle ) {
 void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
 	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
-	Draw(x, y, angle, resize_ratio_w, resize_ratio_h);
+
+	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 }
 
 /**\brief Draw the image within a box but not stretched
@@ -216,25 +229,20 @@ void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_h = (float)box_h / (float)this->h;
 	// Use Minimum of the two ratios
 	float resize_ratio = resize_ratio_w<resize_ratio_h ? resize_ratio_w : resize_ratio_h;
-	Draw(x, y, angle, resize_ratio, resize_ratio);
+
+	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio, resize_ratio);
 }
 
 /**\brief Returns the next highest power of two if num is not a power of two
  */
 int Image::PowerOfTwo(int num) {
-	float q = (float)num;
-
-	if(q != 1.)
-		while( !((int)( q /= 2. ) % 2) && q != 1. );
-
-	if(q != 1.) {
+	if (!(num & (num - 1)) && num) {
+		return num;
+	} else {
 		// num is not a power of two
 		int c = 1;
 		while(c < num) c *= 2;
 		return(c);
-	} else {
-		// num is a power of two
-		return(num);
 	}
 }
 
@@ -315,9 +323,13 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	return( true );
 }
 
+void Image::DrawTiledAlpha( int x, int y, int fill_w, int fill_h, float alpha ) {
+	DrawTiled( x, y, fill_w, fill_h, alpha );
+}
+
 /**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
  */
-void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
+void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 {
 	if( !image ) {
 		LogMsg(WARN, "Trying to draw without loading an image first." );
@@ -332,7 +344,7 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h )
 	glDisable(GL_DEPTH_TEST);
 
 	// draw it
-	glColor3f(1, 1, 1);
+	glColor4f(1, 1, 1, alpha);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);

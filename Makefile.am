@@ -48,6 +48,7 @@ Epiar_SOURCES = Source/main.cpp \
                 Source/UI/ui_textbox.cpp \
                 Source/UI/ui_widget.cpp \
                 Source/UI/ui_window.cpp \
+                Source/UI/ui_frame.cpp \
                 Source/Utilities/argparser.cpp \
                 Source/Utilities/camera.cpp \
                 Source/Utilities/cmath.cpp \

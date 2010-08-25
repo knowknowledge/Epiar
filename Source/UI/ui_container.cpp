@@ -25,9 +25,11 @@ UIContainer::UIContainer( string _name, bool _mouseHandled ):
  */
 UIContainer::~UIContainer( void ){
 	list<Widget *>::iterator i;
+
 	for( i = children.begin(); i != children.end(); ++i ) {
 		delete (*i);
 	}
+	children.clear();
 }
 
 /**\brief Adds a child to the current container.

@@ -43,11 +43,14 @@ class Image : public Resource {
 		int GetHalfHeight( void ) { return h / 2; };
 
 		// Draw the image (angle in degrees)
-		void Draw( int x, int y, float angle = 0.f, float resize_ratio_w = 1.f, float resize_ratio_h = 1.f);
+		void Draw( int x, int y, float angle = 0.f );
+		// Draw the image with an alpha channel
+		void DrawAlpha( int x, int y, float alpha );
 		// Draw the image centered on (x,y) (angle in degrees)
 		void DrawCentered( int x, int y, float angle = 0. );
 		// Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
-		void DrawTiled( int x, int y, int w, int h );
+		void DrawTiled( int x, int y, int w, int h, float alpha = 1. );
+		void DrawTiledAlpha( int x, int y, int w, int h, float alpha );
 		// Draw the image stretched within to a box
 		void DrawStretch( int x, int y, int w, int h, float angle = 0. );
 		// Draw the image within a box but not stretched
@@ -56,6 +59,9 @@ class Image : public Resource {
 		string GetPath(){return filepath;}
 
 	private:
+		// Draw the image (angle in degrees)
+		void _Draw( int x, int y, float r, float g, float b, float alpha = 1.f, float angle = 0.f, float resize_ratio_w = 1.f, float resize_ratio_h = 1.f );
+
 		// Converts an SDL surface to an OpenGL texture
 		bool ConvertToTexture( SDL_Surface *s );
 		// Expands surface 's' to width/height of w/h, keeping the original image in the upper-left

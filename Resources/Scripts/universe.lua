@@ -603,12 +603,13 @@ end
 function landingDialog(id)
 	-- Create the Planet Landing Screen
 	if landingWin ~= nil then return end
+
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
 	local height = 500
 	local width = 600
-	local boxsize=80
+	local boxsize = 80
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
 	landingWin:add(storeframe)
@@ -767,14 +768,8 @@ function ui_demo()
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
 	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
-	demo_check = UI.newCheckbox(50, 100, ( Epiar.getoption("options/development/debug-quadtree") ), "Toggle This")
 
 	-- Modify the Widgets
-	demo_trigger = function ()
-		Epiar.setoption("options/development/debug-quadtree", demo_check:IsChecked() and 1 or 0 )
-		demo_win:close()
-		demo_win = nil;
-	end
 	demo_swap = function()
 		s1 = demo_text1:GetText()
 		s2 = demo_text2:GetText()
@@ -785,8 +780,7 @@ function ui_demo()
 	-- Attach the widgets to the window
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
-	demo_win:add(demo_check)
 	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
-	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
-	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
+
+	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end

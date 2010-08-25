@@ -19,6 +19,7 @@
 #include "ui_label.h"
 #include "ui_scrollbar.h"
 #include "ui_window.h"
+#include "ui_frame.h"
 #include "ui_button.h"
 #include "ui_textbox.h"
 #include "ui_picture.h"

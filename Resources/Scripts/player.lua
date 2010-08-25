@@ -120,19 +120,23 @@ function attemptLanding()
 	local planet = Epiar.nearestPlanet(PLAYER,4096)
 	local px,py = planet:GetPosition()
 	local distance = distfrom( px,py, x,y)
-	local message=""
+	local message = ""
+
 	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
-		message = string.format("This is %s Landing Control. ",planet:GetName())
+		message = string.format("This is %s Landing Control. ", planet:GetName())
+		
+		-- Check if the ship is close enough and moving slowly enough to land on the planet.
+		HUD.setTarget(planet:GetID())
+
+		return
 	end
 	
-	-- Check if the ship is close enough and moving slowly enough to land on the planet.
-	HUD.setTarget(planet:GetID())
 	-- TODO make this distance check based off of the planet size.
 	if distance > 200 then
-		if message~="" then
-			message=message.."Begin your approach."
+		if message ~= "" then
+			message = message.."Begin your approach."
 		else
-			message="Continue your approach."
+			message = "Continue your approach."
 		end
 		HUD.newAlert(message)
 	else
