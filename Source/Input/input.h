@@ -104,6 +104,8 @@ class Input {
 		static void UnRegisterCallBack( InputEvent key );
 		static int RegisterKey(lua_State *L);
 		static int UnRegisterKey(lua_State *L);
+
+		static void HandleLuaCallBacks( list<InputEvent> & events );
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );
@@ -114,7 +116,6 @@ class Input {
 		void _UpdateHandleMouseMotion( SDL_Event *event );
 
 		void PushTypeEvent( list<InputEvent> & events, SDLKey key );
-		void HandleLuaCallBacks( list<InputEvent> & events );
 
 		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems

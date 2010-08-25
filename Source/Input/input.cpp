@@ -116,8 +116,6 @@ list<InputEvent> Input::Update( bool &quitSignal ) {
 			events.push_back( InputEvent( KEY, KEYPRESSED, k ) );
 	}
 
-	HandleLuaCallBacks( events );
-
 	if((Timer::GetTicks() - lastMouseMove > OPTION(Uint32,"options/timing/mouse-fade")) ){
 		Video::DisableMouse();
 	}
@@ -293,6 +291,7 @@ void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 		map<InputEvent,string>::iterator val = eventMappings.find( *i );
 		if( val != eventMappings.end() ){
 			Lua::Run( val->second );
+			events.erase( i );
 		}
 	}
 }
