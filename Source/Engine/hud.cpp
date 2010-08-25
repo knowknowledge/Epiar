@@ -102,29 +102,30 @@ void StatusBar::print ()
  */
 void StatusBar::Draw(int x, int y) {
 	int widthRemaining = this->width;
-	Image *BorderLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
-	Image *BorderMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
-	Image *BorderRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
 
-	if(pos==UPPER_RIGHT||pos==LOWER_RIGHT){
-		x = Video::GetWidth() - BorderLeft->GetWidth() - width - BorderRight->GetWidth();
+	Image *BackgroundLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
+	Image *BackgroundMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
+	Image *BackgroundRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
+
+	if(pos == UPPER_RIGHT || pos == LOWER_RIGHT) {
+		x = Video::GetWidth() - BackgroundLeft->GetWidth() - width - BackgroundRight->GetWidth();
 	}
 
 	// Draw the Border
-	BorderLeft->Draw(x,y);
-	x += BorderLeft->GetWidth();
-	BorderMiddle->DrawTiled(x,y,width, BorderMiddle->GetHeight());
-	BorderRight->Draw(x+width,y);
+	BackgroundLeft->Draw(x,y);
+	x += BackgroundLeft->GetWidth();
+	BackgroundMiddle->DrawTiled(x, y, width, BackgroundMiddle->GetHeight());
+	BackgroundRight->Draw(x + width, y);
 
-	BitType->SetColor(1.f,1.f,1.f,1.f);
+	BitType->SetColor(1.f, 1.f, 1.f, 1.f);
 
 	// Draw the Title
-	int wTitle = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), title,Font::LEFT,Font::MIDDLE );
+	int wTitle = BitType->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wTitle;
 	x += wTitle + 5;
 
 	// Draw Name
-	int wName = BitType->RenderTight( x, y+BorderMiddle->GetHalfHeight(), name, Font::LEFT,Font::MIDDLE );
+	int wName = BitType->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), name, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wName;
 	x += wName;
 
@@ -134,7 +135,7 @@ void StatusBar::Draw(int x, int y) {
 		Image *BarMiddle = Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
 		Image *BarRight = Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
 
-		int bar_y = y + BorderLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
+		int bar_y = y + BackgroundLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
 		BarLeft->Draw( x, bar_y );
 		x += BarLeft->GetWidth();
 		int bar_w = widthRemaining - BarLeft->GetWidth() - BarRight->GetWidth();
