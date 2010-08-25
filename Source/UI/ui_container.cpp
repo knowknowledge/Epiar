@@ -166,7 +166,7 @@ bool UIContainer::MouseLUp( int xi, int yi ){
 			this->lmouseDown = NULL;
 		}
 	}
-	LogMsg(INFO,"Mouse Left up detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Left up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -184,7 +184,7 @@ bool UIContainer::MouseLDown( int xi, int yi ) {
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( !event_on  ){
-		LogMsg(INFO,"Mouse Left down detect in %s.",this->name.c_str());
+		//LogMsg(INFO,"Mouse Left down detect in %s.",this->name.c_str());
 		// Nothing was clicked on
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
@@ -214,7 +214,7 @@ bool UIContainer::MouseLRelease( void ){
 	// Pass event onto children if needed
 	if( this->lmouseDown )
 		return this->lmouseDown->MouseLRelease();
-	LogMsg(INFO,"Left Mouse released in %s",this->name.c_str());
+	//LogMsg(INFO,"Left Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -237,7 +237,7 @@ bool UIContainer::MouseMUp( int xi, int yi ){
 			this->mmouseDown = NULL;
 		}
 	}
-	LogMsg(INFO,"Mouse Middle up detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Middle up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -253,7 +253,7 @@ bool UIContainer::MouseMDown( int xi, int yi ){
 		this->mmouseDown=event_on;
 		return event_on->MouseMDown( xr, yr );
 	}
-	LogMsg(INFO,"Mouse Middle down detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Middle down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -265,7 +265,7 @@ bool UIContainer::MouseMRelease( void ){
 	// Pass event onto children if needed
 	if( this->mmouseDown )
 		return this->mmouseDown->MouseMRelease();
-	LogMsg(INFO,"Middle Mouse released in %s",this->name.c_str());
+	//LogMsg(INFO,"Middle Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -288,7 +288,7 @@ bool UIContainer::MouseRUp( int xi, int yi ){
 			this->rmouseDown = NULL;
 		}
 	}
-	LogMsg(INFO,"Mouse Right up detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Right up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -304,7 +304,7 @@ bool UIContainer::MouseRDown( int xi, int yi ){
 		this->rmouseDown=event_on;
 		return event_on->MouseRDown( xr, yr );
 	}
-	LogMsg(INFO,"Mouse Right down detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Right down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -316,7 +316,7 @@ bool UIContainer::MouseRRelease( void ){
 	// Pass event onto children if needed
 	if( this->rmouseDown )
 		return this->rmouseDown->MouseRRelease();
-	LogMsg(INFO,"Right Mouse released in %s",this->name.c_str());
+	//LogMsg(INFO,"Right Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -330,7 +330,7 @@ bool UIContainer::MouseWUp( int xi, int yi ){
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on )
 		return event_on->MouseWUp( xr,yr );
-	LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -344,7 +344,7 @@ bool UIContainer::MouseWDown( int xi, int yi ){
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on )
 		return event_on->MouseWDown( xr,yr );
-	LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -354,7 +354,7 @@ bool UIContainer::KeyboardEnter( void ){
 	this->keyactivated=true;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardEnter();
-	LogMsg(INFO,"Keyboard enter detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Keyboard enter detect in %s.",this->name.c_str());
 	return true;
 }
 
@@ -364,7 +364,7 @@ bool UIContainer::KeyboardLeave( void ){
 	this->keyactivated=false;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardLeave();
-	LogMsg(INFO,"Keyboard leave detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Keyboard leave detect in %s.",this->name.c_str());
 	return true;
 }
 
@@ -373,7 +373,7 @@ bool UIContainer::KeyboardLeave( void ){
 bool UIContainer::KeyPress( SDLKey key ) {
 	if( keyboardFocus ) 
 		return keyboardFocus->KeyPress( key );
-	LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
+	//LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return false;
 }
 
