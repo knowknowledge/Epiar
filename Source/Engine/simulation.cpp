@@ -95,7 +95,7 @@ bool Simulation::Run() {
 	// Start the Lua Universe
 	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
-	       && Lua::Load("Resources/Scripts/basics.lua")
+	       && Lua::Load("Resources/Scripts/ai.lua")
 	       && (OPTION(int,"options/development/editor-mode")
 	          ? Lua::Load("Resources/Scripts/editor.lua")
 	          : Lua::Load("Resources/Scripts/player.lua") );
