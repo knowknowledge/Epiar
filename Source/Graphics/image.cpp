@@ -124,7 +124,19 @@ bool Image::Load( char *buf, int bufSize ) {
 
 /**\brief Draw the image (angle is in degrees)
  */
-void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_ratio_h) {
+void Image::Draw( int x, int y, float angle ) {
+	_Draw( x, y, 1.f, 1.f, 1.f, 1.f, angle );
+}
+
+/**\brief Draw the image (angle is in degrees, alpha is between 0.0 and 1.0)
+ */
+void Image::DrawAlpha( int x, int y, float alpha ) {
+	_Draw( x, y, 1.f, 1.f, 1.f, alpha );
+}
+
+/**\brief Draw the image (angle is in degrees)
+ */
+void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float angle, float resize_ratio_w, float resize_ratio_h) {
 	// the four rotated (if needed) corners of the image
 	float ulx, urx, llx, lrx, uly, ury, lly, lry;
 
@@ -166,7 +178,7 @@ void Image::Draw( int x, int y, float angle, float resize_ratio_w, float resize_
 	}
 
 	// draw!
-	glColor3f(1, 1, 1);
+	glColor4f(r, g, b, alpha);
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
@@ -206,7 +218,8 @@ void Image::DrawCentered( int x, int y, float angle ) {
 void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
 	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
-	Draw(x, y, angle, resize_ratio_w, resize_ratio_h);
+
+	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 }
 
 /**\brief Draw the image within a box but not stretched
@@ -216,7 +229,8 @@ void Image::DrawFit( int x, int y, int box_w, int box_h, float angle ) {
 	float resize_ratio_h = (float)box_h / (float)this->h;
 	// Use Minimum of the two ratios
 	float resize_ratio = resize_ratio_w<resize_ratio_h ? resize_ratio_w : resize_ratio_h;
-	Draw(x, y, angle, resize_ratio, resize_ratio);
+
+	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio, resize_ratio);
 }
 
 /**\brief Returns the next highest power of two if num is not a power of two
