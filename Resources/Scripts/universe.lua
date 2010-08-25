@@ -765,8 +765,6 @@ function ui_demo()
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
 	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
-	demo_win:add(UI.newButton( 152, 262-45, 96, 25, "TOGGLE", "demo_check:setChecked(not demo_check:IsChecked() )"))
-	demo_win:add(UI.newButton( 152, 262, 96, 25, "OK", "demo_trigger()"))
 
 	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end

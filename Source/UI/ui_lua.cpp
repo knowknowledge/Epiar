@@ -121,9 +121,6 @@ int UI_Lua::newFrame(lua_State *L){
 	lua_setmetatable(L, -2);
 	*frame = new Frame(x, y, w, h);
 
-	// Add this Frame
-	UI::Add(*frame);
-
 	// Collect 'extra' widgets and Add them as children
 	for(arg=5; arg <= n;arg++){
 		Widget** widget= (Widget**)lua_touserdata(L,arg);
