@@ -152,8 +152,8 @@ void Camera::GetDelta( double *dx, double *dy ) {
  * \note This is not the recommended way to move the camera.
  */
 void Camera::Move( int dx, int dy ) {
-	this->dx -= dx;
-	this->dy -= dy;
+	this->dx = -dx;
+	this->dy = -dy;
 
 	x -= dx;
 	y -= dy;
