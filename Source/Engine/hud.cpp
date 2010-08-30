@@ -667,7 +667,7 @@ int Hud::setMapDisplay(lua_State *L) {
 		return luaL_error(L, "setMapDisplay got %d arguments expected 1.   Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'.", n);
 	string maptype = (string)luaL_checkstring(L,1);
 
-	printf( "Setting Map Display to '%s'\n", maptype.c_str() );
+	//printf( "Setting Map Display to '%s'\n", maptype.c_str() );
 
 	if( maptype == "NONE" ) {
 		SetMapDisplay( NoMap );

@@ -90,7 +90,6 @@ function togglePause()
 end
 
 function toggleQuadrantMap()
-	print ("Toggling Quadrant Map")
 	local currentMap = HUD.getMapDisplay()
 	if( currentMap=="QUADRANT") then
 		HUD.setMapDisplay("NONE")
@@ -99,7 +98,6 @@ function toggleQuadrantMap()
 	end
 end
 function toggleUniverseMap()
-	print ("Toggling Universe Map")
 	local currentMap = HUD.getMapDisplay()
 	if( currentMap=="UNIVERSE") then
 		HUD.setMapDisplay("NONE")
