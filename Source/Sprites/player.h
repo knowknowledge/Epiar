@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "Sprites/ship.h"
+#include "Engine/mission.h"
 
 class Player : public Ship , public Component {
 	public:
@@ -21,6 +22,8 @@ class Player : public Ship , public Component {
 		void setLastPlanet( string planetName);
 		string GetLastPlanet() { return lastPlanet; }
 		string GetName() { return name; }
+
+		void AcceptMission( Mission *mission );
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
@@ -44,6 +47,7 @@ class Player : public Ship , public Component {
 		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
+		list<Mission*> missions;
 };
 
 class Players : public Components {

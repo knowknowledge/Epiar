@@ -41,6 +41,7 @@ class AI_Lua{
 		static int ShipSetCredits(lua_State* L);
 		static int ShipStoreCommodities(lua_State* L);
 		static int ShipDiscardCommodities(lua_State* L);
+		static int ShipAcceptMission(lua_State* L);
 
 		// Current Ship State
 		static int ShipGetType(lua_State* L);

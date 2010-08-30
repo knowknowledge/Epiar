@@ -15,6 +15,7 @@ Epiar_SOURCES = Source/main.cpp \
                 Source/Engine/engines.cpp \
                 Source/Engine/hud.cpp \
                 Source/Engine/models.cpp \
+                Source/Engine/mission.cpp \
                 Source/Engine/outfit.cpp \
                 Source/Engine/quadrant.cpp \
                 Source/Engine/simulation.cpp \

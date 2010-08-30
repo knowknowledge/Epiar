@@ -29,7 +29,12 @@ Player *Player::Instance( void ) {
 	return( pInstance );
 }
 
-
+void Player::AcceptMission( Mission *mission ) {
+	assert( mission != NULL );
+	mission->Accept();
+	missions.push_back( mission );
+	LogMsg(INFO, "Player has accepted the Mission to %s", mission->GetName().c_str() );
+}
 
 /**\brief set name of last planet visited
  */
@@ -53,6 +58,17 @@ Player::~Player() {
 /**\brief Run the Player Update
  */
 void Player::Update( void ) {
+	bool missionOver;
+	list<Mission*>::iterator i;
+	for( i = missions.begin(); i != missions.end(); ++i ) {
+		missionOver = (*i)->Update();
+		if( missionOver ) {
+			LogMsg(INFO, "Completed the Mission %s", (*i)->GetName().c_str() );
+			// Remove this completed mission from the list
+			i = missions.erase( i );
+		}
+	}
+
 	Ship::Update();
 }
 
@@ -137,6 +153,8 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		lastLoadTime = (time_t)0;
 	}
 
+	// TODO: Load saved missions
+
 	return true;
 }
 
@@ -209,6 +227,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	timestamp = ctime( &lastLoadTime );
 	timestamp[strlen(timestamp)-1] = '\0';
 	xmlAddChild( section, xmlNewComment( BAD_CAST timestamp));
+
+	// TODO: Save Missions
 
 	return section;
 }

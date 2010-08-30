@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Utilities/lua.h"
 #include "Sprites/effects.h"
+#include "Sprites/player.h"
 #include "AI/ai_lua.h"
 #include "Audio/sound.h"
 #include "Utilities/camera.h"
@@ -55,6 +56,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetCredits", &AI_Lua::ShipSetCredits},
 		{"StoreCommodities", &AI_Lua::ShipStoreCommodities},
 		{"DiscardCommodities", &AI_Lua::ShipDiscardCommodities},
+		{"AcceptMission", &AI_Lua::ShipAcceptMission},
 
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
@@ -469,6 +471,32 @@ int AI_Lua::ShipDiscardCommodities(lua_State* L){
 	lua_pushinteger(L, actuallyDiscarded );
 	return 1;
 }
+
+int AI_Lua::ShipAcceptMission(lua_State *L){
+	int n=lua_gettop(L);
+	if(n!=3){
+		return luaL_error(L, "%d arguments provided, but expected 2 (self, MissionType, MissionTable)");
+	}
+
+	// Check that only players accept missions
+	Ship* ship = checkShip(L,1);
+	if( ship->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+		return luaL_error(L, "Only Players may accept Missions");
+	}
+	Player *player = (Player*)ship;
+	
+	// Get and Validate the Mission Information
+	string missionType = (string) luaL_checkstring(L,2);
+	int missionTable = luaL_ref(L, LUA_REGISTRYINDEX); // Gets and pops the top of the stack, which should have the the missionTable.
+	if( Mission::ValidateMission( missionType, missionTable ) ) {
+		Mission *mission = new Mission( missionType, missionTable );
+		player->AcceptMission( mission );
+	} else {
+		return luaL_error(L, "The Mission Type '%s' or the Mission Table is invalid.", missionType.c_str() );
+	}
+	return 0;
+}
+
 
 /**\brief Lua callable function to get the Type of this ship
  *

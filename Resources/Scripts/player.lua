@@ -26,6 +26,8 @@ function playerStart()
 	PLAYER = Epiar.player()
 	createHUD()
 	registerCommands(playerCommands)
+	-- TODO: This is just test code
+	PLAYER:AcceptMission( "ReturnAmbassador", ReturnAmbassador.Create() )
 end
 
 --- Target ship
