@@ -200,7 +200,7 @@ function createHUD()
 	myweapons = {}
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
-		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('')",weapon))
+		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('%s')",weapon))
 	end
 
 	-- Target Bars
@@ -209,13 +209,16 @@ function createHUD()
 	HUD.newStatus("Target (S):",130,1, "HudTargetShield()")
 end
 
-function playerAmmo(weaopnName)
+function playerAmmo(weaponName)
 	local weaponsAndAmmo = PLAYER:GetWeapons()
-	if weaponsAndAmmo[weaopnName] ~= nil then
-		return string.format('%d',weaponsAndAmmo[weaopnName])
-	else
-		return '---'
+	local ammo = "---"
+	if weaponsAndAmmo[weaponName] ~= nil then
+			ammo = string.format("~%d",weaponsAndAmmo[weaponName])
 	end
+	if weaponName == PLAYER:GetCurrentWeapon() then
+		ammo = ammo .. " ARMED"
+	end
+	return ammo
 end
 
 function HudTargetName()

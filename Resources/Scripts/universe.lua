@@ -516,9 +516,12 @@ function buyOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]==nil then
 			PLAYER:AddWeapon(outfit)
-			myweapons[outfit] = HUD.newStatus(outfit..":",130,0,"[ ".. 100 .." ]")
+			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 		end
-		PLAYER:AddAmmo(outfit,100)
+		local weaponInfo = Epiar.getWeaponInfo(outfit)
+		if weaponInfo["Ammo Consumption"] ~= 0 then
+			PLAYER:AddAmmo(outfit,100)
+		end
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
