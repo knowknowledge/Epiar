@@ -724,10 +724,10 @@ function landingDialog(id)
 		--print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
-		tradeCounts[commodity] = UI.newTextbox(180,yoff,30,1, currentCargo[commodity] or 0)
+		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(210,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(240,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(350,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
 	storeframe:add(shipyard,outfitting,trade)
