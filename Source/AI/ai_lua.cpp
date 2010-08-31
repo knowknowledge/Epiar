@@ -632,8 +632,8 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 		if(ai==NULL){
 			lua_pushnumber(L, 0 );
 		} else {
-		float angle = static_cast<float>( luaL_checknumber(L, 2) );
-		lua_pushnumber(L, (double) (ai)->GetDirectionTowards(angle) );
+			float angle = static_cast<float>( luaL_checknumber(L, 2) );
+			lua_pushnumber(L, (double) (ai)->GetDirectionTowards(angle) );
 		}
 	}
 	else if(n==3){ // Coordinate
@@ -641,9 +641,9 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 		if(ai==NULL){
 			lua_pushnumber(L, 0 );
 		} else {
-		double x = static_cast<float>( luaL_checknumber(L, 2) );
-		double y = static_cast<float>( luaL_checknumber(L, 3) );
-		lua_pushnumber(L, (double) (ai)->GetDirectionTowards(Coordinate(x,y)) );
+			double x = static_cast<float>( luaL_checknumber(L, 2) );
+			double y = static_cast<float>( luaL_checknumber(L, 3) );
+			lua_pushnumber(L, (double) (ai)->GetDirectionTowards(Coordinate(x,y)) );
 		}
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
@@ -661,8 +661,7 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 
 	map<Weapon*,int> weaponPack = (ai)->GetWeaponsAndAmmo();
@@ -689,8 +688,7 @@ int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 	Weapon* cur = (ai)->GetCurrentWeapon();
 	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
@@ -707,8 +705,7 @@ int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
 	return 1;
@@ -724,8 +721,7 @@ int AI_Lua::ShipGetModelName(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 	lua_pushfstring(L, ((ai)->GetModelName()).c_str() );
 	return 1;
@@ -741,8 +737,7 @@ int AI_Lua::ShipGetEngine(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 	lua_pushfstring(L, ((ai)->GetEngine())->GetName().c_str() );
 	return 1;
@@ -794,8 +789,7 @@ int AI_Lua::ShipGetState(lua_State* L) {
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL){
-			lua_pushnumber(L, 0 );
-			return 1;
+			return 0;
 		} else if( ai->GetDrawOrder() & DRAW_ORDER_PLAYER ) {
 			// We need to do this since the Player doesn't have a StateMachine.
 			// Warning! these are not actually valid States or StateMachines
@@ -840,8 +834,7 @@ int AI_Lua::ShipGetCargo(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 
 	map<Commodity*,unsigned int> cargo = (ai)->GetCargo();
@@ -881,8 +874,7 @@ int AI_Lua::ShipGetOutfits(lua_State* L){
 
 	AI* ai = checkShip(L,1);
 	if(ai==NULL){
-		lua_pushnumber(L, 0 );
-		return 1;
+		return 0;
 	}
 
 	list<Outfit*>* outfits = (ai)->GetOutfits();

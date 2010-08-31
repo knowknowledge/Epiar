@@ -212,6 +212,9 @@ end
 function playerAmmo(weaponName)
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	local ammo = "---"
+	if weaponsAndAmmo == nil then
+		return ammo
+	end
 	if weaponsAndAmmo[weaponName] ~= nil then
 			ammo = string.format("~%d",weaponsAndAmmo[weaponName])
 	end
