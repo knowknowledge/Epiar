@@ -111,8 +111,6 @@ class Lua {
 		static list<string> getStringListField(int index);
 		static list<string> getStringListField(int index, const char* name);
 		static void stackDump(lua_State *L);
-		static void print_pair(lua_State *L);
-		static void walk(lua_State *L, int index);
 
 	private:
 		static vector<string> buffer;

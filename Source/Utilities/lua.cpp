@@ -690,13 +690,6 @@ void Lua::stackDump (lua_State *L) {
 		printf("[%d]%g",i, lua_tonumber(L, i));
 		break;
 
-	  case LUA_TTABLE:  /* tables */
-		printf("[%d] {",i);
-		walk( L, i );
-		printf("}");
-		break;
-
-
 	  default:  /* other values */
 		printf("[%d]%s",i, lua_typename(L, t));
 		break;
@@ -705,43 +698,6 @@ void Lua::stackDump (lua_State *L) {
 	printf("  ");  /* put a separator */
   }
   printf("\n");  /* end the listing */
-}
-
-void Lua::print_pair( lua_State* L ) {
-	const int KEY = -2;
-	const int VAL = -1;
-	switch (lua_type(L, KEY)) {
-		case LUA_TNUMBER:
-			printf("key: %f\n", lua_tonumber(L, KEY));
-			break;
-		case LUA_TSTRING:
-			printf("key: %s\n", lua_tostring(L, KEY));
-	}
-
-	switch (lua_type(L, VAL)) {
-		case LUA_TNUMBER:
-			printf("val: %f (number)\n", lua_tonumber(L, VAL));
-			break;
-		case LUA_TSTRING:
-			printf("val: %s (string)\n", lua_tostring(L, VAL));
-			break;
-		case LUA_TTABLE:
-			walk(L, VAL);
-			break;
-		default:
-			printf("val: other\n");
-	}
-
-}
-
-void Lua::walk( lua_State* L, int idx ) {
-	lua_pushnil(L);
-
-	printf("idx=%i\n", idx);
-	while (lua_next(L, idx) != 0) {
-		print_pair(L);
-		lua_pop(L, 1);
-	}
 }
 
 
