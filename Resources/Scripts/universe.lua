@@ -1,5 +1,4 @@
 -- Use this script for a solar system
-math.randomseed(os.time())
 
 -- This is the Introduction Message that greets new players.
 -- Notice that we use spaces here since Label can't parse tabs.
@@ -35,6 +34,10 @@ If you have any questions, comments, or bug reports please send us email at:
 
 Thanks for playing!
 ]]
+
+-- Generate a Random Lua Seed
+math.randomseed(os.time())
+math.random(); math.random(); math.random() -- Absorb the first few non-random random results
 
 --------------------------------------------------------------------------------
 -- Init is a list of functions to be run when the game (re)starts
@@ -122,8 +125,21 @@ end
 
 --- Trim a string
 function trim(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
+	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
+
+function linewrap(text, chars_per_line)
+	if chars_per_line == nil then chars_per_line = 72 end
+	local ret = ""
+	for line =1,math.ceil( text:len() / chars_per_line ) do
+		local partial = text:sub( (line-1)*chars_per_line, (line)*chars_per_line -1)
+		ret = ret .. partial .. "\n"
+	end
+	return ret
+end
+
+lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est."
+print (linewrap(lorem))
 
 
 --- Calculate the Distance between two points
@@ -703,7 +719,21 @@ function landingDialog(id)
 		trade:add( UI.newButton(350,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
-	storeframe:add(shipyard,outfitting,trade)
+	-- Employment
+	missions = UI.newTab("Employment")
+	availableMissions = {} -- This is a global variable
+	yoff = 5
+	for i = 1,4 do
+		availableMissions[i] = ReturnAmbassador.Create()
+		missions:add(
+			UI.newLabel( 10, yoff, availableMissions[i].Name ),
+			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
+			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission('ReturnAmbassador', availableMissions[%d])", i) )
+			)
+		yoff = yoff + 80
+	end
+
+	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
