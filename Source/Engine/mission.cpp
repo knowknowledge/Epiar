@@ -94,6 +94,7 @@ bool Mission::ValidateMission( string type, int tableReference){
 		lua_pop(L,1);
 	}
 
+	lua_settop(L,0);
 	return true;
 }
 
