@@ -22,6 +22,7 @@
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
+#include "Utilities/timer.h"
 
 #ifdef EPIAR_COMPILE_TESTS
 #include "Tests/tests.h"
@@ -183,6 +184,7 @@ int main( int argc, char **argv ) {
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
 	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
 
+	Timer::Initialize();
 	Video::Initialize();
 	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
 	string splashScreen[6] = {

@@ -12,6 +12,7 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 #include "Utilities/lua.h"
+#include "Utilities/timer.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
@@ -31,6 +32,7 @@
  */
 Planet::Planet(){
 	SetRadarColor(Color::Get(48, 160, 255));
+	lastTrafficTime = Timer::GetTicks();
 }
 
 /**\brief Copy Constructor
@@ -154,10 +156,21 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	return true;
 }
 
-/**\brief Debug Printing
- */
-void Planet::_dbg_PrintInfo( void ) {
-	//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
+void Planet::Update() {
+	if( lastTrafficTime + 3000 < Timer::GetTicks() ) {
+		GenerateTraffic();
+	}
+	Sprite::Update();
+}
+
+void Planet::GenerateTraffic() {
+	list<Sprite*> *nearbySprites = SpriteManager::Instance()->GetSpritesNear(GetWorldPosition(), TO_FLOAT(sphereOfInfluence), DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER);
+
+	if( nearbySprites->size() < traffic ) {
+		Lua::Call( "createRandomShipForPlanet", "i", GetID() );
+	}
+	delete nearbySprites;
+	lastTrafficTime = Timer::GetTicks();
 }
 
 /**\brief List of the Models that are available at this Planet

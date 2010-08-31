@@ -88,7 +88,7 @@
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>500</sphereOfInfluence>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
   </planet>
   <planet>
@@ -113,7 +113,7 @@
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>700</sphereOfInfluence>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
   </planet>
   <planet>
@@ -187,7 +187,7 @@
     <traffic>0</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>500</sphereOfInfluence>
+    <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
   </planet>
   <planet>
@@ -225,7 +225,7 @@
     <traffic>2</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
     <technology>Terran Medium-Scale Commerce</technology>
   </planet>

@@ -46,9 +46,6 @@ function registerInit(step)
 end
 
 --------------------------------------------------------------------------------
--- Registered Plans for AI to choose from
-
---------------------------------------------------------------------------------
 -- Steps taken during each Update
 
 Steps = {}
@@ -157,7 +154,7 @@ end
 
 --- Creates a new ship
 function createShip(X,Y,model,engine)
-	plans = {"Hunter","Trader","Patrol","Bully"}
+	plans = {"Hunter", "Trader", "Patrol", "Bully"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
 	cur_ship:SetRadarColor(0,255,0)
 	return cur_ship
@@ -428,42 +425,18 @@ function createSystems()
 		end
 	end
 end
---registerInit(createSystems)
 
---- Create Some ships around the planets
-function planetTraffic()
-	planets = Epiar.planets()
-	for p=1,#planets do
-		planet = planets[p]
-		expectedTraffic = 1* planet:Traffic()
+function createRandomShipForPlanet(id)
+	planet = Epiar.getSprite(id)
+	if (planet ~= nil) and (planet:GetType() == 0x01) then
 		x,y = planet:GetPosition()
 		influence = planet:Influence()
-		currentTraffic = #(Epiar.ships(x,y,influence))
-		if influence>0 and currentTraffic < expectedTraffic then
-			models = planet:GetModels()
-			engines = planet:GetEngines()
-			weapons = planet:GetWeapons()
-			for s=currentTraffic,expectedTraffic do
-				createRandomShip(x,y,influence,models,engines,weapons)
-			end
-		end
+		models = planet:GetModels()
+		engines = planet:GetEngines()
+		weapons = planet:GetWeapons()
+		createRandomShip(x,y,influence,models,engines,weapons)
 	end
 end
-
---- This Closure creates more traffic periodically
-function moreTraffic(tickcycle)
-	ticks = tickcycle
-	function traffic()
-		ticks = ticks -1
-		if ticks == 0 then
-			planetTraffic()
-			ticks = tickcycle
-		end
-	end
-	return traffic
-end
-registerStep(moreTraffic(1000))
-registerInit(planetTraffic)
 
 --- Buys a ship
 function buyShip(model)

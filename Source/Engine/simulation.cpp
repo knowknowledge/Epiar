@@ -86,7 +86,6 @@ bool Simulation::Run() {
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 
 	Timer::Update(); // Start the Timer
-	Timer::Initialize();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
