@@ -29,6 +29,9 @@ Console::Console() {
  * \param events A list of events
  */
 void Console::HandleInput( list<InputEvent> & events ) {
+	int returnvals;
+	const char* returnval;
+	lua_State *L = Lua::CurrentState();
 
 	// look for the backquote (`) key to toggle the console
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ) {
@@ -69,8 +72,20 @@ void Console::HandleInput( list<InputEvent> & events ) {
 						break;
 					case '\n':
 						Buffer.push_back(back);
-						Lua::Run(back.substr(2));
+						returnvals = Lua::Run( back.substr(2), true);
+						// Insert each result value as a new line
+						for(int n=returnvals; n>0; --n) {
+							returnval = lua_tostring(L, -n);
+							if( returnval != NULL ) {
+								InsertResult( returnval );
+							} else {
+								InsertResult( "nil" );
+							}
+						}
+						// Cleanup the Stack
+						lua_pop(L,returnvals);
 						back = "> ";
+						break;
 					break;
 					case '\b':
 						if(back.size() > 2) back.erase(back.size() - 1);
