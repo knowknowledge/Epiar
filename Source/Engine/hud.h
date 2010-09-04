@@ -12,6 +12,7 @@
 #include "includes.h"
 #include "Graphics/image.h"
 #include "Utilities/lua.h"
+#include "Utilities/quadtree.h"
 #include "Input/input.h"
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"

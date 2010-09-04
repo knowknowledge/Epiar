@@ -6,7 +6,8 @@
  * \details
  */
 
-#include "Utilities/lua.h"
+#include "includes.h"
+#include "common.h"
 
 class Mission{
 	public:

@@ -8,6 +8,9 @@
 
 #include "Engine/mission.h"
 
+#include "Utilities/lua.h"
+#include "Utilities/log.h"
+
 /**\brief Mission Constructor
  */
 Mission::Mission(string _type, int _tableReference)
