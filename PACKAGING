@@ -1,0 +1,59 @@
+Note: This file should be kept in the repository but taken out on both
+      source and binary releases.
+
+Purpose: This file serves as a quick guide on how to build binary packages
+         for any platform Epiar supports. It is meant both for purposes
+         of documenting project activity and for education for anyone
+         interested.
+
+Contents
+--------
+i. Fedora RPM
+ii. Windows Nullsoft Installer
+iii. Ubuntu DEB
+iv. OS X .app
+
+i. Fedora RPM
+-------------
+Please write me.
+
+ii. Windows Nullsoft Installer
+------------------------------
+Please write me.
+
+iii. Ubuntu DEB
+---------------
+Please write me.
+
+iv. OS X .app
+-------------
+OS X .app bundles (app bundles) are really directories ending in .app.
+
+Create the directory structure below:
+
+Epiar.app/Frameworks/
+Epiar.app/MacOS/
+Epiar.app/Resources/
+Epiar.app/Info.plist
+
+Info.plist is an XML file specially crafted with various OS X-specific
+values. It is best to copy this from the last release and merely update
+the versioning information.
+
+Copy SDL, SDL_image, and SDL_mixer into Epiar.app/Frameworks/ (typically
+copied out of your /Library/Frameworks).
+
+Copy the finalized Epiar binary into Epiar.app/MacOS/. Call it "Epiar"
+(without the quotes). Ensure libz, libxml2, libfreetype and other non-
+standard libraries are statically linked. (FIXME: This should be a
+configure script option, e.g. static-link).
+
+Copy the Epiar resources folders (Animations, etc.) into
+Epiar.app/Resources/.
+
+Set the icon via Finder's "Get Info". (FIXME: Info.plist defines this
+normally but I was unable to get this working.)
+
+Be sure to test the final app bundle on a computer without Xcode or the
+frameworks installed to ensure static linking, etc. worked.
+
