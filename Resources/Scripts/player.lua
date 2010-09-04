@@ -216,7 +216,7 @@ function playerAmmo(weaponName)
 		return ammo
 	end
 	if weaponsAndAmmo[weaponName] ~= nil then
-			ammo = string.format("~%d",weaponsAndAmmo[weaponName])
+			ammo = string.format("%d",weaponsAndAmmo[weaponName])
 	end
 	if weaponName == PLAYER:GetCurrentWeapon() then
 		ammo = ammo .. " ARMED"

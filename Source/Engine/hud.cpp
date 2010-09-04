@@ -83,7 +83,7 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	strncpy(title,_title.c_str(),sizeof(title));
 	title[sizeof(title)-1] = '\0';
 	memset( name, '\0', sizeof(name) );
-	lua_updater = "return " + _updater; // Implicit return
+	lua_updater = _updater;
 	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title, name, ratio);
 	assert(pos>=0);
 	assert(pos<=4);
@@ -145,24 +145,23 @@ void StatusBar::Draw(int x, int y) {
 }
 
 void StatusBar::Update() {
-	int retpos;
+	int returnvals, retpos = -1;
 	lua_State* L = Lua::CurrentState();
 
 	// Run the StatusBar Updater
-	if( luaL_dostring(L,lua_updater.c_str()) ) {
-		LogMsg(ERR,"Error running '%s': %s", lua_updater.c_str(), lua_tostring(L, -1));
-		lua_pop(L, 1);  /* pop error message from the stack */
-	}
+	returnvals = Lua::Run( lua_updater, true );
 
 	// Get the new StatusBar Status
-	retpos = -1;
-	if (lua_isnumber(L, retpos)) {
+	if (returnvals == 0) {
+		SetName( "" );
+	} else if (lua_isnumber(L, retpos) && ( lua_tonumber(L,retpos)>=0.0 && lua_tonumber(L,retpos)<=1.0) )  {
 		SetRatio( TO_FLOAT(lua_tonumber(L, retpos)) );
 	} else if (lua_isstring(L, retpos)) {
 		SetName( string(lua_tostring(L, retpos)) );
 	} else {
 		LogMsg(ERR,"Error running '%s': %s", lua_updater.c_str(), lua_tostring(L, retpos));
 	}
+	lua_pop(L,returnvals);
 }
 
 /**\fn StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio) : title(_title), width(_width), pos(_pos), name(_name), ratio(_ratio)
