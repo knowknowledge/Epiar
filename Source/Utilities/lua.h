@@ -31,8 +31,6 @@ class Lua {
 		static int Run( string line, bool allowReturns=false );
 		static bool Call(const char *func, const char *sig="", ...);
 
-		static vector<string> GetOutput();
-
 		static lua_State* CurrentState() { return L;}
 
 		static void RegisterFunctions();
