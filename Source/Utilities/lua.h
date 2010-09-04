@@ -28,7 +28,7 @@ class Lua {
 		static bool Close();
 
 		static bool Load( const string& filename );
-		static bool Run( string line );
+		static int Run( string line, bool allowReturns=false );
 		static bool Call(const char *func, const char *sig="", ...);
 
 		static vector<string> GetOutput();
@@ -52,8 +52,6 @@ class Lua {
 		static void stackDump(lua_State *L);
 
 	private:
-		static vector<string> buffer;
-
 		static int ErrorCatch(lua_State *L);
 
 		// Internal variables

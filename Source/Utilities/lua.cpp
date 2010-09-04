@@ -19,7 +19,6 @@
 
 bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
-vector<string> Lua::buffer;
 
 bool Lua::Load( const string& filename ) {
 	if( ! luaInitialized ) {
@@ -46,9 +45,13 @@ bool Lua::Load( const string& filename ) {
 }
 
 
-
-// If the function is known at compile time, use 'Call' instead of 'Run'
-bool Lua::Run( string line ) {
+/**\brief Run an arbitrary string as Lua code
+ * \returns The number of return values from that string.
+ *
+ * \note If the function is known at compile time, use 'Call' instead of 'Run'.
+ */
+int Lua::Run( string line, bool allowReturns ) {
+	int stack_before, stack_after;
 	//LogMsg(INFO,"Running '%s'", (char *)line.c_str() );
 
 	if( ! luaInitialized ) {
@@ -58,12 +61,29 @@ bool Lua::Run( string line ) {
 		}
 	}
 
-	if( luaL_dostring(L,line.c_str()) ) {
-		LogMsg(ERR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
-		lua_pop(L, 1);  /* pop error message from the stack */
+	// Record the stack position so that the stack can be reset if returns are not allowed.
+	stack_before = lua_gettop(L);
+	if( allowReturns ) {
+		line = "return " + line;
 	}
 
-	return( false );
+	// Run the String!
+	if( luaL_dostring(L,line.c_str()) ) {
+		LogMsg(ERR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
+		lua_settop(L, stack_before);  /* pop error message from the stack */
+		return 0;
+	}
+
+	// Reset the stack or return a count of returned values
+	if( !allowReturns ) {
+		lua_settop(L, stack_before);
+		stack_after = lua_gettop(L);
+		assert( stack_before == stack_after );
+		return 0;
+	} else {
+		stack_after = lua_gettop(L);
+		return( stack_after - stack_before );
+	}
 }
 
 // This function is from the Lua PIL
@@ -143,15 +163,6 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 	va_end(vl);
 	lua_pop(L,resultcount);
 	return true;
-}
-
-// returns the output from the last lua script and deletes it from internal buffer
-vector<string> Lua::GetOutput() {
-	vector<string> ret = buffer;
-
-	buffer.clear();
-
-	return( ret );
 }
 
 bool Lua::Init() {
