@@ -9,8 +9,10 @@
 #include "includes.h"
 #include "common.h"
 #include "Audio/music.h"
+#include "Audio/audio_lua.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
+#include "Engine/simulation_lua.h"
 #include "Engine/commodities.h"
 #include "Engine/alliances.h"
 #include "Engine/technologies.h"
@@ -26,6 +28,7 @@
 #include "Utilities/timer.h"
 #include "Utilities/lua.h"
 #include "AI/ai.h"
+#include "AI/ai_lua.h"
 
 /**\class Simulation
  * \brief Handles main game loop. */
@@ -84,6 +87,7 @@ bool Simulation::Run() {
 	int fpsCount = 0; // for FPS calculations
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
+	lua_State *L;
 
 	Timer::Update(); // Start the Timer
 
@@ -92,6 +96,16 @@ bool Simulation::Run() {
 
 
 	// Start the Lua Universe
+	// Register these functions to their own lua namespaces
+	Lua::Init();
+	L = Lua::CurrentState();
+	Simulation_Lua::RegisterSimulation(L);
+	AI_Lua::RegisterAI(L);
+	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
+	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
+
 	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")

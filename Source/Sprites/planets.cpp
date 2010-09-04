@@ -17,6 +17,7 @@
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Engine/alliances.h"
+#include "Engine/simulation_lua.h"
 #include "Sprites/spritemanager.h"
 
 /**\class Planet
@@ -357,7 +358,7 @@ int Planets_Lua::Get(lua_State* L){
     } else {
         return luaL_error(L, "Cannot get planet with these arguments.  Expected id or name.");
     }
-    Lua::pushSprite(L,p);
+    Simulation_Lua::pushSprite(L,p);
     return 1;
 }
 
@@ -435,7 +436,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	Image::Store(_name,_image);
 	SpriteManager::Instance()->Add((Sprite*)p);
 	Planets::Instance()->AddOrReplace((Component*)p);
-    Lua::pushSprite(L,p);
+    Simulation_Lua::pushSprite(L,p);
 	return 1;
 }
 

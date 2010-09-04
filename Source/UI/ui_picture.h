@@ -11,6 +11,7 @@
 #define __H_UI_IMAGE
 
 #include "Graphics/image.h"
+#include "Graphics/video.h"
 #include "UI/ui.h"
 
 class Picture: public Widget {

@@ -16,6 +16,7 @@
 #include "Utilities/camera.h"
 #include "Utilities/trig.h"
 #include "Engine/commodities.h"
+#include "Engine/simulation_lua.h"
 
 /**\class AI_Lua
  * \brief Lua bridge for AI.*/
@@ -138,7 +139,7 @@ int AI_Lua::newShip(lua_State *L){
 	s->SetWorldPosition( Coordinate(x, y) );
 	s->SetModel( Models::Instance()->GetModel(modelname) );
 	s->SetEngine( Engines::Instance()->GetEngine(enginename) );
-	Lua::pushSprite(L,s);
+	Simulation_Lua::pushSprite(L,s);
 
 	// Add this ship to the SpriteManager
 	SpriteManager::Instance()->Add((Sprite*)(s));
