@@ -57,3 +57,13 @@ normally but I was unable to get this working.)
 Be sure to test the final app bundle on a computer without Xcode or the
 frameworks installed to ensure static linking, etc. worked.
 
+OS X apps are typically distributed as a .dmg file, which is a compressed
+disk image file. Users are used to downloading these (they typically then
+auto-mount and open a Finder window) and then merely dragging the Epiar
+icon into their Applications folder. Creating the .dmg file should be done
+using OS X's Disk Utility. As of OS X 10.6, it includes an option to create
+a .dmg file from a folder, so one must prepare a folder (throw the .app
+in it, Read Me file, any backgrounding desired, etc.) and have Disk Utility
+then generate the .dmg. That finished .dmg (please test it!) is what
+we upload to epiar.net.
+
