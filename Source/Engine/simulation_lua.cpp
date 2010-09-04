@@ -89,6 +89,25 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 
 }
 
+void Simulation_Lua::StoreSimulation(lua_State *L, Simulation *sim) {
+	// Store A pointer to the simulation is stored in the LUA_REGISTRYINDEX table.
+	lua_pushstring(L,"EPIAR_SIMULATION"); // Key
+	lua_pushlightuserdata(L, sim); // Value
+	lua_settable(L,LUA_REGISTRYINDEX);
+	lua_pop(L,1);
+}
+
+Simulation *Simulation_Lua::GetSimulation(lua_State *L) {
+	Simulation* sim;
+	// A pointer to the simulation is stored in the LUA_REGISTRYINDEX table.
+	lua_pushstring(L,"EPIAR_SIMULATION"); // Key
+	lua_gettable(L,LUA_REGISTRYINDEX);
+	sim = (Simulation*)lua_topointer(L,-1);
+	lua_pop(L,1);
+	return sim;
+}
+
+
 
 /*
 int Simulation_Lua::console_echo(lua_State *L) {
@@ -104,18 +123,27 @@ int Simulation_Lua::console_echo(lua_State *L) {
 */
 
 int Simulation_Lua::pause(lua_State *L){
-		Simulation::pause();
+	Simulation *sim = GetSimulation(L);
+	sim->pause();
 	return 0;
 }
 
 int Simulation_Lua::unpause(lua_State *L){
-	Simulation::unpause();
+	Simulation *sim = GetSimulation(L);
+	sim->unpause();
 	return 0;
 }
 
 int Simulation_Lua::ispaused(lua_State *L){
-	lua_pushnumber(L, (int) Simulation::isPaused() );
+	Simulation *sim = GetSimulation(L);
+	lua_pushnumber(L, (int) sim->isPaused() );
 	return 1;
+}
+
+int Simulation_Lua::savePlayer(lua_State *L){
+	Simulation *sim = GetSimulation(L);
+	sim->save();
+	return 0;
 }
 
 int Simulation_Lua::getoption(lua_State *L) {
@@ -179,10 +207,6 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 	return 0;
 }
 
-int Simulation_Lua::savePlayer(lua_State *L){
-	Simulation::save();
-	return 0;
-}
 
 int Simulation_Lua::newPlayer(lua_State *L) {
 	int n = lua_gettop(L);

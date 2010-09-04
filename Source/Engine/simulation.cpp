@@ -33,8 +33,6 @@
 /**\class Simulation
  * \brief Handles main game loop. */
 
-bool Simulation::paused = false;
-bool Simulation::willsave = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
@@ -50,6 +48,8 @@ Simulation::Simulation( void ) {
 	players = Players::Instance();
 	camera = Camera::Instance();
 	currentFPS = 0.;
+	paused = false;
+	willsave = false;
 }
 
 /**\brief Loads the XML file.
@@ -99,6 +99,9 @@ bool Simulation::Run() {
 	// Register these functions to their own lua namespaces
 	Lua::Init();
 	L = Lua::CurrentState();
+
+	Simulation_Lua::StoreSimulation(L,this);
+
 	Simulation_Lua::RegisterSimulation(L);
 	AI_Lua::RegisterAI(L);
 	UI_Lua::RegisterUI(L);

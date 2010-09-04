@@ -32,10 +32,12 @@ class Simulation : public XMLFile {
 
 		bool HandleInput();
 
-		static void save();
-		static void pause();
-		static void unpause();
-		static bool isPaused() {return paused;}
+		void save();
+		void pause();
+		void unpause();
+		bool isPaused() {return paused;}
+
+		friend class Simulation_Lua;
 
 	private:
 		bool Parse( void );
@@ -61,8 +63,8 @@ class Simulation : public XMLFile {
 		Console console;
 
 		float currentFPS;
-		static bool paused;
-		static bool willsave;
+		bool paused;
+		bool willsave;
 
 };
 

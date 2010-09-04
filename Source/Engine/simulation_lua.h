@@ -1,4 +1,4 @@
-/**\file			simulation_lua.cpp
+/**\file			simulation_lua.h
  * \author			Matt Zweig
  * \date			Created: Friday, September 3, 2010
  * \date			Modified: Friday, September 3, 2010
@@ -12,10 +12,14 @@
 
 #include "Utilities/lua.h"
 #include "Sprites/sprite.h"
+#include "Engine/simulation.h"
 
 class Simulation_Lua{
 	public:
 		static void RegisterSimulation(lua_State *L);
+
+		static void StoreSimulation(lua_State *L, Simulation *sim);
+		static Simulation* GetSimulation(lua_State *L);
 
 		static int console_echo(lua_State *L);
 		static int pause(lua_State *L);
