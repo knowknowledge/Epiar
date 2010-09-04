@@ -70,8 +70,8 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"planets", &Simulation_Lua::getPlanets},
 		{"nearestShip", &Simulation_Lua::getNearestShip},
 		{"nearestPlanet", &Simulation_Lua::getNearestPlanet},
-		{"RegisterKey", &Input::RegisterKey},
-		{"UnRegisterKey", &Input::UnRegisterKey},
+		{"RegisterKey", &Simulation_Lua::RegisterKey},
+		{"UnRegisterKey", &Simulation_Lua::UnRegisterKey},
 		{"getCommodityInfo", &Simulation_Lua::getCommodityInfo},
 		{"getAllianceInfo", &Simulation_Lua::getAllianceInfo},
 		{"getModelInfo", &Simulation_Lua::getModelInfo},
@@ -183,6 +183,47 @@ int Simulation_Lua::setmusicvol(lua_State *L){
 	float volume = TO_FLOAT(luaL_checknumber(L, 1));
 	Audio::Instance().SetMusicVol(volume);
 	SETOPTION("options/sound/musicvolume",volume);
+	return 0;
+}
+
+/**\brief Lua callable function to register a key.
+ */
+int Simulation_Lua::RegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 3) {
+		Simulation *sim = GetSimulation(L);
+		int triggerKey;
+		if( lua_isnumber(L,1) ) {
+			triggerKey = (int)(luaL_checkint(L,1));
+		} else {
+			triggerKey = (int)(luaL_checkstring(L,1)[0]);
+		}
+		keyState triggerState = (keyState)(luaL_checkint(L,2));
+		string command = (string)luaL_checkstring(L,3);
+		sim->inputs.RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to unregister a key.
+ */
+int Simulation_Lua::UnRegisterKey(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 2) {
+		Simulation *sim = GetSimulation(L);
+		int triggerKey;
+		if( lua_isnumber(L,1) ) {
+			triggerKey = (int)(luaL_checkint(L,1));
+		} else {
+			triggerKey = (int)(luaL_checkstring(L,1)[0]);
+		}
+		keyState triggerState = (keyState)(luaL_checkint(L,2));
+		sim->inputs.UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n);
+	}
 	return 0;
 }
 

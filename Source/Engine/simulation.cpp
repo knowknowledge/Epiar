@@ -348,7 +348,7 @@ bool Simulation::HandleInput() {
 	console.HandleInput( events );
 	Hud::HandleInput( events );
 	
-	Input::HandleLuaCallBacks( events );
+	inputs.HandleLuaCallBacks( events );
 
 	return quitSignal;
 }

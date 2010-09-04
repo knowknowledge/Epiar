@@ -30,6 +30,10 @@ class Simulation_Lua{
 		static int setsoundvol(lua_State *L);
 		static int setmusicvol(lua_State *L);
 
+		// Input Interfaces
+		static int RegisterKey(lua_State *L);
+		static int UnRegisterKey(lua_State *L);
+
 		// Simulation Interfaces
 		static int unpause(lua_State *L);
 		static int ispaused(lua_State *L);
