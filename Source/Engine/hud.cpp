@@ -366,8 +366,9 @@ void Hud::DrawShieldIntegrity() {
  */
 void Hud::DrawRadarNav( void ) {
 	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
-	
+	Video::SetCropRect( Video::GetWidth() - 125, 9, RADAR_WIDTH-8, RADAR_HEIGHT-8 );
 	Radar::Draw();
+	Video::UnsetCropRect();
 }
 
 /**\brief Draws the target.
@@ -736,21 +737,18 @@ void Radar::Draw( void ) {
 		Coordinate wpos = sprite->GetWorldPosition();
 		WorldToBlip( wpos, blip );
 		
-		if( blip.ViolatesBoundary( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) ) == false ) {
-			/* blip is on the radar */
-			
-			/* Convert to screen coords */
-			blip.SetX( blip.GetX() + radar_mid_x );
-			blip.SetY( blip.GetY() + radar_mid_y );
-
-			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
-			
-			
-			if( radarSize >= 1 ) {
-				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
-			} else {
-				Video::DrawPoint( blip, sprite->GetRadarColor() );
-			}
+		// Use the OpenGL Crop Rectangle to ensure that the blip is on the radar
+		
+		/* Convert to screen coords */
+		blip.SetX( blip.GetX() + radar_mid_x );
+		blip.SetY( blip.GetY() + radar_mid_y );
+		
+		radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
+		
+		if( radarSize >= 1 ) {
+			Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
+		} else {
+			Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}
 	}
 	delete spriteList;
