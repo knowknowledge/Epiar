@@ -53,8 +53,8 @@ class Planet : public Sprite, public Component {
 		list<Weapon*> GetWeapons();
 		list<Outfit*> GetOutfits();
 		Alliance* GetAlliance() const {return alliance;}
-		short int GetTraffic() const {return traffic;}
-		short int GetMilitiaSize() const {return militiaSize;}
+		short unsigned int GetTraffic() const {return traffic;}
+		short unsigned int GetMilitiaSize() const {return militiaSize;}
 		bool GetLandable() const {return landable;}
 		int GetInfluence() const {return sphereOfInfluence;}
 		list<Technology*> GetTechnologies() const { return technologies;}
@@ -64,8 +64,8 @@ class Planet : public Sprite, public Component {
 	private:
 		Alliance* alliance;
 		bool landable;
-		short int traffic;
-		short int militiaSize;
+		short unsigned int traffic;
+		short unsigned int militiaSize;
 		int sphereOfInfluence;
 		list<Technology*> technologies;
 
