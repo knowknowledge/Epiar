@@ -40,51 +40,14 @@ math.randomseed(os.time())
 math.random(); math.random(); math.random() -- Absorb the first few non-random random results
 
 --------------------------------------------------------------------------------
--- Init is a list of functions to be run when the game (re)starts
-
-Init = {}
---- Initialization functions
-function registerInit(step)
-	table.insert(Init,step)
-end
-
---------------------------------------------------------------------------------
--- Steps taken during each Update
-
-Steps = {}
---- Steps after each update
-function registerStep(step)
-	table.insert(Steps,step)
-end
-
---- Run the functions
-function Start()
-	--io.write(string.format("\tInit: %d\n\tSteps: %d\n", #Init, #Steps ))
-	for i,func in ipairs(Init) do
-		func()
-	end
-end
-
---- Update function
-function Update()
-	if #Steps >0 then
-		for i,post_func in ipairs(Steps) do
-			post_func()
-		end
-	end
-end
-
---------------------------------------------------------------------------------
 -- Basic Utilities
 
 --- Pause the game
 function togglePause()
 	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
-		io.write("Un Pause\n")
 		Epiar.unpause()
 	else
-		io.write("Pause\n")
 		Epiar.pause()
 	end
 end
@@ -105,15 +68,6 @@ function toggleUniverseMap()
 		HUD.setMapDisplay("UNIVERSE")
 	end
 end
-
---- For debugging
-function godmode()
-	function heal()
-		PLAYER:Repair(10000)
-	end
-	registerStep(heal)
-end
---godmode() -- Uncomment this line to never die
 
 --- Convert a list of strings/numbers into an table with those values as keys
 -- Code from: http://www.lua.org/pil/11.5.html

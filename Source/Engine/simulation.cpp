@@ -128,7 +128,6 @@ bool Simulation::Run() {
 		    sprites->Add(  planets->GetPlanet(*pname) );
 	    }
 	}
-	Lua::Call("Start");
 
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("-----------------------------------");
@@ -175,7 +174,6 @@ bool Simulation::Run() {
 				if (lowFps)
 					lowFpsFrameCount --;
 				Timer::IncrementFrameCount();
-				Lua::Call("Update");
 				// Update cycle
 				sprites->Update( lowFps );
 			}

@@ -44,10 +44,7 @@ function registerCommands(cmds)
     end
 end
 
-function registerDefaults()
-	registerCommands(defaultCommands)
-end
-registerInit(registerDefaults)
+registerCommands(defaultCommands)
 
 --- Specify keys configuration
 function chooseKeys()

@@ -176,7 +176,7 @@ function radarZoomKeys()
 		Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
 	end
 end
-registerInit(radarZoomKeys)
+radarZoomKeys()
 
 --- Convert coordinate to quadrant
 function coordinateToQuadrant(x,y)
