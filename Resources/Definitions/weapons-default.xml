@@ -23,7 +23,7 @@
     <name>Magnetic Mine</name>
     <weaponType>0</weaponType>
     <imageName>Resources/Graphics/marker_red.png</imageName>
-    <picName>Resources/new/SpaceBomb.png</picName>
+    <picName>Resources/Graphics/SpaceBomb.png</picName>
     <payload>100</payload>
     <velocity>0</velocity>
     <acceleration>2</acceleration>
@@ -39,7 +39,7 @@
     <name>Mine</name>
     <weaponType>0</weaponType>
     <imageName>Resources/Graphics/marker_blue.png</imageName>
-    <picName>Resources/new/SpaceBomb.png</picName>
+    <picName>Resources/Graphics/SpaceBomb.png</picName>
     <payload>250</payload>
     <velocity>0</velocity>
     <acceleration>0</acceleration>
