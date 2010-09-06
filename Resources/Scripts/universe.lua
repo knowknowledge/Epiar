@@ -197,9 +197,9 @@ function options()
 	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
 						--]]
-	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume","Audio.setSoundVolume"),
+	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume", Audio.getSoundVolume(), "Audio.setSoundVolume"),
 					Label = UI.newLabel( 105, 140, "Sound Volume", 0)}
-	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume","Audio.setMusicVolume"),
+	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume", Audio.getMusicVolume(), "Audio.setMusicVolume"),
 					Label = UI.newLabel( 105, 170, "Music Volume", 0)}
 	soundsTab:add(  soundsLabel,
 					backgroundSound,

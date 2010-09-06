@@ -174,26 +174,39 @@ int UI_Lua::newButton(lua_State *L){
 
 int UI_Lua::newSlider(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if ( (n != 5) && (n != 6) )
+	if ( (n != 5) && (n != 6) && (n != 7) )
 		return luaL_error(L,
-		"Got %d arguments expected 5 or 6(x, y, w, h, label, [callback])", n);
+		"Got %d arguments expected 5 or 6(x, y, w, h, label, [position], [callback] )", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
 	int w = int(luaL_checknumber (L, 3));
 	int h = int(luaL_checknumber (L, 4));
 	string label = luaL_checkstring (L, 5);
-	string callback;
-	if (n > 5) callback  = luaL_checkstring(L, 6); 
+	float position = 0.5f;
+	string callback = "";
+	for(int index=6; index<=7; ++index )
+	{
+		if ( lua_isnumber(L, index) ) {
+			position = TO_FLOAT( luaL_checknumber(L,  index) );
+		} else if ( lua_isstring(L, index) ) {
+			callback = luaL_checkstring(L,  index); 
+			printf("Callback: %s\n", luaL_checkstring(L,  index) );
+		}
+	}
+
 	// Allocate memory for a pointer to object
 	Slider **slider= (Slider**)lua_newuserdata(L, sizeof(Slider**));
     luaL_getmetatable(L, EPIAR_UI);
     lua_setmetatable(L, -2);
 	
-	if (n == 6) 
-		*slider = new Slider(x,y,w,h,label,callback);
-	else 
+	if (n == 7) {
+		*slider = new Slider(x,y,w,h,label,position,callback);
+	} else if (n == 6) {
+		*slider = new Slider(x,y,w,h,label,position);
+	} else {
 		*slider = new Slider(x,y,w,h,label);
+	}
 	
 	return 1;
 }

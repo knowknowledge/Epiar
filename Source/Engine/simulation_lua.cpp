@@ -43,8 +43,6 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"ispaused", &Simulation_Lua::ispaused},
 		{"getoption", &Simulation_Lua::getoption},
 		{"setoption", &Simulation_Lua::setoption},
-		{"setsoundvol", &Simulation_Lua::setsoundvol},
-		{"setmusicvol", &Simulation_Lua::setmusicvol},
 		{"loadPlayer", &Simulation_Lua::loadPlayer},
 		{"savePlayer", &Simulation_Lua::savePlayer},
 		{"newPlayer", &Simulation_Lua::newPlayer},
@@ -163,26 +161,6 @@ int Simulation_Lua::setoption(lua_State *L) {
 	string path = (string)lua_tostring(L, 1);
 	string value = (string)lua_tostring(L, 2);
 	SETOPTION(path,value);
-	return 0;
-}
-
-int Simulation_Lua::setsoundvol(lua_State *L){
-	int n = lua_gettop(L);	// Number of arguments
-	if (n !=  1)
-		return luaL_error(L, "Sound volume: Got %d arguments expected 1 (volume)", n);
-	float volume = TO_FLOAT(luaL_checknumber(L, 1));
-	Audio::Instance().SetSoundVol(volume);
-	SETOPTION("options/sound/soundvolume",volume);
-	return 0;
-}
-
-int Simulation_Lua::setmusicvol(lua_State *L){
-	int n = lua_gettop(L);	// Number of arguments
-	if (n !=  1)
-		return luaL_error(L, "Music volume: Got %d arguments expected 1 (volume)", n);
-	float volume = TO_FLOAT(luaL_checknumber(L, 1));
-	Audio::Instance().SetMusicVol(volume);
-	SETOPTION("options/sound/musicvolume",volume);
 	return 0;
 }
 

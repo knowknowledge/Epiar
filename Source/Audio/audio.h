@@ -24,6 +24,8 @@ class Audio {
 		void HaltAll( void );
 		bool SetMusicVol ( float volume );
 		bool SetSoundVol ( float volume );
+		float GetMusicVol () { return music_vol; }
+		float GetSoundVol () { return sound_vol; }
 		int GetFreeChannel( void );
 		int GetTotalChannels( void );
 		int PlayChannel( int chan, Mix_Chunk *chunk, int loop );
@@ -39,6 +41,7 @@ class Audio {
 		Uint16 audio_format;				// AUDIO_S16
 		int audio_channels;					// Stereo, etc.
 		int audio_buffers;					// Size of buffer
+		float music_vol;					// Sound volumes
 		float sound_vol;					// Sound volumes
 		unsigned int max_chan;				// Total number of channels request
 		list<int> lastplayed;				// Queue of last used channels.

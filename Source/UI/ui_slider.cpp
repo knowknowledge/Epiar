@@ -19,10 +19,12 @@
 
 /**\brief Constructs a slider with given parameters and a Lua callback
  */
- Slider::Slider( int x, int y, int w, int h, const string& label,
+Slider::Slider( int x, int y, int w, int h, const string& label,
+		float value,
 		const string& callback):
-	minval( 0.000f ), maxval( 1.000f ), val ( 0.5f),
-	lua_callback( string(callback) ){
+		minval( 0.000f ), maxval( 1.000f ), val( value ),
+		lua_callback( string(callback) )
+{
 	this->x=x;
 	this->y=y;
 	this->w=w;

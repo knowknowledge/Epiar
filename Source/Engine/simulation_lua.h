@@ -27,8 +27,6 @@ class Simulation_Lua{
 		// Options Interfaces
 		static int getoption(lua_State *L);
 		static int setoption(lua_State *L);
-		static int setsoundvol(lua_State *L);
-		static int setmusicvol(lua_State *L);
 
 		// Input Interfaces
 		static int RegisterKey(lua_State *L);
