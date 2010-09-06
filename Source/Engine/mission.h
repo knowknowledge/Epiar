@@ -6,6 +6,9 @@
  * \details
  */
 
+#ifndef __H_MISSION__
+#define __H_MISSION__
+
 #include "includes.h"
 #include "common.h"
 
@@ -32,3 +35,5 @@ class Mission{
 
 		string GetStringAttribute(string attribute);
 };
+
+#endif //__H_MISSION__
