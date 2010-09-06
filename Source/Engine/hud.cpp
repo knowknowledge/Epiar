@@ -466,9 +466,11 @@ void Hud::DrawMap( void ) {
 
 			case DRAW_ORDER_GATE_TOP:
 				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
-				posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
-				posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
-				Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+				if( ((Gate*)(*iter))->GetExit() != NULL ) {
+					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
+					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
+					Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+				}
 				break;
 			default:
 				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");

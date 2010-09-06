@@ -14,6 +14,7 @@
 #include "Engine/engines.h"
 #include "Engine/models.h"
 #include "Sprites/planets.h"
+#include "Sprites/gate.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
@@ -48,6 +49,7 @@ class Simulation : public XMLFile {
 		
 		Commodities *commodities;
 		Planets *planets;
+		Gates *gates;
 		Engines *engines;
 		Models *models;
 		Weapons *weapons;

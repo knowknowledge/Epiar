@@ -40,6 +40,7 @@ Simulation::Simulation( void ) {
 	commodities = Commodities::Instance();
 	engines = Engines::Instance();
 	planets = Planets::Instance();
+	gates = Gates::Instance();
 	models = Models::Instance();
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
@@ -126,6 +127,11 @@ bool Simulation::Run() {
 	    list<string>* planetNames = planets->GetNames();
 	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
 		    sprites->Add(  planets->GetPlanet(*pname) );
+	    }
+
+	    list<string>* gateNames = gates->GetNames();
+	    for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
+		    sprites->Add(  gates->GetGate(*gname) );
 	    }
 	}
 
@@ -303,6 +309,10 @@ bool Simulation::Parse( void ) {
 	if( 0 == OPTION(int, "options/simulation/random-universe")) {
 		if( planets->Load( Get("planets") ) != true ) {
 		    LogMsg(WARN, "There was an error loading the planets from '%s'.", Get("planets").c_str() );
+		    return false;
+	    }
+		if( gates->Load( Get("gates") ) != true ) {
+		    LogMsg(WARN, "There was an error loading the gates from '%s'.", Get("gates").c_str() );
 		    return false;
 	    }
 	}
