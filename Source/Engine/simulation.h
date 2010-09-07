@@ -26,10 +26,11 @@
 class Simulation : public XMLFile {
 	public:
 		Simulation();
-		
+
 		bool Load( string filename );
 		//bool Save();
 		bool Run();
+		bool Edit();
 
 		bool HandleInput();
 
@@ -59,7 +60,7 @@ class Simulation : public XMLFile {
 		// Pointers to Singletons
 		// TODO: These should all be rewritten to not be singletons
 		SpriteManager *sprites;
-		
+
 		Commodities *commodities;
 		Planets *planets;
 		Gates *gates;

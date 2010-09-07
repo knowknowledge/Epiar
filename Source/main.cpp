@@ -222,7 +222,11 @@ int main( int argc, char **argv ) {
 	Simulation debug;
 	if(	debug.Load( simName ) )
 	{
-		debug.Run();
+		if( OPTION(int,"options/development/editor-mode") == 0 ) {
+			debug.Edit();
+		} else {
+			debug.Run();
+		}
 	} else {
 		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 	}
@@ -231,7 +235,7 @@ int main( int argc, char **argv ) {
 	Audio::Instance().Shutdown();
 
 	LogMsg(INFO, "Epiar shutting down." );
-	
+
 	// free the main font files
 	delete SansSerif;
 	delete BitType;
@@ -239,7 +243,7 @@ int main( int argc, char **argv ) {
 	delete Mono;
 	// free the configuration file data
 	delete optionsfile;
-	
+
 #ifdef USE_PHYSICSFS
 	Filesystem::DeInit();
 #endif
