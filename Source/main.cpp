@@ -222,7 +222,7 @@ int main( int argc, char **argv ) {
 	Simulation debug;
 	if(	debug.Load( simName ) )
 	{
-		if( OPTION(int,"options/development/editor-mode") == 0 ) {
+		if( OPTION(int,"options/development/editor-mode") == 1 ) {
 			debug.Edit();
 		} else {
 			debug.Run();
