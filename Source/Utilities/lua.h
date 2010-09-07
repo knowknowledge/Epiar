@@ -35,6 +35,10 @@ class Lua {
 
 		static void RegisterFunctions();
 
+		static void RegisterGlobal(string name, int value);
+		static void RegisterGlobal(string name, float value);
+		static void RegisterGlobal(string name, string value);
+
 		// Get/Set Table Fields
 		static void setField(const char* index, int value);
 		static void setField(const char* index, float value);

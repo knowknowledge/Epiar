@@ -209,6 +209,21 @@ int Lua::ErrorCatch(lua_State *L) {
 	exit( -500 );
 }
 
+void Lua::RegisterGlobal(string name, int value) {
+	lua_pushinteger(L, value );
+	lua_setglobal(L, name.c_str() );
+}
+
+void Lua::RegisterGlobal(string name, float value) {
+	lua_pushnumber(L, value );
+	lua_setglobal(L, name.c_str() );
+}
+
+void Lua::RegisterGlobal(string name, string value) {
+	lua_pushstring(L, value.c_str() );
+	lua_setglobal(L, name.c_str() );
+}
+
 void Lua::setField(const char* index, int value) {
 	lua_pushstring(L, index);
 	lua_pushinteger(L, value);

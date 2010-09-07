@@ -24,6 +24,7 @@
 #include "UI/ui_window.h"
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
+#include "Graphics/video.h"
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
@@ -36,6 +37,9 @@
 #include "Engine/hud.h"
 
 void Simulation_Lua::RegisterSimulation(lua_State *L) {
+	Lua::RegisterGlobal("WIDTH", Video::GetWidth() );
+	Lua::RegisterGlobal("HEIGHT", Video::GetHeight() );
+
 	static const luaL_Reg EngineFunctions[] = {
 		//{"echo", &Simulation_Lua::console_echo},
 		{"pause", &Simulation_Lua::pause},
