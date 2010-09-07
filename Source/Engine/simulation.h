@@ -38,7 +38,20 @@ class Simulation : public XMLFile {
 		void unpause();
 		bool isPaused() {return paused;}
 
-		friend class Simulation_Lua;
+
+		SpriteManager *GetSpriteManager() { return sprites; }
+		Commodities *GetCommodities() { return commodities; }
+		Planets *GetPlanets() { return planets; }
+		Gates *GetGates() { return gates; }
+		Engines *GetEngines() { return engines; }
+		Models *GetModels() { return models; }
+		Weapons *GetWeapons() { return weapons; }
+		Alliances *GetAlliances() { return alliances; }
+		Technologies *GetTechnologies() { return technologies; }
+		Outfits *GetOutfits() { return outfits; }
+		Players *GetPlayers() { return players; }
+		Camera *GetCamera() { return camera; }
+		Input* GetInput() { return &inputs; }
 
 	private:
 		bool Parse( void );

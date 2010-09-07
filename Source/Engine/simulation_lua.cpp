@@ -185,7 +185,7 @@ int Simulation_Lua::RegisterKey(lua_State *L) {
 		}
 		keyState triggerState = (keyState)(luaL_checkint(L,2));
 		string command = (string)luaL_checkstring(L,3);
-		sim->inputs.RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
+		sim->GetInput()->RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n);
 	}
@@ -205,7 +205,7 @@ int Simulation_Lua::UnRegisterKey(lua_State *L) {
 			triggerKey = (int)(luaL_checkstring(L,1)[0]);
 		}
 		keyState triggerState = (keyState)(luaL_checkint(L,2));
-		sim->inputs.UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
+		sim->GetInput()->UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n);
 	}
@@ -213,7 +213,7 @@ int Simulation_Lua::UnRegisterKey(lua_State *L) {
 }
 
 int Simulation_Lua::getPlayerNames(lua_State *L) {
-	list<string> *names = Players::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetPlayers()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
@@ -225,11 +225,11 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 	}
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Loading Player: "<<playerName<<endl;
-	Player* newPlayer = Players::Instance()->GetPlayer( playerName );
+	Player* newPlayer = GetSimulation(L)->GetPlayers()->GetPlayer( playerName );
 	if( newPlayer==NULL ) {
 		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
 	}
-	Players::Instance()->LoadPlayer(playerName);
+	GetSimulation(L)->GetPlayers()->LoadPlayer(playerName);
 	return 0;
 }
 
@@ -243,7 +243,7 @@ int Simulation_Lua::newPlayer(lua_State *L) {
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Creating Player: "<<playerName<<endl;
 
-	Players::Instance()->CreateNew(playerName);
+	GetSimulation(L)->GetPlayers()->CreateNew(playerName);
 
 	return 0;
 }
@@ -271,8 +271,8 @@ int Simulation_Lua::NewGatePair(lua_State *L){
 
 	Gate* gate_1 = new Gate( Coordinate( luaL_checkinteger(L,1), luaL_checkinteger(L,2)));
 	Gate* gate_2 = new Gate( Coordinate( luaL_checkinteger(L,3), luaL_checkinteger(L,4)));
-	SpriteManager::Instance()->Add((Sprite*)gate_1);
-	SpriteManager::Instance()->Add((Sprite*)gate_2);
+	GetSimulation(L)->GetSpriteManager()->Add((Sprite*)gate_1);
+	GetSimulation(L)->GetSpriteManager()->Add((Sprite*)gate_2);
 	// Note that we need to set the exit _after_ adding to the SpriteManager since SetExit checks that the Sprite exists.
 	Gate::SetPair( gate_1, gate_2 );
 
@@ -284,7 +284,7 @@ int Simulation_Lua::getCamera(lua_State *L){
 	if (n != 0) {
 		return luaL_error(L, "Getting the Camera Coordinates didn't expect %d arguments. But thanks anyway", n);
 	}
-	Coordinate c = Camera::Instance()->GetFocusCoordinate();
+	Coordinate c = GetSimulation(L)->GetCamera()->GetFocusCoordinate();
 	lua_pushinteger(L,static_cast<lua_Integer>(c.GetX()));
 	lua_pushinteger(L,static_cast<lua_Integer>(c.GetY()));
 	return 2;
@@ -297,14 +297,14 @@ int Simulation_Lua::moveCamera(lua_State *L){
 	}
 	int x = luaL_checkinteger(L,1);
 	int y = luaL_checkinteger(L,2);
-	Camera::Instance()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
-	Camera::Instance()->Move(-x,y);
+	GetSimulation(L)->GetCamera()->Focus((Sprite*)NULL); // This unattaches the Camera from the focusSprite
+	GetSimulation(L)->GetCamera()->Move(-x,y);
 	return 0;
 }
 //Allow camera shaking from Lua
 int Simulation_Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
-		Camera *pInstance = Camera::Instance();
+		Camera *pInstance = GetSimulation(L)->GetCamera();
 		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
 						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
@@ -315,16 +315,16 @@ int Simulation_Lua::focusCamera(lua_State *L){
 	int n = lua_gettop(L);
 	if (n == 1) {
 		int id = (int)(luaL_checkint(L,1));
-		SpriteManager *sprites= SpriteManager::Instance();
+		SpriteManager *sprites= GetSimulation(L)->GetSpriteManager();
 		Sprite* target = sprites->GetSpriteByID(id);
 		if(target!=NULL)
-			Camera::Instance()->Focus( target );
+			GetSimulation(L)->GetCamera()->Focus( target );
 	} else if (n == 2) {
 		double x,y;
 		x = (luaL_checknumber(L,1));
 		y = (luaL_checknumber(L,2));
-		Camera::Instance()->Focus((Sprite*)NULL);
-		Camera::Instance()->Focus(x,y);
+		GetSimulation(L)->GetCamera()->Focus((Sprite*)NULL);
+		GetSimulation(L)->GetCamera()->Focus(x,y);
 	} else {
 		return luaL_error(L, "Got %d arguments expected 1 (SpriteID) or 2 (X,Y)", n);
 	}
@@ -332,55 +332,55 @@ int Simulation_Lua::focusCamera(lua_State *L){
 }
 
 int Simulation_Lua::getCommodityNames(lua_State *L){
-	list<string> *names = Commodities::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetCommodities()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getAllianceNames(lua_State *L){
-	list<string> *names = Alliances::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetAlliances()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getWeaponNames(lua_State *L){
-	list<string> *names = Weapons::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetWeapons()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getOutfitNames(lua_State *L){
-	list<string> *names = Outfits::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetOutfits()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getModelNames(lua_State *L){
-	list<string> *names = Models::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetModels()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getEngineNames(lua_State *L){
-	list<string> *names = Engines::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetEngines()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getTechnologyNames(lua_State *L){
-	list<string> *names = Technologies::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetTechnologies()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getPlanetNames(lua_State *L){
-	list<string> *names = Planets::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetPlanets()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
 int Simulation_Lua::getGateNames(lua_State *L){
-	list<string> *names = Gates::Instance()->GetNames();
+	list<string> *names = GetSimulation(L)->GetGates()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
@@ -412,7 +412,7 @@ Sprite* Simulation_Lua::checkSprite(lua_State *L,int id ){
 	cout<<"Checking ID "<<(*idptr)<<endl;
 	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_SHIP' expected");
 	Sprite* s;
-	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	s = GetSimulation(L)->GetSpriteManager()->GetSpriteByID(*idptr);
 	return s;
 }
 */
@@ -437,7 +437,7 @@ int Simulation_Lua::getSpriteByID(lua_State *L){
 
 	// Get the Sprite using the ID
 	int id = (int)(luaL_checkint(L,1));
-	Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+	Sprite* sprite = GetSimulation(L)->GetSpriteManager()->GetSpriteByID(id);
 
 	// Return nil if the sprite no longer exists
 	if(sprite==NULL){
@@ -456,9 +456,9 @@ int Simulation_Lua::getSprites(lua_State *L, int kind){
 		double x = luaL_checknumber (L, 1);
 		double y = luaL_checknumber (L, 2);
 		double r = luaL_checknumber (L, 3);
-		sprites = SpriteManager::Instance()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r),kind);
+		sprites = GetSimulation(L)->GetSpriteManager()->GetSpritesNear(Coordinate(x,y),static_cast<float>(r),kind);
 	} else {
-		sprites = SpriteManager::Instance()->GetSprites(kind);
+		sprites = GetSimulation(L)->GetSpriteManager()->GetSprites(kind);
 	}
 
 	// Populate a Lua table with Sprites
@@ -485,15 +485,15 @@ int Simulation_Lua::getMSRP(lua_State *L) {
 
 	// Is there a priced Component named 'name'?
 	Component* comp = NULL;
-	if( (comp = Models::Instance()->Get(name)) != NULL )
+	if( (comp = GetSimulation(L)->GetModels()->Get(name)) != NULL )
 		lua_pushinteger(L,((Model*)comp)->GetMSRP() );
-	else if( (comp = Engines::Instance()->Get(name)) != NULL )
+	else if( (comp = GetSimulation(L)->GetEngines()->Get(name)) != NULL )
 		lua_pushinteger(L,((Engine*)comp)->GetMSRP() );
-	else if( (comp = Weapons::Instance()->Get(name)) != NULL )
+	else if( (comp = GetSimulation(L)->GetWeapons()->Get(name)) != NULL )
 		lua_pushinteger(L,((Weapon*)comp)->GetMSRP() );
-	else if( (comp = Commodities::Instance()->Get(name)) != NULL )
+	else if( (comp = GetSimulation(L)->GetCommodities()->Get(name)) != NULL )
 		lua_pushinteger(L,((Commodity*)comp)->GetMSRP() );
-	else if( (comp = Outfits::Instance()->Get(name)) != NULL )
+	else if( (comp = GetSimulation(L)->GetOutfits()->Get(name)) != NULL )
 		lua_pushinteger(L,((Outfit*)comp)->GetMSRP() );
 	else {
 		return luaL_error(L, "Couldn't find anything by the name: '%s'", name.c_str());
@@ -508,7 +508,7 @@ int Simulation_Lua::getShips(lua_State *L){
 }
 
 int Simulation_Lua::getPlanets(lua_State *L){
-	Planets *planets = Planets::Instance();
+	Planets *planets = GetSimulation(L)->GetPlanets();
 	list<string>* planetNames = planets->GetNames();
 
 	lua_createtable(L, planetNames->size(), 0);
@@ -523,7 +523,7 @@ int Simulation_Lua::getPlanets(lua_State *L){
 }
 
 int Simulation_Lua::getGates(lua_State *L){
-	Gates *gates = Gates::Instance();
+	Gates *gates = GetSimulation(L)->GetGates();
 	list<string>* gateNames = gates->GetNames();
 
 	lua_createtable(L, gateNames->size(), 0);
@@ -547,7 +547,7 @@ int Simulation_Lua::getNearestSprite(lua_State *L,int kind) {
 		return 0;
 	}
 	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite *closest = SpriteManager::Instance()->GetNearestSprite((ai),r,kind);
+	Sprite *closest = GetSimulation(L)->GetSpriteManager()->GetNearestSprite((ai),r,kind);
 	if(closest!=NULL){
 		assert(closest->GetDrawOrder() & (kind));
 		pushSprite(L,(closest));
@@ -570,7 +570,7 @@ int Simulation_Lua::getCommodityInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (AllianceName)", n);
 	string name = (string)luaL_checkstring(L,1);
-	Commodity *commodity = Commodities::Instance()->GetCommodity(name);
+	Commodity *commodity = GetSimulation(L)->GetCommodities()->GetCommodity(name);
 	if(commodity==NULL){ commodity = new Commodity(); }
 
 	lua_newtable(L);
@@ -587,7 +587,7 @@ int Simulation_Lua::getAllianceInfo(lua_State *L) {
 	Color color;
 	char color_buffer[9];
 	string name = (string)luaL_checkstring(L,1);
-	Alliance *alliance = Alliances::Instance()->GetAlliance(name);
+	Alliance *alliance = GetSimulation(L)->GetAlliances()->GetAlliance(name);
 	if(alliance==NULL){ alliance = new Alliance(); }
 
 	color = alliance->GetColor();
@@ -609,7 +609,7 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (modelName)", n);
 	string modelName = (string)luaL_checkstring(L,1);
-	Model *model = Models::Instance()->GetModel(modelName);
+	Model *model = GetSimulation(L)->GetModels()->GetModel(modelName);
 	if(model==NULL){ model = new Model(); }
 
 	lua_newtable(L);
@@ -639,13 +639,13 @@ int Simulation_Lua::getPlanetInfo(lua_State *L) {
 	Planet* p = NULL;
 	if( lua_isnumber(L,1)){
 		int id = luaL_checkinteger(L,1);
-		Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+		Sprite* sprite = GetSimulation(L)->GetSpriteManager()->GetSpriteByID(id);
 		if( sprite->GetDrawOrder() != DRAW_ORDER_PLANET)
 			return luaL_error(L, "ID #%d does not point to a Planet", id);
 		p = (Planet*)(sprite);
 	} else if( lua_isstring(L,1)){
 		string name = luaL_checkstring(L,1);
-		p = Planets::Instance()->GetPlanet(name);
+		p = GetSimulation(L)->GetPlanets()->GetPlanet(name);
 	}
 	if(p==NULL){ p = new Planet(); }
 
@@ -678,13 +678,13 @@ int Simulation_Lua::getGateInfo(lua_State *L) {
 	Gate* g = NULL;
 	if( lua_isnumber(L,1)){
 		int id = luaL_checkinteger(L,1);
-		Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+		Sprite* sprite = GetSimulation(L)->GetSpriteManager()->GetSpriteByID(id);
 		if( ! (sprite->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM)) )
 			return luaL_error(L, "ID #%d does not point to a Gate", id);
 		g = (Gate*)(sprite);
 	} else if( lua_isstring(L,1)){
 		string name = luaL_checkstring(L,1);
-		g = Gates::Instance()->GetGate(name);
+		g = GetSimulation(L)->GetGates()->GetGate(name);
 	}
 	if(g==NULL){ g = new Gate(); }
 
@@ -705,7 +705,7 @@ int Simulation_Lua::getWeaponInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (weaponName)", n);
 	string weaponName = (string)luaL_checkstring(L,1);
-	Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
+	Weapon* weapon = GetSimulation(L)->GetWeapons()->GetWeapon(weaponName);
 	if(weapon==NULL){ weapon = new Weapon(); }
 
 	lua_newtable(L);
@@ -737,7 +737,7 @@ int Simulation_Lua::getEngineInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
 	string engineName = (string)luaL_checkstring(L,1);
-	Engine* engine = Engines::Instance()->GetEngine(engineName);
+	Engine* engine = GetSimulation(L)->GetEngines()->GetEngine(engineName);
 	if(engine==NULL){ engine = new Engine(); }
 
 	lua_newtable(L);
@@ -760,7 +760,7 @@ int Simulation_Lua::getOutfitInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (outfitName)", n);
 	string outfitName = (string)luaL_checkstring(L,1);
-	Outfit* outfit = Outfits::Instance()->GetOutfit(outfitName);
+	Outfit* outfit = GetSimulation(L)->GetOutfits()->GetOutfit(outfitName);
 	if(outfit==NULL){ outfit = new Outfit(); }
 
 	lua_newtable(L);
@@ -786,7 +786,7 @@ int Simulation_Lua::getTechnologyInfo(lua_State *L) {
 	if( n!=1 )
 		return luaL_error(L, "Got %d arguments expected 1 (techName)", n);
 	string techName = (string)luaL_checkstring(L,1);
-	Technology* tech = Technologies::Instance()->GetTechnology(techName);
+	Technology* tech = GetSimulation(L)->GetTechnologies()->GetTechnology(techName);
 	if( tech == NULL)
 	{
 		lua_createtable(L, 4, 0);
@@ -847,14 +847,14 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		Color color = Color::Get( Lua::getStringField(2,"Color") );
 
 		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency,color);
-		Alliances::Instance()->AddOrReplace( thisAlliance );
+		GetSimulation(L)->GetAlliances()->AddOrReplace( thisAlliance );
 
 	} else if(kind == "Commodity"){
 		string name = Lua::getStringField(2,"Name");
 		int msrp = Lua::getIntField(2,"MSRP");
 
 		Commodity* thisCommodity= new Commodity(name,msrp);
-		Commodities::Instance()->AddOrReplace( thisCommodity );
+		GetSimulation(L)->GetCommodities()->AddOrReplace( thisCommodity );
 
 	} else if(kind == "Engine"){
 		string name = Lua::getStringField(2,"Name");
@@ -875,7 +875,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 
 		Engine* thisEngine = new Engine(name,sound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,picture);
-		Engines::Instance()->AddOrReplace( thisEngine );
+		GetSimulation(L)->GetEngines()->AddOrReplace( thisEngine );
 
 	} else if(kind == "Model"){
 		string name = Lua::getStringField(2,"Name");
@@ -897,7 +897,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		}
 
 		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
-		Models::Instance()->AddOrReplace(thisModel);
+		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){
 		string name = Lua::getStringField(2,"Name");
@@ -915,8 +915,8 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		list<Technology*> techs;
 		list<string>::iterator i;
 		for(i = techNames.begin(); i != techNames.end(); ++i) {
-			if( NULL != Technologies::Instance()->GetTechnology(*i) ) {
-				 techs.push_back( Technologies::Instance()->GetTechnology(*i) );
+			if( NULL != GetSimulation(L)->GetTechnologies()->GetTechnology(*i) ) {
+				 techs.push_back( GetSimulation(L)->GetTechnologies()->GetTechnology(*i) );
 			} else {
 				LogMsg(NOTICE, "Could not create planet: there is no Technology Group '%s'.",(*i).c_str());
 				return 0;
@@ -928,22 +928,22 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			 return 0;
 		}
 
-		if(Alliances::Instance()->GetAlliance(allianceName)==NULL){
+		if(GetSimulation(L)->GetAlliances()->GetAlliance(allianceName)==NULL){
 			 LogMsg(NOTICE, "Could not create planet: there is no Alliance named '%s'.",allianceName.c_str());
 			 return 0;
 		}
 
-		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),Alliances::Instance()->GetAlliance(allianceName),TO_BOOL(landable),traffic,militia,influence,techs);
+		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),GetSimulation(L)->GetAlliances()->GetAlliance(allianceName),TO_BOOL(landable),traffic,militia,influence,techs);
 
-		Planet* oldPlanet = Planets::Instance()->GetPlanet(name);
+		Planet* oldPlanet = GetSimulation(L)->GetPlanets()->GetPlanet(name);
 		if(oldPlanet!=NULL) {
 			LogMsg(INFO,"Saving changes to '%s'",thisPlanet.GetName().c_str());
 			*oldPlanet = thisPlanet;
 		} else {
 			LogMsg(INFO,"Creating new Planet '%s'",thisPlanet.GetName().c_str());
 			Planet* newPlanet = new Planet(thisPlanet);
-			Planets::Instance()->Add(newPlanet);
-			SpriteManager::Instance()->Add(newPlanet);
+			GetSimulation(L)->GetPlanets()->Add(newPlanet);
+			GetSimulation(L)->GetSpriteManager()->Add(newPlanet);
 		}
 
 	} else if(kind == "Gate"){
@@ -952,8 +952,8 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		int y = Lua::getIntField(2,"Y");
 		string exitName = Lua::getStringField(2,"Exit");
 
-		Gate *gate = Gates::Instance()->GetGate( gateName );
-		Gate *exit = Gates::Instance()->GetGate( exitName );
+		Gate *gate = GetSimulation(L)->GetGates()->GetGate( gateName );
+		Gate *exit = GetSimulation(L)->GetGates()->GetGate( exitName );
 		if( gate != NULL ) {
 			gate->SetWorldPosition( Coordinate(x,y) );
 			if( exit != NULL ) {
@@ -972,30 +972,30 @@ int Simulation_Lua::setInfo(lua_State *L) {
 
 		list<string> modelNames = Lua::getStringListField(3);
 		for(iter=modelNames.begin();iter!=modelNames.end();++iter){
-			if(Models::Instance()->GetModel(*iter))
-				models.push_back( Models::Instance()->GetModel(*iter) );
+			if(GetSimulation(L)->GetModels()->GetModel(*iter))
+				models.push_back( GetSimulation(L)->GetModels()->GetModel(*iter) );
 		}
 
 		list<string> weaponNames = Lua::getStringListField(4);
 		for(iter=weaponNames.begin();iter!=weaponNames.end();++iter){
-			if(Weapons::Instance()->GetWeapon(*iter))
-				weapons.push_back( Weapons::Instance()->GetWeapon(*iter) );
+			if(GetSimulation(L)->GetWeapons()->GetWeapon(*iter))
+				weapons.push_back( GetSimulation(L)->GetWeapons()->GetWeapon(*iter) );
 		}
 
 		list<string> engineNames = Lua::getStringListField(5);
 		for(iter=engineNames.begin();iter!=engineNames.end();++iter){
-			if(Engines::Instance()->GetEngine(*iter))
-				engines.push_back( Engines::Instance()->GetEngine(*iter) );
+			if(GetSimulation(L)->GetEngines()->GetEngine(*iter))
+				engines.push_back( GetSimulation(L)->GetEngines()->GetEngine(*iter) );
 		}
 
 		list<string> outfitNames = Lua::getStringListField(6);
 		for(iter=outfitNames.begin();iter!=outfitNames.end();++iter){
-			if(Outfits::Instance()->GetOutfit(*iter))
-				outfits.push_back( Outfits::Instance()->GetOutfit(*iter) );
+			if(GetSimulation(L)->GetOutfits()->GetOutfit(*iter))
+				outfits.push_back( GetSimulation(L)->GetOutfits()->GetOutfit(*iter) );
 		}
 
 		Technology* thisTechnology = new Technology(name,models,engines,weapons,outfits);
-		Technologies::Instance()->AddOrReplace( thisTechnology );
+		GetSimulation(L)->GetTechnologies()->AddOrReplace( thisTechnology );
 
 	} else if(kind == "Weapon"){
 		string name = Lua::getStringField(2,"Name");
@@ -1026,7 +1026,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return luaL_error(L, "Could not create weapon: there is no sound file '%s'.",soundName.c_str());
 
 		Weapon* thisWeaon = new Weapon(name,image,picture,type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,sound,tracking,msrp);
-		Weapons::Instance()->AddOrReplace( thisWeaon );
+		GetSimulation(L)->GetWeapons()->AddOrReplace( thisWeaon );
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());
@@ -1035,13 +1035,13 @@ int Simulation_Lua::setInfo(lua_State *L) {
 }
 
 int Simulation_Lua::saveComponents(lua_State *L) {
-	Alliances::Instance()->Save("Resources/Definitions/alliances-default.xml");
-	Commodities::Instance()->Save("Resources/Definitions/commodities-default.xml");
-	Models::Instance()->Save("Resources/Definitions/models-default.xml");
-	Weapons::Instance()->Save("Resources/Definitions/weapons-default.xml");
-	Engines::Instance()->Save("Resources/Definitions/engines-default.xml");
-	Planets::Instance()->Save("Resources/Definitions/planets-default.xml");
-	Technologies::Instance()->Save("Resources/Definitions/technologies-default.xml");
+	GetSimulation(L)->GetAlliances()->Save("Resources/Definitions/alliances-default.xml");
+	GetSimulation(L)->GetCommodities()->Save("Resources/Definitions/commodities-default.xml");
+	GetSimulation(L)->GetModels()->Save("Resources/Definitions/models-default.xml");
+	GetSimulation(L)->GetWeapons()->Save("Resources/Definitions/weapons-default.xml");
+	GetSimulation(L)->GetEngines()->Save("Resources/Definitions/engines-default.xml");
+	GetSimulation(L)->GetPlanets()->Save("Resources/Definitions/planets-default.xml");
+	GetSimulation(L)->GetTechnologies()->Save("Resources/Definitions/technologies-default.xml");
 	return 0;
 }
 
