@@ -4,16 +4,15 @@ componentWins = {}
 
 --- View components
 function componentDebugger()
-	if componentWindow ~= nil then return end
-	componentWindow = UI.newWindow( 50,10,820,70, "Game Component Debugging",
-		UI.newButton(  10,30,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
-		UI.newButton(110,30,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
-		UI.newButton(210,30,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
-		UI.newButton(310,30,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
-		UI.newButton(410,30,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
-		UI.newButton(510,30,100,30,"Technology","technologyViewer()"),
-		UI.newButton(610,30,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(710,30,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
+	UI.add(
+		UI.newButton(  0,0,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
+		UI.newButton(100,0,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
+		UI.newButton(200,0,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
+		UI.newButton(300,0,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
+		UI.newButton(400,0,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
+		UI.newButton(600,0,100,30,"Technology","technologyViewer()"),
+		UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
+		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
 	)
     UI.newWindow( 452, 700,120,70, "Save Components",
 		UI.newButton(10,30,100,30,"Save","Epiar.saveComponents()" )

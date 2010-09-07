@@ -25,7 +25,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 	// Call them like:
 	// win = UI.newWindow( ... )
 	static const luaL_Reg uiFunctions[] = {
-		// Creation
+		// Create Widgets
 		{"newWindow", &UI_Lua::newWindow},
 		{"newFrame", &UI_Lua::newFrame},
 		{"newButton", &UI_Lua::newButton},
@@ -36,6 +36,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newSlider", &UI_Lua::newSlider},
 		{"newTabCont", &UI_Lua::newTabCont},
 		{"newTab", &UI_Lua::newTab},
+		{"add", &UI_Lua::addWidget},
 		{NULL, NULL}
 	};
 
@@ -358,6 +359,21 @@ int UI_Lua::newCheckbox(lua_State *L) {
 	
 	return 1;
 }
+
+int UI_Lua::addWidget(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 0){
+		return luaL_error(L, "Got %d arguments expected 1 (widgets, ...)", n);
+	}
+
+	for(int i=1; i<=n; i++){
+		Widget** widget = (Widget**)lua_touserdata(L,i);
+		UI::Add(*widget);
+	}
+
+	return 0;
+}
+
 
 int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
