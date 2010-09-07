@@ -246,24 +246,14 @@ void Hud::Update( void ) {
 
 /**\brief Draws the Hud
  */
-void Hud::Draw( float fps ) {
-	Hud::DrawTarget();
-	Hud::DrawShieldIntegrity();
-	Hud::DrawRadarNav();
-	Hud::DrawMessages();
-	Hud::DrawFPS( fps );
-	Hud::DrawStatusBars();
-	switch( mapDisplay ) {
-	case UniverseMap:
-		Hud::DrawMap();
-		break;
-	case QuadrantMap:
-		SpriteManager::Instance()->DrawQuadrantMap();
-		break;
-	case NoMap:
-	default:
-		break;
-	}
+void Hud::Draw( int flags, float fps ) {
+	if(flags & HUD_Target)     Hud::DrawTarget();
+	if(flags & HUD_Shield)     Hud::DrawShieldIntegrity();
+	if(flags & HUD_Radar)      Hud::DrawRadarNav();
+	if(flags & HUD_Messages)   Hud::DrawMessages();
+	if(flags & HUD_FPS)        Hud::DrawFPS(fps) ;
+	if(flags & HUD_StatusBars) Hud::DrawStatusBars();
+	if(flags & HUD_Map)        Hud::DrawMap();
 }
 
 
@@ -389,6 +379,20 @@ void Hud::DrawTarget( void ) {
 }
 
 void Hud::DrawMap( void ) {
+	switch( mapDisplay ) {
+	case UniverseMap:
+		Hud::DrawUniverseMap();
+		break;
+	case QuadrantMap:
+		SpriteManager::Instance()->DrawQuadrantMap();
+		break;
+	case NoMap:
+	default:
+		break;
+	}
+}
+
+void Hud::DrawUniverseMap( void ) {
 	//Video::GetHeight()
 	float size, halfsize;
 	float scale;
