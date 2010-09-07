@@ -67,15 +67,10 @@ bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	SetWorldPosition( pos );
 
 	if( (attr = FirstChildNamed(node,"exit")) ){
-		float angle;
 		value = NodeToString(doc,attr);
 		Gate* exit = Gates::Instance()->GetGate( value );
 		if( exit != NULL ) {
-			exit->SetExit( this->GetID() );
-			this->SetExit( exit->GetID() );
-			angle = (this->GetWorldPosition() - exit->GetWorldPosition()).GetAngle();
-			this->SetAngle(angle+180);
-			exit->SetAngle(angle);
+			Gate::SetPair(this,exit);
 		}
 	}
 
@@ -126,6 +121,16 @@ void Gate::SetWorldPosition(Coordinate c) {
 
 void Gate::SetExit(int spriteID) {
 	exitID = spriteID;
+}
+
+void Gate::SetPair(Gate* one, Gate* two) {
+	float angle;
+	one->SetExit( two->GetID() );
+	two->SetExit( one->GetID() );
+	angle = (two->GetWorldPosition() - one->GetWorldPosition()).GetAngle();
+	two->SetAngle(angle+180);
+	one->SetAngle(angle);
+
 }
 
 /**\brief Get the Top Gate

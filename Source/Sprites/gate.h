@@ -34,6 +34,8 @@ class Gate : public Sprite, public Component {
 		void SetWorldPosition(Coordinate pos);
 		void SetExit(int SpriteID);
 
+		static void SetPair(Gate* one, Gate* two);
+
 		Gate* GetTop();
 		Sprite* GetExit();
 
