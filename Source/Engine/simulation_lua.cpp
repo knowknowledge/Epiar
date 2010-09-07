@@ -66,10 +66,12 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"engines", &Simulation_Lua::getEngineNames},
 		{"technologies", &Simulation_Lua::getTechnologyNames},
 		{"planetNames", &Simulation_Lua::getPlanetNames},
+		{"gateNames", &Simulation_Lua::getGateNames},
 		{"getSprite", &Simulation_Lua::getSpriteByID},
 		{"getMSRP", &Simulation_Lua::getMSRP},
 		{"ships", &Simulation_Lua::getShips},
 		{"planets", &Simulation_Lua::getPlanets},
+		{"gates", &Simulation_Lua::getGates},
 		{"nearestShip", &Simulation_Lua::getNearestShip},
 		{"nearestPlanet", &Simulation_Lua::getNearestPlanet},
 		{"RegisterKey", &Simulation_Lua::RegisterKey},
@@ -78,6 +80,7 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"getAllianceInfo", &Simulation_Lua::getAllianceInfo},
 		{"getModelInfo", &Simulation_Lua::getModelInfo},
 		{"getPlanetInfo", &Simulation_Lua::getPlanetInfo},
+		{"getGateInfo", &Simulation_Lua::getGateInfo},
 		{"getWeaponInfo", &Simulation_Lua::getWeaponInfo},
 		{"getEngineInfo", &Simulation_Lua::getEngineInfo},
 		{"getOutfitInfo", &Simulation_Lua::getOutfitInfo},
@@ -376,6 +379,12 @@ int Simulation_Lua::getPlanetNames(lua_State *L){
 	return 1;
 }
 
+int Simulation_Lua::getGateNames(lua_State *L){
+	list<string> *names = Gates::Instance()->GetNames();
+	Lua::pushStringList(L,names);
+	return 1;
+}
+
 void Simulation_Lua::pushSprite(lua_State *L,Sprite* s){
 	int* id = (int*)lua_newuserdata(L, sizeof(int*));
 	*id = s->GetID();
@@ -513,6 +522,21 @@ int Simulation_Lua::getPlanets(lua_State *L){
 	return 1;
 }
 
+int Simulation_Lua::getGates(lua_State *L){
+	Gates *gates = Gates::Instance();
+	list<string>* gateNames = gates->GetNames();
+
+	lua_createtable(L, gateNames->size(), 0);
+	int newTable = lua_gettop(L);
+	int index = 1;
+	for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
+		pushSprite(L,gates->GetGate(*gname));
+		lua_rawseti(L, newTable, index);
+		++index;
+	}
+	return 1;
+}
+
 int Simulation_Lua::getNearestSprite(lua_State *L,int kind) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=2 ){
@@ -642,6 +666,37 @@ int Simulation_Lua::getPlanetInfo(lua_State *L) {
 	list<Technology*> techs =  p->GetTechnologies();
 	pushComponents(L,  (list<Component*>*)&techs );
 	lua_settable(L, -3);
+	return 1;
+}
+
+int Simulation_Lua::getGateInfo(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 (planetID)", n);
+
+	// Figure out which gate we're fetching
+	Gate* g = NULL;
+	if( lua_isnumber(L,1)){
+		int id = luaL_checkinteger(L,1);
+		Sprite* sprite = SpriteManager::Instance()->GetSpriteByID(id);
+		if( ! (sprite->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM)) )
+			return luaL_error(L, "ID #%d does not point to a Gate", id);
+		g = (Gate*)(sprite);
+	} else if( lua_isstring(L,1)){
+		string name = luaL_checkstring(L,1);
+		g = Gates::Instance()->GetGate(name);
+	}
+	if(g==NULL){ g = new Gate(); }
+
+	// Populate the Info Table.
+	lua_newtable(L);
+	Lua::setField("Name", g->GetName().c_str());
+	Lua::setField("X", static_cast<float>(g->GetWorldPosition().GetX()));
+	Lua::setField("Y", static_cast<float>(g->GetWorldPosition().GetY()));
+	Lua::setField("Exit", (g->GetExit() != NULL) && (g->GetExit()->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM))
+	                    ? ( (Gate*)g->GetExit() )->GetName().c_str()
+						: "" );
+
 	return 1;
 }
 
@@ -889,6 +944,21 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			Planet* newPlanet = new Planet(thisPlanet);
 			Planets::Instance()->Add(newPlanet);
 			SpriteManager::Instance()->Add(newPlanet);
+		}
+
+	} else if(kind == "Gate"){
+		string gateName = Lua::getStringField(2,"Name");
+		int x = Lua::getIntField(2,"X");
+		int y = Lua::getIntField(2,"Y");
+		string exitName = Lua::getStringField(2,"Exit");
+
+		Gate *gate = Gates::Instance()->GetGate( gateName );
+		Gate *exit = Gates::Instance()->GetGate( exitName );
+		if( gate != NULL ) {
+			gate->SetWorldPosition( Coordinate(x,y) );
+			if( exit != NULL ) {
+				Gate::SetPair( gate,exit );
+			}
 		}
 
 	} else if(kind == "Technology"){

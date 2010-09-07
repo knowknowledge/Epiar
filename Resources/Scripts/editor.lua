@@ -10,6 +10,7 @@ function componentDebugger()
 		UI.newButton(200,0,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
 		UI.newButton(300,0,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
 		UI.newButton(400,0,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
+		UI.newButton(500,0,100,30,"Gate","componentViewer('Gate',Epiar.gateNames,'Epiar.getGateInfo')" ),
 		UI.newButton(600,0,100,30,"Technology","technologyViewer()"),
 		UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
 		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
@@ -71,6 +72,13 @@ PlanetEditorLayout = {
 	{"Technologies", "Technologies"},
 	}
 
+GateEditorLayout = {
+	{"Name", "String"},
+	{"X", "Integer"},
+	{"Y", "Integer"},
+	{"Exit", "String"},
+	}
+
 WeaponEditorLayout = {
 	{"Name", "String"},
 	{"Picture", "Picture"}, -- Picture Picker
@@ -107,6 +115,7 @@ EditorLayouts = {
 	Engine=EngineEditorLayout,
 	Model=ModelEditorLayout,
 	Planet=PlanetEditorLayout,
+	Gate=GateEditorLayout,
 	Weapon=WeaponEditorLayout,
 	Outfit=OutfitEditorLayout,
 }
@@ -126,16 +135,19 @@ function componentViewer(kind,listFunc,getStr)
 end
 
 function showComponent(kind,name,getterFunc)
-    if kind=="Planet" and name~="" then
-        planet = Planet.Get(name)
-        Epiar.focusCamera(planet:GetID())
-    end
 	if infoWindows[name] ~= nil then return end
 	local height=700
 	local width=250
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,width,height,name,
 		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+
+    if kind=="Planet" and name~="" then
+        planet = Planet.Get(name)
+        Epiar.focusCamera(planet:GetID())
+    elseif kind=="Gate" and name~="" then
+        Epiar.focusCamera(theInfo.X, theInfo.Y)
+    end
 	
 	local theFields = {}
 	local thePics = {}
@@ -430,16 +442,18 @@ function gotoButton()
 end
 
 function gotoCommand()
-	if gotoWin~=nil then return end
+	if gotoWin~=nil then gotoButton(); return end
 	local cx,cy = Epiar.getCamera()
-	gotoWin = UI.newWindow(600,500,150,200,"Go to Location")
-	gotoWin:add(UI.newLabel(10,45,"X"))
+	local width = 160
+	local height = 100
+	gotoWin = UI.newWindow(WIDTH/2-100,HEIGHT/2-100,width,height,"Go to Location")
+	gotoWin:add(UI.newLabel(10,30,"X"))
 	gotoX = UI.newTextbox(20,30,50,1,cx)
 	gotoWin:add(gotoX)
-	gotoWin:add(UI.newLabel(80,45,"Y"))
-	gotoY = UI.newTextbox(90,30,50,1,cy)
+	gotoWin:add(UI.newLabel(90,30,"Y"))
+	gotoY = UI.newTextbox(100,30,50,1,cy)
 	gotoWin:add(gotoY)
-	gotoWin:add(UI.newButton(10,60,140,30,"Go","gotoButton()"))
+	gotoWin:add(UI.newButton(width/2-40,55,80,30,"Go","gotoButton()"))
 end
 
 DX,DY = 20,20

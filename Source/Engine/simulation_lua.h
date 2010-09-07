@@ -55,18 +55,19 @@ class Simulation_Lua{
 		static int getNearestShip(lua_State *L);
 		static int getNearestPlanet(lua_State *L);
 		static int getShips(lua_State *L);
-
+		static int getPlanets(lua_State *L);
+		static int getGates(lua_State *L);
 
 		// Game Components
 		static int getCommodityNames(lua_State *L);
 		static int getAllianceNames(lua_State *L);
 		static int getEngineNames(lua_State *L);
 		static int getModelNames(lua_State *L);
-		static int getPlanets(lua_State *L);
 		static int getWeaponNames(lua_State *L);
 		static int getOutfitNames(lua_State *L);
 		static int getTechnologyNames(lua_State *L);
 		static int getPlanetNames(lua_State *L);
+		static int getGateNames(lua_State *L);
 
 		// Information about Components
 		static int getMSRP(lua_State *L);
@@ -76,10 +77,12 @@ class Simulation_Lua{
 		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);
 		static int getPlanetInfo(lua_State *L);
+		static int getGateInfo(lua_State *L);
 		static int getWeaponInfo(lua_State *L);
 		static int getEngineInfo(lua_State *L);
 		static int getOutfitInfo(lua_State *L);
 		static int getTechnologyInfo(lua_State *L);
+
 		static int setInfo(lua_State *L);
 		static int saveComponents(lua_State *L);
 		static int listImages(lua_State *L);
