@@ -467,4 +467,5 @@ function debugZoomKeys()
         Epiar.RegisterKey(keyval, KEYPRESSED, cmd)
     end
 end
-registerInit(debugZoomKeys)
+debugZoomKeys()
+
