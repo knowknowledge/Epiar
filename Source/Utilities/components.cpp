@@ -306,6 +306,8 @@ bool Components::Load(string filename, bool optional) {
 	}
 	
 	xmlFreeDoc( doc );
+
+	filepath = filename;
 	
 	LogMsg(INFO, "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
 	return success;
@@ -313,7 +315,7 @@ bool Components::Load(string filename, bool optional) {
 
 /**\brief Save all Components to an XML file
  */
-bool Components::Save(string filename) {
+bool Components::Save() {
 	char buff[10];
     xmlDocPtr doc = NULL;       /* document pointer */
     xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
@@ -333,7 +335,7 @@ bool Components::Save(string filename) {
 		section = i->second->ToXMLNode(componentName);
 		xmlAddChild(root_node, section);
 	}
-	xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	xmlSaveFormatFileEnc( filepath.c_str(), doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
 	return true;
 }

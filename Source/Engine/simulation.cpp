@@ -114,13 +114,12 @@ bool Simulation::Run() {
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")
 	       && Lua::Load("Resources/Scripts/missions.lua")
-	       && (OPTION(int,"options/development/editor-mode")
-	          ? Lua::Load("Resources/Scripts/editor.lua")
-	          : Lua::Load("Resources/Scripts/player.lua") );
+	       && Lua::Load("Resources/Scripts/player.lua");
 	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
 		return false;
 	}
+
 	if( OPTION(int, "options/simulation/random-universe") ) {
 		Lua::Call("createSystems");
 	} else {
@@ -259,7 +258,7 @@ bool Simulation::Run() {
 			}
 		}
 		if(willsave){
-			Players::Instance()->Save( Get("players").c_str()  );
+			Players::Instance()->Save();
 			willsave=false;
 		}
 	}

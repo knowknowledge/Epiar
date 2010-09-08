@@ -1035,13 +1035,15 @@ int Simulation_Lua::setInfo(lua_State *L) {
 }
 
 int Simulation_Lua::saveComponents(lua_State *L) {
-	GetSimulation(L)->GetAlliances()->Save("Resources/Definitions/alliances-default.xml");
-	GetSimulation(L)->GetCommodities()->Save("Resources/Definitions/commodities-default.xml");
-	GetSimulation(L)->GetModels()->Save("Resources/Definitions/models-default.xml");
-	GetSimulation(L)->GetWeapons()->Save("Resources/Definitions/weapons-default.xml");
-	GetSimulation(L)->GetEngines()->Save("Resources/Definitions/engines-default.xml");
-	GetSimulation(L)->GetPlanets()->Save("Resources/Definitions/planets-default.xml");
-	GetSimulation(L)->GetTechnologies()->Save("Resources/Definitions/technologies-default.xml");
+	GetSimulation(L)->GetAlliances()->Save();
+	GetSimulation(L)->GetCommodities()->Save();
+	GetSimulation(L)->GetGates()->Save();
+	GetSimulation(L)->GetModels()->Save();
+	GetSimulation(L)->GetWeapons()->Save();
+	GetSimulation(L)->GetEngines()->Save();
+	GetSimulation(L)->GetPlanets()->Save();
+	GetSimulation(L)->GetOutfits()->Save();
+	GetSimulation(L)->GetTechnologies()->Save();
 	return 0;
 }
 

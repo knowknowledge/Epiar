@@ -39,7 +39,7 @@ class Components {
 		list<string>* GetNames();
 
 		bool Load(string filename, bool optional=false);
-		bool Save(string filename);
+		bool Save();
 	protected:
 
 		Components() {};  ///< Protected default constuctor
@@ -48,6 +48,7 @@ class Components {
 
 		virtual Component* newComponent() = 0;
 		bool ParseXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		string filepath;
 		string rootName;
 		string componentName;
 		map<string,Component*> components;
