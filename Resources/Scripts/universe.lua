@@ -686,7 +686,7 @@ function landingDialog(id)
 	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
-	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
+	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 function intro()
