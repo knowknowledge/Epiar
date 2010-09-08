@@ -20,12 +20,17 @@
 
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
+
 /* Location on screen of hull integrity bar (x,y) coord is top-left */
 #define HULL_INTEGRITY_X     5
 #define HULL_INTEGRITY_Y     5
+
+#define HUD_MESSAGE_BOTTOM_SPACING 10
+
 /* Center of radar in px coords. Derrived from hud_radarnav.png */
 #define RADAR_MIDDLE_X      61
 #define RADAR_MIDDLE_Y      61
+
 /* Width/height of radar. Derrived from hud_radarnav.png */
 #define RADAR_WIDTH        122
 #define RADAR_HEIGHT       122
@@ -36,6 +41,7 @@ int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
 int Radar::visibility = 4096;
 HudMap Hud::mapDisplay = NoMap;
+Font *Hud::AlertFont = NULL;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -219,9 +225,13 @@ void StatusBar::SetName( string n )
 /**\class Hud
  * \brief Heads-Up-Display. */
 
-/**\brief Empty constructor
- */
-Hud::Hud( void ) {
+void Hud::Init( void ) {
+	AlertFont = new Font( "Resources/Fonts/FreeSans.ttf" );
+	AlertFont->SetSize( 12 );
+}
+
+void Hud::Close( void ) {
+	delete AlertFont;
 }
 
 /**\brief Updates the HUD
@@ -287,16 +297,18 @@ void Hud::DrawMessages() {
 	Uint32 age;
 	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
 	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
-	BitType->SetColor(1.f,1.f,1.f,1.f);
+	
+	AlertFont->SetColor(1.f,1.f,1.f,1.f);
+	
 	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > alertFade){
-			BitType->SetColor(1.f,1.f,1.f, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
+			AlertFont->SetColor(1.f,1.f,1.f, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
 		} else {
-			BitType->SetColor(1.f,1.f,1.f,1.f);
+			AlertFont->SetColor(1.f,1.f,1.f,1.f);
 		}
-		BitType->Render( 15, Video::GetHeight() - (j*BitType->LineHeight()), (*i).message);
+		AlertFont->Render( 15, Video::GetHeight() - (j * AlertFont->LineHeight()) - HUD_MESSAGE_BOTTOM_SPACING, (*i).message);
 	}
 }
 

@@ -71,7 +71,8 @@ class StatusBar {
 
 class Hud {
 	public:
-		Hud( void );
+		static void Init( void );
+		static void Close( void );
 
 		static void Update( void );
 		static void Draw( int flags, float fps );
@@ -115,6 +116,7 @@ class Hud {
 		static int targetID;
 		static int timeTargeted;
 		static HudMap mapDisplay;
+		static Font *AlertFont;
 };
 
 class Radar {
