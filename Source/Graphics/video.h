@@ -69,7 +69,7 @@ class Video {
 		static bool Initialize( void );
 		static bool Shutdown( void );
 		
-  		static bool SetWindow( int w, int h, int bpp );
+  		static bool SetWindow( int w, int h, int bpp, bool fullscreen );
 
   		static void Update( void );
   		static void Erase( void );

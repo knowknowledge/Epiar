@@ -99,6 +99,28 @@ bool Video::Initialize( void ) {
 	atexit( SDL_Quit );
 	
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
+	int w = OPTION( int, "options/video/w" );
+	int h = OPTION( int, "options/video/h" );
+	bool fullscreen = (bool)OPTION( int, "options/video/fullscreen" );
+
+	// If w/h not set, then 1024x768 is windowed default, native screen resolution is fullscreen default
+	if( !w && !h ) {
+		if( OPTION( int, "options/video/fullscreen" ) ) {
+			// fullscreen set, use native resolution
+			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+
+			w = videoInfo->current_w;
+			h = videoInfo->current_h;
+		} else {
+			// not fullscreen
+			w = 1024;
+			h = 768;
+		}
+	}
+	
+
+	Video::SetWindow( w, h, OPTION( int, "options/video/bpp"), fullscreen );
 	
 	return( true );
 }
@@ -120,7 +142,7 @@ Video::~Video( void ){
 
 /**\brief Sets the window properties.
  */
-bool Video::SetWindow( int w, int h, int bpp ) {
+bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()
 	SDL_Surface *screen = NULL; // pointer to main video surface
@@ -138,8 +160,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	videoFlags |= SDL_HWPALETTE;
 
 	// enable fullscreen if set (see main.cpp, parseOptions)
-	if( OPTION( int, "options/video/fullscreen" ) )
-		videoFlags |= SDL_FULLSCREEN;
+	if( fullscreen ) videoFlags |= SDL_FULLSCREEN;
 
 	// using SDL given information, use hardware surfaces if supported by
 	// the video card
