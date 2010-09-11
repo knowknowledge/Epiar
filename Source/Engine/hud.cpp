@@ -83,7 +83,7 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	strncpy(title,_title.c_str(),sizeof(title));
 	title[sizeof(title)-1] = '\0';
 	memset( name, '\0', sizeof(name) );
-	lua_updater = "return " + _updater; // Implicit return
+	lua_updater = _updater;
 	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title, name, ratio);
 	assert(pos>=0);
 	assert(pos<=4);
@@ -145,24 +145,23 @@ void StatusBar::Draw(int x, int y) {
 }
 
 void StatusBar::Update() {
-	int retpos;
+	int returnvals, retpos = -1;
 	lua_State* L = Lua::CurrentState();
 
 	// Run the StatusBar Updater
-	if( luaL_dostring(L,lua_updater.c_str()) ) {
-		LogMsg(ERR,"Error running '%s': %s", lua_updater.c_str(), lua_tostring(L, -1));
-		lua_pop(L, 1);  /* pop error message from the stack */
-	}
+	returnvals = Lua::Run( lua_updater, true );
 
 	// Get the new StatusBar Status
-	retpos = -1;
-	if (lua_isnumber(L, retpos)) {
+	if (returnvals == 0) {
+		SetName( "" );
+	} else if (lua_isnumber(L, retpos) && ( lua_tonumber(L,retpos)>=0.0 && lua_tonumber(L,retpos)<=1.0) )  {
 		SetRatio( TO_FLOAT(lua_tonumber(L, retpos)) );
 	} else if (lua_isstring(L, retpos)) {
 		SetName( string(lua_tostring(L, retpos)) );
 	} else {
 		LogMsg(ERR,"Error running '%s': %s", lua_updater.c_str(), lua_tostring(L, retpos));
 	}
+	lua_pop(L,returnvals);
 }
 
 /**\fn StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _name, float _ratio) : title(_title), width(_width), pos(_pos), name(_name), ratio(_ratio)
@@ -247,24 +246,14 @@ void Hud::Update( void ) {
 
 /**\brief Draws the Hud
  */
-void Hud::Draw( float fps ) {
-	Hud::DrawTarget();
-	Hud::DrawShieldIntegrity();
-	Hud::DrawRadarNav();
-	Hud::DrawMessages();
-	Hud::DrawFPS( fps );
-	Hud::DrawStatusBars();
-	switch( mapDisplay ) {
-	case UniverseMap:
-		Hud::DrawMap();
-		break;
-	case QuadrantMap:
-		SpriteManager::Instance()->DrawQuadrantMap();
-		break;
-	case NoMap:
-	default:
-		break;
-	}
+void Hud::Draw( int flags, float fps ) {
+	if(flags & HUD_Target)     Hud::DrawTarget();
+	if(flags & HUD_Shield)     Hud::DrawShieldIntegrity();
+	if(flags & HUD_Radar)      Hud::DrawRadarNav();
+	if(flags & HUD_Messages)   Hud::DrawMessages();
+	if(flags & HUD_FPS)        Hud::DrawFPS(fps) ;
+	if(flags & HUD_StatusBars) Hud::DrawStatusBars();
+	if(flags & HUD_Map)        Hud::DrawMap();
 }
 
 
@@ -366,8 +355,9 @@ void Hud::DrawShieldIntegrity() {
  */
 void Hud::DrawRadarNav( void ) {
 	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
-	
+	Video::SetCropRect( Video::GetWidth() - 125, 9, RADAR_WIDTH-8, RADAR_HEIGHT-8 );
 	Radar::Draw();
+	Video::UnsetCropRect();
 }
 
 /**\brief Draws the target.
@@ -389,6 +379,20 @@ void Hud::DrawTarget( void ) {
 }
 
 void Hud::DrawMap( void ) {
+	switch( mapDisplay ) {
+	case UniverseMap:
+		Hud::DrawUniverseMap();
+		break;
+	case QuadrantMap:
+		SpriteManager::Instance()->DrawQuadrantMap();
+		break;
+	case NoMap:
+	default:
+		break;
+	}
+}
+
+void Hud::DrawUniverseMap( void ) {
 	//Video::GetHeight()
 	float size, halfsize;
 	float scale;
@@ -466,9 +470,11 @@ void Hud::DrawMap( void ) {
 
 			case DRAW_ORDER_GATE_TOP:
 				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
-				posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
-				posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
-				Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+				if( ((Gate*)(*iter))->GetExit() != NULL ) {
+					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
+					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
+					Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+				}
 				break;
 			default:
 				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
@@ -736,21 +742,18 @@ void Radar::Draw( void ) {
 		Coordinate wpos = sprite->GetWorldPosition();
 		WorldToBlip( wpos, blip );
 		
-		if( blip.ViolatesBoundary( -(RADAR_HEIGHT / 2.0), (RADAR_WIDTH / 2.0), (RADAR_HEIGHT / 2.0), -(RADAR_WIDTH / 2.0) ) == false ) {
-			/* blip is on the radar */
-			
-			/* Convert to screen coords */
-			blip.SetX( blip.GetX() + radar_mid_x );
-			blip.SetY( blip.GetY() + radar_mid_y );
-
-			radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
-			
-			
-			if( radarSize >= 1 ) {
-				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
-			} else {
-				Video::DrawPoint( blip, sprite->GetRadarColor() );
-			}
+		// Use the OpenGL Crop Rectangle to ensure that the blip is on the radar
+		
+		/* Convert to screen coords */
+		blip.SetX( blip.GetX() + radar_mid_x );
+		blip.SetY( blip.GetY() + radar_mid_y );
+		
+		radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
+		
+		if( radarSize >= 1 ) {
+			Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
+		} else {
+			Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}
 	}
 	delete spriteList;

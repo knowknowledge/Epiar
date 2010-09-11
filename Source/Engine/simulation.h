@@ -14,6 +14,7 @@
 #include "Engine/engines.h"
 #include "Engine/models.h"
 #include "Sprites/planets.h"
+#include "Sprites/gate.h"
 #include "Engine/weapons.h"
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
@@ -25,17 +26,33 @@
 class Simulation : public XMLFile {
 	public:
 		Simulation();
-		
+
 		bool Load( string filename );
 		//bool Save();
 		bool Run();
+		bool Edit();
 
 		bool HandleInput();
 
-		static void save();
-		static void pause();
-		static void unpause();
-		static bool isPaused() {return paused;}
+		void save();
+		void pause();
+		void unpause();
+		bool isPaused() {return paused;}
+
+
+		SpriteManager *GetSpriteManager() { return sprites; }
+		Commodities *GetCommodities() { return commodities; }
+		Planets *GetPlanets() { return planets; }
+		Gates *GetGates() { return gates; }
+		Engines *GetEngines() { return engines; }
+		Models *GetModels() { return models; }
+		Weapons *GetWeapons() { return weapons; }
+		Alliances *GetAlliances() { return alliances; }
+		Technologies *GetTechnologies() { return technologies; }
+		Outfits *GetOutfits() { return outfits; }
+		Players *GetPlayers() { return players; }
+		Camera *GetCamera() { return camera; }
+		Input* GetInput() { return &inputs; }
 
 	private:
 		bool Parse( void );
@@ -43,9 +60,10 @@ class Simulation : public XMLFile {
 		// Pointers to Singletons
 		// TODO: These should all be rewritten to not be singletons
 		SpriteManager *sprites;
-		
+
 		Commodities *commodities;
 		Planets *planets;
+		Gates *gates;
 		Engines *engines;
 		Models *models;
 		Weapons *weapons;
@@ -61,8 +79,8 @@ class Simulation : public XMLFile {
 		Console console;
 
 		float currentFPS;
-		static bool paused;
-		static bool willsave;
+		bool paused;
+		bool willsave;
 
 };
 

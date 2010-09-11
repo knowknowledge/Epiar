@@ -46,6 +46,58 @@ Gate::Gate(int topID) {
 	partnerID = topID;
 }
 
+/**\brief
+ */
+
+bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+	string value;
+	Coordinate pos;
+
+	if( (attr = FirstChildNamed(node,"x")) ){
+		value = NodeToString(doc,attr);
+		pos.SetX( atof( value.c_str() ));
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"y")) ){
+		value = NodeToString(doc,attr);
+		pos.SetY( atof( value.c_str() ));
+	} else return false;
+
+	SetWorldPosition( pos );
+
+	if( (attr = FirstChildNamed(node,"exit")) ){
+		value = NodeToString(doc,attr);
+		Gate* exit = Gates::Instance()->GetGate( value );
+		if( exit != NULL ) {
+			Gate::SetPair(this,exit);
+		}
+	}
+
+	return true;
+}
+
+/**\brief
+ */
+
+xmlNodePtr Gate::ToXMLNode(string componentName) {
+	char buff[256];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
+	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
+	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
+	
+	Sprite* exit = SpriteManager::Instance()->GetSpriteByID( exitID );
+	if( (exit != NULL) && (exit->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM) ) ) {
+		xmlNewChild(section, NULL, BAD_CAST "exit", BAD_CAST ((Gate*)exit)->GetName().c_str() );
+	}
+
+	return section;
+}
+
 /**\brief Set the Angle for Top and Bottom at once
  *        This overrides the normal Sprite SetAngle.
  */
@@ -68,16 +120,17 @@ void Gate::SetWorldPosition(Coordinate c) {
  */
 
 void Gate::SetExit(int spriteID) {
-	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(spriteID);
-	if (exit == NULL) {
-		LogMsg(WARN,"Gate %d cannot exit at non-existant exit (%d)",this->GetID(),exitID);
-		exitID = 0;
-	//} else if (exit->GetDrawOrder() & (DRAW_ORDER_GATE_TOP|DRAW_ORDER_GATE_BOTTOM)){
-	// Only use other Gates as Exits
-	} else {
-		exitID = exit->GetID();
-		assert(exitID == spriteID);
-	}
+	exitID = spriteID;
+}
+
+void Gate::SetPair(Gate* one, Gate* two) {
+	float angle;
+	one->SetExit( two->GetID() );
+	two->SetExit( one->GetID() );
+	angle = (two->GetWorldPosition() - one->GetWorldPosition()).GetAngle();
+	two->SetAngle(angle+180);
+	one->SetAngle(angle);
+
 }
 
 /**\brief Get the Top Gate
@@ -169,4 +222,18 @@ void Gate::SendRandomDistance(Sprite* ship) {
 		   Coordinate( trig->GetCos( angle ) * distance,
 					  -trig->GetSin( angle ) * distance );
 	ship->SetWorldPosition( destination );
+}
+
+Gates *Gates::pInstance = 0; // initialize pointer
+
+/**\brief Returns or creates the gates instance.
+ * \return Pointer to the gates instance
+ */
+Gates *Gates::Instance( void ) {
+	if( pInstance == 0 ) { // is this the first call?
+		pInstance = new Gates; // create the sold instance
+		pInstance->rootName = "gates";
+		pInstance->componentName = "gate";
+	}
+	return( pInstance );
 }

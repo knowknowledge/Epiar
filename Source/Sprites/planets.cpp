@@ -12,10 +12,12 @@
 #include "Utilities/parser.h"
 #include "Utilities/components.h"
 #include "Utilities/lua.h"
+#include "Utilities/timer.h"
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
 #include "Engine/alliances.h"
+#include "Engine/simulation_lua.h"
 #include "Sprites/spritemanager.h"
 
 /**\class Planet
@@ -31,6 +33,7 @@
  */
 Planet::Planet(){
 	SetRadarColor(Color::Get(48, 160, 255));
+	lastTrafficTime = Timer::GetTicks();
 }
 
 /**\brief Copy Constructor
@@ -154,10 +157,21 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	return true;
 }
 
-/**\brief Debug Printing
- */
-void Planet::_dbg_PrintInfo( void ) {
-	//cout << "Planet: " << name << " at (" << GetWorldPosition() << ") under alliance " << alliance << " with landable option set to " << landable << " and average traffic count of " << traffic << " ships" << endl;
+void Planet::Update() {
+	if( lastTrafficTime + 3000 < Timer::GetTicks() ) {
+		GenerateTraffic();
+	}
+	Sprite::Update();
+}
+
+void Planet::GenerateTraffic() {
+	list<Sprite*> *nearbySprites = SpriteManager::Instance()->GetSpritesNear(GetWorldPosition(), TO_FLOAT(sphereOfInfluence), DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER);
+
+	if( nearbySprites->size() < traffic ) {
+		Lua::Call( "createRandomShipForPlanet", "i", GetID() );
+	}
+	delete nearbySprites;
+	lastTrafficTime = Timer::GetTicks();
 }
 
 /**\brief List of the Models that are available at this Planet
@@ -344,7 +358,7 @@ int Planets_Lua::Get(lua_State* L){
     } else {
         return luaL_error(L, "Cannot get planet with these arguments.  Expected id or name.");
     }
-    Lua::pushSprite(L,p);
+    Simulation_Lua::pushSprite(L,p);
     return 1;
 }
 
@@ -422,7 +436,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	Image::Store(_name,_image);
 	SpriteManager::Instance()->Add((Sprite*)p);
 	Planets::Instance()->AddOrReplace((Component*)p);
-    Lua::pushSprite(L,p);
+    Simulation_Lua::pushSprite(L,p);
 	return 1;
 }
 

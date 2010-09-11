@@ -5,6 +5,7 @@
 	<version-macro>0</version-macro>
 	<commodities>Resources/Definitions/commodities-default.xml</commodities>
 	<planets>Resources/Definitions/planets-default.xml</planets>
+	<gates>Resources/Definitions/gates-default.xml</gates>
 	<models>Resources/Definitions/models-default.xml</models>
 	<engines>Resources/Definitions/engines-default.xml</engines>
 	<alliances>Resources/Definitions/alliances-default.xml</alliances>

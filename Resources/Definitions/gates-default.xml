@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<gates>
+  <version-major>0</version-major>
+  <version-minor>4</version-minor>
+  <version-macro>0</version-macro>
+  <gate>
+    <name>Gate 0</name>
+    <x>-8000</x>
+    <y>3200</y>
+    <exit>Gate 1</exit>
+  </gate>
+  <gate>
+    <name>Gate 1</name>
+    <x>11340</x>
+    <y>17820</y>
+    <exit>Gate 0</exit>
+  </gate>
+  <gate>
+    <name>Gate 2</name>
+    <x>40000</x>
+    <y>-8000</y>
+    <exit>Gate 3</exit>
+  </gate>
+  <gate>
+    <name>Gate 3</name>
+    <x>26000</x>
+    <y>-6000</y>
+    <exit>Gate 2</exit>
+  </gate>
+  <gate>
+    <name>Gate 4</name>
+    <x>9800</x>
+    <y>21000</y>
+    <exit>Gate 5</exit>
+  </gate>
+  <gate>
+    <name>Gate 5</name>
+    <x>-40000</x>
+    <y>18000</y>
+    <exit>Gate 4</exit>
+  </gate>
+  <gate>
+    <name>Gate 6</name>
+    <x>5300</x>
+    <y>59300</y>
+    <exit>Gate 7</exit>
+  </gate>
+  <gate>
+    <name>Gate 7</name>
+    <x>-52000</x>
+    <y>34000</y>
+    <exit>Gate 6</exit>
+  </gate>
+  <gate>
+    <name>Gate 8</name>
+    <x>-14200</x>
+    <y>-7500</y>
+    <exit>Gate 9</exit>
+  </gate>
+  <gate>
+    <name>Gate 9</name>
+    <x>-49970</x>
+    <y>11000</y>
+    <exit>Gate 8</exit>
+  </gate>
+  <gate>
+    <name>Gate 10</name>
+    <x>-10200</x>
+    <y>-8500</y>
+    <exit>Gate 11</exit>
+  </gate>
+  <gate>
+    <name>Gate 11</name>
+    <x>23970</x>
+    <y>-19000</y>
+    <exit>Gate 10</exit>
+  </gate>
+  <gate>
+    <name>Gate 12</name>
+    <x>-2000</x>
+    <y>-5500</y>
+    <exit>Gate 13</exit>
+  </gate>
+  <gate>
+    <name>Gate 13</name>
+    <x>16970</x>
+    <y>-12000</y>
+    <exit>Gate 12</exit>
+  </gate>
+  <gate>
+    <name>Gate 14</name>
+    <x>17000</x>
+    <y>18500</y>
+    <exit>Gate 15</exit>
+  </gate>
+  <gate>
+    <name>Gate 15</name>
+    <x>23070</x>
+    <y>-5400</y>
+    <exit>Gate 14</exit>
+  </gate>
+  <gate>
+    <name>Gate 16</name>
+    <x>21300</x>
+    <y>52300</y>
+    <exit>Gate 17</exit>
+  </gate>
+  <gate>
+    <name>Gate 17</name>
+    <x>35000</x>
+    <y>38000</y>
+    <exit>Gate 16</exit>
+  </gate>
+</gates>

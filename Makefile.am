@@ -19,6 +19,7 @@ Epiar_SOURCES = Source/main.cpp \
                 Source/Engine/outfit.cpp \
                 Source/Engine/quadrant.cpp \
                 Source/Engine/simulation.cpp \
+                Source/Engine/simulation_lua.cpp \
                 Source/Engine/starfield.cpp \
                 Source/Engine/technologies.cpp \
                 Source/Engine/weapon.cpp \

@@ -119,6 +119,8 @@ bool Audio::SetMusicVol( float volume ){
 	}
 	if ( exceed_bounds )
 		return false;
+
+	this->music_vol = volume;
 	return true;
 }
 

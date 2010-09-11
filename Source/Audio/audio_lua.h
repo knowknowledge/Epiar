@@ -30,6 +30,8 @@ class Audio_Lua {
 
 		static int setSoundVolume(lua_State *L);
 		static int setMusicVolume(lua_State *L);
+		static int getSoundVolume(lua_State *L);
+		static int getMusicVolume(lua_State *L);
 
 	private:
 };

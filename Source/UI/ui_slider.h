@@ -20,7 +20,11 @@
 class Slider : public Widget {
 	public:
 		Slider( int x, int y, int w, int h, const string& label,
+			float value = 0.5f,
 			const string& callback= "");
+
+		void SetVal( float value );
+
 		float GetVal( void ){ return this->val;};
 		float GetMin( void ){ return this->minval;};
 		float GetMax( void ){ return this->maxval;};

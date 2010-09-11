@@ -6,7 +6,11 @@
  * \details
  */
 
-#include "Utilities/lua.h"
+#ifndef __H_MISSION__
+#define __H_MISSION__
+
+#include "includes.h"
+#include "common.h"
 
 class Mission{
 	public:
@@ -31,3 +35,5 @@ class Mission{
 
 		string GetStringAttribute(string attribute);
 };
+
+#endif //__H_MISSION__

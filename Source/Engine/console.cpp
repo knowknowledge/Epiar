@@ -17,19 +17,22 @@
 /**\class Console
  * \brief Handles the Heads-Up-Display. */
 
+const char* PROMPT = "> ";
+const char* CURSOR = "_";
+
 /**\brief Initialize Console instance.
  */
 Console::Console() {
 	Buffer.push_back("Console initialized.");
-	Buffer.push_back("> _");
+	command = "";
 	enabled = false;
+	cursor = 0;
 }
 
 /**\brief Handles a list of Input events.
  * \param events A list of events
  */
 void Console::HandleInput( list<InputEvent> & events ) {
-
 	// look for the backquote (`) key to toggle the console
 	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ) {
 		bool skipIncrement = false;
@@ -45,10 +48,6 @@ void Console::HandleInput( list<InputEvent> & events ) {
             }
 			else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
-					string back = Buffer.back();
-					back.erase(back.size() - 1);
-					Buffer.pop_back();
-
 					switch(i->key) {
 					// Ignore Modifiers
 					case SDLK_LSHIFT:
@@ -61,26 +60,30 @@ void Console::HandleInput( list<InputEvent> & events ) {
 					case SDLK_LCTRL:
 					case SDLK_RSUPER:
 					case SDLK_LSUPER:
-					// TODO: add cursor movement support
+					break;
+					// Cursor Movements
 					case SDLK_LEFT:
+						cursor = cursor!=0 ? cursor-1 : cursor;
+					break;
 					case SDLK_RIGHT:
+						cursor = cursor < command.size() ? cursor+1 : cursor;
+					break;
 					case SDLK_UP:
 					case SDLK_DOWN:
-						break;
+						// TODO: add cursor history
+					break;
 					case '\n':
-						Buffer.push_back(back);
-						Lua::Run(back.substr(2));
-						back = "> ";
+						RunCommand();
 					break;
 					case '\b':
-						if(back.size() > 2) back.erase(back.size() - 1);
+						if(command.size() > 0) {
+							command.erase( --cursor, 1 );
+						}
 					break;
 					default:
-						back += i->key;
+						command.insert(cursor++, 1, i->key );
 					break;
 					}
-					back += "_";
-					Buffer.push_back(back);
 
 					// remove it from the queue
 					i = events.erase( i );
@@ -102,17 +105,18 @@ void Console::HandleInput( list<InputEvent> & events ) {
  */
 void Console::Draw() {
 	if( enabled ) {
+		int pos = 8;
 		// draw bg
-		Video::DrawRect(150, 5, 550, 100, 
+		Video::DrawRect(150, 5, 550, Mono->LineHeight()*(pos+1), 
 				static_cast<float>(.5), static_cast<float>(.5),
 				static_cast<float>(.5), static_cast<float>(.3) );
 
-		int pos = 8;
 		Mono->SetColor(.9f,.9f,.9f,1.0);
-		for(int i = Buffer.size() - 1; i >= 0; i--) {
-			Mono->Render(155, pos * Mono->LineHeight(), Buffer[i]);
-			pos--;
-			if(pos < 0) break;
+
+		Mono->Render(155, pos-- * Mono->LineHeight() + 5,  PROMPT + command.substr(0,cursor) + CURSOR + command.substr(cursor)  );
+	
+		for(int i = Buffer.size() - 1; i >= 0 && pos > 0; --i, --pos) {
+			Mono->Render(155, pos * Mono->LineHeight() + 5, Buffer[i]);
 		}
 	}
 }
@@ -125,19 +129,37 @@ void Console::Update() {
 	}
 }
 
+void Console::RunCommand() {
+	int returnvals;
+	const char* returnval;
+	lua_State *L = Lua::CurrentState();
+
+	// Run the Command
+	returnvals = Lua::Run( command, true);
+
+	// Save this command
+	InsertResult(string(PROMPT) + command);
+	command.clear();
+	cursor = 0;
+
+	// Insert each result value as a new line
+	for(int n=returnvals; n>0; --n) {
+		returnval = lua_tostring(L, -n);
+		if( returnval != NULL ) {
+			InsertResult( returnval );
+		} else {
+			InsertResult( "nil" );
+		}
+	}
+
+	// Cleanup the Stack
+	lua_pop(L,returnvals);
+}
 
 /**\brief Used by lua functions, eg echo.
  */
 void Console::InsertResult(string result) {
-	// get the prompt off the buffer
-	//string back = Console::Buffer.back();
-	//back.erase(back.size() - 1);
-	//Console::Buffer.pop_back();
-
 	// insert result into buffer
 	Buffer.push_back(result);
-
-	// insert prompt back into buffer
-	//Console::Buffer.push_back(back);
 }
 

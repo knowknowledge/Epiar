@@ -20,11 +20,14 @@ class Console {
 		void Draw();
 		void Update();
 
-		void InsertResult(string result); // used by lua functions, eg echo
-
 	private:
+		void RunCommand();
+		void InsertResult(string result);
+
 		vector<string> Buffer;
 		bool enabled;
+		string command;
+		unsigned int cursor;
 };
 
 #endif // __h_console__

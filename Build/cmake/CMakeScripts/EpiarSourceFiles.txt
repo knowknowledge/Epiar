@@ -28,10 +28,12 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/commodities.h
 	${Epiar_SRC_DIR}/Engine/engines.h
 	${Epiar_SRC_DIR}/Engine/hud.h
+	${Epiar_SRC_DIR}/Engine/mission.h
 	${Epiar_SRC_DIR}/Engine/models.h
 	${Epiar_SRC_DIR}/Engine/outfit.h
 	${Epiar_SRC_DIR}/Engine/quadrant.h
 	${Epiar_SRC_DIR}/Engine/simulation.h
+	${Epiar_SRC_DIR}/Engine/simulation_lua.h
 	${Epiar_SRC_DIR}/Engine/starfield.h
 	${Epiar_SRC_DIR}/Engine/technologies.h
 	${Epiar_SRC_DIR}/Engine/weapon.h
@@ -41,10 +43,12 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/commodities.cpp
 	${Epiar_SRC_DIR}/Engine/engines.cpp
 	${Epiar_SRC_DIR}/Engine/hud.cpp
+	${Epiar_SRC_DIR}/Engine/mission.cpp
 	${Epiar_SRC_DIR}/Engine/models.cpp
 	${Epiar_SRC_DIR}/Engine/outfit.cpp
 	${Epiar_SRC_DIR}/Engine/quadrant.cpp
 	${Epiar_SRC_DIR}/Engine/simulation.cpp
+	${Epiar_SRC_DIR}/Engine/simulation_lua.cpp
 	${Epiar_SRC_DIR}/Engine/starfield.cpp
 	${Epiar_SRC_DIR}/Engine/technologies.cpp
 	${Epiar_SRC_DIR}/Engine/weapon.cpp
@@ -97,6 +101,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_container.h
 	${Epiar_SRC_DIR}/UI/ui.cpp
 	${Epiar_SRC_DIR}/UI/ui.h
+	${Epiar_SRC_DIR}/UI/ui_frame.h
+	${Epiar_SRC_DIR}/UI/ui_frame.cpp
 	${Epiar_SRC_DIR}/UI/ui_label.cpp
 	${Epiar_SRC_DIR}/UI/ui_label.h
 	${Epiar_SRC_DIR}/UI/ui_lua.cpp

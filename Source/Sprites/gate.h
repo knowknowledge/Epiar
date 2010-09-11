@@ -17,9 +17,12 @@
 
 #define GATE_RADIUS 20000
 
-class Gate : public Sprite {
+class Gate : public Sprite, public Component {
 	public:
-		Gate(Coordinate pos);
+		Gate(Coordinate pos = Coordinate(0,0));
+
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		xmlNodePtr ToXMLNode(string componentName);
 
 		virtual int GetDrawOrder( void ) {
 			return( top? DRAW_ORDER_GATE_TOP : DRAW_ORDER_GATE_BOTTOM );
@@ -30,6 +33,8 @@ class Gate : public Sprite {
 		void SetAngle(float angle);
 		void SetWorldPosition(Coordinate pos);
 		void SetExit(int SpriteID);
+
+		static void SetPair(Gate* one, Gate* two);
 
 		Gate* GetTop();
 		Sprite* GetExit();
@@ -49,6 +54,21 @@ class Gate : public Sprite {
 		void _SetAngle(float angle) { Sprite::SetAngle(angle); }
 		void _SetWorldPosition(Coordinate c) { Sprite::SetWorldPosition(c); }
 		Gate* GetPartner();
+};
+
+class Gates : public Components {
+	public:
+		static Gates *Instance();
+		Gate *GetGate( string& GateName ) { return (Gate*) this->Get(GateName); }
+		Component* newComponent() { return new Gate(); }
+		
+	protected:
+		Gates() {};
+		Gates( const Gates & );
+		Gates& operator= (const Gates&);
+
+	private:
+		static Gates *pInstance;
 };
 
 #endif // __H_GATE__

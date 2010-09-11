@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "common.h"
 #include "audio_lua.h"
 #include "audio.h"
 
@@ -22,6 +23,8 @@ void Audio_Lua::RegisterAudio(lua_State *L){
 		// Creation
 		{"setSoundVolume", &Audio_Lua::setSoundVolume},
 		{"setMusicVolume", &Audio_Lua::setMusicVolume},
+		{"getSoundVolume", &Audio_Lua::getSoundVolume},
+		{"getMusicVolume", &Audio_Lua::getMusicVolume},
 		{NULL, NULL}
 	};
 
@@ -42,7 +45,8 @@ int Audio_Lua::setSoundVolume(lua_State *L){
 	float x = TO_FLOAT(luaL_checknumber (L, 1));
 
 	Audio::Instance().SetSoundVol( x );
-	return 1;
+	SETOPTION("options/sound/soundvolume", x);
+	return 0;
 }
 
 int Audio_Lua::setMusicVolume(lua_State *L){
@@ -53,5 +57,16 @@ int Audio_Lua::setMusicVolume(lua_State *L){
 	float x = TO_FLOAT(luaL_checknumber (L, 1));
 
 	Audio::Instance().SetMusicVol( x );
+	SETOPTION("options/sound/musicvolume", x);
+	return 0;
+}
+
+int Audio_Lua::getSoundVolume(lua_State *L){
+	lua_pushnumber(L, Audio::Instance().GetSoundVol() );
+	return 1;
+}
+
+int Audio_Lua::getMusicVolume(lua_State *L){
+	lua_pushnumber(L, Audio::Instance().GetMusicVol() );
 	return 1;
 }

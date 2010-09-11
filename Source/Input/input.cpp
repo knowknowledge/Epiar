@@ -9,12 +9,11 @@
 #include "includes.h"
 #include "common.h"
 #include "Input/input.h"
+#include "Engine/simulation.h"
+#include "Engine/simulation_lua.h"
 #include "Utilities/log.h"
 #include "Graphics/video.h"
 #include "Utilities/timer.h"
-
-map<InputEvent, string> Input::eventMappings;
-Uint32 Input::lastMouseMove= 0;
 
 /**\class InputEvent
  * \brief Handles Input events. For specific key handling, see the Lua scripts.
@@ -64,6 +63,7 @@ ostream& operator<<(ostream &out, const InputEvent&e) {
  */
 Input::Input() {
 	memset( heldKeys, 0, sizeof( bool ) * SDLK_LAST );
+	lastMouseMove = Timer::GetTicks();
 }
 
 /**\brief Polls the event queue and sends the list of events to subsystems.
@@ -310,41 +310,3 @@ void Input::UnRegisterCallBack( InputEvent event ) {
 	eventMappings.erase(event);
 }
 
-/**\brief Lua callable function to register a key.
- */
-int Input::RegisterKey(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if(n == 3) {
-		int triggerKey;
-		if( lua_isnumber(L,1) ) {
-			triggerKey = (int)(luaL_checkint(L,1));
-		} else {
-			triggerKey = (int)(luaL_checkstring(L,1)[0]);
-		}
-		keyState triggerState = (keyState)(luaL_checkint(L,2));
-		string command = (string)luaL_checkstring(L,3);
-		RegisterCallBack(InputEvent(KEY, triggerState, triggerKey), command);
-	} else {
-		luaL_error(L, "Got %d arguments expected 3 (Key, State, Command)", n);
-	}
-	return 0;
-}
-
-/**\brief Lua callable function to unregister a key.
- */
-int Input::UnRegisterKey(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if(n == 2) {
-		int triggerKey;
-		if( lua_isnumber(L,1) ) {
-			triggerKey = (int)(luaL_checkint(L,1));
-		} else {
-			triggerKey = (int)(luaL_checkstring(L,1)[0]);
-		}
-		keyState triggerState = (keyState)(luaL_checkint(L,2));
-		UnRegisterCallBack(InputEvent(KEY, triggerState, triggerKey));
-	} else {
-		luaL_error(L, "Got %d arguments expected 2 (Key, State)", n);
-	}
-	return 0;
-}

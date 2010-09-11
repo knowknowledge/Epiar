@@ -88,7 +88,7 @@
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>500</sphereOfInfluence>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
   </planet>
   <planet>
@@ -113,7 +113,7 @@
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>1</militia>
-    <sphereOfInfluence>700</sphereOfInfluence>
+    <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
   </planet>
   <planet>
@@ -187,21 +187,45 @@
     <traffic>0</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>500</sphereOfInfluence>
+    <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
   </planet>
   <planet>
     <name>Outpost 11</name>
-    <alliance>Solar Colonies</alliance>
+    <alliance>Tunis Protectorate</alliance>
     <x>14400</x>
-    <y>40500</y>
+    <y>57500</y>
     <landable>1</landable>
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>2000</sphereOfInfluence>
+    <sphereOfInfluence>5000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
     <technology>Terran Medium-Scale Commerce</technology>
+  </planet>
+  <planet>
+    <name>Outpost 17</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>18400</x>
+    <y>51500</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>4000</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+  </planet>
+  <planet>
+    <name>Outpost 23</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>38400</x>
+    <y>38500</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <militia>0</militia>
+    <sphereOfInfluence>4000</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
   </planet>
   <planet>
     <name>Sirth</name>
@@ -218,14 +242,14 @@
   </planet>
   <planet>
     <name>The Guild Hall</name>
-    <alliance>Solar Colonies</alliance>
+    <alliance>Autonomous Territory</alliance>
     <x>-16040</x>
-    <y>-32500</y>
+    <y>-48500</y>
     <landable>1</landable>
     <traffic>2</traffic>
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
-    <sphereOfInfluence>1000</sphereOfInfluence>
+    <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
     <technology>Terran Medium-Scale Commerce</technology>
   </planet>

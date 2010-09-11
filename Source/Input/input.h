@@ -91,21 +91,16 @@ class InputEvent {
 		int mx, my; // mouse coords
 };
 
-
 ostream& operator<<(ostream &out, const InputEvent&e);
 
-// TODO: make this a static class
 class Input {
 	public:
 		Input();
 		list<InputEvent> Update( bool &quitSignal );
 
-		static void RegisterCallBack( InputEvent key, string command );
-		static void UnRegisterCallBack( InputEvent key );
-		static int RegisterKey(lua_State *L);
-		static int UnRegisterKey(lua_State *L);
-
-		static void HandleLuaCallBacks( list<InputEvent> & events );
+		void HandleLuaCallBacks( list<InputEvent> & events );
+		void RegisterCallBack( InputEvent key, string command );
+		void UnRegisterCallBack( InputEvent key );
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );
@@ -119,8 +114,8 @@ class Input {
 
 		bool heldKeys[SDLK_LAST]; // set to true as long as a key is held down
 		list<InputEvent> events; // a list of all the events that occurred for this loop. we pass this list around to various sub-input systems
-		static map<InputEvent,string> eventMappings; // Lua callbacks mapped to a key
-		static Uint32 lastMouseMove;
+		map<InputEvent,string> eventMappings; // Lua callbacks mapped to a key
+		Uint32 lastMouseMove;
 };
 
 #endif // __h_input__

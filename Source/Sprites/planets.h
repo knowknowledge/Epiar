@@ -39,10 +39,10 @@ class Planet : public Sprite, public Component {
 		Planet& operator=(const Planet& other);
 		Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
 		
+		void Update();
+
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
-		void _dbg_PrintInfo( void );
-
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		
@@ -53,19 +53,23 @@ class Planet : public Sprite, public Component {
 		list<Weapon*> GetWeapons();
 		list<Outfit*> GetOutfits();
 		Alliance* GetAlliance() const {return alliance;}
-		short int GetTraffic() const {return traffic;}
-		short int GetMilitiaSize() const {return militiaSize;}
+		short unsigned int GetTraffic() const {return traffic;}
+		short unsigned int GetMilitiaSize() const {return militiaSize;}
 		bool GetLandable() const {return landable;}
 		int GetInfluence() const {return sphereOfInfluence;}
 		list<Technology*> GetTechnologies() const { return technologies;}
+
+		void GenerateTraffic();
 		
 	private:
 		Alliance* alliance;
 		bool landable;
-		short int traffic;
-		short int militiaSize;
+		short unsigned int traffic;
+		short unsigned int militiaSize;
 		int sphereOfInfluence;
 		list<Technology*> technologies;
+
+		Uint32 lastTrafficTime;
 };
 
 // Class that holds list of all planets; manages them

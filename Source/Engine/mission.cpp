@@ -6,7 +6,10 @@
  * \details
  */
 
+#include "includes.h"
 #include "Engine/mission.h"
+#include "Utilities/lua.h"
+#include "Utilities/log.h"
 
 /**\brief Mission Constructor
  */
@@ -94,6 +97,7 @@ bool Mission::ValidateMission( string type, int tableReference){
 		lua_pop(L,1);
 	}
 
+	lua_settop(L,0);
 	return true;
 }
 

@@ -12,11 +12,24 @@
 #include "includes.h"
 #include "Graphics/image.h"
 #include "Utilities/lua.h"
+#include "Utilities/quadtree.h"
 #include "Input/input.h"
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
 #define MAX_STATUS_BARS 20
+
+// Hud Bitflags to determine what should be drawn
+#define HUD_NONE        0x0000
+#define HUD_Target      0x0001
+#define HUD_Shield      0x0002
+#define HUD_Radar       0x0004
+#define HUD_Messages    0x0008
+#define HUD_FPS         0x0010
+#define HUD_StatusBars  0x0020
+#define HUD_Map         0x0040
+#define HUD_ALL         0xFFFF
+
 
 enum HudMap{
 	NoMap, ///< Do not display any kind of Map.
@@ -61,7 +74,7 @@ class Hud {
 		Hud( void );
 
 		static void Update( void );
-		static void Draw( float fps );
+		static void Draw( int flags, float fps );
 
 		static void HandleInput( list<InputEvent> & events );
 		
@@ -94,6 +107,7 @@ class Hud {
 		static void DrawStatusBars();
 		static void DrawTarget();
 		static void DrawMap( void );
+		static void DrawUniverseMap( void );
 	
 		static list<AlertMessage> AlertMessages;
 

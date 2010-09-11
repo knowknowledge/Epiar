@@ -1,5 +1,4 @@
 -- Use this script for a solar system
-math.randomseed(os.time())
 
 -- This is the Introduction Message that greets new players.
 -- Notice that we use spaces here since Label can't parse tabs.
@@ -36,43 +35,9 @@ If you have any questions, comments, or bug reports please send us email at:
 Thanks for playing!
 ]]
 
---------------------------------------------------------------------------------
--- Init is a list of functions to be run when the game (re)starts
-
-Init = {}
---- Initialization functions
-function registerInit(step)
-	table.insert(Init,step)
-end
-
---------------------------------------------------------------------------------
--- Registered Plans for AI to choose from
-
---------------------------------------------------------------------------------
--- Steps taken during each Update
-
-Steps = {}
---- Steps after each update
-function registerStep(step)
-	table.insert(Steps,step)
-end
-
---- Run the functions
-function Start()
-	--io.write(string.format("\tInit: %d\n\tSteps: %d\n", #Init, #Steps ))
-	for i,func in ipairs(Init) do
-		func()
-	end
-end
-
---- Update function
-function Update()
-	if #Steps >0 then
-		for i,post_func in ipairs(Steps) do
-			post_func()
-		end
-	end
-end
+-- Generate a Random Lua Seed
+math.randomseed(os.time())
+math.random(); math.random(); math.random() -- Absorb the first few non-random random results
 
 --------------------------------------------------------------------------------
 -- Basic Utilities
@@ -81,10 +46,8 @@ end
 function togglePause()
 	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
-		io.write("Un Pause\n")
 		Epiar.unpause()
 	else
-		io.write("Pause\n")
 		Epiar.pause()
 	end
 end
@@ -106,15 +69,6 @@ function toggleUniverseMap()
 	end
 end
 
---- For debugging
-function godmode()
-	function heal()
-		PLAYER:Repair(10000)
-	end
-	registerStep(heal)
-end
---godmode() -- Uncomment this line to never die
-
 --- Convert a list of strings/numbers into an table with those values as keys
 -- Code from: http://www.lua.org/pil/11.5.html
 function Set (list)
@@ -125,9 +79,18 @@ end
 
 --- Trim a string
 function trim(s)
-  return (s:gsub("^%s*(.-)%s*$", "%1"))
+	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+function linewrap(text, chars_per_line)
+	if chars_per_line == nil then chars_per_line = 72 end
+	local ret = ""
+	for line =1,math.ceil( text:len() / chars_per_line ) do
+		local partial = text:sub( (line-1)*chars_per_line, (line)*chars_per_line -1)
+		ret = ret .. partial .. "\n"
+	end
+	return ret
+end
 
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
@@ -157,7 +120,7 @@ end
 
 --- Creates a new ship
 function createShip(X,Y,model,engine)
-	plans = {"Hunter","Trader","Patrol","Bully"}
+	plans = {"Hunter", "Trader", "Patrol", "Bully"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
 	cur_ship:SetRadarColor(0,255,0)
 	return cur_ship
@@ -234,9 +197,9 @@ function options()
 	musicVolume     = { Textbox = UI.newTextbox(20,  170, 30, 1, Epiar.getoption("options/sound/musicvolume")),
 						Label = UI.newLabel(55, 185, "Music volume (0-1)")}
 						--]]
-	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume","Audio.setSoundVolume"),
+	soundVolume = { Slider = UI.newSlider(20, 140, 80, 16, "Sound Volume", Audio.getSoundVolume(), "Audio.setSoundVolume"),
 					Label = UI.newLabel( 105, 140, "Sound Volume", 0)}
-	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume","Audio.setMusicVolume"),
+	musicVolume = { Slider = UI.newSlider(20, 170, 80, 16, "Music Volume", Audio.getMusicVolume(), "Audio.setMusicVolume"),
 					Label = UI.newLabel( 105, 170, "Music Volume", 0)}
 	soundsTab:add(  soundsLabel,
 					backgroundSound,
@@ -428,42 +391,18 @@ function createSystems()
 		end
 	end
 end
---registerInit(createSystems)
 
---- Create Some ships around the planets
-function planetTraffic()
-	planets = Epiar.planets()
-	for p=1,#planets do
-		planet = planets[p]
-		expectedTraffic = 1* planet:Traffic()
+function createRandomShipForPlanet(id)
+	planet = Epiar.getSprite(id)
+	if (planet ~= nil) and (planet:GetType() == 0x01) then
 		x,y = planet:GetPosition()
 		influence = planet:Influence()
-		currentTraffic = #(Epiar.ships(x,y,influence))
-		if influence>0 and currentTraffic < expectedTraffic then
-			models = planet:GetModels()
-			engines = planet:GetEngines()
-			weapons = planet:GetWeapons()
-			for s=currentTraffic,expectedTraffic do
-				createRandomShip(x,y,influence,models,engines,weapons)
-			end
-		end
+		models = planet:GetModels()
+		engines = planet:GetEngines()
+		weapons = planet:GetWeapons()
+		createRandomShip(x,y,influence,models,engines,weapons)
 	end
 end
-
---- This Closure creates more traffic periodically
-function moreTraffic(tickcycle)
-	ticks = tickcycle
-	function traffic()
-		ticks = ticks -1
-		if ticks == 0 then
-			planetTraffic()
-			ticks = tickcycle
-		end
-	end
-	return traffic
-end
-registerStep(moreTraffic(1000))
-registerInit(planetTraffic)
 
 --- Buys a ship
 function buyShip(model)
@@ -516,9 +455,12 @@ function buyOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]==nil then
 			PLAYER:AddWeapon(outfit)
-			myweapons[outfit] = HUD.newStatus(outfit..":",130,0,"[ ".. 100 .." ]")
+			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 		end
-		PLAYER:AddAmmo(outfit,100)
+		local weaponInfo = Epiar.getWeaponInfo(outfit)
+		if weaponInfo["Ammo Consumption"] ~= 0 then
+			PLAYER:AddAmmo(outfit,100)
+		end
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -721,13 +663,27 @@ function landingDialog(id)
 		--print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
-		tradeCounts[commodity] = UI.newTextbox(180,yoff,30,1, currentCargo[commodity] or 0)
+		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(210,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(240,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(350,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
-	storeframe:add(shipyard,outfitting,trade)
+	-- Employment
+	missions = UI.newTab("Employment")
+	availableMissions = {} -- This is a global variable
+	yoff = 5
+	for i = 1,4 do
+		availableMissions[i] = ReturnAmbassador.Create()
+		missions:add(
+			UI.newLabel( 10, yoff, availableMissions[i].Name ),
+			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
+			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission('ReturnAmbassador', availableMissions[%d])", i) )
+			)
+		yoff = yoff + 80
+	end
+
+	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))

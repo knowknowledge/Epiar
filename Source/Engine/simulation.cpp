@@ -9,8 +9,10 @@
 #include "includes.h"
 #include "common.h"
 #include "Audio/music.h"
+#include "Audio/audio_lua.h"
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
+#include "Engine/simulation_lua.h"
 #include "Engine/commodities.h"
 #include "Engine/alliances.h"
 #include "Engine/technologies.h"
@@ -26,12 +28,11 @@
 #include "Utilities/timer.h"
 #include "Utilities/lua.h"
 #include "AI/ai.h"
+#include "AI/ai_lua.h"
 
 /**\class Simulation
  * \brief Handles main game loop. */
 
-bool Simulation::paused = false;
-bool Simulation::willsave = false;
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
@@ -39,6 +40,7 @@ Simulation::Simulation( void ) {
 	commodities = Commodities::Instance();
 	engines = Engines::Instance();
 	planets = Planets::Instance();
+	gates = Gates::Instance();
 	models = Models::Instance();
 	weapons = Weapons::Instance();
 	alliances = Alliances::Instance();
@@ -47,6 +49,8 @@ Simulation::Simulation( void ) {
 	players = Players::Instance();
 	camera = Camera::Instance();
 	currentFPS = 0.;
+	paused = false;
+	willsave = false;
 }
 
 /**\brief Loads the XML file.
@@ -84,15 +88,28 @@ bool Simulation::Run() {
 	int fpsCount = 0; // for FPS calculations
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
+	lua_State *L;
 
 	Timer::Update(); // Start the Timer
-	Timer::Initialize();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 
 	// Start the Lua Universe
+	// Register these functions to their own lua namespaces
+	Lua::Init();
+	L = Lua::CurrentState();
+
+	Simulation_Lua::StoreSimulation(L,this);
+
+	Simulation_Lua::RegisterSimulation(L);
+	AI_Lua::RegisterAI(L);
+	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
+	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
+
 	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")
@@ -111,25 +128,27 @@ bool Simulation::Run() {
 	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
 		    sprites->Add(  planets->GetPlanet(*pname) );
 	    }
+
+	    list<string>* gateNames = gates->GetNames();
+	    for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
+		    sprites->Add(  gates->GetGate(*gname) );
+	    }
 	}
-	Lua::Call("Start");
 
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("-----------------------------------");
 	Hud::Alert("Please Report all bugs to epiar.net");
 	Hud::Alert("Epiar is currently under development.");
 
-	if( 0 == OPTION(int,"options/development/editor-mode") ) {
-		// Load the player
-		if( OPTION(int,"options/simulation/automatic-load") ) {
-			if( players->LoadLast()!=NULL ) {
-				Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
-				Lua::Call("playerStart");
-			}
+	// Load the player
+	if( OPTION(int,"options/simulation/automatic-load") ) {
+		if( players->LoadLast()!=NULL ) {
+			Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
+			Lua::Call("playerStart");
 		}
-		if( !Player::IsLoaded() ) {
-			Lua::Call("loadingWindow");
-		}
+	}
+	if( !Player::IsLoaded() ) {
+		Lua::Call("loadingWindow");
 	}
 
 	if( OPTION(int,"options/simulation/intro") )
@@ -149,9 +168,9 @@ bool Simulation::Run() {
 	int lowFpsFrameCount = 0;
 	while( !quit ) {
 		quit = HandleInput();
-		
-			//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
-			//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
+
+		//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
+		//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
 		bool anyUpdate = (logicLoops>0);
 		if( !paused ) {
@@ -159,33 +178,32 @@ bool Simulation::Run() {
 				if (lowFps)
 					lowFpsFrameCount --;
 				Timer::IncrementFrameCount();
-				Lua::Call("Update");
 				// Update cycle
 				sprites->Update( lowFps );
 			}
 		}
-		
+
 		// These only need to be updated once pre Draw cycle, but they can be skipped if there are no Sprite update cycles.
 		if( anyUpdate ) {
 			starfield.Update( camera );
 			camera->Update( sprites );
 			Hud::Update();
 		}
-		
+
 		// Erase cycle
 		Video::Erase();
-		
+
 		// Draw cycle
 		starfield.Draw();
 		sprites->Draw();
-		Hud::Draw( currentFPS );
+		Hud::Draw( HUD_ALL, currentFPS );
 		UI::Draw();
 		console.Draw();
 		Video::Update();
-		
+
 		// Don't kill the CPU (play nice)
 		Timer::Delay();
-		
+
 		// Counting Frames
 		fpsCount++;
 		fpsTotal++;
@@ -219,7 +237,7 @@ bool Simulation::Run() {
 					lowFps = false;
 				}
 			}
-			
+
 			if (!lowFps && currentFPS < 15)
 			{
 				LogMsg (DEBUG4, "Turning on wave-updates for sprites as FPS has gone below 15");
@@ -248,6 +266,76 @@ bool Simulation::Run() {
 	optionsfile->Save();
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
+	return true;
+}
+
+bool Simulation::Edit() {
+	bool quit = false;
+	bool luaLoad = true;
+	lua_State *L;
+
+	// Generate a starfield
+	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
+
+	// Start the Lua Universe
+	// Register these functions to their own lua namespaces
+	Lua::Init();
+	L = Lua::CurrentState();
+
+	Simulation_Lua::StoreSimulation(L,this);
+
+	Simulation_Lua::RegisterSimulation(L);
+	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
+	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
+
+	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
+	       && Lua::Load("Resources/Scripts/commands.lua")
+	       && Lua::Load("Resources/Scripts/editor.lua");
+
+	if (!luaLoad) {
+		LogMsg(ERR,"Fatal error starting Lua.");
+		return false;
+	}
+
+	if( OPTION(int, "options/simulation/random-universe") ) {
+		Lua::Call("createSystems");
+	} else {
+	    list<string>* planetNames = planets->GetNames();
+	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+		    sprites->Add(  planets->GetPlanet(*pname) );
+	    }
+
+	    list<string>* gateNames = gates->GetNames();
+	    for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
+		    sprites->Add(  gates->GetGate(*gname) );
+	    }
+	}
+
+	while( !quit ) {
+		quit = HandleInput();
+
+		Timer::Update();
+		starfield.Update( camera );
+		camera->Update( sprites );
+		Hud::Update();
+
+		// Erase cycle
+		Video::Erase();
+
+		// Draw cycle
+		starfield.Draw();
+		sprites->Draw();
+		UI::Draw();
+		Hud::Draw( HUD_Target | HUD_Map, 0.0f );
+		console.Draw();
+		Video::Update();
+
+		// Don't kill the CPU (play nice)
+		Timer::Delay();
+	}
+
 	return true;
 }
 
@@ -291,12 +379,16 @@ bool Simulation::Parse( void ) {
 		    LogMsg(WARN, "There was an error loading the planets from '%s'.", Get("planets").c_str() );
 		    return false;
 	    }
+		if( gates->Load( Get("gates") ) != true ) {
+		    LogMsg(WARN, "There was an error loading the gates from '%s'.", Get("gates").c_str() );
+		    return false;
+	    }
 	}
 	if( players->Load( Get("players"), true ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
 		return false;
 	}
-	
+
 	bgmusic = Song::Get( Get("music") );
 	if( bgmusic == NULL ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
@@ -333,8 +425,8 @@ bool Simulation::HandleInput() {
 	UI::HandleInput( events );
 	console.HandleInput( events );
 	Hud::HandleInput( events );
-	
-	Input::HandleLuaCallBacks( events );
+
+	inputs.HandleLuaCallBacks( events );
 
 	return quitSignal;
 }
