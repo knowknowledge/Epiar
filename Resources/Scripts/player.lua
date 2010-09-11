@@ -129,8 +129,6 @@ function attemptLanding()
 		
 		-- Check if the ship is close enough and moving slowly enough to land on the planet.
 		HUD.setTarget(planet:GetID())
-
-		return
 	end
 	
 	-- TODO make this distance check based off of the planet size.
