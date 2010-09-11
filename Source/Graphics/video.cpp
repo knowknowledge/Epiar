@@ -1,7 +1,6 @@
 /**\file			video.cpp
  * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
- * \date			Modified: Saturday, January 5, 2008
  * \brief
  * \details
  */
@@ -182,6 +181,12 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
+	//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
+
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // vsync
 
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
@@ -198,7 +203,7 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	}
 
 	// set window title
-	SDL_WM_SetCaption("Epiar","Epiar");
+	SDL_WM_SetCaption("Epiar", "Epiar");
 
 	// set up some needed opengl facilities
 	glEnable( GL_TEXTURE_2D );
@@ -210,6 +215,10 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// for motion blur
+	glClearAccum(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_ACCUM_BUFFER_BIT);
 
 	// set up a pseudo-2D viewpoint
 	glViewport( 0, 0, w, h );
@@ -234,15 +243,25 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 /**\brief Video updates.
  */
 void Video::Update( void ) {
+	//Blur();
+
 	glFlush();
 	SDL_GL_SwapBuffers();
 	glFinish();
 }
 
+void Video::Blur( void ) {
+	float q = .6f;
+
+	glAccum(GL_MULT, q);
+	glAccum(GL_ACCUM, 1.0f - q);
+	glAccum(GL_RETURN, 1.0f);
+}
+
 /**\brief Clears screen.
  */
 void Video::Erase( void ) {
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT );
 	glLoadIdentity();
 }
 

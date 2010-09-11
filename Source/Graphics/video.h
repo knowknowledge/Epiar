@@ -95,6 +95,8 @@ class Video {
 
 		static void SetCropRect( int x, int y, int w, int h );
 		static void UnsetCropRect( void );
+		
+		static void Blur( void );
  	protected:
  		Video();
   		Video( const Video & );
