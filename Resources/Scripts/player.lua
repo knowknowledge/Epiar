@@ -94,16 +94,13 @@ function powerManagement()
 	local height= 120
 	powerManagementWindow = UI.newWindow(30 , 120, width, height, "Power Management")
 	
-	powerSlider= UI.newSlider(20, 40, 80, 16, "Attack Power", "powerShift")
+	powerSlider= UI.newSlider(20, 40, 80, 16, "Attack Power", PLAYER:GetDamageBooster()/3.0, "powerShift")
 	powerLabel=UI.newLabel(105, 35,"Attack Power",0)
-	engineSlider =UI.newSlider(20, 65, 80, 16, "Engine", "engineShift")
+	engineSlider =UI.newSlider(20, 65, 80, 16, "Engine", PLAYER:GetEngineBooster()/3.0, "engineShift")
 	engineLabel=UI.newLabel(105, 60,"Engine Power",0)
-	shieldSlider = UI.newSlider(20, 85, 80, 16, "Shields", "shieldShift")		
+	shieldSlider = UI.newSlider(20, 85, 80, 16, "Shields", PLAYER:GetShieldBooster()/3.0, "shieldShift")		
 	shieldLabel=UI.newLabel(105, 80,"Shield Strength",0)
 	
-	powerSlider:setSliderValue(PLAYER:GetDamageBooster()/3.0)
-	engineSlider:setSliderValue(PLAYER:GetEngineBooster()/3.0)
-	shieldSlider:setSliderValue(PLAYER:GetShieldBooster()/3.0)
 	powerManagementWindow:add(powerSlider, powerLabel, engineSlider, engineLabel, shieldSlider, shieldLabel)
 									
 end
@@ -113,18 +110,21 @@ function powerShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetDamageBooster())/3.0) * 100
 	local compensate =(-change)/2  
+	print("power shift value=" .. value)
 	changePower(compensate, change ,compensate)
 end
 function shieldShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetShieldBooster())/3.0) * 100
 	local compensate =(-change)/2  
+	print("shield shift value=" .. value)
 	changePower(change, compensate ,compensate)
 end
 function engineShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetEngineBooster())/3.0) * 100
 	local compensate =(-change)/2  
+	print("power engine value=" .. value)
 	changePower(compensate, compensate ,change)
 end
  	
