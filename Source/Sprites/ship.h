@@ -75,7 +75,7 @@ class Ship : public Sprite {
 		float GetShieldBoost() {return shieldBooster;}
 		float GetEngineBoost() {return engineBooster;}
 		float GetDamageBoost() {return damageBooster;}
-		void SetShieldBoost(float shield) {shieldBooster=shield;}
+		void SetShieldBoost(float shield) { shieldBooster = shield;}		
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 	

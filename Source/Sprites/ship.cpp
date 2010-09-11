@@ -218,7 +218,7 @@ void Ship::Accelerate( void ) {
 /**\brief Adds damage to hull.
  */
 void Ship::Damage(short int damage) {
-	if(status.shieldDamage >=   (float)shipStats.GetShieldStrength())
+	if(status.shieldDamage >=   ((float)shipStats.GetShieldStrength()) * shieldBooster)
 		status.hullDamage += damage;
 	else
 		status.shieldDamage+=damage;
@@ -544,8 +544,15 @@ float Ship::GetHullIntegrityPct() {
  * \return Shield remaining
  */
 float Ship::GetShieldIntegrityPct() {
-	float remaining =  ( ((float)shipStats.GetShieldStrength()) - (float)status.shieldDamage ) / (float)shipStats.GetShieldStrength();
-	return(remaining);
+	if (shipStats.GetShieldStrength() *shieldBooster > 0){
+		float remaining =  ( ((float)shipStats.GetShieldStrength() *shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * shieldBooster);
+		return(remaining);
+	}
+	else {
+		return 0;
+	}
+
+
 }
 
 /**\brief Gets the current weapon.
@@ -586,6 +593,7 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	return weaponPack;
 }
 
+
 /**\brief Computes the Ship Statistics based on equiped Outfit.
  */
 void Ship::ComputeShipStats() {
@@ -609,4 +617,8 @@ void Ship::ComputeShipStats() {
 		shipStats += *(*iter);
 	}
 }
+
+
+
+
 
