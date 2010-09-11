@@ -23,7 +23,6 @@ class Slider : public Widget {
 			float value = 0.5f,
 			const string& callback= "");
 
-		void SetVal( float value );
 
 		float GetVal( void ){ return this->val;};
 		float GetMin( void ){ return this->minval;};
