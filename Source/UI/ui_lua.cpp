@@ -60,6 +60,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"setText", &UI_Lua::setText},
 		// Checkbox Modification
 		{"setChecked", &UI_Lua::setChecked},
+		{"setSliderValue", &UI_Lua::setSliderValue},
 		{NULL, NULL}
 	};
 
@@ -450,6 +451,19 @@ int UI_Lua::setChecked(lua_State *L){
 	bool checked = lua_toboolean(L, 2) != 0;
 	(*box)->Set(checked);
 
+	return 0;
+}
+
+
+int UI_Lua::setSliderValue(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self, value)", n);
+	
+	Slider **slide= (Slider**)lua_touserdata(L,1);
+	float percent= (float)lua_tonumber(L, 2);
+	(*slide)->SetVal(percent);
+	
 	return 0;
 }
 

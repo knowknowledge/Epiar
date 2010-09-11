@@ -20,6 +20,15 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
+	{'h', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
+	{'j', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
+	{'k', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
+	{'n', "Decrease Shields", "changePower(-1,0.5,0.5)", KEYTYPED},
+	{'m', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
+	{',', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
+	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED}
+
+	
 }
 
 function playerStart()
@@ -71,6 +80,137 @@ function targetClosestShip()
 	nextTarget = closest.index
 	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
 	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
+end
+
+powerSlider, shieldSlider, engineSlider = 0, 0, 0
+
+function powerManagement()
+	if powerManagementWindow ~=nil then
+		powerManagementWindow:close()
+		powerManagementWindow=nil
+		return
+	end
+	local width= 200
+	local height= 120
+	powerManagementWindow = UI.newWindow(30 , 120, width, height, "Power Management")
+	
+	powerSlider= UI.newSlider(20, 40, 80, 16, "Attack Power", "powerShift")
+	powerLabel=UI.newLabel(105, 35,"Attack Power",0)
+	engineSlider =UI.newSlider(20, 65, 80, 16, "Engine", "engineShift")
+	engineLabel=UI.newLabel(105, 60,"Engine Power",0)
+	shieldSlider = UI.newSlider(20, 85, 80, 16, "Shields", "shieldShift")		
+	shieldLabel=UI.newLabel(105, 80,"Shield Strength",0)
+	
+	powerSlider:setSliderValue(PLAYER:GetDamageBooster()/3.0)
+	engineSlider:setSliderValue(PLAYER:GetEngineBooster()/3.0)
+	shieldSlider:setSliderValue(PLAYER:GetShieldBooster()/3.0)
+	powerManagementWindow:add(powerSlider, powerLabel, engineSlider, engineLabel, shieldSlider, shieldLabel)
+									
+end
+
+-- functions required to communicate between slider and ship settings
+function powerShift(value)
+	value = value*3.0
+	local change = ((value - PLAYER:GetDamageBooster())/3.0) * 100
+	local compensate =(-change)/2  
+	changePower(compensate, change ,compensate)
+end
+function shieldShift(value)
+	value = value*3.0
+	local change = ((value - PLAYER:GetShieldBooster())/3.0) * 100
+	local compensate =(-change)/2  
+	changePower(change, compensate ,compensate)
+end
+function engineShift(value)
+	value = value*3.0
+	local change = ((value - PLAYER:GetEngineBooster())/3.0) * 100
+	local compensate =(-change)/2  
+	changePower(compensate, compensate ,change)
+end
+ 	
+---Change Power Distribution
+--- variables given by the desired increase in percentage
+function changePower( shield ,damage ,engine)
+	shield = shield*0.03
+	damage = damage*0.03
+	engine = engine*0.03
+	local s = PLAYER:GetShieldBooster()
+	print("PLAYER:GetShieldBooster()=" .. s ..'\n')
+	local newshield = shield + PLAYER:GetShieldBooster()
+	local newdamage = damage + PLAYER:GetDamageBooster()
+	local newengine = engine + PLAYER:GetEngineBooster()
+	
+	
+	
+	--check boundaries
+	newshield ,newdamage , newengine = lowerBoundCheck(shield , damage ,engine ,newshield ,newdamage , newengine)
+	newdamage ,newshield , newengine=lowerBoundCheck(damage , shield ,engine ,newdamage ,newshield , newengine)
+	newengine ,newdamage , newshield=lowerBoundCheck(engine , damage ,shield ,newengine ,newdamage , newshield)
+	if (math.floor( (newshield*33.333) + 0.5 )>99) then
+		HUD.newAlert("shields at maximum capacity can not raise them any higher")
+		return
+	end
+	if(math.floor( (newdamage*33.333) + 0.5 )>99) then
+		HUD.newAlert("power at maximum capacity can not raise them any higher")
+		return
+	end
+	if(math.floor( (newengine*33.333) + 0.5 )>99) then
+		HUD.newAlert("Engines at maximum capacity can not raise them any higher")
+		return
+	end
+
+	newengine = math.floor(newengine * 1000 + 0.5)/1000
+	newshield = math.floor(newshield * 1000 + 0.5)/1000
+	newdamage = math.floor(newdamage * 1000 + 0.5)/1000
+	PLAYER:SetEngineBooster(newengine)
+	PLAYER:SetShieldBooster(newshield)
+	PLAYER:SetDamageBooster(newdamage)
+	
+	if(powerSlider and shieldSlider and engineSlider ~=0) then
+		powerSlider:setSliderValue(newdamage/3.0)
+		shieldSlider:setSliderValue(newshield/3.0)
+		engineSlider:setSliderValue(newengine/3.0)
+	end
+	print("end of power management function shield=" ..newshield .. "power=" ..newdamage .. "engine=" .. newengine)
+	newengine = math.floor(newengine * 333 + 0.5)/10
+	newshield = math.floor(newshield * 333 + 0.5)/10
+	newdamage = math.floor(newdamage * 333 + 0.5)/10
+	HUD.newAlert("Power Distribution: shields " .. (newshield) .. "%% power " .. (newdamage) .. "%% engine " .. (newengine) .. "%%")
+end
+
+function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for power management function
+	if(newa<0) then
+		newa= newa- a
+		if not ((a<b) and (a<c)) then
+			
+			if(b<0) then
+				if(newb + a > 0) then
+					newb = newb + a
+				else
+					a = a + newa
+					newa=0
+					newb =newb +a
+
+				end
+			else
+				if ( newc + a > 0) then
+					newc = newc + a
+				else
+					a = a + newa
+					newa=0
+					newc =newc +a
+					
+				end
+			end
+		else	
+			
+			newc= newc + (newa/2) -c
+			newb = newb +(newa/2) -b
+			newa = 0
+			HUD.newAlert("can not go any lower")
+		end
+	end
+	return newa, newb, newc
 end
 
 ---Board closest ship if possible

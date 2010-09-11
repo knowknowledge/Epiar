@@ -28,8 +28,9 @@
 
 /**\brief Constructor
  */
-Projectile::Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* _weapon)
+Projectile::Projectile(float damageBooster, float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* _weapon)
 {
+	damageBoost=damageBooster;
 	// All Projectiles get these
 	ownerID = 0;
 	targetID = 0;
@@ -81,7 +82,7 @@ void Projectile::Update( void ) {
 	// Check for projectile collisions
 	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 	if( (impact != NULL) && (impact->GetID() != ownerID) && ((this->GetWorldPosition() - impact->GetWorldPosition()).GetMagnitude() < impact->GetRadarSize() )) {
-		((Ship*)impact)->Damage( weapon->GetPayload() );
+		((Ship*)impact)->Damage( (weapon->GetPayload())*damageBoost );
 		sprites->Delete( (Sprite*)this );
 		
 		// Create a fire burst where this projectile hit the ship's shields.

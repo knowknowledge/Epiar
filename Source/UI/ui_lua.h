@@ -56,6 +56,8 @@ class UI_Lua {
 		static int setLabel(lua_State *L);
 		static int setPicture(lua_State *L);
 		static int setChecked(lua_State *L);
+		static int setSliderValue(lua_State *L);
+
 	private:
 };
 #endif /*__H_UI_LUA*/

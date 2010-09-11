@@ -30,12 +30,12 @@ class Slider : public Widget {
 		bool MouseDrag( int xi, int yi );
 		bool MouseLDown( int xi, int yi );
 		string GetType( void ) {return string("Slider"); }
+		void SetVal( float value );
 
 	private:
 		// Utility functions to convert between pixel and values
 		int ValToPixel( float value );
 		float PixelToVal( int pixels);
-		void SetVal( float value );
 
 		float minval,maxval,val;
 		
