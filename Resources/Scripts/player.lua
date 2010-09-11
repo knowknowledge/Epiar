@@ -95,8 +95,8 @@ function boardShip()
 		-- show the boarding dialog
 		local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits()
 		boardingDialog = UI.newWindow(100, 100, 300, 150, "Boarding Ship")
-		boardingDialog:add( UI.newLabel(50, 30, "That was easy!") )
-		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Take the Monies!", string.format("doBoarding(%d)", moneyOnBoard ) ) )
+		boardingDialog:add( UI.newLabel(50, 30, "You have boarded their ship.") )
+		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
 
 	else
 		HUD.newAlert("Cannot board target -- too far away")
