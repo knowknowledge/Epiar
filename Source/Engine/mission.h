@@ -25,6 +25,8 @@ class Mission{
 		string GetName() { return GetStringAttribute("Name"); }
 		string GetDescription() { return GetStringAttribute("Description"); }
 
+		void PushMissionTable();
+
 		// TODO: Write these functions!
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);

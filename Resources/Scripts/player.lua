@@ -334,6 +334,7 @@ function playerInformation()
 	infoWin = UI.newWindow( 600,200, width,height, "Player Info")
 	local y = 30
 
+
 	local model = PLAYER:GetModelName()
 	local engine = PLAYER:GetEngine()
 	local credits = PLAYER:GetCredits()
@@ -344,31 +345,55 @@ function playerInformation()
 	infoWin:add( UI.newLabel(20, y, "Credits:   ".. credits) )
 	local y = y+20
 	infoWin:add( UI.newPicture( 20, y, width-40,100, model ,0,0,0,1) )
-	local y = y+100
+	local y = y+110
 
-	y = y+40
-	infoWin:add( UI.newLabel(20, y, "Weapons:") )
+	local infoTabs = UI.newTabCont( 15, y, width-30, height-y-30, "Info Tabs" )
+
+	-- The Outfit Tab
+	local outfitTab = UI.newTab( "Outfit" )
+	y = 10
+	outfitTab:add( UI.newLabel(20, y, "Weapons:") )
 	local weaponsAndAmmo = PLAYER:GetWeapons()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		y = y+20
-		infoWin:add( UI.newLabel(30, y, weapon) )
-		infoWin:add( UI.newLabel(230, y, ammo) )
+		outfitTab:add( UI.newLabel(30, y, weapon) )
+		outfitTab:add( UI.newLabel(230, y, ammo) )
 	end
 
 	y = y+40
-	infoWin:add( UI.newLabel(20, y, "Outfit:") )
+	outfitTab:add( UI.newLabel(20, y, "Outfit:") )
 	local outfits = PLAYER:GetOutfits()
 	for i,outfit in pairs(outfits) do
 		y = y+20
-		infoWin:add( UI.newLabel(30, y, outfit) )
+		outfitTab:add( UI.newLabel(30, y, outfit) )
 	end
 
 	y = y+40
-	infoWin:add( UI.newLabel(20, y, "Cargo:") )
+	outfitTab:add( UI.newLabel(20, y, "Cargo:") )
 	local cargo = PLAYER:GetCargo()
 	for cargoName,cargoAmount in pairs(cargo) do
 		y = y+20
-		infoWin:add( UI.newLabel(30, y, cargoName) )
-		infoWin:add( UI.newLabel(230, y, cargoAmount) )
+		outfitTab:add( UI.newLabel(30, y, cargoName) )
+		outfitTab:add( UI.newLabel(230, y, cargoAmount) )
 	end
+
+	-- The Missions Tab
+	local missionTab = UI.newTab( "Missions" )
+	y = 10
+
+	local missions = PLAYER:GetMissions()
+	print( missions, #missions)
+	if #missions > 0 then
+		for key,mission in pairs(missions) do
+			print(mission)
+			missionTab:add( UI.newLabel( 10, y, "["..key.."] "..mission.Name ) )
+			y = y + 20
+		end
+	else
+		missionTab:add( UI.newLabel( 10, y, "You have no current jobs." ) )
+	end
+
+	infoWin:add( infoTabs )
+	infoTabs:add( outfitTab, missionTab )
+
 end

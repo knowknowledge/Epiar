@@ -24,6 +24,7 @@ class Player : public Ship , public Component {
 		string GetName() { return name; }
 
 		void AcceptMission( Mission *mission );
+		list<Mission*>* GetMissions() { return &missions; }
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);

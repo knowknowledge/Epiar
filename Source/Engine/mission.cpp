@@ -222,6 +222,12 @@ bool Mission::Update()
 	return false;
 }
 
+void Mission::PushMissionTable()
+{
+	lua_State *L = Lua::CurrentState();
+	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
+}
+
 /**\brief Lookup String Attributes from the Mission Table
  */
 string Mission::GetStringAttribute( string attribute )
@@ -230,7 +236,7 @@ string Mission::GetStringAttribute( string attribute )
 	string value = "";
 	lua_State *L = Lua::CurrentState();
 
-	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
+	PushMissionTable();
 	MissionTableIndex = lua_gettop(L);
 	lua_pushstring( L, attribute.c_str() );
 	lua_gettable(L,MissionTableIndex);

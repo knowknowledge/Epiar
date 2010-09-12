@@ -82,6 +82,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetOutfits", &AI_Lua::ShipGetOutfits},
 		{"GetTotalCost", &AI_Lua::ShipGetTotalCost},
 		{"IsDisabled", &AI_Lua::ShipIsDisabled},
+		{"GetMissions", &AI_Lua::ShipGetMissions},
 
 		{NULL, NULL}
 	};
@@ -927,3 +928,46 @@ int AI_Lua::ShipIsDisabled(lua_State* L) {
 	return 1;
 }
 
+int AI_Lua::ShipGetMissions(lua_State* L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if(n!=1){
+		return luaL_error(L, "%d arguments provided, but expected 2 (self)");
+	}
+
+	Lua::stackDump(L);
+
+	// Check that only players accept missions
+	Ship* ship = checkShip(L,1);
+	if( ship->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+		return luaL_error(L, "Only Players may accept Missions");
+	}
+	Player *player = (Player*)ship;
+
+	list<Mission*>* missions = player->GetMissions();
+
+	printf("Ship Get Missions:\n");
+	Lua::stackDump(L);
+
+	lua_createtable(L, missions->size(), 0);
+	int missionTableIndex = lua_gettop(L);
+	list<Mission*>::iterator iter;
+	Lua::stackDump(L);
+
+	int m;
+	for( m=1, iter = missions->begin(); iter != missions->end() ; ++iter, ++m )
+	{
+		// Push each mission table
+		lua_pushinteger(L,m);
+		//lua_pushstring(L,"Foobar");
+		(*iter)->PushMissionTable();
+	
+		Lua::stackDump(L);
+		//printf("missions(@%d)[%d] = %s\n", missionTableIndex, m, (*iter)->GetName().c_str() );
+		lua_settable(L,missionTableIndex);
+		Lua::stackDump(L);
+	}
+	
+	Lua::stackDump(L);
+
+	return 1;
+}

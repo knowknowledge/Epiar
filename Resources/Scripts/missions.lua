@@ -36,7 +36,7 @@ ReturnAmbassador = {
 		return missionTable
 	end,
 	--- Call this when the Mission is accepted.
-	Accept = function()
+	Accept = function( missionTable )
 	end,
 	--- Call this each time that the Mission should be checked.
 	--- Update Returns true on Success, False on Failure.  Normally this does not return anything.
