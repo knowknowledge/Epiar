@@ -45,14 +45,14 @@ bool Mission::ValidateMission( string type, int tableReference){
 	};
 
 	lua_State *L = Lua::CurrentState();
-	lua_settop(L,0);
+	int initialStackTop = lua_gettop(L);
 
 	// Check that this mission Type exists
 	lua_getglobal(L, type.c_str() );
 	if( ! lua_istable(L, lua_gettop(L)) )
 	{
 		LogMsg(ERR, "There is no Mission Type named '%s'!", type.c_str() );
-		lua_settop(L,0);
+		lua_settop(L, initialStackTop);
 		return false;
 	}
 
@@ -60,11 +60,12 @@ bool Mission::ValidateMission( string type, int tableReference){
 	{
 		// Check that this Mission defines each of the required functions
 		lua_pushstring(L, requiredFunctions[i] );
-		lua_gettable(L,1);
+		lua_gettable(L, initialStackTop + 1);
 		if( ! lua_isfunction(L, lua_gettop(L)) )
 		{
 			LogMsg(ERR, "The Mission '%s' doesn't have a %s function!", type.c_str(), requiredFunctions[i] );
-			lua_settop(L,0);
+			Lua::stackDump(L);
+			lua_settop(L, initialStackTop );
 			return false;
 		}
 		lua_pop(L,1);
@@ -75,7 +76,9 @@ bool Mission::ValidateMission( string type, int tableReference){
 	if( ! lua_istable(L, lua_gettop(L)) )
 	{
 		LogMsg(ERR, "There is no Mission Table at reference '%d'!", tableReference );
-		lua_settop(L,0);
+		Lua::stackDump(L);
+		lua_settop(L, initialStackTop );
+		Lua::stackDump(L);
 		return false;
 	}
 
@@ -84,12 +87,12 @@ bool Mission::ValidateMission( string type, int tableReference){
 	{
 		// Check that this Mission defines each of the required functions
 		lua_pushstring(L, requiredInformation[i] );
-		lua_gettable(L,2);
+		lua_gettable(L, initialStackTop + 2);
 		if( ! lua_isstring(L, lua_gettop(L)) )
 		{
 			LogMsg(ERR, "The Mission '%s' doesn't have a %s!", type.c_str(), requiredInformation[i] );
 			Lua::stackDump(L);
-			lua_settop(L,0);
+			lua_settop(L, initialStackTop );
 			return false;
 		} else {
 			LogMsg(INFO, "The Mission %s: %s", requiredInformation[i], luaL_checkstring(L, lua_gettop(L)) );
@@ -97,7 +100,7 @@ bool Mission::ValidateMission( string type, int tableReference){
 		lua_pop(L,1);
 	}
 
-	lua_settop(L,0);
+	lua_settop(L, initialStackTop );
 	return true;
 }
 
@@ -107,7 +110,7 @@ bool Mission::ValidateMission( string type, int tableReference){
 bool Mission::Accept()
 {
 	lua_State *L = Lua::CurrentState();
-	lua_settop(L,0);
+	int initialStackTop = lua_gettop(L);
 
 	// Get the Mission
 	lua_getglobal(L, type.c_str() );
@@ -117,12 +120,13 @@ bool Mission::Accept()
 		return true; // Invalid Mission
 	}
 
-	// Get the Update 
+	// Get the Accept Function
 	lua_pushstring(L, "Accept" );
-	lua_gettable(L,1);
+	lua_gettable(L, initialStackTop + 1);
 	if( ! lua_isfunction(L,lua_gettop(L)) )
 	{
 		LogMsg(ERR, "The Mission Type named '%s' cannot update!", type.c_str() );
+		lua_settop(L, initialStackTop);
 		return true; // Invalid Mission
 	}
 
@@ -134,7 +138,7 @@ bool Mission::Accept()
 	if( lua_pcall(L, 1, 0, 0) != 0)
 	{
 		LogMsg(ERR,"Failed to Update %s: %s\n", type.c_str(), lua_tostring(L, -1));
-		lua_settop(L,0);
+		lua_settop(L, initialStackTop);
 		return true; // Invalid Mission
 	}
 
@@ -147,7 +151,7 @@ bool Mission::Accept()
 bool Mission::Update()
 {
 	lua_State *L = Lua::CurrentState();
-	lua_settop(L,0);
+	const int initialStackTop = lua_gettop(L);
 
 	// Get the Mission
 	lua_getglobal(L, type.c_str() );
@@ -159,7 +163,7 @@ bool Mission::Update()
 
 	// Get the Update 
 	lua_pushstring(L, "Update" );
-	lua_gettable(L,1);
+	lua_gettable(L,initialStackTop + 1);
 	if( ! lua_isfunction(L,lua_gettop(L)) )
 	{
 		LogMsg(ERR, "The Mission Type named '%s' cannot update!", type.c_str() );
@@ -172,7 +176,7 @@ bool Mission::Update()
 	if( lua_pcall(L, 1, LUA_MULTRET, 0) != 0)
 	{
 		LogMsg(ERR,"Failed to Update %s: %s\n", type.c_str(), lua_tostring(L, -1));
-		lua_settop(L,0);
+		lua_settop(L,initialStackTop);
 		return true; // Invalid Mission, Delete it
 	}
 
@@ -196,7 +200,7 @@ bool Mission::Update()
 		if( ! lua_isfunction(L,lua_gettop(L)) )
 		{
 			LogMsg(ERR, "The Mission '%s' does not have a '%s' Function!", type.c_str(), completionFunctions[success] );
-			lua_settop(L,0);
+			lua_settop(L,initialStackTop);
 			return true; // Invalid Mission, Delete it
 		}
 
@@ -207,12 +211,14 @@ bool Mission::Update()
 		if( lua_pcall(L, 1, 0, 0) != 0)
 		{
 			LogMsg(ERR,"Failed to run %s.%s: %s\n", type.c_str(), completionFunctions[success], lua_tostring(L, -1));
-			lua_settop(L,0);
+			lua_settop(L,initialStackTop);
 			return true; // Invalid Mission, Delete it
 		}
 		
+		lua_settop(L,initialStackTop);
 		return true; // Mission Complete
 	}
+	lua_settop(L,initialStackTop);
 	return false;
 }
 
@@ -235,7 +241,7 @@ string Mission::GetStringAttribute( string attribute )
 	} else {
 		// TODO: Error!
 	}
-	lua_pop(L, 3); // Table, attribute, and value
+	lua_pop(L, 2); // Table and value
 
 	return value;
 }

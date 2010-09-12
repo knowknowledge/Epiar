@@ -33,11 +33,12 @@ void AI::Decide() {
 	string newstate;
 	// Decide
 	lua_State *L = Lua::CurrentState();
-	lua_settop(L,0);
+	const int initialStackTop = lua_gettop(L);
 
 	// Get the current state machine
 	lua_getglobal(L, stateMachine.c_str() );
-	if( ! lua_istable(L,lua_gettop(L)) )
+	int machineIndex = lua_gettop(L);
+	if( ! lua_istable(L, machineIndex) )
 	{
 		LogMsg(ERR, "There is no State Machine named '%s'!", stateMachine.c_str() );
 		return; // This ship will just sit idle...
@@ -45,17 +46,17 @@ void AI::Decide() {
 
 	// Get the current state
 	lua_pushstring(L, state.c_str() );
-	lua_gettable(L,1);
+	lua_gettable(L, machineIndex);
 	if( ! lua_isfunction(L,lua_gettop(L)) )
 	{
 		LogMsg(WARN, "The State Machine '%s' has no state '%s'.", stateMachine.c_str(), state.c_str() );
 		lua_getglobal(L, stateMachine.c_str() );
 		lua_pushstring(L, "default" );
-		lua_gettable(L,1);
+		lua_gettable(L,machineIndex);
 		if( !lua_isfunction(L,lua_gettop(L)) )
 		{
 			LogMsg(ERR, "The State Machine '%s' has no default state.", stateMachine.c_str() );
-			lua_settop(L,0);
+			lua_settop(L, initialStackTop);
 			return; // This ship will just sit idle...
 		}
 	}
@@ -73,7 +74,7 @@ void AI::Decide() {
 	if( lua_pcall(L, 6, 1, 0) != 0)
 	{
 		LogMsg(ERR,"Failed to run %s(%s): %s\n", stateMachine.c_str(), state.c_str(), lua_tostring(L, -1));
-		lua_settop(L,0);
+		lua_settop(L, initialStackTop);
 		return;
 	}
 	//printf("Return:"); Lua::stackDump(L); // DEBUG
@@ -84,7 +85,7 @@ void AI::Decide() {
 
 		// Verify that this new state exists
 		lua_pushstring(L, newstate.c_str() );
-		lua_gettable(L,1);
+		lua_gettable(L,machineIndex);
 		if( lua_isfunction(L, lua_gettop(L) ))
 		{
 			state = newstate;
@@ -96,7 +97,7 @@ void AI::Decide() {
 	}
 
 	//printf("Complete:");Lua::stackDump(L); // DEBUG
-	lua_settop(L,0);
+	lua_settop(L,initialStackTop);
 }
 
 /**\brief Updates the AI controlled ship by first calling the Lua function
