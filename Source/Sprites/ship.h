@@ -58,8 +58,8 @@ class Ship : public Sprite {
 		float GetHullIntegrityPct();
 		float GetShieldIntegrityPct();
 		Weapon* GetCurrentWeapon();
-		int GetCurrentAmmo();
-		int GetAmmo(AmmoType type);
+
+		int GetCurrentAmmo();		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
 		Engine* GetEngine( void ) const { return engine; }
@@ -71,13 +71,22 @@ class Ship : public Sprite {
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_SHIP );
 		}
-		
+		//Power Distirubution functions
+		float GetShieldBoost() {return shieldBooster;}
+		float GetEngineBoost() {return engineBooster;}
+		float GetDamageBoost() {return damageBooster;}
+		void SetShieldBoost(float shield) { shieldBooster = shield;}		
+		void SetEngineBoost(float engine) {engineBooster=engine;}
+		void SetDamageBoost(float damage) {damageBooster=damage;}
+	
 	private:
 		Model *model;
 		Engine *engine;
 		Animation *flareAnimation;
 		Outfit shipStats;
-
+		//power distribution variables
+		float damageBooster, engineBooster, shieldBooster;
+	
 		void ComputeShipStats();
 
 		struct {

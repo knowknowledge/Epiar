@@ -17,7 +17,7 @@ class Projectile :
 	public Sprite
 {
 public:
-	Projectile(float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon);
+	Projectile(float damageBooster, float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon);
 	~Projectile(void);
 	void Update( void );
 	void SetOwnerID(int id) { ownerID = id; }
@@ -30,6 +30,7 @@ private:
 	Uint32 start;
 	int ownerID;
 	int targetID;
+	float damageBoost;
 	Weapon *weapon;
 };
 #endif // __h_PROJECTILE__

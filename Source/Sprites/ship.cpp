@@ -16,7 +16,6 @@
 #include "Utilities/xml.h"
 #include "Sprites/effects.h"
 #include "Audio/sound.h"
-
 #include "Engine/hud.h"
 
 #define NON_PLAYER_SOUND_RATIO 0.4f ///< Ratio used to quiet NON-PLAYER Ship Sounds.
@@ -47,6 +46,9 @@ Ship::Ship()
 	flareAnimation = NULL;
 	
 	/* Initalize ship's condition */
+	damageBooster=1.0;
+	engineBooster=1.0;
+	shieldBooster=1.0;
 	status.hullDamage = 0;
 	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
@@ -191,9 +193,9 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
-	float speed = shipStats.GetMaxSpeed();
+	float speed = shipStats.GetMaxSpeed()*engineBooster;
 
-	float acceleration = shipStats.GetForceOutput() / shipStats.GetMass();
+	float acceleration = (shipStats.GetForceOutput() *engineBooster ) / shipStats.GetMass();
 
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
 	                   -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
@@ -216,7 +218,7 @@ void Ship::Accelerate( void ) {
 /**\brief Adds damage to hull.
  */
 void Ship::Damage(short int damage) {
-	if(status.shieldDamage >=  (float)shipStats.GetShieldStrength())
+	if(status.shieldDamage >=   ((float)shipStats.GetShieldStrength()) * shieldBooster)
 		status.hullDamage += damage;
 	else
 		status.shieldDamage+=damage;
@@ -257,7 +259,8 @@ void Ship::Update( void ) {
 		flareAnimation->Reset();
 	}
 	flareAnimation->Update();
-
+	Coordinate momentum	= GetMomentum();
+	momentum.EnforceMagnitude( shipStats.GetMaxSpeed()*engineBooster );
 	// Show the hits taken as part of the radar color
 	if(IsDisabled()) SetRadarColor( Color::Get( 128, 128, 128 ) );
 	else SetRadarColor( Color::Get(int(255 *GetHullIntegrityPct()), 0, 0) );
@@ -356,7 +359,7 @@ FireStatus Ship::Fire( int target ) {
 
 		//Fire the weapon
 		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(GetAngle(), worldPosition, GetMomentum(), currentWeapon);
+		Projectile *projectile = new Projectile(damageBooster, GetAngle(), worldPosition, GetMomentum(), currentWeapon);
 		projectile->SetOwnerID( this->GetID() );
 		projectile->SetTargetID( target );
 		sprites->Add( (Sprite*)projectile );
@@ -541,8 +544,15 @@ float Ship::GetHullIntegrityPct() {
  * \return Shield remaining
  */
 float Ship::GetShieldIntegrityPct() {
-	float remaining =  ( (float)shipStats.GetShieldStrength() - (float)status.shieldDamage ) / (float)shipStats.GetShieldStrength();
-	return(remaining);
+	if (shipStats.GetShieldStrength() *shieldBooster > 0){
+		float remaining =  ( ((float)shipStats.GetShieldStrength() *shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * shieldBooster);
+		return(remaining);
+	}
+	else {
+		return 0;
+	}
+
+
 }
 
 /**\brief Gets the current weapon.
@@ -583,6 +593,7 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	return weaponPack;
 }
 
+
 /**\brief Computes the Ship Statistics based on equiped Outfit.
  */
 void Ship::ComputeShipStats() {
@@ -606,4 +617,8 @@ void Ship::ComputeShipStats() {
 		shipStats += *(*iter);
 	}
 }
+
+
+
+
 

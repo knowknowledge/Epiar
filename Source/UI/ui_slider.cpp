@@ -103,6 +103,29 @@ bool Slider::MouseLDown( int wx, int wy ){
 	return true;
 }
 
+/**\brief Never set the this->val directly, use this function.
+ * \details
+ * Bounds checking are performed.
+ */
+void Slider::SetVal( float value ){
+	float checkedval = value;
+	
+	// In case the user switched max and min val,
+	// we can still go ahead, everything will just be flipped.
+	if ( this->maxval < this->minval){
+		if ( value < this->maxval )
+			checkedval = maxval;
+		else if ( value > this->minval )
+			checkedval = minval;
+	}else{
+		if ( value > this->maxval)
+			checkedval = maxval;
+		else if ( value < this->minval)
+			checkedval = minval;
+	}
+	this->val = checkedval;
+}
+
 // Private functions
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
@@ -126,26 +149,4 @@ bool Slider::MouseLDown( int wx, int wy ){
 			* ( maxval - minval) + minval;
 	return value;
  }
-
-/**\brief Never set the this->val directly, use this function.
- * \details
- * Bounds checking are performed.
- */
-void Slider::SetVal( float value ){
-	float checkedval = value;
-
-	// In case the user switched max and min val,
-	// we can still go ahead, everything will just be flipped.
-	if ( this->maxval < this->minval){
-		if ( value < this->maxval )
-			checkedval = maxval;
-		else if ( value > this->minval )
-			checkedval = minval;
-	}else{
-		if ( value > this->maxval)
-			checkedval = maxval;
-		else if ( value < this->minval)
-			checkedval = minval;
-	}
-	this->val = checkedval;
-}
+	

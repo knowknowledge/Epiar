@@ -47,7 +47,15 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Explode", &AI_Lua::ShipExplode},
 		{"Remove", &AI_Lua::ShipRemove},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
-
+		
+		//Power Distribution
+		{"GetShieldBooster", &AI_Lua::ShipGetShieldBooster},
+		{"GetEngineBooster", &AI_Lua::ShipGetEngineBooster},
+		{"GetDamageBooster", &AI_Lua::ShipGetDamageBooster},		
+		{"SetShieldBooster", &AI_Lua::ShipSetShieldBooster},
+		{"SetEngineBooster", &AI_Lua::ShipSetEngineBooster},
+		{"SetDamageBooster", &AI_Lua::ShipSetDamageBooster},
+		
 		// Outfit Changes
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
@@ -325,6 +333,110 @@ int AI_Lua::ShipChangeWeapon(lua_State* L){
 		(ai)->ChangeWeapon();
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to retrieve shield boost data
+ *\sa Ship::GetShieldBoost
+ */
+int AI_Lua::ShipGetShieldBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==1){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		double s=(double) (ai)->GetShieldBoost();
+		printf( "GetShieldBooster= %f \n", (double) (ai)->GetShieldBoost());
+		lua_pushnumber (L, s);
+
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 argument (ship)",n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to retrieve damage boost data
+ *\sa Ship::GetDamageBoost
+ */
+int AI_Lua::ShipGetDamageBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==1){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		lua_pushnumber (L, (double) (ai)->GetDamageBoost());
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 argument (ship)",n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to retrieve engine boost data
+ *\sa Ship::GetEngineBoost
+ */
+int AI_Lua::ShipGetEngineBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==1){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		lua_pushnumber (L, (double) (ai)->GetEngineBoost());
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 argument (ship)",n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to set shield boost data
+ *\sa Ship::SetShieldBoost
+ */
+int AI_Lua::ShipSetShieldBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==2){
+		AI* ai = checkShip( L, 1 );
+		if(ai==NULL) return 0;
+		float shield=(float) luaL_checknumber( L, 2 );
+		(ai)->SetShieldBoost(shield);
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 2 arguments (ship, shield boost)",n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to set damage boost data
+ *\sa Ship::SetDamageBoost
+ */
+int AI_Lua::ShipSetDamageBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==2){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		float damage=(float) luaL_checknumber( L, 2 ); 
+		(ai)->SetDamageBoost(damage);
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 2 arguments (ship, damage boost)",n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to retrieve engine boost data
+ *\sa Ship::SetEngineBoost
+ */
+int AI_Lua::ShipSetEngineBooster(lua_State* L){
+	int n = lua_gettop(L); //Number of arguments
+	if (n==2){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		
+		float engine=(float) luaL_checknumber( L, 2 ); 
+		(ai)->SetEngineBoost(engine);
+
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 2 arguments (ship ,engine boost)",n);
 	}
 	return 0;
 }
