@@ -52,35 +52,11 @@
 /**\class Video
  * \brief Video handling. */
 
-Video *Video::pInstance = 0; // initialize pointer
 int Video::w = 0;
 int Video::h = 0;
 int Video::w2 = 0;
 int Video::h2 = 0;
 stack<Rect> Video::cropRects;
-
-/**\brief Creates the singleton or retrieves the current instance.
- */
-Video *Video::Instance( void ) {
-	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Video; // create the sold instance
-	}
-
-	return( pInstance );
-}
-
-/**\brief Empty constructor.
- */
-Video::Video( void ) {
-	
-}
-
-/**\fn Video::Video( const Video& )
- *  \brief Empty copy constructor.
- * \fn Video::operator= (const Video&)
- *  \brief Empty assignment operator.
- */
-
 
 /**\brief Initializes the Video display.
  */
@@ -131,12 +107,6 @@ bool Video::Shutdown( void ) {
 	EnableMouse();
 
 	return( true );
-}
-
-/**\brief Releases the pointer.
- */
-Video::~Video( void ){
-	pInstance = NULL;
 }
 
 /**\brief Sets the window properties.

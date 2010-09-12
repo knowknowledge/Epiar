@@ -63,9 +63,6 @@ class Rect {
 
 class Video {
  	public:
-		~Video();
-  		static Video *Instance();
-
 		static bool Initialize( void );
 		static bool Shutdown( void );
 		
@@ -97,13 +94,8 @@ class Video {
 		static void UnsetCropRect( void );
 		
 		static void Blur( void );
- 	protected:
- 		Video();
-  		Video( const Video & );
-  		Video& operator= (const Video&);
 
  	private:
-  		static Video *pInstance;
   		static int w, h; // width/height of screen
 		static int w2, h2; // width/height divided by 2
 		static stack<Rect> cropRects;

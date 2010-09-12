@@ -53,10 +53,8 @@ void Picture::Draw( int relx, int rely ){
 	x = this->x + relx;
 	y = this->y + rely;
 	
-	// DEBUG lines to see the difference between the Picture and the Image.
-	Video* vid = Video::Instance();
 	// The Picture size
-	vid->DrawRect( x, y,
+	Video::DrawRect( x, y,
 	               w, h,
 	               color.r,color.g,color.b,alpha );
 	if(bitmap!=NULL)
