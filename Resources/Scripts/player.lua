@@ -1,6 +1,7 @@
 -- Use this script for code directly to the Players
 
-
+--- Keyboard Commands for controlling the Player
+-- General commands belong in the defaultCommands table.
 playerCommands = {
 	-- Each command should be a table
 	-- { KEY, TITLE, SCRIPT }
@@ -20,7 +21,6 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
-
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
 	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
 	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
@@ -28,16 +28,12 @@ playerCommands = {
 	{'c', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
 	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
 	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED}
-
-	
 }
 
 function playerStart()
 	PLAYER = Epiar.player()
 	createHUD()
 	registerCommands(playerCommands)
-	-- TODO: This is just test code
-	PLAYER:AcceptMission( "ReturnAmbassador", ReturnAmbassador.Create() )
 end
 
 --- Target ship
@@ -526,7 +522,6 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			print(mission)
 			missionTab:add( UI.newLabel( 10, y, "["..key.."] "..mission.Name ) )
 			y = y + 20
 		end

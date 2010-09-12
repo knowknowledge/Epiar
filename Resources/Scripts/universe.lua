@@ -60,6 +60,7 @@ function toggleQuadrantMap()
 		HUD.setMapDisplay("QUADRANT")
 	end
 end
+
 function toggleUniverseMap()
 	local currentMap = HUD.getMapDisplay()
 	if( currentMap=="UNIVERSE") then
@@ -97,15 +98,6 @@ function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	x_diff = (pt1_x - pt2_x)
 	y_diff = pt1_y - pt2_y
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
-end
-
---- Generate a new plan from the list above
-function newPlan()
-	theNewPlan = {}
-	planNum = math.random(#Plans)
-	theNewPlan.time = math.random(1000)
-	theNewPlan.plan = Plans[ planNum ]
-	return theNewPlan
 end
 
 --- Create a FailureWindow

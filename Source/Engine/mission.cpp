@@ -29,23 +29,26 @@ Mission::~Mission()
 
 bool Mission::ValidateMission( string type, int tableReference){
 	int i;
-	const int NUM_FUNCTIONS = 5;
-	const char *requiredFunctions[NUM_FUNCTIONS] = {
+	
+	// The Functions that every mission type must have
+	const char *requiredFunctions[] = {
 		"Create",
 		"Accept",
 		"Update",
 		"Success",
 		"Failure",
 	};
+	const int NUM_FUNCTIONS = sizeof(requiredFunctions) / sizeof(requiredFunctions[0]);
 
-	const int NUM_INFORMATION = 2;
-	const char *requiredInformation[NUM_INFORMATION] = {
+	// The Attributes that every mission Table must have
+	const char *requiredInformation[] = {
 		"Name",
 		"Description",
 	};
+	const int NUM_INFORMATION = sizeof(requiredInformation) / sizeof(requiredInformation[0]);
 
 	lua_State *L = Lua::CurrentState();
-	int initialStackTop = lua_gettop(L);
+	const int initialStackTop = lua_gettop(L);
 
 	// Check that this mission Type exists
 	lua_getglobal(L, type.c_str() );
@@ -56,9 +59,9 @@ bool Mission::ValidateMission( string type, int tableReference){
 		return false;
 	}
 
+	// Check that this Mission defines each of the required functions
 	for( i=0; i<NUM_FUNCTIONS; ++i )
 	{
-		// Check that this Mission defines each of the required functions
 		lua_pushstring(L, requiredFunctions[i] );
 		lua_gettable(L, initialStackTop + 1);
 		if( ! lua_isfunction(L, lua_gettop(L)) )

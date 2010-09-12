@@ -1057,29 +1057,21 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 
 	list<Mission*>* missions = player->GetMissions();
 
-	printf("Ship Get Missions:\n");
-	Lua::stackDump(L);
-
+	// Create the Table
 	lua_createtable(L, missions->size(), 0);
-	int missionTableIndex = lua_gettop(L);
+	const int missionTableIndex = lua_gettop(L);
 	list<Mission*>::iterator iter;
-	Lua::stackDump(L);
 
+	// Fill the above table with all the Players mission tables
 	int m;
 	for( m=1, iter = missions->begin(); iter != missions->end() ; ++iter, ++m )
 	{
 		// Push each mission table
 		lua_pushinteger(L,m);
-		//lua_pushstring(L,"Foobar");
 		(*iter)->PushMissionTable();
 	
-		Lua::stackDump(L);
-		//printf("missions(@%d)[%d] = %s\n", missionTableIndex, m, (*iter)->GetName().c_str() );
 		lua_settable(L,missionTableIndex);
-		Lua::stackDump(L);
 	}
-	
-	Lua::stackDump(L);
 
 	return 1;
 }
