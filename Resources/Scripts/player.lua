@@ -20,12 +20,13 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
-	{'h', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
-	{'j', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
-	{'k', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
-	{'n', "Decrease Shields", "changePower(-1,0.5,0.5)", KEYTYPED},
-	{'m', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
-	{',', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
+
+	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
+	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
+	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
+	{'x', "Decrease Shields", "changePower(-1,0.5,0.5)", KEYTYPED},
+	{'c', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
+	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
 	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED}
 
 	
@@ -92,7 +93,7 @@ function powerManagement()
 	end
 	local width= 200
 	local height= 120
-	powerManagementWindow = UI.newWindow(30 , 120, width, height, "Power Management")
+	powerManagementWindow = UI.newWindow(WIDTH/2 - width/2 ,HEIGHT - height, width, height, "Power Management")
 	
 	powerSlider= UI.newSlider(20, 40, 80, 16, "Attack Power", PLAYER:GetDamageBooster()/3.0, "powerShift")
 	powerLabel=UI.newLabel(105, 35,"Attack Power",0)
