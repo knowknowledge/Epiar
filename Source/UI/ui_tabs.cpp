@@ -14,6 +14,7 @@
 
 #define TAB_HEADER 20
 #define TAB_PAD 8
+#define TAB_TEXT_ALIGNMENT 2
 
 /**\class Tab
  * \brief A single tab.
@@ -114,7 +115,7 @@ void Tab::Draw( int relx, int rely ){
 	if ( this->hscrollbar || this->vscrollbar )
 		Video::UnsetCropRect();
 	
-	//Widget::Draw(relx,rely);
+	Widget::Draw(relx,rely);
 }
 
 
@@ -265,15 +266,13 @@ void Tabs::Draw( int relx, int rely ){
 	int xo = 0;
 	for( i = UIContainer::children.begin(); i != UIContainer::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
-		Video::DrawRect( xo+x,y,
-			currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
+		
+		Video::DrawRect( xo + x, y, currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
 		if ( currtab == activetab )
-			Video::DrawRect( xo+x+1,y+1,
-				currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
+			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
 
-		SansSerif->Render(xo+x+TAB_PAD+currtab->capw/2,
-				y+TAB_HEADER/2,
-				currtab->name,Font::CENTER,Font::MIDDLE);
+		SansSerif->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
+
 		xo += currtab->capw+TAB_PAD*2+1;
 	}
 

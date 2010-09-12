@@ -2,7 +2,6 @@
  * \author		Chris Thielen (chris@epiar.net)
  * \author		and others.
  * \date		Created:	Sunday, June 4, 2006
- * \date		Modified:	Thursday, November 19, 2009
  * \brief		Main entry point of Epiar codebase
  * \details
  *	This file performs two functions:
@@ -178,7 +177,7 @@ int main( int argc, char **argv ) {
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
 	LogMsg(INFO,"Using Font Engine: FreeType");
-	//******** FreeType Rendering ********
+
 	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
 	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
@@ -186,7 +185,7 @@ int main( int argc, char **argv ) {
 
 	Timer::Initialize();
 	Video::Initialize();
-	Video::SetWindow( OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"), OPTION( int, "options/video/bpp") );
+
 	string splashScreen[] = {
 		"Resources/Art/EpiarFleetbig.png",
 		"Resources/Art/gatescene.png",

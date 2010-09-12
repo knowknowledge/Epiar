@@ -550,8 +550,9 @@ function landingDialog(id)
 	local height = 500
 	local width = 600
 	local boxsize = 80
-	landingWin = UI.newWindow( 200,100,width,height, string.format("%s Landing Screen",planet:GetName()))
-	storeframe = UI.newTabCont( 10, 30, width-20, height-100,"Store")
+
+	landingWin = UI.newWindow( 200,100,width,height, string.format("%s",planet:GetName()))
+	storeframe = UI.newTabCont( 10, 30, width - 20, height - 80,"Store")
 	landingWin:add(storeframe)
 
 	-- Shipyard
@@ -686,7 +687,7 @@ function landingDialog(id)
 	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
-	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave %s ",planet:GetName()), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
+	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
 function intro()

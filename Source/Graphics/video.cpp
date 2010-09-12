@@ -1,7 +1,6 @@
 /**\file			video.cpp
  * \author			Chris Thielen (chris@epiar.net)
  * \date			Created: Unknown (2006?)
- * \date			Modified: Saturday, January 5, 2008
  * \brief
  * \details
  */
@@ -99,6 +98,28 @@ bool Video::Initialize( void ) {
 	atexit( SDL_Quit );
 	
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
+	int w = OPTION( int, "options/video/w" );
+	int h = OPTION( int, "options/video/h" );
+	bool fullscreen = (bool)OPTION( int, "options/video/fullscreen" );
+
+	// If w/h not set, then 1024x768 is windowed default, native screen resolution is fullscreen default
+	if( !w && !h ) {
+		if( OPTION( int, "options/video/fullscreen" ) ) {
+			// fullscreen set, use native resolution
+			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+
+			w = videoInfo->current_w;
+			h = videoInfo->current_h;
+		} else {
+			// not fullscreen
+			w = 1024;
+			h = 768;
+		}
+	}
+	
+
+	Video::SetWindow( w, h, OPTION( int, "options/video/bpp"), fullscreen );
 	
 	return( true );
 }
@@ -120,7 +141,7 @@ Video::~Video( void ){
 
 /**\brief Sets the window properties.
  */
-bool Video::SetWindow( int w, int h, int bpp ) {
+bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()
 	SDL_Surface *screen = NULL; // pointer to main video surface
@@ -138,8 +159,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	videoFlags |= SDL_HWPALETTE;
 
 	// enable fullscreen if set (see main.cpp, parseOptions)
-	if( OPTION( int, "options/video/fullscreen" ) )
-		videoFlags |= SDL_FULLSCREEN;
+	if( fullscreen ) videoFlags |= SDL_FULLSCREEN;
 
 	// using SDL given information, use hardware surfaces if supported by
 	// the video card
@@ -161,6 +181,12 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
+	//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
+	//SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
+
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // vsync
 
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
@@ -177,7 +203,7 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	}
 
 	// set window title
-	SDL_WM_SetCaption("Epiar","Epiar");
+	SDL_WM_SetCaption("Epiar", "Epiar");
 
 	// set up some needed opengl facilities
 	glEnable( GL_TEXTURE_2D );
@@ -189,6 +215,10 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 	glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// for motion blur
+	glClearAccum(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_ACCUM_BUFFER_BIT);
 
 	// set up a pseudo-2D viewpoint
 	glViewport( 0, 0, w, h );
@@ -213,15 +243,25 @@ bool Video::SetWindow( int w, int h, int bpp ) {
 /**\brief Video updates.
  */
 void Video::Update( void ) {
+	//Blur();
+
 	glFlush();
 	SDL_GL_SwapBuffers();
 	glFinish();
 }
 
+void Video::Blur( void ) {
+	float q = .6f;
+
+	glAccum(GL_MULT, q);
+	glAccum(GL_ACCUM, 1.0f - q);
+	glAccum(GL_RETURN, 1.0f);
+}
+
 /**\brief Clears screen.
  */
 void Video::Erase( void ) {
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT );
 	glLoadIdentity();
 }
 

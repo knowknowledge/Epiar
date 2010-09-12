@@ -10,8 +10,8 @@
 		<sprites>0</sprites>
 	</log>
 	<video>
-		<w>1024</w>
-		<h>768</h>
+		<!--<w>1024</w>
+		<h>768</h>-->
 		<bpp>32</bpp>
 		<fullscreen>0</fullscreen>
 		<fps>60</fps>
@@ -19,14 +19,14 @@
 	<sound>
 		<musicvolume>0.5</musicvolume>
 		<soundvolume>0.5</soundvolume>
-		<background>1</background>
-		<weapons>1</weapons>
-		<engines>1</engines>
-		<explosions>1</explosions>
-		<buttons>1</buttons>
+		<background>0</background>
+		<weapons>0</weapons>
+		<engines>0</engines>
+		<explosions>0</explosions>
+		<buttons>0</buttons>
 	</sound>
 	<simulation>
-		<intro>1</intro>
+		<intro>0</intro>
 		<starfield-density>750</starfield-density>
 		<automatic-load>0</automatic-load>
 		<random-universe>0</random-universe>

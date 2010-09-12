@@ -91,6 +91,8 @@ bool Simulation::Run() {
 	lua_State *L;
 
 	Timer::Update(); // Start the Timer
+	
+	Hud::Init();
 
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
@@ -135,9 +137,7 @@ bool Simulation::Run() {
 	}
 
 	// Message appear in reverse order, so this is upside down
-	Hud::Alert("-----------------------------------");
-	Hud::Alert("Please Report all bugs to epiar.net");
-	Hud::Alert("Epiar is currently under development.");
+	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
 
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
@@ -263,6 +263,8 @@ bool Simulation::Run() {
 		}
 	}
 	optionsfile->Save();
+	
+	Hud::Close();
 
 	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 	return true;
