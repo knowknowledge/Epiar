@@ -313,15 +313,6 @@ function radarZoomKeys()
 end
 radarZoomKeys()
 
---- Convert coordinate to quadrant
-function coordinateToQuadrant(x,y)
-	qsize = 4096
-	function c2q(z)
-		return math.floor( (z+qsize)/(2*qsize))
-	end
-	return c2q(x),c2q(y)
-end
-
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars

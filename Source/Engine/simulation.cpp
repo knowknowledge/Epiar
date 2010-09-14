@@ -112,7 +112,8 @@ bool Simulation::Run() {
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
 
-	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
+	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
+		   && Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")
 	       && Lua::Load("Resources/Scripts/missions.lua")
@@ -295,7 +296,8 @@ bool Simulation::Edit() {
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
 
-	luaLoad = Lua::Load("Resources/Scripts/universe.lua")
+	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
+		   && Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/editor.lua");
 
