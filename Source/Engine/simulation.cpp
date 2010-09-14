@@ -201,7 +201,11 @@ bool Simulation::Run() {
 		Video::Update();
 
 		// Don't kill the CPU (play nice)
-		Timer::Delay();
+		if( paused ) {
+			Timer::Delay(100);
+		} else {
+			Timer::Delay(10);
+		}
 
 		// Counting Frames
 		fpsCount++;
@@ -334,7 +338,7 @@ bool Simulation::Edit() {
 		Video::Update();
 
 		// Don't kill the CPU (play nice)
-		Timer::Delay();
+		Timer::Delay( 50 );
 	}
 
 	return true;

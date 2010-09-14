@@ -17,7 +17,7 @@ class Timer {
 	public:
 		static void Initialize( void );
 		static int Update( void );
-		static void Delay( void );
+		static void Delay( int waitMS );
 		static Uint32 GetTicks( void );
 		
 		static float GetDelta( void );
