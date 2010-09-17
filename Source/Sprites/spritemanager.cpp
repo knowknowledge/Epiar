@@ -37,6 +37,38 @@ SpriteManager::SpriteManager() :
 	}
 }
 
+//---------------experimental code from Dido------
+/**\brief Assignment operator for class SpriteManager.
+ * \return Pointer to SpriteManager
+ */
+SpriteManager& SpriteManager::operator =( SpriteManager& object ){
+	if ( this == &object ) return * this; //block self assignment
+	
+	trees = object.trees;
+	spritelist = object.spritelist;
+	spritelookup = object.spritelookup;
+	
+	spritesToDelete = object.spritesToDelete;
+	
+	tickCount = object.tickCount;
+//	semiRegularPeriod = object.semiRegularPeriod;
+//	fullUpdatePeriod = object.fullUpdatePeriod;
+	
+//	numRegularBands = object.numRegularBands;
+//	numSemiRegularBands = object.numSemiRegularBands;
+	ticksToBandNum = object.ticksToBandNum;
+
+	northEdge = object.northEdge;
+	southEdge = object.southEdge;
+	eastEdge = object.eastEdge;
+	westEdge = object.westEdge;
+
+	return * this;
+}
+
+//---------------experimental code from Dido------END----
+
+
 SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
 
 /**\brief Retrieves or creates new SpriteManager instance.

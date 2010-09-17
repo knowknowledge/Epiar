@@ -168,7 +168,7 @@ bool Simulation::Run() {
 	int lowFpsFrameCount = 0;
 	while( !quit ) {
 		quit = HandleInput();
-
+//_ASSERTE(_CrtCheckMemory());
 		//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
 		//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
@@ -423,7 +423,7 @@ bool Simulation::Parse( void ) {
  */
 bool Simulation::HandleInput() {
 	list<InputEvent> events;
-	bool quitSignal;
+	bool quitSignal = false;
 
 	// Collect user input events
 	events = inputs.Update( quitSignal );
