@@ -229,3 +229,5 @@ Bully = {
 	end,
 }
 
+
+Pirate = Hunter

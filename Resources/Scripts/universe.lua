@@ -75,7 +75,7 @@ end
 function createShip(X,Y,model,engine)
 	plans = {"Hunter", "Trader", "Patrol", "Bully"}
 	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
-	cur_ship:SetRadarColor(0,255,0)
+	cur_ship:SetRadarColor(255,0,0)
 	return cur_ship
 end
 
@@ -623,14 +623,16 @@ function landingDialog(id)
 
 	-- Employment
 	missions = UI.newTab("Employment")
+	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	for i = 1,4 do
-		availableMissions[i] = ReturnAmbassador.Create()
+		local missionType = choose(availableMissionsTypes)
+		availableMissions[i] = _G[missionType].Create()
 		missions:add(
 			UI.newLabel( 10, yoff, availableMissions[i].Name ),
 			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
-			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission('ReturnAmbassador', availableMissions[%d])", i) )
+			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
 			)
 		yoff = yoff + 80
 	end
