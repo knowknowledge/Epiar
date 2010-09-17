@@ -53,3 +53,28 @@ function QuadrantToCoordinate(x,y)
 	qwidth = 4096*2
 	return x*qwidth, y*qwidth
 end
+
+function serialize (o)
+	ret = ""
+	if type(o) == "number" then
+		
+		ret = ret .. o
+	elseif type(o) == "string" then
+		ret = ret .. string.format("%q", o)
+	elseif type(o) == "table" then
+		ret = ret .. "{\n"
+		for k,v in pairs(o) do
+			ret = ret
+			   .. "  ["
+			   .. serialize(k)
+			   .. "] = "
+			   .. serialize(v)
+			   .. ",\n"
+		end
+		ret = ret .. "}\n"
+	else
+		error("cannot serialize a " .. type(o))
+	end
+	return ret
+end
+

@@ -20,6 +20,7 @@ class Mission{
 		static bool ValidateMission(  string type, int tableReference );
 
 		bool Accept();
+		bool Reject();
 		bool Update();
 
 		string GetName() { return GetStringAttribute("Name"); }
@@ -27,14 +28,14 @@ class Mission{
 
 		void PushMissionTable();
 
-		// TODO: Write these functions!
-		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
-		xmlNodePtr ToXMLNode(string componentName);
+		static Mission* FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		xmlNodePtr ToXMLNode();
 		
 	private:
 		string type; ///< The Mission Type
 		int tableReference; ///< A Lua table to hold
 
+		bool RunFunction(string functionName, bool clearStack);
 		string GetStringAttribute(string attribute);
 };
 

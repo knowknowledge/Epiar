@@ -514,6 +514,7 @@ function playerInformation()
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
 			missionTab:add( UI.newLabel( 10, y, "["..key.."] "..mission.Name ) )
+			missionTab:add( UI.newButton(width-55, y+3, 10, 20, "x", string.format("PLAYER:RejectMission('%s')", mission.Name) ) )
 			y = y + 20
 		end
 	else

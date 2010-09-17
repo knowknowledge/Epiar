@@ -36,6 +36,22 @@ void Player::AcceptMission( Mission *mission ) {
 	LogMsg(INFO, "Player has accepted the Mission to %s", mission->GetName().c_str() );
 }
 
+void Player::RejectMission( string missionName ) {
+	list<Mission*>::iterator iter;
+	for( iter=missions.begin(); iter!=missions.end(); ++iter )
+	{
+		if( (*iter)->GetName() == missionName ) {
+			(*iter)->Reject();
+			delete (*iter);
+			missions.erase( iter );
+			LogMsg(INFO, "Player has abandoned the Mission to %s.", missionName.c_str() );
+			return;
+		}
+	}
+
+	LogMsg(ERR, "Failed to find the Mission named %s.", missionName.c_str() );
+}
+
 /**\brief set name of last planet visited
  */
 void Player::setLastPlanet( string planetName){
@@ -213,6 +229,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
 		xmlAddChild(section, ammo);
 	}
+
+	// Outfit
 	list<Outfit*> *outfits = this->GetOutfits();
 	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){
 		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );

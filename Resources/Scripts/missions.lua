@@ -37,6 +37,12 @@ ReturnAmbassador = {
 	end,
 	--- Call this when the Mission is accepted.
 	Accept = function( missionTable )
+		local p = Planet.Get( missionTable.planet )
+		local qx, qy = coordinateToQuadrant( p:GetPosition() )
+		HUD.newAlert( string.format("Please take me to %s in the Quadrant (%d,%d)", missionTable.planet, qx, qy ) )
+	end,
+	Reject = function( missionTable )
+		HUD.newAlert( string.format("Thanks for the help, just drop me off at your next landing" ) )
 	end,
 	--- Call this each time that the Mission should be checked.
 	--- Update Returns true on Success, False on Failure.  Normally this does not return anything.

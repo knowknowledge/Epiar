@@ -66,6 +66,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"StoreCommodities", &AI_Lua::ShipStoreCommodities},
 		{"DiscardCommodities", &AI_Lua::ShipDiscardCommodities},
 		{"AcceptMission", &AI_Lua::ShipAcceptMission},
+		{"RejectMission", &AI_Lua::ShipRejectMission},
 
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
@@ -608,6 +609,25 @@ int AI_Lua::ShipAcceptMission(lua_State *L){
 	} else {
 		return luaL_error(L, "The Mission Type '%s' or the Mission Table is invalid.", missionType.c_str() );
 	}
+	return 0;
+}
+
+int AI_Lua::ShipRejectMission(lua_State *L){
+	int n=lua_gettop(L);
+	if(n!=2){
+		return luaL_error(L, "%d arguments provided, but expected 2 (self, MissionName)");
+	}
+
+	// Check that only players accept missions
+	Ship* ship = checkShip(L,1);
+	if( ship->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+		return luaL_error(L, "Only Players may accept Missions");
+	}
+	Player *player = (Player*)ship;
+	
+	// Get and Validate the Mission Information
+	string missionName = (string) luaL_checkstring(L,2);
+	player->RejectMission( missionName );
 	return 0;
 }
 

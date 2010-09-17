@@ -42,7 +42,8 @@ class AI_Lua{
 		static int ShipStoreCommodities(lua_State* L);
 		static int ShipDiscardCommodities(lua_State* L);
 		static int ShipAcceptMission(lua_State* L);
-		
+		static int ShipRejectMission(lua_State* L);
+
 		//Power Distribution
 		static int ShipGetShieldBooster(lua_State* L);
 		static int ShipGetEngineBooster(lua_State* L);
@@ -50,7 +51,7 @@ class AI_Lua{
 		static int ShipSetShieldBooster(lua_State* L);
 		static int ShipSetEngineBooster(lua_State* L);
 		static int ShipSetDamageBooster(lua_State* L);
-	
+
 		// Current Ship State
 		static int ShipGetType(lua_State* L);
 		static int ShipGetID(lua_State* L);
