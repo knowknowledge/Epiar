@@ -323,7 +323,7 @@ function createSystems()
 					px,py,
 					stationGraphic,
 					s.alliance,
-					1,0,0,math.random(100)*100,
+					1,0,0,(30+math.random(100))*100,
 					technologies[ math.random(#technologies) ]
 					)
 			end
@@ -618,7 +618,7 @@ function landingDialog(id)
 		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0)
 		trade:add( tradeCounts[commodity] )
 		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(350,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
 	end
 
 	-- Employment

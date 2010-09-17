@@ -203,7 +203,7 @@ bool Simulation::Run() {
 
 		// Don't kill the CPU (play nice)
 		if( paused ) {
-			Timer::Delay(100);
+			Timer::Delay(50);
 		} else {
 			Timer::Delay(10);
 		}
