@@ -32,8 +32,8 @@ class Animation {
 		Animation( string filename );
 		bool Update( void );
 		void Draw( int x, int y, float ang );
-		void SetLooping( bool looping ) { this->looping = looping; };
-		bool GetLooping( void ) { return looping; };
+		void SetLoopPercent( float loopPercent );
+		bool GetLoopPercent( void ) { return loopPercent; };
 		void Reset( void );
 		int GetHalfWidth( void ) { return ani->w / 2; };
 		int GetHalfHeight( void ) { return ani->h / 2; };
@@ -41,7 +41,7 @@ class Animation {
 	private:
 		Ani *ani;
 		Uint32 startTime;
-		bool looping;
+		float loopPercent;
 		int fnum;
 };
 

@@ -19,10 +19,10 @@
 
 /**\brief Creates a new Effect at specified coordinate with Animation file
  */
-Effect::Effect(Coordinate pos, string filename, bool looping) {
+Effect::Effect(Coordinate pos, string filename, float loopPercent) {
 	SetWorldPosition(pos);
 	visual = new Animation(filename);
-	visual->SetLooping(looping);
+	visual->SetLoopPercent( loopPercent );
 }
 
 /**\brief Destroy an Effect

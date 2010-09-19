@@ -145,7 +145,7 @@ bool Ani::Load( string& filename ) {
 Animation::Animation() {
 	fnum=0;
 	startTime = 0;
-	looping = false;
+	loopPercent = 0.0f;
 }
 
 /**\brief Constructor (based on file).
@@ -155,7 +155,7 @@ Animation::Animation() {
 Animation::Animation( string filename ) {
 	fnum=0;
 	startTime = 0;
-	looping = false;
+	loopPercent = 0.0f;
 	ani = Ani::Get( filename );
 }
 
@@ -172,11 +172,9 @@ bool Animation::Update() {
 		fnum = (SDL_GetTicks() - startTime) / ani->delay;
 
 		if( fnum > ani->numFrames - 1 ) {
-			if( looping ) {
-				fnum= 0;
-				startTime = SDL_GetTicks();
-			} else {
-				fnum = ani->numFrames - 1;
+			fnum = TO_INT(ani->numFrames * (1.0f-loopPercent)); // Step back a few frames.
+			startTime = SDL_GetTicks() - ani->delay*fnum; // Pretend that we started fnum frames ago
+			if( loopPercent <= 0.0f ) {
 				finished = true;
 			}
 		}
@@ -203,11 +201,28 @@ void Animation::Reset( void ) {
 	startTime = 0;
 }
 
-/**\fn Animation::SetLooping( bool looping )
- *  \brief Set to true to loop the animation
- * \fn Animation::GetLooping( void )
+/**\fn Animation::SetLoopPercent( float newLoopPercent )
+ *  \brief Set the amount that the animation should loop.
+ *  \details 0.0 means that this does not loop at all.
+ *           0.5 means that this loops back to the halfway point.
+ *           1.0 means that this loops back to the beginning.
+ *  \param[in] newLoopPercent must be between +0.0f and +1.0f.
+ */
+void Animation::SetLoopPercent( float newLoopPercent ) {
+	if( newLoopPercent < 0.0f ) {
+		loopPercent = 0.0f;
+	} else if( newLoopPercent > 1.0f ) {
+		loopPercent = 1.0f;
+	} else {
+		loopPercent = newLoopPercent;
+	}
+}
+
+/* \fn Animation::GetLooping( void )
  *  \brief Returns the status of the looping.
- * \fn Animation::GetHalfWidth( void )]
+ */
+
+/**\fn Animation::GetHalfWidth( void )]
  *  \brief Returns half the width of the animation
  * \fn Animation::GetHalfHeight( void )
  *  \brief Returns half the height of the animation

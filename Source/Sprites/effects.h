@@ -17,7 +17,7 @@
 
 class Effect : public Sprite {
 	public:
-		Effect(Coordinate pos, string filename, bool looping);
+		Effect(Coordinate pos, string filename, float loopPercent);
 		~Effect();
 		void Update(void);
 		void Draw(void);

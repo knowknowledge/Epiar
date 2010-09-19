@@ -111,6 +111,7 @@ bool Ship::SetEngine( Engine *engine ) {
 			delete flareAnimation;
 		flareAnimation = new Animation( engine->GetFlareAnimation() );
 		flareAnimation->Reset();
+		flareAnimation->SetLoopPercent(0.25f);
 
 		ComputeShipStats();
 		
