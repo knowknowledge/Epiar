@@ -160,9 +160,12 @@ void StatusBar::Update() {
 	// Get the new StatusBar Status
 	if (returnvals == 0) {
 		SetName( "" );
+		SetRatio( 0.0f );
 	} else if (lua_isnumber(L, retpos) && ( lua_tonumber(L,retpos)>=0.0 && lua_tonumber(L,retpos)<=1.0) )  {
+		SetName( "" );
 		SetRatio( TO_FLOAT(lua_tonumber(L, retpos)) );
 	} else if (lua_isstring(L, retpos)) {
+		SetRatio( 0.0f );
 		SetName( string(lua_tostring(L, retpos)) );
 	} else {
 		LogMsg(ERR,"Error running '%s': %s", lua_updater.c_str(), lua_tostring(L, retpos));

@@ -222,7 +222,7 @@ void Ship::Damage(short int damage) {
 	if(status.shieldDamage >=   ((float)shipStats.GetShieldStrength()) * shieldBooster)
 		status.hullDamage += damage;
 	else
-		status.shieldDamage+=damage;
+		status.shieldDamage += damage;
 
 	if( GetHullIntegrityPct() < .15 ) {
 		status.isDisabled = true;
@@ -538,22 +538,15 @@ float Ship::GetDirectionTowards(float angle){
  */
 float Ship::GetHullIntegrityPct() {
 	float remaining =  ( (float)shipStats.GetHullStrength() - (float)status.hullDamage ) / (float)shipStats.GetHullStrength();
-	return(remaining);
+	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
 /**\brief Returns the ship's shield integrity as a percentage (0.0-1.0, where 1.0 = 100%).
  * \return Shield remaining
  */
 float Ship::GetShieldIntegrityPct() {
-	if (shipStats.GetShieldStrength() *shieldBooster > 0){
-		float remaining =  ( ((float)shipStats.GetShieldStrength() *shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * shieldBooster);
-		return(remaining);
-	}
-	else {
-		return 0;
-	}
-
-
+	float remaining =  ( ((float)shipStats.GetShieldStrength() * shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * shieldBooster);
+	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
 /**\brief Gets the current weapon.
