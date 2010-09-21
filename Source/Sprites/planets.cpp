@@ -33,7 +33,7 @@
  */
 Planet::Planet(){
 	SetRadarColor(Color::Get(48, 160, 255));
-	lastTrafficTime = Timer::GetTicks();
+	lastTrafficTime = 0;
 }
 
 /**\brief Copy Constructor
@@ -158,7 +158,7 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 }
 
 void Planet::Update() {
-	if( lastTrafficTime + 3000 < Timer::GetTicks() ) {
+	if( lastTrafficTime + 120 < Timer::GetLogicalFrameCount() ) {
 		GenerateTraffic();
 	}
 	Sprite::Update();
@@ -171,7 +171,7 @@ void Planet::GenerateTraffic() {
 		Lua::Call( "createRandomShipForPlanet", "i", GetID() );
 	}
 	delete nearbySprites;
-	lastTrafficTime = Timer::GetTicks();
+	lastTrafficTime = Timer::GetLogicalFrameCount();
 }
 
 /**\brief List of the Models that are available at this Planet
