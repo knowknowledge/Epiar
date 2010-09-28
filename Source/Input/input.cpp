@@ -70,7 +70,7 @@ Input::Input() {
  */
 list<InputEvent> Input::Update( bool &quitSignal ) {
 	SDL_Event event;
-	quitSignal = false;
+	
 	events.clear();
 
 	while( SDL_PollEvent( &event ) ) {

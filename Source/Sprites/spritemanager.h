@@ -36,6 +36,10 @@ class SpriteManager {
 
 		void Save();
 
+		//---------------experimental code from Dido------
+		SpriteManager& operator=(SpriteManager & object);
+		//---------------experimental code from Dido------END----
+
 	protected:
 		SpriteManager();
 	private:

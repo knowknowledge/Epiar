@@ -245,7 +245,7 @@ int AI_Lua::ShipDamage(lua_State* L){
 	if (n == 2) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		int damage = (int) luaL_checknumber (L, 2);
+		short damage = (short) luaL_checknumber (L, 2);
 		(ai)->Damage( damage );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);
@@ -260,7 +260,7 @@ int AI_Lua::ShipRepair(lua_State* L){
 	if (n == 2) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		int damage = luaL_checkint (L, 2);
+		short damage = (short) luaL_checkint (L, 2);
 		(ai)->Repair( damage );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);

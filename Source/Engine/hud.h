@@ -60,6 +60,11 @@ class StatusBar {
 		QuadPosition GetPosition(){ return pos; }
 
 		void print ();
+
+		//---------------experimental code from Dido------
+		StatusBar& operator=(StatusBar & object);
+		//---------------experimental code from Dido------END----
+
 	protected:
 		char title[40];
 		const int width;

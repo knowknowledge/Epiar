@@ -95,6 +95,22 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	assert(pos<=4);
 }
 
+//---------------experimental code from Dido------
+/**\brief Assignment operator for class StatusBar.
+ * \return Pointer to StatusBar
+ */
+StatusBar& StatusBar::operator=(StatusBar& object){
+	strcpy( title, object.title );
+	strcpy( name, object.name );
+
+	ratio = object.ratio;
+	lua_updater = object.lua_updater;
+
+	return * this;
+}
+//---------------experimental code from Dido------END----
+
+
 void StatusBar::print ()
 {
 	//LogMsg (DEBUG4, "PRINTOUT OF STATUSBAR AT 0x%X\n\ttitle = %s\n\twidth=%d\n\tpos=%d\n\tname=%s\n\tratio=%f\n", this, title.c_str(), width, pos, GetName().c_str(), ratio);
