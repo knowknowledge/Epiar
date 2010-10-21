@@ -287,11 +287,15 @@ void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
 /**\brief Handle Lua key bindings.
  */
 void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
-	for( list<InputEvent>::iterator i = events.begin(); i != events.end(); ++i) {
+	list<InputEvent>::iterator i = events.begin();
+	while( i != events.end() ) {
 		map<InputEvent,string>::iterator val = eventMappings.find( *i );
 		if( val != eventMappings.end() ){
 			Lua::Run( val->second );
-			events.erase( i );
+			i = events.erase( i );
+		}
+		else{
+			++i;
 		}
 	}
 }

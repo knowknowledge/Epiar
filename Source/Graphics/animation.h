@@ -33,7 +33,7 @@ class Animation {
 		bool Update( void );
 		void Draw( int x, int y, float ang );
 		void SetLoopPercent( float loopPercent );
-		bool GetLoopPercent( void ) { return loopPercent; };
+		float GetLoopPercent( void ) { return loopPercent; };
 		void Reset( void );
 		int GetHalfWidth( void ) { return ani->w / 2; };
 		int GetHalfHeight( void ) { return ani->h / 2; };

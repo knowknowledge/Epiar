@@ -77,7 +77,7 @@ bool Video::Initialize( void ) {
 
 	int w = OPTION( int, "options/video/w" );
 	int h = OPTION( int, "options/video/h" );
-	bool fullscreen = (bool)OPTION( int, "options/video/fullscreen" );
+	bool fullscreen = OPTION( bool, "options/video/fullscreen" );
 
 	// If w/h not set, then 1024x768 is windowed default, native screen resolution is fullscreen default
 	if( !w && !h ) {
