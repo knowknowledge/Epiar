@@ -38,7 +38,7 @@ class UI {
 		static void Draw( void );
 		static void Close( void );
 		static void Close( Widget *widget );
-		static void HandleInput( list<InputEvent> & events );
+		static void HandleInput( list<InputEvent> *events );
 		static void ResetInput(void);
 		static bool Active(void);
 		
@@ -48,8 +48,8 @@ class UI {
 		static void Save( void );
 		
 	private:
-		static bool HandleKeyboard( InputEvent &i );
-		static bool HandleMouse( InputEvent &i );
+		static bool HandleKeyboard( InputEvent i );
+		static bool HandleMouse( InputEvent i );
 
 		// Use a master widget to handle events,
 		// so we don't need to duplicate code.

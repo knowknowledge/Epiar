@@ -23,11 +23,22 @@ UIContainer::UIContainer( string _name, bool _mouseHandled ):
  * \todo Implement a UIContainer::Hide routine that doesn't destroy children.
  * \bug This will cause a segfault on statically allocated widget children
  */
-UIContainer::~UIContainer( void ){
+UIContainer::~UIContainer( void ) {
+	cout << "start uicontainer destructor for name = " << name << endl;
 	list<Widget *>::iterator i;
 	for( i = children.begin(); i != children.end(); ++i ) {
 		delete (*i);
 	}
+
+	children.clear();
+
+	keyboardFocus = NULL;
+	mouseHover = NULL;
+	lmouseDown = NULL;
+	mmouseDown = NULL;
+	rmouseDown = NULL;
+
+	cout << "class UIContainer destructor called" << endl;
 }
 
 /**\brief Adds a child to the current container.
@@ -43,36 +54,43 @@ Widget *UIContainer::AddChild( Widget *widget ) {
  */
 bool UIContainer::DelChild( Widget *widget ){
 	list<Widget *>::iterator i;
+
 	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i) == widget ){
-			delete (*i);
-			this->children.erase( i );
-			this->Reset();
+		if( (*i) == widget ) {
+			//cout << "delchild called on " << (*i)->GetType() << endl;
+			//delete (*i);
+			i = children.erase( i );
+			Reset();
+
 			return true;
 		}
 	}
+
 	return false;
 }
 
 /**\brief Empties all children.*/
 bool UIContainer::Empty( void ){
 	list<Widget *>::iterator i;
-	for( i = this->children.begin(); 
-			i != this->children.end(); ++i ) {
+
+	for( i = children.begin(); i != children.end(); ++i ) {
 		delete (*i);
 	}
-	this->children.clear();
-	this->Reset();
+
+	children.clear();
+	Reset();
+
 	return true;
 }
 
 /**\brief Reset focus and events.*/
 bool UIContainer::Reset( void ){
-	this->keyboardFocus=NULL;
-	this->mouseHover=NULL;
-	this->lmouseDown=NULL;
-	this->mmouseDown=NULL;
-	this->rmouseDown=NULL;
+	this->keyboardFocus = NULL;
+	this->mouseHover = NULL;
+	this->lmouseDown = NULL;
+	this->mmouseDown = NULL;
+	this->rmouseDown = NULL;
+
 	return true;
 }
 
@@ -139,7 +157,9 @@ bool UIContainer::MouseMotion( int xi, int yi ){
 		event_on->MouseEnter( x,y );
 		this->mouseHover=event_on;
 	}
+
 	event_on->MouseMotion( xr, yr );
+
 	return true;
 }
 
@@ -165,6 +185,7 @@ bool UIContainer::MouseLUp( int xi, int yi ){
 		}
 	}
 	LogMsg(INFO,"Mouse Left up detect in %s.",this->name.c_str());
+	
 	return this->mouseHandled;
 }
 
@@ -201,6 +222,7 @@ bool UIContainer::MouseLDown( int xi, int yi ) {
 		event_on->KeyboardEnter();
 	}
 	this->keyboardFocus = event_on;
+
 	return true;
 }
 

@@ -15,13 +15,14 @@
 class Window : public UIContainer {
 	public:
 		Window( int x, int y, int w, int h, string caption );
+		~Window();
 		Widget *AddChild( Widget *widget );
 		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	
 		bool MouseDrag( int x, int y );
 
-		string GetType( void ){return string("Window");}
+		string GetType( void ) { return string("Window"); }
 
 	private:
 		Image *bitmaps[9];

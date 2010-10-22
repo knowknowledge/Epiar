@@ -10,7 +10,7 @@
 
 class UIContainer : public Widget {
 	public:
-		UIContainer(string _name="UnspecifiedContainer", bool _mouseHandled=true );
+		UIContainer(string _name = "UnspecifiedContainer", bool _mouseHandled = true );
 		virtual ~UIContainer( void );
 
 		virtual string GetType( void ) { return string("Container"); }
