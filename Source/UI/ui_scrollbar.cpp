@@ -21,10 +21,16 @@ Scrollbar::Scrollbar( int x, int y, int length,
 		pos( 0 ),maxpos( 0 ),
 		type( type ),parent( parent ){
 
-	this->x=x;
-	this->y=y;
-	this->name=(type==HORIZONTAL)?"Horizontal":"Vertical";
+	this->x = x;
+	this->y = y;
+	this->name = (type==HORIZONTAL)?"Horizontal":"Vertical";
 	SetSize(length);
+}
+
+Scrollbar::~Scrollbar() {
+	parent = NULL; // do not free parent, it is merely assigned
+
+	cout << "class Scrollbar destructor called" << endl;
 }
 
 /**\brief Set the Length and Height of a Scrollbar.

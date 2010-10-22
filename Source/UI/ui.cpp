@@ -19,11 +19,12 @@
 /**\class UI
  * \brief UI. */
 
-UIContainer UI::master=UIContainer("Master", false);
+UIContainer UI::master("Master", false);
 
 /**\brief This constructor resets the input.
  */
 UI::UI() {
+	//UI::master = UIContainer("Master", false);
 	ResetInput();
 }
 
@@ -85,12 +86,12 @@ void UI::Save( void ) {
  * to be handled by the next input handler.
  * The order of input handlers is in input.cpp.
  */
-void UI::HandleInput( list<InputEvent> &events ) {
+void UI::HandleInput( list<InputEvent> *events ) {
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
-	list<InputEvent>::iterator i = events.begin();
-	while( i != events.end() ){
+	list<InputEvent>::iterator i = events->begin();
+	while( i != events->end() ){
 		bool eventWasHandled = false;
 	
 		switch( i->type ) {
@@ -101,8 +102,9 @@ void UI::HandleInput( list<InputEvent> &events ) {
 				eventWasHandled = UI::HandleMouse( *i );
 				break;
 		}
+
 		if( eventWasHandled ) {
-			i = events.erase( i );
+			i = events->erase( i );
 		} else {
 			i++;
 		}
@@ -110,7 +112,7 @@ void UI::HandleInput( list<InputEvent> &events ) {
 }
 
 /**\brief Handles UI keyboard events.*/
-bool UI::HandleKeyboard( InputEvent &i ){
+bool UI::HandleKeyboard( InputEvent i ) {
 	switch(i.kstate) {
 		case KEYTYPED:
 			return UI::master.KeyPress( i.key );
@@ -120,7 +122,7 @@ bool UI::HandleKeyboard( InputEvent &i ){
 }
 
 /**\brief Handles UI mouse events.*/
-bool UI::HandleMouse( InputEvent &i ){
+bool UI::HandleMouse( InputEvent i ) {
 	int x, y;
 	
 	// mouse coordinates associated with the mouse event
@@ -135,20 +137,21 @@ bool UI::HandleMouse( InputEvent &i ){
 		case MOUSELDOWN:		// Left button down
 			return UI::master.MouseLDown( x, y );
 		case MOUSEMUP:			// Middle button up
-			return UI::master.MouseMUp( x,y );
+			return UI::master.MouseMUp( x, y );
 		case MOUSEMDOWN:		// Middle button down
-			return UI::master.MouseMDown( x,y );
+			return UI::master.MouseMDown( x, y );
 		case MOUSERUP:			// Right button up
-			return UI::master.MouseRUp( x,y );
+			return UI::master.MouseRUp( x, y );
 		case MOUSERDOWN:		// Right button down
-			return UI::master.MouseRDown( x,y );
+			return UI::master.MouseRDown( x, y );
 		case MOUSEWUP:			// Scroll wheel up
-			return UI::master.MouseWUp( x,y );
+			return UI::master.MouseWUp( x, y );
 		case MOUSEWDOWN:		// Scroll wheel down
-			return UI::master.MouseWDown( x,y );
+			return UI::master.MouseWDown( x, y );
 		default:
-			LogMsg(WARN,"Unhandled UI mouse input detected.");
+			LogMsg(WARN, "Unhandled UI mouse input detected.");
 		}
+
 	return false;
 }
 
