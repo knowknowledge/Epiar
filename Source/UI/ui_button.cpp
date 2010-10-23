@@ -56,6 +56,19 @@ Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	this->lua_callback = lua_code;
 }
 
+Button::~Button() {
+//	DO NOT DO THIS - it's just a pointer, never allocated - delete bitmap_current;
+	//delete bitmap_normal;
+	//delete bitmap_pressed;
+	//delete sound_click;
+	//delete sound_hover;
+
+	bitmap_normal = bitmap_pressed = NULL;
+	sound_click = sound_hover = NULL;
+
+	cout << "class Button destructor called" << endl;
+}
+
 /**\brief Draws the button.*/
 void Button::Draw( int relx, int rely ) {
 	int x, y;
