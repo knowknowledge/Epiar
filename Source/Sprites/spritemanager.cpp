@@ -315,10 +315,17 @@ list<QuadTree*> SpriteManager::GetQuadrantsInBand ( Coordinate c, int bandIndex)
 	possibleQuadrants.insert (GetQuadrantCenter (bottomRight));
 	for (int i = 0; i < bandLength; i ++) {
 		int offset = ((QUADRANTSIZE * 2) * i);
-		possibleQuadrants.insert (GetQuadrantCenter (bottomLeft + Coordinate (0, offset)));		//west
-		possibleQuadrants.insert (GetQuadrantCenter (bottomLeft + Coordinate (offset, 0)));		//south
-		possibleQuadrants.insert (GetQuadrantCenter (topRight - Coordinate (offset, 0)));		//north
-		possibleQuadrants.insert (GetQuadrantCenter (topRight - Coordinate (0, offset)));		//east
+		Coordinate west, south, north, east;
+
+		west = GetQuadrantCenter (bottomLeft + Coordinate (0, offset));
+		south = GetQuadrantCenter (bottomLeft + Coordinate (offset, 0));
+		north = GetQuadrantCenter (topRight - Coordinate (offset, 0));
+		east = GetQuadrantCenter (topRight - Coordinate (0, offset));
+
+		possibleQuadrants.insert (west);		//west
+		possibleQuadrants.insert (south);		//south
+		possibleQuadrants.insert (north);		//north
+		possibleQuadrants.insert (east);		//east
 	}
 
 				//here we're checking to see if this possible quadrant is one of the existing quadrants
@@ -348,7 +355,10 @@ list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	map<Coordinate,QuadTree*>::iterator iter;
 	list<QuadTree*> nearbyQuadrants;
 	set<Coordinate> possibleQuadrants;
-	possibleQuadrants.insert( GetQuadrantCenter(c));
+
+	Coordinate center = GetQuadrantCenter(c);
+
+	possibleQuadrants.insert( center );
 	float R = r;
 	do{
 		possibleQuadrants.insert( GetQuadrantCenter(c + Coordinate(-R,-0)));

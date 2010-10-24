@@ -20,11 +20,13 @@
  */
 Window::Window( int x, int y, int w, int h, string caption ):
 		hscrollbar( NULL ),vscrollbar( NULL ),draggable( true ){
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-	this->name=caption;
+
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
+	this->name = caption;
+
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
 	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
@@ -35,6 +37,29 @@ Window::Window( int x, int y, int w, int h, string caption ):
 	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
 	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
 	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
+}
+
+Window::~Window() {
+	bitmaps[0] = NULL;
+	bitmaps[1] = NULL;
+	bitmaps[2] = NULL;
+	bitmaps[3] = NULL;
+	bitmaps[4] = NULL;
+	bitmaps[5] = NULL;
+	bitmaps[6] = NULL;
+	bitmaps[7] = NULL;
+	bitmaps[8] = NULL;
+
+	if( hscrollbar ) {
+		delete hscrollbar;
+		hscrollbar = NULL;
+	}
+	if( vscrollbar ) {
+		delete vscrollbar;
+		vscrollbar = NULL;
+	}
+
+	cout << "class Window destructor" << endl;
 }
 
 /**\brief Adds a widget to the current Window.

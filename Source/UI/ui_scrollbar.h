@@ -20,6 +20,8 @@ class Scrollbar : public Widget {
 		Scrollbar( int x, int y, int length,
 			scrollbarType type, Widget *parent );
 
+		~Scrollbar();
+
 		void Draw( int relx=0, int rely = 0 );
 
 		// Use these when the encompassing window size changes
