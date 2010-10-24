@@ -72,7 +72,7 @@ bool Widget::MouseMotion( int xi, int yi ){
 
 /**\brief Event is triggered on mouse enter.
  */
-bool Widget::MouseEnter( int xi,int yi ){
+bool Widget::MouseEnter( int xi, int yi ){
 	hovering = true;
 	LogMsg(INFO,"Mouse enter detect in %s.",this->name.c_str());
 	return true;

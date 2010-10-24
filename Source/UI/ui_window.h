@@ -20,12 +20,15 @@ class Window : public UIContainer {
 		void Draw( int relx = 0, int rely = 0 );
 	
 		bool MouseDrag( int x, int y );
+		bool SetDragability( bool _draggable );
 
 		string GetType( void ){return string("Window");}
 
 	private:
-		Image *bitmaps[9];
+		bool draggable;
 
+		Image *bitmaps[9];
+		
 		Scrollbar *hscrollbar;
 		Scrollbar *vscrollbar;
 };
