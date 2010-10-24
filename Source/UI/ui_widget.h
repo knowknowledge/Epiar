@@ -15,7 +15,7 @@
 class Widget {
 	public:
 		Widget( void );
-		virtual ~Widget( void ) { cout << "class Widget destructor" << endl; };
+		virtual ~Widget( void ) { };
 		
 		// Function to retrieve dimensions
 		virtual int GetX( void ){ return this->x; }

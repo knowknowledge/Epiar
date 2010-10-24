@@ -65,8 +65,6 @@ Button::~Button() {
 
 	bitmap_normal = bitmap_pressed = NULL;
 	sound_click = sound_hover = NULL;
-
-	cout << "class Button destructor called" << endl;
 }
 
 /**\brief Draws the button.*/

@@ -29,8 +29,6 @@ Scrollbar::Scrollbar( int x, int y, int length,
 
 Scrollbar::~Scrollbar() {
 	parent = NULL; // do not free parent, it is merely assigned
-
-	cout << "class Scrollbar destructor called" << endl;
 }
 
 /**\brief Set the Length and Height of a Scrollbar.

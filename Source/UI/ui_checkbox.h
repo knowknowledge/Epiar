@@ -17,7 +17,7 @@
 class Checkbox : public Widget {
 	public:
 		Checkbox( int x, int y, bool checked, string label);
-		~Checkbox() { cout << "class Checkbox destructor called" << endl; };
+		~Checkbox() { };
 		
 		void Draw( int relx = 0, int rely = 0 );
 
