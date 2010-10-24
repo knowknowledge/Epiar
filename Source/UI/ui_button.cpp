@@ -33,6 +33,7 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	
 	// Load the bitmaps needed for drawing
 	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
+	bitmap_mouseover = Image::Get( "Resources/Graphics/ui_button_mouseover.png" );
 	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
 	
@@ -116,5 +117,23 @@ bool Button::MouseLUp( int xi, int yi ) {
 
 bool Button::MouseLRelease( void ){
 	bitmap_current = bitmap_normal;
+	return true;
+}
+
+/**\brief Event is triggered on mouse enter.
+ */
+bool Button::MouseEnter( int xi, int yi ){
+	bitmap_current = bitmap_mouseover;
+	hovering = true;
+	LogMsg(INFO,"Mouse enter detect in %s.",this->name.c_str());
+	return true;
+}
+
+/**\brief Event is triggered on mouse leave.
+ */
+bool Button::MouseLeave( void ){
+	bitmap_current = bitmap_normal;
+	hovering = false;
+	LogMsg(INFO,"Mouse leave detect in %s.",this->name.c_str());
 	return true;
 }

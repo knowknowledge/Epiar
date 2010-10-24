@@ -77,10 +77,10 @@ void UI_Lua::RegisterUI(lua_State *L){
 }
 
 int UI_Lua::newWindow(lua_State *L){
-	int arg;
+	int arg = 6;
 	int n = lua_gettop(L);  // Number of arguments
 	if (n < 5)
-		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, caption, [ Widgets ... ])", n);
+		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, caption,[draggable], [ Widgets ... ])", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
@@ -94,11 +94,17 @@ int UI_Lua::newWindow(lua_State *L){
 	lua_setmetatable(L, -2);
 	*win = new Window(x,y,w,h,caption);
 
+	if( lua_isboolean(L, 6) ){
+		bool draggable = lua_toboolean(L, 6);
+		(*win)->SetDragability( draggable );
+		arg = 7;
+	}
+
 	// Add this Window
 	UI::Add(*win);
 
 	// Collect 'extra' widgets and Add them as children
-	for(arg=6; arg <= n;arg++){
+	for(; arg <= n;arg++){
 		Widget** widget= (Widget**)lua_touserdata(L,arg);
 		(*win)->AddChild(*widget);
 	}

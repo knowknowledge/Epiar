@@ -19,11 +19,11 @@
 /**\brief Creates a new window with specified parameters.
  */
 Window::Window( int x, int y, int w, int h, string caption ):
-		hscrollbar( NULL ),vscrollbar( NULL ){
+		hscrollbar( NULL ),vscrollbar( NULL ),draggable( true ){
 	this->x = x;
 	this->y = y;
 	this->w = w;
-	this->h  =h;
+	this->h = h;
 	this->name = caption;
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
@@ -175,16 +175,22 @@ void Window::Draw( int relx, int rely ) {
 }
 
 bool Window::MouseDrag( int x, int y ){
-	int dx=this->dragX;
-	int dy=this->dragY;
-	// Only drag by titlebar
-	if ( dy < bitmaps[1]->GetHeight() ) {
-		this->x= x - dx;
-		this->y=y - dy;
-	} else {
-	// Pass the event onto widget if not handling it.
-		UIContainer::MouseDrag( x, y );
-	}
+	
+		int dx=this->dragX;
+		int dy=this->dragY;
+		// Only drag by titlebar
+		if ( dy < bitmaps[1]->GetHeight() && draggable == true ) {
+			this->x= x - dx;
+			this->y=y - dy;
+		} else {
+		// Pass the event onto widget if not handling it.
+			UIContainer::MouseDrag( x, y );
+		}
+	
 	return true;
 }
 
+bool Window::SetDragability( bool _draggable ){
+	draggable = _draggable;
+	return true;
+}

@@ -239,7 +239,8 @@ function options()
 		optionWindow=nil;
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton(130, height-50, 60, 30,"Save","saveOptions(); closeOptions()") )
+	optionWindow:add( UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
+						UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" ))
 end
 
 function createSystems()

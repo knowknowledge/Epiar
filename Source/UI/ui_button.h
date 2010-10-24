@@ -24,10 +24,12 @@ class Button : public Widget {
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
 		bool MouseLRelease( void );
+		bool MouseEnter( int xi, int yi );
+		bool MouseLeave( void );
 		virtual string GetType( void ) {return string("Button");}
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
-		Image *bitmap_current, *bitmap_normal, *bitmap_pressed;
+		Image *bitmap_current, *bitmap_normal, *bitmap_mouseover, *bitmap_pressed;
 		Sound *sound_click, *sound_hover;
 
 		string lua_callback;
