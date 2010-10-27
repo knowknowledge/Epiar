@@ -20,11 +20,13 @@
  */
 Window::Window( int x, int y, int w, int h, string caption ):
 		hscrollbar( NULL ),vscrollbar( NULL ),draggable( true ){
+
 	this->x = x;
 	this->y = y;
 	this->w = w;
 	this->h = h;
 	this->name = caption;
+
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
 	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
