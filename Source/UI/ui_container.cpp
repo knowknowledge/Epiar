@@ -24,7 +24,6 @@ UIContainer::UIContainer( string _name, bool _mouseHandled ):
  * \bug This will cause a segfault on statically allocated widget children
  */
 UIContainer::~UIContainer( void ) {
-	cout << "start uicontainer destructor for name = " << name << endl;
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -56,6 +55,7 @@ bool UIContainer::DelChild( Widget *widget ){
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == widget ) {
+			// FIXME BROKEN Uncommenting this delete causes memory corruption crashes on MSVC 2008 and 2010. PLEASE FIX!
 			//cout << "delchild called on " << (*i)->GetType() << endl;
 			//delete (*i);
 			i = children.erase( i );

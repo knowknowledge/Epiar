@@ -58,8 +58,6 @@ Window::~Window() {
 		delete vscrollbar;
 		vscrollbar = NULL;
 	}
-
-	cout << "class Window destructor" << endl;
 }
 
 /**\brief Adds a widget to the current Window.
