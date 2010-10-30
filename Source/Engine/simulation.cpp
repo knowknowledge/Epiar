@@ -48,6 +48,8 @@ Simulation::Simulation( void ) {
 	outfits = Outfits::Instance();
 	players = Players::Instance();
 	camera = Camera::Instance();
+
+	folderpath = "";
 	currentFPS = 0.;
 	paused = false;
 	willsave = false;
@@ -57,8 +59,9 @@ Simulation::Simulation( void ) {
  * \param filename Name of the file
  * \return true if success
  */
-bool Simulation::Load( string filename ) {
-	if( !Open(filename) ) {
+bool Simulation::Load( string _folderpath ) {
+	folderpath = _folderpath + string("/");
+	if( !Open( folderpath + string("simulation.xml") ) ) {
 		return false;
 	}
 	return Parse();
@@ -353,44 +356,45 @@ bool Simulation::Parse( void ) {
 	LogMsg(INFO, "Simulation version %s.%s.%s.", Get("version-major").c_str(), Get("version-minor").c_str(),  Get("version-macro").c_str());
 
 	// Now load the various subsystems
-	if( commodities->Load( Get("commodities") ) != true ) {
-		LogMsg(ERR, "There was an error loading the commodities from '%s'.", Get("commodities").c_str() );
+	if( commodities->Load( (folderpath + Get("commodities")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the commodities from '%s'.", (folderpath + Get("commodities")).c_str() );
 		return false;
 	}
-	if( engines->Load( Get("engines") ) != true ) {
-		LogMsg(ERR, "There was an error loading the engines from '%s'.", Get("engines").c_str() );
+	if( engines->Load( (folderpath + Get("engines")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the engines from '%s'.", (folderpath + Get("engines")).c_str() );
 		return false;
 	}
-	if( models->Load( Get("models") ) != true ) {
-		LogMsg(ERR, "There was an error loading the models from '%s'.", Get("models").c_str() );
+	if( models->Load( (folderpath + Get("models")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the models from '%s'.", (folderpath + Get("models")).c_str() );
 		return false;
 	}
-	if( weapons->Load( Get("weapons") ) != true ) {
-		LogMsg(ERR, "There was an error loading the technologies from '%s'.", Get("weapons").c_str() );
+	if( weapons->Load( (folderpath + Get("weapons")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the technologies from '%s'.", (folderpath + Get("weapons")).c_str() );
 		return false;
 	}
-	if( outfits->Load( Get("outfits") ) != true ) {
-		LogMsg(ERR, "There was an error loading the outfits from '%s'.", Get("outfits").c_str() );
+	if( outfits->Load( (folderpath + Get("outfits")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the outfits from '%s'.", (folderpath + Get("outfits")).c_str() );
 		return false;
 	}
-	if( technologies->Load( Get("technologies") ) != true ) {
-		LogMsg(ERR, "There was an error loading the technologies from '%s'.", Get("technologies").c_str() );
+	if( technologies->Load( (folderpath + Get("technologies")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the technologies from '%s'.", (folderpath + Get("technologies")).c_str() );
 		return false;
 	}
-	if( alliances->Load( Get("alliances") ) != true ) {
-		LogMsg(ERR, "There was an error loading the alliances from '%s'.", Get("alliances").c_str() );
+	if( alliances->Load( (folderpath + Get("alliances")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the alliances from '%s'.", (folderpath + Get("alliances")).c_str() );
 		return false;
 	}
 	if( 0 == OPTION(int, "options/simulation/random-universe")) {
-		if( planets->Load( Get("planets") ) != true ) {
-		    LogMsg(WARN, "There was an error loading the planets from '%s'.", Get("planets").c_str() );
+		if( planets->Load( (folderpath + Get("planets")) ) != true ) {
+		    LogMsg(WARN, "There was an error loading the planets from '%s'.", (folderpath + Get("planets")).c_str() );
 		    return false;
 	    }
-		if( gates->Load( Get("gates") ) != true ) {
-		    LogMsg(WARN, "There was an error loading the gates from '%s'.", Get("gates").c_str() );
+		if( gates->Load( (folderpath + Get("gates")) ) != true ) {
+		    LogMsg(WARN, "There was an error loading the gates from '%s'.", (folderpath + Get("gates")).c_str() );
 		    return false;
 	    }
 	}
+
 	if( players->Load( Get("players"), true ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
 		return false;

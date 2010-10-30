@@ -217,7 +217,7 @@ int main( int argc, char **argv ) {
 	Serif->SetSize(12);
 	Video::Update();
 
-	string simName = "Resources/Definitions/sim-debug.xml";
+	string simName = "Resources/Simulation/default";
 	Simulation debug;
 	if(	debug.Load( simName ) )
 	{
