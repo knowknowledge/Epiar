@@ -17,6 +17,7 @@
 class Simulation_Lua{
 	public:
 		static void RegisterSimulation(lua_State *L);
+		static void RegisterEditor(lua_State *L);
 
 		static void StoreSimulation(lua_State *L, Simulation *sim);
 		static Simulation* GetSimulation(lua_State *L);
@@ -71,8 +72,6 @@ class Simulation_Lua{
 
 		// Information about Components
 		static int getMSRP(lua_State *L);
-
-		// Editor Commands
 		static int getCommodityInfo(lua_State *L);
 		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);
@@ -83,6 +82,7 @@ class Simulation_Lua{
 		static int getOutfitInfo(lua_State *L);
 		static int getTechnologyInfo(lua_State *L);
 
+		// Editor Commands
 		static int setInfo(lua_State *L);
 		static int saveComponents(lua_State *L);
 		static int listImages(lua_State *L);

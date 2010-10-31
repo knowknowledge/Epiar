@@ -294,6 +294,7 @@ bool Simulation::Edit() {
 	Simulation_Lua::StoreSimulation(L,this);
 
 	Simulation_Lua::RegisterSimulation(L);
+	Simulation_Lua::RegisterEditor(L);
 	UI_Lua::RegisterUI(L);
 	Audio_Lua::RegisterAudio(L);
 	Planets_Lua::RegisterPlanets(L);

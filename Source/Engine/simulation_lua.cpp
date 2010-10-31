@@ -85,14 +85,22 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"getEngineInfo", &Simulation_Lua::getEngineInfo},
 		{"getOutfitInfo", &Simulation_Lua::getOutfitInfo},
 		{"getTechnologyInfo", &Simulation_Lua::getTechnologyInfo},
-		{"setInfo", &Simulation_Lua::setInfo},
-		{"saveComponents", &Simulation_Lua::saveComponents},
 		{"listImages", &Simulation_Lua::listImages},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
 
 }
+
+void Simulation_Lua::RegisterEditor(lua_State *L) {
+	static const luaL_Reg EditorFunctions[] = {
+		{"setInfo", &Simulation_Lua::setInfo},
+		{"saveComponents", &Simulation_Lua::saveComponents},
+		{NULL, NULL}
+	};
+	luaL_register(L,"Epiar",EditorFunctions);
+}
+
 
 void Simulation_Lua::StoreSimulation(lua_State *L, Simulation *sim) {
 	// Store A pointer to the simulation is stored in the LUA_REGISTRYINDEX table.
