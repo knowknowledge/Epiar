@@ -19,7 +19,10 @@
 /**\brief Creates a new window with specified parameters.
  */
 Window::Window( int x, int y, int w, int h, string caption ):
-		hscrollbar( NULL ),vscrollbar( NULL ),draggable( true ){
+		draggable( true ),
+		hscrollbar( NULL ),
+		vscrollbar( NULL )
+{
 
 	this->x = x;
 	this->y = y;
@@ -50,14 +53,12 @@ Window::~Window() {
 	bitmaps[7] = NULL;
 	bitmaps[8] = NULL;
 
-	if( hscrollbar ) {
-		delete hscrollbar;
-		hscrollbar = NULL;
-	}
-	if( vscrollbar ) {
-		delete vscrollbar;
-		vscrollbar = NULL;
-	}
+	// Do not delete the scrollbars:
+	// If these are non-NULL then they are children.
+	// Therefore they will be deleted by the UIContainer destructor.
+	hscrollbar = NULL;
+	vscrollbar = NULL;
+
 }
 
 /**\brief Adds a widget to the current Window.
@@ -80,6 +81,7 @@ Widget *Window::AddChild( Widget *widget ){
 
 	if ( vbnd > this->h ){
 		if ( !this->vscrollbar ){
+			UIContainer::DelChild( this->vscrollbar );
 			this->vscrollbar = new Scrollbar(
 				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
 				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
