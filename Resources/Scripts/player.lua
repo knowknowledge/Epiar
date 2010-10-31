@@ -447,8 +447,8 @@ function createNewPlayer()
 	end
 	Epiar.newPlayer(name)
 	loadingWin:close()
-	playerStart();
-	Epiar.unpause()
+	playerStart()
+	intro()
 end
 
 function playerInformation()

@@ -13,9 +13,9 @@ The Epiar controls in a nutshell:
     - Land on a Planet by hitting L when you are near it.
 
     - Fire with the Spacebar once you buy a gun.
-    - To target ships
+    - To target ships:
           - Hit TAB to cycle through nearby ships.
-          - Hit t (select the closest ship
+          - Hit t to select the closest ship.
           - Click on the ship.
     - To board a disabled target hit B while you are near it.
 
@@ -129,11 +129,10 @@ function options()
 	optionTabs:add(gameTab)
 	gameLabel      = UI.newLabel(20, 5, "Game Options:", 0)
 	fullScreen      = UI.newCheckbox(20,  30, ( Epiar.getoption("options/video/fullscreen") ), "Run as Full Screen")
-	showIntro       = UI.newCheckbox(20,  50, ( Epiar.getoption("options/simulation/intro") ), "Show Intro Screen")
-	randomUniverse  = UI.newCheckbox(20,  70, ( Epiar.getoption("options/simulation/random-universe") ), "Create a Random Universe")
-	autoLoad        = UI.newCheckbox(20,  90, ( Epiar.getoption("options/simulation/automatic-load") ), "Automatically Load the last Player")
-	editorMode      = UI.newCheckbox(20, 110, ( Epiar.getoption("options/development/editor-mode") ), "Run in Editor Mode")
-	gameTab:add( gameLabel, fullScreen, showIntro, randomUniverse, autoLoad, editorMode )
+	randomUniverse  = UI.newCheckbox(20,  50, ( Epiar.getoption("options/simulation/random-universe") ), "Create a Random Universe")
+	autoLoad        = UI.newCheckbox(20,  70, ( Epiar.getoption("options/simulation/automatic-load") ), "Automatically Load the last Player")
+	editorMode      = UI.newCheckbox(20,  90, ( Epiar.getoption("options/development/editor-mode") ), "Run in Editor Mode")
+	gameTab:add( gameLabel, fullScreen, randomUniverse, autoLoad, editorMode )
 
 	-- Sounds
 	soundsTab = UI.newTab("Audio")
@@ -199,7 +198,6 @@ function options()
 	function saveOptions()
 		-- General Game Options
 		Epiar.setoption("options/video/fullscreen",           fullScreen      :IsChecked() and 1 or 0 )
-		Epiar.setoption("options/simulation/intro" ,     showIntro       :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/simulation/random-universe", randomUniverse  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/simulation/automatic-load",  autoLoad        :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/editor-mode",    editorMode      :IsChecked() and 1 or 0 )
@@ -648,11 +646,9 @@ function intro()
 	local height = 550
 	local width = 600
 	introWin = UI.newWindow( 200, 100, width, height, "Welcome to Epiar")
-	neverShowAgain = UI.newCheckbox(width/2-90, height-30, 1, "Don't show me this intro again.")
 	
 	introWin:add(
 		UI.newLabel( 50, 50, welcomeMessage),
-		neverShowAgain,
 		UI.newButton( width/2-50, height-70, 100, 30, "I'm Ready!", "introComplete()")
 	)
 
@@ -661,7 +657,6 @@ end
 
 function introComplete()
 	if introWin == nil then return end
-	Epiar.setoption("options/simulation/intro", neverShowAgain:IsChecked() and 0 or 1 )
 	introWin:close()
 	introWin = nil
 	-- Unpause if the player loading screen isn't active
