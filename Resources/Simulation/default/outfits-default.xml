@@ -2,75 +2,115 @@
 <outfits>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>0</version-macro>
+  <version-macro>1</version-macro>
   <outfit>
-    <name>Copper Plating</name>
-    <picName>Resources/Graphics/hp_copper.png</picName>
-    <msrp>100</msrp>
-    <hullStrength>100</hullStrength>
+    <name>Booster</name>
+    <msrp>1000</msrp>
+    <picName>Resources/Graphics/booster.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>1.500000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
   </outfit>
   <outfit>
     <name>Carbon Plating</name>
+    <msrp>500</msrp>
     <picName>Resources/Graphics/hp_carbon.png</picName>
-    <msrp>500</msrp>
-    <hullStrength>200</hullStrength>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
   </outfit>
   <outfit>
-    <name>Organic Plating</name>
-    <picName>Resources/Graphics/hp_organic.png</picName>
-    <msrp>500</msrp>
-    <hullStrength>200</hullStrength>
-    <rotationsPerSecond>0.10</rotationsPerSecond>
-  </outfit>
-  <outfit>
-    <name>Steel Plating</name>
-    <picName>Resources/Graphics/hp_electron.png</picName>
-    <msrp>5000</msrp>
-    <hullStrength>500</hullStrength>
-    <rotationsPerSecond>0.10</rotationsPerSecond>
-    <maxSpeed>0.2</maxSpeed>
-  </outfit>
-  <outfit>
-    <name>Titanium Plating</name>
-    <picName>Resources/Graphics/hp_titanium.png</picName>
-    <msrp>50000</msrp>
-    <hullStrength>2000</hullStrength>
-    <maxSpeed>-0.2</maxSpeed>
-    <forceOutput>1.00</forceOutput>
-  </outfit>
-  <outfit>
-    <name>Booster</name>
-    <picName>Resources/Graphics/booster.png</picName>
-    <msrp>1000</msrp>
-    <maxSpeed>1.5</maxSpeed>
-    <forceOutput>2.00</forceOutput>
-  </outfit>
-  <outfit>
-    <name>Shield Generator</name>
-    <picName>Resources/Graphics/cloaking_device.png</picName>
-    <msrp>3000</msrp>
-    <hullStrength>100</hullStrength>
-    <shieldStrength>1000</shieldStrength>
-  </outfit>
-  <outfit>
-    <name>Shipping License</name>
-    <picName>Resources/Graphics/sector_map.png</picName>
-    <msrp>1000</msrp>
-    <hullStrength>-50</hullStrength>
-    <cargoSpace>150</cargoSpace>
-  </outfit>
-  <outfit>
-    <name>Mass Shipping License</name>
-    <picName>Resources/Graphics/sector_map.png</picName>
-    <msrp>2000</msrp>
-    <cargoSpace>500</cargoSpace>
+    <name>Copper Plating</name>
+    <msrp>100</msrp>
+    <picName>Resources/Graphics/hp_copper.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
   </outfit>
   <outfit>
     <name>Directional Thrusters</name>
-    <picName>Resources/Graphics/status_sensor.png</picName>
     <msrp>3000</msrp>
-    <maxSpeed>1.0</maxSpeed>
-    <forceOutput>1.00</forceOutput>
-    <rotationsPerSecond>0.05</rotationsPerSecond>
+    <picName>Resources/Graphics/status_sensor.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>1.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Mass Shipping License</name>
+    <msrp>2000</msrp>
+    <picName>Resources/Graphics/sector_map.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Organic Plating</name>
+    <msrp>500</msrp>
+    <picName>Resources/Graphics/hp_organic.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Shield Generator</name>
+    <msrp>3000</msrp>
+    <picName>Resources/Graphics/cloaking_device.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Shipping License</name>
+    <msrp>1000</msrp>
+    <picName>Resources/Graphics/sector_map.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Steel Plating</name>
+    <msrp>5000</msrp>
+    <picName>Resources/Graphics/hp_electron.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.200000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
+    <name>Titanium Plating</name>
+    <msrp>50000</msrp>
+    <picName>Resources/Graphics/hp_titanium.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>-0.200000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
   </outfit>
 </outfits>

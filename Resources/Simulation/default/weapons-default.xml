@@ -2,7 +2,7 @@
 <weapons>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>0</version-macro>
+  <version-macro>1</version-macro>
   <weapon>
     <name>Laser</name>
     <weaponType>0</weaponType>

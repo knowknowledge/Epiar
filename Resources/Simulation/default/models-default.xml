@@ -2,7 +2,7 @@
 <models>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>0</version-macro>
+  <version-macro>1</version-macro>
   <model>
     <name>Escape Pod</name>
     <image>Resources/Graphics/podv.png</image>
@@ -11,7 +11,7 @@
     <thrustOffset>10</thrustOffset>
     <maxSpeed>2.0</maxSpeed>
     <hullStrength>100</hullStrength>
-	<shieldStrength>100</shieldStrength>
+    <shieldStrength>100</shieldStrength>
     <msrp>500</msrp>
     <cargoSpace>10</cargoSpace>
   </model>
@@ -23,7 +23,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <hullStrength>700</hullStrength>
-	<shieldStrength>700</shieldStrength>
+    <shieldStrength>700</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>30</cargoSpace>
   </model>
@@ -35,7 +35,7 @@
     <thrustOffset>35</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>600</hullStrength>
-	<shieldStrength>600</shieldStrength>
+    <shieldStrength>600</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>80</cargoSpace>
   </model>
@@ -47,7 +47,7 @@
     <thrustOffset>44</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>800</hullStrength>
-	<shieldStrength>800</shieldStrength>
+    <shieldStrength>800</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
   </model>
@@ -59,7 +59,7 @@
     <thrustOffset>31</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <hullStrength>500</hullStrength>
-	<shieldStrength>500</shieldStrength>
+    <shieldStrength>500</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>20</cargoSpace>
   </model>
@@ -71,7 +71,7 @@
     <thrustOffset>25</thrustOffset>
     <maxSpeed>7.5</maxSpeed>
     <hullStrength>400</hullStrength>
-	<shieldStrength>400</shieldStrength>
+    <shieldStrength>400</shieldStrength>
     <msrp>5000</msrp>
     <cargoSpace>30</cargoSpace>
   </model>
@@ -83,7 +83,7 @@
     <thrustOffset>20</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <hullStrength>200</hullStrength>
-	<shieldStrength>200</shieldStrength>
+    <shieldStrength>200</shieldStrength>
     <msrp>3500</msrp>
     <cargoSpace>10</cargoSpace>
   </model>
@@ -95,7 +95,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <hullStrength>400</hullStrength>
-	<shieldStrength>400</shieldStrength>
+    <shieldStrength>400</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>20</cargoSpace>
   </model>
@@ -107,7 +107,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <hullStrength>300</hullStrength>
-	<shieldStrength>300</shieldStrength>
+    <shieldStrength>300</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>15</cargoSpace>
   </model>
@@ -119,7 +119,7 @@
     <thrustOffset>15</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
     <hullStrength>300</hullStrength>
-	<shieldStrength>300</shieldStrength>
+    <shieldStrength>300</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>50</cargoSpace>
   </model>
@@ -131,7 +131,7 @@
     <thrustOffset>70</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>2500</hullStrength>
-	<shieldStrength>2500</shieldStrength>
+    <shieldStrength>2500</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>500</cargoSpace>
   </model>
@@ -143,7 +143,7 @@
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>800</hullStrength>
-	<shieldStrength>800</shieldStrength>
+    <shieldStrength>800</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>120</cargoSpace>
   </model>
@@ -155,7 +155,7 @@
     <thrustOffset>34</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <hullStrength>700</hullStrength>
-	<shieldStrength>700</shieldStrength>
+    <shieldStrength>700</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
   </model>
@@ -167,7 +167,7 @@
     <thrustOffset>50</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>2000</hullStrength>
-	<shieldStrength>2000</shieldStrength>
+    <shieldStrength>2000</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>400</cargoSpace>
   </model>
@@ -179,7 +179,7 @@
     <thrustOffset>40</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>500</hullStrength>
-	<shieldStrength>500</shieldStrength>
+    <shieldStrength>500</shieldStrength>
     <msrp>1500</msrp>
     <cargoSpace>80</cargoSpace>
   </model>
@@ -191,7 +191,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>500</hullStrength>
-	<shieldStrength>500</shieldStrength>
+    <shieldStrength>500</shieldStrength>
     <msrp>2000</msrp>
     <cargoSpace>60</cargoSpace>
   </model>
@@ -203,7 +203,7 @@
     <thrustOffset>30</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
     <hullStrength>600</hullStrength>
-	<shieldStrength>600</shieldStrength>
+    <shieldStrength>600</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>75</cargoSpace>
   </model>
@@ -215,7 +215,7 @@
     <thrustOffset>27</thrustOffset>
     <maxSpeed>6.0</maxSpeed>
     <hullStrength>400</hullStrength>
-	<shieldStrength>400</shieldStrength>
+    <shieldStrength>400</shieldStrength>
     <msrp>2500</msrp>
     <cargoSpace>30</cargoSpace>
   </model>
@@ -227,7 +227,7 @@
     <thrustOffset>90</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
     <hullStrength>5000</hullStrength>
-	<shieldStrength>5000</shieldStrength>
+    <shieldStrength>5000</shieldStrength>
     <msrp>15000</msrp>
     <cargoSpace>1000</cargoSpace>
   </model>
@@ -239,7 +239,7 @@
     <thrustOffset>35</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>2250</hullStrength>
-	<shieldStrength>2250</shieldStrength>
+    <shieldStrength>2250</shieldStrength>
     <msrp>10000</msrp>
     <cargoSpace>400</cargoSpace>
   </model>

@@ -2,7 +2,14 @@
 <alliances>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>0</version-macro>
+  <version-macro>1</version-macro>
+  <alliance>
+    <name>Autonomous Territory</name>
+    <aggressiveness>0.0</aggressiveness>
+    <attackSize>0</attackSize>
+    <currency>Credits</currency>
+    <color>0x7E336F</color>
+  </alliance>
   <alliance>
     <name>Inter-Terran Conjunctive</name>
     <aggressiveness>5.0</aggressiveness>
@@ -18,24 +25,17 @@
     <color>0x00FF00</color>
   </alliance>
   <alliance>
-    <name>Venusian Union</name>
-    <aggressiveness>0.0</aggressiveness>
-    <attackSize>0</attackSize>
-    <currency>Credits</currency>
-    <color>0x0000FF</color>
-  </alliance>
-  <alliance>
-    <name>Autonomous Territory</name>
-    <aggressiveness>0.0</aggressiveness>
-    <attackSize>0</attackSize>
-    <currency>Credits</currency>
-    <color>0x7E336F</color>
-  </alliance>
-  <alliance>
     <name>Tunis Protectorate</name>
     <aggressiveness>0.0</aggressiveness>
     <attackSize>0</attackSize>
     <currency>Credits</currency>
     <color>0xFC9007</color>
+  </alliance>
+  <alliance>
+    <name>Venusian Union</name>
+    <aggressiveness>0.0</aggressiveness>
+    <attackSize>0</attackSize>
+    <currency>Credits</currency>
+    <color>0x0000FF</color>
   </alliance>
 </alliances>
