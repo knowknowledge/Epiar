@@ -70,31 +70,30 @@ function toggleUniverseMap()
 	end
 end
 
-
---- Creates a new ship
-function createShip(X,Y,model,engine)
-	plans = {"Hunter", "Trader", "Patrol", "Bully"}
-	cur_ship = Ship.new(X,Y,model,engine,plans[math.random(#plans)])
-	cur_ship:SetRadarColor(255,0,0)
-	return cur_ship
-end
-
 --- Creates a random ship
-function createRandomShip(X,Y,Range,models,engines,weapons)
+function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	if models==nil then
-		models = Epiar.models()
+		local models = Epiar.models()
 	end
 	if engines==nil then
-		engines = Epiar.engines()
+		local engines = Epiar.engines()
 	end
 	if weapons==nil then
-		weapons = Epiar.weapons()
+		local weapons = Epiar.weapons()
 	end
-	X = X + math.random(Range)-Range/2
-	Y = Y + math.random(Range)-Range/2
-	model = models[math.random(#models)]
-	engine = engines[math.random(#engines)]
-	s = createShip(X,Y,model,engine)
+	if alliance==nil then
+		alliance = choose(Epiar.alliances())
+	end
+	local name = choose( {"Bob","Joe","Fred","Sally","Frank"} )
+	local X = X + about(Range)
+	local Y = Y + about(Range)
+	local model = choose(models)
+	local engine = choose(engines)
+	local plans = {"Hunter", "Trader", "Patrol", "Bully"}
+
+	s = Ship.new(name,X,Y,model,engine,plans[math.random(#plans)],alliance)
+
+	s:SetRadarColor(255,0,0)
 	attachRandomWeapon(s,weapons)
 	return s
 end

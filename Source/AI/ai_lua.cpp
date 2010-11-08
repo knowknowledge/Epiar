@@ -70,6 +70,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
+		{"GetName", &AI_Lua::ShipGetName},
+		{"GetAlliance", &AI_Lua::ShipGetAlliance},
 		{"GetType", &AI_Lua::ShipGetType},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
 		{"GetPosition", &AI_Lua::ShipGetPosition},
@@ -132,23 +134,26 @@ AI* AI_Lua::checkShip(lua_State *L, int index){
  */
 int AI_Lua::newShip(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 5)
-		return luaL_error(L, "Got %d arguments expected 5 (x, y, model, engine, script)", n);
+	if (n != 7)
+		return luaL_error(L, "Got %d arguments expected 5 (name, x, y, model, engine, script, alliance)", n);
 
-	double x = luaL_checknumber (L, 1);
-	double y = luaL_checknumber (L, 2);
-	string modelname = luaL_checkstring (L, 3);
-	string enginename = luaL_checkstring (L, 4);
-	string statemachine = luaL_checkstring (L, 5);
+	string name = luaL_checkstring (L, 1);
+	double x = luaL_checknumber (L, 2);
+	double y = luaL_checknumber (L, 3);
+	string modelname = luaL_checkstring (L, 4);
+	string enginename = luaL_checkstring (L, 5);
+	string statemachine = luaL_checkstring (L, 6);
+	string alliancename = luaL_checkstring (L, 7);
 
-	//LogMsg(INFO,"Creating new Ship (%f,%f) (%s) (%s) (%s)",x,y,modelname.c_str(),enginename.c_str(),statemachine.c_str());
+	//LogMsg(INFO,"Creating new Ship (%s) (%f,%f) (%s) (%s) (%s) (%s)",name.c_str(), x,y,modelname.c_str(),enginename.c_str(),statemachine.c_str(), alliancename.c_str());
 
 	// Allocate memory for a pointer to object
 	AI* s;
-	s = new AI(statemachine);
+	s = new AI(name,statemachine);
 	s->SetWorldPosition( Coordinate(x, y) );
 	s->SetModel( Models::Instance()->GetModel(modelname) );
 	s->SetEngine( Engines::Instance()->GetEngine(enginename) );
+	s->SetAlliance( Alliances::Instance()->GetAlliance(alliancename) );
 	Simulation_Lua::pushSprite(L,s);
 
 	// Add this ship to the SpriteManager
@@ -668,6 +673,49 @@ int AI_Lua::ShipGetID(lua_State* L){
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the ship's ID
+ * \sa Ship::GetName() AI::GetName() Player::GetName()
+ */
+int AI_Lua::ShipGetName(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Ship* ship = (Ship*)checkShip(L,1);
+		if(ship==NULL){
+			return 0;
+		} else {
+			lua_pushstring(L, ship->GetName().c_str() );
+		}
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the ship's ID
+ * \sa AI::GetAlliance()
+ */
+int AI_Lua::ShipGetAlliance(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if (ai==NULL){
+			return 0;
+		} else if( ai->GetDrawOrder() & DRAW_ORDER_PLAYER ) {
+			lua_pushstring(L, "Independent" ); ///< TODO The "Independent" Alliance should be created or this should be changed.
+		} else {
+			Alliance* alliance = ai->GetAlliance();
+			if (alliance==NULL){
+				lua_pushstring(L, "Independent" ); ///< TODO The "Independent" Alliance should be created or this should be changed.
+			} else {
+				lua_pushstring(L, alliance->GetName().c_str() );
+			}
+		}
+	} else {
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
 }

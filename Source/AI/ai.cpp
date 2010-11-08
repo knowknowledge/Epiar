@@ -14,14 +14,18 @@
 #include "Utilities/lua.h"
 
 /**\class AI
- * \brief AI controls the non-player shipts.*/
+ * \brief AI controls the non-player shipts.
+ *
+ * */
 
 /** \brief AI Constructor
  */
 
-AI::AI(string machine) :
+AI::AI(string _name, string machine) :
+	name(_name),
 	stateMachine(machine),
-	state("default")
+	state("default"),
+	allegiance(NULL)
 {
 	
 }
@@ -130,11 +134,15 @@ void AI::Draw(){
 }
 
 /**\fn AI::SetStateMachine(string _machine)
- * \brief Set's the state machine.
+ * \brief Sets the state machine.
  */
 
 /**\fn AI::SetState(string _state)
- * \brief Set's the current state.
+ * \brief Sets the current state.
+ */
+
+/**\fn AI::SetAlliance(Alliance* alliance)
+ * \brief Sets the current alliance.
  */
 
 /**\fn AI::GetStateMachine
@@ -143,4 +151,9 @@ void AI::Draw(){
 
 /**\fn AI::GetState
  * \brief Retrieves the current state.
+ */
+
+/**\fn AI::GetAlliance
+ * \brief Retrieves the current alliance.
+ * \warning Alliance may be NULL.
  */

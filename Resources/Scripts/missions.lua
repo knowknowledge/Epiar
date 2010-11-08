@@ -108,7 +108,7 @@ DestroyPirate = {
 		local model = choose( {"Fleet Guard", "Uber", "Terran Corvert Mark I", "Terran XV", "Terran Assist"} )
 		local engine = "Ion Engines"
 		local plan = "Pirate"
-		local cur_ship = Ship.new(X,Y,model,engine,plan)
+		local cur_ship = Ship.new(missionTable.Name,X,Y,model,engine,plan,"Independent")
 		local weapon = choose( {"Missile", "Neon Flares", "Plasma Cannon", "Strong Laser"})
 		cur_ship:AddWeapon( weapon )
 		cur_ship:AddAmmo( weapon, 100 )
