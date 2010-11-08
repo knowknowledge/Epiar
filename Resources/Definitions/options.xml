@@ -29,6 +29,7 @@
 		<starfield-density>750</starfield-density>
 		<automatic-load>0</automatic-load>
 		<random-universe>0</random-universe>
+		<random-seed>0</random-seed>
 	</simulation>
 	<timing>
 		<mouse-fade>500</mouse-fade>

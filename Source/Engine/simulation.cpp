@@ -127,7 +127,11 @@ bool Simulation::Run() {
 	}
 
 	if( OPTION(int, "options/simulation/random-universe") ) {
-		Lua::Call("createSystems");
+		if( OPTION(int, "options/simulation/random-seed") ) {
+			Lua::Call("createSystems", "i", OPTION(int, "options/simulation/random-seed") );
+		} else {
+			Lua::Call("createSystems");
+		}
 	} else {
 	    list<string>* planetNames = planets->GetNames();
 	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
@@ -139,6 +143,9 @@ bool Simulation::Run() {
 		    sprites->Add(  gates->GetGate(*gname) );
 	    }
 	}
+
+	// Randomize the Lua Seed
+	Lua::Call("randomizeseed");
 
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");

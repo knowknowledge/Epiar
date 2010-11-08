@@ -36,8 +36,13 @@ Thanks for playing!
 ]]
 
 -- Generate a Random Lua Seed
-math.randomseed(os.time())
-math.random(); math.random(); math.random() -- Absorb the first few non-random random results
+function randomizeseed()
+	math.randomseed(os.time())
+	-- Absorb the first few non-random random results
+	for s =1,10 do
+		math.random();
+	end
+end
 
 --------------------------------------------------------------------------------
 -- Basic Utilities
@@ -240,7 +245,7 @@ function options()
 						UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" ))
 end
 
-function createSystems()
+function createSystems(seed)
 	local alliances = Epiar.alliances()
 	local technologies = Epiar.technologies()
 	local r = 200000
@@ -249,13 +254,22 @@ function createSystems()
 	for p=1,21 do
 		table.insert(planetGraphics, "Resources/Graphics/planet"..p..".png" )
 	end
+	local system = {}
+
+	-- Use a specific Seed to create these Systems
+	if seed ~= nil then
+		math.randomseed(seed)
+	else
+		randomizeseed()
+	end
+
+	-- Create a bunch of random Star Systems
 	local starSystems = {
 		"Xen", "Artegga", "Vazzen", "Rilburn", "Burasu",
 		"Garor", "Hushaw", "Chenal", "Siana", "Hyanallophos",
 		"Allyphos", "Eorith", "Hanacal", "Tyeosur", "Mosalia",
 		"Untania", "Tonulia", "Anusia", "Denacia",
 	}
-	local system = {}
 	for s=1,#starSystems do
 		local x = about(r)
 		local y = about(r)
@@ -274,7 +288,7 @@ function createSystems()
 	-- Create a system at 0,0 so that new players are attached to the gate grid
 	table.insert( system, { ["x"]=0,
 		              ["y"]=0,
-		              ["alliance"]=alliances[1],
+		              ["alliance"]=alliances[ math.random(#alliances) ],
 		              ["numPlanets"]=0,
 		              ["numStations"]=0,
 		              ["numGates"]=0})
@@ -349,6 +363,7 @@ function createRandomShipForPlanet(id)
 		models = planet:GetModels()
 		engines = planet:GetEngines()
 		weapons = planet:GetWeapons()
+		alliance = planet:GetAlliance()
 		createRandomShip(x,y,influence,models,engines,weapons)
 	end
 end
