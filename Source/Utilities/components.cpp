@@ -251,6 +251,9 @@ bool Components::Load(string filename, bool optional) {
 	doc = xmlParseMemory( buffer, static_cast<int>(filelen) );
 	delete [] buffer;
 
+	// This path will be used when saving the file later.
+	filepath = filename;
+
 	if( doc == NULL ) {
 		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
 		return optional;
@@ -307,7 +310,6 @@ bool Components::Load(string filename, bool optional) {
 	
 	xmlFreeDoc( doc );
 
-	filepath = filename;
 	
 	LogMsg(INFO, "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
 	return success;
