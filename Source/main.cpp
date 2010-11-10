@@ -20,6 +20,7 @@
 #include "Utilities/argparser.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
+#include "Utilities/lua.h"
 #include "Utilities/xml.h"
 #include "Utilities/timer.h"
 
@@ -27,11 +28,170 @@
 #include "Tests/tests.h"
 #endif // EPIAR_COMPILE_TESTS
 
-
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
+
+Image* newSplashScreen(){
+	string splashScreens[] = {
+		"Resources/Art/EpiarFleetbig.png",
+		"Resources/Art/gatescene.png",
+		"Resources/Art/fight1.png",
+		"Resources/Art/fight2.png",
+		"Resources/Art/uberdone.png",
+		"Resources/Art/ubertextest.png",
+		"Resources/Graphics/btlcruiser_pretty.png",
+		"Resources/Graphics/cargoclaw_pretty.png",
+		"Resources/Graphics/cargoclaw_pretty2.png",
+		"Resources/Graphics/corvet2_pretty.png",
+		"Resources/Graphics/hammerhead_pretty.png",
+		"Resources/Graphics/patrol_pretty.png",
+		"Resources/Graphics/pirate_pretty.png",
+		"Resources/Graphics/raven_pretty.png",
+		"Resources/Graphics/scivessel_pretty.png",
+		"Resources/Graphics/shuttle_pretty.png",
+		"Resources/Graphics/tugship_pretty.png",
+		"Resources/Graphics/tugship_pretty2.png",
+		"Resources/Graphics/uber_pretty.png",
+		"Resources/Graphics/xv-1_pretty.png",
+	};
+	srand ( time(NULL) );
+	Video::Erase();
+	return Image::Get(splashScreens[rand()% (sizeof(splashScreens)/sizeof(splashScreens[0])) ]);
+}
+
+typedef enum {
+	DoNothing,
+	Play,
+	Options,
+	Editor,
+	Quit,
+} menuOption;
+
+menuOption clicked = DoNothing;
+
+// Currently Static functions are the only way I could think of to have C only 
+void clickPlay() { clicked = Play; }
+void clickOptions() { clicked = Options; }
+void clickEditor() { clicked = Editor; }
+void clickQuit() { clicked = Quit; }
+
+void createMenu() {
+	int x = OPTION( int, "options/video/w" ) - 200;
+	// Create UI
+	UI::Add( new Button(x, 200, 100, 30, "Play",    clickPlay    ) );
+	UI::Add( new Button(x, 300, 100, 30, "Options", clickOptions ) );
+	UI::Add( new Button(x, 400, 100, 30, "Editor",  clickEditor  ) );
+	UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
+}
+
+void mainmenu() {
+	bool quitSignal = false;
+	bool screenNeedsReset = false;
+	Input inputs;
+	list<InputEvent> events;
+
+	Image* splash = newSplashScreen();
+	createMenu();
+
+	string simName = "Resources/Simulation/default";
+	Simulation debug;
+
+	// Input Loop
+	do {
+		if (screenNeedsReset) {
+			UI::Close();
+			createMenu();
+			splash = newSplashScreen();
+			screenNeedsReset = false;
+		}
+
+		// Forget about the last click
+		clicked = DoNothing;
+
+		// Collect user input events
+		events = inputs.Update( quitSignal );
+		UI::HandleInput( &events );
+
+		// Draw Things
+		Video::Erase();
+		splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+		Serif->SetSize(64);
+		Serif->Render(OPTION( int, "options/video/w" )/2,50,"Epiar",Font::CENTER,Font::MIDDLE);
+		Serif->SetSize(12);
+		UI::Draw();
+		Video::Update();
+
+		switch(clicked){
+			case Play:
+				UI::Close();
+				screenNeedsReset = true;
+
+				Video::Erase();
+				splash = newSplashScreen();
+				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+				Serif->SetSize(64);
+				Serif->Render(OPTION( int, "options/video/w" )/2, 50,"Loading",Font::CENTER,Font::MIDDLE);
+				Serif->SetSize(12);
+				Video::Update();
+
+				if( false == debug.isLoaded() )
+				{
+					if(	!debug.Load( simName ) )
+					{
+						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+						break;
+					}
+					debug.SetupToRun();
+				}
+
+				// Only attempt to Run if the Simulation has loaded
+				assert( debug.isLoaded() );
+
+				debug.Run();
+
+				break;
+
+			case Options:
+				UI::Close();
+				Lua::Call("options");
+				break;
+
+			case Editor:
+				UI::Close();
+				screenNeedsReset = true;
+
+				if( false == debug.isLoaded() )
+				{
+					if(	!debug.Load( simName ) )
+					{
+						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+						break;
+					}
+				}
+
+				// Only attempt to Edit if the Simulation has loaded
+				assert( debug.isLoaded() );
+
+				debug.Edit();
+
+				break;
+
+			case Quit:
+				quitSignal = true;
+				break;
+
+			default:
+				break;
+		}
+		
+
+		// Wait until the next click
+		Timer::Delay(50);
+	}while(!quitSignal);
+
+}
 
 /**Main runtime.
  * \return 0 always
@@ -186,49 +346,8 @@ int main( int argc, char **argv ) {
 	Timer::Initialize();
 	Video::Initialize();
 
-	string splashScreen[] = {
-		"Resources/Art/EpiarFleetbig.png",
-		"Resources/Art/gatescene.png",
-		"Resources/Art/fight1.png",
-		"Resources/Art/fight2.png",
-		"Resources/Art/uberdone.png",
-		"Resources/Art/ubertextest.png",
-		"Resources/Graphics/btlcruiser_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty2.png",
-		"Resources/Graphics/corvet2_pretty.png",
-		"Resources/Graphics/hammerhead_pretty.png",
-		"Resources/Graphics/patrol_pretty.png",
-		"Resources/Graphics/pirate_pretty.png",
-		"Resources/Graphics/raven_pretty.png",
-		"Resources/Graphics/scivessel_pretty.png",
-		"Resources/Graphics/shuttle_pretty.png",
-		"Resources/Graphics/tugship_pretty.png",
-		"Resources/Graphics/tugship_pretty2.png",
-		"Resources/Graphics/uber_pretty.png",
-		"Resources/Graphics/xv-1_pretty.png",
-	};
-	srand ( time(NULL) );
-	Video::Erase();
-	Image::Get(splashScreen[rand()% (sizeof(splashScreen)/sizeof(splashScreen[0])) ])->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-	Serif->SetSize(30);
-	Serif->Render(OPTION( int, "options/video/w" )/2,50,"Epiar",Font::CENTER,Font::MIDDLE);
-	Serif->Render(OPTION( int, "options/video/w" )/2,OPTION( int, "options/video/h")-50,"Loading...",Font::CENTER,Font::MIDDLE);
-	Serif->SetSize(12);
-	Video::Update();
 
-	string simName = "Resources/Simulation/default";
-	Simulation debug;
-	if(	debug.Load( simName ) )
-	{
-		if( OPTION(int,"options/development/editor-mode") == 1 ) {
-			debug.Edit();
-		} else {
-			debug.Run();
-		}
-	} else {
-		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
-	}
+	mainmenu();
 
 	Video::Shutdown();
 	Audio::Instance().Shutdown();

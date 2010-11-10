@@ -53,6 +53,7 @@ Simulation::Simulation( void ) {
 	currentFPS = 0.;
 	paused = false;
 	willsave = false;
+	loaded = false;
 }
 
 /**\brief Loads the XML file.
@@ -64,7 +65,8 @@ bool Simulation::Load( string _folderpath ) {
 	if( !Open( folderpath + string("simulation.xml") ) ) {
 		return false;
 	}
-	return Parse();
+	loaded = Parse();
+	return loaded;
 }
 
 /**\brief Pauses the simulation
@@ -82,24 +84,12 @@ void Simulation::unpause(){
 	paused = false;
 }
 
-/**\brief Main game loop
- * \return true
- */
-bool Simulation::Run() {
-	bool quit = false;
+bool Simulation::SetupToRun(){
 	bool luaLoad = true;
-	int fpsCount = 0; // for FPS calculations
-	int fpsTotal= 0; // for FPS calculations
-	Uint32 fpsTS = 0; // timestamp of last FPS printing
 	lua_State *L;
 
 	Timer::Update(); // Start the Timer
 	
-	Hud::Init();
-
-	// Generate a starfield
-	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
-
 
 	// Start the Lua Universe
 	// Register these functions to their own lua namespaces
@@ -147,8 +137,6 @@ bool Simulation::Run() {
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 
-	// Message appear in reverse order, so this is upside down
-	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
 
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
@@ -161,7 +149,25 @@ bool Simulation::Run() {
 		Lua::Call("loadingWindow");
 	}
 
+	return true;
+}
+
+/**\brief Main game loop
+ * \return true
+ */
+bool Simulation::Run() {
+	bool quit = false;
+	int fpsCount = 0; // for FPS calculations
+	int fpsTotal= 0; // for FPS calculations
+	Uint32 fpsTS = 0; // timestamp of last FPS printing
 	fpsTS = Timer::GetTicks();
+
+	Hud::Init();
+	// Message appear in reverse order, so this is upside down
+	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
+
+	// Generate a starfield
+	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	// Load sample game music
 	if(bgmusic && OPTION(int, "options/sound/background"))
@@ -279,13 +285,9 @@ bool Simulation::Run() {
 	return true;
 }
 
-bool Simulation::Edit() {
-	bool quit = false;
+bool Simulation::SetupToEdit() {
 	bool luaLoad = true;
 	lua_State *L;
-
-	// Generate a starfield
-	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	// Start the Lua Universe
 	// Register these functions to their own lua namespaces
@@ -324,6 +326,14 @@ bool Simulation::Edit() {
 		    sprites->Add(  gates->GetGate(*gname) );
 	    }
 	}
+
+	return true;
+}
+
+bool Simulation::Edit() {
+	bool quit = false;
+	// Generate a starfield
+	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	while( !quit ) {
 		quit = HandleInput();

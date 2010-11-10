@@ -29,6 +29,10 @@ class Simulation : public XMLFile {
 
 		bool Load( string filename );
 		//bool Save();
+
+		bool SetupToRun();
+		bool SetupToEdit();
+
 		bool Run();
 		bool Edit();
 
@@ -38,7 +42,7 @@ class Simulation : public XMLFile {
 		void pause();
 		void unpause();
 		bool isPaused() {return paused;}
-
+		bool isLoaded() {return loaded;}
 
 		SpriteManager *GetSpriteManager() { return sprites; }
 		Commodities *GetCommodities() { return commodities; }
@@ -82,7 +86,7 @@ class Simulation : public XMLFile {
 		float currentFPS;
 		bool paused;
 		bool willsave;
-
+		bool loaded;
 };
 
 #endif // __H_SIMULATION__
