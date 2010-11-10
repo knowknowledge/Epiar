@@ -187,34 +187,22 @@ int main( int argc, char **argv ) {
 	Video::Initialize();
 
 	string splashScreen[] = {
-		"Resources/Art/EpiarFleetbig.png",
-		"Resources/Art/gatescene.png",
-		"Resources/Art/fight1.png",
-		"Resources/Art/fight2.png",
-		"Resources/Art/uberdone.png",
-		"Resources/Art/ubertextest.png",
-		"Resources/Graphics/btlcruiser_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty2.png",
-		"Resources/Graphics/corvet2_pretty.png",
-		"Resources/Graphics/hammerhead_pretty.png",
-		"Resources/Graphics/patrol_pretty.png",
-		"Resources/Graphics/pirate_pretty.png",
-		"Resources/Graphics/raven_pretty.png",
-		"Resources/Graphics/scivessel_pretty.png",
-		"Resources/Graphics/shuttle_pretty.png",
-		"Resources/Graphics/tugship_pretty.png",
-		"Resources/Graphics/tugship_pretty2.png",
-		"Resources/Graphics/uber_pretty.png",
-		"Resources/Graphics/xv-1_pretty.png",
+		"Resources/Art/menu1.png",
+		"Resources/Art/menu2.png",
+		"Resources/Art/menu3.png",
+		"Resources/Art/menu4.png",
+		"Resources/Art/menu5.png",
 	};
+
 	srand ( time(NULL) );
+
 	Video::Erase();
+
+	// Draw the background
 	Image::Get(splashScreen[rand()% (sizeof(splashScreen)/sizeof(splashScreen[0])) ])->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-	Serif->SetSize(30);
-	Serif->Render(OPTION( int, "options/video/w" )/2,50,"Epiar",Font::CENTER,Font::MIDDLE);
-	Serif->Render(OPTION( int, "options/video/w" )/2,OPTION( int, "options/video/h")-50,"Loading...",Font::CENTER,Font::MIDDLE);
-	Serif->SetSize(12);
+	// Draw the "logo"
+	Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
+
 	Video::Update();
 
 	string simName = "Resources/Simulation/default";
