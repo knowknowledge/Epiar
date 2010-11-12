@@ -2,7 +2,7 @@
 <engines>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <engine>
     <name>Altaire Corp. NM66 Sublight Thrusters</name>
     <forceOutput>5.0</forceOutput>
