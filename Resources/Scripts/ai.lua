@@ -25,12 +25,26 @@ function FindADestination(id,x,y,angle,speed,vector)
 	return "Travelling"
 end
 
+function MustDefend(id,attacker)
+	local cur_ship = Epiar.getSprite(id)
+	if attacker > -1 then
+		print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
+		AIData[id].target = attacker
+		cur_ship:SetAttacker(-1)
+		return true
+	end
+	return false
+end
+
 --- Trader AI
 Trader = {
 	Docking = function(id,x,y,angle,speed,vector)
 		-- Stop on this planet
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
+
+		--if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
+
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
 		if speed > 0.5 then
@@ -47,6 +61,10 @@ Trader = {
 	Travelling = function(id,x,y,angle,speed,vector)
 		-- Get to the planet
 		local cur_ship = Epiar.getSprite(id)
+
+		-- traders can't defend
+		--if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
+
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
@@ -83,13 +101,7 @@ Hunter = {
 		end
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 
-		local attacker = cur_ship:GetAttacker()
-		if attacker > -1 then
-			print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
-			AIData[id].target = attacker
-			cur_ship:SetAttacker(-1)
-			return "Hunting"
-		end
+		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		-- Rikus added
 		print (string.format("target:%d    target angle:%d current angle:%d\n", AIData[id].target, cur_ship:directionTowards(tx,ty), angle))
@@ -122,7 +134,7 @@ Hunter = {
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 		cur_ship:Fire( AIData[id].target )
 		
-		if dist>100 then
+		if dist>175 then
 			if cur_ship:directionTowards(tx,ty) == 0 then
 				cur_ship:Accelerate()
 			end
@@ -142,13 +154,7 @@ Hunter = {
 			return "Hunting"
 		end
 
-		local attacker = cur_ship:GetAttacker()
-		if attacker > -1 then
-			print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
-			AIData[id].target = attacker
-			cur_ship:SetAttacker(-1)
-			return "Hunting"
-		end
+		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
@@ -173,6 +179,9 @@ Patrol = {
 	Killing = Hunter.Killing,
 	Travelling = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
+
+		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
+
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
@@ -182,7 +191,13 @@ Patrol = {
 		end
 	end,
 	Orbiting = function(id,x,y,angle,speed,vector)
+
 		local cur_ship = Epiar.getSprite(id)
+
+		local attacker = cur_ship:GetAttacker()
+
+		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
+
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
@@ -240,6 +255,8 @@ Bully = {
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
+
+		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		local ship= Epiar.nearestShip(cur_ship,900)
 		if (ship~=nil) and (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) then

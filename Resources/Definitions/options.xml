@@ -38,9 +38,9 @@
 		<alert-fade>2500</alert-fade>
 	</timing>
 	<development>
-        <ships-worldmap>0</ships-worldmap>
+        <ships-worldmap>1</ships-worldmap>
 		<editor-mode>0</editor-mode>
-		<debug-ai>0</debug-ai>
+		<debug-ai>1</debug-ai>
 		<debug-ui>0</debug-ui>
 		<override-tgz>1</override-tgz>
 	</development>
