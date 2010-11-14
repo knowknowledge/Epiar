@@ -1,5 +1,6 @@
 -- Use this script for code directly to the Players
 
+
 --- Keyboard Commands for controlling the Player
 -- General commands belong in the defaultCommands table.
 playerCommands = {
@@ -302,10 +303,18 @@ function doHailBFM()
 	end
 
 	-- placeholder reply for now; work on implementing this later.
-	if ( math.random(25) == 1 ) then
+	math.randomseed( os.time() + targettedShip:GetID() )
+
+	for s = 1,10 do
+		math.random()
+	end
+
+	local r = math.random(25)
+	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
 	else
+		print ( string.format ("r: %d != 1\n", r ) )
 		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
 		didBFM = 1
 	end
