@@ -92,8 +92,7 @@ void Projectile::Update( void ) {
 		hit->SetMomentum( impact->GetMomentum() );
 		sprites->Add( hit );
 
-		// Notify the sprite of who the owner was (may influence AI's target decision)
-		printf("setting attacker id to %d\n", ownerID);
+		// Notify the sprite of who the projectile's owner was (may influence AI's target decision)
 		((Ship*)impact)->SetAttacker(ownerID);
 	}
 

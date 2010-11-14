@@ -21,6 +21,7 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
+	{'y', "Hail", "hailShip()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
 	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
 	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
@@ -241,6 +242,83 @@ function boardShip()
 		HUD.newAlert("Cannot board target -- too far away")
 	end
 end
+
+---Hail target ship
+function hailShip()
+	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+
+	--local x, y = PLAYER:GetPosition()
+	local targettedShip = Epiar.getSprite( HUD.getTarget() )
+
+	if targettedShip == nil then
+		HUD.newAlert("Cannot hail - no target.")
+		return
+	end
+
+	--local targettedX, targettedY = targettedShip:GetPosition()
+	--local dist = distfrom( x, y, targettedX, targettedY ) -- calculate distance to target
+
+	-- for now, let's only hail non-disabled ships
+
+	didBFM = false
+
+	if (targettedShip:IsDisabled() ~= 1) then
+		HUD.newAlert("Hailing ship...")
+		Epiar.pause()
+
+		-- show the dialog
+		hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
+		hailReplyLabel = UI.newLabel(50, 50, "")
+
+		hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
+		hailDialog:add( hailReplyLabel ) 
+
+		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet(50,50)") )
+		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM(50)" ) )
+		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+
+	else
+		HUD.newAlert("Cannot board target -- too far away")
+	end
+end
+
+function doHailGreet()
+	if hailDialog == nil then return end
+	local targettedShip = Epiar.getSprite( HUD.getTarget() )
+
+	-- generic reply for now; later should make this query the AI routine for an appropriate response
+	hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+
+	-- play some sound?
+end
+	
+function doHailBFM()
+	if hailDialog == nil then return end
+	local targettedShip = Epiar.getSprite( HUD.getTarget() )
+
+	if didBFM then
+		HUD.newAlert(string.format("The %s closed the channel.", targettedShip:GetModelName() ) )
+		doHailEnd()
+	end
+
+	-- placeholder reply for now; work on implementing this later.
+	if ( math.random(25) == 1 ) then
+		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
+		AIData[targettedShip:GetID()].target = -1
+	else
+		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
+		didBFM = 1
+	end
+end
+	
+function doHailEnd()
+	if hailDialog == nil then return end
+
+	Epiar.unpause()
+	hailDialog:close()
+	hailDialog = nil
+end
+	
 
 --- Callback for the UI button in boarding ship dialog (see above)
 function doBoarding( reward )

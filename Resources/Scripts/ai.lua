@@ -28,7 +28,7 @@ end
 function MustDefend(id,attacker)
 	local cur_ship = Epiar.getSprite(id)
 	if attacker > -1 then
-		print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
+		--print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
 		AIData[id].target = attacker
 		cur_ship:SetAttacker(-1)
 		return true
@@ -104,7 +104,7 @@ Hunter = {
 		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		-- Rikus added
-		print (string.format("target:%d    target angle:%d current angle:%d\n", AIData[id].target, cur_ship:directionTowards(tx,ty), angle))
+		--print (string.format("target:%d    target angle:%d current angle:%d\n", AIData[id].target, cur_ship:directionTowards(tx,ty), angle))
 
 		if cur_ship:directionTowards(tx,ty) == 0 then
 			cur_ship:Accelerate()

@@ -220,20 +220,13 @@ void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
 	assert(this);
 	assert(this->w);
 	assert(this->h);
-	printf("w: %d\nh: %d\n", this->w, this->h);
 
 	float wf = static_cast<float>(this->w);
 	float hf = static_cast<float>(this->h);
 
-	printf("wf: %f\nhf: %f\n", wf, hf);
-
 	float resize_ratio_w = static_cast<float>(box_w) / wf;
 	float resize_ratio_h = static_cast<float>(box_h) / hf;
 
-	//printf("resize_ratio_w: %f\nresize_ratio_h: %f\n", resize_ratio_w, resize_ratio_h);
-
-	printf("Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h)\n");
-	printf("values: %d %d %f %f %f %f %f %f %f\n", x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 }
 
