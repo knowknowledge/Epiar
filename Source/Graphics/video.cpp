@@ -151,12 +151,6 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-	//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
-
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // vsync
 
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
@@ -208,6 +202,32 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	LogMsg(INFO, "Video mode initialized at %dx%dx%d\n", screen->w, screen->h, screen->format->BitsPerPixel );
 
 	return( true );
+}
+
+/**\brief Register Lua functions for Video related operations.
+ */
+void Video::RegisterLua(lua_State *L) {
+	static const luaL_Reg videoFunctions[] = {
+		{"getWidth", &Video::lua_getWidth},
+		{"getHeight", &Video::lua_getHeight},
+		{NULL, NULL}
+	};
+
+	luaL_openlib(L, EPIAR_VIDEO, videoFunctions, 0);
+}
+
+/**\brief Same as Video::GetWidth (Lua callable)
+ */
+int Video::lua_getWidth(lua_State *L) {
+	lua_pushinteger(L, GetWidth() );
+	return 1;
+}
+
+/**\brief Same as Video::GetHeight (Lua callable)
+ */
+int Video::lua_getHeight(lua_State *L) {
+	lua_pushinteger(L, GetHeight() );
+	return 1;
 }
 
 /**\brief Video updates.

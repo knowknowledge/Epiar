@@ -106,14 +106,12 @@ bool Simulation::Run() {
 	Lua::Init();
 	L = Lua::CurrentState();
 
-	Simulation_Lua::StoreSimulation(L,this);
+	Simulation_Lua::StoreSimulation(L, this);
 
-	Simulation_Lua::RegisterSimulation(L);
+	// Load default Lua registers
+	LuaRegisters(L);
+	// Load ::Run()-specific Lua registers
 	AI_Lua::RegisterAI(L);
-	UI_Lua::RegisterUI(L);
-	Audio_Lua::RegisterAudio(L);
-	Planets_Lua::RegisterPlanets(L);
-	Hud::RegisterHud(L);
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
 		   && Lua::Load("Resources/Scripts/universe.lua")
@@ -294,12 +292,10 @@ bool Simulation::Edit() {
 
 	Simulation_Lua::StoreSimulation(L,this);
 
-	Simulation_Lua::RegisterSimulation(L);
+	// Load main Lua registers
+	LuaRegisters(L);
+	// Load ::Edit()-specific Lua registers
 	Simulation_Lua::RegisterEditor(L);
-	UI_Lua::RegisterUI(L);
-	Audio_Lua::RegisterAudio(L);
-	Planets_Lua::RegisterPlanets(L);
-	Hud::RegisterHud(L);
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
 		   && Lua::Load("Resources/Scripts/universe.lua")
@@ -349,6 +345,18 @@ bool Simulation::Edit() {
 	}
 
 	return true;
+}
+
+/**\brief Subroutine. Calls various Lua register functions needed by both Run and Edit
+ * \return true if successful
+ */
+void Simulation::LuaRegisters(lua_State *L) {
+	Simulation_Lua::RegisterSimulation(L);
+	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
+	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
+	Video::RegisterLua(L);
 }
 
 /**\brief Parses an XML simulation file
