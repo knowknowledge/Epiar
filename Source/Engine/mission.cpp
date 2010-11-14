@@ -240,7 +240,6 @@ Mission* Mission::FromXMLNode( xmlDocPtr doc, xmlNodePtr node )
 	xmlNodePtr  attr;
 	string _type;
 	int _tableReference;
-	lua_State *L = Lua::CurrentState();
 	
 	if( (attr = FirstChildNamed(node, "type"))){
 		_type = NodeToString(doc,attr);
