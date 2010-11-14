@@ -134,7 +134,7 @@ Hunter = {
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 		cur_ship:Fire( AIData[id].target )
 		
-		if dist>175 then
+		if dist>200 then
 			if cur_ship:directionTowards(tx,ty) == 0 then
 				cur_ship:Accelerate()
 			end

@@ -70,6 +70,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 		// Current State
 		{"GetID", &AI_Lua::ShipGetID},
+		{"GetMass", &AI_Lua::ShipGetMass},
 		{"GetName", &AI_Lua::ShipGetName},
 		{"GetAlliance", &AI_Lua::ShipGetAlliance},
 		{"GetType", &AI_Lua::ShipGetType},
@@ -672,6 +673,26 @@ int AI_Lua::ShipGetID(lua_State* L){
 			return 1;
 		}
 		lua_pushinteger(L, (ai)->GetID() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the ship's mass
+ * \sa Sprite::GetMass()
+ */
+int AI_Lua::ShipGetMass(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushnumber(L, (ai)->GetModel()->GetMass() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
