@@ -91,6 +91,10 @@ void Projectile::Update( void ) {
 		hit->SetAngle( -this->GetAngle() );
 		hit->SetMomentum( impact->GetMomentum() );
 		sprites->Add( hit );
+
+		// Notify the sprite of who the owner was (may influence AI's target decision)
+		printf("setting attacker id to %d\n", ownerID);
+		((Ship*)impact)->SetAttacker(ownerID);
 	}
 
 	// Expire the projectile after a time period

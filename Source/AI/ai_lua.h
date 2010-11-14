@@ -78,6 +78,10 @@ class AI_Lua{
 		static int ShipGetHull(lua_State* L);
 		static int ShipGetShield(lua_State* L);
 		static int ShipGetMissions(lua_State* L);
+
+		// Situational Awareness
+		static int ShipGetAttacker(lua_State* L);
+		static int ShipSetAttacker(lua_State* L);
 	private:
 };
 

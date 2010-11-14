@@ -23,6 +23,9 @@ class Ship : public Sprite {
 		~Ship();
 		
 		bool SetModel( Model *model );
+
+		Model *GetModel(){ return model; };
+
 		bool SetEngine( Engine *engine );
 		Sprite *GetSprite();
 		string GetModelName();
@@ -79,6 +82,10 @@ class Ship : public Sprite {
 		void SetShieldBoost(float shield) { shieldBooster = shield;}		
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
+
+		// Situational awareness / AI functions
+		void SetAttacker(int attacker) { attackedBy = attacker; }
+		int GetAttacker() { return attackedBy; }
 	
 	private:
 		Model *model;
@@ -103,6 +110,8 @@ class Ship : public Sprite {
 			bool isAccelerating; ///< Cleared by update, set by accelerate (so it's always updated twice a loop)
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
+
+		int attackedBy; ///< Sprite id for owner of last projectile to hit this ship
 
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship

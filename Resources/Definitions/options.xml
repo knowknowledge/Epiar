@@ -19,11 +19,11 @@
 	<sound>
 		<musicvolume>0.5</musicvolume>
 		<soundvolume>0.5</soundvolume>
-		<background>0</background>
-		<weapons>0</weapons>
-		<engines>0</engines>
-		<explosions>0</explosions>
-		<buttons>0</buttons>
+		<background>1</background>
+		<weapons>1</weapons>
+		<engines>1</engines>
+		<explosions>1</explosions>
+		<buttons>1</buttons>
 	</sound>
 	<simulation>
 		<starfield-density>750</starfield-density>
