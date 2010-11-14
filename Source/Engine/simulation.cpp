@@ -83,7 +83,7 @@ void Simulation::unpause(){
 }
 
 /**\brief Main game loop
- * \return true
+ * \return true if everything runs correctly
  */
 bool Simulation::Run() {
 	bool quit = false;
@@ -279,6 +279,9 @@ bool Simulation::Run() {
 	return true;
 }
 
+/**\brief Main edit loop
+ * \return true if everything runs correctly
+ */
 bool Simulation::Edit() {
 	bool quit = false;
 	bool luaLoad = true;
