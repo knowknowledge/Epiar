@@ -2,7 +2,7 @@
 <alliances>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <alliance>
     <name>Autonomous Territory</name>
     <aggressiveness>0.0</aggressiveness>

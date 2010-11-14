@@ -36,6 +36,9 @@
 
 #include "Engine/hud.h"
 
+/** Register
+ */
+
 void Simulation_Lua::RegisterSimulation(lua_State *L) {
 	Lua::RegisterGlobal("WIDTH", Video::GetWidth() );
 	Lua::RegisterGlobal("HEIGHT", Video::GetHeight() );
@@ -45,19 +48,29 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"pause", &Simulation_Lua::pause},
 		{"unpause", &Simulation_Lua::unpause},
 		{"ispaused", &Simulation_Lua::ispaused},
+
+		// OPTION Functions
 		{"getoption", &Simulation_Lua::getoption},
 		{"setoption", &Simulation_Lua::setoption},
+
+		// Player Functions
 		{"loadPlayer", &Simulation_Lua::loadPlayer},
 		{"savePlayer", &Simulation_Lua::savePlayer},
 		{"newPlayer", &Simulation_Lua::newPlayer},
 		{"players", &Simulation_Lua::getPlayerNames},
 		{"player", &Simulation_Lua::getPlayer},
 		{"setLastPlanet", &Simulation_Lua::setLastPlanet},
+
+		// Sprite Creation Functions
 		{"NewGatePair", &Simulation_Lua::NewGatePair},
+
+		// Camera Functions
 		{"getCamera", &Simulation_Lua::getCamera},
 		{"moveCamera", &Simulation_Lua::moveCamera},
 		{"shakeCamera", &Simulation_Lua::shakeCamera},
 		{"focusCamera", &Simulation_Lua::focusCamera},
+
+		// Game Component lists
 		{"commodities", &Simulation_Lua::getCommodityNames},
 		{"alliances", &Simulation_Lua::getAllianceNames},
 		{"models", &Simulation_Lua::getModelNames},
@@ -67,15 +80,21 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"technologies", &Simulation_Lua::getTechnologyNames},
 		{"planetNames", &Simulation_Lua::getPlanetNames},
 		{"gateNames", &Simulation_Lua::getGateNames},
+
+		// Sprite Searching Functions
 		{"getSprite", &Simulation_Lua::getSpriteByID},
-		{"getMSRP", &Simulation_Lua::getMSRP},
 		{"ships", &Simulation_Lua::getShips},
 		{"planets", &Simulation_Lua::getPlanets},
 		{"gates", &Simulation_Lua::getGates},
 		{"nearestShip", &Simulation_Lua::getNearestShip},
 		{"nearestPlanet", &Simulation_Lua::getNearestPlanet},
+
+		// Keyboard Command Functions
 		{"RegisterKey", &Simulation_Lua::RegisterKey},
 		{"UnRegisterKey", &Simulation_Lua::UnRegisterKey},
+
+		// Game Component Information
+		{"getMSRP", &Simulation_Lua::getMSRP},
 		{"getCommodityInfo", &Simulation_Lua::getCommodityInfo},
 		{"getAllianceInfo", &Simulation_Lua::getAllianceInfo},
 		{"getModelInfo", &Simulation_Lua::getModelInfo},
@@ -85,6 +104,8 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"getEngineInfo", &Simulation_Lua::getEngineInfo},
 		{"getOutfitInfo", &Simulation_Lua::getOutfitInfo},
 		{"getTechnologyInfo", &Simulation_Lua::getTechnologyInfo},
+
+		// File System Functions
 		{"listImages", &Simulation_Lua::listImages},
 		{NULL, NULL}
 	};
@@ -92,6 +113,8 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 
 }
 
+/** \brief Register functions specific to the editor
+ */
 void Simulation_Lua::RegisterEditor(lua_State *L) {
 	static const luaL_Reg EditorFunctions[] = {
 		{"setInfo", &Simulation_Lua::setInfo},
@@ -102,6 +125,16 @@ void Simulation_Lua::RegisterEditor(lua_State *L) {
 }
 
 
+/** \brief Store a pointer to the Simulation into a Lua State
+ * \details In order to make it possible to have multiple Simulations running,
+ *  each lua_State needs to have a way to know which Simulation it is attached
+ *  to.  This is because the calling model Lua requires that all registered
+ *  functions be static functions.
+ *
+ *  In order to access Simulation variables (ex: Sprites) from a Lua registered
+ *  c++ function, use GetSimulation.
+ *  \see Simulation_Lua::GetSimulation
+ */
 void Simulation_Lua::StoreSimulation(lua_State *L, Simulation *sim) {
 	// Store A pointer to the simulation is stored in the LUA_REGISTRYINDEX table.
 	lua_pushstring(L,"EPIAR_SIMULATION"); // Key
@@ -110,6 +143,9 @@ void Simulation_Lua::StoreSimulation(lua_State *L, Simulation *sim) {
 	lua_pop(L,1);
 }
 
+/** \brief Retrieve the Simuation pointer associated with a specific lua_State.
+ *  \see Simulation_Lua::GetSimulation
+ */
 Simulation *Simulation_Lua::GetSimulation(lua_State *L) {
 	Simulation* sim;
 	// A pointer to the simulation is stored in the LUA_REGISTRYINDEX table.
@@ -119,8 +155,6 @@ Simulation *Simulation_Lua::GetSimulation(lua_State *L) {
 	lua_pop(L,1);
 	return sim;
 }
-
-
 
 /*
 int Simulation_Lua::console_echo(lua_State *L) {
@@ -135,30 +169,44 @@ int Simulation_Lua::console_echo(lua_State *L) {
 }
 */
 
+/** \brief Pause the Simulation
+ */
 int Simulation_Lua::pause(lua_State *L){
 	Simulation *sim = GetSimulation(L);
 	sim->pause();
 	return 0;
 }
 
+/** \brief Unpause the Simulation
+ */
 int Simulation_Lua::unpause(lua_State *L){
 	Simulation *sim = GetSimulation(L);
 	sim->unpause();
 	return 0;
 }
 
+/** \brief Check if the Simulation is paused
+ *  \returns true if the Simulation is paused
+ */
 int Simulation_Lua::ispaused(lua_State *L){
 	Simulation *sim = GetSimulation(L);
 	lua_pushnumber(L, (int) sim->isPaused() );
 	return 1;
 }
 
+/** \brief Save the Player Data
+ *  \note The Player's data will only be saved once at the end of a Run loop.  This is not immediate.
+ */
 int Simulation_Lua::savePlayer(lua_State *L){
 	Simulation *sim = GetSimulation(L);
 	sim->save();
 	return 0;
 }
 
+/** \brief Get an OPTION value
+ *  \param [in] key Path to a specific OPTION.
+ *  \returns string representation of the OPTION's value.
+ */
 int Simulation_Lua::getoption(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -169,6 +217,11 @@ int Simulation_Lua::getoption(lua_State *L) {
 	return 1;
 }
 
+/** \brief Set an OPTION value
+ *  \param [in] key Path to a specific OPTION.
+ *  \param [in] value the OPTION's new value.
+ *  \note All Lua primitives should support lua_tostring, so ints and floats can be used.
+ */
 int Simulation_Lua::setoption(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -220,12 +273,20 @@ int Simulation_Lua::UnRegisterKey(lua_State *L) {
 	return 0;
 }
 
+/** \brief Get a list of players names.
+ *  \details Each name can be used to load a player.
+ *  \see Simulation_Lua::loadPlayer
+ *  \returns list of strings
+ */
 int Simulation_Lua::getPlayerNames(lua_State *L) {
 	list<string> *names = GetSimulation(L)->GetPlayers()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Load a player.
+ *  \param [in] playerName
+ */
 int Simulation_Lua::loadPlayer(lua_State *L) {
 	int n = lua_gettop(L);
 	if (n != 1) {
@@ -241,7 +302,12 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 	return 0;
 }
 
-
+/** \brief Create a new player.
+ *  \param [in] playerName
+ *  \note All new players will use the same defaultPlayer as defined in by the Simulation.
+ *  \note The player will not be automatically saved.
+ *  \see Simulation_Lua::savePlayer
+ */
 int Simulation_Lua::newPlayer(lua_State *L) {
 	int n = lua_gettop(L);
 	if (n != 1) {
@@ -256,11 +322,17 @@ int Simulation_Lua::newPlayer(lua_State *L) {
 	return 0;
 }
 
+/** \brief Get reference to the Player
+ *  \returns Lua Ship object that references the Player.
+ */
 int Simulation_Lua::getPlayer(lua_State *L){
 	Simulation_Lua::pushSprite(L,Player::Instance() );
 	return 1;
 }
 
+/** \brief Record the last planet that a player landed on.
+ *  \details The player will be loaded at this planet next time.
+ */
 int Simulation_Lua::setLastPlanet(lua_State *L){
 	int n=lua_gettop(L);
 	if(n!=1){
@@ -270,7 +342,13 @@ int Simulation_Lua::setLastPlanet(lua_State *L){
 	Player::Instance()->setLastPlanet(planetName);
 	return 0;
 }
-	
+
+/** \brief Create Two Gates that are linked to each other
+ *  \param [in] X value for Gate 1
+ *  \param [in] Y value for Gate 1
+ *  \param [in] X value for Gate 2
+ *  \param [in] Y value for Gate 2
+ */
 int Simulation_Lua::NewGatePair(lua_State *L){
 	int n = lua_gettop(L);
 	if (n != 4) {
@@ -287,6 +365,9 @@ int Simulation_Lua::NewGatePair(lua_State *L){
 	return 0;
 }
 
+/** \brief Get Camera Position
+ *  \returns X,Y position of the camera.
+ */
 int Simulation_Lua::getCamera(lua_State *L){
 	int n = lua_gettop(L);
 	if (n != 0) {
@@ -298,6 +379,11 @@ int Simulation_Lua::getCamera(lua_State *L){
 	return 2;
 }
 
+/** \brief Shift Camera Position by a vector
+ *  \param [in] X component of the Camera's movement
+ *  \param [in] Y component of the Camera's movement
+ *  \note This jumps the camera, so it can be a bit jarring.
+ */
 int Simulation_Lua::moveCamera(lua_State *L){
 	int n = lua_gettop(L);
 	if (n != 2) {
@@ -309,7 +395,13 @@ int Simulation_Lua::moveCamera(lua_State *L){
 	GetSimulation(L)->GetCamera()->Move(-x,y);
 	return 0;
 }
-//Allow camera shaking from Lua
+
+/** \brief Shake the camera
+ *  \param [in] duration to keep shaking (in game ticks)
+ *  \param [in] intensity of the shaking
+ *  \param [in] X component of the Shake vector
+ *  \param [in] Y component of the Shake vector
+ */
 int Simulation_Lua::shakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
 		Camera *pInstance = GetSimulation(L)->GetCamera();
@@ -319,6 +411,14 @@ int Simulation_Lua::shakeCamera(lua_State *L){
 	return 0;
 }
 
+/** \brief Focus the Camera on a Sprite or Position
+ *  \param[in] Sprite object
+ *  \note When a sprite object is given, the Camera will continue to focus on it as it moves.
+ * or
+ *  \param[in] X position to focus the camera.
+ *  \param[in] Y position to focus the camera.
+ *  \note When X,Y positions are given, the Camera will not follow any sprite.
+ */
 int Simulation_Lua::focusCamera(lua_State *L){
 	int n = lua_gettop(L);
 	if (n == 1) {
@@ -339,60 +439,90 @@ int Simulation_Lua::focusCamera(lua_State *L){
 	return 0;
 }
 
+/** \brief Get Commodity names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getCommodityNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetCommodities()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Alliance names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getAllianceNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetAlliances()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Weapon names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getWeaponNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetWeapons()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Outfit names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getOutfitNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetOutfits()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Model names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getModelNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetModels()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Engine names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getEngineNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetEngines()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Technology names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getTechnologyNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetTechnologies()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Planet names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getPlanetNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetPlanets()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Get Gate names
+ *  \returns list of names as strings
+ */
 int Simulation_Lua::getGateNames(lua_State *L){
 	list<string> *names = GetSimulation(L)->GetGates()->GetNames();
 	Lua::pushStringList(L,names);
 	return 1;
 }
 
+/** \brief Pushes a Sprite reference onto the Lua Stack.
+ *  \note Sprites are referenced by their ID.
+ */
 void Simulation_Lua::pushSprite(lua_State *L,Sprite* s){
 	int* id = (int*)lua_newuserdata(L, sizeof(int*));
 	*id = s->GetID();
@@ -425,6 +555,8 @@ Sprite* Simulation_Lua::checkSprite(lua_State *L,int id ){
 }
 */
 
+/** \brief Push a list of names for a component list.
+ */
 void Simulation_Lua::pushComponents(lua_State *L, list<Component*> *components){
 	lua_createtable(L, components->size(), 0);
 	int newTable = lua_gettop(L);
@@ -438,6 +570,10 @@ void Simulation_Lua::pushComponents(lua_State *L, list<Component*> *components){
 	}
 }
 
+/** \brief Search for a Sprite by ID
+ *  \param [in] Sprite ID
+ *  \returns reference to a Sprite
+ */
 int Simulation_Lua::getSpriteByID(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -456,6 +592,10 @@ int Simulation_Lua::getSpriteByID(lua_State *L){
 	return 1;
 }
 
+/** \brief Get list of Sprites
+ *  \details Optionally accepts an X,Y Coordinate and radius to limit which sprites are returned
+ *  \returns list of sprites
+ */
 int Simulation_Lua::getSprites(lua_State *L, int kind){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -485,6 +625,11 @@ int Simulation_Lua::getSprites(lua_State *L, int kind){
 	return 1;
 }
 
+/** \brief Get the MSRP of a Game Component
+ *  \details  Searches all saleable Component collections for a Component by the given name.
+ *  \param[in] Name of a Game Component
+ *  \returns credit value of the Component
+ */
 int Simulation_Lua::getMSRP(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -511,10 +656,17 @@ int Simulation_Lua::getMSRP(lua_State *L) {
 	return 1;
 }
 
+/** Get Lua references to Ships
+ * \see Simulation_Lua::getSprites
+ * \returns list of Ship References
+ */
 int Simulation_Lua::getShips(lua_State *L){
 	return Simulation_Lua::getSprites(L,DRAW_ORDER_SHIP);
 }
 
+/** Get Lua references to All Planets
+ * \returns list of Planet References
+ */
 int Simulation_Lua::getPlanets(lua_State *L){
 	Planets *planets = GetSimulation(L)->GetPlanets();
 	list<string>* planetNames = planets->GetNames();
@@ -530,6 +682,9 @@ int Simulation_Lua::getPlanets(lua_State *L){
 	return 1;
 }
 
+/** Get Lua references to All Gates
+ * \returns list of Gate References
+ */
 int Simulation_Lua::getGates(lua_State *L){
 	Gates *gates = GetSimulation(L)->GetGates();
 	list<string>* gateNames = gates->GetNames();
@@ -545,6 +700,10 @@ int Simulation_Lua::getGates(lua_State *L){
 	return 1;
 }
 
+/** Get the nearest Sprite to another sprite
+ * \param[in] A Sprite to use as the base location for the search.  This sprite will be ignored while searching.
+ * \returns The nearest Sprite
+ */
 int Simulation_Lua::getNearestSprite(lua_State *L,int kind) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=2 ){
@@ -565,14 +724,27 @@ int Simulation_Lua::getNearestSprite(lua_State *L,int kind) {
 	}
 }
 
+/** Get the nearest Ship to another sprite
+ * \param[in] A Sprite to use as the base location for the search.  This sprite will be ignored while searching.
+ * \returns The nearest Ship
+ * \see Simulation_Lua::getNearestSprite
+ */
 int Simulation_Lua::getNearestShip(lua_State *L) {
 	return Simulation_Lua::getNearestSprite(L,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER);
 }
 
+/** \brief Get the nearest Planet to another sprite
+ *  \param[in] A Sprite to use as the base location for the search.  This sprite will be ignored while searching.
+ *  \returns The nearest Planet
+ *  \see Simulation_Lua::getNearestSprite
+ */
 int Simulation_Lua::getNearestPlanet(lua_State *L) {
 	return Simulation_Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
 }
 
+/** \brief Get Information about a Commodity
+ *  \returns Lua table of Commodity Information
+ */
 int Simulation_Lua::getCommodityInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -588,6 +760,9 @@ int Simulation_Lua::getCommodityInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Alliance
+ *  \returns Lua table of Alliance Information
+ */
 int Simulation_Lua::getAllianceInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -611,7 +786,9 @@ int Simulation_Lua::getAllianceInfo(lua_State *L) {
 	return 1;
 }
 
-
+/** \brief Get Information about a Model
+ *  \returns Lua table of Model Information
+ */
 int Simulation_Lua::getModelInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -638,6 +815,9 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Planet
+ *  \returns Lua table of Planet Information
+ */
 int Simulation_Lua::getPlanetInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -677,6 +857,9 @@ int Simulation_Lua::getPlanetInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Gate
+ *  \returns Lua table of Gate Information
+ */
 int Simulation_Lua::getGateInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -708,6 +891,9 @@ int Simulation_Lua::getGateInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Weapon
+ *  \returns Lua table of Weapon Information
+ */
 int Simulation_Lua::getWeaponInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -740,6 +926,9 @@ int Simulation_Lua::getWeaponInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Engine
+ *  \returns Lua table of Engine Information
+ */
 int Simulation_Lua::getEngineInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -763,6 +952,9 @@ int Simulation_Lua::getEngineInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Outfit
+ *  \returns Lua table of Outfit Information
+ */
 int Simulation_Lua::getOutfitInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( n!=1 )
@@ -788,6 +980,9 @@ int Simulation_Lua::getOutfitInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Get Information about a Technology
+ *  \returns Lua table of Technology Information
+ */
 int Simulation_Lua::getTechnologyInfo(lua_State *L) {
 	int newTable;
 	int n = lua_gettop(L);  // Number of arguments
@@ -841,6 +1036,10 @@ int Simulation_Lua::getTechnologyInfo(lua_State *L) {
 	return 1;
 }
 
+/** \brief Change the Information about a Game Component
+ *  \param[in] Kind of Component
+ *  \param[in] Lua table of Component Information
+ */
 int Simulation_Lua::setInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if( !(n==2||n==6)  )
@@ -1042,6 +1241,8 @@ int Simulation_Lua::setInfo(lua_State *L) {
 	return 0;
 }
 
+/** \brief Save All Game Component files
+ */
 int Simulation_Lua::saveComponents(lua_State *L) {
 	GetSimulation(L)->GetAlliances()->Save();
 	GetSimulation(L)->GetCommodities()->Save();
@@ -1055,6 +1256,8 @@ int Simulation_Lua::saveComponents(lua_State *L) {
 	return 0;
 }
 
+/** \brief List all .png files in the Graphics directory
+ */
 int Simulation_Lua::listImages(lua_State *L) {
 	list<string> pics = Filesystem::Enumerate("Resources/Graphics/",".png");
 	Lua::pushStringList(L,&pics);

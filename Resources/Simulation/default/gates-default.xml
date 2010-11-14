@@ -2,7 +2,7 @@
 <gates>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <gate>
     <name>Gate 0</name>
     <x>-8000</x>

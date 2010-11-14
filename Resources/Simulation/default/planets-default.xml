@@ -2,7 +2,7 @@
 <planets>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <planet>
     <name>Alexandria</name>
     <alliance>Inter-Terran Conjunctive</alliance>
@@ -151,8 +151,8 @@
     <image>Resources/Graphics/planet7.png</image>
     <militia>1</militia>
     <sphereOfInfluence>8000</sphereOfInfluence>
-    <technology>Solaran Defence</technology>
     <technology>Solaran Outpost</technology>
+    <technology>Solaran Defence</technology>
   </planet>
   <planet>
     <name>Malche</name>
