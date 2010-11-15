@@ -329,8 +329,7 @@ void Image::DrawTiledAlpha( int x, int y, int fill_w, int fill_h, float alpha ) 
 
 /**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
  */
-void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
-{
+void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 	if( !image ) {
 		LogMsg(WARN, "Trying to draw without loading an image first." );
 		return;
@@ -352,13 +351,11 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 
 	glPushMatrix();
 
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(x, Video::GetHeight() - y - fill_h, fill_w, fill_h); // for some reason, glScissor counts (0,0) as lower-left
+	Video::SetCropRect(x, y, fill_w, fill_h); // don't need to invert y here
 
 	glBegin( GL_QUADS );
 	for( int j = 0; j < fill_h; j += h) {
 		for( int i = 0; i < fill_w; i += w) {
-			//cout<<"Image "<<j<<","<<i<<endl;
 			glTexCoord2f( 0., 0. ); glVertex2f( static_cast<GLfloat>(x+i), static_cast<GLfloat>(y+j) ); // Lower Left
 			glTexCoord2f( scale_w, 0. ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+j)); // Lower Right
 			glTexCoord2f( scale_w, scale_h ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+h+j) ); // Upper Right
@@ -367,7 +364,7 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 	}
 	glEnd();
 
-	glDisable(GL_SCISSOR_TEST);
+	Video::UnsetCropRect();
 
 	glPopMatrix();
 

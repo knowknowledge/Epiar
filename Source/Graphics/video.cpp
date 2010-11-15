@@ -409,45 +409,54 @@ int Video::GetHalfHeight( void ) {
 /**\brief Set crop rectangle.
  */
 void Video::SetCropRect( int x, int y, int w, int h ){
-	int xn,yn,wn,hn;
-	if (cropRects.empty()){
+	int xn, yn, wn, hn;
+
+	if (cropRects.empty()) {
 		glEnable(GL_SCISSOR_TEST);
-		xn=x;
-		yn=y;
-		wn=w;
-		hn=h;
-	}else{
+
+		xn = x;
+		yn = y;
+		wn = w;
+		hn = h;
+	} else {
 		// Need to detect which part of crop rectangle is within previous rectangle
 		// So we don't miss things that needs to be cropped.
 		Rect prevrect = cropRects.top();
-		int rightprev = TO_INT(prevrect.x+prevrect.w);
-		int right = x+w;
-		int botprev = TO_INT(prevrect.y+prevrect.h);
-		int bot = y+h;
-		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	// Left
-		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	// Top
-		wn = rightprev > right ? right-xn : rightprev-xn;// Right
-		hn = botprev > bot ? bot-yn : botprev-yn;		// Bottom
+
+		int rightprev = TO_INT(prevrect.x + prevrect.w);
+		int right = x + w;
+		int botprev = TO_INT(prevrect.y + prevrect.h);
+		int bot = y + h;
+
+		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	       // Left
+		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	       // Top
+		wn = rightprev > right ? right - xn : rightprev - xn;  // Right
+		hn = botprev > bot ? bot - yn : botprev - yn;		   // Bottom
+
+		if(wn < 0) wn = 0; // crops don't overlap. we still record this as they're going to call unsetcrop, unaware of the issue
+		if(hn < 0) hn = 0; // same reason as line above
 	}
 
 	cropRects.push(Rect( xn, yn, wn, hn ));
+
 	// Need to convert top down y-axis
-	glScissor( x, Video::h-(y+h), w, h );
+	glScissor( x, Video::h - (y + h), w, h );
 }
 
 /**\brief Unset the previous crop rectangle after use.
  */
-void Video::UnsetCropRect( void ){
+void Video::UnsetCropRect( void ) {
 	if (!cropRects.empty()) // Shouldn't be empty
 		cropRects.pop();
 	else
 		LogMsg(WARN,"You unset the crop rect too many times.");
 
-	if ( cropRects.empty() )
+	if ( cropRects.empty() ) {
 		glDisable(GL_SCISSOR_TEST);
-	else{	//Set's the previous crop rectangle.
+	} else {
+		// Set's the previous crop rectangle.
 		Rect prevrect = cropRects.top();
-		glScissor( TO_INT(prevrect.x), TO_INT(prevrect.y), 
-				TO_INT(prevrect.w), TO_INT(prevrect.h) );
+
+		glScissor( TO_INT(prevrect.x), Video::h - (TO_INT(prevrect.y) + TO_INT(prevrect.h)), TO_INT(prevrect.w), TO_INT(prevrect.h) );
 	}
 }
