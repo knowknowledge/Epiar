@@ -456,6 +456,10 @@ function sellOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
 			PLAYER:RemoveWeapon(outfit)
+			HUD.closeStatusMatching(outfit..":");
+		else
+			HUD.newAlert("You don't have a "..outfit.."!")
+			return
 		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
 		if weaponInfo["Ammo Consumption"] ~= 0 then
@@ -470,7 +474,10 @@ function sellOutfit(outfit)
 
 	elseif ( Set(Epiar.outfits())[outfit] ) then
 		print("Outfit...")
-		PLAYER:RemoveOutfit(outfit)
+		HUD.newAlert("You are not able to sell your "..outfit..".")
+		print "Selling non-weapon outfits is not yet implemented."
+		return;
+		--PLAYER:RemoveOutfit(outfit)
 	else
 		print("Unknown Outfit: "..outfit)
 		return

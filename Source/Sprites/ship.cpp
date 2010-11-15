@@ -415,6 +415,7 @@ bool Ship::ChangeWeapon() {
  * \param pos Index of the weapon
  */
 void Ship::RemoveShipWeapon(int pos){
+	cout << "Ship::RemoveWeapon(): removing weapon at pos=" << pos << endl;
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 /**\brief Removes a weapon from the ship
