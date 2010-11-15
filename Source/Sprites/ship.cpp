@@ -472,18 +472,17 @@ void Ship::AddOutfit(string outfitName){
  * \param i Pointer to Outfit instance
  */
 void Ship::RemoveOutfit(Outfit *i){
-	cout << "Ship::RemoveOutfit() removing outfit " << i->GetName() << endl;
 	list<Outfit*> new_list;
 	bool done_removing = false;
 	while(outfits.size() > 0){
 		Outfit *o = outfits.back();
 		outfits.pop_back();
-		cout << "Ship::RemoveOutfit(): considering outfit " << o->GetName() << endl;
 		if(o != i || done_removing)
 			new_list.push_back(o);
 		else
 			done_removing = true;
 	}
+	cout << "Ship::RemoveOutfit() was not able to remove the outfit!" << endl;
 	this->SetOutfits(&new_list);
 }
 

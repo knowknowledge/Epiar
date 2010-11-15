@@ -423,6 +423,17 @@ function buyOutfit(outfit)
 	if ( Set(Epiar.weapons())[outfit] ) then
 		print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
+
+		local weapCount = 0;
+		for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
+
+		-- the 2 here should be changed to some per-ship value (e.g., maybe warships should hold 5)
+		if weapCount >= 2 then
+			print("You cannot hold any more weapons")
+			HUD.newAlert("You can't hold any more weapons.")
+			return
+		end
+
 		if weaponsAndAmmo[outfit]==nil then
 			PLAYER:AddWeapon(outfit)
 			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
@@ -776,3 +787,4 @@ function ui_demo()
 
 	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end
+
