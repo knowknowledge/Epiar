@@ -139,11 +139,12 @@ bool Coordinate::ViolatesBoundary( double top, double right, double bottom, doub
 }
 
 void Coordinate::EnforceMagnitude(double radius) {
-	if( GetMagnitudeSquared() > radius*radius ) {
-		Trig *trig = Trig::Instance();
-		int angle = TO_INT(GetAngle());
-		m_x = trig->GetCos( angle )*radius;
-		m_y = -trig->GetSin( angle )*radius;
+	// While the magnitude exceeds maximum, reduce X and Y by the same factor.
+	// This allows the momentum angle to continue to absorb changes from the
+	// accel angle even at max velocity.
+	while(GetMagnitudeSquared() > radius*radius){
+		SetX(GetX() * 0.99);
+		SetY(GetY() * 0.99);
 	}
 }
 
