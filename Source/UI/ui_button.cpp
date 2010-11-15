@@ -81,6 +81,7 @@ void Button::Draw( int relx, int rely ) {
 	bitmap_current->DrawStretch( x, y, this->w, this->h );
 
 	// draw the label
+	cout << "BUTTON IS ABOUT TO SET CROP" << endl;
 	Video::SetCropRect(x + 1, y + 1, this->w - 2, this->h - 2); // constants adjust for the 1px border
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );

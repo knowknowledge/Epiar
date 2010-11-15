@@ -104,9 +104,10 @@ int Font::LineHeight( void ){
  * Use Outer height to get the tight fitting height of the font.
  */
 int Font::TightHeight( void ){
-	float asc=this->font->Ascender();
-	float dsc=this->font->Descender();
-	int height=TO_INT(ceil(asc-dsc));
+	float asc = this->font->Ascender();
+	float dsc = this->font->Descender();
+	int height = TO_INT(ceil(asc-dsc));
+
 	return height;
 }
 
@@ -122,7 +123,7 @@ int Font::Render( int x, int y, const string& text,XPos xpos, YPos ypos ){
  * \return The consumed width (This includes a small bit of padding on the right)
  */
 int Font::RenderTight(int x, int y, const string& text,XPos xpos, YPos ypos ){
-	int h= this->TightHeight();
+	int h = this->TightHeight();
 	return this->RenderInternal(x,y,text,h,xpos,ypos);
 }
 
