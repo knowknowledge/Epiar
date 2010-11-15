@@ -19,9 +19,7 @@
 
 /**\brief Constructs new font (default color white).
  */
-Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL){
-}
-
+Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {}
 
 /**\brief Construct new font based on file.
  * \param filename String containing file.
@@ -140,42 +138,44 @@ int Font::RenderWrapped( int x, int y, const string& text, int w ){
 int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YPos ypos) {
 	int xn;
 	int yn;
-	switch( xpos ){
+
+	switch( xpos ) {
 		case LEFT:
-			xn=x;
+			xn = x;
 			break;
 		case CENTER:
-			xn=x-this->TextWidth(text)/2;
+			xn = x - this->TextWidth(text) / 2;
 			break;
 		case RIGHT:
 			xn=x-this->TextWidth(text);
 			break;
 		default:
-			LogMsg(ERR,"Invalid xpos");
-			assert(0);
-	}
-	// Y coordinates are flipped
-	switch( ypos ){
-		case TOP:
-			yn=-y-h-TO_INT(floor(this->font->Descender()));
-			break;
-		case MIDDLE:
-			yn=-y-h/2-TO_INT(floor(this->font->Descender()));
-			break;
-		case BOTTOM:
-			yn=-y-TO_INT(floor(this->font->Descender()));
-			break;
-		default:
-			LogMsg(ERR,"Invalid ypos");
+			LogMsg(ERR, "Invalid xpos");
 			assert(0);
 	}
 
+	// Y coordinates are flipped
+	switch( ypos ) {
+		case TOP:
+			yn = -y - h - TO_INT(floor(this->font->Descender()));
+			break;
+		case MIDDLE:
+			yn = -y - h / 2 - TO_INT(floor(this->font->Descender()));
+			break;
+		case BOTTOM:
+			yn = -y - TO_INT(floor(this->font->Descender()));
+			break;
+		default:
+			LogMsg(ERR, "Invalid ypos");
+			assert(0);
+	}
 
 	glColor4f( r, g, b, a );
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1);
-	FTPoint newpoint=this->font->Render( text.c_str(), -1, FTPoint( xn, yn, 1) );
+	FTPoint newpoint = this->font->Render( text.c_str(), -1, FTPoint( xn, yn, 1) );
 	glPopMatrix(); // restore the previous matrix
-	return TO_INT(ceil(newpoint.Xf()))-x;
+
+	return TO_INT(ceil(newpoint.Xf())) - x;
 }
 
