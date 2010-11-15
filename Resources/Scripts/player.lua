@@ -232,11 +232,26 @@ function boardShip()
 		Epiar.pause()
 
 		-- show the boarding dialog
-		local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits()
-		boardingDialog = UI.newWindow(100, 100, 300, 180, "Boarding Ship")
-		boardingDialog:add( UI.newLabel(50, 30, "You have boarded their ship.") )
-		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
-		boardingDialog:add( UI.newButton(50, 110, 200, 30, "Attempt to capture vessel", string.format("doCapture()") ) )
+		--local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits() -- old way
+		local moneyOnBoard = targettedShip:GetCredits() -- new way
+
+		local targetMass = targettedShip:GetMass()
+
+		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
+		local succ_max = 15 ^ ( targetMass / PLAYER:GetMass() )
+		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
+		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
+
+		local captureProbPct = (1 / succ_max) * 100
+
+		boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
+		boardingDialog:add( UI.newLabel(50, 30,  string.format("You have boarded the ship." ) ) )
+		boardingDialog:add( UI.newLabel(50, 60,  string.format("  Class: %s", targettedShip:GetModelName() ) ) )
+		boardingDialog:add( UI.newLabel(50, 90,  string.format("  Credits on board: %d", moneyOnBoard ) ) )
+		boardingDialog:add( UI.newLabel(50, 120, string.format("  Capture probability: %.0f%%", captureProbPct ) ) )
+		boardingDialog:add( UI.newButton(50, 150, 100, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
+		boardingDialog:add( UI.newButton(150, 150, 150, 30, "Attempt to capture vessel", string.format("doCapture(%f, %f)", succ_max, destruct_max) ) )
+		boardingDialog:add( UI.newButton(300, 150, 100, 30, "End boarding", string.format("endBoarding()") ) )
 
 	else
 		HUD.newAlert("Cannot board target -- too far away")
@@ -410,6 +425,8 @@ function doBoarding( reward )
 
 	addcredits( reward )
 
+	Epiar.getSprite( HUD.getTarget() ) : SetCredits( 0 )
+
 	Epiar.unpause()
 	boardingDialog:close()
 	boardingDialog = nil
@@ -421,17 +438,8 @@ function endBoarding()
 	boardingDialog = nil
 end
 
-function doCapture( )
+function doCapture(succ_max, destruct_max)
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
-	local mass = targettedShip:GetMass()
-
-	message = string.format("mass of target ship is %f", mass)
-	HUD.newAlert(message)
-
-	-- prob. divisor that attempt will succeed. greater player mass boosts this number.
-	local succ_max = 100 ^ ( mass / PLAYER:GetMass() )
-	-- prob. divisor that ship will destruct. greater player mass diminishes this number.
-	local destruct_max = 5 ^ ( PLAYER:GetMass() / mass )
 
 	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
 	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
@@ -445,6 +453,8 @@ function doCapture( )
 		targettedShip:SetHullDamage(10000)
 
 	elseif r_succ == 1 then -- success!
+		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
+
 		local oldPlayerModel = PLAYER:GetModelName() 
 		--local oldPlayerX, oldPlayerY = PLAYER:GetPosition() 
 		local oldPlayerHD = PLAYER:GetHullDamage() 
@@ -462,8 +472,6 @@ function doCapture( )
 		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
 		targettedShip:SetHullDamage( oldPlayerHD ) 
 		targettedShip:SetShieldDamage( oldPlayerSD ) 
-
-		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
 
 		endBoarding()
 
