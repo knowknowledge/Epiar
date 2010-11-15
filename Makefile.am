@@ -1,8 +1,8 @@
 AM_CXXFLAGS = -I$(top_srcdir)/Source/ -I$(top_srcdir)/Source/Lua/src
 
-bin_PROGRAMS = Epiar
+bin_PROGRAMS = epiar
 
-Epiar_SOURCES = Source/main.cpp \
+epiar_SOURCES = Source/main.cpp \
                 Source/AI/ai.cpp \
                 Source/AI/ai_lua.cpp \
                 Source/Audio/audio.cpp \
@@ -69,6 +69,6 @@ Epiar_SOURCES = Source/main.cpp \
                 Source/Utilities/vector.cpp \
                 Source/Utilities/xml.cpp
 
-Epiar_LDADD = Source/Lua/src/liblua.a
+epiar_LDADD = Source/Lua/src/liblua.a
 
 SUBDIRS=Source/Lua
