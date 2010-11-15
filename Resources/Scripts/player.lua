@@ -20,7 +20,7 @@ playerCommands = {
 	{'L', "Land on Planet", "attemptLanding()", KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())", KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
-	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
+	{'space', "Fire", "playerFire()", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
 	{'y', "Hail", "hailShip()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
@@ -210,6 +210,21 @@ function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for po
 		end
 	end
 	return newa, newb, newc
+end
+
+function playerFire()
+	if Epiar.ispaused()==1 then return end
+
+	local result = PLAYER:Fire( HUD.getTarget() )
+
+	if result == 0 then -- FireSuccess
+	elseif result == 1 then -- FireNoWeapons
+		HUD.newAlert("No weapons to fire!")
+	elseif result == 2 then -- FireNotReady
+	elseif result == 3 then -- FireNoAmmo
+		HUD.newAlert("Out of Ammo!")
+	else
+	end
 end
 
 ---Board closest ship if possible

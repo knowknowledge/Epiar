@@ -225,6 +225,7 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 
 /**\brief Lua callable function to fire ship's weapons.
  * \sa Ship::Fire()
+ * \returns FireStatus result of the firing attempt
  */
 int AI_Lua::ShipFire(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -239,10 +240,8 @@ int AI_Lua::ShipFire(lua_State* L){
 		FireStatus result = (ai)->Fire(target);
 		lua_pushinteger(L, (int)(result) );
 		return 1;
-	} else {
-		luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
 	}
-	return 0;
+	return luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
 }
 
 /**\brief Lua callable function to add damage to ship.
