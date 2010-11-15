@@ -33,11 +33,13 @@ class AI_Lua{
 		static int ShipExplode(lua_State* L);
 		static int ShipRemove(lua_State* L);
 		static int ShipAddWeapon(lua_State* L);
+		static int ShipRemoveWeapon(lua_State* L);
 		static int ShipChangeWeapon(lua_State* L);
 		static int ShipAddAmmo(lua_State* L);
 		static int ShipSetModel(lua_State* L);
 		static int ShipSetEngine(lua_State* L);
 		static int ShipAddOutfit(lua_State* L);
+		static int ShipRemoveOutfit(lua_State* L);
 		static int ShipSetCredits(lua_State* L);
 		static int ShipStoreCommodities(lua_State* L);
 		static int ShipDiscardCommodities(lua_State* L);

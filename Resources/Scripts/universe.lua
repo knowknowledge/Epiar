@@ -443,6 +443,53 @@ function buyOutfit(outfit)
 	print("Outfit Purchase complete")
 end
 
+function sellOutfit(outfit)
+	if outfit==nil then
+		outfit = outfitstats["Name"]:GetText()
+		print("Selling Outfit ("..outfit..")")
+	end
+
+	print("Removing Outfit...")
+
+	if ( Set(Epiar.weapons())[outfit] ) then
+		print("Weapon...")
+		local weaponsAndAmmo = PLAYER:GetWeapons()
+		if weaponsAndAmmo[outfit]~=nil then
+			PLAYER:RemoveWeapon(outfit)
+		end
+		local weaponInfo = Epiar.getWeaponInfo(outfit)
+		if weaponInfo["Ammo Consumption"] ~= 0 then
+			-- I'm thinking it should remove 100 ammo with each sale, and RemoveAmmo()
+			-- should set ammo to zero if it would have gone negative.
+			--PLAYER:RemoveAmmo(outfit,100)
+		end
+	elseif ( Set(Epiar.engines())[outfit] ) then
+		print("Engine...")
+		HUD.newAlert("You can't sell your engines!")
+		return
+
+	elseif ( Set(Epiar.outfits())[outfit] ) then
+		print("Outfit...")
+		PLAYER:RemoveOutfit(outfit)
+	else
+		print("Unknown Outfit: "..outfit)
+		return
+	end
+
+	local price = Epiar.getMSRP(outfit)
+	local adjustedPrice = math.floor( price * 0.65) -- only get back 65% of MSRP
+
+	print ( string.format("price=%d adjustedPrice=%d\n", price, adjustedPrice) )
+
+	local player_credits = PLAYER:GetCredits()
+
+	print("Crediting your account...")
+
+	PLAYER:SetCredits( player_credits + adjustedPrice )
+	HUD.newAlert("You sold your "..outfit.." system for "..adjustedPrice.." credits")
+	print("Outfit Selling complete")
+end
+
 --- Trade a Commodity
 function tradeCommodity(transaction, commodity, count, price)
 	player_credits = PLAYER:GetCredits()
@@ -619,6 +666,7 @@ function landingDialog(id)
 		storeView(outfitstats,'outfit',outfits[1])
 	end
 	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyOutfit()" ))
+	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+50,100,30,"Sell","sellOutfit()" ))
 
 	-- Trade
 	trade = UI.newTab("Trade")

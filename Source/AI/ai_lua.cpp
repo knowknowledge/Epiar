@@ -58,10 +58,12 @@ void AI_Lua::RegisterAI(lua_State *L){
 		
 		// Outfit Changes
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
+		{"RemoveWeapon", &AI_Lua::ShipRemoveWeapon},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		{"SetEngine", &AI_Lua::ShipSetEngine},
 		{"AddOutfit", &AI_Lua::ShipAddOutfit},
+		{"RemoveOutfit", &AI_Lua::ShipRemoveOutfit},
 		{"SetCredits", &AI_Lua::ShipSetCredits},
 		{"StoreCommodities", &AI_Lua::ShipStoreCommodities},
 		{"DiscardCommodities", &AI_Lua::ShipDiscardCommodities},
@@ -339,6 +341,22 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 	return 0;
 }	
 
+/**\brief Lua callable function to remove weapon from ship.
+ * \sa Ship::RemoveShipWeapon(string)
+ */
+int AI_Lua::ShipRemoveWeapon(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string weaponName = luaL_checkstring (L, 2);
+		(ai)->RemoveShipWeapon(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
+	}
+	return 0;
+}
+
 /**\brief Lua callable function to change a ship's weapon.
  * \sa Ship::ChangeWeapon()
  */
@@ -525,6 +543,23 @@ int AI_Lua::ShipAddOutfit(lua_State* L){
 		string outfitName = luaL_checkstring (L, 2);
 		(ai)->AddOutfit( Outfits::Instance()->GetOutfit(outfitName) );
 		printf("Adding outfit: %s\n",outfitName.c_str());
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to remove an Outfit from a ship.
+ * \sa Ship::RemoveOutfit(Outfit*)
+ */
+int AI_Lua::ShipRemoveOutfit(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string outfitName = luaL_checkstring (L, 2);
+		(ai)->RemoveOutfit( Outfits::Instance()->GetOutfit(outfitName) );
+		printf("Removing outfit: %s\n",outfitName.c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
 	}

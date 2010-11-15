@@ -45,9 +45,13 @@ class Ship : public Sprite {
 		void AddShipWeapon(Weapon *i);
 		void AddShipWeapon(string weaponName);
 		void RemoveShipWeapon(int pos);
+		void RemoveShipWeapon(Weapon *i);
+		void RemoveShipWeapon(string weaponName);
 		void AddAmmo(AmmoType ammoType, int qty);
 		void AddOutfit(Outfit *outfit);
 		void AddOutfit(string outfitName);
+		void RemoveOutfit(Outfit *outfit);
+		void RemoveOutfit(string outfitName);
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);

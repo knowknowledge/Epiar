@@ -201,7 +201,7 @@ void Ship::Accelerate( void ) {
 	float acceleration = (shipStats.GetForceOutput() *engineBooster ) / shipStats.GetMass();
 
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
-	                   -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
+	                -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
 
 	momentum.EnforceMagnitude(speed);
 	
@@ -417,6 +417,33 @@ bool Ship::ChangeWeapon() {
 void Ship::RemoveShipWeapon(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
+/**\brief Removes a weapon from the ship
+ * \param i Pointer to Weapon instance
+ */
+void Ship::RemoveShipWeapon(Weapon *i){
+	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
+		if(shipWeapons[pos]->GetName() == i->GetName()){
+			cout << "found weapon to remove, " << i->GetName() << ", at position " << pos << endl;
+			RemoveShipWeapon(pos);
+			return;
+		}
+	}
+	printf("Ship::RemoveShipWeapon(): did not find weapon to remove\n");
+}
+
+/**\brief Removes a weapon from the ship
+ * \param weaponName Name of the Weapon
+ */
+void Ship::RemoveShipWeapon(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	if(weapons->GetWeapon(weaponName)){
+		RemoveShipWeapon(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
+}
+
+
 
 /**\brief Adds ammo to the ship.
  * \param AmmoType Type of ammo that should be added.
@@ -437,6 +464,32 @@ void Ship::AddOutfit(string outfitName){
 		AddOutfit( Outfits::Instance()->GetOutfit(outfitName) );
 	} else {
 		LogMsg(INFO, "Failed to Attach outfit '%s', it doesn't exist.", outfitName.c_str());
+	}
+}
+
+/**\brief Removes an outfit from the ship
+ * \param i Pointer to Outfit instance
+ */
+void Ship::RemoveOutfit(Outfit *i){
+	/*for(unsigned int pos = 0; pos < outfits.size(); pos++){
+		if(outfits.at(pos)->GetName() == i->GetName()){
+			cout << "Found outfit to remove, " << i->GetName() << ", at position " << pos << endl;
+			outfits.erase(pos);
+			return;
+		}
+	}*/
+	cout << "Ship::RemoveOutfit(): Not able to remove outfit" << endl;
+}
+
+/**\brief Removes an outfit from the ship
+ * \param outfitName Name of the Outfit
+ */
+void Ship::RemoveOutfit(string outfitName){
+	Outfits *o = Outfits::Instance();
+	if(o->GetOutfit(outfitName)){
+		RemoveOutfit(o->GetOutfit(outfitName));
+	} else {
+		LogMsg(INFO, "Failed to remove outfit '%s', it doesn't exist.", outfitName.c_str());
 	}
 }
 
