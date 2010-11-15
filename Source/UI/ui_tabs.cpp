@@ -80,17 +80,14 @@ bool Tab::MouseWDown( int xi, int yi ){
 
 /**\brief Draws the Tab contents.
  */
-void Tab::Draw( int relx, int rely ){
+void Tab::Draw( int relx, int rely ) {
 	int x, y;
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
 
-	// Crop when necessary
-	if ( this->hscrollbar || this->vscrollbar )
-		Video::SetCropRect(x,y,
-				this->w-SCROLLBAR_PAD,
-				this->h-SCROLLBAR_PAD);
+	// Crop to prevent child widgets from spilling
+	Video::SetCropRect(x, y + 2, this->w - SCROLLBAR_PAD, this->h - SCROLLBAR_PAD + 4);
 	
 	// Draw any children
 	list<Widget *>::iterator i;
@@ -102,18 +99,18 @@ void Tab::Draw( int relx, int rely ){
 			(*i)->Draw( x, y );
 			continue;
 		}
-		int xscroll=0;
-		int yscroll=0;
+
+		int xscroll = 0;
+		int yscroll = 0;
 		if ( this->hscrollbar )
 			xscroll = hscrollbar->pos;
 		if ( this->vscrollbar )
 			yscroll = vscrollbar->pos;
-		(*i)->Draw( x-xscroll,
-				y-yscroll );
+
+		(*i)->Draw( x - xscroll, y - yscroll );
 	}
 	
-	if ( this->hscrollbar || this->vscrollbar )
-		Video::UnsetCropRect();
+	Video::UnsetCropRect();
 	
 	Widget::Draw(relx,rely);
 }

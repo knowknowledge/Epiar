@@ -145,19 +145,21 @@ int main( int argc, char **argv ) {
 	string msgfilt = argparser.HaveValue("log-msg");
 	string loglvl = argparser.HaveValue("log-lvl");
 
-	if(""!=funfilt) Log::Instance().SetFunFilter(funfilt);
-	if(""!=msgfilt) Log::Instance().SetMsgFilter(msgfilt);
-	if(""!=loglvl)  Log::Instance().SetLevel( loglvl );
+	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
+	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
+	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
 
 	// Print unused options.
 	list<string> unused = argparser.GetUnused();
 	list<string>::iterator it;
-	for ( it=unused.begin() ; it != unused.end(); it++ )
-		cout << "\tUnknown options:\t" << (*it)<<endl;
-	if ( !unused.empty() ){
+	for ( it = unused.begin() ; it != unused.end(); it++ )
+		cout << "\tUnknown options:\t" << (*it) << endl;
+	if ( !unused.empty() ) {
 		argparser.PrintUsage();
+
 		// free the configuration file data
 		delete optionsfile;
+
 		return -1;
 	}
 

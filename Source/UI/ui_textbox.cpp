@@ -22,12 +22,12 @@
 Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 	int rowHeight = ((Mono->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
 
-	rowPad =(rowHeight - Mono->LineHeight())/2; // Pad the text to center it in the row
+	rowPad = (rowHeight - Mono->LineHeight()) / 2; // Pad the text to center it in the row
 
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=rows * rowHeight;
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = rows * rowHeight;
 	this->name = label;
 	
 	this->text = text;
@@ -48,9 +48,9 @@ void Textbox::Draw( int relx, int rely ) {
 	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15f, 0.15f, 0.15f );
 
 	// draw the text
-	Video::SetCropRect(x,y,this->w,this->h);
+	Video::SetCropRect(x, y, this->w, this->h);
 	Mono->SetColor( 1., 1., 1. );
-	int tw = Mono->Render( x+rowPad, y+rowPad, text );
+	int tw = Mono->Render( x + rowPad, y + rowPad, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
