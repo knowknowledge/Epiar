@@ -474,10 +474,23 @@ function sellOutfit(outfit)
 
 	elseif ( Set(Epiar.outfits())[outfit] ) then
 		print("Outfit...")
-		HUD.newAlert("You are not able to sell your "..outfit..".")
-		print "Selling non-weapon outfits is not yet implemented."
-		return;
-		--PLAYER:RemoveOutfit(outfit)
+		local playerOutfits = PLAYER:GetOutfits()
+
+		local found = false
+
+		for n,po in pairs(playerOutfits) do
+			print (string.format ("does %s equal %s?", po, outfit ) )
+			if po == outfit then
+				if found == false then PLAYER:RemoveOutfit(outfit) end
+				found = true
+			end
+		end
+
+		if found == false then
+			HUD.newAlert("You don't have a "..outfit.."!")
+			return
+		end
+		
 	else
 		print("Unknown Outfit: "..outfit)
 		return

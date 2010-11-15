@@ -472,16 +472,22 @@ void Ship::AddOutfit(string outfitName){
  * \param i Pointer to Outfit instance
  */
 void Ship::RemoveOutfit(Outfit *i){
-	/*for(unsigned int pos = 0; pos < outfits.size(); pos++){
-		if(outfits.at(pos)->GetName() == i->GetName()){
-			cout << "Found outfit to remove, " << i->GetName() << ", at position " << pos << endl;
-			outfits.erase(pos);
-			return;
-		}
-	}*/
-	cout << "Ship::RemoveOutfit(): Not able to remove outfit" << endl;
+	cout << "Ship::RemoveOutfit() removing outfit " << i->GetName() << endl;
+	list<Outfit*> new_list;
+	bool done_removing = false;
+	while(outfits.size() > 0){
+		Outfit *o = outfits.back();
+		outfits.pop_back();
+		cout << "Ship::RemoveOutfit(): considering outfit " << o->GetName() << endl;
+		if(o != i || done_removing)
+			new_list.push_back(o);
+		else
+			done_removing = true;
+	}
+	this->SetOutfits(&new_list);
 }
 
+	
 /**\brief Removes an outfit from the ship
  * \param outfitName Name of the Outfit
  */
@@ -642,6 +648,20 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	}
 	return weaponPack;
 }
+
+/**\brief Gets a std::map of the current outfit system.
+ * \return std:map with pointer to weapon as the key, ammo quantity as the data
+ */
+map<Outfit*,int> Ship::GetOutfits_map() {
+	map<Outfit*,int> outfitPack;
+	list<Outfit*>::iterator item = outfits.begin();
+	while (item != outfits.end()){
+		outfitPack.insert( make_pair(*item,-1) );
+		item++;
+	}
+	return outfitPack;
+}
+
 
 
 /**\brief Computes the Ship Statistics based on equiped Outfit.

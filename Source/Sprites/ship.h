@@ -73,6 +73,9 @@ class Ship : public Sprite {
 		int GetCurrentAmmo();		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
+		void SetOutfits(list<Outfit*>* o) { outfits = *o; }
+		map<Outfit*,int> GetOutfits_map();
+
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
 		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
