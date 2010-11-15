@@ -151,12 +151,6 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-	//SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 8);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE, 16);
-	//SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
-
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1); // vsync
 
 	ret = SDL_VideoModeOK( w, h, bpp, videoFlags );
@@ -208,6 +202,34 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	LogMsg(INFO, "Video mode initialized at %dx%dx%d\n", screen->w, screen->h, screen->format->BitsPerPixel );
 
 	return( true );
+}
+
+/**\brief Register Lua functions for Video related operations.
+ */
+void Video::RegisterVideo(lua_State *L) {
+	static const luaL_Reg videoFunctions[] = {
+		{"getWidth", &Video::lua_getWidth},
+		{"getHeight", &Video::lua_getHeight},
+		{NULL, NULL}
+	};
+
+	luaL_openlib(L, EPIAR_VIDEO, videoFunctions, 0);
+
+	lua_pop(L,1);
+}
+
+/**\brief Same as Video::GetWidth (Lua callable)
+ */
+int Video::lua_getWidth(lua_State *L) {
+	lua_pushinteger(L, GetWidth() );
+	return 1;
+}
+
+/**\brief Same as Video::GetHeight (Lua callable)
+ */
+int Video::lua_getHeight(lua_State *L) {
+	lua_pushinteger(L, GetHeight() );
+	return 1;
 }
 
 /**\brief Video updates.
@@ -389,45 +411,54 @@ int Video::GetHalfHeight( void ) {
 /**\brief Set crop rectangle.
  */
 void Video::SetCropRect( int x, int y, int w, int h ){
-	int xn,yn,wn,hn;
-	if (cropRects.empty()){
+	int xn, yn, wn, hn;
+
+	if (cropRects.empty()) {
 		glEnable(GL_SCISSOR_TEST);
-		xn=x;
-		yn=y;
-		wn=w;
-		hn=h;
-	}else{
+
+		xn = x;
+		yn = y;
+		wn = w;
+		hn = h;
+	} else {
 		// Need to detect which part of crop rectangle is within previous rectangle
 		// So we don't miss things that needs to be cropped.
 		Rect prevrect = cropRects.top();
-		int rightprev = TO_INT(prevrect.x+prevrect.w);
-		int right = x+w;
-		int botprev = TO_INT(prevrect.y+prevrect.h);
-		int bot = y+h;
-		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	// Left
-		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	// Top
-		wn = rightprev > right ? right-xn : rightprev-xn;// Right
-		hn = botprev > bot ? bot-yn : botprev-yn;		// Bottom
+
+		int rightprev = TO_INT(prevrect.x + prevrect.w);
+		int right = x + w;
+		int botprev = TO_INT(prevrect.y + prevrect.h);
+		int bot = y + h;
+
+		xn = prevrect.x > x ? TO_INT(prevrect.x) : x;	       // Left
+		yn = prevrect.y > y ? TO_INT(prevrect.y) : y;	       // Top
+		wn = rightprev > right ? right - xn : rightprev - xn;  // Right
+		hn = botprev > bot ? bot - yn : botprev - yn;		   // Bottom
+
+		if(wn < 0) wn = 0; // crops don't overlap. we still record this as they're going to call unsetcrop, unaware of the issue
+		if(hn < 0) hn = 0; // same reason as line above
 	}
 
 	cropRects.push(Rect( xn, yn, wn, hn ));
+
 	// Need to convert top down y-axis
-	glScissor( x, Video::h-(y+h), w, h );
+	glScissor( xn, Video::h - (yn + hn), wn, hn );
 }
 
 /**\brief Unset the previous crop rectangle after use.
  */
-void Video::UnsetCropRect( void ){
+void Video::UnsetCropRect( void ) {
 	if (!cropRects.empty()) // Shouldn't be empty
 		cropRects.pop();
 	else
 		LogMsg(WARN,"You unset the crop rect too many times.");
 
-	if ( cropRects.empty() )
+	if ( cropRects.empty() ) {
 		glDisable(GL_SCISSOR_TEST);
-	else{	//Set's the previous crop rectangle.
+	} else {
+		// Set's the previous crop rectangle.
 		Rect prevrect = cropRects.top();
-		glScissor( TO_INT(prevrect.x), TO_INT(prevrect.y), 
-				TO_INT(prevrect.w), TO_INT(prevrect.h) );
+
+		glScissor( TO_INT(prevrect.x), Video::h - (TO_INT(prevrect.y) + TO_INT(prevrect.h)), TO_INT(prevrect.w), TO_INT(prevrect.h) );
 	}
 }

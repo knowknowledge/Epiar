@@ -114,11 +114,7 @@ void Frame::Draw( int relx, int rely ) {
 
 	// Crop when necessary
 	if ( this->hscrollbar || this->vscrollbar )
-		Video::SetCropRect(this->GetX(),
-				this->GetY()+bitmaps[1]->GetHeight(),
-				this->w-SCROLLBAR_PAD,
-				this->h-SCROLLBAR_PAD
-				-bitmaps[1]->GetHeight());
+		Video::SetCropRect(this->GetX(), this->GetY()+bitmaps[1]->GetHeight(), this->w-SCROLLBAR_PAD, this->h-SCROLLBAR_PAD-bitmaps[1]->GetHeight());
 	
 	// Draw any children
 	list<Widget *>::iterator i;

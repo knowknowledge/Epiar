@@ -125,6 +125,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 	// preloading this animation prevents an FPS
 	// drop the first time that a ship explodes.
 	Ani::Get("Resources/Animations/explosion1.ani");
+
+	lua_pop(L,2);
 }
 
 /**\brief Validates Ship in Lua.
@@ -235,6 +237,7 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 
 /**\brief Lua callable function to fire ship's weapons.
  * \sa Ship::Fire()
+ * \returns FireStatus result of the firing attempt
  */
 int AI_Lua::ShipFire(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -249,10 +252,8 @@ int AI_Lua::ShipFire(lua_State* L){
 		FireStatus result = (ai)->Fire(target);
 		lua_pushinteger(L, (int)(result) );
 		return 1;
-	} else {
-		luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
 	}
-	return 0;
+	return luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
 }
 
 /**\brief Lua callable function to add damage to ship.

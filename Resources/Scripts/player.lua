@@ -20,7 +20,7 @@ playerCommands = {
 	{'L', "Land on Planet", "attemptLanding()", KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())", KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
-	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
+	{'space', "Fire", "playerFire()", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
 	{'y', "Hail", "hailSprite()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
@@ -210,6 +210,21 @@ function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for po
 		end
 	end
 	return newa, newb, newc
+end
+
+function playerFire()
+	if Epiar.ispaused()==1 then return end
+
+	local result = PLAYER:Fire( HUD.getTarget() )
+
+	if result == 0 then -- FireSuccess
+	elseif result == 1 then -- FireNoWeapons
+		HUD.newAlert("No weapons to fire!")
+	elseif result == 2 then -- FireNotReady
+	elseif result == 3 then -- FireNoAmmo
+		HUD.newAlert("Out of Ammo!")
+	else
+	end
 end
 
 ---Board closest ship if possible
@@ -486,9 +501,9 @@ function attemptLanding()
 	if landingWin ~= nil then return end
 
 	local x,y = PLAYER:GetPosition()
-	local planet = Epiar.nearestPlanet(PLAYER,4096)
+	local planet = Epiar.nearestPlanet(PLAYER, 4096)
 	local px,py = planet:GetPosition()
-	local distance = distfrom( px,py, x,y)
+	local distance = distfrom(px, py, x,y)
 	local message = ""
 
 	if HUD.getTarget() ~= planet:GetID() then -- Add this text before the first message.
@@ -496,30 +511,30 @@ function attemptLanding()
 		
 		-- Check if the ship is close enough and moving slowly enough to land on the planet.
 		HUD.setTarget(planet:GetID())
-	end
-
-	if planet:GetForbidden() == 1 then
-		HUD.newAlert(string.format("%s: %s! You are forbidden from landing here.", planet:GetName(), PLAYER:GetName() ) )
-		return
-	end
-	
-	-- TODO make this distance check based off of the planet size.
-	if distance > 200 then
-		if message ~= "" then
-			message = message.."Begin your approach."
-		else
-			message = "Continue your approach."
-		end
 		HUD.newAlert(message)
 	else
-		velocity = PLAYER:GetMomentumSpeed()
-		if velocity > 2 then
-			HUD.newAlert(message.."Please slow your approach.")
+		if planet:GetForbidden() == 1 then
+			HUD.newAlert(string.format("%s: %s! You are forbidden from landing here.", planet:GetName(), PLAYER:GetName() ) )
+			return
+		end
+		-- TODO make this distance check based off of the planet size.
+		if distance > 200 then
+			if message ~= "" then
+				message = message.."Begin your approach."
+			else
+				message = "Continue your approach."
+			end
+			HUD.newAlert(message)
 		else
-			HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
-			landingDialog( planet:GetID() )
-			Epiar.setLastPlanet( planet:GetName() )
-			Epiar.savePlayer()
+			velocity = PLAYER:GetMomentumSpeed()
+			if velocity > 2 then
+				HUD.newAlert(message.."Please slow your approach.")
+			else
+				HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
+				landingDialog( planet:GetID() )
+				Epiar.setLastPlanet( planet:GetName() )
+				Epiar.savePlayer()
+			end
 		end
 	end
 end
@@ -636,8 +651,10 @@ function loadingWindow()
 	local width=300
 	local height=300
 	local players = Epiar.players()
+	local videoWidth = Video.getWidth()
+	local videoHeight = Video.getHeight()
 
-	loadingWin = UI.newWindow( 300,300,width,height,"Load a Player" )
+	loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
 
 	--- Load an old Player
 	yoff = 30
