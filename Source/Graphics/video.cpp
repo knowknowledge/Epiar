@@ -440,7 +440,7 @@ void Video::SetCropRect( int x, int y, int w, int h ){
 	cropRects.push(Rect( xn, yn, wn, hn ));
 
 	// Need to convert top down y-axis
-	glScissor( x, Video::h - (y + h), w, h );
+	glScissor( xn, Video::h - (yn + hn), wn, hn );
 }
 
 /**\brief Unset the previous crop rectangle after use.
