@@ -647,7 +647,8 @@ function loadingWindow()
 		for i=1,#players do
 			local player = players[i]
 			-- TODO: show a preview of the player (curret ship, location, equipment)
-			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer('%s')",player)))
+			player = string.gsub(player, "([\\\"])", "\\%1")
+			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(\"%s\")",player)))
 			yoff = yoff + 40
 		end
 		yoff = yoff + 30
