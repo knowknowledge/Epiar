@@ -411,8 +411,6 @@ int Video::GetHalfHeight( void ) {
 void Video::SetCropRect( int x, int y, int w, int h ){
 	int xn, yn, wn, hn;
 
-	cout << "requested a crop of " << x << ", " << y << ", " << w << ", " << h << endl;
-
 	if (cropRects.empty()) {
 		glEnable(GL_SCISSOR_TEST);
 
@@ -420,8 +418,6 @@ void Video::SetCropRect( int x, int y, int w, int h ){
 		yn = y;
 		wn = w;
 		hn = h;
-
-		cout << "giving that crop" << endl;
 	} else {
 		// Need to detect which part of crop rectangle is within previous rectangle
 		// So we don't miss things that needs to be cropped.
@@ -439,10 +435,6 @@ void Video::SetCropRect( int x, int y, int w, int h ){
 
 		if(wn < 0) wn = 0; // crops don't overlap. we still record this as they're going to call unsetcrop, unaware of the issue
 		if(hn < 0) hn = 0; // same reason as line above
-
-		cout << "merged with the last crop for a result of " << xn << ", " << yn << ", " << wn << ", " << hn << endl;
-		cout << "that merged in last crop was a " << prevrect.x << ", " << prevrect.y << ", " << prevrect.w << ", " << prevrect.h << endl;
-		cout << "botprev = " << botprev << ", bot = " << bot << ", yn = " << yn << endl;
 	}
 
 	cropRects.push(Rect( xn, yn, wn, hn ));
@@ -461,14 +453,10 @@ void Video::UnsetCropRect( void ) {
 
 	if ( cropRects.empty() ) {
 		glDisable(GL_SCISSOR_TEST);
-		cout << "turning off all crops, no more" << endl;
 	} else {
-		//Set's the previous crop rectangle.
+		// Set's the previous crop rectangle.
 		Rect prevrect = cropRects.top();
 
-		cout << "turning off a crop, restoring previous of " << TO_INT(prevrect.x) << ", " << TO_INT(prevrect.y) << ", " <<
-				TO_INT(prevrect.w) << ", " << TO_INT(prevrect.h) << endl;
-
-		glScissor( TO_INT(prevrect.x), TO_INT(prevrect.y), TO_INT(prevrect.w), TO_INT(prevrect.h) );
+		glScissor( TO_INT(prevrect.x), Video::h - (TO_INT(prevrect.y) + TO_INT(prevrect.h)), TO_INT(prevrect.w), TO_INT(prevrect.h) );
 	}
 }

@@ -356,7 +356,6 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 	glBegin( GL_QUADS );
 	for( int j = 0; j < fill_h; j += h) {
 		for( int i = 0; i < fill_w; i += w) {
-			//cout<<"Image "<<j<<","<<i<<endl;
 			glTexCoord2f( 0., 0. ); glVertex2f( static_cast<GLfloat>(x+i), static_cast<GLfloat>(y+j) ); // Lower Left
 			glTexCoord2f( scale_w, 0. ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+j)); // Lower Right
 			glTexCoord2f( scale_w, scale_h ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+h+j) ); // Upper Right
