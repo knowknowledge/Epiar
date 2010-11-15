@@ -84,8 +84,13 @@ class Ship : public Sprite {
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 
 		// Situational awareness / AI functions
-		void SetAttacker(int attacker) { attackedBy = attacker; }
+		void SetAttacker(int attacker) {
+			attackedBy = attacker;
+			if(attacker == 60) friendly = false;
+		}
 		int GetAttacker() { return attackedBy; }
+		void SetFriendly(int f) { friendly = (f == 1); }
+		int GetFriendly() { return (friendly ? 1 : 0 ); }
 	
 	private:
 		Model *model;
@@ -112,6 +117,7 @@ class Ship : public Sprite {
 		} status;
 
 		int attackedBy; ///< Sprite id for owner of last projectile to hit this ship
+		bool friendly; ///< Is this ship friendly to the player?
 
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship

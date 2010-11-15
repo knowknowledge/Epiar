@@ -83,6 +83,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
 		{"GetAttacker", &AI_Lua::ShipGetAttacker},
 		{"SetAttacker", &AI_Lua::ShipSetAttacker},
+		{"SetFriendly", &AI_Lua::ShipSetFriendly},
+		{"GetFriendly", &AI_Lua::ShipGetFriendly},
 
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
@@ -1199,6 +1201,42 @@ int AI_Lua::ShipSetAttacker(lua_State* L){
 		(ai)->SetAttacker( attacker );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, attacker)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to get last attacker of a ship
+ * \sa Sprite::GetAttacker()
+ */
+int AI_Lua::ShipGetFriendly(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushnumber(L, (int) (ai)->GetFriendly() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to set the last attacker of a ship
+ * \sa Ship::SetCredits()
+ */
+int AI_Lua::ShipSetFriendly(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		int friendly = luaL_checkint (L, 2);
+		(ai)->SetFriendly( friendly );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, friendly)", n);
 	}
 	return 0;
 }

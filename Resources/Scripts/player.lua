@@ -233,11 +233,10 @@ function boardShip()
 
 		-- show the boarding dialog
 		local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits()
-		--boardingDialog = UI.newWindow(100, 100, 300, 150, "Boarding Ship")
-		boardingDialog = UI.newWindow(100, 100, 500, 300, "Boarding Ship")
+		boardingDialog = UI.newWindow(100, 100, 300, 180, "Boarding Ship")
 		boardingDialog:add( UI.newLabel(50, 30, "You have boarded their ship.") )
 		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
-		boardingDialog:add( UI.newButton(50, 160, 200, 30, "Attempt to capture vessel", string.format("doCapture()") ) )
+		boardingDialog:add( UI.newButton(50, 110, 200, 30, "Attempt to capture vessel", string.format("doCapture()") ) )
 
 	else
 		HUD.newAlert("Cannot board target -- too far away")
@@ -248,16 +247,12 @@ end
 function hailShip()
 	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
 
-	--local x, y = PLAYER:GetPosition()
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
 	if targettedShip == nil then
 		HUD.newAlert("Cannot hail - no target.")
 		return
 	end
-
-	--local targettedX, targettedY = targettedShip:GetPosition()
-	--local dist = distfrom( x, y, targettedX, targettedY ) -- calculate distance to target
 
 	-- for now, let's only hail non-disabled ships
 
@@ -279,7 +274,7 @@ function hailShip()
 		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
 
 	else
-		HUD.newAlert("Cannot board target -- too far away")
+		HUD.newAlert("No reply.")
 	end
 end
 
@@ -302,19 +297,14 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	-- placeholder reply for now; work on implementing this later.
-	math.randomseed( os.time() + targettedShip:GetID() )
+	local r = getRand( os.time() + targettedShip:GetID(), 25 )
 
-	for s = 1,10 do
-		math.random()
-	end
-
-	local r = math.random(25)
 	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
+		-- 'friendly' means will never arbitrary select player as a target unless provoked
+		targettedShip:SetFriendly(1)
 	else
-		print ( string.format ("r: %d != 1\n", r ) )
 		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
 		didBFM = 1
 	end
@@ -327,6 +317,20 @@ function doHailEnd()
 	hailDialog:close()
 	hailDialog = nil
 end
+
+function getRand(seed, top)
+	math.randomseed( seed )
+
+	for s = 1,10 do
+		math.random()
+	end
+
+	local r = math.random(top)
+
+	return r
+end
+
+
 	
 
 --- Callback for the UI button in boarding ship dialog (see above)
