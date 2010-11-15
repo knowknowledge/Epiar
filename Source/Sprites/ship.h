@@ -61,6 +61,10 @@ class Ship : public Sprite {
 		float GetHullIntegrityPct();
 		float GetShieldIntegrityPct();
 		Weapon* GetCurrentWeapon();
+		short int GetHullDamage(){ return status.hullDamage; }
+		void SetHullDamage(short int hd){ status.hullDamage = hd; }
+		short int GetShieldDamage(){ return status.shieldDamage; }
+		void SetShieldDamage(short int sd){ status.shieldDamage = sd; }
 
 		int GetCurrentAmmo();		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();

@@ -99,6 +99,12 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetTotalCost", &AI_Lua::ShipGetTotalCost},
 		{"IsDisabled", &AI_Lua::ShipIsDisabled},
 		{"GetMissions", &AI_Lua::ShipGetMissions},
+		//{"GetWorldPosition", &AI_Lua::ShipGetWorldPosition},
+		//{"SetWorldPosition", &AI_Lua::ShipSetWorldPosition},
+		{"GetHullDamage", &AI_Lua::ShipGetHullDamage},
+		{"SetHullDamage", &AI_Lua::ShipSetHullDamage},
+		{"GetShieldDamage", &AI_Lua::ShipGetShieldDamage},
+		{"SetShieldDamage", &AI_Lua::ShipSetShieldDamage},
 
 		{NULL, NULL}
 	};
@@ -765,11 +771,11 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 	return 1;
 }
 
-/**\brief Lua callable function to get the ship's position.
- * \sa Coordinate::GetWorldPosition()
+/**\brief Lua callable function to get the world position
+ * \sa Coordinate::GetWorldPosition() 
  */
 int AI_Lua::ShipGetPosition(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
+	int n = lua_gettop(L); // Number of arguments
 
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
@@ -1170,7 +1176,6 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 }
 
 /**\brief Lua callable function to get last attacker of a ship
- * \sa Sprite::GetAttacker()
  */
 int AI_Lua::ShipGetAttacker(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -1206,7 +1211,6 @@ int AI_Lua::ShipSetAttacker(lua_State* L){
 }
 
 /**\brief Lua callable function to get last attacker of a ship
- * \sa Sprite::GetAttacker()
  */
 int AI_Lua::ShipGetFriendly(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -1226,7 +1230,6 @@ int AI_Lua::ShipGetFriendly(lua_State* L){
 }
 
 /**\brief Lua callable function to set the last attacker of a ship
- * \sa Ship::SetCredits()
  */
 int AI_Lua::ShipSetFriendly(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -1240,3 +1243,75 @@ int AI_Lua::ShipSetFriendly(lua_State* L){
 	}
 	return 0;
 }
+
+
+
+
+/**\brief Lua callable function to get Shield damage of a ship
+ */
+int AI_Lua::ShipGetShieldDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (ai)->GetShieldDamage() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to set the Shield damage of a ship
+ */
+int AI_Lua::ShipSetShieldDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		int damage = luaL_checkint (L, 2);
+		(ai)->SetShieldDamage( damage );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to get Hull damage of a ship
+ */
+int AI_Lua::ShipGetHullDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (ai)->GetHullDamage() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to set the Hull damage of a ship
+ */
+int AI_Lua::ShipSetHullDamage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		int damage = luaL_checkint (L, 2);
+		(ai)->SetHullDamage( damage );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, damage)", n);
+	}
+	return 0;
+}
+

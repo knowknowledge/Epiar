@@ -60,6 +60,7 @@ class AI_Lua{
 		static int ShipGetAlliance(lua_State* L);
 		static int ShipGetAngle(lua_State* L);
 		static int ShipGetPosition(lua_State* L);
+		//static int ShipSetPosition(lua_State* L);
 		static int ShipGetMomentumAngle(lua_State* L);
 		static int ShipGetMomentumSpeed(lua_State* L);
 		static int ShipGetDirectionTowards(lua_State* L); // Accepts either Angles or Coordinates
@@ -72,6 +73,10 @@ class AI_Lua{
 		static int ShipGetOutfits(lua_State* L);
 		static int ShipGetTotalCost(lua_State* L);
 		static int ShipIsDisabled(lua_State* L);
+		static int ShipGetShieldDamage(lua_State* L);
+		static int ShipSetShieldDamage(lua_State* L);
+		static int ShipGetHullDamage(lua_State* L);
+		static int ShipSetHullDamage(lua_State* L);
 
 		// Ship Properties
 		static int ShipGetModelName(lua_State* L);

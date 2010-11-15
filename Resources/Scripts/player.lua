@@ -344,6 +344,12 @@ function doBoarding( reward )
 	boardingDialog = nil
 end
 
+function endBoarding()
+	Epiar.unpause()
+	boardingDialog:close()
+	boardingDialog = nil
+end
+
 function doCapture( )
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 	local mass = targettedShip:GetMass()
@@ -351,18 +357,47 @@ function doCapture( )
 	message = string.format("mass of target ship is %f", mass)
 	HUD.newAlert(message)
 
-	-- do some calculation like:
-	--   max = 1000 ^ (theirmass / ourmass)
-	--   num = rand() % max
-	--   if num == 0 then success = true end
+	-- prob. divisor that attempt will succeed. greater player mass boosts this number.
+	local succ_max = 100 ^ ( mass / PLAYER:GetMass() )
+	-- prob. divisor that ship will destruct. greater player mass diminishes this number.
+	local destruct_max = 5 ^ ( PLAYER:GetMass() / mass )
 
-	local success = true -- for now, allow success every time
+	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
+	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
 
-	if success then
-		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
+	--print ( string.format("smax=%d dmax=%d rsucc=%d rdestruct=%d", succ_max, destruct_max, r_succ, r_selfdestruct) )
+
+	if r_selfdestruct == 1 then
+		HUD.newAlert(string.format("Your boarding party set off the %s's self-destruct mechanism.", targettedShip:GetModelName() ) )
+		endBoarding()
+		targettedShip:SetShieldDamage(10000)
+		targettedShip:SetHullDamage(10000)
+
+	elseif r_succ == 1 then -- success!
+		local oldPlayerModel = PLAYER:GetModelName() 
+		--local oldPlayerX, oldPlayerY = PLAYER:GetPosition() 
+		local oldPlayerHD = PLAYER:GetHullDamage() 
+		local oldPlayerSD = PLAYER:GetShieldDamage() 
+
+		--print (string.format ("opm=%s opp=%f,%f ophd=%d opsd=%d\n", oldPlayerModel, oldPlayerX, oldPlayerY, oldPlayerHD, oldPlayerSD) )
+
 		PLAYER:SetModel( targettedShip:GetModelName() )
-		PLAYER:Repair( 10000 )
-		targettedShip:Damage(10000); -- crude but good enough for now
+		--PLAYER:SetPosition( targettedShip:GetPosition() ) -- would like to swap positions too, but this is not critical
+		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
+		PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
+		PLAYER:Repair( 10 )
+
+		targettedShip:SetModel( oldPlayerModel ) 
+		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
+		targettedShip:SetHullDamage( oldPlayerHD ) 
+		targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
+
+		endBoarding()
+
+	else
+		HUD.newAlert(string.format("You were not able to gain control of the %s.", targettedShip:GetModelName() ) )
 	end
 
 end
