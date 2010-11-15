@@ -513,8 +513,10 @@ function loadingWindow()
 	local width=300
 	local height=300
 	local players = Epiar.players()
+	local videoWidth = Video.getWidth()
+	local videoHeight = Video.getHeight()
 
-	loadingWin = UI.newWindow( 300,300,width,height,"Load a Player" )
+	loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
 
 	--- Load an old Player
 	yoff = 30

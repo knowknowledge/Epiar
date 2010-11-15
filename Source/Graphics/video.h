@@ -12,6 +12,9 @@
 
 #include "includes.h"
 #include "Utilities/coordinate.h"
+#include "Utilities/lua.h"
+
+#define EPIAR_VIDEO "Video"
 
 class Color {
 	public:
@@ -68,6 +71,8 @@ class Video {
 		
   		static bool SetWindow( int w, int h, int bpp, bool fullscreen );
 
+  		static void RegisterLua(lua_State *L);
+
   		static void Update( void );
   		static void Erase( void );
 
@@ -94,6 +99,10 @@ class Video {
 		static void UnsetCropRect( void );
 		
 		static void Blur( void );
+
+		// Lua functions
+		static int lua_getWidth(lua_State *L);
+		static int lua_getHeight(lua_State *L);
 
  	private:
   		static int w, h; // width/height of screen
