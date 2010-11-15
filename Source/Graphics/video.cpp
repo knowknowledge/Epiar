@@ -206,7 +206,7 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 
 /**\brief Register Lua functions for Video related operations.
  */
-void Video::RegisterLua(lua_State *L) {
+void Video::RegisterVideo(lua_State *L) {
 	static const luaL_Reg videoFunctions[] = {
 		{"getWidth", &Video::lua_getWidth},
 		{"getHeight", &Video::lua_getHeight},
@@ -214,6 +214,8 @@ void Video::RegisterLua(lua_State *L) {
 	};
 
 	luaL_openlib(L, EPIAR_VIDEO, videoFunctions, 0);
+
+	lua_pop(L,1);
 }
 
 /**\brief Same as Video::GetWidth (Lua callable)

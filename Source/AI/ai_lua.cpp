@@ -115,6 +115,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 	// preloading this animation prevents an FPS
 	// drop the first time that a ship explodes.
 	Ani::Get("Resources/Animations/explosion1.ani");
+
+	lua_pop(L,2);
 }
 
 /**\brief Validates Ship in Lua.

@@ -71,7 +71,7 @@ class Video {
 		
   		static bool SetWindow( int w, int h, int bpp, bool fullscreen );
 
-  		static void RegisterLua(lua_State *L);
+  		static void RegisterVideo(lua_State *L);
 
   		static void Update( void );
   		static void Erase( void );

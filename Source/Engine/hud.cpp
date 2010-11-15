@@ -617,6 +617,8 @@ void Hud::RegisterHud(lua_State *L) {
 	};
 
 	luaL_openlib(L, EPIAR_HUD, hudFunctions, 0);
+
+	lua_pop(L,1);
 }
 
 /**\brief Set's the visibility of the target (Lua callable)

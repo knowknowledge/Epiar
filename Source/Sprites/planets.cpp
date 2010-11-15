@@ -333,6 +333,8 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 
 	luaL_openlib(L, NULL, PlanetMethods,0);
 	luaL_openlib(L, EPIAR_PLANET, PlanetFunctions,0);
+
+	lua_pop(L,2);
 }
 
 /**\brief Get a planet by name or id

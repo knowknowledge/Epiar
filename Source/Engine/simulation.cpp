@@ -359,7 +359,7 @@ void Simulation::LuaRegisters(lua_State *L) {
 	Audio_Lua::RegisterAudio(L);
 	Planets_Lua::RegisterPlanets(L);
 	Hud::RegisterHud(L);
-	Video::RegisterLua(L);
+	Video::RegisterVideo(L);
 }
 
 /**\brief Parses an XML simulation file

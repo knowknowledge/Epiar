@@ -74,6 +74,8 @@ void UI_Lua::RegisterUI(lua_State *L){
 	luaL_openlib(L, NULL, uiMethods, 0);
 
 	luaL_openlib(L, EPIAR_UI, uiFunctions, 0);
+
+	lua_pop(L,2);
 }
 
 int UI_Lua::newWindow(lua_State *L){
