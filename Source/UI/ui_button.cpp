@@ -37,7 +37,6 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
 
-	// Rikus added
 	assert(bitmap_normal);
 	assert(bitmap_mouseover);
 	
@@ -81,7 +80,6 @@ void Button::Draw( int relx, int rely ) {
 	
 	Video::DrawRect( x, y, this->w, this->h, 1., 1., 1. );
 
-	// Rikus added
 	assert(bitmap_current);
 
 	// draw the button (loaded image is simply scaled)

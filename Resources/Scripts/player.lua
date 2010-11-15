@@ -22,7 +22,7 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "playerFire()", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
-	{'y', "Hail", "hailShip()", KEYTYPED},
+	{'y', "Hail", "hailSprite()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
 	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
 	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
@@ -247,32 +247,82 @@ function boardShip()
 		Epiar.pause()
 
 		-- show the boarding dialog
-		local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits()
-		--boardingDialog = UI.newWindow(100, 100, 300, 150, "Boarding Ship")
-		boardingDialog = UI.newWindow(100, 100, 500, 300, "Boarding Ship")
-		boardingDialog:add( UI.newLabel(50, 30, "You have boarded their ship.") )
-		boardingDialog:add( UI.newButton(50, 80, 200, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
-		boardingDialog:add( UI.newButton(50, 160, 200, 30, "Attempt to capture vessel", string.format("doCapture()") ) )
+		--local moneyOnBoard = targettedShip:GetTotalCost() + targettedShip:GetCredits() -- old way
+		local moneyOnBoard = targettedShip:GetCredits() -- new way
+
+		local targetMass = targettedShip:GetMass()
+
+		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
+		local succ_max = 15 ^ ( targetMass / PLAYER:GetMass() )
+		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
+		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
+
+		local captureProbPct = (1 / succ_max) * 100
+
+		boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
+		boardingDialog:add( UI.newLabel(50, 30,  string.format("You have boarded the ship." ) ) )
+		boardingDialog:add( UI.newLabel(50, 60,  string.format("  Class: %s", targettedShip:GetModelName() ) ) )
+		boardingDialog:add( UI.newLabel(50, 90,  string.format("  Credits on board: %d", moneyOnBoard ) ) )
+		boardingDialog:add( UI.newLabel(50, 120, string.format("  Capture probability: %.0f%%", captureProbPct ) ) )
+		boardingDialog:add( UI.newButton(50, 150, 100, 30, "Steal their credits", string.format("doBoarding(%d)", moneyOnBoard ) ) )
+		boardingDialog:add( UI.newButton(150, 150, 150, 30, "Attempt to capture vessel", string.format("doCapture(%f, %f)", succ_max, destruct_max) ) )
+		boardingDialog:add( UI.newButton(300, 150, 100, 30, "End boarding", string.format("endBoarding()") ) )
 
 	else
 		HUD.newAlert("Cannot board target -- too far away")
 	end
 end
 
+---Hail wrapper for any type of sprite
+function hailSprite()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
+
+	if spritetype == 0x01 then
+		hailPlanet()
+	elseif spritetype == 0x08 then
+		hailShip()
+	else
+		HUD.newAlert("No reply.")
+	end
+end
+
+function hailPlanet()
+	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+
+	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
+
+	if targettedPlanet == nil then
+		HUD.newAlert("Cannot hail - no target.")
+		return
+	end
+
+	HUD.newAlert("Hailing planet...")
+	Epiar.pause()
+
+	-- show the dialog
+	hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
+	hailReplyLabel = UI.newLabel(50, 50, "")
+
+	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
+	hailDialog:add( hailReplyLabel ) 
+
+	hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
+	hailDialog:add( UI.newButton(150, 100, 100, 30, "Rude comment", "doHailInsult()" ) )
+	hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+
+end
+
 ---Hail target ship
 function hailShip()
 	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
 
-	--local x, y = PLAYER:GetPosition()
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
 	if targettedShip == nil then
 		HUD.newAlert("Cannot hail - no target.")
 		return
 	end
-
-	--local targettedX, targettedY = targettedShip:GetPosition()
-	--local dist = distfrom( x, y, targettedX, targettedY ) -- calculate distance to target
 
 	-- for now, let's only hail non-disabled ships
 
@@ -289,23 +339,54 @@ function hailShip()
 		hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
 		hailDialog:add( hailReplyLabel ) 
 
-		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet(50,50)") )
-		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM(50)" ) )
+		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
+		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM()" ) )
 		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
 
 	else
-		HUD.newAlert("Cannot board target -- too far away")
+		HUD.newAlert("No reply.")
 	end
 end
 
 function doHailGreet()
 	if hailDialog == nil then return end
-	local targettedShip = Epiar.getSprite( HUD.getTarget() )
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
 
-	-- generic reply for now; later should make this query the AI routine for an appropriate response
-	hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+	if spritetype == 0x01 then
+		if targettedSprite:GetForbidden() == 1 then
+			hailReplyLabel.setLabel(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
+		else
+			hailReplyLabel.setLabel(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
+		end
+	elseif spritetype == 0x08 then
+		hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+	else
+		-- should not happen
+	end
+end
 
-	-- play some sound?
+function doHailInsult()
+	if hailDialog == nil then return end
+	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
+
+	if targettedPlanet:GetForbidden() == 1 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
+		return
+	end
+
+	-- should make this query the planet data for an appropriate response / attitude toward the player
+	local r = getRand( os.time() + targettedPlanet:GetID(), 10 )
+
+	if r == 1 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
+		planet:SetForbidden(1)
+	elseif r == 2 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
+		addcredits( 100 )
+	else 
+		hailReplyLabel.setLabel(hailReplyLabel,"We are saddened by your insults.")
+	end
 end
 	
 function doHailBFM()
@@ -317,19 +398,14 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	-- placeholder reply for now; work on implementing this later.
-	math.randomseed( os.time() + targettedShip:GetID() )
+	local r = getRand( os.time() + targettedShip:GetID(), 25 )
 
-	for s = 1,10 do
-		math.random()
-	end
-
-	local r = math.random(25)
 	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
+		-- 'friendly' means will never arbitrary select player as a target unless provoked
+		targettedShip:SetFriendly(1)
 	else
-		print ( string.format ("r: %d != 1\n", r ) )
 		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
 		didBFM = 1
 	end
@@ -342,6 +418,20 @@ function doHailEnd()
 	hailDialog:close()
 	hailDialog = nil
 end
+
+function getRand(seed, top)
+	math.randomseed( seed )
+
+	for s = 1,10 do
+		math.random()
+	end
+
+	local r = math.random(top)
+
+	return r
+end
+
+
 	
 
 --- Callback for the UI button in boarding ship dialog (see above)
@@ -350,30 +440,58 @@ function doBoarding( reward )
 
 	addcredits( reward )
 
+	Epiar.getSprite( HUD.getTarget() ) : SetCredits( 0 )
+
 	Epiar.unpause()
 	boardingDialog:close()
 	boardingDialog = nil
 end
 
-function doCapture( )
+function endBoarding()
+	Epiar.unpause()
+	boardingDialog:close()
+	boardingDialog = nil
+end
+
+function doCapture(succ_max, destruct_max)
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
-	local mass = targettedShip:GetMass()
 
-	message = string.format("mass of target ship is %f", mass)
-	HUD.newAlert(message)
+	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
+	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
 
-	-- do some calculation like:
-	--   max = 1000 ^ (theirmass / ourmass)
-	--   num = rand() % max
-	--   if num == 0 then success = true end
+	--print ( string.format("smax=%d dmax=%d rsucc=%d rdestruct=%d", succ_max, destruct_max, r_succ, r_selfdestruct) )
 
-	local success = true -- for now, allow success every time
+	if r_selfdestruct == 1 then
+		HUD.newAlert(string.format("Your boarding party set off the %s's self-destruct mechanism.", targettedShip:GetModelName() ) )
+		endBoarding()
+		targettedShip:SetShieldDamage(10000)
+		targettedShip:SetHullDamage(10000)
 
-	if success then
+	elseif r_succ == 1 then -- success!
 		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
+
+		local oldPlayerModel = PLAYER:GetModelName() 
+		--local oldPlayerX, oldPlayerY = PLAYER:GetPosition() 
+		local oldPlayerHD = PLAYER:GetHullDamage() 
+		local oldPlayerSD = PLAYER:GetShieldDamage() 
+
+		--print (string.format ("opm=%s opp=%f,%f ophd=%d opsd=%d\n", oldPlayerModel, oldPlayerX, oldPlayerY, oldPlayerHD, oldPlayerSD) )
+
 		PLAYER:SetModel( targettedShip:GetModelName() )
-		PLAYER:Repair( 10000 )
-		targettedShip:Damage(10000); -- crude but good enough for now
+		--PLAYER:SetPosition( targettedShip:GetPosition() ) -- would like to swap positions too, but this is not critical
+		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
+		PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
+		PLAYER:Repair( 10 )
+
+		targettedShip:SetModel( oldPlayerModel ) 
+		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
+		targettedShip:SetHullDamage( oldPlayerHD ) 
+		targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+		endBoarding()
+
+	else
+		HUD.newAlert(string.format("You were not able to gain control of the %s.", targettedShip:GetModelName() ) )
 	end
 
 end
@@ -393,7 +511,12 @@ function attemptLanding()
 		
 		-- Check if the ship is close enough and moving slowly enough to land on the planet.
 		HUD.setTarget(planet:GetID())
+		HUD.newAlert(message)
 	else
+		if planet:GetForbidden() == 1 then
+			HUD.newAlert(string.format("%s: %s! You are forbidden from landing here.", planet:GetName(), PLAYER:GetName() ) )
+			return
+		end
 		-- TODO make this distance check based off of the planet size.
 		if distance > 200 then
 			if message ~= "" then
@@ -541,7 +664,8 @@ function loadingWindow()
 		for i=1,#players do
 			local player = players[i]
 			-- TODO: show a preview of the player (curret ship, location, equipment)
-			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer('%s')",player)))
+			player = string.gsub(player, "([\\\"])", "\\%1")
+			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(\"%s\")",player)))
 			yoff = yoff + 40
 		end
 		yoff = yoff + 30

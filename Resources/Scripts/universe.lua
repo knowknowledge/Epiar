@@ -100,6 +100,12 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 
 	s:SetRadarColor(255,0,0)
 	attachRandomWeapon(s,weapons)
+
+	local creditsMax = 5500
+	-- curving probability with lower numbers being more likely
+	local randCredits = math.random(math.sqrt(creditsMax)) * math.random(math.sqrt(creditsMax)) 
+	s:SetCredits(randCredits)
+
 	return s
 end
 
