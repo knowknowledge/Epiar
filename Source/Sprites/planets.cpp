@@ -34,6 +34,7 @@
 Planet::Planet(){
 	SetRadarColor(Color::Get(48, 160, 255));
 	lastTrafficTime = 0;
+	forbidden = false;
 }
 
 /**\brief Copy Constructor
@@ -323,6 +324,8 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetEngines", &Planets_Lua::GetEngines},
 		{"GetWeapons", &Planets_Lua::GetWeapons},
 		{"GetOutfits", &Planets_Lua::GetOutfits},
+		{"GetForbidden", &Planets_Lua::GetForbidden},
+		{"SetForbidden", &Planets_Lua::SetForbidden},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -666,4 +669,38 @@ int Planets_Lua::GetOutfits(lua_State* L){
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
+}
+
+/**\brief Lua callable function to get forbidden status
+ */
+int Planets_Lua::GetForbidden(lua_State* L){
+        int n = lua_gettop(L);  // Number of arguments
+
+        if (n == 1) {
+                Planet* p = checkPlanet(L,1);
+                if(p==NULL){
+                        lua_pushnumber(L, 0 );
+                        return 1;
+                }
+                lua_pushinteger(L, (int) ((p)->GetForbidden() ? 1 : 0) );
+        }
+        else {  
+                luaL_error(L, "Got %d arguments expected 1 (self)", n);
+        }
+        return 1;
+}
+
+/**\brief Lua callable function to set forbidden status
+ */
+int Planets_Lua::SetForbidden(lua_State* L){
+        int n = lua_gettop(L);  // Number of arguments
+        if (n == 2) {
+                Planet* p = checkPlanet(L,1);
+                if(p==NULL) return 0;
+                int f = luaL_checkint (L, 2);
+                (p)->SetForbidden( (f == 1) );
+        } else {
+                luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
+        }
+        return 0;
 }

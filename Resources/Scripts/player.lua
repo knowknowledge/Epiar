@@ -22,7 +22,7 @@ playerCommands = {
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "PLAYER:Fire( HUD.getTarget() )", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
-	{'y', "Hail", "hailShip()", KEYTYPED},
+	{'y', "Hail", "hailSprite()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
 	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
 	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
@@ -243,6 +243,46 @@ function boardShip()
 	end
 end
 
+---Hail wrapper for any type of sprite
+function hailSprite()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
+
+	if spritetype == 0x01 then
+		hailPlanet()
+	elseif spritetype == 0x08 then
+		hailShip()
+	else
+		HUD.newAlert("No reply.")
+	end
+end
+
+function hailPlanet()
+	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+
+	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
+
+	if targettedPlanet == nil then
+		HUD.newAlert("Cannot hail - no target.")
+		return
+	end
+
+	HUD.newAlert("Hailing planet...")
+	Epiar.pause()
+
+	-- show the dialog
+	hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
+	hailReplyLabel = UI.newLabel(50, 50, "")
+
+	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
+	hailDialog:add( hailReplyLabel ) 
+
+	hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
+	hailDialog:add( UI.newButton(150, 100, 100, 30, "Rude comment", "doHailInsult()" ) )
+	hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+
+end
+
 ---Hail target ship
 function hailShip()
 	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
@@ -269,8 +309,8 @@ function hailShip()
 		hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
 		hailDialog:add( hailReplyLabel ) 
 
-		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet(50,50)") )
-		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM(50)" ) )
+		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
+		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM()" ) )
 		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
 
 	else
@@ -280,12 +320,43 @@ end
 
 function doHailGreet()
 	if hailDialog == nil then return end
-	local targettedShip = Epiar.getSprite( HUD.getTarget() )
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
 
-	-- generic reply for now; later should make this query the AI routine for an appropriate response
-	hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+	if spritetype == 0x01 then
+		if targettedSprite:GetForbidden() == 1 then
+			hailReplyLabel.setLabel(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
+		else
+			hailReplyLabel.setLabel(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
+		end
+	elseif spritetype == 0x08 then
+		hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+	else
+		-- should not happen
+	end
+end
 
-	-- play some sound?
+function doHailInsult()
+	if hailDialog == nil then return end
+	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
+
+	if targettedPlanet:GetForbidden() == 1 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
+		return
+	end
+
+	-- should make this query the planet data for an appropriate response / attitude toward the player
+	local r = getRand( os.time() + targettedPlanet:GetID(), 10 )
+
+	if r == 1 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
+		planet:SetForbidden(1)
+	elseif r == 2 then
+		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
+		addcredits( 100 )
+	else 
+		hailReplyLabel.setLabel(hailReplyLabel,"We are saddened by your insults.")
+	end
 end
 	
 function doHailBFM()
@@ -417,6 +488,11 @@ function attemptLanding()
 		
 		-- Check if the ship is close enough and moving slowly enough to land on the planet.
 		HUD.setTarget(planet:GetID())
+	end
+
+	if planet:GetForbidden() == 1 then
+		HUD.newAlert(string.format("%s: %s! You are forbidden from landing here.", planet:GetName(), PLAYER:GetName() ) )
+		return
 	end
 	
 	-- TODO make this distance check based off of the planet size.
