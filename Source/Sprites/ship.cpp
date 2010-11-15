@@ -61,6 +61,8 @@ Ship::Ship()
 		ammo[a]=0;
 	}
 
+	attackedBy = -1; 
+
 	shipStats = Outfit();
 
 	SetRadarColor(Color::Get(255,0,0));

@@ -55,6 +55,7 @@ class AI_Lua{
 		// Current Ship State
 		static int ShipGetType(lua_State* L);
 		static int ShipGetID(lua_State* L);
+		static int ShipGetMass(lua_State* L);
 		static int ShipGetName(lua_State* L);
 		static int ShipGetAlliance(lua_State* L);
 		static int ShipGetAngle(lua_State* L);
@@ -78,6 +79,10 @@ class AI_Lua{
 		static int ShipGetHull(lua_State* L);
 		static int ShipGetShield(lua_State* L);
 		static int ShipGetMissions(lua_State* L);
+
+		// Situational Awareness
+		static int ShipGetAttacker(lua_State* L);
+		static int ShipSetAttacker(lua_State* L);
 	private:
 };
 

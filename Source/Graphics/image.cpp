@@ -216,8 +216,16 @@ void Image::DrawCentered( int x, int y, float angle ) {
 /**\brief Draw the image stretched within to a box
  */
 void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
-	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
-	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
+	if(!this) return;
+	assert(this);
+	assert(this->w);
+	assert(this->h);
+
+	float wf = static_cast<float>(this->w);
+	float hf = static_cast<float>(this->h);
+
+	float resize_ratio_w = static_cast<float>(box_w) / wf;
+	float resize_ratio_h = static_cast<float>(box_h) / hf;
 
 	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 }
