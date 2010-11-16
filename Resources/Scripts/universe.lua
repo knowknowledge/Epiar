@@ -1,4 +1,4 @@
--- Use this script for a solar system
+
 
 -- This is the Introduction Message that greets new players.
 -- Notice that we use spaces here since Label can't parse tabs.
@@ -740,6 +740,7 @@ function landingDialog(id)
 	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
+	landingWin:add(UI.newButton( 110,height-40,100,30,"Weapon Config","weaponConfigDialog()" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
@@ -790,3 +791,53 @@ function ui_demo()
 	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end
 
+-- interactive weapon slot configuration
+function weaponConfigDialog()
+	if wcDialog ~= nil then return end
+
+	local slotCount = PLAYER:GetWeaponSlotCount()
+
+	print (string.format( "weaponConfigDialog(): slot count is %d\n", slotCount))
+
+	local height = 50 + (40*slotCount)
+	local width = 400
+
+	local leftFrame = UI.newFrame( 10, 30, 190, height )
+	local rightFrame = UI.newFrame( 200, 30, 190, height )
+
+	local slotsLabel = UI.newLabel(50, 5, "Weapon slots:", 0)
+	local weapLabel = UI.newLabel(50, 5, "Available weapons:", 0)
+
+	wcDialog = UI.newWindow( 300,50,width,height+30+30, "Weapon Configuration")
+
+	wcDialog:add(leftFrame, rightFrame);
+	wcDialog:add(UI.newButton( 150, height+30, 100, 20, "Finish", "weaponConfigFinish()"))
+
+	leftFrame:add(slotsLabel);
+	rightFrame:add(weapLabel);
+
+	for slot =0,(slotCount-1) do
+		local slotName = PLAYER:GetWeaponSlotName(slot)
+		local slotStatus = PLAYER:GetWeaponSlotStatus(slot)
+		local slotLabel = UI.newLabel( 15, 35+(40*slot), (string.format("[%d] %s:", slot, slotName)), 0)
+		local slotButton = UI.newButton( 50, 35+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
+		local clearSlotButton = UI.newButton( 150, 35+(40*slot)+20, 20, 20, "X", (string.format("clearWeaponSlot(%d)", slot)))
+		leftFrame:add(slotLabel,slotButton,clearSlotButton);
+	end
+
+	local w = 0
+	for name,ammo in pairs(PLAYER:GetWeapons()) do
+		local weapButton = UI.newButton( 50, 35+(40*w)+20, 100, 20, (string.format("%s", name)), (string.format("pickWeaponToAssign(%s)", name)))
+		rightFrame:add(weapButton);
+		w = w + 1
+	end
+
+end
+
+function weaponConfigFinish()
+
+	-- FIX: this function needs to actually apply the changes the user specified in the dialog before closing it
+
+	wcDialog:close()
+	wcDialog = nil
+end

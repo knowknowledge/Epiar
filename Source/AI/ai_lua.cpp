@@ -108,6 +108,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetShieldDamage", &AI_Lua::ShipGetShieldDamage},
 		{"SetShieldDamage", &AI_Lua::ShipSetShieldDamage},
 		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
+		{"GetWeaponSlotName", &AI_Lua::ShipGetWeaponSlotName},
+		{"GetWeaponSlotStatus", &AI_Lua::ShipGetWeaponSlotStatus},
 
 		{NULL, NULL}
 	};
@@ -1396,6 +1398,45 @@ int AI_Lua::ShipGetWeaponSlotCount(lua_State* L){
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+
+/**\brief Lua callable function to get name of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotName(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushstring(L, (s)->GetWeaponSlotName(slotNum).c_str() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get status of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotStatus(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushstring(L, (s)->GetWeaponSlotStatus(slotNum).c_str() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
 	}
 	return 1;
 }

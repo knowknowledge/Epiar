@@ -687,5 +687,18 @@ int Ship::GetWeaponSlotCount() {
 	return this->weaponSlots.size();
 }
 
+/**\brief The name of weapon slot i
+ */
+string Ship::GetWeaponSlotName(int i) {
+	if(i >= weaponSlots.size())
+		return "[BUG! slot does not exist]";
+	return ((struct Outfit::ws)(this->weaponSlots[i])).name;
+}
 
-
+/**\brief The status of weapon slot i
+ */
+string Ship::GetWeaponSlotStatus(int i) {
+	if(i >= weaponSlots.size())
+		return "[BUG! slot does not exist]";
+	return ((struct Outfit::ws)(this->weaponSlots[i])).content;
+}

@@ -14,7 +14,7 @@
 
 #define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship
 #define EPIAR_SHIP "Ship" ///< The Lua tag used to identify the Library for a Ship.
-#define EPIAR_OUTFIT "Outfit" ///< The Lua tag used to identify the Library for a Ship.
+#define EPIAR_OUTFIT "Outfit" ///< The Lua tag used to identify the Library for an Outfit
 
 class AI_Lua{
 	public:
@@ -84,6 +84,8 @@ class AI_Lua{
 
 		// Weapon slot related functions (defined in Outfit)
 		static int ShipGetWeaponSlotCount(lua_State* L);
+		static int ShipGetWeaponSlotName(lua_State* L);
+		static int ShipGetWeaponSlotStatus(lua_State* L);
 
 		// Ship Properties
 		static int ShipGetModelName(lua_State* L);

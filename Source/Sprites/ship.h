@@ -53,6 +53,8 @@ class Ship : public Sprite {
 		void RemoveOutfit(Outfit *outfit);
 		void RemoveOutfit(string outfitName);
 		int GetWeaponSlotCount();
+		string GetWeaponSlotName(int i);
+		string GetWeaponSlotStatus(int i);
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);
