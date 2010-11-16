@@ -443,7 +443,7 @@
           </coord>
           <angle>180</angle>
           <motionAngle>120</motionAngle>
-          <content>Plasma Turret</content>
+          <content>Strong Laser</content>
        </slot>
        <slot>
           <name>turret slot 1</name>
@@ -453,7 +453,7 @@
           </coord>
           <angle>0</angle>
           <motionAngle>180</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
     </weaponSlots>
   </model>
@@ -583,7 +583,7 @@
           </coord>
           <angle>0</angle>
           <motionAngle>140</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
        <slot>
           <name>forward swivel slot 2</name>
@@ -603,7 +603,7 @@
           </coord>
           <angle>0</angle>
           <motionAngle>140</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
        <slot>
           <name>forward regular slot 1</name>
@@ -653,7 +653,7 @@
           </coord>
           <angle>270</angle>
           <motionAngle>150</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
        <slot>
           <name>starboard swivel slot 1</name>
@@ -663,7 +663,7 @@
           </coord>
           <angle>90</angle>
           <motionAngle>150</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
        <slot>
           <name>rear swivel slot 1</name>
@@ -707,7 +707,7 @@
           </coord>
           <angle>0</angle>
           <motionAngle>0</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
        <slot>
           <name>rear swivel slot 1</name>
@@ -717,7 +717,7 @@
           </coord>
           <angle>180</angle>
           <motionAngle>150</motionAngle>
-          <content>Laser Turret</content>
+          <content>Missile</content>
        </slot>
     </weaponSlots>
   </model>

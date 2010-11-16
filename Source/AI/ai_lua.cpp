@@ -110,6 +110,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
 		{"GetWeaponSlotName", &AI_Lua::ShipGetWeaponSlotName},
 		{"GetWeaponSlotStatus", &AI_Lua::ShipGetWeaponSlotStatus},
+		{"GetWeaponSlotContents", &AI_Lua::ShipGetWeaponSlotContents},
 
 		{NULL, NULL}
 	};
@@ -1437,6 +1438,33 @@ int AI_Lua::ShipGetWeaponSlotStatus(lua_State* L){
 		lua_pushstring(L, (s)->GetWeaponSlotStatus(slotNum).c_str() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the ship's weapons as defined by the weapon slots
+ * You don't normally want to use this function unless you are changing ships.
+ */
+int AI_Lua::ShipGetWeaponSlotContents(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Ship* s = checkShip(L,1);
+	if(s==NULL){
+		return 0;
+	}
+
+	map<string,string> weaps = s->GetWeaponSlotContents();
+	map<string,string>::iterator it = weaps.begin();
+
+	lua_createtable(L, weaps.size(), 0);
+	int newTable = lua_gettop(L);
+	while( it!=weaps.end() ) {
+		lua_pushfstring(L, ((*it).first).c_str() );
+		lua_pushfstring(L, ((*it).second).c_str() );
+		lua_settable(L,newTable);
+		++it;
 	}
 	return 1;
 }

@@ -388,7 +388,25 @@ function buyShip(model)
 		if currentModel ~= model then
 			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
 			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
+
 			PLAYER:SetModel(model)
+
+			
+
+			
+			for weap,ammo in pairs( PLAYER:GetWeapons() ) do
+				print (string.format (" --- WEAP %s", weap))
+				PLAYER:RemoveWeapon(weap)
+				HUD.closeStatusMatching(weap..":");
+			end
+
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+				print (string.format (" --- Slot defaults for %s specified a %s.\n\t\tTrying PLAYER:AddWeapon(%s)", slot, weap, weap))
+				PLAYER:AddWeapon(weap)
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+			end
+
+
 			PLAYER:Repair(10000)
 		else
 			HUD.newAlert("You already have a "..model)

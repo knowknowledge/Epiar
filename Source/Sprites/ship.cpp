@@ -83,17 +83,16 @@ Ship::~Ship() {
  * \return true if successful
  * \sa Model
  */
-bool Ship::SetModel( Model *model ) {
+bool Ship::SetModel( Model *model) {
 	assert( model );
 	if( model ) {
 		this->model = model;
 
-		// copy default weapon slot arrangement from model
+		// Copy default weapon slot arrangement from model,
 		this->weaponSlots = model->GetWeaponSlots();
+		// but leave it up to Lua to decide how the default weapon
+		// slot arrangement influences the weapons onboard the ship.
 
-		// should now populate shipWeapons with weapons named in weaponSlots. example:
-		//this->shipWeapons = SlotVectorToWeapVector (this->weaponSlots);
-		
 		SetImage( model->GetImage() );
 
 		ComputeShipStats();
@@ -702,3 +701,24 @@ string Ship::GetWeaponSlotStatus(int i) {
 		return "[BUG! slot does not exist]";
 	return ((struct Outfit::ws)(this->weaponSlots[i])).content;
 }
+
+//list<Weapon*> Ship::GetWeaponSlotContents(){
+map<string,string> Ship::GetWeaponSlotContents(){
+	//Weapons *weapons = Weapons::Instance();
+
+	map<string,string> weaps;
+
+	for(int i = 0; i < weaponSlots.size(); i++){
+		if(weaponSlots[i].content != ""){
+			weaps.insert( make_pair(weaponSlots[i].name, weaponSlots[i].content) );
+		}
+		else {
+			cout << "GWSC: slot is empty by default" << endl;
+		}
+	}
+
+	cout << "We think the weap list from ship.cpp is okay" << endl;
+
+	return weaps;
+}
+
