@@ -26,6 +26,18 @@
     <shieldStrength>700</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Gate Enforcer</name>
@@ -38,6 +50,18 @@
     <shieldStrength>600</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>80</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Hammer Freighter</name>
@@ -50,6 +74,18 @@
     <shieldStrength>800</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>center turret 1</name>
+          <coord>
+             <x>0.3</x>
+             <y>0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>360</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Kartanal</name>
@@ -62,6 +98,28 @@
     <shieldStrength>500</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>20</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Large Vesper</name>
@@ -74,6 +132,38 @@
     <shieldStrength>400</shieldStrength>
     <msrp>5000</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>turret slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-0.40</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>360</motionAngle>
+          <content>Plasma Cannon</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Mid Vesper</name>
@@ -86,6 +176,28 @@
     <shieldStrength>200</shieldStrength>
     <msrp>3500</msrp>
     <cargoSpace>10</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Plasma Cannon</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Patitu</name>
@@ -98,6 +210,18 @@
     <shieldStrength>400</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>20</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Raven</name>
@@ -110,6 +234,18 @@
     <shieldStrength>300</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>15</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>110</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Shuttle</name>
@@ -122,6 +258,18 @@
     <shieldStrength>300</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>50</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-0.35</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Solaran Battle Cruiser</name>
@@ -142,8 +290,8 @@
              <y>-3.50</y>
           </coord>
           <angle>0</angle>
-          <motion-angle>0</motion-angle>
-          <content></content>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
        </slot>
        <slot>
           <name>forward slot 2</name>
@@ -152,8 +300,8 @@
              <y>-3.50</y>
           </coord>
           <angle>0</angle>
-          <motion-angle>0</motion-angle>
-          <content></content>
+          <motionAngle>0</motionAngle>
+          <content>Plasma Cannon</content>
        </slot>
        <slot>
           <name>forward slot 3</name>
@@ -162,27 +310,27 @@
              <y>-3.50</y>
           </coord>
           <angle>0</angle>
-          <motion-angle>0</motion-angle>
+          <motionAngle>0</motionAngle>
           <content></content>
        </slot>
        <slot>
-          <name>forward slot 4</name>
+          <name>rear swivel slot 1</name>
           <coord>
-             <x>0.3</x>
-             <y>-3.50</y>
+             <x>0.0</x>
+             <y>-2.50</y>
           </coord>
-          <angle>0</angle>
-          <motion-angle>0</motion-angle>
+          <angle>180</angle>
+          <motionAngle>130</motionAngle>
           <content></content>
        </slot>
        <slot>
-          <name>turret slot 3</name>
+          <name>turret slot 1</name>
           <coord>
              <x>0.0</x>
              <y>1.2</y>
           </coord>
           <angle>0</angle>
-          <motion-angle>360</motion-angle>
+          <motionAngle>360</motionAngle>
           <content></content>
        </slot>
     </weaponSlots>
@@ -198,6 +346,18 @@
     <shieldStrength>800</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>120</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Corvert Mark I</name>
@@ -210,6 +370,38 @@
     <shieldStrength>700</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>rear swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>1.25</y>
+          </coord>
+          <angle>180</angle>
+          <motionAngle>90</motionAngle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>turret slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>180</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Corvert Mark II</name>
@@ -222,6 +414,48 @@
     <shieldStrength>2000</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>400</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>rear swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>1.25</y>
+          </coord>
+          <angle>180</angle>
+          <motionAngle>120</motionAngle>
+          <content>Plasma Turret</content>
+       </slot>
+       <slot>
+          <name>turret slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>180</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Explorer</name>
@@ -234,6 +468,18 @@
     <shieldStrength>500</shieldStrength>
     <msrp>1500</msrp>
     <cargoSpace>80</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>defensive swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>180</angle>
+          <motionAngle>220</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran FV-5 Frigate</name>
@@ -246,6 +492,38 @@
     <shieldStrength>500</shieldStrength>
     <msrp>2000</msrp>
     <cargoSpace>60</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0.25</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>turret slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>1.0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>360</motionAngle>
+          <content>Plasma Turret</content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Miner</name>
@@ -258,6 +536,18 @@
     <shieldStrength>600</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>75</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-0.75</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran XV</name>
@@ -270,6 +560,28 @@
     <shieldStrength>400</shieldStrength>
     <msrp>2500</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.25</x>
+             <y>-1.0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>0.25</x>
+             <y>-1.0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Uber</name>
@@ -282,6 +594,108 @@
     <shieldStrength>5000</shieldStrength>
     <msrp>15000</msrp>
     <cargoSpace>1000</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward swivel slot 1</name>
+          <coord>
+             <x>-0.4</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>140</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+       <slot>
+          <name>forward swivel slot 2</name>
+          <coord>
+             <x>0.0</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>140</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>forward swivel slot 3</name>
+          <coord>
+             <x>0.4</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>140</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+       <slot>
+          <name>forward regular slot 1</name>
+          <coord>
+             <x>-0.75</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Missile</content>
+       </slot>
+       <slot>
+          <name>forward regular slot 2</name>
+          <coord>
+             <x>-0.55</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Magnetic Mine</content>
+       </slot>
+       <slot>
+          <name>forward regular slot 3</name>
+          <coord>
+             <x>0.75</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>forward regular slot 4</name>
+          <coord>
+             <x>0.55</x>
+             <y>-2.5</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>port swivel slot 1</name>
+          <coord>
+             <x>-1.0</x>
+             <y>0</y>
+          </coord>
+          <angle>270</angle>
+          <motionAngle>150</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+       <slot>
+          <name>starboard swivel slot 1</name>
+          <coord>
+             <x>1.0</x>
+             <y>0</y>
+          </coord>
+          <angle>90</angle>
+          <motionAngle>150</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+       <slot>
+          <name>rear swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Vespan Carrier</name>
@@ -294,5 +708,37 @@
     <shieldStrength>2250</shieldStrength>
     <msrp>10000</msrp>
     <cargoSpace>400</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.45</x>
+             <y>-1.25</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Strong Laser</content>
+       </slot>
+       <slot>
+          <name>turret slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>-0.50</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+       <slot>
+          <name>rear swivel slot 1</name>
+          <coord>
+             <x>0</x>
+             <y>1.25</y>
+          </coord>
+          <angle>180</angle>
+          <motionAngle>150</motionAngle>
+          <content>Laser Turret</content>
+       </slot>
+    </weaponSlots>
   </model>
 </models>
