@@ -18,6 +18,14 @@ class Outfit : public Component {
 
 		Outfit();
 
+                typedef struct ws {
+                        string name;
+                        double x,y;
+                        double angle; // angle the weapon will be mounted
+                        double motionAngle; // should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
+			string content; // name of the weapon it contains (or "" for empty)
+                };
+
 		Outfit(
 				int _msrp,
 	            Image* _picture,
@@ -28,7 +36,8 @@ class Outfit : public Component {
 				int _cargoSpace,
 				int _surfaceArea,
 				int _hullStrength,
-				int _shieldStrength
+				int _shieldStrength,
+				int _weaponSlots
 				);
 
 		Outfit& operator= (const Outfit& other);
@@ -69,6 +78,11 @@ class Outfit : public Component {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
+                bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
+                bool ConfigureWeaponSlots( vector<struct ws>& slots );
+                bool ConfigureWeaponSlots();
+
+
 	protected:
 		int msrp; ///< The cost in credits.
 		Image* picture; ///< The image used in the store.
@@ -88,7 +102,10 @@ class Outfit : public Component {
 		int shieldStrength; ///< The amount of damage the shields can absorb.
 
 		// Offensive Stats
-		//TODO: What would go here?
+		vector<struct Outfit::ws> weaponSlots;
+
+		// Debug
+		void WSDebug(struct Outfit::ws);
 	private:
 };
 

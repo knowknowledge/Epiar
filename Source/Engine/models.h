@@ -15,18 +15,27 @@
 #include "Utilities/log.h"
 #include "Utilities/components.h"
 
+
 // Abstraction of a single ship model
 class Model : public Outfit {
 	public:
 		Model();
   		Model& operator= (const Model&);
+
 		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace);
+
+		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<struct Model::ws>& _weaponSlots);
+
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 		
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
+
+		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
+		bool ConfigureWeaponSlots( vector<struct ws>& slots );
+		bool ConfigureWeaponSlots();
 		
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.

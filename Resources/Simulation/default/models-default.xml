@@ -124,7 +124,7 @@
     <cargoSpace>50</cargoSpace>
   </model>
   <model>
-    <name>Solaran Battle Cuiser</name>
+    <name>Solaran Battle Cruiser</name>
     <image>Resources/Graphics/btlcruiser.png</image>
     <mass>2.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
@@ -134,6 +134,58 @@
     <shieldStrength>2500</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>500</cargoSpace>
+    <weaponSlots>
+       <slot>
+          <name>forward slot 1</name>
+          <coord>
+             <x>-0.3</x>
+             <y>-3.50</y>
+          </coord>
+          <angle>0</angle>
+          <motion-angle>0</motion-angle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
+          <coord>
+             <x>-0.2</x>
+             <y>-3.50</y>
+          </coord>
+          <angle>0</angle>
+          <motion-angle>0</motion-angle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>forward slot 3</name>
+          <coord>
+             <x>0.2</x>
+             <y>-3.50</y>
+          </coord>
+          <angle>0</angle>
+          <motion-angle>0</motion-angle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>forward slot 4</name>
+          <coord>
+             <x>0.3</x>
+             <y>-3.50</y>
+          </coord>
+          <angle>0</angle>
+          <motion-angle>0</motion-angle>
+          <content></content>
+       </slot>
+       <slot>
+          <name>turret slot 3</name>
+          <coord>
+             <x>0.0</x>
+             <y>1.2</y>
+          </coord>
+          <angle>0</angle>
+          <motion-angle>360</motion-angle>
+          <content></content>
+       </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Assist</name>

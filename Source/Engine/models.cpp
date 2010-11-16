@@ -50,8 +50,9 @@ Model& Model::operator=(const Model& other) {
  * \param _msrp Price
  * \param _cargoSpace Tons of cargo space
  */
-Model::Model( string _name, Image* _image, float _mass,
-		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
+
+Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
+		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
 	image(_image),
 	thrustOffset(_thrustOffset)
 {
@@ -63,6 +64,25 @@ Model::Model( string _name, Image* _image, float _mass,
 	SetCargoSpace(_cargoSpace);
 	SetHullStrength(_hullStrength);
 	SetShieldStrength(_shieldStrength);
+	Outfit::ConfigureWeaponSlots();
+	//((Component*)this)->SetName(_name);
+}
+
+Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
+		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace,
+		vector<struct ws>& _weaponSlots) :
+	image(_image),
+	thrustOffset(_thrustOffset)
+{
+	SetName(_name);
+	SetMass(_mass);
+	SetRotationsPerSecond(_rotPerSecond);
+	SetMaxSpeed(_maxSpeed);
+	SetMSRP(_msrp);
+	SetCargoSpace(_cargoSpace);
+	SetHullStrength(_hullStrength);
+	SetShieldStrength(_shieldStrength);
+	Outfit::ConfigureWeaponSlots(_weaponSlots);
 	//((Component*)this)->SetName(_name);
 }
 
@@ -118,6 +138,15 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetShieldStrength( (short)atoi( value.c_str() ));
 	} else return false;
 
+	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
+		// pass the weaponSlots XML node into a handler function
+		Outfit::ConfigureWeaponSlots( doc, attr );
+	} else {
+		cout << "Model::FromXMLNode(): Did not find weapon slot configuration - assuming defaults." << endl;
+		// with no parameters, it sets default values
+		Outfit::ConfigureWeaponSlots();
+	}
+
 	return true;
 }
 
@@ -161,6 +190,7 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 
 	return section;
 }
+
 
 /**\fn Model::GetImage()
  *  \brief Retrieves a pointer to the Image

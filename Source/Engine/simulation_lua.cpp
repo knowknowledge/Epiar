@@ -1103,7 +1103,9 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo); /* FIXME need to have a way of grabbing entire slot system destription from Lua and passing it in here */  
+		assert(true == false);
+
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){
