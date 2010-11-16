@@ -184,7 +184,10 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
 		cout << "found a child named weaponSlots; calling ConfigureWeaponSlots() ..." << endl;
-		ConfigureWeaponSlots(doc, attr);
+		if(ConfigureWeaponSlots(doc, attr))
+			cout << "FromXMLNode(): weapon slot XML helper succeeded!\n";
+		else
+			cout << "FromXMLNode(): weapon slot XML helper failed!\n";
 	}
 
 	return true;
@@ -306,16 +309,15 @@ void Outfit::_dbg_PrintInfo( void ) {
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
  */
+
+
 /**\brief Configure the ship's weapon slots based on the XML node weaponSlots.
+ * These routines are in Outfit rather than Model for flexibility reasons.
  */
-
 bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
-
-        cout << "XML parsing for ConfigureWeaponSlots() is not implemented yet." << endl;
 
 	xmlNodePtr slotPtr;
 	string value;
-
 
 	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
         for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
@@ -326,7 +328,7 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 		if( (attr = FirstChildNamed(slotPtr,"name")) ){
 			value = NodeToString(doc,attr);
 			newSlot.name = value;
-		}
+		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"coord")) ){
 			value = NodeToString(doc,attr);
@@ -336,32 +338,44 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			if( (coordAttr = FirstChildNamed(attr,"x")) ){
 				value = NodeToString(doc,coordAttr);
 				newSlot.x = atof(value.c_str());
-			}
+			} else return false;
 			if( (coordAttr = FirstChildNamed(attr,"y")) ){
 				value = NodeToString(doc,coordAttr);
 				newSlot.y = atof(value.c_str());
-			}
-		}
+			} else return false;
+		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"angle")) ){
 			value = NodeToString(doc,attr);
 			newSlot.angle = atof(value.c_str());
-		}
+		} else return false;
 
-		if( (attr = FirstChildNamed(slotPtr,"motion-angle")) ){
+		if( (attr = FirstChildNamed(slotPtr,"motionAngle")) ){
 			value = NodeToString(doc,attr);
 			newSlot.motionAngle = atof(value.c_str());
-		}
+		} else return false;
 
-		WSDebug(newSlot);
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			newSlot.content = value;
+		} else return false;
+
+		//WSDebug(newSlot);
 
 		weaponSlots.push_back(newSlot);
 
 		//Outfit::ConfigureWeaponSlots( doc, node );
 	}
 
+	WSDebug(weaponSlots);
 
-        return false;
+
+        return true;
 }
 
 /**\brief Configure the ship's weapon slots based on a list passed in (probably from the constructor)
@@ -401,8 +415,21 @@ bool Outfit::ConfigureWeaponSlots() {
         return true;
 }
 
+/**\brief Return the total number of weapon slots of any kind that this Outfit (probably a Model) has.
+ */
+int Outfit::GetWeaponSlotCount(){
+	return this->weaponSlots.size();
+}
+
 void Outfit::WSDebug(struct Outfit::ws slot){
-	printf("WSDebug: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str());
+	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str());
+}
+
+void Outfit::WSDebug(vector<struct ws>& slots){
+	cout << "WSD  Ship model: " << this->GetName() << endl;
+	for(unsigned int i = 0; i < slots.size(); i++){
+		WSDebug(slots[i]);
+	}
 }
 
 

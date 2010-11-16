@@ -87,6 +87,12 @@ bool Ship::SetModel( Model *model ) {
 	assert( model );
 	if( model ) {
 		this->model = model;
+
+		// copy default weapon slot arrangement from model
+		this->weaponSlots = model->GetWeaponSlots();
+
+		// should now populate shipWeapons with weapons named in weaponSlots. example:
+		//this->shipWeapons = SlotVectorToWeapVector (this->weaponSlots);
 		
 		SetImage( model->GetImage() );
 
@@ -673,7 +679,13 @@ void Ship::ComputeShipStats() {
 	}
 }
 
-
+/**\brief The total number of weapon slots on this ship
+ */
+int Ship::GetWeaponSlotCount() {
+	cout << "calling Outfit::WSDebug() from Ship::GetWeaponSlotCount() ..." << endl;
+	model->WSDebug(this->weaponSlots);
+	return this->weaponSlots.size();
+}
 
 
 

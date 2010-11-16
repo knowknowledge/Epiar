@@ -107,6 +107,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetHullDamage", &AI_Lua::ShipSetHullDamage},
 		{"GetShieldDamage", &AI_Lua::ShipGetShieldDamage},
 		{"SetShieldDamage", &AI_Lua::ShipSetShieldDamage},
+		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
 
 		{NULL, NULL}
 	};
@@ -143,6 +144,16 @@ AI* AI_Lua::checkShip(lua_State *L, int index){
 	}
 	*/
 	return (AI*)s;
+}
+
+/**\brief Validates Outfit in Lua.
+ */
+Outfit* AI_Lua::checkOutfit(lua_State *L, int index){
+	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_OUTFIT);
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_OUTFIT' expected");
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	return (Outfit*)s;
 }
 
 /**\brief Spawns a new AI ship for Lua.
@@ -1351,3 +1362,40 @@ int AI_Lua::ShipSetHullDamage(lua_State* L){
 	return 0;
 }
 
+/**\brief Lua callable function to get the model of a ship
+ */
+/*int AI_Lua::ShipGetModel(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		Ship* s = checkShip(L,1);
+		if(s==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (s)->GetModel() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}*/
+
+/**\brief Lua callable function to get the number of weapon slots of any kind on an outfit (probably a ship model)
+ */
+int AI_Lua::ShipGetWeaponSlotCount(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		Ship* s = checkShip(L,1);
+		if(s==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (s)->GetWeaponSlotCount() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}

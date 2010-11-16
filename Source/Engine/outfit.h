@@ -78,10 +78,15 @@ class Outfit : public Component {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
+		vector<struct ws> GetWeaponSlots(){ return this->weaponSlots; }
+                int GetWeaponSlotCount();
                 bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
                 bool ConfigureWeaponSlots( vector<struct ws>& slots );
                 bool ConfigureWeaponSlots();
 
+		// Debug
+		void WSDebug(vector<struct ws>&);
+		void WSDebug(struct Outfit::ws);
 
 	protected:
 		int msrp; ///< The cost in credits.
@@ -103,9 +108,6 @@ class Outfit : public Component {
 
 		// Offensive Stats
 		vector<struct Outfit::ws> weaponSlots;
-
-		// Debug
-		void WSDebug(struct Outfit::ws);
 	private:
 };
 

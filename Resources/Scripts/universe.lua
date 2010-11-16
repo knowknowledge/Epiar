@@ -427,9 +427,11 @@ function buyOutfit(outfit)
 		local weapCount = 0;
 		for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
 
+		local wsCount = PLAYER:GetWeaponSlotCount();
+		print( string.format("Your ship can hold a total of %d weapons.", wsCount) )
 		-- the 2 here should be changed to some per-ship value (e.g., maybe warships should hold 5)
-		if weapCount >= 2 then
-			print("You cannot hold any more weapons")
+		if weapCount >= wsCount then
+			print( string.format("%d >= %d; You cannot hold any more weapons", weapCount, wsCount) )
 			HUD.newAlert("You can't hold any more weapons.")
 			return
 		end

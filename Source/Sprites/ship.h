@@ -52,6 +52,7 @@ class Ship : public Sprite {
 		void AddOutfit(string outfitName);
 		void RemoveOutfit(Outfit *outfit);
 		void RemoveOutfit(string outfitName);
+		int GetWeaponSlotCount();
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);
@@ -131,7 +132,9 @@ class Ship : public Sprite {
 
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
-		vector<Weapon *> shipWeapons; ///< 
+
+		vector<Weapon *> shipWeapons; ///< The weapons installed on this ship
+		vector<struct Outfit::ws> weaponSlots; ///< The weapon slot arrangement
 
 		list<Outfit *> outfits;
 
