@@ -648,20 +648,6 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	return weaponPack;
 }
 
-/**\brief Gets a std::map of the current outfit system.
- * \return std:map with pointer to weapon as the key, ammo quantity as the data
- */
-map<Outfit*,int> Ship::GetOutfits_map() {
-	map<Outfit*,int> outfitPack;
-	list<Outfit*>::iterator item = outfits.begin();
-	while (item != outfits.end()){
-		outfitPack.insert( make_pair(*item,-1) );
-		item++;
-	}
-	return outfitPack;
-}
-
-
 
 /**\brief Computes the Ship Statistics based on equiped Outfit.
  */

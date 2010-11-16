@@ -74,7 +74,6 @@ class Ship : public Sprite {
 		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
 		void SetOutfits(list<Outfit*>* o) { outfits = *o; }
-		map<Outfit*,int> GetOutfits_map();
 
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
