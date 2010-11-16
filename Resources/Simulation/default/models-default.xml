@@ -500,28 +500,8 @@
              <y>-1.25</y>
           </coord>
           <angle>0</angle>
-          <motionAngle>0</motionAngle>
-          <content>Strong Laser</content>
-       </slot>
-       <slot>
-          <name>forward slot 2</name>
-          <coord>
-             <x>0.25</x>
-             <y>-1.25</y>
-          </coord>
-          <angle>0</angle>
-          <motionAngle>0</motionAngle>
+          <motionAngle>200</motionAngle>
           <content></content>
-       </slot>
-       <slot>
-          <name>turret slot 1</name>
-          <coord>
-             <x>0</x>
-             <y>1.0</y>
-          </coord>
-          <angle>0</angle>
-          <motionAngle>360</motionAngle>
-          <content>Plasma Turret</content>
        </slot>
     </weaponSlots>
   </model>
