@@ -511,6 +511,18 @@ void Hud::DrawUniverseMap( void ) {
 				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
 		}
 	}
+
+	// Do a second pass to draw planet Names on top
+	for( iter = sprites->begin(); iter != sprites->end(); ++iter )
+	{
+		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
+		{
+			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
+			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
+			SansSerif->SetColor(1.f,1.f,1.f,1.f);
+			SansSerif->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
+		}
+	}
 	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;
 	posy = starty + Camera::Instance()->GetFocusCoordinate().GetY() * scale + halfsize;
 	Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
