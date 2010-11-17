@@ -69,13 +69,14 @@ class Ship : public Sprite {
 		float GetDirectionTowards(float angle);
 		float GetHullIntegrityPct();
 		float GetShieldIntegrityPct();
-		Weapon* GetCurrentWeapon();
+		//Weapon* GetCurrentWeapon();
 		short int GetHullDamage(){ return status.hullDamage; }
 		void SetHullDamage(short int hd){ status.hullDamage = hd; }
 		short int GetShieldDamage(){ return status.shieldDamage; }
 		void SetShieldDamage(short int sd){ status.shieldDamage = sd; }
 
-		int GetCurrentAmmo();		int GetAmmo(AmmoType type);
+		//int GetCurrentAmmo();
+		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
 		void SetOutfits(list<Outfit*>* o) { outfits = *o; }
@@ -122,8 +123,10 @@ class Ship : public Sprite {
 			short int hullDamage; ///< Once the hull takes too much damage, your ship blows apart, hooray! :)
 			short int shieldDamage; ///< Your hull doesn`t take damage untill the shield is down
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
-			unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
+			//unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
+			unsigned int lastFiredAt[35]; ///< Number of ticks where last fire event occured
 			unsigned int selectedWeapon; ///< Which weapon is currently selected
+			string selectedWeaponName; ///< Which weapon is currently selected
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
 			
 			/* Flags */

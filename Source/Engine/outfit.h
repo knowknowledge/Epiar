@@ -24,6 +24,7 @@ class Outfit : public Component {
                         double angle; // angle the weapon will be mounted
                         double motionAngle; // should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
 			string content; // name of the weapon it contains (or "" for empty)
+			short int firingGroup; // which firing group this slot belongs to
                 };
 
 		Outfit(

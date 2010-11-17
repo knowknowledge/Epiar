@@ -92,6 +92,7 @@ class Hud {
 		static bool DeleteStatus( StatusBar* bar );
 		static bool DeleteStatus( string deleteTitle );
 		static bool DeleteStatusMatching( string deletePattern );
+		static bool HasStatusMatching( string deletePattern );
 
 		static void SetMapDisplay( HudMap _newMapDisplay );
 
@@ -102,6 +103,7 @@ class Hud {
 		static int newStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
 		static int closeStatusMatching(lua_State *L);
+		static int HudHasStatusMatching(lua_State *L);
 		static int getTarget(lua_State *L);
 		static int setTarget(lua_State *L);
 		static int setMapDisplay(lua_State *L);

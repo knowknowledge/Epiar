@@ -365,6 +365,11 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			newSlot.content = value;
 		} else return false;
 
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			newSlot.firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
 		//WSDebug(newSlot);
 
 		weaponSlots.push_back(newSlot);
@@ -397,13 +402,14 @@ bool Outfit::ConfigureWeaponSlots() {
         wsFront1.angle = 0.0;
         wsFront1.motionAngle = 0.0;
 	wsFront1.content = "";
+	wsFront1.firingGroup = 0;
 
         wsFront2.name = "front 2";
         wsFront1.x = 0.3;
 	wsFront1.y = 2.0;
         wsFront2.angle = 0.0;
         wsFront2.motionAngle = 0.0;
-	wsFront2.content = "";
+	wsFront2.firingGroup = 1;
 
 	vector<struct ws> newSlots;
         newSlots.push_back(wsFront1);
@@ -422,7 +428,7 @@ int Outfit::GetWeaponSlotCount(){
 }
 
 void Outfit::WSDebug(struct Outfit::ws slot){
-	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str());
+	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
 void Outfit::WSDebug(vector<struct ws>& slots){

@@ -52,7 +52,7 @@ Ship::Ship()
 	status.hullDamage = 0;
 	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
-	status.lastFiredAt = 0;
+	//status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
@@ -336,50 +336,97 @@ FireStatus Ship::Fire( int target ) {
 		return FireNoWeapons;
 	}
 
-	// Check that we are always selecting a real weapon
-	assert( (status.selectedWeapon>=0 && status.selectedWeapon < shipWeapons.size() ) );
+	// Check that we are always selecting either the primary or the secondary firing group
+	assert( status.selectedWeapon == 0 || status.selectedWeapon == 1 );
 
-	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-	// Check that the weapon has cooled down;
-	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
-		return FireNotReady;
+	Weapons *weapons = Weapons::Instance();
+
+	bool fnr = false;
+	bool fna = false;
+	bool emptySlot = false;
+	bool fired = false;
+
+	//for(int weap = 0; weap < shipWeapons.size(); weap++){
+	for(int slot = 0; slot < weaponSlots.size(); slot++){
+		// if this weapon is a member of the selected firing group...
+		// (for now, just take the shortcut of even numbers being one group
+		// and odd numbers the other)
+
+		string weapName = weaponSlots[slot].content;
+		short int slotFiringGroup = weaponSlots[slot].firingGroup;
+
+		if(weapName == ""){
+			cout << "can't fire an empty weapon slot! Therefore, " << endl;
+		}
+
+		Weapon* currentWeapon = NULL;
+		for(int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient
+			if(shipWeapons[weap]->GetName() == weapName){
+				currentWeapon = shipWeapons.at(weap);
+			}
+		}
+
+		if(currentWeapon == NULL){
+			cout << "currentWeapon is NULL; this may be a problem." << endl;
+			cout << "\twanted to fire slot" << slot << ", and I count " << shipWeapons.size() << " installed weapons" << endl;
+		}
+		else {
+			cout << "\n\ncurrentWeapon is " << currentWeapon << endl;
+			cout << "slot firing group is " << slotFiringGroup << " and status.selectedWeapon is " << status.selectedWeapon << "; we want them to be equal" << endl;
+
+			if( slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
+
+				// Check that the weapon has cooled down;
+				if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
+					fnr = true;
+				}
+				// Check that there is sufficient ammo
+				else if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
+					fna = true;
+				}
+				else if(emptySlot){
+					// do nothing
+				} else {
+					//Calculate the offset needed by the ship to fire infront of the ship
+					Trig *trig = Trig::Instance();
+					float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
+					Coordinate worldPosition  = GetWorldPosition();
+					int offset = model->GetImage()->GetHalfHeight();
+					worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
+
+					//Play weapon sound
+					float weapvol = OPTION(float,"options/sound/weapons");
+					if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+						currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
+					else
+						currentWeapon->sound->SetVolume( weapvol );
+					currentWeapon->sound->Play(
+						GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+
+
+					//Fire the weapon
+					SpriteManager *sprites = SpriteManager::Instance();
+					Projectile *projectile = new Projectile(damageBooster, GetAngle(), worldPosition, GetMomentum(), currentWeapon);
+					projectile->SetOwnerID( this->GetID() );
+					projectile->SetTargetID( target );
+					sprites->Add( (Sprite*)projectile );
+
+					//reduce ammo
+					ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
+
+					//track number of ticks the last fired occured for this weapon
+					status.lastFiredAt[slot] = Timer::GetTicks();
+
+					fired = true;
+				}
+			}
+		}
 	}
-	// Check that there is sufficient ammo
-	else if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
-		return FireNoAmmo;
-	} else {
-		//Calculate the offset needed by the ship to fire infront of the ship
-		Trig *trig = Trig::Instance();
-		float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
-		Coordinate worldPosition  = GetWorldPosition();
-		int offset = model->GetImage()->GetHalfHeight();
-		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
-		//Play weapon sound
-		float weapvol = OPTION(float,"options/sound/weapons");
-		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-			currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
-		else
-			currentWeapon->sound->SetVolume( weapvol );
-		currentWeapon->sound->Play(
-			GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
-
-
-		//Fire the weapon
-		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(damageBooster, GetAngle(), worldPosition, GetMomentum(), currentWeapon);
-		projectile->SetOwnerID( this->GetID() );
-		projectile->SetTargetID( target );
-		sprites->Add( (Sprite*)projectile );
-
-		//track number of ticks the last fired occured
-		status.lastFiredAt = Timer::GetTicks();
-		//reduce ammo
-		ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
-
-		return FireSuccess;
-	}
-	
+	//return FireNotReady;
+	if(fired) return FireSuccess;
+	if(fna) return FireNoAmmo;
+	if(fnr) return FireNotReady;
 }
 
 /**\brief Adds a new weapon to the ship.
@@ -409,11 +456,10 @@ void Ship::AddShipWeapon(string weaponName){
  * \return true if successful.
  */
 bool Ship::ChangeWeapon() {
-	if (shipWeapons.size() && (250 < Timer::GetTicks() - status.lastWeaponChangeAt)){
-		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
-		return true;
-	}
-	return false;
+	// alternate between primary and secondary firing groups
+	status.selectedWeapon = (status.selectedWeapon+1) % 2;
+	status.selectedWeaponName = (status.selectedWeapon == 0 ? "Primary firing group" : "Secondary firing group");
+	return true;
 }
 
 /**\brief Removes a weapon from the ship.
@@ -615,22 +661,26 @@ float Ship::GetShieldIntegrityPct() {
 	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
-/**\brief Gets the current weapon.
- * \return Pointer to Weapon object.
- */
-Weapon* Ship::GetCurrentWeapon() {
-	if(shipWeapons.size()==0) return (Weapon*)NULL;
-	return shipWeapons.at(status.selectedWeapon);
-}
+/* these functions no longer make sense now that weapon selection is done by firing group */
 
-/**\brief Gets the current ammo left.
- * \return Integer count of ammo
- */
-int Ship::GetCurrentAmmo() {
-	if(shipWeapons.size()==0) return 0;
-	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-	return ammo[currentWeapon->GetAmmoType()];
-}
+///**\brief Gets the current weapon.
+// * \return Pointer to Weapon object.
+// */
+//Weapon* Ship::GetCurrentWeapon() {
+//	if(shipWeapons.size()==0) return (Weapon*)NULL;
+//	return shipWeapons.at(status.selectedWeapon);
+//}
+//
+///**\brief Gets the current ammo left.
+// * \return Integer count of ammo
+// */
+//int Ship::GetCurrentAmmo() {
+//	if(shipWeapons.size()==0) return 0;
+//	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
+//	return ammo[currentWeapon->GetAmmoType()];
+//}
+//
+
 
 /**\brief Gets the ammo of a certain type.
  * \return Integer count of ammo

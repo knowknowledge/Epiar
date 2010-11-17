@@ -623,6 +623,20 @@ bool Hud::DeleteStatusMatching( string deletePattern ) {
 	return false;
 }
 
+/**\brief Is there a matching status bar?
+ */
+bool Hud::HasStatusMatching( string matchPattern ) {
+	int i;
+	for(i = 0; i< MAX_STATUS_BARS; i++)
+	{
+		if( (Bars[i]!=NULL) && (  strstr(Bars[i]->GetTitle().c_str(), matchPattern.c_str() ) != NULL ) )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 /**\brief Select what kind of Map is displayed
  */
@@ -639,6 +653,7 @@ void Hud::RegisterHud(lua_State *L) {
 		{"newStatus", &Hud::newStatus},
 		{"closeStatus", &Hud::closeStatus},
 		{"closeStatusMatching", &Hud::closeStatusMatching},
+		{"HudHasStatusMatching", &Hud::HudHasStatusMatching},
 		{"newAlert", &Hud::newAlert},
 		{"getTarget", &Hud::getTarget},
 		{"setTarget", &Hud::setTarget},
@@ -725,6 +740,19 @@ int Hud::closeStatusMatching(lua_State *L) {
 	}
 	return 0;
 }
+
+/**\brief Lua-callable for HasStatusMatching
+ */
+int Hud::HudHasStatusMatching(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (Pattern)", n);
+	string matchPattern = luaL_checkstring(L,1);
+	bool yes = HasStatusMatching( matchPattern );
+	lua_pushinteger(L, (yes?1:0) );
+	return 0;
+}
+
 
 /**\brief Returns the target (Lua callable).
  */

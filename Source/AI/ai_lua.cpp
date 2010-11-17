@@ -81,8 +81,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &AI_Lua::ShipGetMomentumSpeed},
 		{"directionTowards", &AI_Lua::ShipGetDirectionTowards},
-		{"GetCurrentWeapon", &AI_Lua::ShipGetCurrentWeapon},
-		{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
+		//{"GetCurrentWeapon", &AI_Lua::ShipGetCurrentWeapon},
+		//{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
 		{"GetAttacker", &AI_Lua::ShipGetAttacker},
 		{"SetAttacker", &AI_Lua::ShipSetAttacker},
 		{"SetFriendly", &AI_Lua::ShipSetFriendly},
@@ -941,38 +941,39 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 	return 1;
 }
 
-/**\brief Lua callable function to get the current weapon.
- * \sa Ship::getCurrentWeapon()
- */
-int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+///**\brief Lua callable function to get the current weapon.
+// * \sa Ship::getCurrentWeapon()
+// */
+//int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
+//	int n = lua_gettop(L);  // Number of arguments
+//	if (n != 1)
+//		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+//
+//	AI* ai = checkShip(L,1);
+//	if(ai==NULL){
+//		return 0;
+//	}
+//	Weapon* cur = (ai)->GetCurrentWeapon();
+//	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
+//	return 1;
+//}
+//
+///**\brief Lua callable function to get the current ammo.
+// * \sa Ship::getCurrentAmmo()
+// */
+//int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
+//	int n = lua_gettop(L);  // Number of arguments
+//	if (n != 1)
+//		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+//
+//	AI* ai = checkShip(L,1);
+//	if(ai==NULL){
+//		return 0;
+//	}
+//	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
+//	return 1;
+//}
 
-	AI* ai = checkShip(L,1);
-	if(ai==NULL){
-		return 0;
-	}
-	Weapon* cur = (ai)->GetCurrentWeapon();
-	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
-	return 1;
-}
-
-/**\brief Lua callable function to get the current ammo.
- * \sa Ship::getCurrentAmmo()
- */
-int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
-
-	AI* ai = checkShip(L,1);
-	if(ai==NULL){
-		return 0;
-	}
-	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
-	return 1;
-}
 
 /**\brief Lua callable function to get the ship's model name.
  * \sa Ship::GetModelName()

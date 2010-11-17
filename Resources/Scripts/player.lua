@@ -594,9 +594,11 @@ function playerAmmo(weaponName)
 	if weaponsAndAmmo[weaponName] ~= nil then
 			ammo = string.format("%d",weaponsAndAmmo[weaponName])
 	end
-	if weaponName == PLAYER:GetCurrentWeapon() then
-		ammo = ammo .. " ARMED"
-	end
+
+	-- with weapon groups, this convention no longer makes sense
+	--if weaponName == PLAYER:GetCurrentWeapon() then -- FIXME need to make this also check which SLOT is being used
+	--	ammo = ammo .. " ARMED"
+	--end
 	return ammo
 end
 
