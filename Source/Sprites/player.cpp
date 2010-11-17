@@ -163,6 +163,18 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		} else return false;
 	}
 
+        if( (attr = FirstChildNamed(node,"weaponSlots")) ){
+                cout << "loading player, found a child named weaponSlots; calling ConfigureWeaponSlots() ..." << endl;
+		weaponSlots.clear();
+                if(this->ConfigureWeaponSlots(doc, attr))
+                        cout << "FromXMLNode(): weapon slot XML helper succeeded in loading player!\n";   
+                else {
+                        cout << "FromXMLNode(): weapon slot XML helper failed for loading player!\n";
+			//exit(1);
+		}
+        }
+
+
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
 		lastLoadTime = NodeToInt(doc,attr);
 	} else {
@@ -173,6 +185,85 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	return true;
 }
+
+/**\brief Configure the ship's weapon slots based on the XML node weaponSlots.
+ * This function is stupidly copy/pasted from the equivalent one I put in outfit.cpp.
+ * At a later time, it might be nice to move them up to component.cpp so the same
+ * function can be used for both purposes. (It's almost identical.)
+ */
+bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
+
+	xmlNodePtr slotPtr;
+	string value;
+
+	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
+	for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
+		struct Outfit::ws newSlot;
+
+		xmlNodePtr attr;
+
+		if( (attr = FirstChildNamed(slotPtr,"name")) ){
+			value = NodeToString(doc,attr);
+			newSlot.name = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"coord")) ){
+			value = NodeToString(doc,attr);
+			// go deeper...
+
+			xmlNodePtr coordAttr;
+			if( (coordAttr = FirstChildNamed(attr,"mode")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.mode = value;
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"x")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.x = atof(value.c_str());
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"y")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.y = atof(value.c_str());
+			} else return false;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"angle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.angle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"motionAngle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.motionAngle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			newSlot.content = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			newSlot.firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
+		//WSDebug(newSlot);
+
+		weaponSlots.push_back(newSlot);
+
+	}
+
+	//WSDebug(weaponSlots);
+
+
+	return true;
+}
+
+
 
 /**\brief Save this Player to an xml node
  */
@@ -214,6 +305,44 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 			xmlAddChild(section, ammo);
 		}
 	}
+
+	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
+	for(int w=0;w<weaponSlots.size();w++){
+		struct Outfit::ws *slot = &weaponSlots[w];
+
+		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
+
+		char *ntos = (char*)malloc(256);
+
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+
+		xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
+
+		xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
+		snprintf(ntos, 256, "%.1f", slot->x);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->y);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST ntos);
+
+		xmlAddChild(slotPtr, coordPtr);
+
+		snprintf(ntos, 256, "%.1f", slot->angle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->motionAngle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST ntos);
+
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+
+		snprintf(ntos, 256, "%d", slot->firingGroup);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
+
+		free(ntos);
+
+		xmlAddChild(wsPtr, slotPtr);
+	}
+	xmlAddChild(section, wsPtr);
+
+	
 
 	// Cargo
 	map<Commodity*,unsigned int> cargo = this->GetCargo();

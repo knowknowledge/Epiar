@@ -113,6 +113,9 @@ class Ship : public Sprite {
 		int GetAttacker() { return attackedBy; }
 		void SetFriendly(int f) { friendly = (f == 1); }
 		int GetFriendly() { return (friendly ? 1 : 0 ); }
+
+	protected:
+		vector<struct Outfit::ws> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
 	
 	private:
 		Model *model;
@@ -147,7 +150,6 @@ class Ship : public Sprite {
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
 
 		vector<Weapon *> shipWeapons; ///< The weapons installed on this ship
-		vector<struct Outfit::ws> weaponSlots; ///< The weapon slot arrangement
 
 		list<Outfit *> outfits;
 

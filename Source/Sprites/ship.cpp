@@ -559,6 +559,7 @@ void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
 		if(shipWeapons[pos]->GetName() == w->GetName()){
 			cout << "found weapon to remove, " << w->GetName() << ", at position " << pos << endl;
 			RemoveShipWeapon(pos);
+			break;
 		}
 	}
 	for(int s = 0; s < weaponSlots.size(); s++){
