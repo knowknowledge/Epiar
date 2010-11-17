@@ -346,6 +346,8 @@ FireStatus Ship::Fire( int target ) {
 	bool emptySlot = false;
 	bool fired = false;
 
+	float randAngleVariation = 0.0;
+
 	//for(int weap = 0; weap < shipWeapons.size(); weap++){
 	for(int slot = 0; slot < weaponSlots.size(); slot++){
 		// if this weapon is a member of the selected firing group...
@@ -389,7 +391,7 @@ FireStatus Ship::Fire( int target ) {
 				} else {
 					//Calculate the offset needed by the ship to fire infront of the ship
 					Trig *trig = Trig::Instance();
-					float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
+					float angle = static_cast<float>(trig->DegToRad( GetAngle()));		
 					Coordinate worldPosition  = GetWorldPosition();
 					int offset = model->GetImage()->GetHalfHeight();
 					worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
@@ -403,10 +405,13 @@ FireStatus Ship::Fire( int target ) {
 					currentWeapon->sound->Play(
 						GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
 
+					// vary angle randomly 3 degrees in either direction
+					srand(time(NULL) + slotFiringGroup + (int)randAngleVariation);
+					randAngleVariation = (float)( (357+(rand()%6))%360 );
 
 					//Fire the weapon
 					SpriteManager *sprites = SpriteManager::Instance();
-					Projectile *projectile = new Projectile(damageBooster, GetAngle(), worldPosition, GetMomentum(), currentWeapon);
+					Projectile *projectile = new Projectile(damageBooster, GetAngle() + randAngleVariation, worldPosition, GetMomentum(), currentWeapon);
 					projectile->SetOwnerID( this->GetID() );
 					projectile->SetTargetID( target );
 					sprites->Add( (Sprite*)projectile );
@@ -429,15 +434,16 @@ FireStatus Ship::Fire( int target ) {
 	if(fnr) return FireNotReady;
 }
 
-/**\brief Adds a new weapon to the ship.
+/**\brief Adds a new weapon to the ship WITHOUT updating weaponSlots.
  * \param i Pointer to Weapon instance
  * \sa Weapon
  */
-void Ship::AddShipWeapon(Weapon *i){
-	shipWeapons.push_back(i);
+void Ship::AddShipWeapon(Weapon *w){
+	shipWeapons.push_back(w);
 
 	ComputeShipStats();
 }
+
 
 /**\brief Adds a new weapon to the ship by name.
  * \param weaponName Name of the Weapon
@@ -449,6 +455,37 @@ void Ship::AddShipWeapon(string weaponName){
 		AddShipWeapon(weapons->GetWeapon(weaponName));
 	} else {
 		LogMsg(INFO, "Failed to add weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
+}
+
+/**\brief Adds a new weapon to the ship AND update weaponSlots.
+ * \param i Pointer to Weapon instance
+ * \sa Weapon
+ */
+void Ship::AddShipWeaponAndInstall(Weapon *w){
+	AddShipWeapon(w);
+	for(int s = 0; s < weaponSlots.size(); s++){
+		struct Outfit::ws *slot = &weaponSlots[s];
+		if(slot->content == ""){
+			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
+			cout << "Ship::AddShipWeaponAndInstall() calling WSDebug on the slot it chose for the " << w->GetName() << " ..." << endl;
+			model->WSDebug(*slot);
+			return;
+		}
+	}
+	printf("BUG! AddShipWeaponAndInstall() was called, but there is not empty slot. Perhaps a weapon was sold without clearing its slot.\n");
+}
+
+/**\brief Adds a new weapon to the ship by name AND updates weaponSlots
+ * \param weaponName Name of the Weapon
+ * \sa Weapon
+ */
+void Ship::AddShipWeaponAndInstall(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	if(weapons->GetWeapon(weaponName)){
+		AddShipWeaponAndInstall(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to add/install weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
 }
 
@@ -494,6 +531,41 @@ void Ship::RemoveShipWeapon(string weaponName){
 		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
 }
+
+
+/**\brief Removes a weapon from the ship AND updates weaponSlots
+ * \param i Pointer to Weapon instance
+ */
+void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
+	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
+		if(shipWeapons[pos]->GetName() == w->GetName()){
+			cout << "found weapon to remove, " << w->GetName() << ", at position " << pos << endl;
+			RemoveShipWeapon(pos);
+		}
+	}
+	for(int s = 0; s < weaponSlots.size(); s++){
+		struct Outfit::ws *slot = &weaponSlots[s];
+		if(slot->content == w->GetName()){
+			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
+			cout << "Ship DSWAR calling WSDebug on the slot it chose for the " << w->GetName() << " ..." << endl;
+			model->WSDebug(*slot);
+			return;
+		}
+	}
+}
+
+/**\brief Removes a weapon from the ship AND updates weaponSlots
+ * \param weaponName Name of the Weapon
+ */
+void Ship::DeinstallShipWeaponAndRemove(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	if(weapons->GetWeapon(weaponName)){
+		DeinstallShipWeaponAndRemove(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
+}
+
 
 
 

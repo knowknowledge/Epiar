@@ -120,21 +120,23 @@ function attachRandomWeapon(cur_ship,weapons)
 	cur_ship:AddAmmo( weapons[i],100 )
 end
 
+--- Attach the standard set of weapons as defined by the XML file for this model
 function attachStandardWeapons(cur_ship,weapons)
+
+	-- first clear the weapon list
 	for weap,ammo in pairs( cur_ship:GetWeapons() ) do
 		print (string.format (" --- WEAP %s", weap))
 		cur_ship:RemoveWeapon(weap)
 	end
 
-	--cur_ship:ChangeWeapon()
-
+	-- then populate the weapon list from the standard slot contents
 	for slot,weap in pairs( cur_ship:GetWeaponSlotContents() ) do
 		print (string.format (" --- Slot defaults for %s specified a %s.\n\t\tTrying PLAYER:AddWeapon(%s)", slot, weap, weap))
-		-- this apparently redundant check/remove is necessary because
-		-- closeStatusMatching() will error on a non-match
-		cur_ship:AddWeapon(weap)
 
-		--cur_ship:ChangeWeapon()
+		-- note: we are still using AddWeapon() here instead of AddWeaponAndInstall()
+		-- because this weapon list is actually being pulled from the slots; no need
+		-- to edit the slot contents.
+		cur_ship:AddWeapon(weap)
 	end
 end
 
@@ -422,12 +424,10 @@ function buyShip(model)
 
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				print (string.format (" --- Slot defaults for %s specified a %s.\n\t\tTrying PLAYER:AddWeapon(%s)", slot, weap, weap))
-				-- this apparently redundant check/remove is necessary because
-				-- closeStatusMatching() will error on a non-match
 				PLAYER:AddWeapon(weap)
-				if HUD.HudHasStatusMatching(weap..":") == 0 then
+				--if HUD.HudHasStatusMatching(weap..":") == 0 then
 					HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
-				end
+				--end
 
 				PLAYER:ChangeWeapon()
 			end
@@ -481,7 +481,8 @@ function buyOutfit(outfit)
 		end
 
 		if weaponsAndAmmo[outfit]==nil then
-			PLAYER:AddWeapon(outfit)
+			--PLAYER:AddWeapon(outfit)
+			PLAYER:AddWeaponAndInstall(outfit)
 			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
@@ -512,7 +513,7 @@ function sellOutfit(outfit)
 		print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
-			PLAYER:RemoveWeapon(outfit)
+			PLAYER:DeinstallWeaponAndRemove(outfit)
 			HUD.closeStatusMatching(outfit..":");
 		else
 			HUD.newAlert("You don't have a "..outfit.."!")

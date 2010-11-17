@@ -58,7 +58,9 @@ void AI_Lua::RegisterAI(lua_State *L){
 		
 		// Outfit Changes
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
+		{"AddWeaponAndInstall", &AI_Lua::ShipAddWeaponAndInstall},
 		{"RemoveWeapon", &AI_Lua::ShipRemoveWeapon},
+		{"DeinstallWeaponAndRemove", &AI_Lua::ShipDeinstallWeaponAndRemove},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		{"SetEngine", &AI_Lua::ShipSetEngine},
@@ -340,7 +342,7 @@ int AI_Lua::ShipRemove(lua_State* L){
 	return 0;
 }
 
-/**\brief Lua callable function to add weapon to ship.
+/**\brief Lua callable function to add weapon to ship (but see function below)
  * \sa Ship::addShipWeapon(string)
  */
 int AI_Lua::ShipAddWeapon(lua_State* L){
@@ -350,6 +352,21 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 		if(ai==NULL) return 0;
 		string weaponName = luaL_checkstring (L, 2);
 		(ai)->AddShipWeapon(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
+	}
+	return 0;
+}	
+/**\brief Lua callable function to add weapon to ship and update the weapon slots accordingly (PREFERRED)
+ * \sa Ship::addShipWeaponAndInstall(string)
+ */
+int AI_Lua::ShipAddWeaponAndInstall(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string weaponName = luaL_checkstring (L, 2);
+		(ai)->AddShipWeaponAndInstall(weaponName);
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
 	}
@@ -371,6 +388,22 @@ int AI_Lua::ShipRemoveWeapon(lua_State* L){
 	}
 	return 0;
 }
+
+/**\brief Lua callable function to remove weapon from ship and update the weapon slots accordingly (PREFERRED)
+ * \sa Ship::addShipWeaponAndInstall(string)
+ */
+int AI_Lua::ShipDeinstallWeaponAndRemove(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string weaponName = luaL_checkstring (L, 2);
+		(ai)->DeinstallShipWeaponAndRemove(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
+	}
+	return 0;
+}	
 
 /**\brief Lua callable function to change a ship's weapon.
  * \sa Ship::ChangeWeapon()

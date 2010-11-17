@@ -44,9 +44,13 @@ class Ship : public Sprite {
 		// Outfitting Functions
 		void AddShipWeapon(Weapon *i);
 		void AddShipWeapon(string weaponName);
+		void AddShipWeaponAndInstall(Weapon *i);
+		void AddShipWeaponAndInstall(string weaponName);
 		void RemoveShipWeapon(int pos);
 		void RemoveShipWeapon(Weapon *i);
 		void RemoveShipWeapon(string weaponName);
+		void DeinstallShipWeaponAndRemove(Weapon *i);
+		void DeinstallShipWeaponAndRemove(string weaponName);
 		void AddAmmo(AmmoType ammoType, int qty);
 		void AddOutfit(Outfit *outfit);
 		void AddOutfit(string outfitName);
