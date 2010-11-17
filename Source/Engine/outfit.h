@@ -20,7 +20,8 @@ class Outfit : public Component {
 
                 typedef struct ws {
                         string name;
-                        double x,y;
+                        string mode; // coord mode: "auto" or "manual"
+                        double x,y; // only matters if mode is manual
                         double angle; // angle the weapon will be mounted
                         double motionAngle; // should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
 			string content; // name of the weapon it contains (or "" for empty)

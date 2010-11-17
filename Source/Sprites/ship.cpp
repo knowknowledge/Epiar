@@ -350,9 +350,6 @@ FireStatus Ship::Fire( int target ) {
 
 	//for(int weap = 0; weap < shipWeapons.size(); weap++){
 	for(int slot = 0; slot < weaponSlots.size(); slot++){
-		// if this weapon is a member of the selected firing group...
-		// (for now, just take the shortcut of even numbers being one group
-		// and odd numbers the other)
 
 		string weapName = weaponSlots[slot].content;
 		short int slotFiringGroup = weaponSlots[slot].firingGroup;
@@ -389,12 +386,33 @@ FireStatus Ship::Fire( int target ) {
 				else if(emptySlot){
 					// do nothing
 				} else {
-					//Calculate the offset needed by the ship to fire infront of the ship
+					//Calculate the offset needed to fire at the position specified for this slot in the XML file
 					Trig *trig = Trig::Instance();
 					float angle = static_cast<float>(trig->DegToRad( GetAngle()));		
 					Coordinate worldPosition  = GetWorldPosition();
-					int offset = model->GetImage()->GetHalfHeight();
-					worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
+					int y_offset = (int)(weaponSlots[slot].y);
+					int x_offset = (int)(weaponSlots[slot].x);
+
+					if(weaponSlots[slot].mode == "manual"){
+						// adjust for y offset
+						worldPosition += Coordinate(
+							trig->GetCos( angle ) * y_offset,
+							-trig->GetSin( angle ) * y_offset
+						);
+
+						// adjust for x offset
+						worldPosition += Coordinate(
+							trig->GetSin(angle) * x_offset,
+							trig->GetCos(angle) * x_offset
+						);
+					}
+					else if(weaponSlots[slot].mode == "auto"){
+						int offset = model->GetImage()->GetHalfHeight();
+						worldPosition += Coordinate(
+							trig->GetCos( angle ) * offset,
+							-trig->GetSin( angle ) * offset
+						);
+					}
 
 					//Play weapon sound
 					float weapvol = OPTION(float,"options/sound/weapons");

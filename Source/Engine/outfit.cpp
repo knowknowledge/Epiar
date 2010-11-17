@@ -335,6 +335,10 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			// go deeper...
 
 			xmlNodePtr coordAttr;
+			if( (coordAttr = FirstChildNamed(attr,"mode")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.mode = value;
+			} else return false;
 			if( (coordAttr = FirstChildNamed(attr,"x")) ){
 				value = NodeToString(doc,coordAttr);
 				newSlot.x = atof(value.c_str());
