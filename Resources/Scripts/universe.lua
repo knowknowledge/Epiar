@@ -417,7 +417,7 @@ function buyShip(model)
 			for weap,ammo in pairs( PLAYER:GetWeapons() ) do
 				print (string.format (" --- WEAP %s", weap))
 				PLAYER:RemoveWeapon(weap)
-				HUD.closeStatusMatching(weap..":");
+				HUD.closeStatus(weap..":");
 			end
 
 			PLAYER:ChangeWeapon()
@@ -460,7 +460,6 @@ function buyOutfit(outfit)
 	print("Debiting your account...")
 
 	PLAYER:SetCredits( player_credits - price )
-	HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 
 	print("Installing Outfit...")
 	
@@ -469,26 +468,36 @@ function buyOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 
 		local weapCount = 0;
-		for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
+		--for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			if weap ~= "" then
+				weapCount = weapCount + 1
+			end
+		end
+
+		local weaponInfo = Epiar.getWeaponInfo(outfit)
+		if weaponInfo["Ammo Consumption"] ~= 0 then
+			PLAYER:AddAmmo(outfit,100)
+			HUD.newAlert( (string.format("Added 100 ammo for %s",outfit ) ) )
+		end
 
 		local wsCount = PLAYER:GetWeaponSlotCount();
 		print( string.format("Your ship can hold a total of %d weapons.", wsCount) )
 		-- the 2 here should be changed to some per-ship value (e.g., maybe warships should hold 5)
 		if weapCount >= wsCount then
 			print( string.format("%d >= %d; You cannot hold any more weapons", weapCount, wsCount) )
-			HUD.newAlert("You can't hold any more weapons.")
+			HUD.newAlert( "You can't hold any more weapons" )
 			return
 		end
 
-		if weaponsAndAmmo[outfit]==nil then
+		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+
+		-- disabled this check to allow more than one of the same kind
+		--if weaponsAndAmmo[outfit]==nil then
 			--PLAYER:AddWeapon(outfit)
 			PLAYER:AddWeaponAndInstall(outfit)
 			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
-		end
-		local weaponInfo = Epiar.getWeaponInfo(outfit)
-		if weaponInfo["Ammo Consumption"] ~= 0 then
-			PLAYER:AddAmmo(outfit,100)
-		end
+		--end
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -514,7 +523,7 @@ function sellOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
 			PLAYER:DeinstallWeaponAndRemove(outfit)
-			HUD.closeStatusMatching(outfit..":");
+			HUD.closeStatus(outfit..":");
 		else
 			HUD.newAlert("You don't have a "..outfit.."!")
 			return

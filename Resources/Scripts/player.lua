@@ -574,9 +574,11 @@ function createHUD()
 	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
 	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
 	myweapons = {}
-	local weaponsAndAmmo = PLAYER:GetWeapons()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('%s')",weapon))
+	--local weaponsAndAmmo = PLAYER:GetWeapons()
+	local weapSlotContents = PLAYER:GetWeaponSlotContents()
+	--for weapon,ammo in pairs(weaponsAndAmmo) do
+	for name,weap in pairs(weapSlotContents) do
+		HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 	end
 
 	-- Target Bars

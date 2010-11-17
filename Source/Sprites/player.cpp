@@ -289,12 +289,19 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
 
 	// Ammo
-	map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
-	map<Weapon*,int>::iterator it = weapons.begin();
-	while( it!=weapons.end() ) {
-		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
-		++it;
+	//map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
+	//map<Weapon*,int>::iterator it = weapons.begin();
+	//while( it!=weapons.end() ) {
+	//	xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
+	//	++it;
+	//}
+	for(int i = 0; i < weaponSlots.size(); i++){
+		char *w = (char*)weaponSlots[i].content.c_str();
+		if(strlen(w) > 0)
+			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST w);
 	}
+
+
 	for(int a=0;a<max_ammo;a++){
 		if(GetAmmo(AmmoType(a)) != 0 ){ // Don't save empty ammo Nodes
 			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
