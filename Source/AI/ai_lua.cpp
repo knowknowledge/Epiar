@@ -112,7 +112,10 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
 		{"GetWeaponSlotName", &AI_Lua::ShipGetWeaponSlotName},
 		{"GetWeaponSlotStatus", &AI_Lua::ShipGetWeaponSlotStatus},
-		{"GetWeaponSlotContents", &AI_Lua::ShipGetWeaponSlotContents},
+		{"SetWeaponSlotStatus", &AI_Lua::ShipSetWeaponSlotStatus},
+		{"GetWeaponSlotContents", &AI_Lua::ShipGetWeaponSlotContents}, // builds a Lua table; no setter for this one
+		{"GetWeaponSlotFG", &AI_Lua::ShipGetWeaponSlotFG},
+		{"SetWeaponSlotFG", &AI_Lua::ShipSetWeaponSlotFG},
 
 		{NULL, NULL}
 	};
@@ -1470,6 +1473,64 @@ int AI_Lua::ShipGetWeaponSlotStatus(lua_State* L){
 			return 1;
 		}
 		lua_pushstring(L, (s)->GetWeaponSlotStatus(slotNum).c_str() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+/**\brief Lua callable function to set status of a weapon slot
+ */
+int AI_Lua::ShipSetWeaponSlotStatus(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 3) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkinteger (L, 2);
+		string status = luaL_checkstring (L, 3);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		printf("AI_Lua SSWSS running s->SetWeaponSlotStatus(%d, %s)\n", slotNum, status.c_str());
+		s->SetWeaponSlotStatus(slotNum, status);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, slot, status)", n);
+	}
+	return 1;
+}
+/**\brief Lua callable function to set firing group of a weapon slot
+ */
+int AI_Lua::ShipSetWeaponSlotFG(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 3) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		short int fg = luaL_checkint (L, 3);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		s->SetWeaponSlotFG(slotNum, fg);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, slot, fg)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get firing group of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotFG(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushinteger(L, (s)->GetWeaponSlotFG(slotNum) );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
 	}

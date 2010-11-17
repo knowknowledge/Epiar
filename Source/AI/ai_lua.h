@@ -88,6 +88,9 @@ class AI_Lua{
 		static int ShipGetWeaponSlotCount(lua_State* L);
 		static int ShipGetWeaponSlotName(lua_State* L);
 		static int ShipGetWeaponSlotStatus(lua_State* L);
+		static int ShipSetWeaponSlotStatus(lua_State* L);
+		static int ShipGetWeaponSlotFG(lua_State* L);
+		static int ShipSetWeaponSlotFG(lua_State* L);
 		static int ShipGetWeaponSlotContents(lua_State* L);
 
 		// Ship Properties

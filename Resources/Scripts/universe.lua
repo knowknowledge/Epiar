@@ -851,7 +851,7 @@ function weaponConfigDialog()
 	local rightFrame = UI.newFrame( 200, 30, 190, height )
 
 	local slotsLabel = UI.newLabel(50, 5, "Weapon slots:", 0)
-	local weapLabel = UI.newLabel(50, 5, "Available weapons:", 0)
+	local weapLabel = UI.newLabel(50, 5, "Weapons available:", 0)
 
 	wcDialog = UI.newWindow( 300,50,width,height+30+30, "Weapon Configuration")
 
@@ -861,22 +861,54 @@ function weaponConfigDialog()
 	leftFrame:add(slotsLabel);
 	rightFrame:add(weapLabel);
 
+	-- when assignWeaponToSlot() is called, if this is nil, set it;
+	-- if it's set, swap the slot contents, update the buttons,
+	-- then set it back to nil.
+	pickedSlot = nil
+
 	for slot =0,(slotCount-1) do
 		local slotName = PLAYER:GetWeaponSlotName(slot)
 		local slotStatus = PLAYER:GetWeaponSlotStatus(slot)
+		local slotFG = PLAYER:GetWeaponSlotFG(slot)
+
 		local slotLabel = UI.newLabel( 15, 35+(40*slot), (string.format("[%d] %s:", slot, slotName)), 0)
 		local slotButton = UI.newButton( 50, 35+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
-		local clearSlotButton = UI.newButton( 150, 35+(40*slot)+20, 20, 20, "X", (string.format("clearWeaponSlot(%d)", slot)))
-		leftFrame:add(slotLabel,slotButton,clearSlotButton);
+		local slotFGButton = UI.newButton( 150, 35+(40*slot)+20, 20, 20, string.format(slotFG), (string.format("alternateFiringGroup(%d)", slot)))
+		leftFrame:add(slotLabel,slotButton,slotFGButton);
 	end
 
 	local w = 0
 	for name,ammo in pairs(PLAYER:GetWeapons()) do
-		local weapButton = UI.newButton( 50, 35+(40*w)+20, 100, 20, (string.format("%s", name)), (string.format("pickWeaponToAssign(%s)", name)))
-		rightFrame:add(weapButton);
+		local weapLabel = UI.newLabel( 50, 35+(40*w)+20, (string.format("%s", name)))
+		rightFrame:add(weapLabel);
 		w = w + 1
 	end
 
+end
+
+function assignWeaponToSlot(slot)
+	if(pickedSlot == nil) then
+		pickedSlot = slot
+	else
+		-- swap contents of pickedSlot and slot
+		local s = PLAYER:GetWeaponSlotStatus(slot)
+		PLAYER:SetWeaponSlotStatus(slot, PLAYER:GetWeaponSlotStatus(pickedSlot) )
+		PLAYER:SetWeaponSlotStatus(pickedSlot, s)
+
+		-- FIXME super crude window update trick
+		weaponConfigFinish()
+		weaponConfigDialog()
+	end
+end
+
+function alternateFiringGroup(slot)
+	local fg = PLAYER:GetWeaponSlotFG(slot)
+	fg = (fg+1)%2
+	PLAYER:SetWeaponSlotFG(slot, fg)
+
+	-- FIXME super crude window update trick
+	weaponConfigFinish()
+	weaponConfigDialog()
 end
 
 function weaponConfigFinish()

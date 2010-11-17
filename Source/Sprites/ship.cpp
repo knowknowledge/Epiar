@@ -824,6 +824,36 @@ string Ship::GetWeaponSlotStatus(int i) {
 	return ((struct Outfit::ws)(this->weaponSlots[i])).content;
 }
 
+/**\brief Set the status of weapon slot i
+ */
+void Ship::SetWeaponSlotStatus(int i, string s) {
+	if(i >= weaponSlots.size()){
+		cout << "[BUG! slot does not exist]" << endl;
+		return;
+	}
+	cout << "Ship SWSS calling WSDebug before and after for attempt to set content to " << s << endl;
+	model->WSDebug(this->weaponSlots[i]);
+	this->weaponSlots[i].content = s;
+	model->WSDebug(this->weaponSlots[i]);
+}
+
+/**\brief The firing group of weapon slot i
+ */
+short int Ship::GetWeaponSlotFG(int i) {
+	if(i >= weaponSlots.size())
+		cout << "[BUG! slot does not exist]";
+	return ((struct Outfit::ws)(this->weaponSlots[i])).firingGroup;
+}
+
+/**\brief Set the firing group of weapon slot i
+ */
+void Ship::SetWeaponSlotFG(int i, short int fg) {
+	if(i >= weaponSlots.size())
+		cout << "[BUG! slot does not exist]";
+	this->weaponSlots[i].firingGroup = fg;
+}
+
+
 //list<Weapon*> Ship::GetWeaponSlotContents(){
 map<string,string> Ship::GetWeaponSlotContents(){
 	//Weapons *weapons = Weapons::Instance();

@@ -59,7 +59,9 @@ class Ship : public Sprite {
 		int GetWeaponSlotCount();
 		string GetWeaponSlotName(int i);
 		string GetWeaponSlotStatus(int i);
-		//list<Weapon*> GetWeaponSlotContents();
+		void SetWeaponSlotStatus(int i, string);
+		short int GetWeaponSlotFG(int i);
+		void SetWeaponSlotFG(int i, short int);
 		map<string,string> GetWeaponSlotContents();
 
 		// Economic Functions
