@@ -112,7 +112,7 @@ Hunter = {
 		end
 
 
-		if dist<300 then
+		if dist<400 then
 			return "Killing"
 		end
 		if dist>1000 then
