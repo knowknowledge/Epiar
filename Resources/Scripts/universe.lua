@@ -100,8 +100,8 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 
 	s:SetRadarColor(255,0,0)
 
-	--attachRandomWeapon(s,weapons)  -- attaching random weapons here without syncing the weapon slots confuses Fire(),
-	attachStandardWeapons(s,weapons)  -- so just use standard weapons for now.
+	-- give every AI the standard weapons of their ship class
+	attachStandardWeapons(s,weapons)
 
 	local creditsMax = 5500
 	-- curving probability with lower numbers being more likely
@@ -111,28 +111,15 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	return s
 end
 
---- Fixate random weapon
-function attachRandomWeapon(cur_ship,weapons)
-	if weapons==nil or #weapons==0 then return end
-	--Randomly assign a weapon to everyone
-	i = math.random(#weapons)
-	cur_ship:AddWeapon( weapons[i] )
-	cur_ship:AddAmmo( weapons[i],100 )
-end
-
---- Attach the standard set of weapons as defined by the XML file for this model
 function attachStandardWeapons(cur_ship,weapons)
 
 	-- first clear the weapon list
 	for weap,ammo in pairs( cur_ship:GetWeapons() ) do
-		print (string.format (" --- WEAP %s", weap))
 		cur_ship:RemoveWeapon(weap)
 	end
 
 	-- then populate the weapon list from the standard slot contents
 	for slot,weap in pairs( cur_ship:GetWeaponSlotContents() ) do
-		print (string.format (" --- Slot defaults for %s specified a %s.\n\t\tTrying PLAYER:AddWeapon(%s)", slot, weap, weap))
-
 		-- note: we are still using AddWeapon() here instead of AddWeaponAndInstall()
 		-- because this weapon list is actually being pulled from the slots; no need
 		-- to edit the slot contents.
@@ -412,26 +399,22 @@ function buyShip(model)
 			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
 			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
 
+			-- clear these based on the old slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-				print (string.format (" --- WEAP %s", weap))
 				PLAYER:RemoveWeapon(weap)
 				HUD.closeStatus(weap..":");
 			end
 
-			PLAYER:SetModel(model)
-
+			PLAYER:SetModel(model) -- slot list gets updated by SetModel()
 			PLAYER:ChangeWeapon()
 
+			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-				print (string.format (" --- Slot defaults for %s specified a %s.\n\t\tTrying PLAYER:AddWeapon(%s)", slot, weap, weap))
 				PLAYER:AddWeapon(weap)
-				--if HUD.HudHasStatusMatching(weap..":") == 0 then
-					HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
-				--end
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 
 				PLAYER:ChangeWeapon()
 			end
-
 
 			PLAYER:Repair(10000)
 		else
@@ -482,22 +465,14 @@ function buyOutfit(outfit)
 		end
 
 		local wsCount = PLAYER:GetWeaponSlotCount();
-		print( string.format("Your ship can hold a total of %d weapons.", wsCount) )
-		-- the 2 here should be changed to some per-ship value (e.g., maybe warships should hold 5)
 		if weapCount >= wsCount then
-			print( string.format("%d >= %d; You cannot hold any more weapons", weapCount, wsCount) )
 			HUD.newAlert( "You can't hold any more weapons" )
 			return
 		end
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
-
-		-- disabled this check to allow more than one of the same kind
-		--if weaponsAndAmmo[outfit]==nil then
-			--PLAYER:AddWeapon(outfit)
-			PLAYER:AddWeaponAndInstall(outfit)
-			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
-		--end
+		PLAYER:AddWeaponAndInstall(outfit)
+		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -530,9 +505,11 @@ function sellOutfit(outfit)
 		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
 		if weaponInfo["Ammo Consumption"] ~= 0 then
-			-- I'm thinking it should remove 100 ammo with each sale, and RemoveAmmo()
+			-- Do something about selling a weapon that has ammo. I'm thinking
+			-- it should remove 100 ammo with each sale, and RemoveAmmo()
 			-- should set ammo to zero if it would have gone negative.
 			--PLAYER:RemoveAmmo(outfit,100)
+			-- Or, better yet, ammunition should be bought and sold separately.
 		end
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
@@ -546,7 +523,6 @@ function sellOutfit(outfit)
 		local found = false
 
 		for n,po in pairs(playerOutfits) do
-			print (string.format ("does %s equal %s?", po, outfit ) )
 			if po == outfit then
 				if found == false then PLAYER:RemoveOutfit(outfit) end
 				found = true
@@ -565,8 +541,6 @@ function sellOutfit(outfit)
 
 	local price = Epiar.getMSRP(outfit)
 	local adjustedPrice = math.floor( price * 0.65) -- only get back 65% of MSRP
-
-	print ( string.format("price=%d adjustedPrice=%d\n", price, adjustedPrice) )
 
 	local player_credits = PLAYER:GetCredits()
 
@@ -851,8 +825,6 @@ function weaponConfigDialog()
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
-	print (string.format( "weaponConfigDialog(): slot count is %d\n", slotCount))
-
 	local height = 50 + (40*slotCount)
 	local width = 400
 
@@ -921,9 +893,7 @@ function alternateFiringGroup(slot)
 end
 
 function weaponConfigFinish()
-
-	-- FIX: this function needs to actually apply the changes the user specified in the dialog before closing it
-
+	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
 	wcDialog:close()
 	wcDialog = nil
 end

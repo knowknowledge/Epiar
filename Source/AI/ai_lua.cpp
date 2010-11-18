@@ -1491,7 +1491,6 @@ int AI_Lua::ShipSetWeaponSlotStatus(lua_State* L){
 			lua_pushstring(L, "");
 			return 1;
 		}
-		printf("AI_Lua SSWSS running s->SetWeaponSlotStatus(%d, %s)\n", slotNum, status.c_str());
 		s->SetWeaponSlotStatus(slotNum, status);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (ship, slot, status)", n);

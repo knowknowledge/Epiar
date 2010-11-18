@@ -339,42 +339,29 @@ FireStatus Ship::Fire( int target ) {
 	// Check that we are always selecting either the primary or the secondary firing group
 	assert( status.selectedWeapon == 0 || status.selectedWeapon == 1 );
 
-	Weapons *weapons = Weapons::Instance();
-
 	bool fnr = false;
 	bool fna = false;
 	bool emptySlot = false;
 	bool fired = false;
 	bool emptyFiringGroup = true;
 
-	float randAngleVariation = 0.0;
-
-	//for(int weap = 0; weap < shipWeapons.size(); weap++){
-	for(int slot = 0; slot < weaponSlots.size(); slot++){
+	for(unsigned int slot = 0; slot < weaponSlots.size(); slot++){
 
 		string weapName = weaponSlots[slot].content;
 		short int slotFiringGroup = weaponSlots[slot].firingGroup;
 
-		if(weapName == ""){
-			cout << "can't fire an empty weapon slot! Therefore, " << endl;
-		}
-
 		Weapon* currentWeapon = NULL;
-		for(int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient
+		for(unsigned int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient - FIX THIS
 			if(shipWeapons[weap]->GetName() == weapName){
 				currentWeapon = shipWeapons.at(weap);
 			}
 		}
 
 		if(currentWeapon == NULL){
-			cout << "currentWeapon is NULL; this may be a problem." << endl;
-			cout << "\twanted to fire slot" << slot << ", and I count " << shipWeapons.size() << " installed weapons" << endl;
+			// do nothing for this slot (this may be because the weapon slot is empty)
 		}
 		else {
-			cout << "\n\ncurrentWeapon is " << currentWeapon << endl;
-			cout << "slot firing group is " << slotFiringGroup << " and status.selectedWeapon is " << status.selectedWeapon << "; we want them to be equal" << endl;
-
-			if( slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
+			if( (unsigned int)slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
 				emptyFiringGroup = false;
 
 				// Check that the weapon has cooled down;
@@ -388,20 +375,15 @@ FireStatus Ship::Fire( int target ) {
 				else if(emptySlot){
 					// do nothing
 				}
-				// this calculation is wrong - leave it disabled for now
-				//else if( fabs( ((int)(GetDirectionTowards(target)+weaponSlots[slot].angle))%360 ) > (int)(weaponSlots[slot].motionAngle)/2 ){
-					// if the angle difference between where the weapon is pointing and the the direction
-					// of the target is greater than than half the slot's acceptable angles of firing, don't
-					// allow it to fire
-				//}
 				else {
-					//Calculate the offset needed to fire at the position specified for this slot in the XML file
+					// Calculate the offset needed to fire at the position specified for this slot in the XML file
 					Trig *trig = Trig::Instance();
 					float angle = static_cast<float>(trig->DegToRad( GetAngle()));		
 					Coordinate worldPosition  = GetWorldPosition();
 					int y_offset = (int)(weaponSlots[slot].y);
 					int x_offset = (int)(weaponSlots[slot].x);
 
+					// if mode is manual, then the x,y offsets from the XML file are to be used
 					if(weaponSlots[slot].mode == "manual"){
 						// adjust for y offset
 						worldPosition += Coordinate(
@@ -415,6 +397,7 @@ FireStatus Ship::Fire( int target ) {
 							trig->GetCos(angle) * x_offset
 						);
 					}
+					// if mode is auto, use the old-style firing offset behavior
 					else if(weaponSlots[slot].mode == "auto"){
 						int offset = model->GetImage()->GetHalfHeight();
 						worldPosition += Coordinate(
@@ -432,13 +415,9 @@ FireStatus Ship::Fire( int target ) {
 					currentWeapon->sound->Play(
 						GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
 
-					// vary angle randomly 3 degrees in either direction
-					//srand(  some great seed );
-					//randAngleVariation = (float)( (357+(rand()%6))%360 );
-
 					//Fire the weapon
 					SpriteManager *sprites = SpriteManager::Instance();
-					Projectile *projectile = new Projectile(damageBooster, GetAngle() + weaponSlots[slot].angle + randAngleVariation, worldPosition, GetMomentum(), currentWeapon);
+					Projectile *projectile = new Projectile(damageBooster, GetAngle() + weaponSlots[slot].angle, worldPosition, GetMomentum(), currentWeapon);
 					projectile->SetOwnerID( this->GetID() );
 					projectile->SetTargetID( target );
 					sprites->Add( (Sprite*)projectile );
@@ -459,6 +438,8 @@ FireStatus Ship::Fire( int target ) {
 	if(fired) return FireSuccess;
 	if(fna) return FireNoAmmo;
 	if(fnr) return FireNotReady;
+
+	return FireUnknown;
 }
 
 /**\brief Adds a new weapon to the ship WITHOUT updating weaponSlots.
@@ -491,16 +472,14 @@ void Ship::AddShipWeapon(string weaponName){
  */
 void Ship::AddShipWeaponAndInstall(Weapon *w){
 	AddShipWeapon(w);
-	for(int s = 0; s < weaponSlots.size(); s++){
+	for(unsigned int s = 0; s < weaponSlots.size(); s++){
 		struct Outfit::ws *slot = &weaponSlots[s];
 		if(slot->content == ""){
 			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
-			cout << "Ship::AddShipWeaponAndInstall() calling WSDebug on the slot it chose for the " << w->GetName() << " ..." << endl;
-			model->WSDebug(*slot);
 			return;
 		}
 	}
-	printf("BUG! AddShipWeaponAndInstall() was called, but there is not empty slot. Perhaps a weapon was sold without clearing its slot.\n");
+	printf("This line should not be reached.\n"); assert(true == false);
 }
 
 /**\brief Adds a new weapon to the ship by name AND updates weaponSlots
@@ -530,7 +509,6 @@ bool Ship::ChangeWeapon() {
  * \param pos Index of the weapon
  */
 void Ship::RemoveShipWeapon(int pos){
-	cout << "Ship::RemoveWeapon(): removing weapon at pos=" << pos << endl;
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 /**\brief Removes a weapon from the ship
@@ -539,12 +517,10 @@ void Ship::RemoveShipWeapon(int pos){
 void Ship::RemoveShipWeapon(Weapon *i){
 	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
 		if(shipWeapons[pos]->GetName() == i->GetName()){
-			cout << "found weapon to remove, " << i->GetName() << ", at position " << pos << endl;
 			RemoveShipWeapon(pos);
 			return;
 		}
 	}
-	printf("Ship::RemoveShipWeapon(): did not find weapon to remove\n");
 }
 
 /**\brief Removes a weapon from the ship
@@ -566,17 +542,14 @@ void Ship::RemoveShipWeapon(string weaponName){
 void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
 	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
 		if(shipWeapons[pos]->GetName() == w->GetName()){
-			cout << "found weapon to remove, " << w->GetName() << ", at position " << pos << endl;
 			RemoveShipWeapon(pos);
 			break;
 		}
 	}
-	for(int s = 0; s < weaponSlots.size(); s++){
+	for(unsigned int s = 0; s < weaponSlots.size(); s++){
 		struct Outfit::ws *slot = &weaponSlots[s];
 		if(slot->content == w->GetName()){
 			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
-			cout << "Ship DSWAR calling WSDebug on the slot it chose for the " << w->GetName() << " ..." << endl;
-			model->WSDebug(*slot);
 			return;
 		}
 	}
@@ -633,7 +606,6 @@ void Ship::RemoveOutfit(Outfit *i){
 		else
 			done_removing = true;
 	}
-	cout << "Ship::RemoveOutfit() was not able to remove the outfit!" << endl;
 	this->SetOutfits(&new_list);
 }
 
@@ -761,25 +733,14 @@ float Ship::GetShieldIntegrityPct() {
 	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
-/* these functions no longer make sense now that weapon selection is done by firing group */
-
-///**\brief Gets the current weapon.
-// * \return Pointer to Weapon object.
-// */
-//Weapon* Ship::GetCurrentWeapon() {
-//	if(shipWeapons.size()==0) return (Weapon*)NULL;
-//	return shipWeapons.at(status.selectedWeapon);
-//}
-//
-///**\brief Gets the current ammo left.
-// * \return Integer count of ammo
-// */
-//int Ship::GetCurrentAmmo() {
-//	if(shipWeapons.size()==0) return 0;
-//	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-//	return ammo[currentWeapon->GetAmmoType()];
-//}
-//
+/* Note:
+ *
+ * There used to be functions called GetCurrentWeapon() and GetCurrentAmmo(),
+ * but these functions don't make much sense anymore now that firing groups
+ * are used instead of individual weapons. A GetCurrentFiringGroup() function
+ * might be a good thing, though.
+ *
+ */
 
 
 /**\brief Gets the ammo of a certain type.
@@ -831,73 +792,49 @@ void Ship::ComputeShipStats() {
 /**\brief The total number of weapon slots on this ship
  */
 int Ship::GetWeaponSlotCount() {
-	cout << "calling Outfit::WSDebug() from Ship::GetWeaponSlotCount() ..." << endl;
-	model->WSDebug(this->weaponSlots);
 	return this->weaponSlots.size();
 }
 
 /**\brief The name of weapon slot i
  */
 string Ship::GetWeaponSlotName(int i) {
-	if(i >= weaponSlots.size())
-		return "[BUG! slot does not exist]";
 	return ((struct Outfit::ws)(this->weaponSlots[i])).name;
 }
 
-/**\brief The status of weapon slot i
+/**\brief The status of weapon slot i. By the way, the "status" naming of this function has nothing to do with statusbars.
  */
 string Ship::GetWeaponSlotStatus(int i) {
-	if(i >= weaponSlots.size())
-		return "[BUG! slot does not exist]";
 	return ((struct Outfit::ws)(this->weaponSlots[i])).content;
 }
 
 /**\brief Set the status of weapon slot i
  */
 void Ship::SetWeaponSlotStatus(int i, string s) {
-	if(i >= weaponSlots.size()){
-		cout << "[BUG! slot does not exist]" << endl;
-		return;
-	}
-	cout << "Ship SWSS calling WSDebug before and after for attempt to set content to " << s << endl;
-	model->WSDebug(this->weaponSlots[i]);
 	this->weaponSlots[i].content = s;
-	model->WSDebug(this->weaponSlots[i]);
 }
 
 /**\brief The firing group of weapon slot i
  */
 short int Ship::GetWeaponSlotFG(int i) {
-	if(i >= weaponSlots.size())
-		cout << "[BUG! slot does not exist]";
 	return ((struct Outfit::ws)(this->weaponSlots[i])).firingGroup;
 }
 
 /**\brief Set the firing group of weapon slot i
  */
 void Ship::SetWeaponSlotFG(int i, short int fg) {
-	if(i >= weaponSlots.size())
-		cout << "[BUG! slot does not exist]";
 	this->weaponSlots[i].firingGroup = fg;
 }
 
-
-//list<Weapon*> Ship::GetWeaponSlotContents(){
+/**\brief returns a map<string,string> of with slotname/content pairs for use in Lua
+ */
 map<string,string> Ship::GetWeaponSlotContents(){
-	//Weapons *weapons = Weapons::Instance();
 
 	map<string,string> weaps;
 
-	for(int i = 0; i < weaponSlots.size(); i++){
-		if(weaponSlots[i].content != ""){
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
+		if(weaponSlots[i].content != "")
 			weaps.insert( make_pair(weaponSlots[i].name, weaponSlots[i].content) );
-		}
-		else {
-			cout << "GWSC: slot is empty by default" << endl;
-		}
 	}
-
-	cout << "We think the weap list from ship.cpp is okay" << endl;
 
 	return weaps;
 }

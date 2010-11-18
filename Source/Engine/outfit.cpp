@@ -183,11 +183,7 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	}
 
 	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
-		cout << "found a child named weaponSlots; calling ConfigureWeaponSlots() ..." << endl;
-		if(ConfigureWeaponSlots(doc, attr))
-			cout << "FromXMLNode(): weapon slot XML helper succeeded!\n";
-		else
-			cout << "FromXMLNode(): weapon slot XML helper failed!\n";
+		ConfigureWeaponSlots(doc, attr);
 	}
 
 	return true;
@@ -419,8 +415,6 @@ bool Outfit::ConfigureWeaponSlots() {
         newSlots.push_back(wsFront1);
         newSlots.push_back(wsFront2);
 	this->weaponSlots = newSlots;
-
-        cout << "Model::ConfigureWeaponSlots(): using default weapon slot configuration\n";
 
         return true;
 }

@@ -164,13 +164,12 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	}
 
         if( (attr = FirstChildNamed(node,"weaponSlots")) ){
-                cout << "loading player, found a child named weaponSlots; calling ConfigureWeaponSlots() ..." << endl;
 		weaponSlots.clear();
-                if(this->ConfigureWeaponSlots(doc, attr))
-                        cout << "FromXMLNode(): weapon slot XML helper succeeded in loading player!\n";   
+                if(this->ConfigureWeaponSlots(doc, attr)){
+			// great - it worked
+		}
                 else {
                         cout << "FromXMLNode(): weapon slot XML helper failed for loading player!\n";
-			//exit(1);
 		}
         }
 
@@ -288,14 +287,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
 
-	// Ammo
-	//map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
-	//map<Weapon*,int>::iterator it = weapons.begin();
-	//while( it!=weapons.end() ) {
-	//	xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
-	//	++it;
-	//}
-	for(int i = 0; i < weaponSlots.size(); i++){
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
 		char *w = (char*)weaponSlots[i].content.c_str();
 		if(strlen(w) > 0)
 			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST w);
@@ -314,7 +306,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	}
 
 	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
-	for(int w=0;w<weaponSlots.size();w++){
+	for(unsigned int w=0;w<weaponSlots.size();w++){
 		struct Outfit::ws *slot = &weaponSlots[w];
 
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
