@@ -105,12 +105,6 @@ class Ship : public Sprite {
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 
-		// Situational awareness / AI functions
-		void SetAttacker(int attacker) {
-			attackedBy = attacker;
-			if(attacker == 60) friendly = false;
-		}
-		int GetAttacker() { return attackedBy; }
 		void SetFriendly(int f) { friendly = (f == 1); }
 		int GetFriendly() { return (friendly ? 1 : 0 ); }
 
@@ -143,7 +137,6 @@ class Ship : public Sprite {
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
 
-		int attackedBy; ///< Sprite id for owner of last projectile to hit this ship
 		bool friendly; ///< Is this ship friendly to the player?
 
 		// Weapon Systems

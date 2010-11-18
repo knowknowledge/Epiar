@@ -83,10 +83,6 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &AI_Lua::ShipGetMomentumSpeed},
 		{"directionTowards", &AI_Lua::ShipGetDirectionTowards},
-		//{"GetCurrentWeapon", &AI_Lua::ShipGetCurrentWeapon},
-		//{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
-		{"GetAttacker", &AI_Lua::ShipGetAttacker},
-		{"SetAttacker", &AI_Lua::ShipSetAttacker},
 		{"SetFriendly", &AI_Lua::ShipSetFriendly},
 		{"GetFriendly", &AI_Lua::ShipGetFriendly},
 
@@ -1262,42 +1258,7 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 	return 1;
 }
 
-/**\brief Lua callable function to get last attacker of a ship
- */
-int AI_Lua::ShipGetAttacker(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-
-	if (n == 1) {
-		AI* ai = checkShip(L,1);
-		if(ai==NULL){
-			lua_pushnumber(L, 0 );
-			return 1;
-		}
-		lua_pushnumber(L, (int) (ai)->GetAttacker() );
-	}
-	else {
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
-	}
-	return 1;
-}
-
-/**\brief Lua callable function to set the last attacker of a ship
- * \sa Ship::SetCredits()
- */
-int AI_Lua::ShipSetAttacker(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n == 2) {
-		AI* ai = checkShip(L,1);
-		if(ai==NULL) return 0;
-		int attacker = luaL_checkint (L, 2);
-		(ai)->SetAttacker( attacker );
-	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, attacker)", n);
-	}
-	return 0;
-}
-
-/**\brief Lua callable function to get last attacker of a ship
+/**\brief Lua callable function to get friendly status of a ship
  */
 int AI_Lua::ShipGetFriendly(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -1316,7 +1277,7 @@ int AI_Lua::ShipGetFriendly(lua_State* L){
 	return 1;
 }
 
-/**\brief Lua callable function to set the last attacker of a ship
+/**\brief Lua callable function to set the friendly status of a ship
  */
 int AI_Lua::ShipSetFriendly(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
