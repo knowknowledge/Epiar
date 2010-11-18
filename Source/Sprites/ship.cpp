@@ -406,29 +406,59 @@ FireStatus Ship::Fire( int target ) {
 						);
 					}
 
-					//Play weapon sound
-					float weapvol = OPTION(float,"options/sound/weapons");
-					if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-						currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
-					else
-						currentWeapon->sound->SetVolume( weapvol );
-					currentWeapon->sound->Play(
-						GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
-
-					//Fire the weapon
 					SpriteManager *sprites = SpriteManager::Instance();
-					Projectile *projectile = new Projectile(damageBooster, GetAngle() + weaponSlots[slot].angle, worldPosition, GetMomentum(), currentWeapon);
-					projectile->SetOwnerID( this->GetID() );
-					projectile->SetTargetID( target );
-					sprites->Add( (Sprite*)projectile );
+					Sprite *targetSprite = sprites->GetSpriteByID(target);
 
-					//reduce ammo
-					ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
+					float projectileAngle;
+					bool angleAcceptable = true;
 
-					//track number of ticks the last fired occured for this weapon
-					status.lastFiredAt[slot] = Timer::GetTicks();
+					if(weaponSlots[slot].motionAngle == 0){ // a regular fixed weapon slot
+						projectileAngle = GetAngle() + weaponSlots[slot].angle;
+					}
+					else if(targetSprite != NULL && weaponSlots[slot].motionAngle == 360){ // a turret with full rotation
+						projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
+					}
+					else if(targetSprite != NULL) { // a "swivel" slot with partial rotation
+						if( fabs( (weaponSlots[slot].angle) -
+						      (GetDirectionTowards(targetSprite->GetWorldPosition())) )
+						         < weaponSlots[slot].motionAngle/2 )
+						{
+							projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
+						}
+						else {
+							angleAcceptable = false; // out of the slot's range of motion
+						}
+					}
+					else {
+						// turret or swivel but there is no target
+						angleAcceptable = false;
+					}
 
-					fired = true;
+					if(angleAcceptable){
+
+						//Play weapon sound
+						float weapvol = OPTION(float,"options/sound/weapons");
+						if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+							currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
+						else
+							currentWeapon->sound->SetVolume( weapvol );
+						currentWeapon->sound->Play(
+							GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+
+						//Fire the weapon
+						Projectile *projectile = new Projectile(damageBooster, projectileAngle, worldPosition, GetMomentum(), currentWeapon);
+						projectile->SetOwnerID( this->GetID() );
+						projectile->SetTargetID( target );
+						sprites->Add( (Sprite*)projectile );
+
+						//reduce ammo
+						ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
+
+						//track number of ticks the last fired occured for this weapon
+						status.lastFiredAt[slot] = Timer::GetTicks();
+
+						fired = true;
+					}
 				}
 			}
 		}

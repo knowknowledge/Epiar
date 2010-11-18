@@ -407,7 +407,7 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	local r = getRand( os.time() + targettedShip:GetID(), 25 )
+	local r = getRand( os.time() + targettedShip:GetID(), 8 )
 
 	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
@@ -415,7 +415,7 @@ function doHailBFM()
 		-- 'friendly' means will never arbitrary select player as a target unless provoked
 		targettedShip:SetFriendly(1)
 	else
-		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
+		hailReplyLabel.setLabel(hailReplyLabel, "I don't think so.")
 		didBFM = 1
 	end
 end
