@@ -34,6 +34,13 @@ playerCommands = {
 
 function playerStart()
 	PLAYER = Epiar.player()
+
+	-- give the player the standard weapons for this ship model
+	for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+		PLAYER:AddWeapon(weap)
+		-- don't worry about updating the HUD; createHUD() will handle it
+	end
+
 	createHUD()
 	registerCommands(playerCommands)
 end
@@ -710,6 +717,7 @@ function createNewPlayer()
 		return
 	end
 	Epiar.newPlayer(name)
+
 	loadingWin:close()
 	playerStart()
 	intro()
