@@ -546,15 +546,15 @@
     <cargoSpace>80</cargoSpace>
     <weaponSlots>
        <slot>
-          <name>defensive swivel slot 1</name>
+          <name>forward slot 1</name>
           <coord>
-             <mode>auto</mode>
-             <x>0</x>
-             <y>-1.25</y>
+             <mode>manual</mode>
+             <x>10</x>
+             <y>40</y>
           </coord>
-          <angle>180</angle>
-          <motionAngle>220</motionAngle>
-          <content>Plasma Cannon</content>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Laser</content>
           <firingGroup>0</firingGroup>
        </slot>
     </weaponSlots>
@@ -680,8 +680,8 @@
              <x>-38</x>
              <y>-65</y>
           </coord>
-          <angle>0</angle>
-          <motionAngle>140</motionAngle>
+          <angle>5</angle>
+          <motionAngle>0</motionAngle>
           <content>Missile</content>
           <firingGroup>1</firingGroup>
        </slot>
@@ -692,8 +692,8 @@
              <x>-28</x>
              <y>-65</y>
           </coord>
-          <angle>0</angle>
-          <motionAngle>140</motionAngle>
+          <angle>5</angle>
+          <motionAngle>0</motionAngle>
           <content>Plasma Cannon</content>
           <firingGroup>0</firingGroup>
        </slot>
@@ -704,8 +704,8 @@
              <x>28</x>
              <y>-65</y>
           </coord>
-          <angle>0</angle>
-          <motionAngle>140</motionAngle>
+          <angle>-5</angle>
+          <motionAngle>0</motionAngle>
           <content>Plasma Cannon</content>
           <firingGroup>0</firingGroup>
        </slot>
@@ -716,8 +716,8 @@
              <x>36</x>
              <y>-65</y>
           </coord>
-          <angle>0</angle>
-          <motionAngle>140</motionAngle>
+          <angle>-5</angle>
+          <motionAngle>0</motionAngle>
           <content>Missile</content>
           <firingGroup>1</firingGroup>
        </slot>
@@ -729,7 +729,7 @@
              <y>65</y>
           </coord>
           <angle>0</angle>
-          <motionAngle>0</motionAngle>
+          <motionAngle>140</motionAngle>
           <content>Laser</content>
           <firingGroup>0</firingGroup>
        </slot>
@@ -741,7 +741,7 @@
              <y>65</y>
           </coord>
           <angle>0</angle>
-          <motionAngle>0</motionAngle>
+          <motionAngle>140</motionAngle>
           <content>Strong Laser</content>
           <firingGroup>0</firingGroup>
        </slot>
@@ -753,7 +753,7 @@
              <y>65</y>
           </coord>
           <angle>0</angle>
-          <motionAngle>0</motionAngle>
+          <motionAngle>140</motionAngle>
           <content>Strong Laser</content>
           <firingGroup>0</firingGroup>
        </slot>
@@ -765,21 +765,9 @@
              <y>65</y>
           </coord>
           <angle>0</angle>
-          <motionAngle>0</motionAngle>
+          <motionAngle>140</motionAngle>
           <content>Laser</content>
           <firingGroup>0</firingGroup>
-       </slot>
-       <slot>
-          <name>rear swivel slot 1</name>
-          <coord>
-             <mode>manual</mode>
-             <x>-36</x>
-             <y>-75</y>
-          </coord>
-          <angle>180</angle>
-          <motionAngle>120</motionAngle>
-          <content></content>
-          <firingGroup>1</firingGroup>
        </slot>
     </weaponSlots>
   </model>
@@ -796,37 +784,49 @@
     <cargoSpace>400</cargoSpace>
     <weaponSlots>
        <slot>
-          <name>forward slot 1</name>
+          <name>side forward-facing 1</name>
           <coord>
-             <mode>auto</mode>
-             <x>-0.45</x>
-             <y>-1.25</y>
+             <mode>manual</mode>
+             <x>-18</x>
+             <y>15</y>
           </coord>
-          <angle>0</angle>
+          <angle>-5</angle>
           <motionAngle>0</motionAngle>
           <content>Strong Laser</content>
           <firingGroup>0</firingGroup>
        </slot>
        <slot>
-          <name>turret slot 1</name>
+          <name>side forward-facing 2</name>
           <coord>
-             <mode>auto</mode>
-             <x>0</x>
-             <y>-0.50</y>
+             <mode>manual</mode>
+             <x>18</x>
+             <y>15</y>
           </coord>
-          <angle>0</angle>
+          <angle>5</angle>
           <motionAngle>0</motionAngle>
-          <content>Missile</content>
-          <firingGroup>1</firingGroup>
+          <content>Strong Laser</content>
+          <firingGroup>0</firingGroup>
        </slot>
        <slot>
-          <name>rear swivel slot 1</name>
+          <name>forward slot 1</name>
+          <coord>
+             <mode>auto</mode>
+             <x>-3</x>
+             <y>0</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>150</motionAngle>
+          <content>Laser</content>
+          <firingGroup>0</firingGroup>
+       </slot>
+       <slot>
+          <name>forward slot 2</name>
           <coord>
              <mode>auto</mode>
              <x>0</x>
-             <y>1.25</y>
+             <y>0</y>
           </coord>
-          <angle>180</angle>
+          <angle>3</angle>
           <motionAngle>150</motionAngle>
           <content>Missile</content>
           <firingGroup>1</firingGroup>

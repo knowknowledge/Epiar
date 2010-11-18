@@ -387,7 +387,14 @@ FireStatus Ship::Fire( int target ) {
 				}
 				else if(emptySlot){
 					// do nothing
-				} else {
+				}
+				// this calculation is wrong - leave it disabled for now
+				//else if( fabs( ((int)(GetDirectionTowards(target)+weaponSlots[slot].angle))%360 ) > (int)(weaponSlots[slot].motionAngle)/2 ){
+					// if the angle difference between where the weapon is pointing and the the direction
+					// of the target is greater than than half the slot's acceptable angles of firing, don't
+					// allow it to fire
+				//}
+				else {
 					//Calculate the offset needed to fire at the position specified for this slot in the XML file
 					Trig *trig = Trig::Instance();
 					float angle = static_cast<float>(trig->DegToRad( GetAngle()));		
@@ -426,12 +433,12 @@ FireStatus Ship::Fire( int target ) {
 						GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
 
 					// vary angle randomly 3 degrees in either direction
-					srand(time(NULL) + slotFiringGroup + (int)randAngleVariation);
-					randAngleVariation = (float)( (357+(rand()%6))%360 );
+					//srand(  some great seed );
+					//randAngleVariation = (float)( (357+(rand()%6))%360 );
 
 					//Fire the weapon
 					SpriteManager *sprites = SpriteManager::Instance();
-					Projectile *projectile = new Projectile(damageBooster, GetAngle() + randAngleVariation, worldPosition, GetMomentum(), currentWeapon);
+					Projectile *projectile = new Projectile(damageBooster, GetAngle() + weaponSlots[slot].angle + randAngleVariation, worldPosition, GetMomentum(), currentWeapon);
 					projectile->SetOwnerID( this->GetID() );
 					projectile->SetTargetID( target );
 					sprites->Add( (Sprite*)projectile );
