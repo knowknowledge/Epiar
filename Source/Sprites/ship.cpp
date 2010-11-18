@@ -345,6 +345,7 @@ FireStatus Ship::Fire( int target ) {
 	bool fna = false;
 	bool emptySlot = false;
 	bool fired = false;
+	bool emptyFiringGroup = true;
 
 	float randAngleVariation = 0.0;
 
@@ -374,6 +375,7 @@ FireStatus Ship::Fire( int target ) {
 			cout << "slot firing group is " << slotFiringGroup << " and status.selectedWeapon is " << status.selectedWeapon << "; we want them to be equal" << endl;
 
 			if( slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
+				emptyFiringGroup = false;
 
 				// Check that the weapon has cooled down;
 				if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
@@ -446,7 +448,7 @@ FireStatus Ship::Fire( int target ) {
 		}
 	}
 
-	//return FireNotReady;
+	if(emptyFiringGroup) return FireEmptyGroup;
 	if(fired) return FireSuccess;
 	if(fna) return FireNoAmmo;
 	if(fnr) return FireNotReady;

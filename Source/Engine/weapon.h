@@ -17,7 +17,7 @@
 #define WEAPON_PROJECTILE  0
 #define WEAPON_ENERGY  1
 
-enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo};
+enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo, FireEmptyGroup};
 
 enum AmmoType {
 	energy_ammo,

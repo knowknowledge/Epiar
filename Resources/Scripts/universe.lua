@@ -412,13 +412,13 @@ function buyShip(model)
 			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
 			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
 
-			PLAYER:SetModel(model)
-
-			for weap,ammo in pairs( PLAYER:GetWeapons() ) do
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				print (string.format (" --- WEAP %s", weap))
 				PLAYER:RemoveWeapon(weap)
 				HUD.closeStatus(weap..":");
 			end
+
+			PLAYER:SetModel(model)
 
 			PLAYER:ChangeWeapon()
 

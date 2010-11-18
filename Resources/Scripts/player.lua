@@ -223,6 +223,8 @@ function playerFire()
 	elseif result == 2 then -- FireNotReady
 	elseif result == 3 then -- FireNoAmmo
 		HUD.newAlert("Out of Ammo!")
+	elseif result == 4 then -- FireEmptyGroup
+		HUD.newAlert("No weapons assigned to this firing group")
 	else
 	end
 end
@@ -253,7 +255,7 @@ function boardShip()
 		local targetMass = targettedShip:GetMass()
 
 		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
-		local succ_max = 15 ^ ( targetMass / PLAYER:GetMass() )
+		local succ_max = 4 ^ ( targetMass / PLAYER:GetMass() )
 		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
 		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
 
@@ -477,6 +479,16 @@ function doCapture(succ_max, destruct_max)
 
 		--print (string.format ("opm=%s opp=%f,%f ophd=%d opsd=%d\n", oldPlayerModel, oldPlayerX, oldPlayerY, oldPlayerHD, oldPlayerSD) )
 
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+		--for weap,ammo in pairs( PLAYER:GetWeapons() ) do
+			print (string.format (" --- WEAP %s want to close a status for %s:", weap, weap))
+			PLAYER:RemoveWeapon(weap)
+			--HUD.closeStatus(weap..":");
+			HUD.closeStatus(weap..":");
+			--HUD.closeStatusIfExists(weap..":");
+			--HUD.closeStatus("error test");
+		end
+
 		PLAYER:SetModel( targettedShip:GetModelName() )
 		--PLAYER:SetPosition( targettedShip:GetPosition() ) -- would like to swap positions too, but this is not critical
 		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
@@ -487,6 +499,15 @@ function doCapture(succ_max, destruct_max)
 		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
 		targettedShip:SetHullDamage( oldPlayerHD ) 
 		targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+		-- SetModel() has already determined the slot contents for us, so use them
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			print (string.format (" --- WEAP %s", weap))
+			PLAYER:AddWeapon(weap)
+			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+		end
+
+		PLAYER:ChangeWeapon()
 
 		endBoarding()
 

@@ -605,22 +605,20 @@ bool Hud::DeleteStatus( string deleteTitle ) {
 	return false;
 }
 
-/**\brief Deletes a StatusBar by pattern
+/**\brief Deletes a StatusBar if it exists
  */
-bool Hud::DeleteStatusMatching( string deletePattern ) {
+void Hud::DeleteStatusIfExists( string deleteTitle ) {
 	int i;
 	for(i = 0; i< MAX_STATUS_BARS; i++)
 	{
-		if( (Bars[i]!=NULL) && (  strstr(Bars[i]->GetTitle().c_str(), deletePattern.c_str() ) != NULL ) )
+		if( (Bars[i]!=NULL) && (Bars[i]->GetTitle()==deleteTitle) )
 		{
-			cout << Bars[i]->GetTitle() << " matches " << deletePattern.c_str() << endl;
+			cout << Bars[i]->GetTitle() << " matches " << deleteTitle.c_str() << endl;
 			delete Bars[i];
 			Bars[i] = NULL;
-			return true;
+			return;
 		}
 	}
-	LogMsg(ERR, "Could not find the StatusBar matching '%s'", deletePattern.c_str() );
-	return false;
 }
 
 /**\brief Is there a matching status bar?
@@ -652,7 +650,7 @@ void Hud::RegisterHud(lua_State *L) {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
 		{"closeStatus", &Hud::closeStatus},
-		{"closeStatusMatching", &Hud::closeStatusMatching},
+		{"closeStatusIfExists", &Hud::closeStatusIfExists},
 		{"HudHasStatusMatching", &Hud::HudHasStatusMatching},
 		{"newAlert", &Hud::newAlert},
 		{"getTarget", &Hud::getTarget},
@@ -727,17 +725,14 @@ int Hud::closeStatus(lua_State *L) {
 	return 0;
 }
 
-/**\brief Closes the status matching a pattern (Lua callable).
+/**\brief Closes the status if it exists (Lua callable).
  */
-int Hud::closeStatusMatching(lua_State *L) {
+int Hud::closeStatusIfExists(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
-		return luaL_error(L, "Got %d arguments expected 1 (Pattern)", n);
-	string deletePattern = luaL_checkstring(L,1);
-	bool success = DeleteStatusMatching( deletePattern );
-	if(!success) {
-		return luaL_error(L, "closeStatus couldn't find the StatusBar matching '%s'.", deletePattern.c_str() );
-	}
+		return luaL_error(L, "Got %d arguments expected 1 (Title)", n);
+	string deleteTitle = luaL_checkstring(L,1);
+	DeleteStatusIfExists( deleteTitle );
 	return 0;
 }
 
