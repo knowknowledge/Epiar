@@ -825,16 +825,19 @@ function weaponConfigDialog()
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
-	local height = 50 + (40*slotCount)
-	if height < 350 then height = 350 end -- accommodate the instruction text
+	local height = 60 + (40*slotCount)
+	--if height < 350 then height = 350 end -- accommodate the instruction text
 
 	local width = 500
 
-	local leftFrame = UI.newFrame( 10, 30, 240, height )
-	local rightFrame = UI.newFrame( 250, 30, 240, height )
+	local leftFrame = UI.newFrame( 10, 60, 240, height )
+	local rightFrame = UI.newFrame( 250, 60, 240, height )
 
-	local slotsLabel = UI.newLabel(50, 5, "Weapon slot:", 0)
-	local fgLabel = UI.newLabel(150, 5, "Firing group:", 0)
+	local slotPlural = ""
+	if slotCount ~= 1 then slotPlural = "s" end
+	local shipLabel = UI.newLabel(20, 30, (string.format("Your %s has %d weapon slot%s...", PLAYER:GetModelName(), slotCount, slotPlural)), 0)
+	local slotsLabel = UI.newLabel(50, 10, "Weapon slot:", 0)
+	local fgLabel = UI.newLabel(150, 10, "Firing group:", 0)
 
 	--local weapLabel = UI.newLabel(25, 5, "Weapons available:", 0)
 
@@ -868,10 +871,11 @@ function weaponConfigDialog()
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
-	wcDialog = UI.newWindow( 300,50,width,height+30+30, "Weapon Configuration")
+	wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
 
+	wcDialog:add(shipLabel)
 	wcDialog:add(leftFrame, rightFrame);
-	wcDialog:add(UI.newButton( 150, height+30, 100, 20, "Finish", "weaponConfigFinish()"))
+	wcDialog:add(UI.newButton( 200, height+30+30, 100, 30, "Finish", "weaponConfigFinish()"))
 
 	leftFrame:add(slotsLabel, fgLabel);
 	rightFrame:add(instructionsLabel);
@@ -890,9 +894,9 @@ function weaponConfigDialog()
 		local slotFGName = "Primary"
 		if slotFG == 1 then slotFGName = "Secondary" end
 
-		local slotLabel = UI.newLabel( 15, 35+(40*slot), (string.format("%s:", slotName)), 0)
-		slotButtons[slot] = UI.newButton( 50, 35+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
-		local slotFGButton = UI.newButton( 150, 35+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
+		local slotLabel = UI.newLabel( 15, 45+(40*slot), (string.format("%s:", slotName)), 0)
+		slotButtons[slot] = UI.newButton( 50, 45+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
+		local slotFGButton = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
 		leftFrame:add(slotLabel,slotButtons[slot],slotFGButton);
 	end
 
