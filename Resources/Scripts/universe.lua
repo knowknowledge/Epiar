@@ -826,50 +826,90 @@ function weaponConfigDialog()
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
 	local height = 50 + (40*slotCount)
-	local width = 400
+	if height < 350 then height = 350 end -- accommodate the instruction text
 
-	local leftFrame = UI.newFrame( 10, 30, 190, height )
-	local rightFrame = UI.newFrame( 200, 30, 190, height )
+	local width = 500
 
-	local slotsLabel = UI.newLabel(50, 5, "Weapon slots:", 0)
-	local weapLabel = UI.newLabel(50, 5, "Weapons available:", 0)
+	local leftFrame = UI.newFrame( 10, 30, 240, height )
+	local rightFrame = UI.newFrame( 250, 30, 240, height )
+
+	local slotsLabel = UI.newLabel(50, 5, "Weapon slot:", 0)
+	local fgLabel = UI.newLabel(150, 5, "Firing group:", 0)
+
+	--local weapLabel = UI.newLabel(25, 5, "Weapons available:", 0)
+
+	local wcInstructions = [[
+
+	To move a weapon from one
+	slot to another, click on
+	the first slot, then click
+	on the one you want to swap
+	it with.
+
+	There are two firing groups,
+	Primary and Secondary. To
+	switch the firing group of a
+	slot, click on the firing
+	group button.
+
+	Although you may have your
+	own preferences, it is
+	recommended that, if you have
+	a weapon which requires ammo
+	(e.g. missile launcher), you
+	keep it in a firing group
+	separate from your main group.
+
+	Grouping missiles into a salvo
+	is a possibility if you have
+	more than one launcher.
+	]]
+	wcInstructions = string.gsub(wcInstructions, "\t", "")
+
+	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
 	wcDialog = UI.newWindow( 300,50,width,height+30+30, "Weapon Configuration")
 
 	wcDialog:add(leftFrame, rightFrame);
 	wcDialog:add(UI.newButton( 150, height+30, 100, 20, "Finish", "weaponConfigFinish()"))
 
-	leftFrame:add(slotsLabel);
-	rightFrame:add(weapLabel);
+	leftFrame:add(slotsLabel, fgLabel);
+	rightFrame:add(instructionsLabel);
 
 	-- when assignWeaponToSlot() is called, if this is nil, set it;
 	-- if it's set, swap the slot contents, update the buttons,
 	-- then set it back to nil.
 	pickedSlot = nil
 
+	slotButtons = { }
+
 	for slot =0,(slotCount-1) do
 		local slotName = PLAYER:GetWeaponSlotName(slot)
 		local slotStatus = PLAYER:GetWeaponSlotStatus(slot)
 		local slotFG = PLAYER:GetWeaponSlotFG(slot)
+		local slotFGName = "Primary"
+		if slotFG == 1 then slotFGName = "Secondary" end
 
-		local slotLabel = UI.newLabel( 15, 35+(40*slot), (string.format("[%d] %s:", slot, slotName)), 0)
-		local slotButton = UI.newButton( 50, 35+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
-		local slotFGButton = UI.newButton( 150, 35+(40*slot)+20, 20, 20, string.format(slotFG), (string.format("alternateFiringGroup(%d)", slot)))
-		leftFrame:add(slotLabel,slotButton,slotFGButton);
+		local slotLabel = UI.newLabel( 15, 35+(40*slot), (string.format("%s:", slotName)), 0)
+		slotButtons[slot] = UI.newButton( 50, 35+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
+		local slotFGButton = UI.newButton( 150, 35+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
+		leftFrame:add(slotLabel,slotButtons[slot],slotFGButton);
 	end
 
 	local w = 0
-	for name,ammo in pairs(PLAYER:GetWeapons()) do
-		local weapLabel = UI.newLabel( 50, 35+(40*w)+20, (string.format("%s", name)))
-		rightFrame:add(weapLabel);
-		w = w + 1
-	end
+
+	--for name,ammo in pairs(PLAYER:GetWeapons()) do
+	--	local weapLabel = UI.newLabel( 25, 35+(40*w)+20, (string.format("%s", name)))
+	--	rightFrame:add(weapLabel);
+	--	w = w + 1
+	--end
 
 end
 
 function assignWeaponToSlot(slot)
 	if(pickedSlot == nil) then
 		pickedSlot = slot
+		--slotButtons[pickedSlot]:setLabel("This causes a UI problem. See ticket #113.")
 	else
 		-- swap contents of pickedSlot and slot
 		local s = PLAYER:GetWeaponSlotStatus(slot)
@@ -895,5 +935,6 @@ end
 function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
 	wcDialog:close()
+	slotButtons = nil
 	wcDialog = nil
 end
