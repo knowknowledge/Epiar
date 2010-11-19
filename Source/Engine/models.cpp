@@ -188,6 +188,32 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );
 	xmlNewChild(section, NULL, BAD_CAST "cargoSpace", BAD_CAST buff );
 
+	char *ntos = (char*)malloc(256);
+	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
+	for(unsigned int w=0;w<weaponSlots.size();w++){
+		ws_t *slot = &weaponSlots[w];
+
+		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+		xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
+		xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
+		snprintf(ntos, 256, "%.1f", slot->x);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->y);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST ntos);
+		xmlAddChild(slotPtr, coordPtr);
+		snprintf(ntos, 256, "%.1f", slot->angle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->motionAngle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST ntos);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+		snprintf(ntos, 256, "%d", slot->firingGroup);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
+		xmlAddChild(wsPtr, slotPtr);
+	}
+	xmlAddChild(section, wsPtr);
+	free(ntos);
+
 	return section;
 }
 

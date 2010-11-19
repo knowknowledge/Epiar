@@ -24,7 +24,7 @@ class Model : public Outfit {
 
 		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace);
 
-		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<struct Model::ws>& _weaponSlots);
+		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<ws_t>& _weaponSlots);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
@@ -33,10 +33,6 @@ class Model : public Outfit {
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
 
-		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
-		bool ConfigureWeaponSlots( vector<ws_t>& slots );
-		bool ConfigureWeaponSlots();
-		
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.
 		short int thrustOffset; ///< The number of pixels engine flare animation offset

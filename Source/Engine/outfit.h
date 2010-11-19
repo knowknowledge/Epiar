@@ -81,6 +81,13 @@ class Outfit : public Component {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
+		// anticipated editor behavior: (remove these comments when it is implemented)
+		//    typedef struct Outfit::ws ws_t
+		//    [...]
+		//    vector<ws_t> slots = thisModel->GetWeaponSlots()    action: copy
+		//    [alter slots as requested by user]
+		//    thisModel->ConfigureWeaponSlots(slots);             action: pass reference
+		//    [existing behavior]
 		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
                 int GetWeaponSlotCount();
                 bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
