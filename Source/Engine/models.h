@@ -34,7 +34,7 @@ class Model : public Outfit {
 		int GetThrustOffset( void ) { return thrustOffset; }
 
 		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
-		bool ConfigureWeaponSlots( vector<struct ws>& slots );
+		bool ConfigureWeaponSlots( vector<ws_t>& slots );
 		bool ConfigureWeaponSlots();
 		
 	private:

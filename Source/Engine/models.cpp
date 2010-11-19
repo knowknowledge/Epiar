@@ -70,7 +70,7 @@ Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset,
 
 Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
 		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace,
-		vector<struct ws>& _weaponSlots) :
+		vector<ws_t>& _weaponSlots) :
 	image(_image),
 	thrustOffset(_thrustOffset)
 {

@@ -317,7 +317,7 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
         for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
-		struct ws newSlot;
+		ws_t newSlot;
 
 		xmlNodePtr attr;
 
@@ -385,7 +385,7 @@ bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 /**\brief Configure the ship's weapon slots based on a list passed in (probably from the constructor)
  */
-bool Outfit::ConfigureWeaponSlots( vector<struct ws>& slots ) {
+bool Outfit::ConfigureWeaponSlots( vector<ws_t>& slots ) {
         this->weaponSlots = slots;
         return true;
 }
@@ -393,8 +393,8 @@ bool Outfit::ConfigureWeaponSlots( vector<struct ws>& slots ) {
 /**\brief Configure the ship's weapon slots using default values.
  */
 bool Outfit::ConfigureWeaponSlots() {
-        struct ws wsFront1;
-        struct ws wsFront2;
+        ws_t wsFront1;
+        ws_t wsFront2;
 
         wsFront1.name = "front 1";
         wsFront1.x = -0.3;
@@ -411,7 +411,7 @@ bool Outfit::ConfigureWeaponSlots() {
         wsFront2.motionAngle = 0.0;
 	wsFront2.firingGroup = 1;
 
-	vector<struct ws> newSlots;
+	vector<ws_t> newSlots;
         newSlots.push_back(wsFront1);
         newSlots.push_back(wsFront2);
 	this->weaponSlots = newSlots;
@@ -425,11 +425,11 @@ int Outfit::GetWeaponSlotCount(){
 	return this->weaponSlots.size();
 }
 
-void Outfit::WSDebug(struct Outfit::ws slot){
+void Outfit::WSDebug(ws_t slot){
 	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
-void Outfit::WSDebug(vector<struct ws>& slots){
+void Outfit::WSDebug(vector<ws_t>& slots){
 	cout << "WSD  Ship model: " << this->GetName() << endl;
 	for(unsigned int i = 0; i < slots.size(); i++){
 		WSDebug(slots[i]);

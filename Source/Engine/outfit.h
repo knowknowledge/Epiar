@@ -18,7 +18,7 @@ class Outfit : public Component {
 
 		Outfit();
 
-                typedef struct ws {
+                struct ws {
                         string name;
                         string mode; // coord mode: "auto" or "manual"
                         double x,y; // only matters if mode is manual
@@ -27,6 +27,7 @@ class Outfit : public Component {
 			string content; // name of the weapon it contains (or "" for empty)
 			short int firingGroup; // which firing group this slot belongs to
                 };
+		typedef struct ws ws_t;
 
 		Outfit(
 				int _msrp,
@@ -80,15 +81,15 @@ class Outfit : public Component {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
-		vector<struct ws> GetWeaponSlots(){ return this->weaponSlots; }
+		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
                 int GetWeaponSlotCount();
                 bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
-                bool ConfigureWeaponSlots( vector<struct ws>& slots );
+                bool ConfigureWeaponSlots( vector<ws_t>& slots );
                 bool ConfigureWeaponSlots();
 
 		// Debug
-		void WSDebug(vector<struct ws>&);
-		void WSDebug(struct Outfit::ws);
+		void WSDebug(vector<ws_t>&);
+		void WSDebug(ws_t);
 
 	protected:
 		int msrp; ///< The cost in credits.
@@ -109,7 +110,7 @@ class Outfit : public Component {
 		int shieldStrength; ///< The amount of damage the shields can absorb.
 
 		// Offensive Stats
-		vector<struct Outfit::ws> weaponSlots;
+		vector<ws_t> weaponSlots;
 	private:
 };
 

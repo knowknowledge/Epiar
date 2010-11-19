@@ -197,7 +197,7 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
 	for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
-		struct Outfit::ws newSlot;
+		ws_t newSlot;
 
 		xmlNodePtr attr;
 
@@ -307,7 +307,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 
 	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
 	for(unsigned int w=0;w<weaponSlots.size();w++){
-		struct Outfit::ws *slot = &weaponSlots[w];
+		ws_t *slot = &weaponSlots[w];
 
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
 
