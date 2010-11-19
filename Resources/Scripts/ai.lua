@@ -25,17 +25,6 @@ function FindADestination(id,x,y,angle,speed,vector)
 	return "Travelling"
 end
 
-function MustDefend(id,attacker)
-	local cur_ship = Epiar.getSprite(id)
-	if attacker > -1 then
-		--print (string.format("lua hunter AI: attacked by id %d! will now hunt %d\n", attacker,attacker))
-		AIData[id].target = attacker
-		cur_ship:SetAttacker(-1)
-		return true
-	end
-	return false
-end
-
 function okayTarget(cur_ship, ship)
 	-- if friendly (merciful) mode is on and the nearest target is the player, forbid this target
 	if cur_ship:GetFriendly() == 1 and ship:GetID() == 60 then
@@ -43,7 +32,6 @@ function okayTarget(cur_ship, ship)
 	end
 	return true
 end
-
 
 --- Trader AI
 Trader = {
@@ -105,8 +93,6 @@ Hunter = {
 		end
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 
-		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
-
 		if cur_ship:directionTowards(tx,ty) == 0 then
 			cur_ship:Accelerate()
 		end
@@ -155,8 +141,6 @@ Hunter = {
 			return "Hunting"
 		end
 
-		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
-
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
@@ -181,8 +165,6 @@ Patrol = {
 	Travelling = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 
-		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
-
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
@@ -194,10 +176,6 @@ Patrol = {
 	Orbiting = function(id,x,y,angle,speed,vector)
 
 		local cur_ship = Epiar.getSprite(id)
-
-		local attacker = cur_ship:GetAttacker()
-
-		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
@@ -256,8 +234,6 @@ Bully = {
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
-
-		if MustDefend(id,cur_ship:GetAttacker()) then return "Hunting" end
 
 		local ship= Epiar.nearestShip(cur_ship,900)
 		if (ship~=nil) and (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) and (okayTarget(cur_ship, ship)) then
