@@ -39,4 +39,13 @@ class XMLFile {
 
 vector<string> TokenizedString(const string& path, const char* tokens);
 
+#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
+#define NodeNameIs( node, text ) ( !xmlStrcmp( ((node)->name), (const xmlChar *)(text) ) )
+
+xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text );
+xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text );
+string NodeToString( xmlDocPtr doc, xmlNodePtr node );
+int NodeToInt( xmlDocPtr doc, xmlNodePtr node );
+float NodeToFloat( xmlDocPtr doc, xmlNodePtr node );
+
 #endif // __H_XML__
