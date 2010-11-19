@@ -417,9 +417,13 @@ FireStatus Ship::Fire( int target ) {
 						projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
 					}
 					else if(targetSprite != NULL) { // a "swivel" slot with partial rotation
-						if( fabs( (weaponSlots[slot].angle) -
+						if(
+						    fabs( (weaponSlots[slot].angle) -
 						      (GetDirectionTowards(targetSprite->GetWorldPosition())) )
-						         < weaponSlots[slot].motionAngle/2 )
+						         < weaponSlots[slot].motionAngle/2 ||
+						    fabs( (weaponSlots[slot].angle) -
+						      (GetDirectionTowards(targetSprite->GetWorldPosition())) )
+						         > (360-weaponSlots[slot].motionAngle/2) )
 						{
 							projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
 						}
