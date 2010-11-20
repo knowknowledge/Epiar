@@ -54,16 +54,28 @@
     <cargoSpace>80</cargoSpace>
     <weaponSlots>
        <slot>
-          <name>forward slot 1</name>
+          <name>side slot 1</name>
           <coord>
-             <mode>auto</mode>
-             <x>0</x>
-             <y>-1.25</y>
+             <mode>manual</mode>
+             <x>-31</x>
+             <y>7</y>
           </coord>
           <angle>0</angle>
           <motionAngle>0</motionAngle>
-          <content>Strong Laser</content>
+          <content>Missile</content>
           <firingGroup>0</firingGroup>
+       </slot>
+       <slot>
+          <name>side slot 2</name>
+          <coord>
+             <mode>manual</mode>
+             <x>31</x>
+             <y>7</y>
+          </coord>
+          <angle>0</angle>
+          <motionAngle>0</motionAngle>
+          <content>Laser</content>
+          <firingGroup>1</firingGroup>
        </slot>
     </weaponSlots>
   </model>
@@ -177,7 +189,7 @@
           <angle>0</angle>
           <motionAngle>360</motionAngle>
           <content>Laser</content>
-          <firingGroup>0</firingGroup>
+          <firingGroup>1</firingGroup>
        </slot>
     </weaponSlots>
   </model>
@@ -215,7 +227,7 @@
           <angle>0</angle>
           <motionAngle>360</motionAngle>
           <content>Laser</content>
-          <firingGroup>0</firingGroup>
+          <firingGroup>1</firingGroup>
        </slot>
     </weaponSlots>
   </model>
