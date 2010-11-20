@@ -58,6 +58,7 @@ ModelEditorLayout = {
 	{"MaxSpeed", "Integer"},
 	{"Cargo", "Integer"},
 	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
+	{"WeaponSlots", "Weapon slots"}, -- Slot configuration builder
 	}
 
 PlanetEditorLayout = {
@@ -152,6 +153,7 @@ function showComponent(kind,name,getterFunc)
 	
 	local theFields = {}
 	local thePics = {}
+	local theWeaponTables = {}
 	yoff=40 -- Buffer for the titlebar?
 	for i,layout in ipairs(EditorLayouts[kind]) do
 		local title,fieldType = layout[1],layout[2]
@@ -206,6 +208,32 @@ function showComponent(kind,name,getterFunc)
 				theWin:add(field[tech])
 				yoff = yoff+20
 			end
+		elseif fieldType == "Weapon slots" then
+
+			-- theInfo[title] (what most other types put into the value variable)
+			-- will be a Lua table built by simulation_lua.cpp representing the
+			-- slot configuration. I still need to write that table builder function
+			-- and have it called for this type.
+			--
+			-- I expect the format of the table to be a set of pairs like what infoTable() asks for
+			--
+			-- EditWeaponSlots() will look up the table, populate the window with fields
+			-- (it might be nice to do it according to a template like those at the top of
+			-- the file, but it would make as much sense not to, since, for example, the
+			-- ImagePicker doesn't create its window using one of those templates either),
+			-- allow the user to add and remove slots, and, when finished, re-build the table
+			-- and store the table a bit like how the ImagePicker window stores its field.
+			-- If it's too complicated for the EditWeaponSlots() window to actually add/remove
+			-- rows in the GUI, it could just have a fixed number (say, 16), and checkboxes
+			-- to enable or disable them, with the idea that nobody should need more
+			-- slots than that (and if they do, they can tweak the limit).
+
+			numConfigured = 0
+			theWin:add(UI.newLabel( 10, yoff+10, (string.format("%s:  %d slots configured",title, numConfigured) ) ) )
+			yoff = yoff+35
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s','%s')",name,title)))
+			yoff = yoff+20+5
+			theWeaponTables[title] = weaponTable
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -213,29 +241,30 @@ function showComponent(kind,name,getterFunc)
 	end
 	
 	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo('%s')",name )) )
-	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics}
+	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics,weapontables=theWeaponTables}
 end
 
 --- Lays out a series of labels and textboxes
 -- Returns the checkboxes for later
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
-function infoTable(info,win)
-	local y1,y2=155,140
-	local yoff=20
-	uiElements = {}
-	for title, value in pairs(info) do
-		-- Truncate decimal numbers to only 2 digits
-		if type(value)=="number" and math.floor(value) ~= value then
-			value = string.format("%.2f",value)
-		end
-		win:add(UI.newLabel( 10, y1, title))
-		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
-		win:add(uiElements[title])
-		y1,y2=y1+yoff,y2+yoff
-	end
-	return uiElements
-end
+-- see new infoTable function below
+--function infoTable(info,win)
+--	local y1,y2=155,140
+--	local yoff=20
+--	uiElements = {}
+--	for title, value in pairs(info) do
+--		-- Truncate decimal numbers to only 2 digits
+--		if type(value)=="number" and math.floor(value) ~= value then
+--			value = string.format("%.2f",value)
+--		end
+--		win:add(UI.newLabel( 10, y1, title))
+--		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
+--		win:add(uiElements[title])
+--		y1,y2=y1+yoff,y2+yoff
+--	end
+--	return uiElements
+--end
 
 --- Show Info for the current Target
 function showInfo()
@@ -431,6 +460,83 @@ function ImagePicker(name,title)
 			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s','%s','%s')",name,title,"Resources/Graphics/"..picPath )))
 	end
 end
+
+-- Modified version of the infoTable function
+function infoTable(info, win, variables, widths)
+	local y2=155
+	local yoff=20
+
+	uiElements = {}
+
+	function numformat (value)
+		if type(value)=="number" and math.floor(value) ~= value then
+			local formatted = string.format("%.2f",value)
+		end
+		return formatted
+	end
+
+
+	local xoff = 0
+
+	for colNum =(-1),7 do
+		local colKey = (string.format("%d", colNum))
+		local title = variables[colKey]
+		local w = widths[title]
+		win:add(UI.newLabel( 10 + xoff, y2 - 20, title))
+		xoff = xoff + w
+	end
+
+	local length = info["length"]
+	--for rn, rv in pairs(info) do
+	for rowNum =0,(length-1) do
+
+		rowElements = {}
+
+		rowKey = (string.format("%d", rowNum))
+		print (string.format("%s\n", rowKey))
+		--for title, value in pairs(rv) do
+		thisrow = info[rowKey]
+
+		xoff = 0
+
+		for colNum =(-1),7 do
+			local colKey = (string.format("%d", colNum))
+			local title = variables[colKey]
+			local w = widths[title]
+			local value = thisrow[title]
+			rowElements[title] = UI.newTextbox( 10 + xoff, y2, w, 1, value)
+			win:add(rowElements[title])
+			xoff = xoff + w
+		end
+
+		y2 = y2 + yoff
+		uiElements[rowKey] = rowElements
+	end
+	
+	return uiElements
+end
+
+function EditWeaponSlots(name,title)
+	if editWeaponSlotsWin ~= nil then return end
+	editWeaponSlotsWin = UI.newWindow(100,100,800,600, "Edit Weapon Slots")
+
+	local table = infoWindows[name]["weapontables"][title]
+
+	--infoTable( info, infoWindows[name] )
+	local testTable = {
+		["length"] = 3,
+		["0"] = {enabled="yes", name="some slot", mode="manual", x=15, y=40, angle=0, motionAngle=0, content="Laser", firingGroup=0},
+		["1"] = {enabled="yes", name="another slot",  mode="auto", x=0, y=5, angle=180, motionAngle=100, content="Missile", firingGroup=1},
+		["2"] = {enabled="no", name="third slot",  mode="auto", x=0, y=0, angle=0, motionAngle=360, content="", firingGroup=0},
+	}
+	--infoTable( testTable, editWeaponSlotsWin )
+
+	local variables = { ["-1"]="enabled", ["0"]="name", ["1"]="mode", ["2"]="x", ["3"]="y", ["4"]="angle", ["5"]="motionAngle", ["6"]="content", ["7"]="firingGroup" }
+	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40, ["angle"]=80, ["motionAngle"]=75, ["content"]=75, ["firingGroup"]=90 }
+
+	infoTable( testTable, editWeaponSlotsWin, variables, widths )
+end
+	
 
 function goto(x,y)
 	Epiar.focusCamera(x,y)
