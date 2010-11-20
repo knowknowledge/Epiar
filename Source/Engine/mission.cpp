@@ -116,13 +116,13 @@ bool Mission::ValidateMission( string type, int tableReference){
  */
 bool Mission::Reject()
 {
-	LogMsg(INFO, "Rejecting");
+	LogMsg(INFO, "Rejecting Mission '%s'", GetName().c_str());
 	return (false == RunFunction( "Reject", true ) );
 }
 
 bool Mission::Accept()
 {
-	LogMsg(INFO, "Accepting");
+	LogMsg(INFO, "Accepting Mission '%s'", GetName().c_str());
 	return (false == RunFunction( "Accept", true ) );
 }
 
@@ -237,28 +237,31 @@ string Mission::GetStringAttribute( string attribute )
 
 Mission* Mission::FromXMLNode( xmlDocPtr doc, xmlNodePtr node )
 {
-	xmlNodePtr  attr;
-	string _type;
-	int _tableReference;
-	
-	if( (attr = FirstChildNamed(node, "type"))){
-		_type = NodeToString(doc,attr);
-	} else return NULL;
+	string type;
+	int missionTable;
+	xmlNodePtr typeNode = FirstChildNamed(node,"type");
+	xmlNodePtr missionNode = FirstChildNamed(node,"value");
+	lua_State* L = Lua::CurrentState();
 
-	if( (attr = FirstChildNamed(node, "table"))){
-		string serializedTable = NodeToString(doc,attr);
-		printf("Serialized Table: %s\n", serializedTable.c_str() );
-		Lua::Run( string("print( ") + serializedTable + " )");
-		//Lua::Run( serializedTable);
-		//_tableReference = luaL_ref(L, LUA_REGISTRYINDEX); // Gets and pops the top of the stack, which should have the the missionTable.
-	} else return NULL;
+	type = NodeToString(doc, typeNode);
 
+	// Turn the XML data into a Table
+	Lua::ConvertFromXML(L, doc, missionNode);
+	// pop the name off the top of the stack.  It should just be "missionTable" anyway.
+	assert(lua_istable(L,lua_gettop(L)));
+	// Gets and pops the top of the stack, which should have the the missionTable.
+	missionTable = luaL_ref(L, LUA_REGISTRYINDEX); 
 
-	if( !Mission::ValidateMission(_type, _tableReference) ) {
+	assert(lua_isstring(L,lua_gettop(L)));
+	lua_pop(L,1); // Pop the Name
+
+	// Validate this Mission
+	if( !Mission::ValidateMission(type, missionTable) ) {
+		LogMsg(ERR, "Something important!");
 		return NULL;
 	}
 
-	return new Mission( _type, _tableReference);
+	return new Mission( type, missionTable);
 }
 
 xmlNodePtr Mission::ToXMLNode()
@@ -268,21 +271,14 @@ xmlNodePtr Mission::ToXMLNode()
 	xmlNewChild(section, NULL, BAD_CAST "type", BAD_CAST type.c_str() );
 
 	lua_State *L = Lua::CurrentState();
-	const int initialStackTop = lua_gettop(L);
 
-	lua_getglobal(L, "serialize" );
+	lua_pushstring(L,"missionTable");
 	PushMissionTable();
-	if( lua_pcall(L, 1, 1, 0) != 0)
-	{
-		LogMsg(ERR,"Failed to Update %s: %s\n", type.c_str(), lua_tostring(L, -1));
-		lua_settop(L, initialStackTop);
-		return section; // Invalid Mission
-	}
 
-	printf("TABLE: %s",  lua_tostring(L, lua_gettop(L) ) );
-	
-	xmlNewChild(section, NULL, BAD_CAST "table", BAD_CAST lua_tostring(L, lua_gettop(L) ) );
-	
+	xmlAddChild(section, Lua::ConvertToXML(L, lua_gettop(L), lua_gettop(L)-1) );
+
+	lua_pop(L, 1); // Pop Table
+
 	return section;
 }
 

@@ -175,3 +175,105 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 
 	return( cur );
 }
+
+/**\brief Find the first child node that matches a specific name
+ * \param node The parent node that we are searching.
+ * \param text The text name that we are searching for.
+ * \sa NextSiblingNamed
+ * \Example
+ * \code
+ * xmlNodePtr parent,node;
+ * ... // get the parent node that contains the children we want to iterate over.
+ * for(node = FirstChildNamed(parent,"FOO"); node != NULL; node = NextSiblingNamed(node, "FOO"))
+ * {
+ * ...
+ * }
+ * \endcode
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+
+xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
+{
+	xmlNodePtr child = node->xmlChildrenNode;
+	while( child != NULL )
+	{
+		if( !xmlStrcmp( child->name, (const xmlChar *)text ) )
+		{
+			return child;
+		}
+		child = child->next;
+	}
+	return (xmlNodePtr )NULL;
+}
+
+/**\brief Find the first sibliing node that matches a specific name
+ * \param child The previous child node that we are searching.
+ * \param text The text name that we are searching for.
+ * \sa FirstChildNamed
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
+{
+	child = child->next;
+	while( child != NULL )
+	{
+		if( !xmlStrcmp( child->name, (const xmlChar *)text ) )
+		{
+			return child;
+		}
+		child = child->next;
+	}
+	
+	return (xmlNodePtr )NULL;
+}
+
+/**\brief Extract the text from a XML Node as a String.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * 
+ * It's easier to deal with C++ strings than xmlStrings, since the C++ strings have destructors.
+ *
+ * \sa NodeToInt, NodeToFloat
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+string NodeToString( xmlDocPtr doc, xmlNodePtr node )
+{
+	string value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = (const char *)xmlString;
+	xmlFree( xmlString );
+	return value;
+}
+
+/**\brief Extract the text from a XML Node as an int.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * \sa NodeToString, NodeToFloat
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
+{
+	int value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = atoi( (const char *)xmlString );
+	xmlFree( xmlString );
+	return value;
+}
+
+/**\brief Extract the text from a XML Node as a float.
+ * \param doc The document that contains this node.
+ * \param node The node itself
+ * \sa NodeToString, NodeToInt
+ * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
+ */
+float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
+{
+	float value;
+	xmlChar *xmlString;
+	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	value = atof( (const char *)xmlString );
+	xmlFree( xmlString );
+	return value;
+}

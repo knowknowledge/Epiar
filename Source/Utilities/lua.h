@@ -51,6 +51,9 @@ class Lua {
 		static list<string> getStringListField(int index);
 		static list<string> getStringListField(int index, const char* name);
 
+		static xmlNodePtr ConvertToXML( lua_State *L, int value_index, int key_index);
+		static int ConvertFromXML( lua_State *L, xmlDocPtr doc, xmlNodePtr tree );
+
 		static void stackDump(lua_State *L);
 
 	private:

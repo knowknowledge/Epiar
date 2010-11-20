@@ -9,15 +9,8 @@
 #define __h_components__
 
 #include "includes.h"
-
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
-#define NodeNameIs( node, text ) ( !xmlStrcmp( ((node)->name), (const xmlChar *)(text) ) )
-
-xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text );
-xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text );
-string NodeToString( xmlDocPtr doc, xmlNodePtr node );
-int NodeToInt( xmlDocPtr doc, xmlNodePtr node );
-float NodeToFloat( xmlDocPtr doc, xmlNodePtr node );
+#include "common.h"
+#include "Utilities/xml.h"
 
 class Component {
 	public:

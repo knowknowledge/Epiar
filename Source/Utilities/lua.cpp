@@ -329,34 +329,135 @@ list<string> Lua::getStringListField(int index, const char* name) {
 	return results;
 }
 
+xmlNodePtr Lua::ConvertToXML( lua_State *L, int value_index, int key_index) {
+	int t;
+	char buff[1024];
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST "value");
+
+	// Using lua_tostring will convert a value into a string.
+	// Never use this on a table key.
+	lua_pushvalue(L, key_index);
+	t = lua_type(L, key_index);
+
+	// Save the Key and keytype
+	xmlSetProp( section, BAD_CAST "key", BAD_CAST lua_tostring(L, lua_gettop(L)) );
+	xmlSetProp( section, BAD_CAST "keytype", BAD_CAST lua_typename(L, t));
+
+	lua_pop(L,1); // Pop the copied key now that we're done with it.
+
+	// Save the type 
+	t = lua_type(L, value_index);
+	xmlSetProp( section, BAD_CAST "type", BAD_CAST lua_typename(L, t));
+
+	// Save the value
+	switch (t) {
+	    case LUA_TBOOLEAN:
+			xmlNodeSetContent( section, BAD_CAST (lua_toboolean(L, value_index) ? "true" : "false"));
+			break;
+	    case LUA_TNUMBER:
+			snprintf(buff, sizeof(buff), "%f", lua_tonumber(L, value_index) );
+			xmlNodeSetContent( section, BAD_CAST buff);
+			break;
+	    case LUA_TSTRING:
+			xmlNodeSetContent( section, BAD_CAST lua_tostring(L, value_index) );
+			break;
+	    case LUA_TTABLE:
+			lua_pushnil(L);
+			while(lua_next(L, value_index)) {
+				xmlAddChild( section, Lua::ConvertToXML(L, lua_gettop(L), lua_gettop(L)-1));
+
+				// Pop off this value
+				lua_pop(L, 1);
+			}
+			
+			break;
+	    case LUA_TNIL:
+	    case LUA_TLIGHTUSERDATA:
+	    case LUA_TFUNCTION:
+	    case LUA_TUSERDATA:
+	    case LUA_TTHREAD:
+			xmlAddChild( section, xmlNewComment( BAD_CAST "Cannot convert to XML"));
+			break;
+	    default:
+		    assert(0);
+		    break;
+	}
+	return section;
+}
+
+int Lua::ConvertFromXML( lua_State *L, xmlDocPtr doc, xmlNodePtr node )
+{
+	string key;
+	string type;
+	string keytype;
+
+
+	keytype = (const char *)xmlGetProp(node, BAD_CAST "keytype");
+	type    = (const char *)xmlGetProp(node, BAD_CAST "type");
+
+	// Process the Key
+	if(keytype == "number") {
+		lua_pushnumber(L, atof( (const char *)xmlGetProp(node, BAD_CAST "key") ) );
+	} else if(keytype == "string") {
+		lua_pushstring(L, (const char *)xmlGetProp(node, BAD_CAST "key"));
+	} else {
+		LogMsg(WARN, "Unknown Lua/XML conversion type '%s'", type.c_str());
+		return 0;
+	}
+
+	// Process the Value
+	if( type == "number"){
+		float value = NodeToFloat(doc,node);
+		lua_pushnumber(L, value);
+	} else if( type == "string"){
+		string value = NodeToString( doc, node );
+		lua_pushstring(L, value.c_str());
+	} else if( type == "table"){
+		int tableIndex;
+		lua_newtable(L);
+		tableIndex = lua_gettop(L);
+		// Create a table
+		for( node = FirstChildNamed(node, "value"); node!=NULL; node = NextSiblingNamed(node, "value") ){
+			Lua::ConvertFromXML(L, doc, node);
+			assert(lua_istable(L, tableIndex));
+			lua_settable(L, tableIndex); // Pops the name and value.
+			assert( tableIndex == lua_gettop(L) ); // The table should be at the top now.
+		}
+	} else {
+		LogMsg(WARN, "Unknown Lua/XML conversion type '%s'", type.c_str());
+		return 1; // Just Key
+	}
+	return 2; // Key, Value
+}
+
 //can be found here  http://www.lua.org/pil/24.2.3.html
 void Lua::stackDump (lua_State *L) {
-  int i;
-  int top = lua_gettop(L);
-  for (i = 1; i <= top; i++) {  /* repeat for each level */
-	int t = lua_type(L, i);
-	switch (t) {
+	int i;
+	int top = lua_gettop(L);
+	for (i = 1; i <= top; i++) {  /* repeat for each level */
+		int t = lua_type(L, i);
+		switch (t) {
 
-	  case LUA_TSTRING:  /* strings */
-		printf("[%d]`%s'", i,lua_tostring(L, i));
-		break;
+			case LUA_TSTRING:  /* strings */
+				printf("[%d]`%s'", i, lua_tostring(L, i));
+				break;
 
-	  case LUA_TBOOLEAN:  /* booleans */
-		printf("[%d]%s",i,lua_toboolean(L, i) ? "true" : "false");
-		break;
+			case LUA_TBOOLEAN:  /* booleans */
+				printf("[%d]%s", i, lua_toboolean(L, i) ? "true" : "false");
+				break;
 
-	  case LUA_TNUMBER:  /* numbers */
-		printf("[%d]%g",i, lua_tonumber(L, i));
-		break;
+			case LUA_TNUMBER:  /* numbers */
+				printf("[%d]%g", i, lua_tonumber(L, i));
+				break;
 
-	  default:  /* other values */
-		printf("[%d]%s",i, lua_typename(L, t));
-		break;
+			default:  /* other values */
+				printf("[%d]%s", i, lua_typename(L, t));
+				break;
 
+		}
+		printf("  ");  /* put a separator */
 	}
-	printf("  ");  /* put a separator */
-  }
-  printf("\n");  /* end the listing */
+	printf("\n");  /* end the listing */
 }
 
 
