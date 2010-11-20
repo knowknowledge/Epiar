@@ -210,29 +210,14 @@ function showComponent(kind,name,getterFunc)
 			end
 		elseif fieldType == "Weapon slots" then
 
-			-- theInfo[title] (what most other types put into the value variable)
-			-- will be a Lua table built by simulation_lua.cpp representing the
-			-- slot configuration. I still need to write that table builder function
-			-- and have it called for this type.
-			--
-			-- I expect the format of the table to be a set of pairs like what infoTable() asks for
-			--
-			-- EditWeaponSlots() will look up the table, populate the window with fields
-			-- (it might be nice to do it according to a template like those at the top of
-			-- the file, but it would make as much sense not to, since, for example, the
-			-- ImagePicker doesn't create its window using one of those templates either),
-			-- allow the user to add and remove slots, and, when finished, re-build the table
-			-- and store the table a bit like how the ImagePicker window stores its field.
-			-- If it's too complicated for the EditWeaponSlots() window to actually add/remove
-			-- rows in the GUI, it could just have a fixed number (say, 16), and checkboxes
-			-- to enable or disable them, with the idea that nobody should need more
-			-- slots than that (and if they do, they can tweak the limit).
-
 			numConfigured = 0
 			theWin:add(UI.newLabel( 10, yoff+10, (string.format("%s:  %d slots configured",title, numConfigured) ) ) )
 			yoff = yoff+35
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s','%s')",name,title)))
 			yoff = yoff+20+5
+
+			--local weaponTable = grab the weapon table
+
 			theWeaponTables[title] = weaponTable
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
@@ -244,11 +229,12 @@ function showComponent(kind,name,getterFunc)
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics,weapontables=theWeaponTables}
 end
 
+-- see the further developed infoTable function later in this file
+
 --- Lays out a series of labels and textboxes
 -- Returns the checkboxes for later
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
--- see new infoTable function below
 --function infoTable(info,win)
 --	local y1,y2=155,140
 --	local yoff=20
@@ -462,8 +448,8 @@ function ImagePicker(name,title)
 end
 
 -- Modified version of the infoTable function
-function infoTable(info, win, variables, widths)
-	local y2=155
+function infoTable(info, win, variables, widths, desiredSize)
+	local y2=50
 	local yoff=20
 
 	uiElements = {}
@@ -471,14 +457,17 @@ function infoTable(info, win, variables, widths)
 	function numformat (value)
 		if type(value)=="number" and math.floor(value) ~= value then
 			local formatted = string.format("%.2f",value)
+			return formatted
 		end
-		return formatted
+		return value
 	end
-
 
 	local xoff = 0
 
-	for colNum =(-1),7 do
+	local length = info["length"]
+	local desiredLength = info["desiredLength"]
+
+	for colNum =0,(info["fields"]-1) do
 		local colKey = (string.format("%d", colNum))
 		local title = variables[colKey]
 		local w = widths[title]
@@ -486,20 +475,26 @@ function infoTable(info, win, variables, widths)
 		xoff = xoff + w
 	end
 
-	local length = info["length"]
 	--for rn, rv in pairs(info) do
-	for rowNum =0,(length-1) do
+	for rowNum =0,(desiredLength-1) do
 
-		rowElements = {}
+		local rowElements = {}
 
 		rowKey = (string.format("%d", rowNum))
 		print (string.format("%s\n", rowKey))
 		--for title, value in pairs(rv) do
-		thisrow = info[rowKey]
+
+		if rowNum <= (length-1) then
+			thisrow = info[rowKey]
+		else
+			-- after we have run out of actual data, fill up the remaining lines with a template
+			-- which may or may not become part of the actual data depending on how the user edits it
+			thisrow = info["filler"] 
+		end
 
 		xoff = 0
 
-		for colNum =(-1),7 do
+		for colNum =0,(info["fields"]-1) do
 			local colKey = (string.format("%d", colNum))
 			local title = variables[colKey]
 			local w = widths[title]
@@ -518,23 +513,52 @@ end
 
 function EditWeaponSlots(name,title)
 	if editWeaponSlotsWin ~= nil then return end
-	editWeaponSlotsWin = UI.newWindow(100,100,800,600, "Edit Weapon Slots")
+	editWeaponSlotsWin = UI.newWindow(100,100,800,450, "Edit Weapon Slots")
 
+	-- Grab the table
 	local table = infoWindows[name]["weapontables"][title]
 
-	--infoTable( info, infoWindows[name] )
+	-- A demo table for testing
+	-- (Note: even with a real table, the four special rows you see in this table will need to be added in
+	-- if the table doesn't come that way already, so don't forget to do that.)
 	local testTable = {
 		["length"] = 3,
-		["0"] = {enabled="yes", name="some slot", mode="manual", x=15, y=40, angle=0, motionAngle=0, content="Laser", firingGroup=0},
-		["1"] = {enabled="yes", name="another slot",  mode="auto", x=0, y=5, angle=180, motionAngle=100, content="Missile", firingGroup=1},
-		["2"] = {enabled="no", name="third slot",  mode="auto", x=0, y=0, angle=0, motionAngle=360, content="", firingGroup=0},
+		["desiredLength"] = 16,
+		["fields"] = 9,
+		["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0},
+
+		["0"] = {enabled="yes", name="some slot", mode="manual", x=15, y=40, angle=0, motionAngle=0, content="Item 1", firingGroup=0},
+		["1"] = {enabled="yes", name="some other slot", mode="manual", x=30, y=40, angle=0, motionAngle=0, content="Item 2", firingGroup=0},
+		["2"] = {enabled="yes", name="some third slot", mode="manual", x=45, y=40, angle=0, motionAngle=0, content="Item 3", firingGroup=0}
 	}
-	--infoTable( testTable, editWeaponSlotsWin )
 
-	local variables = { ["-1"]="enabled", ["0"]="name", ["1"]="mode", ["2"]="x", ["3"]="y", ["4"]="angle", ["5"]="motionAngle", ["6"]="content", ["7"]="firingGroup" }
-	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40, ["angle"]=80, ["motionAngle"]=75, ["content"]=75, ["firingGroup"]=90 }
+	-- This ugly indexing trick is a workaround for Lua's apparent lack of sensible element ordering.
+	-- Clean it up if a better built-in solution can be found.
+	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y", ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
+	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40, ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
 
-	infoTable( testTable, editWeaponSlotsWin, variables, widths )
+	-- In these two lines, change testTable to table once the actual data is being successfully grabbed into the infoWindows[...] area
+	fieldTable = infoTable( testTable, editWeaponSlotsWin, variables, widths )
+	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(%d, %d)", testTable["desiredLength"], testTable["fields"]) ) ) )
+end
+
+function finishEditingWeaponSlots(desiredLength, fields)
+	for rowNum =0,(desiredLength-1) do
+		for colNum =0,(fields-1) do
+			local fieldName = variables[(string.format("%d", colNum))]
+			local value = uiElements[(string.format("%d",rowNum))][fieldName]:GetText()
+			print (string.format("row num is %d and field name is %s\n", rowNum, fieldName))
+			print (string.format("found value %s\n", value))
+			-- TODO need to shove this information back where the component editor can use it for saving
+			-- infoWindows[name]["weapontables"][title] is probably where it needs to go
+		end
+	end
+	
+	editWeaponSlotsWin:close()
+	editWeaponSlotsWin = nil
+	variables = nil
+	fieldTable = nil
+	uiElements = nil
 end
 	
 
