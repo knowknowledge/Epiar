@@ -29,7 +29,6 @@ class Tab : public UIContainer {
 		int capw;
 
 		void ResetScrollBars();
-		Scrollbar *hscrollbar;
 		Scrollbar *vscrollbar;
 };
 
