@@ -513,7 +513,8 @@ end
 
 function EditWeaponSlots(name,title)
 	if editWeaponSlotsWin ~= nil then return end
-	editWeaponSlotsWin = UI.newWindow(100,100,800,450, "Edit Weapon Slots")
+	editWeaponSlotsWin = UI.newWindow(200,200,800,450, "Edit Weapon Slots")
+	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
 
 	-- Grab the table
 	local table = infoWindows[name]["weapontables"][title]
@@ -537,7 +538,9 @@ function EditWeaponSlots(name,title)
 	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y", ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
 	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40, ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
 
-	-- In these two lines, change testTable to table once the actual data is being successfully grabbed into the infoWindows[...] area
+	-- TODO In these two lines, change testTable to table once the actual
+	-- slot data is being successfully grabbed from the C++ object into the
+	-- infoWindows[...] area
 	fieldTable = infoTable( testTable, editWeaponSlotsWin, variables, widths )
 	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(%d, %d)", testTable["desiredLength"], testTable["fields"]) ) ) )
 end

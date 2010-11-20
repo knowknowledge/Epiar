@@ -812,6 +812,18 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	Lua::setField("Cargo", model->GetCargoSpace());
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
+        /*
+	Weapon Slots - expected procedure (still not fully understood):
+	  0. lua_pushstring(L, "weaponSlots"); // so it knows what this is when it finds the table
+	  1. lua_createtable(L, whatever size is needed, 0);
+	  2. int table = lua_gettop(L)
+	  2. vector<ws_t> slots = model->GetWeaponSlots();
+	  3. for each ws_t s in slots {
+	       follow the example of Lua::pushStringList() to push the
+	       items onto the table and adjust the index as needed
+	}
+	*/
+
 	return 1;
 }
 
