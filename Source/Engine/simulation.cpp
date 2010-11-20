@@ -145,6 +145,25 @@ bool Simulation::Run() {
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 
+	if( players->Load( Get("players"), true ) != true ) {
+		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
+		return false;
+	}
+
+	Coordinate startPos(0,0);
+	string startPlanet = Get("defaultPlayer/start");
+	if( planets->GetPlanet( startPlanet ) ) {
+		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
+	} else {
+		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
+	}
+	players->SetDefaults(
+		models->GetModel( Get("defaultPlayer/model") ),
+		engines->GetEngine( Get("defaultPlayer/engine") ),
+		convertTo<int>( Get("defaultPlayer/credits")),
+		startPos
+	);
+
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
 
@@ -408,29 +427,12 @@ bool Simulation::Parse( void ) {
 	    }
 	}
 
-	if( players->Load( Get("players"), true ) != true ) {
-		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
-		return false;
-	}
-
 	bgmusic = Song::Get( Get("music") );
 	if( bgmusic == NULL ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
 	}
 
-	Coordinate startPos(0,0);
-	string startPlanet = Get("defaultPlayer/start");
-	if( planets->GetPlanet( startPlanet ) ) {
-		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
-	} else {
-		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
-	}
-	players->SetDefaults(
-		models->GetModel( Get("defaultPlayer/model") ),
-		engines->GetEngine( Get("defaultPlayer/engine") ),
-		convertTo<int>( Get("defaultPlayer/credits")),
-		startPos
-	);
+
 
 	return true;
 }

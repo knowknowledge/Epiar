@@ -163,6 +163,13 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		} else return false;
 	}
 
+	for( attr = FirstChildNamed(node,"Mission"); attr!=NULL; attr = NextSiblingNamed(attr,"Mission") ){
+		Mission *mission = Mission::FromXMLNode(doc,attr);
+		if( mission != NULL ) {
+			missions.push_back( mission );
+		}
+	}
+
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
 		lastLoadTime = NodeToInt(doc,attr);
 	} else {
@@ -217,15 +224,15 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 
 	// Cargo
 	map<Commodity*,unsigned int> cargo = this->GetCargo();
-	map<Commodity*,unsigned int>::iterator iter;
-	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
-		if( !(*iter).second )
+	map<Commodity*,unsigned int>::iterator iter_com;
+	for(iter_com = cargo.begin(); iter_com!=cargo.end(); ++iter_com) {
+		if( !(*iter_com).second )
 		{
 			continue; // Don't Save empty cargo Nodes
 		}
-		snprintf(buff, sizeof(buff), "%d", (*iter).second );
+		snprintf(buff, sizeof(buff), "%d", (*iter_com).second );
 		xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "cargo");
-		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter).first)->GetName().c_str() );
+		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter_com).first)->GetName().c_str() );
 		xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
 		xmlAddChild(section, ammo);
 	}
@@ -234,6 +241,12 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	list<Outfit*> *outfits = this->GetOutfits();
 	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){
 		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
+	}
+
+	// Missions
+	list<Mission*>::iterator iter_mission;
+	for(iter_mission = missions.begin(); iter_mission != missions.end(); ++iter_mission){
+		xmlAddChild( section,  (*iter_mission)->ToXMLNode() );
 	}
 
 	// Last Load Time
@@ -245,8 +258,6 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	timestamp = ctime( &lastLoadTime );
 	timestamp[strlen(timestamp)-1] = '\0';
 	xmlAddChild( section, xmlNewComment( BAD_CAST timestamp));
-
-	// TODO: Save Missions
 
 	return section;
 }
@@ -340,6 +351,13 @@ Player* Players::LoadPlayer(string playerName) {
 	// We can't start the game with bad player Information
 	assert( newPlayer->GetModelName() != "" );
 	assert( newPlayer->GetEngineName() != "" );
+
+	// Restart the missions that were ongoing.
+	list<Mission*>::iterator iter_m;
+	list<Mission*>* missions = newPlayer->GetMissions();
+	for( iter_m = missions->begin(); iter_m != missions->end(); ++iter_m) {
+		(*iter_m)->Accept(); ///< TODO: This should be a distinct function.  Mission::Load perhaps?
+	}
 
 	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
