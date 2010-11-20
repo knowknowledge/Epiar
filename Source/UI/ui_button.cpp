@@ -105,7 +105,7 @@ bool Button::MouseLDown( int xi, int yi ) {
 
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
-	bitmap_current = bitmap_normal;
+	bitmap_current = bitmap_mouseover;
 
 	if( clickCallBack ){
 		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );

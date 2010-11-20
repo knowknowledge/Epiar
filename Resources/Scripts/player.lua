@@ -706,13 +706,17 @@ end
 
 function playerInformation()
 	if infoWin~=nil then
+		if descriptionWindow ~= nil then
+			descriptionWindow:close()
+			descriptionWindow = nil
+		end
 		infoWin:close()
 		infoWin = nil
 		return
 	end
 	local height = 500
 	local width = 300
-	infoWin = UI.newWindow( 600,200, width,height, "Player Info")
+	infoWin = UI.newWindow( 500,200, width,height, "Player Info")
 	local y = 30
 
 
@@ -766,9 +770,8 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			missionTab:add( UI.newLabel( 10, y, "["..key.."] "..mission.Name ) )
-			missionTab:add( UI.newButton(width-55, y+3, 10, 20, "x", string.format("PLAYER:RejectMission('%s')", mission.Name) ) )
-			y = y + 20
+			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription('%s','%s')", mission.Name, mission.Description ) ) )
+			y = y + 30
 		end
 	else
 		missionTab:add( UI.newLabel( 10, y, "You have no current jobs." ) )
@@ -778,3 +781,25 @@ function playerInformation()
 	infoTabs:add( outfitTab, missionTab )
 
 end
+
+----------------------------Experimental code by Dido--------------------------------------------------	
+-- Description window for individual mission in mission dialog
+	function ShowMissionDescription( _missionName, _missionDescription )
+		if descriptionWindow ~= nil then
+			descriptionWindow:close()
+			descriptionWindow = nil
+			--Epiar.unpause()
+			return
+		end
+		
+		--Epiar.pause()
+
+		--displayedDescription = _missionDescription
+		
+		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
+		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
+		rejectButton = UI.newButton( 100, 100, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
+		--currentDescription:close() 
+		descriptionWindow:add( descriptionLable, rejectButton )
+	end
+---------------------------/Experimental code by Dido--------------------------------------------------
