@@ -121,6 +121,17 @@ bool Ani::Load( string& filename ) {
 	return( true );
 }
 
+/** \brief Get the Image at a specific Frame
+ * 	\param[in] frameNum
+ * 	\returns Image pointer;
+ */
+Image* Ani::GetFrame(int frameNum) {
+	assert(frames);
+	assert(frameNum >= 0);
+	assert(frameNum < numFrames);
+	return &(frames[frameNum]);
+}
+
 /**\var Ani::frames
  *  \brief Frames of the animation as Image objects
  */
@@ -165,15 +176,16 @@ Animation::Animation( string filename ) {
  * Note: if looping is turned on, the animation will always return true.
  */
 bool Animation::Update() {
+	
 	Image *frame = NULL;
 	bool finished = false;
 
 	if( startTime ) {
-		fnum = (SDL_GetTicks() - startTime) / ani->delay;
+		fnum = (SDL_GetTicks() - startTime) / ani->GetDelay();
 
-		if( fnum > ani->numFrames - 1 ) {
-			fnum = TO_INT(ani->numFrames * (1.0f-loopPercent)); // Step back a few frames.
-			startTime = SDL_GetTicks() - ani->delay*fnum; // Pretend that we started fnum frames ago
+		if( fnum > ani->GetNumFrames() - 1 ) {
+			fnum = TO_INT(ani->GetNumFrames() * (1.0f-loopPercent)); // Step back a few frames.
+			startTime = SDL_GetTicks() - ani->GetDelay()*fnum; // Pretend that we started fnum frames ago
 			if( loopPercent <= 0.0f ) {
 				finished = true;
 			}
@@ -181,7 +193,7 @@ bool Animation::Update() {
 
 	} else {
 		startTime = SDL_GetTicks();
-		frame = &(ani->frames)[0];
+		frame = ani->GetFrame(0);
 	}
 	return finished;
 }
@@ -189,7 +201,7 @@ bool Animation::Update() {
 /**\brief Draws the animation at given coordinate.
  */
 void Animation::Draw( int x, int y, float ang ) {
-	Image* frame = &(ani->frames)[fnum];
+	Image* frame = ani->GetFrame( fnum );
 	frame->DrawCentered( x, y, ang );
 }
 
