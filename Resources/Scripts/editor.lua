@@ -58,7 +58,7 @@ ModelEditorLayout = {
 	{"MaxSpeed", "Integer"},
 	{"Cargo", "Integer"},
 	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
-	{"WeaponSlots", "Weapon slots"}, -- Slot configuration builder
+	{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
 	}
 
 PlanetEditorLayout = {
@@ -218,7 +218,7 @@ function showComponent(kind,name,getterFunc)
 
 			--local weaponTable = grab the weapon table
 
-			theWeaponTables[title] = weaponTable
+			theWeaponTables[title] = theInfo["weaponSlots"]
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -273,6 +273,7 @@ function saveInfo(name)
 	local texts = infoWindows[name].texts
 	local win = infoWindows[name].win
 	local kind = infoWindows[name].kind
+	local weaponslots = infoWindows[name].weaponslots
 	for i,layout in ipairs(EditorLayouts[kind]) do
 		local title,fieldType = layout[1],layout[2]
 		local field = texts[title]
@@ -291,6 +292,8 @@ function saveInfo(name)
 					end
 				end
 				info[title] = techs
+			elseif fieldType == "weaponSlots" then
+				info[title] = weaponslots[title]
 			else
 				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 			end
@@ -484,12 +487,18 @@ function infoTable(info, win, variables, widths, desiredSize)
 		print (string.format("%s\n", rowKey))
 		--for title, value in pairs(rv) do
 
-		if rowNum <= (length-1) then
+		local thisrow
+		if rowNum <= (length-1) and info[rowKey]["enabled"] == "yes" then
 			thisrow = info[rowKey]
 		else
-			-- after we have run out of actual data, fill up the remaining lines with a template
-			-- which may or may not become part of the actual data depending on how the user edits it
-			thisrow = info["filler"] 
+			if info[rowKey] ~= nil and info[rowKey]["enabled"] == "yes" then -- user enabled another row
+				info["length"] = info["length"] + 1
+				thisrow = info[rowKey]
+			else
+				-- after we have run out of actual data, fill up the remaining lines with a template
+				-- which may or may not become part of the actual data depending on how the user edits it
+				thisrow = info["filler"] 
+			end
 		end
 
 		xoff = 0
@@ -519,42 +528,38 @@ function EditWeaponSlots(name,title)
 	-- Grab the table
 	local table = infoWindows[name]["weapontables"][title]
 
-	-- A demo table for testing
-	-- (Note: even with a real table, the four special rows you see in this table will need to be added in
-	-- if the table doesn't come that way already, so don't forget to do that.)
-	local testTable = {
-		["length"] = 3,
-		["desiredLength"] = 16,
-		["fields"] = 9,
-		["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0},
-
-		["0"] = {enabled="yes", name="some slot", mode="manual", x=15, y=40, angle=0, motionAngle=0, content="Item 1", firingGroup=0},
-		["1"] = {enabled="yes", name="some other slot", mode="manual", x=30, y=40, angle=0, motionAngle=0, content="Item 2", firingGroup=0},
-		["2"] = {enabled="yes", name="some third slot", mode="manual", x=45, y=40, angle=0, motionAngle=0, content="Item 3", firingGroup=0}
-	}
+	-- Tell the table interface function to make extra rows until there are 16
+	table["desiredLength"] = 16
+	table["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 
 	-- This ugly indexing trick is a workaround for Lua's apparent lack of sensible element ordering.
 	-- Clean it up if a better built-in solution can be found.
-	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y", ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
-	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40, ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
 
-	-- TODO In these two lines, change testTable to table once the actual
-	-- slot data is being successfully grabbed from the C++ object into the
-	-- infoWindows[...] area
-	fieldTable = infoTable( testTable, editWeaponSlotsWin, variables, widths )
-	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(%d, %d)", testTable["desiredLength"], testTable["fields"]) ) ) )
+	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y",
+		      ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
+
+	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40,
+			 ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
+
+	fieldTable = infoTable( table, editWeaponSlotsWin, variables, widths )
+	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
 end
 
-function finishEditingWeaponSlots(desiredLength, fields)
+function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	for rowNum =0,(desiredLength-1) do
+		local r = {}
 		for colNum =0,(fields-1) do
 			local fieldName = variables[(string.format("%d", colNum))]
-			local value = uiElements[(string.format("%d",rowNum))][fieldName]:GetText()
+			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
 			print (string.format("row num is %d and field name is %s\n", rowNum, fieldName))
 			print (string.format("found value %s\n", value))
 			-- TODO need to shove this information back where the component editor can use it for saving
 			-- infoWindows[name]["weapontables"][title] is probably where it needs to go
+			rowKey = (string.format("%d", rowNum))
+			--print (string.format("infoWindows[%s][\"weapontables\"][%s][%s][%s] = %s", name, title, rowKey, fieldName, value))
+			r[fieldName] = value
 		end
+		infoWindows[name]["weapontables"][title][rowKey] = r
 	end
 	
 	editWeaponSlotsWin:close()

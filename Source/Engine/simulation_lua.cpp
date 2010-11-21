@@ -812,17 +812,53 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	Lua::setField("Cargo", model->GetCargoSpace());
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
-        /*
-	Weapon Slots - expected procedure (still not fully understood):
-	  0. lua_pushstring(L, "weaponSlots"); // so it knows what this is when it finds the table
-	  1. lua_createtable(L, whatever size is needed, 0);
-	  2. int table = lua_gettop(L)
-	  2. vector<ws_t> slots = model->GetWeaponSlots();
-	  3. for each ws_t s in slots {
-	       follow the example of Lua::pushStringList() to push the
-	       items onto the table and adjust the index as needed
+	/* May want to move this to a helper function (but in which file?) */
+	vector<ws_t> slots = model->GetWeaponSlots();
+	lua_pushstring(L, "weaponSlots");
+	lua_newtable(L);
+
+	int table = lua_gettop(L);
+
+	const short int numFields = 9;
+
+	Lua::setField("length", (int)slots.size());
+	Lua::setField("fields", (int)numFields);
+
+	char *rowKey = (char*)malloc(6);
+
+	for(short int i = 0; i < slots.size(); i++){
+		ws_t s = slots[i];
+
+		snprintf(rowKey, 6, "%d", i);
+		lua_pushstring(L, rowKey);
+
+		lua_createtable(L, 0, numFields); // create a slot table
+
+		int rowTable = lua_gettop(L);
+
+		Lua::setField("enabled", "yes");
+		Lua::setField("name", s.name.c_str() );
+		Lua::setField("mode", s.mode.c_str() );
+		Lua::setField("x", (float)s.x);
+		Lua::setField("y", (float)s.y);
+		Lua::setField("angle", (float)s.angle);
+		Lua::setField("motionAngle", (float)s.motionAngle);
+		Lua::setField("content", s.content.c_str() );
+		Lua::setField("firingGroup", s.firingGroup);
+
+		// keep in mind that the above field data has been popped off of the Lua state at this point
+
+		assert( rowTable == lua_gettop(L) );
+
+		lua_settable(L, -3);
+
+		assert( table == lua_gettop(L) );
+
 	}
-	*/
+	
+	free(rowKey);
+
+	lua_settable(L, -3);
 
 	return 1;
 }
@@ -1108,6 +1144,8 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		int msrp = Lua::getIntField(2,"MSRP");
 		int cargo = Lua::getIntField(2,"Cargo");
 
+		/* TODO: Extract and interpret the weapon slot table given to setInfo() by editor.lua */
+
 		Image *image = Image::Get(imageName);
 		if(image==NULL)
 		{
@@ -1115,8 +1153,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo); /* FIXME need to have a way of grabbing entire slot system destription from Lua and passing it in here */  
-		assert(true == false);
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
 
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
