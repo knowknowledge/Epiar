@@ -288,3 +288,9 @@ bool File::IsDir( const string& filename ) {
 	return false;
 }
 
+bool IsBigEndian() {
+	int test_var = 1;
+	unsigned char *test_array = (unsigned char*)&test_var;
+	return (test_array[0] == '\0');
+}
+

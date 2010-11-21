@@ -96,6 +96,12 @@ bool Ani::Load( string& filename ) {
 
 		file.Read( sizeof(int), (char *) &fs );
 
+		// Big Endian Machines need to swap the bytes here.
+		if( IsBigEndian() ) {
+			LogMsg(ERR, "Swapping Bytes for Endianness");
+			fs = SDL_SwapLE32(fs);
+		}
+
 		pos = file.Tell();
 
 		// On OS X 10.6 with SDL_image 1.2.8, the load from fp is broken, so we load it into a buffer ourselves and SDL_image
