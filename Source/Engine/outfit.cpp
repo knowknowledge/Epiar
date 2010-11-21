@@ -220,10 +220,41 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetShieldStrength() );
 	xmlNewChild(section, NULL, BAD_CAST "shield", BAD_CAST buff );
 
-	//snprintf(buff, sizeof(buff), "%d", this->GetWeaponSlots() );
-	//xmlNewChild(section, NULL, BAD_CAST "weaponSlots", BAD_CAST buff );
+	if(this->GetWeaponSlots().size() > 0){
+		xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
+		for(unsigned int w=0;w<weaponSlots.size();w++){
+			ws_t *slot = &weaponSlots[w];
 
-	assert(true == false); // FIXME ^^     need to create XML exporting routine for weaponSlots structure
+			xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
+
+			xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+
+			xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
+
+			xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
+			snprintf(buff, sizeof(buff), "%.1f", slot->x);
+			xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST buff);
+			snprintf(buff, sizeof(buff), "%.1f", slot->y);
+			xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST buff);
+
+			xmlAddChild(slotPtr, coordPtr);
+
+			snprintf(buff, sizeof(buff), "%.1f", slot->angle);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST buff);
+			snprintf(buff, sizeof(buff), "%.1f", slot->motionAngle);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST buff);
+
+			xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+
+			snprintf(buff, sizeof(buff), "%d", slot->firingGroup);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST buff);
+
+			free(buff);
+
+			xmlAddChild(wsPtr, slotPtr);
+		}
+		xmlAddChild(section, wsPtr);
+	}
 
 	return section;
 }

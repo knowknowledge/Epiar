@@ -216,9 +216,7 @@ function showComponent(kind,name,getterFunc)
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s','%s')",name,title)))
 			yoff = yoff+20+5
 
-			--local weaponTable = grab the weapon table
-
-			theWeaponTables[title] = theInfo["weaponSlots"]
+			theWeaponTables[title] = theInfo[title]
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -226,7 +224,7 @@ function showComponent(kind,name,getterFunc)
 	end
 	
 	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo('%s')",name )) )
-	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics,weapontables=theWeaponTables}
+	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics, weapontables=theWeaponTables}
 end
 
 -- see the further developed infoTable function later in this file
@@ -271,9 +269,9 @@ function saveInfo(name)
 	if infoWindows[name] == nil then return end
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
+	local weapontables = infoWindows[name].weapontables
 	local win = infoWindows[name].win
 	local kind = infoWindows[name].kind
-	local weaponslots = infoWindows[name].weaponslots
 	for i,layout in ipairs(EditorLayouts[kind]) do
 		local title,fieldType = layout[1],layout[2]
 		local field = texts[title]
@@ -292,11 +290,21 @@ function saveInfo(name)
 					end
 				end
 				info[title] = techs
-			elseif fieldType == "weaponSlots" then
-				info[title] = weaponslots[title]
 			else
 				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 			end
+		elseif fieldType == "Weapon slots" then
+
+			-- FEEX
+			local i_t_nil = "not "
+			if info[title] == nil then i_t_nil = "" end
+			local wt_t_nil = "not "
+			if weapontables[title] == nil then wt_t_nil = "" end
+			print (string.format("info[title] is %snil\n", i_t_nil))
+			print (string.format("weapontables[title] is %snil\n", wt_t_nil))
+
+			print (string.format("setting info[%s] to weapontables[%s]\n", title, title))
+			info[title] = weapontables[title]
 		end
 	end
 	Epiar.setInfo(kind,info)
@@ -548,18 +556,23 @@ end
 function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	for rowNum =0,(desiredLength-1) do
 		local r = {}
+		local rowKey = string.format("%d", rowNum)
 		for colNum =0,(fields-1) do
 			local fieldName = variables[(string.format("%d", colNum))]
 			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
-			print (string.format("row num is %d and field name is %s\n", rowNum, fieldName))
-			print (string.format("found value %s\n", value))
-			-- TODO need to shove this information back where the component editor can use it for saving
-			-- infoWindows[name]["weapontables"][title] is probably where it needs to go
-			rowKey = (string.format("%d", rowNum))
-			--print (string.format("infoWindows[%s][\"weapontables\"][%s][%s][%s] = %s", name, title, rowKey, fieldName, value))
+			print (string.format("adding %s=%s to row %d", fieldName, value, rowNum))
+			print (string.format("infoWindows[%s][\"weapontables\"][%s][%s][%s] will be %s", name, title, rowKey, fieldName, value))
 			r[fieldName] = value
+			if infoWindows[name]["weapontables"][title][rowKey] == nil then
+				print "***************** row was nil in weapontables\n"
+				infoWindows[name]["weapontables"][title][rowKey] = {}
+			end
+			infoWindows[name]["weapontables"][title][rowKey][fieldName] = value
 		end
-		infoWindows[name]["weapontables"][title][rowKey] = r
+		-- which one?
+		--infoWindows[name]["texts"][title][rowKey] = r
+		print (string.format("infoWindows[%s][\"weapontables\"][%s][%s] = <row %d data>\n", name, title, rowKey, rowNum))
+		--infoWindows[name]["info"][title][rowKey] = r
 	end
 	
 	editWeaponSlotsWin:close()

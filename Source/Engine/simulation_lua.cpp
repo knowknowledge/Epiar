@@ -1144,8 +1144,6 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		int msrp = Lua::getIntField(2,"MSRP");
 		int cargo = Lua::getIntField(2,"Cargo");
 
-		/* TODO: Extract and interpret the weapon slot table given to setInfo() by editor.lua */
-
 		Image *image = Image::Get(imageName);
 		if(image==NULL)
 		{
@@ -1153,7 +1151,68 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
+		// FEEX
+		//int wsTable = Lua::getTableField(2,"weaponSlots");
+
+		cout << "Simulation_Lua: About to try fetching the slot table..." << endl;
+
+		int wsTable;
+		lua_pushstring(L, "weaponSlots");
+		assert( lua_istable(L, 2) );
+		lua_gettable(L,2);
+		wsTable = lua_gettop(L);
+		assert( lua_istable(L, wsTable) );
+		// don't pop this table yet!
+
+		cout << "wsTable grabbed from the top of the stack is " << wsTable << endl;
+
+		/*int wsDesiredLength;
+		lua_pushstring(L, "desiredLength");
+		assert( lua_istable(L, wsTable) );
+		lua_gettable(L, wsTable);
+		wsDesiredLength = luaL_checkinteger( L, lua_gettop(L) );
+		lua_pop(L,1);*/
+
+		
+
+		int wsDesiredLength = Lua::getIntField(wsTable,"desiredLength");
+		cout << "desiredLength grabbed from the top of the stack is " << wsDesiredLength << endl;
+		vector<ws_t> weaponSlots;
+		char *rowKey = (char*)malloc(6);
+		for(short int i = 0; i < wsDesiredLength; i++){
+			snprintf(rowKey, 6, "%d", i);
+
+			//short int row = Lua::getIntField(wsTable, rowKey);
+			int row;
+			lua_pushstring(L, rowKey);
+			assert( lua_istable(L, wsTable) );
+			lua_gettable(L,wsTable);
+			row = lua_gettop(L);
+			assert( lua_istable(L, row) );
+			// don't pop this table yet either!
+
+			if(row){
+				printf("row %d is not NULL -- building a ws_t for it...\n", i);
+				ws_t s;
+				s.name = Lua::getStringField(row, "name");
+				s.mode = Lua::getStringField(row, "mode");
+				s.x = Lua::getNumField(row, "x");
+				s.y = Lua::getNumField(row, "y");
+				s.angle = Lua::getNumField(row, "angle");
+				s.motionAngle = Lua::getNumField(row, "motionAngle");
+				s.content = Lua::getStringField(row, "content");
+				s.firingGroup = Lua::getIntField(row, "firingGroup");
+
+				if(Lua::getStringField(row, "enabled") == "yes")
+					weaponSlots.push_back(s);
+			}
+			else {
+				printf("row %d is NULL\n", i);
+			}
+		}
+		free(rowKey);
+
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
 
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
