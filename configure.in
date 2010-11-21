@@ -1,5 +1,5 @@
 PACKAGE=epiar
-VERSION=0.2.0
+VERSION=0.4.2
 
 dnl Init
 AC_INIT(README)
@@ -25,6 +25,12 @@ dnl Include FreeType
 LIBS="$LIBS -lfreetype"
 dnl Include FTGL
 LIBS="$LIBS -lftgl"
+
+dnl Static path to dynamic Libraries.
+dnl LIBS="$LIBS /opt/local/lib/libfreetype.a"
+dnl LIBS="$LIBS /opt/local/lib/libftgl.a"
+dnl LIBS="$LIBS /opt/local/lib/libxml2.a"
+dnl LIBS="$LIBS /opt/local/lib/libz.a"
 
 case "$target" in *-*-linux*)
 	CFLAGS="$CFLAGS -I/usr/include/freetype2"
