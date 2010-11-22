@@ -84,3 +84,16 @@ function choose( array )
 	return array[math.random(#array)]
 end
 
+-- Shuffle a table
+-- http://rosettacode.org/wiki/Knuth_shuffle#Lua
+function table.shuffle(t)
+  local n = #t
+  while n > 1 do
+    local k = math.random(n)
+    t[n], t[k] = t[k], t[n]
+    n = n - 1
+  end
+ 
+  return t
+end
+
