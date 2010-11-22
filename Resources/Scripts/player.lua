@@ -819,7 +819,7 @@ end
 		
 		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
 		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
-		rejectButton = UI.newButton( 100, 100, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
+		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
 		--currentDescription:close() 
 		descriptionWindow:add( descriptionLable, rejectButton )
 	end

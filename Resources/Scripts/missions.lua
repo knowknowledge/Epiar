@@ -82,7 +82,7 @@ ReturnAmbassador = {
 }
 
 DestroyPirate = {
-	UID = 1,
+	UID = 2,
 	Difficulty = "MEDIUM",
 	Create = function()
 		local missionTable = {}
@@ -142,4 +142,108 @@ DestroyPirate = {
 }
 
 
+CollectArtifacts = {
+	UID = 3,
+	Difficulty = "EASY",
+	Create = function()
+		local missionTable = defaultMissionTable(
+				"Collect %d Artifacts from %s for The %s",
+				"Several important items of %s have been found by %s %s.  The %s will pay you %d credits to return them safely to %s."
+			)
+
+		-- The vocabulary of our mission madlibs
+		local allianceNames = Epiar.alliances()
+		local planetNames = Epiar.planetNames()
+		local objects = {"Sword", "Blaster", "Helm", "Amulet", "Tome", "Flag", "Statue", "History", "MacGuffin", "Crystal", "Book", "Document"}
+		local adjectives = {"Red", "Black", "Bloodless", "Steel", "Iron", "Circular", "Mistaken", "Forgotten", "Wild", "Nuclear"}
+		local events = {"Revolution", "Revolt", "Insurgency", "Tournament", "Race", "Decade", "Legend", "Treaty", "Project", "Council"}
+		local actors = {"revolutionaries", "spies", "rebels", "agitators", "freedom fighters", "terrorists", "hooligans", "mobsters", "pirates", "officials", "assassins"}
+
+		-- The rest of the Mission Table entries.
+		missionTable.EventName = "The %s %s"
+		missionTable.Actors = choose( actors )
+		missionTable.FriendAlliance = choose( allianceNames )
+		missionTable.EnemyAlliance = choose( allianceNames )
+		missionTable.NumArtifacts = math.random( 2, 6 )
+		missionTable.FinalPlanet = choose( planetNames )
+		missionTable.Adjective = choose( adjectives )
+		missionTable.Event = choose( events )
+		missionTable.Reward = 5000 + (missionTable.NumArtifacts * 2000)
+		missionTable.Objects = {}
+		missionTable.Collected = {}
+		missionTable.PlanetsWithArtifacts = {}
+
+		-- Fill in the blanks madlib style
+		missionTable.EventName = missionTable.EventName:format( missionTable.Adjective, missionTable.Event )
+		missionTable.Name = missionTable.Name:format( missionTable.NumArtifacts, missionTable.EventName, missionTable.FriendAlliance)
+		missionTable.Description = missionTable.Description:format( missionTable.EventName, missionTable.EnemyAlliance, missionTable.Actors, missionTable.FriendAlliance, missionTable.Reward, missionTable.FinalPlanet)
+
+		-- Get a random subset of the Objects and Planets
+		table.shuffle( planetNames )
+		table.shuffle( objects )
+		for i=1, missionTable.NumArtifacts do
+			table.insert( missionTable.PlanetsWithArtifacts, planetNames[i] )
+			table.insert( missionTable.Objects, objects[i] )
+			table.insert( missionTable.Collected, false )
+			local sentence = "  The %s can be found on %s."
+			sentence = sentence:format( objects[i], planetNames[i] )
+			missionTable.Description = missionTable.Description .. sentence
+		end
+
+		return missionTable
+	end,
+	Accept = function( missionTable )
+		local acceptMessage = "The artifacts from %s can be found at %s"
+		local places = missionTable.PlanetsWithArtifacts[1] .. " and " .. missionTable.PlanetsWithArtifacts[2]
+		for i=3, missionTable.NumArtifacts do
+			places = missionTable.PlanetsWithArtifacts[1] .. ", " .. places
+		end
+		acceptMessage = acceptMessage:format( missionTable.EventName, places )
+		HUD.newAlert( acceptMessage  )
+	end,
+	Reject = function( missionTable )
+		local rejectMessage = "The %s %s will get away with the artifacts."
+		rejectMessage = rejectMessage:format( missionTable.EnemyAlliance, missionTable.Actors )
+		HUD.newAlert( acceptMessage  )
+	end,
+	Update = function( missionTable )
+		local totalFound = 0
+		local x,y = PLAYER:GetPosition()
+		for i=1, missionTable.NumArtifacts do
+			if missionTable.Collected[i] == false then
+				local p = Planet.Get( missionTable.PlanetsWithArtifacts[i] )
+				local px,py = p:GetPosition()
+				if distfrom(px,py,x,y) < 50 then
+					-- This artifact has been recovered
+					-- Record this in the Description
+					local desc = "** You have recovered the %s **"
+					desc = desc:format( missionTable.Objects[i] )
+					missionTable.Description = missionTable.Description .. desc
+					-- Alert the Player
+					local message = "You have recovered the %s of %s from %s."
+					message = message:format( missionTable.Objects[i], missionTable.EventName, missionTable.PlanetsWithArtifacts[i] )
+					HUD.newAlert( message )
+					-- Mark this Object as Collected
+					missionTable.Collected[i] = true
+				end
+			else
+				totalFound = totalFound + 1
+			end
+		end
+		if totalFound == missionTable.NumArtifacts then
+			local p = Planet.Get( missionTable.FinalPlanet )
+			local px,py = p:GetPosition()
+			if distfrom(px,py,x,y) < 50 then
+				local message = "All of the Artifacts from %s have been delivered to the %s on ."
+				message = message:format( missionTable.EventName, missionTable.FriendAlliance, missionTable.FinalPlanet )
+				HUD.newAlert( message )
+				return true
+			end
+		end
+	end,
+	Success = function( missionTable )
+		addcredits(  missionTable.Reward )
+	end,
+	Failure = function( missionTable ) end,
+}
 
