@@ -52,7 +52,7 @@ Ship::Ship()
 	status.hullDamage = 0;
 	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
-	status.lastFiredAt = 0;
+	//status.lastFiredAt = 0;
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
@@ -81,11 +81,16 @@ Ship::~Ship() {
  * \return true if successful
  * \sa Model
  */
-bool Ship::SetModel( Model *model ) {
+bool Ship::SetModel( Model *model) {
 	assert( model );
 	if( model ) {
 		this->model = model;
-		
+
+		// Copy default weapon slot arrangement from model,
+		this->weaponSlots = model->GetWeaponSlots();
+		// but leave it up to Lua to decide how the default weapon
+		// slot arrangement influences the weapons onboard the ship.
+
 		SetImage( model->GetImage() );
 
 		ComputeShipStats();
@@ -329,61 +334,156 @@ FireStatus Ship::Fire( int target ) {
 		return FireNoWeapons;
 	}
 
-	// Check that we are always selecting a real weapon
-	assert( (status.selectedWeapon>=0 && status.selectedWeapon < shipWeapons.size() ) );
+	// Check that we are always selecting either the primary or the secondary firing group
+	assert( status.selectedWeapon == 0 || status.selectedWeapon == 1 );
 
-	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-	// Check that the weapon has cooled down;
-	if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt)) ) {
-		return FireNotReady;
+	bool fnr = false;
+	bool fna = false;
+	bool emptySlot = false;
+	bool fired = false;
+	bool emptyFiringGroup = true;
+
+	for(unsigned int slot = 0; slot < weaponSlots.size(); slot++){
+
+		string weapName = weaponSlots[slot].content;
+		short int slotFiringGroup = weaponSlots[slot].firingGroup;
+
+		Weapon* currentWeapon = NULL;
+		for(unsigned int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient - FIX THIS
+			if(shipWeapons[weap]->GetName() == weapName){
+				currentWeapon = shipWeapons.at(weap);
+			}
+		}
+
+		if(currentWeapon == NULL){
+			// do nothing for this slot (this may be because the weapon slot is empty)
+		}
+		else {
+			if( (unsigned int)slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
+				emptyFiringGroup = false;
+
+				// Check that the weapon has cooled down;
+				if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
+					fnr = true;
+				}
+				// Check that there is sufficient ammo
+				else if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
+					fna = true;
+				}
+				else if(emptySlot){
+					// do nothing
+				}
+				else {
+					// Calculate the offset needed to fire at the position specified for this slot in the XML file
+					Trig *trig = Trig::Instance();
+					float angle = static_cast<float>(trig->DegToRad( GetAngle()));		
+					Coordinate worldPosition  = GetWorldPosition();
+					int y_offset = (int)(weaponSlots[slot].y);
+					int x_offset = (int)(weaponSlots[slot].x);
+
+					// if mode is manual, then the x,y offsets from the XML file are to be used
+					if(weaponSlots[slot].mode == "manual"){
+						// adjust for y offset
+						worldPosition += Coordinate(
+							trig->GetCos( angle ) * y_offset,
+							-trig->GetSin( angle ) * y_offset
+						);
+
+						// adjust for x offset
+						worldPosition += Coordinate(
+							trig->GetSin(angle) * x_offset,
+							trig->GetCos(angle) * x_offset
+						);
+					}
+					// if mode is auto, use the old-style firing offset behavior
+					else if(weaponSlots[slot].mode == "auto"){
+						int offset = model->GetImage()->GetHalfHeight();
+						worldPosition += Coordinate(
+							trig->GetCos( angle ) * offset,
+							-trig->GetSin( angle ) * offset
+						);
+					}
+
+					SpriteManager *sprites = SpriteManager::Instance();
+					Sprite *targetSprite = sprites->GetSpriteByID(target);
+
+					float projectileAngle;
+					bool angleAcceptable = true;
+
+					if(weaponSlots[slot].motionAngle == 0){ // a regular fixed weapon slot
+						projectileAngle = GetAngle() + weaponSlots[slot].angle;
+					}
+					else if(targetSprite != NULL && weaponSlots[slot].motionAngle == 360){ // a turret with full rotation
+						projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
+					}
+					else if(targetSprite != NULL) { // a "swivel" slot with partial rotation
+						if(
+						    fabs( (weaponSlots[slot].angle) -
+						      (GetDirectionTowards(targetSprite->GetWorldPosition())) )
+						         < weaponSlots[slot].motionAngle/2 ||
+						    fabs( (weaponSlots[slot].angle) -
+						      (GetDirectionTowards(targetSprite->GetWorldPosition())) )
+						         > (360-weaponSlots[slot].motionAngle/2) )
+						{
+							projectileAngle = GetAngle() + GetDirectionTowards(targetSprite->GetWorldPosition());
+						}
+						else {
+							angleAcceptable = false; // out of the slot's range of motion
+						}
+					}
+					else {
+						// turret or swivel but there is no target
+						angleAcceptable = false;
+					}
+
+					if(angleAcceptable){
+
+						//Play weapon sound
+						float weapvol = OPTION(float,"options/sound/weapons");
+						if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+							currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
+						else
+							currentWeapon->sound->SetVolume( weapvol );
+						currentWeapon->sound->Play(
+							GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+
+						//Fire the weapon
+						Projectile *projectile = new Projectile(damageBooster, projectileAngle, worldPosition, GetMomentum(), currentWeapon);
+						projectile->SetOwnerID( this->GetID() );
+						projectile->SetTargetID( target );
+						sprites->Add( (Sprite*)projectile );
+
+						//reduce ammo
+						ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
+
+						//track number of ticks the last fired occured for this weapon
+						status.lastFiredAt[slot] = Timer::GetTicks();
+
+						fired = true;
+					}
+				}
+			}
+		}
 	}
-	// Check that there is sufficient ammo
-	else if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
-		return FireNoAmmo;
-	} else {
-		//Calculate the offset needed by the ship to fire infront of the ship
-		Trig *trig = Trig::Instance();
-		float angle = static_cast<float>(trig->DegToRad( GetAngle() ));		
-		Coordinate worldPosition  = GetWorldPosition();
-		int offset = model->GetImage()->GetHalfHeight();
-		worldPosition += Coordinate(trig->GetCos( angle ) * offset, -trig->GetSin( angle ) * offset);
 
-		//Play weapon sound
-		float weapvol = OPTION(float,"options/sound/weapons");
-		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-			currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
-		else
-			currentWeapon->sound->SetVolume( weapvol );
-		currentWeapon->sound->Play(
-			GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+	if(emptyFiringGroup) return FireEmptyGroup;
+	if(fired) return FireSuccess;
+	if(fna) return FireNoAmmo;
+	if(fnr) return FireNotReady;
 
-
-		//Fire the weapon
-		SpriteManager *sprites = SpriteManager::Instance();
-		Projectile *projectile = new Projectile(damageBooster, GetAngle(), worldPosition, GetMomentum(), currentWeapon);
-		projectile->SetOwnerID( this->GetID() );
-		projectile->SetTargetID( target );
-		sprites->Add( (Sprite*)projectile );
-
-		//track number of ticks the last fired occured
-		status.lastFiredAt = Timer::GetTicks();
-		//reduce ammo
-		ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
-
-		return FireSuccess;
-	}
-	
+	return FireUnknown;
 }
 
-/**\brief Adds a new weapon to the ship.
+/**\brief Adds a new weapon to the ship WITHOUT updating weaponSlots.
  * \param i Pointer to Weapon instance
  * \sa Weapon
  */
-void Ship::AddShipWeapon(Weapon *i){
-	shipWeapons.push_back(i);
+void Ship::AddShipWeapon(Weapon *w){
+	shipWeapons.push_back(w);
 
 	ComputeShipStats();
 }
+
 
 /**\brief Adds a new weapon to the ship by name.
  * \param weaponName Name of the Weapon
@@ -398,22 +498,49 @@ void Ship::AddShipWeapon(string weaponName){
 	}
 }
 
+/**\brief Adds a new weapon to the ship AND update weaponSlots.
+ * \param i Pointer to Weapon instance
+ * \sa Weapon
+ */
+void Ship::AddShipWeaponAndInstall(Weapon *w){
+	AddShipWeapon(w);
+	for(unsigned int s = 0; s < weaponSlots.size(); s++){
+		ws_t *slot = &weaponSlots[s];
+		if(slot->content == ""){
+			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
+			return;
+		}
+	}
+	printf("This line should not be reached.\n"); assert(true == false);
+}
+
+/**\brief Adds a new weapon to the ship by name AND updates weaponSlots
+ * \param weaponName Name of the Weapon
+ * \sa Weapon
+ */
+void Ship::AddShipWeaponAndInstall(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	if(weapons->GetWeapon(weaponName)){
+		AddShipWeaponAndInstall(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to add/install weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
+}
+
 /**\brief Changes the ship's weapon.
  * \return true if successful.
  */
 bool Ship::ChangeWeapon() {
-	if (shipWeapons.size() && (250 < Timer::GetTicks() - status.lastWeaponChangeAt)){
-		status.selectedWeapon = (status.selectedWeapon+1)%shipWeapons.size();
-		return true;
-	}
-	return false;
+	// alternate between primary and secondary firing groups
+	status.selectedWeapon = (status.selectedWeapon+1) % 2;
+	status.selectedWeaponName = (status.selectedWeapon == 0 ? "Primary firing group" : "Secondary firing group");
+	return true;
 }
 
 /**\brief Removes a weapon from the ship.
  * \param pos Index of the weapon
  */
 void Ship::RemoveShipWeapon(int pos){
-	cout << "Ship::RemoveWeapon(): removing weapon at pos=" << pos << endl;
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 /**\brief Removes a weapon from the ship
@@ -422,12 +549,10 @@ void Ship::RemoveShipWeapon(int pos){
 void Ship::RemoveShipWeapon(Weapon *i){
 	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
 		if(shipWeapons[pos]->GetName() == i->GetName()){
-			cout << "found weapon to remove, " << i->GetName() << ", at position " << pos << endl;
 			RemoveShipWeapon(pos);
 			return;
 		}
 	}
-	printf("Ship::RemoveShipWeapon(): did not find weapon to remove\n");
 }
 
 /**\brief Removes a weapon from the ship
@@ -441,6 +566,39 @@ void Ship::RemoveShipWeapon(string weaponName){
 		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
 }
+
+
+/**\brief Removes a weapon from the ship AND updates weaponSlots
+ * \param i Pointer to Weapon instance
+ */
+void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
+	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
+		if(shipWeapons[pos]->GetName() == w->GetName()){
+			RemoveShipWeapon(pos);
+			break;
+		}
+	}
+	for(unsigned int s = 0; s < weaponSlots.size(); s++){
+		ws_t *slot = &weaponSlots[s];
+		if(slot->content == w->GetName()){
+			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
+			return;
+		}
+	}
+}
+
+/**\brief Removes a weapon from the ship AND updates weaponSlots
+ * \param weaponName Name of the Weapon
+ */
+void Ship::DeinstallShipWeaponAndRemove(string weaponName){
+	Weapons *weapons = Weapons::Instance();
+	if(weapons->GetWeapon(weaponName)){
+		DeinstallShipWeaponAndRemove(weapons->GetWeapon(weaponName));
+	} else {
+		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
+	}
+}
+
 
 
 
@@ -480,7 +638,6 @@ void Ship::RemoveOutfit(Outfit *i){
 		else
 			done_removing = true;
 	}
-	cout << "Ship::RemoveOutfit() was not able to remove the outfit!" << endl;
 	this->SetOutfits(&new_list);
 }
 
@@ -608,22 +765,15 @@ float Ship::GetShieldIntegrityPct() {
 	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
-/**\brief Gets the current weapon.
- * \return Pointer to Weapon object.
+/* Note:
+ *
+ * There used to be functions called GetCurrentWeapon() and GetCurrentAmmo(),
+ * but these functions don't make much sense anymore now that firing groups
+ * are used instead of individual weapons. A GetCurrentFiringGroup() function
+ * might be a good thing, though.
+ *
  */
-Weapon* Ship::GetCurrentWeapon() {
-	if(shipWeapons.size()==0) return (Weapon*)NULL;
-	return shipWeapons.at(status.selectedWeapon);
-}
 
-/**\brief Gets the current ammo left.
- * \return Integer count of ammo
- */
-int Ship::GetCurrentAmmo() {
-	if(shipWeapons.size()==0) return 0;
-	Weapon* currentWeapon = shipWeapons.at(status.selectedWeapon);
-	return ammo[currentWeapon->GetAmmoType()];
-}
 
 /**\brief Gets the ammo of a certain type.
  * \return Integer count of ammo
@@ -645,20 +795,6 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	}
 	return weaponPack;
 }
-
-/**\brief Gets a std::map of the current outfit system.
- * \return std:map with pointer to weapon as the key, ammo quantity as the data
- */
-map<Outfit*,int> Ship::GetOutfits_map() {
-	map<Outfit*,int> outfitPack;
-	list<Outfit*>::iterator item = outfits.begin();
-	while (item != outfits.end()){
-		outfitPack.insert( make_pair(*item,-1) );
-		item++;
-	}
-	return outfitPack;
-}
-
 
 
 /**\brief Computes the Ship Statistics based on equiped Outfit.
@@ -685,7 +821,53 @@ void Ship::ComputeShipStats() {
 	}
 }
 
+/**\brief The total number of weapon slots on this ship
+ */
+int Ship::GetWeaponSlotCount() {
+	return this->weaponSlots.size();
+}
 
+/**\brief The name of weapon slot i
+ */
+string Ship::GetWeaponSlotName(int i) {
+	return ((ws_t)(this->weaponSlots[i])).name;
+}
 
+/**\brief The status of weapon slot i. By the way, the "status" naming of this function has nothing to do with statusbars.
+ */
+string Ship::GetWeaponSlotStatus(int i) {
+	return ((ws_t)(this->weaponSlots[i])).content;
+}
 
+/**\brief Set the status of weapon slot i
+ */
+void Ship::SetWeaponSlotStatus(int i, string s) {
+	this->weaponSlots[i].content = s;
+}
+
+/**\brief The firing group of weapon slot i
+ */
+short int Ship::GetWeaponSlotFG(int i) {
+	return ((ws_t)(this->weaponSlots[i])).firingGroup;
+}
+
+/**\brief Set the firing group of weapon slot i
+ */
+void Ship::SetWeaponSlotFG(int i, short int fg) {
+	this->weaponSlots[i].firingGroup = fg;
+}
+
+/**\brief returns a map<string,string> of with slotname/content pairs for use in Lua
+ */
+map<string,string> Ship::GetWeaponSlotContents(){
+
+	map<string,string> weaps;
+
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
+		if(weaponSlots[i].content != "")
+			weaps.insert( make_pair(weaponSlots[i].name, weaponSlots[i].content) );
+	}
+
+	return weaps;
+}
 

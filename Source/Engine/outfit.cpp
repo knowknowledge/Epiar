@@ -14,8 +14,8 @@
  * \brief A piece of Ship Equipment.
  * \details There are two basic types of Outfit objects:
  *          -# Generic Outfit objects that only affect Ship stats (Tougher armor).
- *          -# Specific Ship equipments that require their own classes. (Engines, Weapons, Models)
- * \sa Engine, Model, Weapon
+ *          -# Specific Ship equipments that require their own classes. (Engines, Outfits, Models)
+ * \sa Engine, Model, Outfit
  */
 
 /** Default Constructor
@@ -31,6 +31,7 @@ Outfit::Outfit()
 	,surfaceArea(0)
 	,hullStrength(0)
 	,shieldStrength(0)
+	,weaponSlots(0)
 {
 }
 
@@ -46,7 +47,8 @@ Outfit::Outfit(
 	            int _cargoSpace,
 	            int _surfaceArea,
 	            int _hullStrength,
-	            int _shieldStrength
+	            int _shieldStrength,
+	            int _weaponSlots
 	            )
 	:msrp(_msrp)
 	,picture(_picture)
@@ -58,6 +60,7 @@ Outfit::Outfit(
 	,surfaceArea(_surfaceArea)
 	,hullStrength(_hullStrength)
 	,shieldStrength(_shieldStrength)
+	,weaponSlots(_weaponSlots)
 {
 }
 
@@ -75,6 +78,7 @@ Outfit& Outfit::operator= (const Outfit& other)
 	surfaceArea = other.surfaceArea;
 	hullStrength = other.hullStrength;
 	shieldStrength = other.shieldStrength;
+	weaponSlots = other.weaponSlots;
 	return *this;
 }
 
@@ -93,6 +97,7 @@ Outfit Outfit::operator+ (const Outfit& other)
 	total.surfaceArea = surfaceArea + other.surfaceArea;
 	total.hullStrength = hullStrength + other.hullStrength;
 	total.shieldStrength = shieldStrength + other.shieldStrength;
+	total.weaponSlots = weaponSlots;
 	return total;
 }
 
@@ -110,6 +115,7 @@ Outfit& Outfit::operator+= (const Outfit& other)
 	surfaceArea += other.surfaceArea;
 	hullStrength += other.hullStrength;
 	shieldStrength += other.shieldStrength;
+	//weaponSlots += other.weaponSlots;
 	return *this;
 }
 
@@ -176,6 +182,10 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetShieldStrength( (short)atoi( value.c_str() ));
 	}
 
+	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
+		ConfigureWeaponSlots(doc, attr);
+	}
+
 	return true;
 }
 
@@ -209,6 +219,42 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 
 	snprintf(buff, sizeof(buff), "%d", this->GetShieldStrength() );
 	xmlNewChild(section, NULL, BAD_CAST "shield", BAD_CAST buff );
+
+	if(this->GetWeaponSlots().size() > 0){
+		xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
+		for(unsigned int w=0;w<weaponSlots.size();w++){
+			ws_t *slot = &weaponSlots[w];
+
+			xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
+
+			xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+
+			xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
+
+			xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
+			snprintf(buff, sizeof(buff), "%.1f", slot->x);
+			xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST buff);
+			snprintf(buff, sizeof(buff), "%.1f", slot->y);
+			xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST buff);
+
+			xmlAddChild(slotPtr, coordPtr);
+
+			snprintf(buff, sizeof(buff), "%.1f", slot->angle);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST buff);
+			snprintf(buff, sizeof(buff), "%.1f", slot->motionAngle);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST buff);
+
+			xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+
+			snprintf(buff, sizeof(buff), "%d", slot->firingGroup);
+			xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST buff);
+
+			free(buff);
+
+			xmlAddChild(wsPtr, slotPtr);
+		}
+		xmlAddChild(section, wsPtr);
+	}
 
 	return section;
 }
@@ -290,6 +336,137 @@ void Outfit::_dbg_PrintInfo( void ) {
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
  */
+
+
+/**\brief Configure the ship's weapon slots based on the XML node weaponSlots.
+ * These routines are in Outfit rather than Model for flexibility reasons.
+ */
+bool Outfit::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
+
+	xmlNodePtr slotPtr;
+	string value;
+
+	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
+        for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
+		ws_t newSlot;
+
+		xmlNodePtr attr;
+
+		if( (attr = FirstChildNamed(slotPtr,"name")) ){
+			value = NodeToString(doc,attr);
+			newSlot.name = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"coord")) ){
+			value = NodeToString(doc,attr);
+			// go deeper...
+
+			xmlNodePtr coordAttr;
+			if( (coordAttr = FirstChildNamed(attr,"mode")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.mode = value;
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"x")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.x = atof(value.c_str());
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"y")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.y = atof(value.c_str());
+			} else return false;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"angle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.angle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"motionAngle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.motionAngle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			newSlot.content = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			newSlot.firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
+		//WSDebug(newSlot);
+
+		weaponSlots.push_back(newSlot);
+
+		//Outfit::ConfigureWeaponSlots( doc, node );
+	}
+
+	WSDebug(weaponSlots);
+
+
+        return true;
+}
+
+/**\brief Configure the ship's weapon slots based on a list passed in (probably from the constructor)
+ */
+bool Outfit::ConfigureWeaponSlots( vector<ws_t>& slots ) {
+        this->weaponSlots = slots;
+        return true;
+}
+
+/**\brief Configure the ship's weapon slots using default values.
+ */
+bool Outfit::ConfigureWeaponSlots() {
+        ws_t wsFront1;
+        ws_t wsFront2;
+
+        wsFront1.name = "front 1";
+        wsFront1.x = -0.3;
+	wsFront1.y = 2.0;
+        wsFront1.angle = 0.0;
+        wsFront1.motionAngle = 0.0;
+	wsFront1.content = "";
+	wsFront1.firingGroup = 0;
+
+        wsFront2.name = "front 2";
+        wsFront1.x = 0.3;
+	wsFront1.y = 2.0;
+        wsFront2.angle = 0.0;
+        wsFront2.motionAngle = 0.0;
+	wsFront2.firingGroup = 1;
+
+	vector<ws_t> newSlots;
+        newSlots.push_back(wsFront1);
+        newSlots.push_back(wsFront2);
+	this->weaponSlots = newSlots;
+
+        return true;
+}
+
+/**\brief Return the total number of weapon slots of any kind that this Outfit (probably a Model) has.
+ */
+int Outfit::GetWeaponSlotCount(){
+	return this->weaponSlots.size();
+}
+
+void Outfit::WSDebug(ws_t slot){
+	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+}
+
+void Outfit::WSDebug(vector<ws_t>& slots){
+	cout << "WSD  Ship model: " << this->GetName() << endl;
+	for(unsigned int i = 0; i < slots.size(); i++){
+		WSDebug(slots[i]);
+	}
+}
+
 
 /**\class Outfits
  * \brief Collection of Outfit objects

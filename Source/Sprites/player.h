@@ -45,6 +45,8 @@ class Player : public Ship , public Component {
 			return( DRAW_ORDER_PLAYER );
 		}
 
+		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
+
 	private:
 		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed

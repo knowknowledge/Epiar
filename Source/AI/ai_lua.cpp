@@ -58,7 +58,9 @@ void AI_Lua::RegisterAI(lua_State *L){
 		
 		// Outfit Changes
 		{"AddWeapon", &AI_Lua::ShipAddWeapon},
+		{"AddWeaponAndInstall", &AI_Lua::ShipAddWeaponAndInstall},
 		{"RemoveWeapon", &AI_Lua::ShipRemoveWeapon},
+		{"DeinstallWeaponAndRemove", &AI_Lua::ShipDeinstallWeaponAndRemove},
 		{"AddAmmo", &AI_Lua::ShipAddAmmo},
 		{"SetModel", &AI_Lua::ShipSetModel},
 		{"SetEngine", &AI_Lua::ShipSetEngine},
@@ -81,8 +83,6 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &AI_Lua::ShipGetMomentumSpeed},
 		{"directionTowards", &AI_Lua::ShipGetDirectionTowards},
-		{"GetCurrentWeapon", &AI_Lua::ShipGetCurrentWeapon},
-		{"GetCurrentAmmo", &AI_Lua::ShipGetCurrentAmmo},
 		{"SetFriendly", &AI_Lua::ShipSetFriendly},
 		{"GetFriendly", &AI_Lua::ShipGetFriendly},
 
@@ -105,6 +105,13 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetHullDamage", &AI_Lua::ShipSetHullDamage},
 		{"GetShieldDamage", &AI_Lua::ShipGetShieldDamage},
 		{"SetShieldDamage", &AI_Lua::ShipSetShieldDamage},
+		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
+		{"GetWeaponSlotName", &AI_Lua::ShipGetWeaponSlotName},
+		{"GetWeaponSlotStatus", &AI_Lua::ShipGetWeaponSlotStatus},
+		{"SetWeaponSlotStatus", &AI_Lua::ShipSetWeaponSlotStatus},
+		{"GetWeaponSlotContents", &AI_Lua::ShipGetWeaponSlotContents}, // builds a Lua table; no setter for this one
+		{"GetWeaponSlotFG", &AI_Lua::ShipGetWeaponSlotFG},
+		{"SetWeaponSlotFG", &AI_Lua::ShipSetWeaponSlotFG},
 
 		{NULL, NULL}
 	};
@@ -141,6 +148,16 @@ AI* AI_Lua::checkShip(lua_State *L, int index){
 	}
 	*/
 	return (AI*)s;
+}
+
+/**\brief Validates Outfit in Lua.
+ */
+Outfit* AI_Lua::checkOutfit(lua_State *L, int index){
+	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_OUTFIT);
+	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_OUTFIT' expected");
+	Sprite* s;
+	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	return (Outfit*)s;
 }
 
 /**\brief Spawns a new AI ship for Lua.
@@ -324,7 +341,7 @@ int AI_Lua::ShipRemove(lua_State* L){
 	return 0;
 }
 
-/**\brief Lua callable function to add weapon to ship.
+/**\brief Lua callable function to add weapon to ship (but see function below)
  * \sa Ship::addShipWeapon(string)
  */
 int AI_Lua::ShipAddWeapon(lua_State* L){
@@ -334,6 +351,21 @@ int AI_Lua::ShipAddWeapon(lua_State* L){
 		if(ai==NULL) return 0;
 		string weaponName = luaL_checkstring (L, 2);
 		(ai)->AddShipWeapon(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
+	}
+	return 0;
+}	
+/**\brief Lua callable function to add weapon to ship and update the weapon slots accordingly (PREFERRED)
+ * \sa Ship::addShipWeaponAndInstall(string)
+ */
+int AI_Lua::ShipAddWeaponAndInstall(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string weaponName = luaL_checkstring (L, 2);
+		(ai)->AddShipWeaponAndInstall(weaponName);
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
 	}
@@ -355,6 +387,22 @@ int AI_Lua::ShipRemoveWeapon(lua_State* L){
 	}
 	return 0;
 }
+
+/**\brief Lua callable function to remove weapon from ship and update the weapon slots accordingly (PREFERRED)
+ * \sa Ship::addShipWeaponAndInstall(string)
+ */
+int AI_Lua::ShipDeinstallWeaponAndRemove(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string weaponName = luaL_checkstring (L, 2);
+		(ai)->DeinstallShipWeaponAndRemove(weaponName);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
+	}
+	return 0;
+}	
 
 /**\brief Lua callable function to change a ship's weapon.
  * \sa Ship::ChangeWeapon()
@@ -925,38 +973,39 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 	return 1;
 }
 
-/**\brief Lua callable function to get the current weapon.
- * \sa Ship::getCurrentWeapon()
- */
-int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+///**\brief Lua callable function to get the current weapon.
+// * \sa Ship::getCurrentWeapon()
+// */
+//int AI_Lua::ShipGetCurrentWeapon(lua_State* L){
+//	int n = lua_gettop(L);  // Number of arguments
+//	if (n != 1)
+//		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+//
+//	AI* ai = checkShip(L,1);
+//	if(ai==NULL){
+//		return 0;
+//	}
+//	Weapon* cur = (ai)->GetCurrentWeapon();
+//	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
+//	return 1;
+//}
+//
+///**\brief Lua callable function to get the current ammo.
+// * \sa Ship::getCurrentAmmo()
+// */
+//int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
+//	int n = lua_gettop(L);  // Number of arguments
+//	if (n != 1)
+//		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+//
+//	AI* ai = checkShip(L,1);
+//	if(ai==NULL){
+//		return 0;
+//	}
+//	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
+//	return 1;
+//}
 
-	AI* ai = checkShip(L,1);
-	if(ai==NULL){
-		return 0;
-	}
-	Weapon* cur = (ai)->GetCurrentWeapon();
-	lua_pushfstring(L, cur?cur->GetName().c_str():"" );
-	return 1;
-}
-
-/**\brief Lua callable function to get the current ammo.
- * \sa Ship::getCurrentAmmo()
- */
-int AI_Lua::ShipGetCurrentAmmo(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		luaL_error(L, "Got %d arguments expected 1 (self)", n);
-
-	AI* ai = checkShip(L,1);
-	if(ai==NULL){
-		return 0;
-	}
-	lua_pushnumber(L, (ai)->GetCurrentAmmo() );
-	return 1;
-}
 
 /**\brief Lua callable function to get the ship's model name.
  * \sa Ship::GetModelName()
@@ -1314,3 +1363,163 @@ int AI_Lua::ShipSetHullDamage(lua_State* L){
 	return 0;
 }
 
+/**\brief Lua callable function to get the model of a ship
+ */
+/*int AI_Lua::ShipGetModel(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		Ship* s = checkShip(L,1);
+		if(s==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (s)->GetModel() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}*/
+
+/**\brief Lua callable function to get the number of weapon slots of any kind on an outfit (probably a ship model)
+ */
+int AI_Lua::ShipGetWeaponSlotCount(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 1) {
+		Ship* s = checkShip(L,1);
+		if(s==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) (s)->GetWeaponSlotCount() );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+
+/**\brief Lua callable function to get name of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotName(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushstring(L, (s)->GetWeaponSlotName(slotNum).c_str() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get status of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotStatus(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushstring(L, (s)->GetWeaponSlotStatus(slotNum).c_str() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+/**\brief Lua callable function to set status of a weapon slot
+ */
+int AI_Lua::ShipSetWeaponSlotStatus(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 3) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkinteger (L, 2);
+		string status = luaL_checkstring (L, 3);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		s->SetWeaponSlotStatus(slotNum, status);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, slot, status)", n);
+	}
+	return 1;
+}
+/**\brief Lua callable function to set firing group of a weapon slot
+ */
+int AI_Lua::ShipSetWeaponSlotFG(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 3) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		short int fg = luaL_checkint (L, 3);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		s->SetWeaponSlotFG(slotNum, fg);
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (ship, slot, fg)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get firing group of a weapon slot
+ */
+int AI_Lua::ShipGetWeaponSlotFG(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if (n == 2) {
+		Ship* s = checkShip(L,1);
+		int slotNum = luaL_checkint (L, 2);
+		if(s==NULL){
+			lua_pushstring(L, "");
+			return 1;
+		}
+		lua_pushinteger(L, (s)->GetWeaponSlotFG(slotNum) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
+	}
+	return 1;
+}
+
+/**\brief Lua callable function to get the ship's weapons as defined by the weapon slots
+ * You don't normally want to use this function unless you are changing ships.
+ */
+int AI_Lua::ShipGetWeaponSlotContents(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	Ship* s = checkShip(L,1);
+	if(s==NULL){
+		return 0;
+	}
+
+	map<string,string> weaps = s->GetWeaponSlotContents();
+	map<string,string>::iterator it = weaps.begin();
+
+	lua_createtable(L, weaps.size(), 0);
+	int newTable = lua_gettop(L);
+	while( it!=weaps.end() ) {
+		lua_pushfstring(L, ((*it).first).c_str() );
+		lua_pushfstring(L, ((*it).second).c_str() );
+		lua_settable(L,newTable);
+		++it;
+	}
+	return 1;
+}

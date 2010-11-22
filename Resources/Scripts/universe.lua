@@ -1,4 +1,4 @@
--- Use this script for a solar system
+
 
 -- This is the Introduction Message that greets new players.
 -- Notice that we use spaces here since Label can't parse tabs.
@@ -99,7 +99,9 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	s = Ship.new(name,X,Y,model,engine,plans[math.random(#plans)],alliance)
 
 	s:SetRadarColor(255,0,0)
-	attachRandomWeapon(s,weapons)
+
+	-- give every AI the standard weapons of their ship class
+	attachStandardWeapons(s,weapons)
 
 	local creditsMax = 5500
 	-- curving probability with lower numbers being more likely
@@ -109,14 +111,22 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	return s
 end
 
---- Fixate random weapon
-function attachRandomWeapon(cur_ship,weapons)
-	if weapons==nil or #weapons==0 then return end
-	--Randomly assign a weapon to everyone
-	i = math.random(#weapons)
-	cur_ship:AddWeapon( weapons[i] )
-	cur_ship:AddAmmo( weapons[i],100 )
+function attachStandardWeapons(cur_ship,weapons)
+
+	-- first clear the weapon list
+	for weap,ammo in pairs( cur_ship:GetWeapons() ) do
+		cur_ship:RemoveWeapon(weap)
+	end
+
+	-- then populate the weapon list from the standard slot contents
+	for slot,weap in pairs( cur_ship:GetWeaponSlotContents() ) do
+		-- note: we are still using AddWeapon() here instead of AddWeaponAndInstall()
+		-- because this weapon list is actually being pulled from the slots; no need
+		-- to edit the slot contents.
+		cur_ship:AddWeapon(weap)
+	end
 end
+
 
 --- List of options
 function options()
@@ -388,7 +398,24 @@ function buyShip(model)
 		if currentModel ~= model then
 			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
 			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
-			PLAYER:SetModel(model)
+
+			-- clear these based on the old slot list
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+				PLAYER:RemoveWeapon(weap)
+				HUD.closeStatus(weap..":");
+			end
+
+			PLAYER:SetModel(model) -- slot list gets updated by SetModel()
+			PLAYER:ChangeWeapon()
+
+			-- update weapon list and HUD to match the new slot list
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+				PLAYER:AddWeapon(weap)
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+
+				PLAYER:ChangeWeapon()
+			end
+
 			PLAYER:Repair(10000)
 		else
 			HUD.newAlert("You already have a "..model)
@@ -416,7 +443,6 @@ function buyOutfit(outfit)
 	print("Debiting your account...")
 
 	PLAYER:SetCredits( player_credits - price )
-	HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 
 	print("Installing Outfit...")
 	
@@ -425,23 +451,28 @@ function buyOutfit(outfit)
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 
 		local weapCount = 0;
-		for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
-
-		-- the 2 here should be changed to some per-ship value (e.g., maybe warships should hold 5)
-		if weapCount >= 2 then
-			print("You cannot hold any more weapons")
-			HUD.newAlert("You can't hold any more weapons.")
-			return
+		--for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			if weap ~= "" then
+				weapCount = weapCount + 1
+			end
 		end
 
-		if weaponsAndAmmo[outfit]==nil then
-			PLAYER:AddWeapon(outfit)
-			HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
-		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
 		if weaponInfo["Ammo Consumption"] ~= 0 then
 			PLAYER:AddAmmo(outfit,100)
+			HUD.newAlert( (string.format("Added 100 ammo for %s",outfit ) ) )
 		end
+
+		local wsCount = PLAYER:GetWeaponSlotCount();
+		if weapCount >= wsCount then
+			HUD.newAlert( "You can't hold any more weapons" )
+			return
+		end
+
+		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+		PLAYER:AddWeaponAndInstall(outfit)
+		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -466,17 +497,19 @@ function sellOutfit(outfit)
 		print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
-			PLAYER:RemoveWeapon(outfit)
-			HUD.closeStatusMatching(outfit..":");
+			PLAYER:DeinstallWeaponAndRemove(outfit)
+			HUD.closeStatus(outfit..":");
 		else
 			HUD.newAlert("You don't have a "..outfit.."!")
 			return
 		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
 		if weaponInfo["Ammo Consumption"] ~= 0 then
-			-- I'm thinking it should remove 100 ammo with each sale, and RemoveAmmo()
+			-- Do something about selling a weapon that has ammo. I'm thinking
+			-- it should remove 100 ammo with each sale, and RemoveAmmo()
 			-- should set ammo to zero if it would have gone negative.
 			--PLAYER:RemoveAmmo(outfit,100)
+			-- Or, better yet, ammunition should be bought and sold separately.
 		end
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
@@ -490,7 +523,6 @@ function sellOutfit(outfit)
 		local found = false
 
 		for n,po in pairs(playerOutfits) do
-			print (string.format ("does %s equal %s?", po, outfit ) )
 			if po == outfit then
 				if found == false then PLAYER:RemoveOutfit(outfit) end
 				found = true
@@ -509,8 +541,6 @@ function sellOutfit(outfit)
 
 	local price = Epiar.getMSRP(outfit)
 	local adjustedPrice = math.floor( price * 0.65) -- only get back 65% of MSRP
-
-	print ( string.format("price=%d adjustedPrice=%d\n", price, adjustedPrice) )
 
 	local player_credits = PLAYER:GetCredits()
 
@@ -738,6 +768,7 @@ function landingDialog(id)
 	storeframe:add(shipyard, outfitting, trade, missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
+	landingWin:add(UI.newButton( 110,height-40,100,30,"Weapon Config","weaponConfigDialog()" ))
 	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
 end
 
@@ -788,3 +819,126 @@ function ui_demo()
 	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
 end
 
+-- interactive weapon slot configuration
+function weaponConfigDialog()
+	if wcDialog ~= nil then return end
+
+	local slotCount = PLAYER:GetWeaponSlotCount()
+
+	local height = 60 + (40*slotCount)
+	--if height < 350 then height = 350 end -- accommodate the instruction text
+
+	local width = 500
+
+	local leftFrame = UI.newFrame( 10, 60, 240, height )
+	local rightFrame = UI.newFrame( 250, 60, 240, height )
+
+	local slotPlural = ""
+	if slotCount ~= 1 then slotPlural = "s" end
+	local shipLabel = UI.newLabel(20, 30, (string.format("Your %s has %d weapon slot%s...", PLAYER:GetModelName(), slotCount, slotPlural)), 0)
+	local slotsLabel = UI.newLabel(50, 10, "Weapon slot:", 0)
+	local fgLabel = UI.newLabel(150, 10, "Firing group:", 0)
+
+	--local weapLabel = UI.newLabel(25, 5, "Weapons available:", 0)
+
+	local wcInstructions = [[
+
+	To move a weapon from one
+	slot to another, click on
+	the first slot, then click
+	on the one you want to swap
+	it with.
+
+	There are two firing groups,
+	Primary and Secondary. To
+	switch the firing group of a
+	slot, click on the firing
+	group button.
+
+	Although you may have your
+	own preferences, it is
+	recommended that, if you have
+	a weapon which requires ammo
+	(e.g. missile launcher), you
+	keep it in a firing group
+	separate from your main group.
+
+	Grouping missiles into a salvo
+	is a possibility if you have
+	more than one launcher.
+	]]
+	wcInstructions = string.gsub(wcInstructions, "\t", "")
+
+	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
+
+	wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
+
+	wcDialog:add(shipLabel)
+	wcDialog:add(leftFrame, rightFrame);
+	wcDialog:add(UI.newButton( 200, height+30+30, 100, 30, "Finish", "weaponConfigFinish()"))
+
+	leftFrame:add(slotsLabel, fgLabel);
+	rightFrame:add(instructionsLabel);
+
+	-- when assignWeaponToSlot() is called, if this is nil, set it;
+	-- if it's set, swap the slot contents, update the buttons,
+	-- then set it back to nil.
+	pickedSlot = nil
+
+	slotButtons = { }
+
+	for slot =0,(slotCount-1) do
+		local slotName = PLAYER:GetWeaponSlotName(slot)
+		local slotStatus = PLAYER:GetWeaponSlotStatus(slot)
+		local slotFG = PLAYER:GetWeaponSlotFG(slot)
+		local slotFGName = "Primary"
+		if slotFG == 1 then slotFGName = "Secondary" end
+
+		local slotLabel = UI.newLabel( 15, 45+(40*slot), (string.format("%s:", slotName)), 0)
+		slotButtons[slot] = UI.newButton( 50, 45+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
+		local slotFGButton = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
+		leftFrame:add(slotLabel,slotButtons[slot],slotFGButton);
+	end
+
+	local w = 0
+
+	--for name,ammo in pairs(PLAYER:GetWeapons()) do
+	--	local weapLabel = UI.newLabel( 25, 35+(40*w)+20, (string.format("%s", name)))
+	--	rightFrame:add(weapLabel);
+	--	w = w + 1
+	--end
+
+end
+
+function assignWeaponToSlot(slot)
+	if(pickedSlot == nil) then
+		pickedSlot = slot
+		--slotButtons[pickedSlot]:setLabel("This causes a UI problem. See ticket #113.")
+	else
+		-- swap contents of pickedSlot and slot
+		local s = PLAYER:GetWeaponSlotStatus(slot)
+		PLAYER:SetWeaponSlotStatus(slot, PLAYER:GetWeaponSlotStatus(pickedSlot) )
+		PLAYER:SetWeaponSlotStatus(pickedSlot, s)
+
+		-- FIXME super crude window update trick
+		weaponConfigFinish()
+		weaponConfigDialog()
+	end
+end
+
+function alternateFiringGroup(slot)
+	local fg = PLAYER:GetWeaponSlotFG(slot)
+	fg = (fg+1)%2
+	PLAYER:SetWeaponSlotFG(slot, fg)
+
+	-- FIXME super crude window update trick
+	weaponConfigFinish()
+	weaponConfigDialog()
+end
+
+function weaponConfigFinish()
+	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
+	wcDialog:close()
+	slotButtons = nil
+	wcDialog = nil
+end

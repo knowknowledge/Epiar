@@ -14,6 +14,7 @@
 
 #define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship
 #define EPIAR_SHIP "Ship" ///< The Lua tag used to identify the Library for a Ship.
+#define EPIAR_OUTFIT "Outfit" ///< The Lua tag used to identify the Library for an Outfit
 
 class AI_Lua{
 	public:
@@ -21,6 +22,7 @@ class AI_Lua{
 		static void RegisterAI(lua_State *L);
 		//static void pushShip(lua_State *L,int id);
 		static AI *checkShip(lua_State *L, int index);
+		static Outfit *checkOutfit(lua_State *L, int index);
 		static int newShip(lua_State *L);
 
 		// Actions
@@ -33,6 +35,8 @@ class AI_Lua{
 		static int ShipExplode(lua_State* L);
 		static int ShipRemove(lua_State* L);
 		static int ShipAddWeapon(lua_State* L);
+		static int ShipAddWeaponAndInstall(lua_State* L);
+		static int ShipDeinstallWeaponAndRemove (lua_State* L);
 		static int ShipRemoveWeapon(lua_State* L);
 		static int ShipChangeWeapon(lua_State* L);
 		static int ShipAddAmmo(lua_State* L);
@@ -66,8 +70,8 @@ class AI_Lua{
 		static int ShipGetMomentumAngle(lua_State* L);
 		static int ShipGetMomentumSpeed(lua_State* L);
 		static int ShipGetDirectionTowards(lua_State* L); // Accepts either Angles or Coordinates
-		static int ShipGetCurrentWeapon(lua_State* L);
-		static int ShipGetCurrentAmmo(lua_State* L);
+		//static int ShipGetCurrentWeapon(lua_State* L);
+		//static int ShipGetCurrentAmmo(lua_State* L);
 		static int ShipGetWeapons(lua_State* L);
 		static int ShipGetState(lua_State* L);
 		static int ShipGetCredits(lua_State* L);
@@ -79,6 +83,15 @@ class AI_Lua{
 		static int ShipSetShieldDamage(lua_State* L);
 		static int ShipGetHullDamage(lua_State* L);
 		static int ShipSetHullDamage(lua_State* L);
+
+		// Weapon slot related functions
+		static int ShipGetWeaponSlotCount(lua_State* L);
+		static int ShipGetWeaponSlotName(lua_State* L);
+		static int ShipGetWeaponSlotStatus(lua_State* L);
+		static int ShipSetWeaponSlotStatus(lua_State* L);
+		static int ShipGetWeaponSlotFG(lua_State* L);
+		static int ShipSetWeaponSlotFG(lua_State* L);
+		static int ShipGetWeaponSlotContents(lua_State* L);
 
 		// Ship Properties
 		static int ShipGetModelName(lua_State* L);

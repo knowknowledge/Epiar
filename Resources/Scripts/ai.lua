@@ -98,7 +98,7 @@ Hunter = {
 		end
 
 
-		if dist<300 then
+		if dist<400 then
 			return "Killing"
 		end
 		if dist>1000 then
@@ -119,7 +119,12 @@ Hunter = {
 		end
 
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
-		cur_ship:Fire( AIData[id].target )
+		local fireResult = cur_ship:Fire( AIData[id].target )
+
+		-- if this firing group isn't doing anything, switch
+		if fireResult == 3 or fireResult == 4 then -- FireNoAmmo or FireEmptyGroup
+			cur_ship:ChangeWeapon()
+		end
 		
 		if dist>200 then
 			if cur_ship:directionTowards(tx,ty) == 0 then

@@ -170,6 +170,13 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		}
 	}
 
+	if(this->ConfigureWeaponSlots(doc, node)){
+		// great - it worked
+	}
+	else {
+		cout << "FromXMLNode(): weapon slot XML helper failed for loading player!\n";
+	}
+
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
 		lastLoadTime = NodeToInt(doc,attr);
 	} else {
@@ -180,6 +187,62 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	return true;
 }
+
+/**\brief Configure the ship's weapon slots, first copying the default slots
+  * from the model, then updating it according to the saved player XML.
+ */
+bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
+
+	xmlNodePtr slotPtr;
+	string value;
+
+	// Grab the default slots from the player's ship model, then update it below.
+	// This makes a copy, not a pointer or reference, so we don't have to worry
+	// that it might alter the slots in the model.
+	this->weaponSlots = this->GetModel()->GetWeaponSlots();
+
+	for( slotPtr = FirstChildNamed(node,"weapSlot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"weapSlot") ){
+		ws_t *existingSlot = NULL;
+
+		xmlNodePtr attr;
+
+		string slotName;
+		if( (attr = FirstChildNamed(slotPtr,"name")) ){
+			value = NodeToString(doc,attr);
+			slotName = value;
+		} else return false;
+
+		for(unsigned int s = 0; s < weaponSlots.size(); s++){	// Being able to use a hash table lookup here to avoid turning
+			if(weaponSlots[s].name == slotName){		// O(n) into O(n^2) might be nice conceptually, but in reality 
+				existingSlot = &weaponSlots[s];		// the efficiency difference here would not be noticeable. For
+				break;					// a similar but more important issue to fix, see Ship::Fire().
+			}
+		}
+		if(!existingSlot) return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			existingSlot->content = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			existingSlot->firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
+	}
+
+	// no need to push any ws_t back into the player's weaponSlots; slots were edited in place
+
+	return true;
+}
+
+
 
 /**\brief Save this Player to an xml node
  */
@@ -204,13 +267,14 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
 
-	// Ammo
-	map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
-	map<Weapon*,int>::iterator it = weapons.begin();
-	while( it!=weapons.end() ) {
-		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
-		++it;
+	// this part is becoming less important and may be removed at some point
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
+		char *w = (char*)weaponSlots[i].content.c_str();
+		if(strlen(w) > 0)
+			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST w);
 	}
+
+
 	for(int a=0;a<max_ammo;a++){
 		if(GetAmmo(AmmoType(a)) != 0 ){ // Don't save empty ammo Nodes
 			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
@@ -221,6 +285,21 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 			xmlAddChild(section, ammo);
 		}
 	}
+
+	// save info about whichever items players are able to change in their slot configuration (content and firing group)
+	char *ntos = (char*)malloc(256);
+	for(unsigned int w=0; w < weaponSlots.size(); w++){
+		ws_t *slot = &weaponSlots[w];
+		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "weapSlot");
+
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+
+		snprintf(ntos, 256, "%d", slot->firingGroup);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
+		xmlAddChild(section, slotPtr); // saved player data is less structured than model data, so just add it here
+	}
+	free(ntos);
 
 	// Cargo
 	map<Commodity*,unsigned int> cargo = this->GetCargo();

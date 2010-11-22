@@ -813,6 +813,54 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	Lua::setField("Cargo", model->GetCargoSpace());
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
+	/* May want to move this to a helper function (but in which file?) */
+	vector<ws_t> slots = model->GetWeaponSlots();
+	lua_pushstring(L, "weaponSlots");
+	lua_newtable(L);
+
+	int table = lua_gettop(L);
+
+	const short int numFields = 9;
+
+	Lua::setField("length", (int)slots.size());
+	Lua::setField("fields", (int)numFields);
+
+	char *rowKey = (char*)malloc(6);
+
+	for(short int i = 0; i < slots.size(); i++){
+		ws_t s = slots[i];
+
+		snprintf(rowKey, 6, "%d", i);
+		lua_pushstring(L, rowKey);
+
+		lua_createtable(L, 0, numFields); // create a slot table
+
+		int rowTable = lua_gettop(L);
+
+		Lua::setField("enabled", "yes");
+		Lua::setField("name", s.name.c_str() );
+		Lua::setField("mode", s.mode.c_str() );
+		Lua::setField("x", (float)s.x);
+		Lua::setField("y", (float)s.y);
+		Lua::setField("angle", (float)s.angle);
+		Lua::setField("motionAngle", (float)s.motionAngle);
+		Lua::setField("content", s.content.c_str() );
+		Lua::setField("firingGroup", s.firingGroup);
+
+		// keep in mind that the above field data has been popped off of the Lua state at this point
+
+		assert( rowTable == lua_gettop(L) );
+
+		lua_settable(L, -3);
+
+		assert( table == lua_gettop(L) );
+
+	}
+	
+	free(rowKey);
+
+	lua_settable(L, -3);
+
 	return 1;
 }
 
@@ -1104,7 +1152,53 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo);
+		cout << "Simulation_Lua: About to try fetching the slot table..." << endl;
+
+		int wsTable;
+		lua_pushstring(L, "weaponSlots");
+		assert( lua_istable(L, 2) );
+		lua_gettable(L,2);
+		wsTable = lua_gettop(L);
+		assert( lua_istable(L, wsTable) );
+		// don't pop this table yet!
+
+		int wsDesiredLength = Lua::getIntField(wsTable,"desiredLength");
+		vector<ws_t> weaponSlots;
+		char *rowKey = (char*)malloc(6);
+		for(short int i = 0; i < wsDesiredLength; i++){
+			snprintf(rowKey, 6, "%d", i);
+
+			//short int row = Lua::getIntField(wsTable, rowKey);
+			int row;
+			lua_pushstring(L, rowKey);
+			assert( lua_istable(L, wsTable) );
+			lua_gettable(L,wsTable);
+			row = lua_gettop(L);
+			// don't pop this table yet either!
+
+			if( lua_istable(L, row) ){
+				ws_t s;
+				s.name = Lua::getStringField(row, "name");
+				s.mode = Lua::getStringField(row, "mode");
+				s.x = Lua::getNumField(row, "x");
+				s.y = Lua::getNumField(row, "y");
+				s.angle = Lua::getNumField(row, "angle");
+				s.motionAngle = Lua::getNumField(row, "motionAngle");
+				s.content = Lua::getStringField(row, "content");
+				s.firingGroup = Lua::getIntField(row, "firingGroup");
+
+				if(Lua::getStringField(row, "enabled") == "yes")
+					weaponSlots.push_back(s);
+			}
+			// else: it's an empty row
+			lua_pop(L,1);
+		}
+		free(rowKey);
+
+		lua_pop(L,1);
+
+		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
+
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
 	} else if(kind == "Planet"){

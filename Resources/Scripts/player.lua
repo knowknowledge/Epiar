@@ -34,6 +34,13 @@ playerCommands = {
 
 function playerStart()
 	PLAYER = Epiar.player()
+
+	-- give the player the standard weapons for this ship model
+	for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+		PLAYER:AddWeapon(weap)
+		-- don't worry about updating the HUD; createHUD() will handle it
+	end
+
 	createHUD()
 	registerCommands(playerCommands)
 end
@@ -223,6 +230,9 @@ function playerFire()
 	elseif result == 2 then -- FireNotReady
 	elseif result == 3 then -- FireNoAmmo
 		HUD.newAlert("Out of Ammo!")
+	elseif result == 4 then -- FireEmptyGroup
+		HUD.newAlert("No weapons assigned to this firing group - switching...")
+		PLAYER:ChangeWeapon()
 	else
 	end
 end
@@ -253,7 +263,7 @@ function boardShip()
 		local targetMass = targettedShip:GetMass()
 
 		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
-		local succ_max = 15 ^ ( targetMass / PLAYER:GetMass() )
+		local succ_max = 4 ^ ( targetMass / PLAYER:GetMass() )
 		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
 		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
 
@@ -380,7 +390,7 @@ function doHailInsult()
 
 	if r == 1 then
 		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
-		planet:SetForbidden(1)
+		planet:SetForbidden(1) -- FIXME need to store this kind of thing some kind of structure that gets saved when the game is closed
 	elseif r == 2 then
 		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
 		addcredits( 100 )
@@ -398,7 +408,7 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	local r = getRand( os.time() + targettedShip:GetID(), 25 )
+	local r = getRand( os.time() + targettedShip:GetID(), 8 )
 
 	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
@@ -406,7 +416,7 @@ function doHailBFM()
 		-- 'friendly' means will never arbitrary select player as a target unless provoked
 		targettedShip:SetFriendly(1)
 	else
-		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
+		hailReplyLabel.setLabel(hailReplyLabel, "I don't think so.")
 		didBFM = 1
 	end
 end
@@ -459,8 +469,6 @@ function doCapture(succ_max, destruct_max)
 	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
 	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
 
-	--print ( string.format("smax=%d dmax=%d rsucc=%d rdestruct=%d", succ_max, destruct_max, r_succ, r_selfdestruct) )
-
 	if r_selfdestruct == 1 then
 		HUD.newAlert(string.format("Your boarding party set off the %s's self-destruct mechanism.", targettedShip:GetModelName() ) )
 		endBoarding()
@@ -471,22 +479,30 @@ function doCapture(succ_max, destruct_max)
 		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
 
 		local oldPlayerModel = PLAYER:GetModelName() 
-		--local oldPlayerX, oldPlayerY = PLAYER:GetPosition() 
 		local oldPlayerHD = PLAYER:GetHullDamage() 
 		local oldPlayerSD = PLAYER:GetShieldDamage() 
 
-		--print (string.format ("opm=%s opp=%f,%f ophd=%d opsd=%d\n", oldPlayerModel, oldPlayerX, oldPlayerY, oldPlayerHD, oldPlayerSD) )
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			PLAYER:RemoveWeapon(weap)
+			HUD.closeStatus(weap..":");
+		end
 
 		PLAYER:SetModel( targettedShip:GetModelName() )
-		--PLAYER:SetPosition( targettedShip:GetPosition() ) -- would like to swap positions too, but this is not critical
 		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
 		PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
 		PLAYER:Repair( 10 )
 
 		targettedShip:SetModel( oldPlayerModel ) 
-		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
 		targettedShip:SetHullDamage( oldPlayerHD ) 
 		targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+		-- SetModel() has already determined the slot contents for us, so use them
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			PLAYER:AddWeapon(weap)
+			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+		end
+
+		PLAYER:ChangeWeapon()
 
 		endBoarding()
 
@@ -542,7 +558,6 @@ end
 
 ---Adds to the player's credits
 function addcredits( credits )
-	--print("adding " .. credits)
 	playerCredits=PLAYER:GetCredits( )
 	PLAYER:SetCredits( credits + playerCredits )
 end
@@ -574,9 +589,11 @@ function createHUD()
 	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
 	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
 	myweapons = {}
-	local weaponsAndAmmo = PLAYER:GetWeapons()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('%s')",weapon))
+	--local weaponsAndAmmo = PLAYER:GetWeapons()
+	local weapSlotContents = PLAYER:GetWeaponSlotContents()
+	--for weapon,ammo in pairs(weaponsAndAmmo) do
+	for name,weap in pairs(weapSlotContents) do
+		HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 	end
 
 	-- Target Bars
@@ -592,11 +609,13 @@ function playerAmmo(weaponName)
 		return ammo
 	end
 	if weaponsAndAmmo[weaponName] ~= nil then
-			ammo = string.format("%d",weaponsAndAmmo[weaponName])
+		ammo = string.format("%d",weaponsAndAmmo[weaponName])
 	end
-	if weaponName == PLAYER:GetCurrentWeapon() then
-		ammo = ammo .. " ARMED"
-	end
+
+	-- with weapon groups, this convention no longer makes sense
+	--if weaponName == PLAYER:GetCurrentWeapon() then -- FIXME need to make this also check which SLOT is being used
+	--	ammo = ammo .. " ARMED"
+	--end
 	return ammo
 end
 
@@ -699,6 +718,7 @@ function createNewPlayer()
 		return
 	end
 	Epiar.newPlayer(name)
+
 	loadingWin:close()
 	playerStart()
 	intro()

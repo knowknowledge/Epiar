@@ -90,6 +90,7 @@ class Simulation_Lua{
 		static void pushSprite(lua_State *L,Sprite* sprite);
 		static void pushComponents(lua_State *L, list<Component*> *components);
 	private:
+		typedef struct Outfit::ws ws_t;
 		
 };
 

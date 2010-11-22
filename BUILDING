@@ -15,7 +15,7 @@ i. Generic Unix Instructions
 	./configure
 	make
 
-	The Epiar binary will then appear in the root of the source tree. You can launch it by typing ./Epiar.
+	The epiar binary will then appear in the root of the source tree. You can launch it by typing ./epiar.
 
 ia. Mac OS X Notes
 ------------------

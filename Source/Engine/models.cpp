@@ -63,8 +63,9 @@ Model& Model::operator=(const Model& other) {
  * \param _msrp Price
  * \param _cargoSpace Tons of cargo space
  */
-Model::Model( string _name, Image* _image, float _mass,
-		short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
+
+Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
+		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
 	image(_image),
 	thrustOffset(_thrustOffset)
 {
@@ -76,6 +77,25 @@ Model::Model( string _name, Image* _image, float _mass,
 	SetCargoSpace(_cargoSpace);
 	SetHullStrength(_hullStrength);
 	SetShieldStrength(_shieldStrength);
+	Outfit::ConfigureWeaponSlots();
+	//((Component*)this)->SetName(_name);
+}
+
+Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
+		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace,
+		vector<ws_t>& _weaponSlots) :
+	image(_image),
+	thrustOffset(_thrustOffset)
+{
+	SetName(_name);
+	SetMass(_mass);
+	SetRotationsPerSecond(_rotPerSecond);
+	SetMaxSpeed(_maxSpeed);
+	SetMSRP(_msrp);
+	SetCargoSpace(_cargoSpace);
+	SetHullStrength(_hullStrength);
+	SetShieldStrength(_shieldStrength);
+	Outfit::ConfigureWeaponSlots(_weaponSlots);
 	//((Component*)this)->SetName(_name);
 }
 
@@ -131,6 +151,15 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetShieldStrength( (short)atoi( value.c_str() ));
 	} else return false;
 
+	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
+		// pass the weaponSlots XML node into a handler function
+		Outfit::ConfigureWeaponSlots( doc, attr );
+	} else {
+		cout << "Model::FromXMLNode(): Did not find weapon slot configuration - assuming defaults." << endl;
+		// with no parameters, it sets default values
+		Outfit::ConfigureWeaponSlots();
+	}
+
 	return true;
 }
 
@@ -172,8 +201,35 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );
 	xmlNewChild(section, NULL, BAD_CAST "cargoSpace", BAD_CAST buff );
 
+	char *ntos = (char*)malloc(256);
+	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
+	for(unsigned int w=0;w<weaponSlots.size();w++){
+		ws_t *slot = &weaponSlots[w];
+
+		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+		xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
+		xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
+		snprintf(ntos, 256, "%.1f", slot->x);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->y);
+		xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST ntos);
+		xmlAddChild(slotPtr, coordPtr);
+		snprintf(ntos, 256, "%.1f", slot->angle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST ntos);
+		snprintf(ntos, 256, "%.1f", slot->motionAngle);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST ntos);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+		snprintf(ntos, 256, "%d", slot->firingGroup);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
+		xmlAddChild(wsPtr, slotPtr);
+	}
+	xmlAddChild(section, wsPtr);
+	free(ntos);
+
 	return section;
 }
+
 
 /**\fn Model::GetImage()
  *  \brief Retrieves a pointer to the Image
