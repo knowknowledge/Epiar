@@ -115,15 +115,12 @@ function attachStandardWeapons(cur_ship,weapons)
 
 	-- first clear the weapon list
 	for weap,ammo in pairs( cur_ship:GetWeapons() ) do
-		cur_ship:RemoveWeapon(weap)
+		cur_ship:RemoveFromWeaponList(weap)
 	end
 
 	-- then populate the weapon list from the standard slot contents
 	for slot,weap in pairs( cur_ship:GetWeaponSlotContents() ) do
-		-- note: we are still using AddWeapon() here instead of AddWeaponAndInstall()
-		-- because this weapon list is actually being pulled from the slots; no need
-		-- to edit the slot contents.
-		cur_ship:AddWeapon(weap)
+		cur_ship:AddToWeaponList(weap)
 	end
 end
 
@@ -401,7 +398,7 @@ function buyShip(model)
 
 			-- clear these based on the old slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-				PLAYER:RemoveWeapon(weap)
+				PLAYER:RemoveFromWeaponList(weap)
 				HUD.closeStatus(weap..":");
 			end
 
@@ -410,7 +407,7 @@ function buyShip(model)
 
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-				PLAYER:AddWeapon(weap)
+				PLAYER:AddToWeaponList(weap)
 				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 
 				PLAYER:ChangeWeapon()
@@ -471,7 +468,7 @@ function buyOutfit(outfit)
 		end
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
-		PLAYER:AddWeaponAndInstall(outfit)
+		PLAYER:AddWeapon(outfit)
 		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
@@ -497,7 +494,7 @@ function sellOutfit(outfit)
 		print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
-			PLAYER:DeinstallWeaponAndRemove(outfit)
+			PLAYER:RemoveWeapon(outfit)
 			HUD.closeStatus(outfit..":");
 		else
 			HUD.newAlert("You don't have a "..outfit.."!")

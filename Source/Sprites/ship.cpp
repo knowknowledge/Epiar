@@ -348,12 +348,12 @@ FireStatus Ship::Fire( int target ) {
 		string weapName = weaponSlots[slot].content;
 		short int slotFiringGroup = weaponSlots[slot].firingGroup;
 
-		Weapon* currentWeapon = NULL;
-		for(unsigned int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient - FIX THIS
-			if(shipWeapons[weap]->GetName() == weapName){
-				currentWeapon = shipWeapons.at(weap);
-			}
-		}
+		Weapon* currentWeapon = Weapons::Instance()->GetWeapon(weapName);
+		//for(unsigned int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient - FIX THIS
+		//	if(shipWeapons[weap]->GetName() == weapName){
+		//		currentWeapon = shipWeapons.at(weap);
+		//	}
+		//}
 
 		if(currentWeapon == NULL){
 			// do nothing for this slot (this may be because the weapon slot is empty)
@@ -478,7 +478,7 @@ FireStatus Ship::Fire( int target ) {
  * \param i Pointer to Weapon instance
  * \sa Weapon
  */
-void Ship::AddShipWeapon(Weapon *w){
+void Ship::AddToShipWeaponList(Weapon *w){
 	shipWeapons.push_back(w);
 
 	ComputeShipStats();
@@ -489,10 +489,10 @@ void Ship::AddShipWeapon(Weapon *w){
  * \param weaponName Name of the Weapon
  * \sa Weapon
  */
-void Ship::AddShipWeapon(string weaponName){
+void Ship::AddToShipWeaponList(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	if(weapons->GetWeapon(weaponName)){
-		AddShipWeapon(weapons->GetWeapon(weaponName));
+		AddToShipWeaponList(weapons->GetWeapon(weaponName));
 	} else {
 		LogMsg(INFO, "Failed to add weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
@@ -502,29 +502,38 @@ void Ship::AddShipWeapon(string weaponName){
  * \param i Pointer to Weapon instance
  * \sa Weapon
  */
-void Ship::AddShipWeaponAndInstall(Weapon *w){
-	AddShipWeapon(w);
+int Ship::AddShipWeapon(Weapon *w){
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
 		ws_t *slot = &weaponSlots[s];
 		if(slot->content == ""){
 			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
-			return;
+			AddToShipWeaponList(w);
+			return 1;
 		}
 	}
-	printf("This line should not be reached.\n"); assert(true == false);
+
+	printf("Somebody really wanted to shove a weapon onto this ship. Overwriting zeroth weapon.\n");
+	RemoveFromShipWeaponList(weaponSlots[0].content);
+	weaponSlots[0].content = w->GetName();
+	AddToShipWeaponList(w);
+	//assert(true == false);
+	return 1;
 }
 
 /**\brief Adds a new weapon to the ship by name AND updates weaponSlots
  * \param weaponName Name of the Weapon
  * \sa Weapon
  */
-void Ship::AddShipWeaponAndInstall(string weaponName){
+int Ship::AddShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	if(weapons->GetWeapon(weaponName)){
-		AddShipWeaponAndInstall(weapons->GetWeapon(weaponName));
+		if(AddShipWeapon(weapons->GetWeapon(weaponName)))
+			return 1;
 	} else {
 		LogMsg(INFO, "Failed to add/install weapon '%s', it doesn't exist.", weaponName.c_str());
+		return 0;
 	}
+	return 0;
 }
 
 /**\brief Changes the ship's weapon.
@@ -540,16 +549,16 @@ bool Ship::ChangeWeapon() {
 /**\brief Removes a weapon from the ship.
  * \param pos Index of the weapon
  */
-void Ship::RemoveShipWeapon(int pos){
+void Ship::RemoveFromShipWeaponList(int pos){
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
 /**\brief Removes a weapon from the ship
  * \param i Pointer to Weapon instance
  */
-void Ship::RemoveShipWeapon(Weapon *i){
+void Ship::RemoveFromShipWeaponList(Weapon *i){
 	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
 		if(shipWeapons[pos]->GetName() == i->GetName()){
-			RemoveShipWeapon(pos);
+			RemoveFromShipWeaponList(pos);
 			return;
 		}
 	}
@@ -558,10 +567,10 @@ void Ship::RemoveShipWeapon(Weapon *i){
 /**\brief Removes a weapon from the ship
  * \param weaponName Name of the Weapon
  */
-void Ship::RemoveShipWeapon(string weaponName){
+void Ship::RemoveFromShipWeaponList(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	if(weapons->GetWeapon(weaponName)){
-		RemoveShipWeapon(weapons->GetWeapon(weaponName));
+		RemoveFromShipWeaponList(weapons->GetWeapon(weaponName));
 	} else {
 		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
@@ -571,10 +580,10 @@ void Ship::RemoveShipWeapon(string weaponName){
 /**\brief Removes a weapon from the ship AND updates weaponSlots
  * \param i Pointer to Weapon instance
  */
-void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
+void Ship::RemoveShipWeapon(Weapon *w){
 	for(unsigned int pos = 0; pos < shipWeapons.size(); pos++){
 		if(shipWeapons[pos]->GetName() == w->GetName()){
-			RemoveShipWeapon(pos);
+			RemoveFromShipWeaponList(pos);
 			break;
 		}
 	}
@@ -590,10 +599,10 @@ void Ship::DeinstallShipWeaponAndRemove(Weapon *w){
 /**\brief Removes a weapon from the ship AND updates weaponSlots
  * \param weaponName Name of the Weapon
  */
-void Ship::DeinstallShipWeaponAndRemove(string weaponName){
+void Ship::RemoveShipWeapon(string weaponName){
 	Weapons *weapons = Weapons::Instance();
 	if(weapons->GetWeapon(weaponName)){
-		DeinstallShipWeaponAndRemove(weapons->GetWeapon(weaponName));
+		RemoveShipWeapon(weapons->GetWeapon(weaponName));
 	} else {
 		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
 	}

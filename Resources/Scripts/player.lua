@@ -37,7 +37,8 @@ function playerStart()
 
 	-- give the player the standard weapons for this ship model
 	for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-		PLAYER:AddWeapon(weap)
+		print ("giving the player a "..weap)
+		PLAYER:AddToWeaponList(weap)
 		-- don't worry about updating the HUD; createHUD() will handle it
 	end
 
@@ -483,7 +484,7 @@ function doCapture(succ_max, destruct_max)
 		local oldPlayerSD = PLAYER:GetShieldDamage() 
 
 		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-			PLAYER:RemoveWeapon(weap)
+			PLAYER:RemoveFromWeaponList(weap)
 			HUD.closeStatus(weap..":");
 		end
 
@@ -498,7 +499,7 @@ function doCapture(succ_max, destruct_max)
 
 		-- SetModel() has already determined the slot contents for us, so use them
 		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-			PLAYER:AddWeapon(weap)
+			PLAYER:AddToWeaponList(weap)
 			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 		end
 
