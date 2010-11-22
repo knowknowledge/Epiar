@@ -313,7 +313,7 @@ function hailPlanet()
 	Epiar.pause()
 
 	-- show the dialog
-	hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
+	hailDialog = UI.newWindow(100, 50, 400, 150, "Communication channel")
 	hailReplyLabel = UI.newLabel(50, 50, "")
 
 	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
@@ -328,6 +328,11 @@ end
 ---Hail target ship
 function hailShip()
 	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+
+	if PLAYER:GetName() == nil then
+		HUD.newAlert("You can't hail a ship when you're dead!")
+		return
+	end
 
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
@@ -344,21 +349,102 @@ function hailShip()
 		HUD.newAlert("Hailing ship...")
 		Epiar.pause()
 
+		local aiMachDescs = {
+			["Trading"]="I'm moving some goods.",
+			["Orbiting"]="Oh, I'm just orbiting here.",
+			["Hunting"]="If you must know, I'm pursuing a target.",
+			["Killing"]="I'm shooting at someone right now!",
+			["Docking"]="I'm docking here.",
+			["TooClose"]="I'm orbiting, but I'm too close!",
+			["TooFar"]="I'm orbiting, but I need to get closer!",
+			["Travelling"]="I'm on my way to the next destination."
+		}
+
+		hailResponses = { ["Greetings"]="Hello there.",
+				  ["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
+				  ["What's the nearest port?"]="Sorry, I'm not sure about that.",
+				  ["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
+				  ["Do you know who I am?"]=string.format("Well, your identification reads '%s'.", PLAYER:GetName()),
+				  ["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
+				  ["Your ship looks like junk."]="--" }
+
+		if Epiar.nearestPlanet(targettedShip, 4096) ~= nil then
+			hailResponses["What's the nearest port?"] = string.format("I guess that would be %s",
+				Epiar.nearestPlanet(targettedShip, 4096):GetName())
+		end
+
+		local aiState, aiMach = targettedShip:GetState()
+		if aiMachDescs[aiMach] ~= nil then
+			hailResponses["What are you up to?"] = aiMachDescs[aiMach]
+		end
+
+		hailOption1 = "Greetings"
+		hailOption2 = "What's the nearest port?"
+
 		-- show the dialog
-		hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
-		hailReplyLabel = UI.newLabel(50, 50, "")
+		hailDialog = UI.newWindow(200, 300, 550, 135, "Communication channel")
 
-		hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
-		hailDialog:add( hailReplyLabel ) 
+		hailDialog:add( UI.newLabel(30, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
+		hailReplyLabel = UI.newLabel(30, 45, "")
 
-		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
-		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM()" ) )
-		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+		hailDialog:add( UI.newButton(50, 75, 50, 20, "Say:", "doHailSay(hailOption1)") )
+		hailDialog:add( UI.newButton(250, 75, 50, 20, "Say:", "doHailSay(hailOption2)" ) )
+		hailDialog:add( UI.newButton(400, 75, 100, 20, "close channel", "doHailEnd()" ) )
+
+		hailOption1Label = UI.newLabel(50, 95, hailOption1)
+		hailOption2Label = UI.newLabel(250, 95, hailOption2)
+		--hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+
+		hailDialog:add( hailReplyLabel, hailOption1Label, hailOption2Label ) 
 
 	else
 		HUD.newAlert("No reply.")
 	end
 end
+
+function doHailSay(said)
+	if hailDialog == nil then return end
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
+
+	print ("said "..said)
+
+	if said == "Your ship looks like junk." then
+		-- when an AI is in "hostile" mode, it will not abandon its target
+		AIData[ HUD.getTarget() ].target = PLAYER:GetID()
+		AIData[ HUD.getTarget() ].hostile = 1
+		HUD.newAlert( (string.format("%s: We'll see about that!", targettedSprite:GetModelName() ) ) )
+		doHailEnd()
+	elseif said == "Goodbye" then
+		HUD.newAlert (string.format("%s: Goodbye, %s.", targettedSprite:GetModelName(), PLAYER:GetName() ) ) 
+		doHailEnd()
+	end
+
+	local reply = hailResponses[said]
+
+	hailReplyLabel.setLabel(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
+	
+	hailResponses[said] = nil
+
+	hailOption1 = nil
+	hailOption2 = nil
+
+	hailResponses[said] = nil
+
+	for k,v in pairs(hailResponses) do
+		if v ~= nil then
+			if hailOption1 == nil then hailOption1 = k 
+			elseif hailOption2 == nil then hailOption2 = k end
+		end
+	end
+	if hailOption1 == nil then hailOption1 = "Goodbye" end
+	if hailOption2 == nil then hailOption2 = "Goodbye" end
+	
+	hailOption1Label.setLabel(hailOption1Label,hailOption1)
+	hailOption2Label.setLabel(hailOption2Label,hailOption2)
+
+end
+	
 
 function doHailGreet()
 	if hailDialog == nil then return end

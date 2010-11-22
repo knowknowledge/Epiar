@@ -76,6 +76,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetID", &AI_Lua::ShipGetID},
 		{"GetMass", &AI_Lua::ShipGetMass},
 		{"GetName", &AI_Lua::ShipGetName},
+		{"SetName", &AI_Lua::ShipSetName},
 		{"GetAlliance", &AI_Lua::ShipGetAlliance},
 		{"GetType", &AI_Lua::ShipGetType},
 		{"GetAngle", &AI_Lua::ShipGetAngle},
@@ -805,6 +806,21 @@ int AI_Lua::ShipGetName(lua_State* L){
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 1;
+}
+
+/**\brief Lua callable function to set the ship's name
+ */
+int AI_Lua::ShipSetName(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		string newName = luaL_checkstring (L, 2);
+		(ai)->SetName( newName );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, newName)", n);
+	}
+	return 0;
 }
 
 /**\brief Lua callable function to get the ship's ID
