@@ -748,7 +748,7 @@ function landingDialog(id)
 
 	-- Employment
 	missions = UI.newTab("Employment")
-	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate"}
+	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	for i = 1,4 do
@@ -759,7 +759,7 @@ function landingDialog(id)
 			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
 			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
 			)
-		yoff = yoff + 80
+		yoff = yoff + 100
 	end
 
 	storeframe:add(shipyard, outfitting, trade, missions)

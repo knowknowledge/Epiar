@@ -27,6 +27,14 @@ int Sprite::sprite_ids = 1;
  *          Sprite is removed, so a Sprite object may or may not be valid from
  *          one point to the next.
  *
+ *          Sprites are drawn based on their Draw Order and their id.  This
+ *          means that all Planets are drawn below all ships, which are drawn
+ *          below all Effects.  The Draw Order should also be used to detect
+ *          the kind of Sprite given just a Sprite pointer.
+ * 
+ *          Sprites share Image objects to save on memory usage.
+ *
+ * \TODO Move function implementations to the .cpp file.
  * \warn NEVER STORE SPRITE POINTERS (unless you are the SpriteManager).
  * \sa SpriteManager
  */

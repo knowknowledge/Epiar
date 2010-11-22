@@ -10,8 +10,21 @@
 #include "Utilities/components.h"
 #include "Engine/models.h"
 
-/**\class Models
- * \brief Handles ship models. */
+/** \class Model
+ *  \brief Common ship attributes shared between a style of ship.
+ *  \details A Model is like the blueprint specification for a kind of ship.
+ *           The Model describes the key attributes of a ship: what it looks
+ *           like, how much it can store, how fast it can manuever, etc.
+ *
+ *           Notice though that most of the important attributes are not
+ *           defined in this class but are defined as a part of the Outfit
+ *           class.  This is because a ship can improve it's base statistics by
+ *           installing a better Engine, better armor etc.  The Model defines
+ *           that baseline.
+ *
+ *  \see Outfit
+ */
+
 
 /**\brief Creates an empty Model object.
  */

@@ -47,4 +47,6 @@ class File {
 		string validName;		/** Name of the file referenced (exists).*/
 };
 
+bool IsBigEndian();
+
 #endif // __H_XML__

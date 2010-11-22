@@ -15,8 +15,31 @@
 
 #define ANI_VERSION 1
 
-/**\class Ani
- * \brief Animations */
+/** \class Ani
+ *  \brief An animation data object
+ *  \details The Ani class is a package of Images allocated adjacent to one
+ *  another.  The Ani also knows how long each frame should last (0 to 255 ms).
+ *  A single Ani object is meant to be shared between multiple Animation
+ *  objects.  The Ani object stores the Image frames, and the Animation object
+ *  knows what frame it is currently on.  This implementation split is done to
+ *  make sharing the Animation Resource possible between many different
+ *  instances.
+ *  
+ *  The .ani filetype is Epiar specific.
+ *
+ *  ANI_VERSION 1:
+ *
+ * 	- One byte of delay time
+ *
+ *  - One byte of number of frames
+ *
+ *  - Multiple Images concatenated together
+ *  
+ *  The external python script "ani.py" can be used to extract, modify, and create .ani files.
+ *
+ *  \warning Since this file format is developed specifically for Epiar it is more fragile than other file formats.  For example, it makes endianess assumptions that require the bytes be swapped before it can be loaded on Big Endian machines.
+ *  \see Animation
+ */
 
 /**\brief Gets the resource object.
  * \param filename string containing the animation
@@ -96,6 +119,12 @@ bool Ani::Load( string& filename ) {
 
 		file.Read( sizeof(int), (char *) &fs );
 
+		// Big Endian Machines need to swap the bytes here.
+		if( IsBigEndian() ) {
+			LogMsg(ERR, "Swapping Bytes for Endianness");
+			fs = SDL_SwapLE32(fs);
+		}
+
 		pos = file.Tell();
 
 		// On OS X 10.6 with SDL_image 1.2.8, the load from fp is broken, so we load it into a buffer ourselves and SDL_image
@@ -121,6 +150,17 @@ bool Ani::Load( string& filename ) {
 	return( true );
 }
 
+/** \brief Get the Image at a specific Frame
+ * 	\param[in] frameNum
+ * 	\returns Image pointer;
+ */
+Image* Ani::GetFrame(int frameNum) {
+	assert(frames);
+	assert(frameNum >= 0);
+	assert(frameNum < numFrames);
+	return &(frames[frameNum]);
+}
+
 /**\var Ani::frames
  *  \brief Frames of the animation as Image objects
  */
@@ -137,8 +177,15 @@ bool Ani::Load( string& filename ) {
  *  \brief Height of Ani
  */
 
-/**\class Animation
- * \brief Animations implementation. */
+/** \class Animation
+ *  \brief Animations implementation.
+ *  \details The Animation class is used for each instantiation of an
+ *  animation.  Many Animations can share the same Ani object while each having
+ *  a different timestamp.
+ *  \note The Animation uses "real" clocktime, so they will continue to play
+ *  while the game is paused.
+ *  \see Ani, Effect
+ */
 
 /**\brief Empty constructor.
  */
@@ -165,15 +212,16 @@ Animation::Animation( string filename ) {
  * Note: if looping is turned on, the animation will always return true.
  */
 bool Animation::Update() {
+	
 	Image *frame = NULL;
 	bool finished = false;
 
 	if( startTime ) {
-		fnum = (SDL_GetTicks() - startTime) / ani->delay;
+		fnum = (SDL_GetTicks() - startTime) / ani->GetDelay();
 
-		if( fnum > ani->numFrames - 1 ) {
-			fnum = TO_INT(ani->numFrames * (1.0f-loopPercent)); // Step back a few frames.
-			startTime = SDL_GetTicks() - ani->delay*fnum; // Pretend that we started fnum frames ago
+		if( fnum > ani->GetNumFrames() - 1 ) {
+			fnum = TO_INT(ani->GetNumFrames() * (1.0f-loopPercent)); // Step back a few frames.
+			startTime = SDL_GetTicks() - ani->GetDelay()*fnum; // Pretend that we started fnum frames ago
 			if( loopPercent <= 0.0f ) {
 				finished = true;
 			}
@@ -181,7 +229,7 @@ bool Animation::Update() {
 
 	} else {
 		startTime = SDL_GetTicks();
-		frame = &(ani->frames)[0];
+		frame = ani->GetFrame(0);
 	}
 	return finished;
 }
@@ -189,7 +237,7 @@ bool Animation::Update() {
 /**\brief Draws the animation at given coordinate.
  */
 void Animation::Draw( int x, int y, float ang ) {
-	Image* frame = &(ani->frames)[fnum];
+	Image* frame = ani->GetFrame( fnum );
 	frame->DrawCentered( x, y, ang );
 }
 

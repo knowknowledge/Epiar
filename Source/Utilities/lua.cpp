@@ -412,6 +412,17 @@ int Lua::ConvertFromXML( lua_State *L, xmlDocPtr doc, xmlNodePtr node )
 	} else if( type == "string"){
 		string value = NodeToString( doc, node );
 		lua_pushstring(L, value.c_str());
+	} else if( type == "boolean"){
+		string value = NodeToString( doc, node );
+		if (value == "true") {
+			lua_pushboolean(L, 1);
+		} else if (value == "false") {
+			lua_pushboolean(L, 0);
+		} else {
+			LogMsg(WARN, "Unknown value '%s' for type '%s'", value.c_str(), type.c_str());
+			assert(0);
+		}
+
 	} else if( type == "table"){
 		int tableIndex;
 		lua_newtable(L);

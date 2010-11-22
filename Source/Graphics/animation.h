@@ -19,11 +19,18 @@ class Ani: public Resource {
 		Ani( string& filename );
 		bool Load( string& filename );
 		static Ani* Get(string filename);
+
+		Image* GetFrame(int frameNum);
+		int GetNumFrames() { return numFrames; }
+		int GetDelay() { return delay; }
+		int GetWidth() { return w; }
+		int GetHeight() { return h; }
+
+	private:
 		Image *frames;
 		int numFrames;
 		Uint32 delay;
 		int w, h;
-	private:
 };
 
 class Animation {
@@ -35,8 +42,8 @@ class Animation {
 		void SetLoopPercent( float loopPercent );
 		float GetLoopPercent( void ) { return loopPercent; };
 		void Reset( void );
-		int GetHalfWidth( void ) { return ani->w / 2; };
-		int GetHalfHeight( void ) { return ani->h / 2; };
+		int GetHalfWidth( void ) { return ani->GetWidth() / 2; };
+		int GetHalfHeight( void ) { return ani->GetHeight() / 2; };
 
 	private:
 		Ani *ani;
