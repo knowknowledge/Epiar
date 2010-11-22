@@ -95,11 +95,10 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	assert(pos<=4);
 }
 
-//---------------experimental code from Dido------
 /**\brief Assignment operator for class StatusBar.
  * \return Pointer to StatusBar
  */
-StatusBar& StatusBar::operator=(StatusBar& object){
+StatusBar& StatusBar::operator=( StatusBar& object ){
 	strcpy( title, object.title );
 	strcpy( name, object.name );
 
@@ -108,8 +107,6 @@ StatusBar& StatusBar::operator=(StatusBar& object){
 
 	return * this;
 }
-//---------------experimental code from Dido------END----
-
 
 void StatusBar::print ()
 {

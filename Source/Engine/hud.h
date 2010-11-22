@@ -48,6 +48,7 @@ class AlertMessage {
 class StatusBar {
 	public:
 		StatusBar(string _title, int _width, QuadPosition _pos, string _updater);
+		StatusBar& operator=( StatusBar& object );
 		void Update();
 		void Draw(int x, int y);
 
@@ -60,11 +61,7 @@ class StatusBar {
 		QuadPosition GetPosition(){ return pos; }
 
 		void print ();
-
-		//---------------experimental code from Dido------
-		StatusBar& operator=(StatusBar & object);
-		//---------------experimental code from Dido------END----
-
+				
 	protected:
 		char title[40];
 		const int width;
