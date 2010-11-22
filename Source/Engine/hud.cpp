@@ -851,7 +851,10 @@ void Radar::Draw( void ) {
 		if( radarSize >= 1 ) {
 			Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 		} else {
-			Video::DrawPoint( blip, sprite->GetRadarColor() );
+			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
+				Video::DrawCircle( blip, 1, 2, Color::Get(0xff, 0xff, 0xff));
+			else
+				Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}
 	}
 	delete spriteList;
