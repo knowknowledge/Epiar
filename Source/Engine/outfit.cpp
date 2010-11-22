@@ -461,7 +461,7 @@ void Outfit::WSDebug(ws_t slot){
 }
 
 void Outfit::WSDebug(vector<ws_t>& slots){
-	cout << "WSD  Ship model: " << this->GetName() << endl;
+	//cout << "WSD  Ship model: " << this->GetName() << endl;
 	for(unsigned int i = 0; i < slots.size(); i++){
 		WSDebug(slots[i]);
 	}
