@@ -1151,9 +1151,6 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		// FEEX
-		//int wsTable = Lua::getTableField(2,"weaponSlots");
-
 		cout << "Simulation_Lua: About to try fetching the slot table..." << endl;
 
 		int wsTable;
@@ -1164,19 +1161,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		assert( lua_istable(L, wsTable) );
 		// don't pop this table yet!
 
-		cout << "wsTable grabbed from the top of the stack is " << wsTable << endl;
-
-		/*int wsDesiredLength;
-		lua_pushstring(L, "desiredLength");
-		assert( lua_istable(L, wsTable) );
-		lua_gettable(L, wsTable);
-		wsDesiredLength = luaL_checkinteger( L, lua_gettop(L) );
-		lua_pop(L,1);*/
-
-		
-
 		int wsDesiredLength = Lua::getIntField(wsTable,"desiredLength");
-		cout << "desiredLength grabbed from the top of the stack is " << wsDesiredLength << endl;
 		vector<ws_t> weaponSlots;
 		char *rowKey = (char*)malloc(6);
 		for(short int i = 0; i < wsDesiredLength; i++){
@@ -1188,11 +1173,9 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			assert( lua_istable(L, wsTable) );
 			lua_gettable(L,wsTable);
 			row = lua_gettop(L);
-			assert( lua_istable(L, row) );
 			// don't pop this table yet either!
 
-			if(row){
-				printf("row %d is not NULL -- building a ws_t for it...\n", i);
+			if( lua_istable(L, row) ){
 				ws_t s;
 				s.name = Lua::getStringField(row, "name");
 				s.mode = Lua::getStringField(row, "mode");
@@ -1206,11 +1189,12 @@ int Simulation_Lua::setInfo(lua_State *L) {
 				if(Lua::getStringField(row, "enabled") == "yes")
 					weaponSlots.push_back(s);
 			}
-			else {
-				printf("row %d is NULL\n", i);
-			}
+			// else: it's an empty row
+			lua_pop(L,1);
 		}
 		free(rowKey);
+
+		lua_pop(L,1);
 
 		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
 

@@ -244,7 +244,6 @@ void Lua::setField(const char* index, const char* value) {
 
 int Lua::getIntField(int index, const char* name) {
 	int val;
-	cout << "field being checked is " << name << endl;
 	assert(lua_istable(L,index));
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
@@ -256,7 +255,6 @@ int Lua::getIntField(int index, const char* name) {
 
 float Lua::getNumField(int index, const char* name) {
 	float val;
-	cout << "field being checked is " << name << endl;
 	assert(lua_istable(L,index));
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));
@@ -268,7 +266,6 @@ float Lua::getNumField(int index, const char* name) {
 
 string Lua::getStringField(int index, const char* name) {
 	string val;
-	cout << "field being checked is " << name << endl;
 	assert(lua_istable(L,index));
 	lua_pushstring(L, name);
 	assert(lua_istable(L,index));

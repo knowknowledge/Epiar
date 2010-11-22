@@ -210,13 +210,16 @@ function showComponent(kind,name,getterFunc)
 			end
 		elseif fieldType == "Weapon slots" then
 
-			numConfigured = 0
-			theWin:add(UI.newLabel( 10, yoff+10, (string.format("%s:  %d slots configured",title, numConfigured) ) ) )
+			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
-			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s','%s')",name,title)))
+
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s', '%s', false)",name,title)))
 			yoff = yoff+20+5
 
+			theInfo[title]["desiredLength"] = 16
+			theInfo[title]["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 			theWeaponTables[title] = theInfo[title]
+			--EditWeaponSlots(name, title, true) -- get everything set up for saving or editing
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -294,16 +297,6 @@ function saveInfo(name)
 				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 			end
 		elseif fieldType == "Weapon slots" then
-
-			-- FEEX
-			local i_t_nil = "not "
-			if info[title] == nil then i_t_nil = "" end
-			local wt_t_nil = "not "
-			if weapontables[title] == nil then wt_t_nil = "" end
-			print (string.format("info[title] is %snil\n", i_t_nil))
-			print (string.format("weapontables[title] is %snil\n", wt_t_nil))
-
-			print (string.format("setting info[%s] to weapontables[%s]\n", title, title))
 			info[title] = weapontables[title]
 		end
 	end
@@ -486,14 +479,11 @@ function infoTable(info, win, variables, widths, desiredSize)
 		xoff = xoff + w
 	end
 
-	--for rn, rv in pairs(info) do
 	for rowNum =0,(desiredLength-1) do
 
 		local rowElements = {}
 
 		rowKey = (string.format("%d", rowNum))
-		print (string.format("%s\n", rowKey))
-		--for title, value in pairs(rv) do
 
 		local thisrow
 		if rowNum <= (length-1) and info[rowKey]["enabled"] == "yes" then
@@ -528,13 +518,13 @@ function infoTable(info, win, variables, widths, desiredSize)
 	return uiElements
 end
 
-function EditWeaponSlots(name,title)
+function EditWeaponSlots(name, title, initOnly)
 	if editWeaponSlotsWin ~= nil then return end
 	editWeaponSlotsWin = UI.newWindow(200,200,800,450, "Edit Weapon Slots")
 	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
 
 	-- Grab the table
-	local table = infoWindows[name]["weapontables"][title]
+	local table = infoWindows[name].weapontables[title]
 
 	-- Tell the table interface function to make extra rows until there are 16
 	table["desiredLength"] = 16
@@ -551,6 +541,10 @@ function EditWeaponSlots(name,title)
 
 	fieldTable = infoTable( table, editWeaponSlotsWin, variables, widths )
 	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
+
+	if(initOnly) then
+		finishEditingWeaponSlots(name, title, table["desiredLength"], table["fields"])
+	end
 end
 
 function finishEditingWeaponSlots(name, title, desiredLength, fields)
@@ -560,19 +554,12 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 		for colNum =0,(fields-1) do
 			local fieldName = variables[(string.format("%d", colNum))]
 			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
-			print (string.format("adding %s=%s to row %d", fieldName, value, rowNum))
-			print (string.format("infoWindows[%s][\"weapontables\"][%s][%s][%s] will be %s", name, title, rowKey, fieldName, value))
 			r[fieldName] = value
-			if infoWindows[name]["weapontables"][title][rowKey] == nil then
-				print "***************** row was nil in weapontables\n"
-				infoWindows[name]["weapontables"][title][rowKey] = {}
+			if infoWindows[name].weapontables[title][rowKey] == nil then
+				infoWindows[name].weapontables[title][rowKey] = {}
 			end
-			infoWindows[name]["weapontables"][title][rowKey][fieldName] = value
+			infoWindows[name].weapontables[title][rowKey][fieldName] = value
 		end
-		-- which one?
-		--infoWindows[name]["texts"][title][rowKey] = r
-		print (string.format("infoWindows[%s][\"weapontables\"][%s][%s] = <row %d data>\n", name, title, rowKey, rowNum))
-		--infoWindows[name]["info"][title][rowKey] = r
 	end
 	
 	editWeaponSlotsWin:close()
