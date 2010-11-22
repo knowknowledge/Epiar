@@ -36,7 +36,8 @@
 
 #include "Engine/hud.h"
 
-/** Register
+/** \class Simulation_Lua
+ *  \brief Lua bridge for interacting with the Epiar engine.
  */
 
 void Simulation_Lua::RegisterSimulation(lua_State *L) {

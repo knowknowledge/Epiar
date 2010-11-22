@@ -14,9 +14,9 @@
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
-/**\class Weapon
- *
- * \see Weapons
+/** \class Weapon
+ *  \brief A Ship Outfit used for attacking other Ships.
+ *  \see Weapons
  */
 
 /**\brief Empty constructor

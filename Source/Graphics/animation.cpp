@@ -15,8 +15,31 @@
 
 #define ANI_VERSION 1
 
-/**\class Ani
- * \brief Animations */
+/** \class Ani
+ *  \brief An animation data object
+ *  \details The Ani class is a package of Images allocated adjacent to one
+ *  another.  The Ani also knows how long each frame should last (0 to 255 ms).
+ *  A single Ani object is meant to be shared between multiple Animation
+ *  objects.  The Ani object stores the Image frames, and the Animation object
+ *  knows what frame it is currently on.  This implementation split is done to
+ *  make sharing the Animation Resource possible between many different
+ *  instances.
+ *  
+ *  The .ani filetype is Epiar specific.
+ *
+ *  ANI_VERSION 1:
+ *
+ * 	- One byte of delay time
+ *
+ *  - One byte of number of frames
+ *
+ *  - Multiple Images concatenated together
+ *  
+ *  The external python script "ani.py" can be used to extract, modify, and create .ani files.
+ *
+ *  \warning Since this file format is developed specifically for Epiar it is more fragile than other file formats.  For example, it makes endianess assumptions that require the bytes be swapped before it can be loaded on Big Endian machines.
+ *  \see Animation
+ */
 
 /**\brief Gets the resource object.
  * \param filename string containing the animation
@@ -154,8 +177,15 @@ Image* Ani::GetFrame(int frameNum) {
  *  \brief Height of Ani
  */
 
-/**\class Animation
- * \brief Animations implementation. */
+/** \class Animation
+ *  \brief Animations implementation.
+ *  \details The Animation class is used for each instantiation of an
+ *  animation.  Many Animations can share the same Ani object while each having
+ *  a different timestamp.
+ *  \note The Animation uses "real" clocktime, so they will continue to play
+ *  while the game is paused.
+ *  \see Ani, Effect
+ */
 
 /**\brief Empty constructor.
  */

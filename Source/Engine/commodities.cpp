@@ -12,6 +12,8 @@
 #include "Engine/commodities.h"
 
 /**\class Commodity
+ * \brief Fungible items that can be traded between Planets by the ton.
+ * \note Fungible: a commodity that is freely interchangeable with another in satisfying an obligation.
  */
 
 /**\brief Initializes Commodity
@@ -66,7 +68,7 @@ xmlNodePtr Commodity::ToXMLNode(string componentName){
 }
 
 /**\class Commodities
- * \brief Collection of Alliance objects.
+ * \brief Collection of Commodity objects.
  */
 Commodities *Commodities::pInstance = 0; // initialize pointer
 
