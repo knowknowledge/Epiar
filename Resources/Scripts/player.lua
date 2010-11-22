@@ -231,6 +231,7 @@ function playerFire()
 	elseif result == 2 then -- FireNotReady
 	elseif result == 3 then -- FireNoAmmo
 		HUD.newAlert("Out of Ammo!")
+		PLAYER:ChangeWeapon()
 	elseif result == 4 then -- FireEmptyGroup
 		HUD.newAlert("No weapons assigned to this firing group - switching...")
 		PLAYER:ChangeWeapon()

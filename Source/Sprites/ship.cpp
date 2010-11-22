@@ -52,7 +52,9 @@ Ship::Ship()
 	status.hullDamage = 0;
 	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
-	//status.lastFiredAt = 0;
+
+	memset(status.lastFiredAt, 0, sizeof(status.lastFiredAt));
+
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
@@ -88,8 +90,11 @@ bool Ship::SetModel( Model *model) {
 
 		// Copy default weapon slot arrangement from model,
 		this->weaponSlots = model->GetWeaponSlots();
-		// but leave it up to Lua to decide how the default weapon
-		// slot arrangement influences the weapons onboard the ship.
+
+		// go ahead and build a weapon list from it
+		for(unsigned int i = 0; i < weaponSlots.size(); i++){
+			this->AddToShipWeaponList( weaponSlots[i].content );
+		}
 
 		SetImage( model->GetImage() );
 
@@ -466,6 +471,9 @@ FireStatus Ship::Fire( int target ) {
 		}
 	}
 
+	//if(target == 60) // uncomment this if you want to debug AI firing issues
+	//	printf("Ship::Fire(60) for #%d status: emptygroup=%d fired=%d noammo=%d notready=%d lastFiredAt[0]=%d lastFiredAt[1]=%d tick=%d\n", this->GetID(), (emptyFiringGroup?1:0), (fired?1:0), (fna?1:0), (fnr?1:0), status.lastFiredAt[0], status.lastFiredAt[1], Timer::GetTicks());
+
 	if(emptyFiringGroup) return FireEmptyGroup;
 	if(fired) return FireSuccess;
 	if(fna) return FireNoAmmo;
@@ -490,7 +498,10 @@ void Ship::AddToShipWeaponList(Weapon *w){
  * \sa Weapon
  */
 void Ship::AddToShipWeaponList(string weaponName){
+	if(weaponName == "") return; // not a weapon
+
 	Weapons *weapons = Weapons::Instance();
+
 	if(weapons->GetWeapon(weaponName)){
 		AddToShipWeaponList(weapons->GetWeapon(weaponName));
 	} else {
@@ -511,13 +522,7 @@ int Ship::AddShipWeapon(Weapon *w){
 			return 1;
 		}
 	}
-
-	printf("Somebody really wanted to shove a weapon onto this ship. Overwriting zeroth weapon.\n");
-	RemoveFromShipWeaponList(weaponSlots[0].content);
-	weaponSlots[0].content = w->GetName();
-	AddToShipWeaponList(w);
-	//assert(true == false);
-	return 1;
+	return 0;
 }
 
 /**\brief Adds a new weapon to the ship by name AND updates weaponSlots
@@ -607,9 +612,6 @@ void Ship::RemoveShipWeapon(string weaponName){
 		LogMsg(INFO, "Failed to remove weapon '%s', it doesn't exist.", weaponName.c_str());
 	}
 }
-
-
-
 
 /**\brief Adds ammo to the ship.
  * \param AmmoType Type of ammo that should be added.
@@ -792,15 +794,24 @@ int Ship::GetAmmo(AmmoType type) {
 	return ammo[type];
 }
 
-/**\brief Gets a std::map of the current weapon system.
+/**\brief Gets a std::map of the current weapon system
  * \return std:map with pointer to weapon as the key, ammo quantity as the data
  */
 map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
+	Weapons* weaps = Weapons::Instance();
 	Weapon* thisWeapon;
-	for(unsigned int i=0; i<shipWeapons.size(); i++){
-		thisWeapon = this->shipWeapons[i];
-		weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
+	// old:
+	//for(unsigned int i=0; i<shipWeapons.size(); i++){
+	//	thisWeapon = this->shipWeapons[i];
+	//	weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
+	//}
+	// new:
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
+		if(this->weaponSlots[i].content != ""){
+			thisWeapon = weaps->GetWeapon(this->weaponSlots[i].content);
+			weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
+		}
 	}
 	return weaponPack;
 }

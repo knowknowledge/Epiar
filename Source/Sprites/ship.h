@@ -128,8 +128,7 @@ class Ship : public Sprite {
 			short int hullDamage; ///< Once the hull takes too much damage, your ship blows apart, hooray! :)
 			short int shieldDamage; ///< Your hull doesn`t take damage untill the shield is down
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
-			//unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
-			unsigned int lastFiredAt[35]; ///< Number of ticks where last fire event occured
+			unsigned int lastFiredAt[32]; ///< Number of ticks where last fire event occured for a given weapon slot
 			unsigned int selectedWeapon; ///< Which weapon is currently selected
 			string selectedWeaponName; ///< Which weapon is currently selected
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
