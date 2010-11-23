@@ -12,6 +12,8 @@
 
 MissionType = {
 	UID = 0, --- TODO: Use this for Mission Dependencies.
+	Version = 1, --- Increment this whenever changes are made to the Mission.
+	Author = "", --- The name of the first author.
 	Difficulty = "EASY", --- TODO: Use this to warn Users about difficult Missions.
 	Create = function() --- Call this when the Mission is created.
 		--- Return a mission table.
@@ -42,6 +44,8 @@ end
 
 ReturnAmbassador = {
 	UID = 1, 
+	Version = 1,
+	Author = "Matt Zweig",
 	Difficulty = "EASY", 
 	Create = function()
 		local planets = Epiar.planets()
@@ -83,6 +87,8 @@ ReturnAmbassador = {
 
 DestroyPirate = {
 	UID = 2,
+	Version = 1,
+	Author = "Matt Zweig",
 	Difficulty = "MEDIUM",
 	Create = function()
 		local missionTable = {}
@@ -144,6 +150,8 @@ DestroyPirate = {
 
 CollectArtifacts = {
 	UID = 3,
+	Version = 1,
+	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
 		local missionTable = defaultMissionTable(
