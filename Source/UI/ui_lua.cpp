@@ -56,6 +56,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
+		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 		// Label Modification
 		{"setLabel", &UI_Lua::setLabel},
 		{"setText", &UI_Lua::setText},
@@ -316,14 +317,19 @@ int UI_Lua::newLabel(lua_State *L){
 
 int UI_Lua::newPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if ( (n != 5) && (n != 9))
-		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, modelname, [red,blue,green,alpha] )", n);
+	if ( (n != 3) && (n != 5) && (n != 9))
+		return luaL_error(L, "Got %d arguments expected 3, 5, or 9 (x, y, [w, h,] modelname, [red,blue,green,alpha] )", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
-	int w = int(luaL_checknumber (L, 3));
-	int h = int(luaL_checknumber (L, 4));
-	string picname = luaL_checkstring (L, 5);
+
+	int w, h;
+	w = h = 0;
+	if(n >= 5){
+		w = int(luaL_checknumber (L, 3));
+		h = int(luaL_checknumber (L, 4));
+	}
+	string picname = luaL_checkstring (L, (n >= 5 ? 5 : 3) );
 	
 
 	// Get Background Color
@@ -340,7 +346,10 @@ int UI_Lua::newPicture(lua_State *L){
 	Picture **pic= (Picture**)lua_newuserdata(L, sizeof(Picture**));
 	luaL_getmetatable(L, EPIAR_UI);
 	lua_setmetatable(L, -2);
-	*pic = new Picture(x,y,w,h, picname );
+	if (w + h > 0)
+		*pic = new Picture(x,y,w,h, picname );
+	else
+		*pic = new Picture(x,y, picname );
 	(*pic)->SetColor(red,blue,green,alpha);
 
 	// Note: We're not putting this Label anywhere!
@@ -390,6 +399,20 @@ int UI_Lua::setPicture(lua_State *L){
 		Picture** pic = (Picture**)lua_touserdata(L,1);
 		string picname = luaL_checkstring (L, 2);
 		(*pic)->Set( picname );
+	
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
+	}
+	return 0;
+}
+
+/* set the Lua callback name for clicks within pictures */
+int UI_Lua::setLuaClickCallback(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2){
+		Picture** pic = (Picture**)lua_touserdata(L,1);
+		string callback = luaL_checkstring (L, 2);
+		(*pic)->SetLuaClickCallback( callback );
 	
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);

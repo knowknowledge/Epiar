@@ -213,13 +213,12 @@ function showComponent(kind,name,getterFunc)
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
 
-			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s', '%s', false)",name,title)))
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s', '%s')",name,title)))
 			yoff = yoff+20+5
 
 			theInfo[title]["desiredLength"] = 16
 			theInfo[title]["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 			theWeaponTables[title] = theInfo[title]
-			--EditWeaponSlots(name, title, true) -- get everything set up for saving or editing
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -518,9 +517,10 @@ function infoTable(info, win, variables, widths, desiredSize)
 	return uiElements
 end
 
-function EditWeaponSlots(name, title, initOnly)
+function EditWeaponSlots(name, title)
+	SlotEditor = {}
 	if editWeaponSlotsWin ~= nil then return end
-	editWeaponSlotsWin = UI.newWindow(200,200,800,450, "Edit Weapon Slots")
+	editWeaponSlotsWin = UI.newWindow(200,200,800,500, "Edit Weapon Slots")
 	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
 
 	-- Grab the table
@@ -540,11 +540,28 @@ function EditWeaponSlots(name, title, initOnly)
 			 ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
 
 	fieldTable = infoTable( table, editWeaponSlotsWin, variables, widths )
-	editWeaponSlotsWin:add(UI.newButton( 300,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
+	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
 
-	if(initOnly) then
-		finishEditingWeaponSlots(name, title, table["desiredLength"], table["fields"])
-	end
+	local imageName = infoWindows[name].texts["Image"]:GetText()
+
+	SlotEditor["calcPosX"] = 350
+	SlotEditor["calcPosY"] = 400
+	editWeaponSlotsWin:add( UI.newLabel(SlotEditor["calcPosX"] - 60, SlotEditor["calcPosY"] - 20, "Click on the image to extract X,Y offsets for that position.") )
+	local image = UI.newPicture(SlotEditor["calcPosX"], SlotEditor["calcPosY"], imageName)
+	local imageX, imageY, imageW, imageH = image:GetEdges()
+	SlotEditor["imageHH"] = imageH / 2
+	SlotEditor["imageHW"] = imageW / 2
+	SlotEditor["calcXLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"], "X: ")
+	SlotEditor["calcYLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"]+15, "Y: ")
+	image:setLuaClickCallback('calculateSlotOffset')
+	editWeaponSlotsWin:add(image, SlotEditor["calcXLabel"], SlotEditor["calcYLabel"])
+end
+
+function calculateSlotOffset(x, y)
+	local newY = x - SlotEditor["calcPosX"] - SlotEditor["imageHW"] -- flipping x and y here is intentional
+	local newX = y - SlotEditor["calcPosY"] - SlotEditor["imageHH"] -- (the image is sideways)
+	SlotEditor["calcXLabel"].setLabel(SlotEditor["calcXLabel"], (string.format("X: %d", newX)))
+	SlotEditor["calcYLabel"].setLabel(SlotEditor["calcYLabel"], (string.format("Y: %d", newY)))
 end
 
 function finishEditingWeaponSlots(name, title, desiredLength, fields)
@@ -567,6 +584,7 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	variables = nil
 	fieldTable = nil
 	uiElements = nil
+	SlotEditor = nil
 end
 	
 

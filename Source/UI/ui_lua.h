@@ -56,6 +56,7 @@ class UI_Lua {
 		static int setText(lua_State *L);
 		static int setLabel(lua_State *L);
 		static int setPicture(lua_State *L);
+		static int setLuaClickCallback(lua_State *L);
 		static int setChecked(lua_State *L);
 		static int setSliderValue(lua_State *L);
 
