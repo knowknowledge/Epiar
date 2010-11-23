@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "Engine/outfit.h"
 #include "Graphics/image.h"
+#include "Utilities/log.h"
 #include "Utilities/components.h"
 
 /** \class Outfit
@@ -259,12 +260,6 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 	return section;
 }
 
-/**\brief Prints debugging information (not implemented)
- */
-void Outfit::_dbg_PrintInfo( void ) {
-	cout << "Outfit: " << name << endl;
-}
-
 /**
  * \fn Outfit::GetMSRP()
  * \brief Get the msrp
@@ -457,7 +452,7 @@ int Outfit::GetWeaponSlotCount(){
 }
 
 void Outfit::WSDebug(ws_t slot){
-	printf("WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d\n", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+	LogMsg(INFO, "WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
 void Outfit::WSDebug(vector<ws_t>& slots){

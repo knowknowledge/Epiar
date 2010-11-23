@@ -827,7 +827,7 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 
 	char *rowKey = (char*)malloc(6);
 
-	for(short int i = 0; i < slots.size(); i++){
+	for(unsigned int i = 0; i < slots.size(); i++){
 		ws_t s = slots[i];
 
 		snprintf(rowKey, 6, "%d", i);

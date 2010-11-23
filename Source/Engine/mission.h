@@ -17,12 +17,13 @@ class Mission{
 		Mission(string _type, int _tableReference);
 		~Mission();
 
-		static bool ValidateMission(  string type, int tableReference );
+		static bool ValidateMission(  string type, int tableReference, int expectedVersion );
 
 		bool Accept();
 		bool Reject();
 		bool Update();
 
+		int GetVersion();
 		string GetName() { return GetStringAttribute("Name"); }
 		string GetDescription() { return GetStringAttribute("Description"); }
 
@@ -37,6 +38,7 @@ class Mission{
 
 		bool RunFunction(string functionName, bool clearStack);
 		string GetStringAttribute(string attribute);
+		static int GetMissionType( string type );
 };
 
 #endif //__H_MISSION__

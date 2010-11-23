@@ -18,15 +18,15 @@ class Outfit : public Component {
 
 		Outfit();
 
-                struct ws {
-                        string name;
-                        string mode; // coord mode: "auto" or "manual"
-                        double x,y; // only matters if mode is manual
-                        double angle; // angle the weapon will be mounted
-                        double motionAngle; // should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
-			string content; // name of the weapon it contains (or "" for empty)
-			short int firingGroup; // which firing group this slot belongs to
-                };
+		struct ws {
+			string name;            ///< name of the slot
+			string mode;            ///< coord mode: "auto" or "manual"
+			double x,y;             ///< only matters if mode is manual
+			double angle;           ///< angle the weapon will be mounted
+			double motionAngle;     ///< should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
+			string content;         ///< name of the weapon it contains (or "" for empty)
+			short int firingGroup;  ///< which firing group this slot belongs to
+		};
 		typedef struct ws ws_t;
 
 		Outfit(
@@ -49,7 +49,6 @@ class Outfit : public Component {
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
-		void _dbg_PrintInfo( void );
 
 		int GetMSRP() { return msrp; }
 		void SetMSRP( int _msrp ) { msrp = _msrp; }

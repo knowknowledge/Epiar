@@ -166,15 +166,19 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	for( attr = FirstChildNamed(node,"Mission"); attr!=NULL; attr = NextSiblingNamed(attr,"Mission") ){
 		Mission *mission = Mission::FromXMLNode(doc,attr);
 		if( mission != NULL ) {
+			LogMsg(INFO, "Successfully loaded the %s mission of player '%s'", mission->GetName().c_str(), this->GetName().c_str() );
 			missions.push_back( mission );
+		} else {
+			LogMsg(INFO, "Aborted loading mission of player '%s'", mission->GetName().c_str(), this->GetName().c_str() );
 		}
 	}
 
 	if(this->ConfigureWeaponSlots(doc, node)){
 		// great - it worked
+		LogMsg( INFO, "Successfully loaded weapon slots");
 	}
 	else {
-		cout << "FromXMLNode(): weapon slot XML helper failed for loading player!\n";
+		LogMsg( ERR, "Weapon slot XML helper failed to configure weapon slots");
 	}
 
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
@@ -182,8 +186,6 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else {
 		lastLoadTime = (time_t)0;
 	}
-
-	// TODO: Load saved missions
 
 	return true;
 }
@@ -445,7 +447,7 @@ Player* Players::LoadPlayer(string playerName) {
 
 	Player::pInstance = newPlayer;
 
-	LogMsg(INFO, "Loaded the Player '%s'.",newPlayer->GetName().c_str() );
+	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
 	return newPlayer;
 }
 

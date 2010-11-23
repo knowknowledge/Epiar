@@ -218,12 +218,6 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	return section;
 }
 
-/**\brief Prints debugging information (not implemented)
- */
-void Weapon::_dbg_PrintInfo( void ) {
-	cout << "Weapon: " << name << endl;
-}
-
 /**\fn Weapon::GetImage( )
  *  \brief Returns the image of the fired weapon
  * \fn Weapon::GetType( )
