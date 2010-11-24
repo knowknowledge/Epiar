@@ -969,8 +969,8 @@ int Simulation_Lua::getWeaponInfo(lua_State *L) {
 	Lua::setField("Type", weapon->GetType());
 	Lua::setField("Ammo Type", Weapon::AmmoTypeToName(weapon->GetAmmoType()).c_str() );
 	Lua::setField("Ammo Consumption", weapon->GetAmmoConsumption());
-	Lua::setField("Sound", (weapon->sound!=NULL)
-	                ? weapon->sound->GetPath().c_str()
+	Lua::setField("Sound", (weapon->GetSound()!=NULL)
+	                ? weapon->GetSound()->GetPath().c_str()
 	                : "" );
 	return 1;
 }

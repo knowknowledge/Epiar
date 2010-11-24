@@ -444,13 +444,15 @@ FireStatus Ship::Fire( int target ) {
 					if(angleAcceptable){
 
 						//Play weapon sound
-						float weapvol = OPTION(float,"options/sound/weapons");
-						if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-							currentWeapon->sound->SetVolume( weapvol * NON_PLAYER_SOUND_RATIO );
-						else
-							currentWeapon->sound->SetVolume( weapvol );
-						currentWeapon->sound->Play(
-							GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+						if( currentWeapon->GetSound() != NULL ) {
+							float weapvol = OPTION(float,"options/sound/weapons");
+						
+							if ( this->GetDrawOrder() == DRAW_ORDER_SHIP ) {
+								weapvol *= NON_PLAYER_SOUND_RATIO;
+							}
+							currentWeapon->GetSound()->SetVolume( weapvol );
+							currentWeapon->GetSound()->Play( GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+						}
 
 						//Fire the weapon
 						Projectile *projectile = new Projectile(damageBooster, projectileAngle, worldPosition, GetMomentum(), currentWeapon);

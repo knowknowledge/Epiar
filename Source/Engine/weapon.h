@@ -36,12 +36,12 @@ class Weapon : public Outfit {
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
-		void _dbg_PrintInfo( void );
 
 		static string AmmoTypeToName(AmmoType type);
 		static AmmoType AmmoNameToType(string typeName );
 
 		Image *GetImage(void) {return image;}
+		Sound *GetSound(void) {return sound;}
 		int GetType(void) {return weaponType;}
 		int GetPayload(void) {return payload;}
 		int GetVelocity(void) {return velocity;}
@@ -51,10 +51,10 @@ class Weapon : public Outfit {
 		int GetFireDelay(void) {return fireDelay;}
 		int GetLifetime(void) {return lifetime;}
 		float GetTracking(void) {return tracking;}
-		Sound *sound; //Sound the weapon makes
 
 	private:
 		Image *image;
+		Sound *sound; //Sound the weapon makes
 		int weaponType; //(energy, explosive, laser, etc)
 		int payload; //intesity of explosion
 		int velocity; //speed of travel
