@@ -98,6 +98,13 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 
 	s = Ship.new(name,X,Y,model,engine,plans[math.random(#plans)],alliance)
 
+	-- To demonstrate the Escort AI, give a few ships escorts
+	if math.random(10) == 1 then
+		local escortModels = { "Fleet Guard", "Terran XV", "Shuttle", "Kartanal", "Terran Assist", "Patitu"  }
+		local escort = Ship.new("an escort",X-30,Y+30, choose(escortModels) ,"Ion Engines","Escort",alliance)
+		setAccompany(escort:GetID(), s:GetID())
+	end
+
 	s:SetRadarColor(255,0,0)
 
 	-- give every AI the standard weapons of their ship class

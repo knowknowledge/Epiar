@@ -30,7 +30,21 @@ function okayTarget(cur_ship, ship)
 	if cur_ship:GetFriendly() == 1 and ship:GetID() == 60 then
 		return false
 	end
+
+	if AIData[ship:GetID()] == nil then return true end
+
+	if AIData[ship:GetID()].accompany == cur_ship:GetID() then
+		return false
+	end
+
 	return true
+end
+
+function setAccompany(id, accid)
+	if AIData[id] == nil then
+		AIData[id] = { }
+	end
+	AIData[id].accompany = accid
 end
 
 --- Hunter AI
@@ -274,5 +288,96 @@ Bully = {
 	end,
 }
 
-
 Pirate = Hunter
+
+Escort = {
+	default = function(id,x,y,angle,speed,vector)
+		if AIData[id] == nil then
+			AIData[id] = { }
+			AIData[id].accompany = -1
+		end
+		AIData[id].target = -1
+		if AIData[id].accompany < 0 then return "New_Planet" end
+		return "Accompanying"
+	end,
+	Travelling = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.Travelling(id,x,y,angle,speed,vector)
+	end,
+	New_Planet = FindADestination,
+	Orbiting = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.Orbiting(id,x,y,angle,speed,vector)
+	end,
+	TooClose = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.TooClose(id,x,y,angle,speed,vector)
+	end,
+	TooFar = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.TooFar(id,x,y,angle,speed,vector)
+	end,
+	Hunting = Hunter.Hunting,
+	Killing = Hunter.Killing,
+	Accompanying = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
+
+		local cur_ship = Epiar.getSprite(id)
+		local acc = AIData[id].accompany
+		local accompanySprite
+
+		if acc > -1 then
+			accompanySprite = Epiar.getSprite(AIData[id].accompany)
+		else
+			return "New_Planet"
+		end
+
+		local ax = 0
+		local ay = 0
+		local distance
+
+		if accompanySprite~=nil then
+			ax,ay = accompanySprite:GetPosition()
+
+			local aitype, aitask = accompanySprite:GetState()
+			if aitask == "Hunting" or aitask == "Killing" then
+				AIData[id].target = AIData[AIData[id].accompany].target
+				return "Hunting"
+			end
+		else
+			AIData[id].accompany = -1
+			return "default"
+		end
+		distance = distfrom(ax,ay,x,y)
+
+		local accDir = cur_ship:directionTowards(ax,ay)
+		local accDirInverse = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
+		--print (string.format("accDir=%d accDirInverse=%d\n", accDir, accDirInverse))
+
+		local mass = cur_ship:GetMass()
+
+		local farThreshold = 250 * mass
+		local nearThreshold = 120 * mass
+
+		if distance > farThreshold then
+			cur_ship:Rotate( accDir )
+			if math.abs(accDir) < 35 then
+				cur_ship:Accelerate()
+			end
+		else
+			if distance > nearThreshold then
+				cur_ship:Rotate( accDir )
+				if distance % (math.sqrt(farThreshold - distance) + 1) < 2 and accDir == 0 then
+					cur_ship:Accelerate()
+				end
+			else
+				cur_ship:Rotate( accDirInverse )
+				--if math.abs(accDirInverse) < 35 then
+				--	cur_ship:Accelerate()
+				--end
+			end
+		end
+
+		return "Accompanying"
+	end,
+}

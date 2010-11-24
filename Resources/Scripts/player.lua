@@ -349,15 +349,20 @@ function hailShip()
 		HUD.newAlert("Hailing ship...")
 		Epiar.pause()
 
+		local planetNames = Epiar.planetNames()
+		local aiDest = planetNames[AIData[targettedShip:GetID()].destination]
+		if aiDest == nil then aiDest = "a port" end
+
 		local aiMachDescs = {
 			["Trading"]="I'm moving some goods.",
 			["Orbiting"]="Oh, I'm just orbiting here.",
 			["Hunting"]="If you must know, I'm pursuing a target.",
 			["Killing"]="I'm shooting at someone right now!",
-			["Docking"]="I'm docking here.",
+			["Docking"]=string.format("I'm docking here at %s.", aiDest),
 			["TooClose"]="I'm orbiting, but I'm too close!",
 			["TooFar"]="I'm orbiting, but I need to get closer!",
-			["Travelling"]="I'm on my way to the next destination."
+			["Travelling"]=string.format("I'm on my way to %s.", aiDest),
+			["Accompanying"]="I'm accompanying another ship."
 		}
 
 		hailResponses = { ["Greetings"]="Hello there.",
