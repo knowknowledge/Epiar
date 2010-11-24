@@ -22,8 +22,8 @@
 /**\brief Empty constructor
  */
 Weapon::Weapon(void) :
-	sound(NULL),
 	image(NULL),
+	sound(NULL),
 	weaponType(0),
 	payload(0),
 	velocity(0),
@@ -77,8 +77,8 @@ Weapon& Weapon::operator=(const Weapon& other) {
 Weapon::Weapon( string _name, Image* _image, Image* _pic,
 		int _weaponType, int _payload, int _velocity, int _acceleration,
 		AmmoType _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
-	sound(_sound),
 	image(_image),
+	sound(_sound),
 	weaponType(_weaponType),
 	payload(_payload),
 	velocity(_velocity),
