@@ -849,7 +849,10 @@ void Radar::Draw( void ) {
 		radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 		
 		if( radarSize >= 1 ) {
-			Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
+			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
+				Video::DrawCircle( blip, radarSize, 2, Color::Get(0xff, 0xff, 0xff));
+			else
+				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 		} else {
 			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
 				Video::DrawCircle( blip, 1, 2, Color::Get(0xff, 0xff, 0xff));
