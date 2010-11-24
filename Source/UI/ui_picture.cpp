@@ -28,6 +28,8 @@ void Picture::Default( int x, int y, int w, int h ){
 
 	color = Color::Get(0,0,0);
 	alpha = 0.0f;
+
+	this->luaClickCallback = "";
 }
 
 Picture::Picture( int x, int y, int w, int h, Image* pic ){
@@ -40,6 +42,15 @@ Picture::Picture( int x, int y, int w, int h, Image* pic ){
 Picture::Picture( int x, int y, int w, int h, string filename ){
 	Default(x,y,w,h);
 	bitmap = Image::Get(filename);
+	name = filename;
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+}
+
+Picture::Picture( int x, int y, string filename ){
+	Default(x,y,0,0);
+	bitmap = Image::Get(filename);
+	this->w = bitmap->GetWidth();
+	this->h = bitmap->GetHeight();
 	name = filename;
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
@@ -86,3 +97,17 @@ void Picture::SetColor( float r, float g, float b, float a) {
 	color = Color::Get(r,g,b);
 	alpha = a;
 }
+
+void Picture::SetLuaClickCallback( string luaFunctionName ){
+	this->luaClickCallback = luaFunctionName;
+}
+
+bool Picture::MouseLUp( int x, int y ){
+	if(luaClickCallback != ""){
+		char *lua_call = (char*)malloc(128);
+		snprintf(lua_call, 128, "%s(%d,%d)", luaClickCallback.c_str(), x, y);
+		LogMsg(INFO, "running Lua function %s\n", lua_call);
+		Lua::Run(lua_call);
+		free(lua_call);
+	}
+} 
