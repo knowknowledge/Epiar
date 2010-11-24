@@ -25,8 +25,7 @@ Mission::Mission(string _type, int _tableReference)
 Mission::~Mission()
 {
 	lua_State *L = Lua::CurrentState();
-	lua_pushinteger(L, tableReference);
-	luaL_ref(L, LUA_REGISTRYINDEX);
+	luaL_unref(L, LUA_REGISTRYINDEX, tableReference);
 }
 
 

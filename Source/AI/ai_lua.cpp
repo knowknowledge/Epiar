@@ -705,6 +705,7 @@ int AI_Lua::ShipAcceptMission(lua_State *L){
 		Mission *mission = new Mission( missionType, missionTable );
 		player->AcceptMission( mission );
 	} else {
+		luaL_unref(L, LUA_REGISTRYINDEX, missionTable);
 		return luaL_error(L, "The Mission Type '%s' or the Mission Table is invalid.", missionType.c_str() );
 	}
 	return 0;
