@@ -94,14 +94,23 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	local Y = Y + about(Range)
 	local model = choose(models)
 	local engine = choose(engines)
-	local plans = {"Hunter", "Trader", "Patrol", "Bully"}
+	local plans = {"Hunter", "Trader", "Patrol", "Bully" }
+	local pirateModels = { "Fleet Guard", "Kartanal", "Terran Assist", "Patitu", "Terran Corvert Mark I", "Large Vesper", "Raven", "Hammer Freighter"  }
+	local escortModels = { "Fleet Guard", "Terran XV", "Kartanal", "Patitu", "Terran Corvert Mark I"  }
 
-	s = Ship.new(name,X,Y,model,engine,plans[math.random(#plans)],alliance)
+	local p = plans[math.random(#plans)]
+	-- Turn some Hunters into anti-player Pirates if the player is far enough along
+	if PLAYER:GetCredits() > 10000 and p == "Hunter" and math.random(20) == 1 then p = "Pirate" end
+	if p == "Pirate" then
+		model = pirateModels[math.random(#pirateModels)]
+		engine = "Ion Engines"
+	end
 
-	-- To demonstrate the Escort AI, give a few ships escorts
-	if math.random(10) == 1 then
-		local escortModels = { "Fleet Guard", "Terran XV", "Shuttle", "Kartanal", "Terran Assist", "Patitu"  }
-		local escort = Ship.new("an escort",X-30,Y+30, choose(escortModels) ,"Ion Engines","Escort",alliance)
+	s = Ship.new(name,X,Y,model,engine,p,alliance)
+
+	if p == "Pirate" then
+		setHuntHostile(s:GetID(), PLAYER:GetID() )
+		local escort = Ship.new("an escort",X-150,Y-150, choose(escortModels), "Ion Engines","Escort",alliance)
 		setAccompany(escort:GetID(), s:GetID())
 	end
 
