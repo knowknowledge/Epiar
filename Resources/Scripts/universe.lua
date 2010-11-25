@@ -765,10 +765,16 @@ function landingDialog(id)
 	-- Employment
 	missions = UI.newTab("Employment")
 	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts"}
+	rareMissionTypes = {"DestroyGaryTheGold"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	for i = 1,4 do
-		local missionType = choose(availableMissionsTypes)
+		local missionType
+		if math.random(50) == 1 then
+			missionType = choose(rareMissionTypes)
+		else
+			missionType = choose(availableMissionsTypes)
+		end
 		availableMissions[i] = _G[missionType].Create()
 		missions:add(
 			UI.newLabel( 10, yoff, availableMissions[i].Name ),

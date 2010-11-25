@@ -6,17 +6,19 @@
   <technology>
     <name>Questionable Legality</name>
     <model>Gate Enforcer</model>
+    <model>Golden Uber</model>
     <model>Patitu</model>
     <model>Kartanal</model>
     <weapon>Neon Flares</weapon>
     <weapon>Magnetic Mine</weapon>
+    <weapon>Gold Beam</weapon>
     <weapon>Plasma Cannon</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <outfit>Organic Plating</outfit>
   </technology>
   <technology>
     <name>Solaran Defence</name>
-    <model>Solaran Battle Cuiser</model>
+    <model>Solaran Battle Cruiser</model>
     <model>Patitu</model>
     <model>Kartanal</model>
     <weapon>Slow Missile</weapon>
@@ -24,8 +26,8 @@
     <weapon>Strong Laser</weapon>
     <engine>Ion Engines</engine>
     <outfit>Directional Thrusters</outfit>
-    <outfit>Copper Plating</outfit>
     <outfit>Shield Generator</outfit>
+    <outfit>Copper Plating</outfit>
     <outfit>Organic Plating</outfit>
   </technology>
   <technology>
