@@ -367,8 +367,11 @@ FireStatus Ship::Fire( int target ) {
 			if( (unsigned int)slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
 				emptyFiringGroup = false;
 
+				// 20101124 alternate branch: still thinking about how best to do this 
+				//int staggerTime = (currentWeapon->GetFireDelay() / weaponSlots.size()) * (slot);
+				int staggerTime = rand() % (100 * weaponSlots.size());
 				// Check that the weapon has cooled down;
-				if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
+				if( !( (int)(currentWeapon->GetFireDelay()) + staggerTime < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
 					fnr = true;
 				}
 				// Check that there is sufficient ammo
