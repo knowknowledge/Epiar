@@ -4,6 +4,7 @@
 -- Go to Planet
 -- Destroy Ship X
 -- Rescue Ship X
+-- TraderProtection
 
 
 --[[
@@ -30,35 +31,37 @@ MissionType = {
 	Success = function( missionTable ) end, --- Call this if the Mission is a Success.
 	Failure = function( missionTable ) end, --- Call this if the Mission is a failure.
 }
-	
+
 ]]
 
 --- These are the bare minimum values that need to be in the each Mission Table
 function defaultMissionTable( Name, Description)
 	local missionTable = {
-		Name = Name, 
+		Name = Name,
 		Description = Description,
 		}
 	return missionTable
 end
 
 ReturnAmbassador = {
-	UID = 1, 
+	UID = 1,
 	Version = 1,
 	Author = "Matt Zweig",
-	Difficulty = "EASY", 
+	Difficulty = "EASY",
 	Create = function()
-		local planets = Epiar.planets()
-		local n = math.random( #planets )
-		local p = planets[ n ]
-		local Name = string.format("Transport Ambassador to %s", p:GetName() )
+		local p = choose( Epiar.planets() )
+		local professions = {"Ambassador", "Smuggler", "Executive", "Trader"}
+		local profession = choose( professions )
+		local Name = string.format("Transport %s to %s", profession, p:GetName() )
 		local Reward = 1000 * ( math.random(10) + 10)
-		local Description = "The Ambassador of %s needs to be returned to her home planet.  She will pay you %d credits if you can get her there safely."
-		Description = Description:format( p:GetName(), Reward )
+		local Description = "A %s %s needs to be returned to %s. You will be paid %d credits if you can get there safely."
+		local alliance = choose( Epiar.alliances() )
+		Description = Description:format( alliance, profession, p:GetName(), Reward )
 		-- Save the mission information into a table
 		local missionTable = defaultMissionTable( Name, Description )
-		missionTable['planet'] = p:GetName()
-		missionTable['reward'] = Reward
+		missionTable.planet = p:GetName()
+		missionTable.reward = Reward
+		missionTable.alliance = alliance
 		return missionTable
 	end,
 	Accept = function( missionTable )
@@ -81,7 +84,7 @@ ReturnAmbassador = {
 		HUD.newAlert(string.format("Thank you for returning me to my home.") )
 		addcredits(  missionTable.reward )
 	end,
-	Failure = function( missionTable ) 
+	Failure = function( missionTable )
 	end,
 }
 
@@ -255,3 +258,128 @@ CollectArtifacts = {
 	Failure = function( missionTable ) end,
 }
 
+
+ShippingRoutes = {
+	UID = 5,
+	Version = 1,
+	Author = "Matt Zweig",
+	Difficulty = "EASY",
+	Create = function()
+		local missionTable = {}
+		local planet = choose( Epiar.planets() )
+
+		missionTable.Name = "Transport %d tons of %s to %s"
+		missionTable.Description = "The planet of %s needs high quality %s.  A Trader will pay you %d to deliver %d tons of his %s."
+		missionTable.Tonnage = math.random(50) + 10
+		missionTable.Commodity = choose( Epiar.commodities() )
+		missionTable.Planet = planet:GetName()
+		missionTable.Reward = 1000 + (100 * missionTable.Tonnage)
+
+		missionTable.Name = missionTable.Name:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
+		missionTable.Description = missionTable.Description:format( missionTable.Planet, missionTable.Commodity, missionTable.Reward, missionTable.Tonnage, missionTable.Commodity )
+
+		return missionTable
+	end,
+	Accept = function( missionTable )
+		local message = "%d tons of %s have been stored in your hold."
+		local stored = PLAYER:StoreCommodities( missionTable.Commodity, missionTable.Tonnage )
+		if(stored ~= missionTable.Tonnage) then
+			PLAYER:DiscardCommodities( missionTable.Commodity, stored )
+			message = "You don't have enough space to store %d tons of %s."
+		end
+		message = message:format( missionTable.Tonnage, missionTable.Commodity )
+		HUD.newAlert( message )
+	end,
+	Reject = function( missionTable )
+		PLAYER:DiscardCommodities( missionTable.Commodity, missionTable.Tonnage )
+		local message = "You've jettisoned the %d tons of %s destined for %s."
+		message = message:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
+		HUD.newAlert( message )
+	end,
+	Update = function( missionTable )
+		-- Check if the Player still has all the cargo
+		local currentCargo, stored, storable = PLAYER:GetCargo()
+		if currentCargo[ missionTable.Commodity ] < missionTable.Tonnage then
+			return false
+		end
+
+		-- Check if the player has landed at the destination
+		local x,y = PLAYER:GetPosition()
+		local p = Planet.Get( missionTable.Planet )
+		local px,py = p:GetPosition()
+		if distfrom(px,py,x,y) < 50 then
+			return true
+		end
+	end,
+	Success = function( missionTable )
+		addcredits(  missionTable.Reward )
+		PLAYER:DiscardCommodities( missionTable.Commodity, missionTable.Tonnage )
+		local message = "You've safely delivered %d tons of %s to %s."
+		message = message:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
+		HUD.newAlert( message )
+	end,
+	Failure = function( missionTable )
+		-- Discard remaining cargo.
+		local message = "You've lost the job to deliver %s to %s."
+		message = message:format( missionTable.Commodity, missionTable.Planet )
+		HUD.newAlert( message )
+	end,
+}
+
+DestroyGaryTheGold = {
+	UID = 4,
+	Version = 1,
+	Author = "Rikus Goodell",
+	Difficulty = "HARD",
+	Create = function()
+		
+		local reward = 100000 + (10000*math.random(10))
+		local planets = Epiar.planets()
+		local p = planets[math.random(#planets)]
+		local planetName = p:GetName()
+		local missionTable = defaultMissionTable( "Destroy Gary the Gold", (string.format("Insane ship captain Gary the Gold has stolen a piece of once secret military technology, known as the Gold Beam. After assuming his new title and giving his Uber a fitting paint job, he and his brother Larry have begun terrorizing ships who are defenseless against their highly illegal armaments. They were last seen in the vicinity of %s. Reward is %d.", planetName, reward)) )
+		missionTable.planet = planetName
+		missionTable.reward = reward
+		return missionTable
+	end,
+	Accept = function( missionTable )
+		local planetName = missionTable.planet
+		local p = Planet.Get( planetName )
+		local X, Y = p:GetPosition()
+		local garyX = X + math.random(700) - 350
+		local garyY = Y + math.random(700) - 350
+		local gary = Ship.new("Gary the Gold", garyX, garyY, "Golden Uber", "Ion Engines", "Pirate", "Independent")
+		gary:SetRadarColor(255,0,0)
+		--attachStandardWeapons(gary, Epiar.weapons())
+
+                local escort = Ship.new("Larry the Gold",garyX-150,garyY-150, "Vespan Carrier", "Ion Engines","Escort","Independent")
+		escort:RemoveWeapon("Strong Laser")
+		escort:RemoveWeapon("Strong Laser")
+		escort:AddWeapon("Gold Beam")
+		escort:AddWeapon("Gold Beam")
+		escort:SetRadarColor(255,0,0)
+                setAccompany(escort:GetID(), gary:GetID())
+
+		missionTable.garyID = gary:GetID()
+		missionTable.escortID = escort:GetID()
+	end,
+	Reject = function( missionTable )
+		HUD.newAlert( "Gary may never be stopped" )
+	end,
+	Update = function( missionTable )
+		local gary = Epiar.getSprite( missionTable.garyID )
+		local escort = Epiar.getSprite( missionTable.escortID )
+		if gary == nil and escort == nil then
+			return true
+		else
+			-- do nothing
+		end
+	end,
+	Success = function( missionTable )
+		HUD.newAlert("Thank you for destroying Gary the Gold!")
+		addcredits(missionTable.reward)
+	end,
+	Failure = function( missionTable )
+	end,
+
+}

@@ -89,19 +89,34 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	if alliance==nil then
 		alliance = choose(Epiar.alliances())
 	end
-	local name = choose( {"Bob","Joe","Fred","Sally","Frank"} )
+	local name = choose( {
+		"Bob", "Joe", "Fred", "Sally", "Frank",
+		"Hillary", "Bruce", "Patrick", "Jimbo", "Richard",
+		"John", "Chuck", "Arthur", "James", "Bill",
+		"Helen", "Ken", "Marcus", "Violet", "Ethel",
+		"Gary", "Scott", "Thomas", "Russel", "Steve",
+	} )
 	local X = X + about(Range)
 	local Y = Y + about(Range)
 	local model = choose(models)
 	local engine = choose(engines)
-	local plans = {"Hunter", "Trader", "Patrol", "Bully"}
+	local plans = {"Hunter", "Trader", "Patrol", "Bully" }
+	local pirateModels = { "Fleet Guard", "Kartanal", "Terran Assist", "Patitu", "Terran Corvert Mark I", "Large Vesper", "Raven", "Hammer Freighter"  }
+	local escortModels = { "Fleet Guard", "Terran XV", "Kartanal", "Patitu", "Terran Corvert Mark I"  }
 
-	s = Ship.new(name,X,Y,model,engine,plans[math.random(#plans)],alliance)
+	local p = plans[math.random(#plans)]
+	-- Turn some Hunters into anti-player Pirates if the player is far enough along
+	if PLAYER:GetCredits() > 10000 and p == "Hunter" and math.random(20) == 1 then p = "Pirate" end
+	if p == "Pirate" then
+		model = pirateModels[math.random(#pirateModels)]
+		engine = "Ion Engines"
+	end
 
-	-- To demonstrate the Escort AI, give a few ships escorts
-	if math.random(10) == 1 then
-		local escortModels = { "Fleet Guard", "Terran XV", "Shuttle", "Kartanal", "Terran Assist", "Patitu"  }
-		local escort = Ship.new("an escort",X-30,Y+30, choose(escortModels) ,"Ion Engines","Escort",alliance)
+	s = Ship.new(name,X,Y,model,engine,p,alliance)
+
+	if p == "Pirate" then
+		setHuntHostile(s:GetID(), PLAYER:GetID() )
+		local escort = Ship.new("an escort",X-150,Y-150, choose(escortModels), "Ion Engines","Escort",alliance)
 		setAccompany(escort:GetID(), s:GetID())
 	end
 
@@ -754,18 +769,27 @@ function landingDialog(id)
 
 	-- Employment
 	missions = UI.newTab("Employment")
-	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts"}
+	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts", "ShippingRoutes"}
+	rareMissionTypes = {"DestroyGaryTheGold"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
-	for i = 1,4 do
-		local missionType = choose(availableMissionsTypes)
+	local numMissions = math.random(2,7)
+	for i = 1,numMissions do
+		local missionType
+		if math.random(50) == 1 then
+			missionType = choose(rareMissionTypes)
+		else
+			missionType = choose(availableMissionsTypes)
+		end
 		availableMissions[i] = _G[missionType].Create()
 		missions:add(
-			UI.newLabel( 10, yoff, availableMissions[i].Name ),
-			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
-			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
+			UI.newFrame( 10, yoff, width -70, 150,
+				UI.newLabel( 10, 10, availableMissions[i].Name ),
+				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
+				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
 			)
-		yoff = yoff + 100
+		)
+		yoff = yoff + 170
 	end
 
 	storeframe:add(shipyard, outfitting, trade, missions)
