@@ -15,13 +15,25 @@ end
 
 function linewrap(text, chars_per_line)
 	if chars_per_line == nil then chars_per_line = 72 end
-	local ret = ""
-	for line =1,math.ceil( text:len() / chars_per_line ) do
-		local partial = text:sub( (line-1)*chars_per_line, (line)*chars_per_line -1)
-		ret = ret .. partial .. "\n"
-	end
-	return ret
+	local words = { }
+	local wrapped = ""
+	local line = ""
+	string.gsub(text, "([^ ]*)",
+	   function(w)
+              local joined = string.format("%s %s", line, w)
+	      if string.len( joined ) <= chars_per_line  then
+		 line = joined
+	      else
+		 if wrapped == "" then wrapped = line
+		 else wrapped = string.format("%s\n%s", wrapped, line) end
+		 line = w
+	      end
+	      return ""
+	   end)
+	wrapped = string.format("%s\n%s", wrapped, line)
+	return wrapped
 end
+
 
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
