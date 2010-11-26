@@ -89,7 +89,13 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	if alliance==nil then
 		alliance = choose(Epiar.alliances())
 	end
-	local name = choose( {"Bob","Joe","Fred","Sally","Frank"} )
+	local name = choose( {
+		"Bob", "Joe", "Fred", "Sally", "Frank",
+		"Hillary", "Bruce", "Patrick", "Jimbo", "Richard",
+		"John", "Chuck", "Arthur", "James", "Bill",
+		"Helen", "Ken", "Marcus", "Violet", "Ethel",
+		"Gary", "Scott", "Thomas", "Russel", "Steve",
+	} )
 	local X = X + about(Range)
 	local Y = Y + about(Range)
 	local model = choose(models)
@@ -758,15 +764,18 @@ function landingDialog(id)
 	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts", "ShippingRoutes"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
-	for i = 1,4 do
+	local numMissions = math.random(2,7)
+	for i = 1,numMissions do
 		local missionType = choose(availableMissionsTypes)
 		availableMissions[i] = _G[missionType].Create()
 		missions:add(
-			UI.newLabel( 10, yoff, availableMissions[i].Name ),
-			UI.newLabel( 10, yoff+20, linewrap(availableMissions[i].Description) ),
-			UI.newButton( width-150, yoff+20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
+			UI.newFrame( 10, yoff, width -70, 150,
+				UI.newLabel( 10, 10, availableMissions[i].Name ),
+				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
+				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
 			)
-		yoff = yoff + 100
+		)
+		yoff = yoff + 170
 	end
 
 	storeframe:add(shipyard, outfitting, trade, missions)
