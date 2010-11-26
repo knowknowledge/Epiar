@@ -16,13 +16,22 @@
 #include "Utilities/components.h"
 
 
+struct ws {
+	string name;            ///< name of the slot
+	string mode;            ///< coord mode: "auto" or "manual"
+	double x,y;             ///< only matters if mode is manual
+	double angle;           ///< angle the weapon will be mounted
+	double motionAngle;     ///< should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
+	string content;         ///< name of the weapon it contains (or "" for empty)
+	short int firingGroup;  ///< which firing group this slot belongs to
+};
+typedef struct ws ws_t;
+
 // Abstraction of a single ship model
 class Model : public Outfit {
 	public:
 		Model();
-  		Model& operator= (const Model&);
-
-		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace);
+		Model& operator= (const Model&);
 
 		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<ws_t>& _weaponSlots);
 
@@ -33,9 +42,27 @@ class Model : public Outfit {
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
 
+		// anticipated editor behavior: (remove these comments when it is implemented)
+		//    typedef struct Model::ws ws_t
+		//    [...]
+		//    vector<ws_t> slots = thisModel->GetWeaponSlots()    action: copy
+		//    [alter slots as requested by user]
+		//    thisModel->ConfigureWeaponSlots(slots);             action: pass reference
+		//    [existing behavior]
+		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
+		int GetWeaponSlotCount();
+		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
+		bool ConfigureWeaponSlots( vector<ws_t>& slots );
+		bool ConfigureWeaponSlots();
+
+		// Debug
+		void WSDebug(vector<ws_t>&);
+		void WSDebug(ws_t);
+
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.
 		short int thrustOffset; ///< The number of pixels engine flare animation offset
+		vector<ws_t> weaponSlots; ///< Slots for Weapons
 };
 
 // Class that holds list of all models; manages them

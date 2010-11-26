@@ -109,7 +109,7 @@ class Ship : public Sprite {
 		int GetFriendly() { return (friendly ? 1 : 0 ); }
 
 	protected:
-		typedef struct Outfit::ws ws_t;
+		typedef struct ws ws_t;
 
 		vector<ws_t> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
 	

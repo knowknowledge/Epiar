@@ -64,22 +64,6 @@ Model& Model::operator=(const Model& other) {
  * \param _cargoSpace Tons of cargo space
  */
 
-Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
-		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace) :
-	image(_image),
-	thrustOffset(_thrustOffset)
-{
-	SetName(_name);
-	SetMass(_mass);
-	SetRotationsPerSecond(_rotPerSecond);
-	SetMaxSpeed(_maxSpeed);
-	SetMSRP(_msrp);
-	SetCargoSpace(_cargoSpace);
-	SetHullStrength(_hullStrength);
-	SetShieldStrength(_shieldStrength);
-	Outfit::ConfigureWeaponSlots();
-	//((Component*)this)->SetName(_name);
-}
 
 Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
 		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace,
@@ -95,7 +79,7 @@ Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset,
 	SetCargoSpace(_cargoSpace);
 	SetHullStrength(_hullStrength);
 	SetShieldStrength(_shieldStrength);
-	Outfit::ConfigureWeaponSlots(_weaponSlots);
+	ConfigureWeaponSlots(_weaponSlots);
 	//((Component*)this)->SetName(_name);
 }
 
@@ -153,11 +137,11 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	if( (attr = FirstChildNamed(node,"weaponSlots")) ){
 		// pass the weaponSlots XML node into a handler function
-		Outfit::ConfigureWeaponSlots( doc, attr );
+		ConfigureWeaponSlots( doc, attr );
 	} else {
 		cout << "Model::FromXMLNode(): Did not find weapon slot configuration - assuming defaults." << endl;
 		// with no parameters, it sets default values
-		Outfit::ConfigureWeaponSlots();
+		ConfigureWeaponSlots();
 	}
 
 	return true;
@@ -230,6 +214,133 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	return section;
 }
 
+/**\brief Configure the ship's weapon slots based on the XML node weaponSlots.
+ */
+bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
+
+	xmlNodePtr slotPtr;
+	string value;
+
+	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
+        for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
+		ws_t newSlot;
+
+		xmlNodePtr attr;
+
+		if( (attr = FirstChildNamed(slotPtr,"name")) ){
+			value = NodeToString(doc,attr);
+			newSlot.name = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"coord")) ){
+			value = NodeToString(doc,attr);
+			// go deeper...
+
+			xmlNodePtr coordAttr;
+			if( (coordAttr = FirstChildNamed(attr,"mode")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.mode = value;
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"x")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.x = atof(value.c_str());
+			} else return false;
+			if( (coordAttr = FirstChildNamed(attr,"y")) ){
+				value = NodeToString(doc,coordAttr);
+				newSlot.y = atof(value.c_str());
+			} else return false;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"angle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.angle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"motionAngle")) ){
+			value = NodeToString(doc,attr);
+			newSlot.motionAngle = atof(value.c_str());
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			newSlot.content = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			newSlot.firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
+		//WSDebug(newSlot);
+
+		weaponSlots.push_back(newSlot);
+
+		//Model::ConfigureWeaponSlots( doc, node );
+	}
+
+	WSDebug(weaponSlots);
+
+
+        return true;
+}
+
+/**\brief Configure the ship's weapon slots based on a list passed in (probably from the constructor)
+ */
+bool Model::ConfigureWeaponSlots( vector<ws_t>& slots ) {
+        this->weaponSlots = slots;
+        return true;
+}
+
+/**\brief Configure the ship's weapon slots using default values.
+ */
+bool Model::ConfigureWeaponSlots() {
+        ws_t wsFront1;
+        ws_t wsFront2;
+
+        wsFront1.name = "front 1";
+        wsFront1.x = -0.3;
+	wsFront1.y = 2.0;
+        wsFront1.angle = 0.0;
+        wsFront1.motionAngle = 0.0;
+	wsFront1.content = "";
+	wsFront1.firingGroup = 0;
+
+        wsFront2.name = "front 2";
+        wsFront1.x = 0.3;
+	wsFront1.y = 2.0;
+        wsFront2.angle = 0.0;
+        wsFront2.motionAngle = 0.0;
+	wsFront2.firingGroup = 1;
+
+	vector<ws_t> newSlots;
+        newSlots.push_back(wsFront1);
+        newSlots.push_back(wsFront2);
+	this->weaponSlots = newSlots;
+
+        return true;
+}
+
+/**\brief Return the total number of weapon slots of any kind that this Model (probably a Model) has.
+ */
+int Model::GetWeaponSlotCount(){
+	return this->weaponSlots.size();
+}
+
+void Model::WSDebug(ws_t slot){
+	LogMsg(INFO, "WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+}
+
+void Model::WSDebug(vector<ws_t>& slots){
+	//cout << "WSD  Ship model: " << this->GetName() << endl;
+	for(unsigned int i = 0; i < slots.size(); i++){
+		WSDebug(slots[i]);
+	}
+}
 
 /**\fn Model::GetImage()
  *  \brief Retrieves a pointer to the Image

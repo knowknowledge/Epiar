@@ -15,23 +15,11 @@
 
 class Outfit : public Component {
 	public:
-
 		Outfit();
-
-		struct ws {
-			string name;            ///< name of the slot
-			string mode;            ///< coord mode: "auto" or "manual"
-			double x,y;             ///< only matters if mode is manual
-			double angle;           ///< angle the weapon will be mounted
-			double motionAngle;     ///< should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
-			string content;         ///< name of the weapon it contains (or "" for empty)
-			short int firingGroup;  ///< which firing group this slot belongs to
-		};
-		typedef struct ws ws_t;
 
 		Outfit(
 				int _msrp,
-	            Image* _picture,
+				Image* _picture,
 				float _rotPerSecond,
 				float _maxSpeed,
 				float _forceOutput,
@@ -39,8 +27,7 @@ class Outfit : public Component {
 				int _cargoSpace,
 				int _surfaceArea,
 				int _hullStrength,
-				int _shieldStrength,
-				int _weaponSlots
+				int _shieldStrength
 				);
 
 		Outfit& operator= (const Outfit& other);
@@ -80,23 +67,6 @@ class Outfit : public Component {
 		int GetShieldStrength() { return shieldStrength; }
 		void SetShieldStrength( int _shieldStrength ) { shieldStrength = _shieldStrength; }
 
-		// anticipated editor behavior: (remove these comments when it is implemented)
-		//    typedef struct Outfit::ws ws_t
-		//    [...]
-		//    vector<ws_t> slots = thisModel->GetWeaponSlots()    action: copy
-		//    [alter slots as requested by user]
-		//    thisModel->ConfigureWeaponSlots(slots);             action: pass reference
-		//    [existing behavior]
-		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
-                int GetWeaponSlotCount();
-                bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
-                bool ConfigureWeaponSlots( vector<ws_t>& slots );
-                bool ConfigureWeaponSlots();
-
-		// Debug
-		void WSDebug(vector<ws_t>&);
-		void WSDebug(ws_t);
-
 	protected:
 		int msrp; ///< The cost in credits.
 		Image* picture; ///< The image used in the store.
@@ -116,7 +86,6 @@ class Outfit : public Component {
 		int shieldStrength; ///< The amount of damage the shields can absorb.
 
 		// Offensive Stats
-		vector<ws_t> weaponSlots;
 	private:
 };
 
