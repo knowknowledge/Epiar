@@ -110,9 +110,8 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	-- give every AI the standard weapons of their ship class
 	attachStandardWeapons(s,weapons)
 
-	local creditsMax = 5500
-	-- curving probability with lower numbers being more likely
-	local randCredits = math.random(math.sqrt(creditsMax)) * math.random(math.sqrt(creditsMax)) 
+        local creditsMax = math.random(40,90) * math.sqrt( s:GetTotalCost() )
+        local randCredits = math.random( creditsMax )
 	s:SetCredits(randCredits)
 
 	return s
