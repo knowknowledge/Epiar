@@ -33,7 +33,10 @@ function okayTarget(cur_ship, ship)
 
 	if AIData[ship:GetID()] == nil then return true end
 
-	if AIData[ship:GetID()].accompany == cur_ship:GetID() then
+	-- If the ship in question is accompanying either this ship or whichever one we are
+	-- accompanying, don't attack it.
+	if AIData[ship:GetID()].accompany == cur_ship:GetID() or
+	   AIData[ship:GetID()].accompany == AIData[cur_ship:GetID()].accompany then
 		return false
 	end
 
@@ -47,10 +50,25 @@ function setAccompany(id, accid)
 	AIData[id].accompany = accid
 end
 
+function setHuntHostile(id, tid)
+	if AIData[id] == nil then
+		AIData[id] = { }
+	end
+	AIData[id].target = tid
+	AIData[id].hostile = 1
+	AIData[id].foundTarget = 0
+end
+
 --- Hunter AI
 Hunter = {
 	default = function(id,x,y,angle,speed,vector)
-		AIData[id] = {}
+		if AIData[id] == nil then
+			AIData[id] = { }
+		end
+		if AIData[id].foundTarget == 1 then
+			AIData[id].hostile = 0
+			AIData[id].foundTarget = 0
+		end
 		return "New_Planet"
 	end,
 	New_Planet = FindADestination,
@@ -64,11 +82,12 @@ Hunter = {
 			tx,ty = target:GetPosition()
 			dist = distfrom(tx,ty,x,y)
 		else
+			AIData[id].hostile = 0
 			return "default"
 		end
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 
-		if cur_ship:directionTowards(tx,ty) == 0 then
+		if math.abs(cur_ship:directionTowards(tx,ty)) == 0 then
 			cur_ship:Accelerate()
 		end
 
@@ -78,6 +97,8 @@ Hunter = {
 		if dist>1000 and AIData[id].hostile == 0 then
 			return "default"
 		end
+
+		return "Hunting"
 	end,
 	Killing = function(id,x,y,angle,speed,vector)
 		-- Attack the target
@@ -90,6 +111,12 @@ Hunter = {
 		else
 			tx,ty = target:GetPosition()
 			dist = distfrom(tx,ty,x,y)
+		end
+
+		if AIData[id].hostile == 1 and AIData[id].foundTarget == 0 then
+			AIData[id].foundTarget = 1
+			local machine, state = cur_ship:GetState()
+			HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
 		end
 
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
@@ -111,21 +138,32 @@ Hunter = {
 	end,
 
 	Travelling = function(id,x,y,angle,speed,vector)
-		if AIData[id].hostile == 1 then return "Hunting" end
 		-- Find a new target
 		local cur_ship = Epiar.getSprite(id)
-		local ship= Epiar.nearestShip(cur_ship,1000)
+		local closeShip= Epiar.nearestShip(cur_ship,1000)
+		local targetShip= nil
+		if AIData[id].target ~= nil then targetShip = Epiar.getSprite(AIData[id].target) end
 
-		if ship~=nil and okayTarget(cur_ship, ship) then
-			tx,ty = ship:GetPosition()
-			AIData[id].target = ship:GetID()
+		if targetShip~=nil and okayTarget(cur_ship, targetShip) and AIData[id].hostile == 1 then
+			return "Hunting"
+		elseif closeShip~=nil and okayTarget(cur_ship, closeShip) then
+			AIData[id].hostile = 0
+			AIData[id].target = closeShip:GetID()
 			return "Hunting"
 		end
+
+
+		--print (string.format ("%s %s not hunting anything target %d\n", cur_ship:GetState(), AIData[id].target))
+
+		AIData[id].hostile = 0
 
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
+		if distfrom(px,py,x,y) < 800 then
+			return "New_Planet"
+		end
 	end,
 }
 
@@ -297,6 +335,12 @@ Escort = {
 			AIData[id].accompany = -1
 		end
 		AIData[id].target = -1
+
+		-- Create some variation in how escort pilots behave
+		local mass = Epiar.getSprite(id):GetMass()
+		AIData[id].farThreshold = 225 * mass + math.random(50)
+		AIData[id].nearThreshold = 100 * mass + math.random(40)
+
 		if AIData[id].accompany < 0 then return "New_Planet" end
 		return "Accompanying"
 	end,
@@ -320,14 +364,13 @@ Escort = {
 	Hunting = Hunter.Hunting,
 	Killing = Hunter.Killing,
 	Accompanying = function(id,x,y,angle,speed,vector)
-		if AIData[id].hostile == 1 then return "Hunting" end
-
 		local cur_ship = Epiar.getSprite(id)
 		local acc = AIData[id].accompany
 		local accompanySprite
 
 		if acc > -1 then
 			accompanySprite = Epiar.getSprite(AIData[id].accompany)
+			if AIData[id].hostile == 1 then return "Hunting" end
 		else
 			return "New_Planet"
 		end
@@ -336,7 +379,7 @@ Escort = {
 		local ay = 0
 		local distance
 
-		if accompanySprite~=nil then
+		if accompanySprite~=nil and accompanySprite:GetHull() > 0 then
 			ax,ay = accompanySprite:GetPosition()
 
 			local aitype, aitask = accompanySprite:GetState()
@@ -346,33 +389,31 @@ Escort = {
 			end
 		else
 			AIData[id].accompany = -1
+			AIData[id].hostile = -1
 			return "default"
 		end
+
 		distance = distfrom(ax,ay,x,y)
 
-		local accDir = cur_ship:directionTowards(ax,ay)
-		local accDirInverse = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
-		--print (string.format("accDir=%d accDirInverse=%d\n", accDir, accDirInverse))
+		local accelDir = cur_ship:directionTowards(ax,ay)
+		local inverseMomentumDir = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
+		--print (string.format("accompanyDir=%d accompanyDirInverse=%d\n", accompanyDir, accompanyDirInverse))
 
-		local mass = cur_ship:GetMass()
-
-		local farThreshold = 250 * mass
-		local nearThreshold = 120 * mass
-
-		if distance > farThreshold then
-			cur_ship:Rotate( accDir )
-			if math.abs(accDir) < 35 then
+		if distance > AIData[id].farThreshold then
+			cur_ship:Rotate( accelDir )
+			if math.abs(accelDir) == 0 then
 				cur_ship:Accelerate()
 			end
 		else
-			if distance > nearThreshold then
-				cur_ship:Rotate( accDir )
-				if distance % (math.sqrt(farThreshold - distance) + 1) < 2 and accDir == 0 then
+			if distance > AIData[id].nearThreshold then
+				cur_ship:Rotate( accelDir )
+				if distance % (math.sqrt(AIData[id].farThreshold - distance) + 1) < 2 and
+				   accelDir == 0 then
 					cur_ship:Accelerate()
 				end
 			else
-				cur_ship:Rotate( accDirInverse )
-				--if math.abs(accDirInverse) < 35 then
+				cur_ship:Rotate( inverseMomentumDir )
+				--if math.abs(inverseMomentumDir) < 35 then
 				--	cur_ship:Accelerate()
 				--end
 			end

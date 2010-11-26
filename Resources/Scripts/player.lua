@@ -48,6 +48,7 @@ end
 
 --- Target ship
 function targetShip()
+	if Epiar.ispaused()==1 then return end
 	local x,y = PLAYER:GetPosition()
 	local nearby = Epiar.ships(x,y,4096)
 	if #nearby==0 then return end
@@ -264,9 +265,9 @@ function boardShip()
 
 		local targetMass = targettedShip:GetMass()
 
-		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
+		-- prob. divisor that attempt will succeed. greater player mass improves this ratio.
 		local succ_max = 4 ^ ( targetMass / PLAYER:GetMass() )
-		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
+		-- prob. divisor that ship will destruct. greater player mass makes this ratio worse.
 		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
 
 		local captureProbPct = (1 / succ_max) * 100

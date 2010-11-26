@@ -258,6 +258,7 @@ CollectArtifacts = {
 	Failure = function( missionTable ) end,
 }
 
+
 ShippingRoutes = {
 	UID = 5,
 	Version = 1,
@@ -325,3 +326,60 @@ ShippingRoutes = {
 	end,
 }
 
+DestroyGaryTheGold = {
+	UID = 4,
+	Version = 1,
+	Author = "Rikus Goodell",
+	Difficulty = "HARD",
+	Create = function()
+		
+		local reward = 100000 + (10000*math.random(10))
+		local planets = Epiar.planets()
+		local p = planets[math.random(#planets)]
+		local planetName = p:GetName()
+		local missionTable = defaultMissionTable( "Destroy Gary the Gold", (string.format("Insane ship captain Gary the Gold has stolen a piece of once secret military technology, known as the Gold Beam. After assuming his new title and giving his Uber a fitting paint job, he and his brother Larry have begun terrorizing ships who are defenseless against their highly illegal armaments. They were last seen in the vicinity of %s. Reward is %d.", planetName, reward)) )
+		missionTable.planet = planetName
+		missionTable.reward = reward
+		return missionTable
+	end,
+	Accept = function( missionTable )
+		local planetName = missionTable.planet
+		local p = Planet.Get( planetName )
+		local X, Y = p:GetPosition()
+		local garyX = X + math.random(700) - 350
+		local garyY = Y + math.random(700) - 350
+		local gary = Ship.new("Gary the Gold", garyX, garyY, "Golden Uber", "Ion Engines", "Pirate", "Independent")
+		gary:SetRadarColor(255,0,0)
+		--attachStandardWeapons(gary, Epiar.weapons())
+
+                local escort = Ship.new("Larry the Gold",garyX-150,garyY-150, "Vespan Carrier", "Ion Engines","Escort","Independent")
+		escort:RemoveWeapon("Strong Laser")
+		escort:RemoveWeapon("Strong Laser")
+		escort:AddWeapon("Gold Beam")
+		escort:AddWeapon("Gold Beam")
+		escort:SetRadarColor(255,0,0)
+                setAccompany(escort:GetID(), gary:GetID())
+
+		missionTable.garyID = gary:GetID()
+		missionTable.escortID = escort:GetID()
+	end,
+	Reject = function( missionTable )
+		HUD.newAlert( "Gary may never be stopped" )
+	end,
+	Update = function( missionTable )
+		local gary = Epiar.getSprite( missionTable.garyID )
+		local escort = Epiar.getSprite( missionTable.escortID )
+		if gary == nil and escort == nil then
+			return true
+		else
+			-- do nothing
+		end
+	end,
+	Success = function( missionTable )
+		HUD.newAlert("Thank you for destroying Gary the Gold!")
+		addcredits(missionTable.reward)
+	end,
+	Failure = function( missionTable )
+	end,
+
+}
