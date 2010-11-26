@@ -755,7 +755,7 @@ function landingDialog(id)
 
 	-- Employment
 	missions = UI.newTab("Employment")
-	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts"}
+	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts", "ShippingRoutes"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	for i = 1,4 do
