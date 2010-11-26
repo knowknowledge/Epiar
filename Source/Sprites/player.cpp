@@ -169,7 +169,7 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 			LogMsg(INFO, "Successfully loaded the %s mission of player '%s'", mission->GetName().c_str(), this->GetName().c_str() );
 			missions.push_back( mission );
 		} else {
-			LogMsg(INFO, "Aborted loading mission of player '%s'", mission->GetName().c_str(), this->GetName().c_str() );
+			LogMsg(INFO, "Aborted loading mission of player '%s'", this->GetName().c_str() );
 		}
 	}
 
