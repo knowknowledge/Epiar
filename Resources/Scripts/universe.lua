@@ -769,7 +769,7 @@ function landingDialog(id)
 
 	-- Employment
 	missions = UI.newTab("Employment")
-	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts", "ShippingRoutes"}
+	availableMissionsTypes = {"ReturnAmbassador", "DestroyPirate", "CollectArtifacts", "ShippingRoutes", "ProtectFreighter" }
 	rareMissionTypes = {"DestroyGaryTheGold"}
 	availableMissions = {} -- This is a global variable
 	yoff = 5

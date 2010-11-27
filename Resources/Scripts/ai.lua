@@ -372,7 +372,11 @@ Escort = {
 			accompanySprite = Epiar.getSprite(AIData[id].accompany)
 			if AIData[id].hostile == 1 then return "Hunting" end
 		else
-			return "New_Planet"
+			if AIData[id].destination ~= nil and AIData[id].destination > -1 then
+				return "Travelling"
+			else
+				return "New_Planet"
+			end
 		end
 
 		local ax = 0

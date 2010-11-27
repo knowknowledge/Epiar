@@ -337,7 +337,7 @@ DestroyGaryTheGold = {
 		local planets = Epiar.planets()
 		local p = planets[math.random(#planets)]
 		local planetName = p:GetName()
-		local missionTable = defaultMissionTable( "Destroy Gary the Gold", (string.format("Insane ship captain Gary the Gold has stolen a piece of once secret military technology, known as the Gold Beam. After assuming his new title and giving his Uber a fitting paint job, he and his brother Larry have begun terrorizing ships who are defenseless against their highly illegal armaments. They were last seen in the vicinity of %s. Reward is %d.", planetName, reward)) )
+		local missionTable = defaultMissionTable( "Destroy Gary the Gold", (string.format("Insane ship captain Gary the Gold has stolen a piece of once secret military technology known as the Gold Beam. After assuming his new title and giving his ship a fitting paint job, he and his brother Larry have begun terrorizing merchants who are defenseless against their highly illegal armaments. They were last seen in the vicinity of %s. Reward is %d.", planetName, reward)) )
 		missionTable.planet = planetName
 		missionTable.reward = reward
 		return missionTable
@@ -380,6 +380,93 @@ DestroyGaryTheGold = {
 		addcredits(missionTable.reward)
 	end,
 	Failure = function( missionTable )
+	end,
+
+}
+
+ProtectFreighter = {
+	UID = 5,
+	Version = 1,
+	Author = "Rikus Goodell",
+	Difficulty = "MEDIUM",
+	Create = function()
+		
+
+		local reward = 10000 + math.random(100)*200
+		local planets = Epiar.planets()
+		local p = planets[math.random(#planets)]
+		local planetName = p:GetName()
+
+
+		local pronoun = "his"
+		local maleNames = { "Manfred", "Johnny", "Otis", "Gus", "Gilbert" }
+		local femaleNames = { "Suzie", "Wanda", "Francine", "Bertha", "Mildred" }
+		local freighterName
+		if math.random(2) == 1 then
+			pronoun = "his"
+			freighterName = (string.format("Captain %s", maleNames[math.random(#maleNames)]))
+		else
+			pronoun = "her"
+			freighterName = (string.format("Captain %s", femaleNames[math.random(#femaleNames)]))
+		end
+
+		local missionTable = defaultMissionTable( (string.format ("Protect freighter en route to %s", planetName)),
+		   (string.format(
+		      "%s, under threat from pirates, requests that you ensure %s safe arrival at %s. Reward is %d.",
+		      freighterName, pronoun, planetName, reward) )
+		)
+		missionTable.freighterName = freighterName
+		missionTable.planet = planetName
+		missionTable.reward = reward
+		return missionTable
+	end,
+	Accept = function( missionTable )
+		local planetName = missionTable.planet
+		local p = Planet.Get( planetName )
+		local pX, pY = p:GetPosition()
+		local playerX, playerY = PLAYER:GetPosition()
+
+                local freighter = Ship.new( string.format("%s", missionTable.freighterName), playerX-100,playerY, "Hammer Freighter", "Altaire Corp. NM66 Sublight Thrusters","Escort","Independent")
+                --local freighter = Ship.new("freighter",playerX-100,playerY, "Terran Corvert Mark I", "Ion Engines","Escort","Independent")
+		freighter:SetRadarColor(0,255,0)
+		setAccompany(freighter:GetID(), PLAYER:GetID())
+		missionTable.freighter = freighter:GetID()
+
+		for i =1,2 do
+			local pirateX = pX + math.random(7000*i) - 3500*i
+			local pirateY = pY + math.random(7000*i) - 3500*i
+			local pirate = Ship.new("Pete", pirateX, pirateY, "Terran Corvert Mark I", "Ion Engines", "Pirate", "Independent")
+			pirate:SetRadarColor(255,0,0)
+			local escort = Ship.new("Skip",pirateX-150,pirateY-150, "Fleet Guard", "Ion Engines","Escort","Independent")
+			escort:SetRadarColor(255,0,0)
+			setAccompany(escort:GetID(), pirate:GetID())
+			setHuntHostile(pirate:GetID(), freighter:GetID())
+		end
+	end,
+	Reject = function( missionTable )
+		HUD.newAlert( (string.format("%s: \"%s! I find your betrayal most disappointing.\"", missionTable.freighterName, PLAYER:GetName() ) ) )
+		setAccompany(missionTable.freighter, -1)
+	end,
+	Update = function( missionTable )
+		local freighter = Epiar.getSprite( missionTable.freighter )
+		local p = Planet.Get( missionTable.planet )
+		if freighter ~= nil and p ~= nil then
+			local fX, fY = freighter:GetPosition()
+			local pX, pY = p:GetPosition()
+			if distfrom( fX, fY, pX, pY ) < 350 then
+				return true
+			end
+		else
+			return false
+		end
+	end,
+	Success = function( missionTable )
+		HUD.newAlert("Mission succeeded.")
+		addcredits(missionTable.reward)
+		setAccompany(missionTable.freighter, -1)
+	end,
+	Failure = function( missionTable )
+		HUD.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )
 	end,
 
 }
