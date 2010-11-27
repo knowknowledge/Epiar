@@ -13,20 +13,22 @@ function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+-- Wrap lines of text to a specified maximum width or 72 characters by default.
+-- To-do: allow hard wrapping with blank lines.
 function linewrap(text, chars_per_line)
 	if chars_per_line == nil then chars_per_line = 72 end
-	local words = { }
 	local wrapped = ""
 	local line = ""
-	string.gsub(text, "([^ ]*)",
+	string.gsub(text, "([^ \n]*)[ \n]*",
 	   function(w)
-              local joined = string.format("%s %s", line, w)
+	      local joined = string.format("%s %s", line, w)
+              if line == "" then joined = w end
 	      if string.len( joined ) <= chars_per_line  then
 		 line = joined
 	      else
-		 if wrapped == "" then wrapped = line
-		 else wrapped = string.format("%s\n%s", wrapped, line) end
-		 line = w
+	         if wrapped == "" then wrapped = line
+	         else wrapped = string.format("%s\n%s", wrapped, line) end
+	         line = w
 	      end
 	      return ""
 	   end)

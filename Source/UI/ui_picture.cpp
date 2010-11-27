@@ -106,7 +106,6 @@ bool Picture::MouseLUp( int x, int y ){
 	if(luaClickCallback != ""){
 		char *lua_call = (char*)malloc(128);
 		snprintf(lua_call, 128, "%s(%d,%d)", luaClickCallback.c_str(), x, y);
-		LogMsg(INFO, "running Lua function %s\n", lua_call);
 		Lua::Run(lua_call);
 		free(lua_call);
 	}

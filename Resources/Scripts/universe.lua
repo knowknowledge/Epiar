@@ -853,7 +853,7 @@ function weaponConfigDialog()
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
 	local height = 60 + (40*slotCount)
-	--if height < 350 then height = 350 end -- accommodate the instruction text
+	if height < 275 then height = 275 end -- accommodate the instruction text
 
 	local width = 500
 
@@ -868,33 +868,15 @@ function weaponConfigDialog()
 
 	--local weapLabel = UI.newLabel(25, 5, "Weapons available:", 0)
 
-	local wcInstructions = [[
+	local wcInstructions = [[To move a weapon from one slot to another, click on the first slot, then click on the one you want to swap it with.
 
-	To move a weapon from one
-	slot to another, click on
-	the first slot, then click
-	on the one you want to swap
-	it with.
+				There are two firing groups, Primary and Secondary. To switch the firing group of a slot, click on the firing group button.
 
-	There are two firing groups,
-	Primary and Secondary. To
-	switch the firing group of a
-	slot, click on the firing
-	group button.
+				Although you may have your own preferences, it is recommended that, if you have a weapon which requires ammo (e.g. missile launcher), you keep it in a firing group separate from your main group.
 
-	Although you may have your
-	own preferences, it is
-	recommended that, if you have
-	a weapon which requires ammo
-	(e.g. missile launcher), you
-	keep it in a firing group
-	separate from your main group.
+				Grouping missiles into a salvo is a possibility if you have more than one launcher.]]
 
-	Grouping missiles into a salvo
-	is a possibility if you have
-	more than one launcher.
-	]]
-	wcInstructions = string.gsub(wcInstructions, "\t", "")
+	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32 )
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
@@ -928,12 +910,6 @@ function weaponConfigDialog()
 	end
 
 	local w = 0
-
-	--for name,ammo in pairs(PLAYER:GetWeapons()) do
-	--	local weapLabel = UI.newLabel( 25, 35+(40*w)+20, (string.format("%s", name)))
-	--	rightFrame:add(weapLabel);
-	--	w = w + 1
-	--end
 
 end
 

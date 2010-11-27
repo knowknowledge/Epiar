@@ -354,11 +354,6 @@ FireStatus Ship::Fire( int target ) {
 		short int slotFiringGroup = weaponSlots[slot].firingGroup;
 
 		Weapon* currentWeapon = Weapons::Instance()->GetWeapon(weapName);
-		//for(unsigned int weap = 0; weap < shipWeapons.size(); weap++){ // inefficient - FIX THIS
-		//	if(shipWeapons[weap]->GetName() == weapName){
-		//		currentWeapon = shipWeapons.at(weap);
-		//	}
-		//}
 
 		if(currentWeapon == NULL){
 			// do nothing for this slot (this may be because the weapon slot is empty)
@@ -367,11 +362,8 @@ FireStatus Ship::Fire( int target ) {
 			if( (unsigned int)slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
 				emptyFiringGroup = false;
 
-				// 20101124 alternate branch: still thinking about how best to do this 
-				//int staggerTime = (currentWeapon->GetFireDelay() / weaponSlots.size()) * (slot);
-				int staggerTime = rand() % (100 * weaponSlots.size());
 				// Check that the weapon has cooled down;
-				if( !( (int)(currentWeapon->GetFireDelay()) + staggerTime < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
+				if( !( (int)(currentWeapon->GetFireDelay()) < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
 					fnr = true;
 				}
 				// Check that there is sufficient ammo
@@ -475,9 +467,6 @@ FireStatus Ship::Fire( int target ) {
 			}
 		}
 	}
-
-	//if(target == 60) // uncomment this if you want to debug AI firing issues
-	//	printf("Ship::Fire(60) for #%d status: emptygroup=%d fired=%d noammo=%d notready=%d lastFiredAt[0]=%d lastFiredAt[1]=%d tick=%d\n", this->GetID(), (emptyFiringGroup?1:0), (fired?1:0), (fna?1:0), (fnr?1:0), status.lastFiredAt[0], status.lastFiredAt[1], Timer::GetTicks());
 
 	if(emptyFiringGroup) return FireEmptyGroup;
 	if(fired) return FireSuccess;
@@ -806,12 +795,6 @@ map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
 	Weapons* weaps = Weapons::Instance();
 	Weapon* thisWeapon;
-	// old:
-	//for(unsigned int i=0; i<shipWeapons.size(); i++){
-	//	thisWeapon = this->shipWeapons[i];
-	//	weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
-	//}
-	// new:
 	for(unsigned int i = 0; i < weaponSlots.size(); i++){
 		if(this->weaponSlots[i].content != ""){
 			thisWeapon = weaps->GetWeapon(this->weaponSlots[i].content);
