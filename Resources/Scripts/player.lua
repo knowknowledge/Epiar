@@ -29,7 +29,9 @@ playerCommands = {
 	{'x', "Decrease Shields", "changePower(-1,0.5,0.5)", KEYTYPED},
 	{'c', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
 	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
-	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED}
+	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED},
+	{'lalt', "Angle towards next gate in route", "playerGateAutoAngle()", KEYPRESSED},
+	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED}
 }
 
 function playerStart()

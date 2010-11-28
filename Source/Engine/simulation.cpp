@@ -118,7 +118,8 @@ bool Simulation::Run() {
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")
 	       && Lua::Load("Resources/Scripts/missions.lua")
-	       && Lua::Load("Resources/Scripts/player.lua");
+	       && Lua::Load("Resources/Scripts/player.lua")
+	       && Lua::Load("Resources/Scripts/autopilot.lua");
 	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
 		return false;
