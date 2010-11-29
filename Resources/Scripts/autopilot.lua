@@ -7,15 +7,13 @@
 --
 --   This is an automatic gate navigation system for the player. It might make sense to
 --   turn it into an AI and allow the player to be controlled by that AI. Then it could
---   also guide escorts, for example, through the gates with you (however, a case like that
---   might make it tempting for the autopilot to recompute shortest path every time the player
+--   also guide escorts, for example, through the gates with you. However, a case like that
+--   it might make it tempting for the autopilot to recompute shortest path every time the player
 --   moves, which would be unacceptably CPU intensive, so a better way of tracking the player
 --   would need to be devised.
 --
---   This should probably also be made into something that you get after buying an outfit or with certain
---   ships.
---
 -- How to use it:
+--   0) buy the "Nav Aid" outfit (it won't work until you do)
 --   1) hit 'T' (capital) and choose your destination (must be a valid planet/station name)
 --   2) hold down Left Alt and accelerate in the direction it takes you.
 --   3) if you think you are headed completely in the right direction or if it tells you to stop,
@@ -44,6 +42,13 @@ function APInit()
 		end
 		return (string.format("%s to %s", u, v))
 	end
+	Autopilot.hasAutopilot = function(ship)
+		for n,po in pairs( ship:GetOutfits() ) do
+			if po == "Nav Aid" then return true end
+		end
+		return false
+	end
+
 end
 
 function shortestPath(orig, dest)
@@ -54,18 +59,19 @@ function shortestPath(orig, dest)
 	local pred = { } -- predecessor list; e.g., pred["Ves"] is the gate (if any -- else origin) that the player exits before reaching Ves
 	local s = orig -- starting point (most likely "player")
 	local V = Autopilot.Objects -- names of planets, stations, and gates
-
 	local S = { }
-	local d = { }
 	local l = Autopilot.SpatialDistances -- edge lengths: lengths between partner gates are zero, all others are calculated by distfrom().
 
 	-- relax distances between edges based on newly discovered routes
-	function relax( u, v, luv )
-		local e_uv = (Autopilot.graphEdge(u, v))
-		local e_su = (Autopilot.graphEdge(s, u))
+	local relax = function ( u, v )
 		if u == v then return end
-		-- for this algorithm, d[x] == nil shall be taken to mean d[x] == infinity (unexplored); not to be confused with d[x] == 0
+		local e_uv = Autopilot.graphEdge(u, v)
+		local luv = l[e_uv]
+		-- if luv is nil, then this may be a planet-planet edge; we don't care about those
+		if luv == nil then return end
+		-- for this algorithm, d[x] == nil shall be taken to mean d(x) = infinity (unexplored); not to be confused with d(x) = 0
 		if d[u] == nil then return end
+		-- if d(v) is infinite or longer than d(u) + l(u,v), then set d(v) = d(u) = l(u,v), and set predecessor(v) = u
 		if d[v] == nil or d[v] > d[u] + luv then
 			d[v] = d[u] + luv
 			pred[v] = u
@@ -84,21 +90,17 @@ function shortestPath(orig, dest)
 	-- structure in Lua, and I seem to have better luck with Bellman-Ford. Running time of O(nm)
 	-- for n = objs and m = edges is worse than Dijkstra. Ways the running time could be reduced:
 	--     - switch to Dijkstra
-	--     - only iterate through Gate-Gate and Gate-Planet pairs (Planet-Planet is ignored anyway by the luv ~= nil test but the loop still happens)
+	--     - only iterate through Gate-Gate and Gate-Planet pairs; Planet-Planet is ignored anyway by the luv == nil test in relax(), but the loop still happens.
 	--     - find a faster way of achieving "choose v from V such that v not in S" (choose v from V - S) rather than just testing for existence in S of each object
 
 	-- Fortunately, this only has to run each time the player chooses to calculate a new route, which is rare.
 
-	for i= 1,Autopilot.numObjects-1 do -- <--- repeat (Autopilot.numObjects - 1) times
+	for i =1,Autopilot.numObjects-1 do -- <--- repeat (Autopilot.numObjects - 1) times
 		for i1,u in pairs(V) do -- <----------\_______________ for each
 			for i2,v in pairs(V) do -- <--/                edge (u,v)
-
 				if S[v] == nil then -- such that v not in S
-					local luv = l[u.." to "..v]
-					if luv ~= nil then -- if spatial distance is pre-calculated (if not, then we don't care)
-						if( u ~= v ) then relax( u, v, luv ) end
-						relaxations = relaxations + 1
-					end
+					if( u ~= v ) then relax( u, v ) end
+					relaxations = relaxations + 1
 				end
 				cycles = cycles + 1
 			end
@@ -113,7 +115,7 @@ function shortestPath(orig, dest)
 	else
 		Autopilot.buildRoute = function(obj)
 			table.insert(Autopilot.GateRoute, 0, obj)
-			if obj == orig then return true end
+			if obj == orig or obj == nil then return true end
 			return Autopilot.buildRoute(pred[obj])
 		end
 
@@ -176,6 +178,7 @@ function calculateSpatialDistances ()
 
 	-- include the player too
 	table.insert(Autopilot.Objects, "player")
+	Autopilot.numObjects = Autopilot.numObjects + 1
 end
 
 function APCompute (dest)
@@ -197,16 +200,27 @@ function APCompute (dest)
 	-- (only recompute player-Gate and player-Planet distances).
 	calculateSpatialDistances() 
 
-	if dest == nil or dest == "" then
-		HUD.newAlert("Please specify a destination")
+	local exists = function(obj)
+		for n,o in pairs(Autopilot.Objects) do
+			if o == obj then return true end
+		end
+		return false
+	end
+
+	if dest == nil or dest == "" or exists(dest) == false then
+		HUD.newAlert("Please specify a real destination.")
 		return
 	end
 
 	shortestPath("player", dest)
+	HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#Autopilot.GateRoute/2) ) )
 end
 
 function playerGateAutoAngle ()
 	if Autopilot == nil then return end
+	if Autopilot.hasAutopilot(PLAYER) == false then
+		return
+	end
 
 	local theObj = Autopilot.GateRoute[1]
 	if theObj == "player" then
@@ -248,11 +262,14 @@ function playerGateAutoAngle ()
 			end
 		end
 	end
-	--Autopilot.showGateRoute()
 end
 
 function showAPConfigDialog()
 	if Autopilot == nil then APInit() end
+	if Autopilot.hasAutopilot(PLAYER) == false then
+		HUD.newAlert("You don't have an autopilot system.")
+		return
+	end
 	if Autopilot.ConfigDialog ~= nil then return end
 
 	Epiar.pause()

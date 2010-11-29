@@ -494,9 +494,11 @@ function buyOutfit(outfit)
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
+		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 	elseif ( Set(Epiar.outfits())[outfit] ) then
 		print("Outfit...")
 		PLAYER:AddOutfit(outfit)
+		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 	else
 		print("Unknown Outfit: "..outfit)
 	end
