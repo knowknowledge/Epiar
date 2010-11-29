@@ -1,21 +1,16 @@
+--
 -- Autopilot for Epiar player
+--   Last updated: Nov 29, 2010
 --
---    A WORK IN PROGRESS
---
-
--- some revision history is in RCS
+-- some revision history is in RCS - last RCS revision:
 --   $Id: autopilot.lua,v 1.10 2010/11/28 23:22:13 rikus Exp $
-
--- Nov 28
---   I'm not sure if this will be useful or not, but I decided to work on it.
---   This is still in the very early stages and quite messy, but I have a partially automatic
---   gate navigation system that works. Once this is cleaned up a bit, it might make sense to
---   turn it into an AI and allow the player to be controlled by that AI.
---   Example : one state would be for "coasting into the gate once proper momentum angle is achieved").
---   Then it could also guide escorts, for example, through the gates with you (however, a case like that
---   might make it tempting for the autopilot to recompute shortest path every time the player moves,
---   which would be unacceptably CPU intensive, so a better way of tracking the player would need to be
---   devised.
+--
+--   This is an automatic gate navigation system for the player. It might make sense to
+--   turn it into an AI and allow the player to be controlled by that AI. Then it could
+--   also guide escorts, for example, through the gates with you (however, a case like that
+--   might make it tempting for the autopilot to recompute shortest path every time the player
+--   moves, which would be unacceptably CPU intensive, so a better way of tracking the player
+--   would need to be devised.
 --
 --   This should probably also be made into something that you get after buying an outfit or with certain
 --   ships.
@@ -28,45 +23,62 @@
 --   4) when you are through the gate and it tells you to resume acceleration, start accelerating
 --      again with Left Alt still held.
 --   5) repeat until you arrive at your destination
+--
 
-spatialDistance = distfrom
-
-Autopilot = { }
-
-Autopilot.SpatialDistances = { } 
-Autopilot.Objects = { }
-
-Autopilot.numObjects = 0
+function APInit()
+	Autopilot = { }
+	Autopilot.Objects = { }
+	Autopilot.numObjects = 0
+	Autopilot.SpatialDistances = { } 
+	Autopilot.GateRoute = { }
+	Autopilot.showGateRoute = function ()
+		print ""
+		for num =1,#Autopilot.GateRoute do
+			print (string.format("   GR %d %s", num, Autopilot.GateRoute[num]))
+		end
+	end
+	Autopilot.graphEdge = function(u, v)
+		if u == nil or v == nil then
+			print "Autopilot.graphEdge() received one or both values nil."
+			return nil
+		end
+		return (string.format("%s to %s", u, v))
+	end
+end
 
 function shortestPath(orig, dest)
 
-	local d = { }  -- path distances from s
-	local pred = { } -- predecessor list
-	local s = orig -- starting point
-	local V = Autopilot.Objects
+	-- Sorry; these obfuscated-looking variables are to best match the algorithm description from my CS textbook!
+
+	local d = { }  -- shortest path distances from s; e.g., d["Ves"] is the length of the shortest known route to from s to Ves.
+	local pred = { } -- predecessor list; e.g., pred["Ves"] is the gate (if any -- else origin) that the player exits before reaching Ves
+	local s = orig -- starting point (most likely "player")
+	local V = Autopilot.Objects -- names of planets, stations, and gates
 
 	local S = { }
 	local d = { }
-	local l = Autopilot.SpatialDistances
+	local l = Autopilot.SpatialDistances -- edge lengths: lengths between partner gates are zero, all others are calculated by distfrom().
 
+	-- relax distances between edges based on newly discovered routes
 	function relax( u, v, luv )
-		local e_uv = (string.format("%s to %s", u, v))
-		local e_su = (string.format("%s to %s", s, u))
+		local e_uv = (Autopilot.graphEdge(u, v))
+		local e_su = (Autopilot.graphEdge(s, u))
 		if u == v then return end
+		-- for this algorithm, d[x] == nil shall be taken to mean d[x] == infinity (unexplored); not to be confused with d[x] == 0
 		if d[u] == nil then return end
 		if d[v] == nil or d[v] > d[u] + luv then
-		--if d[v] == nil or d[v] > d[u] + luv then
 			d[v] = d[u] + luv
 			pred[v] = u
 		end
 	end
 
 	-- initialize with values for starting point
-	d[s] = 0
-	S[s] = true
-	pred[s] = nil
+	d[s] = 0	-- distance to s is 0
+	S[s] = true	-- s is the only node that has been explored
+	pred[s] = nil	-- s has no predecessor
 
-	local iterations = 0
+	local relaxations = 0
+	local cycles = 0
 
 	-- My original plan was to implement Dijkstra's algorithm, but I don't know of a priority queue
 	-- structure in Lua, and I seem to have better luck with Bellman-Ford. Running time of O(nm)
@@ -85,160 +97,168 @@ function shortestPath(orig, dest)
 					local luv = l[u.." to "..v]
 					if luv ~= nil then -- if spatial distance is pre-calculated (if not, then we don't care)
 						if( u ~= v ) then relax( u, v, luv ) end
-						iterations = iterations + 1
+						relaxations = relaxations + 1
 					end
 				end
-
+				cycles = cycles + 1
 			end
 		end
 	end
 
-	print ("iterations: "..iterations)
+	print ("relaxations: "..relaxations)
+	print ("cycles: "..cycles)
 
-	print (string.format("distance %s to %s: %f", orig, dest, d[dest]))
-
-	--for i1,dest in pairs(V) do
-		-- show all the path calculations
-		print ("dest is "..dest)
-		table.insert(Autopilot.GateRoute, 0, dest)
-		print ("  d[dest] is "..d[dest])
-		if dest == orig then
-			print "dest is same as orig"
-		else
-
-			local p = pred[dest]
-			print ("the pred is "..p)
-			while p ~= orig do
-				print ("pred: "..p.." dist from s:"..(d[p]))
-				table.insert(Autopilot.GateRoute, 0, p)
-				print (string.format("spatial distance p:%s to pred[p]:%s is %f", p, pred[p], l[p.." to "..pred[p]]))
-				p = pred[p]
-			end
-			print (orig)
-			table.insert(Autopilot.GateRoute, 0, orig)
-			print ""
-			print ""
+	if dest == s then
+		-- this should not happen unless the player asks the for a route to "player"
+	else
+		Autopilot.buildRoute = function(obj)
+			table.insert(Autopilot.GateRoute, 0, obj)
+			if obj == orig then return true end
+			return Autopilot.buildRoute(pred[obj])
 		end
-	--end
-end
 
-Autopilot.GateRoute = { }
+		Autopilot.buildRoute(dest)
+	end
+	Autopilot.showGateRoute()
+end
 
 function calculateSpatialDistances ()
 	local theGates = Epiar.gates()
 	local thePlanets = Epiar.planets()
 	local playerX, playerY = PLAYER:GetPosition()
 	Autopilot.numObjects = 0
-	--theGateNames = Epiar.gateNames()
 	for num,gate1 in pairs(theGates) do
 		local gi1 = Epiar.getGateInfo(gate1:GetID())
+
+		-- loop to calculate spatial distances between all gate pairs (including partners, which are recorded as zero distance)
 		for num,gate2 in pairs(theGates) do
 			local gi2 = Epiar.getGateInfo(gate2:GetID())
-			--print (string.format("Name: %s  X: %d  Y: %d  Exit: %s\n", gateInfo.Name, gateInfo.X, gateInfo.Y, gateInfo.Exit))
-			local edge = string.format("%s to %s", gi1.Name, gi2.Name)
-			Autopilot.SpatialDistances[edge] = spatialDistance( gi1.X, gi1.Y, gi2.X, gi2.Y )
+			local edge = Autopilot.graphEdge(gi1.Name, gi2.Name)
+			Autopilot.SpatialDistances[edge] = distfrom( gi1.X, gi1.Y, gi2.X, gi2.Y )
 			if gi1.Exit == gi2.Name then 
 				Autopilot.SpatialDistances[edge] = 0
 			end
 		end
-		local edge = string.format("player to %s", gi1.Name)
-		Autopilot.SpatialDistances[edge] = spatialDistance( playerX, playerY, gi1.X, gi1.Y )
-		edge = string.format("%s to player", gi1.Name)
-		Autopilot.SpatialDistances[edge] = spatialDistance( gi1.X, gi1.Y, playerX, playerY )
+
+		-- calculate distance from player to this gate
+		local edge = Autopilot.graphEdge("player", gi1.Name)
+		Autopilot.SpatialDistances[edge] = distfrom( playerX, playerY, gi1.X, gi1.Y )
+		edge = Autopilot.graphEdge(gi1.Name, "player")
+		Autopilot.SpatialDistances[edge] = distfrom( gi1.X, gi1.Y, playerX, playerY )
+
+		-- loop to calculate distances Gate-Planet and player-Planet
 		for num,planet in pairs(thePlanets) do
 			local pi = Epiar.getPlanetInfo(planet:GetID())
-			--print (string.format("planet Name: %s  X: %d  Y: %d\n", pi.Name, pi.X, pi.Y))
-			local edge = string.format("%s to %s", gi1.Name, pi.Name)
-			Autopilot.SpatialDistances[edge] = spatialDistance( gi1.X, gi1.Y, pi.X, pi.Y )
-			edge = string.format("%s to %s", pi.Name, gi1.Name) -- flip it in case it's searched in that order
-			Autopilot.SpatialDistances[edge] = spatialDistance( gi1.X, gi1.Y, pi.X, pi.Y )
+
+			local edge = Autopilot.graphEdge(gi1.Name, pi.Name)
+			Autopilot.SpatialDistances[edge] = distfrom( gi1.X, gi1.Y, pi.X, pi.Y )
+			edge = Autopilot.graphEdge(pi.Name, gi1.Name)
+			Autopilot.SpatialDistances[edge] = distfrom( pi.X, pi.Y, gi1.X, gi1.Y )
 	
-			edge = string.format("player to %s", pi.Name)
-			Autopilot.SpatialDistances[edge] = spatialDistance( playerX, playerY, pi.X, pi.Y )
-			edge = string.format("%s to player", pi.Name)
-			Autopilot.SpatialDistances[edge] = spatialDistance( pi.X, pi.Y, playerX, playerY )
+			edge = Autopilot.graphEdge("player", pi.Name)
+			Autopilot.SpatialDistances[edge] = distfrom( playerX, playerY, pi.X, pi.Y )
+			edge = Autopilot.graphEdge(pi.Name, "player")
+			Autopilot.SpatialDistances[edge] = distfrom( pi.X, pi.Y, playerX, playerY )
 		end
+
+		-- include this gate in the list of objects
 		table.insert(Autopilot.Objects, gi1.Name)
 		Autopilot.numObjects = Autopilot.numObjects + 1
 	end
+
+	-- once the gate loop is finished, run through the planets
+	-- one time and insert them into the list of objects
 	for num,planet in pairs(thePlanets) do
 		local pi = Epiar.getPlanetInfo(planet:GetID())
 		table.insert(Autopilot.Objects, pi.Name)
 		Autopilot.numObjects = Autopilot.numObjects + 1
 	end
+
+	-- include the player too
 	table.insert(Autopilot.Objects, "player")
 end
 
-function testsp (dest)
-	if APConfigDialog ~= nil then
-		APConfigDialog:close()
-		APConfigDialog = nil
+function APCompute (dest)
+	if Autopilot.ConfigDialog ~= nil then
+		Autopilot.ConfigDialog:close()
+		Autopilot.ConfigDialog = nil
+		Autopilot.ConfigDest = nil
 		Epiar.unpause()
 	end
 
-	print ("testsp got dest "..dest)
-
-	showgateroute()
+	Autopilot.showGateRoute()
 
 	Autopilot.Objects = { }
 	Autopilot.SpatialDistances = { }
 	Autopilot.GateRoute = { }
-	calculateSpatialDistances()
-	if dest == nil then dest = "Facility 33" end
-	shortestPath("player", dest)
 
+	-- This has to be done each time, but only because the player's position changes;
+	-- SpatialDistances could be made persistent, and this could be optimized a bit
+	-- (only recompute player-Gate and player-Planet distances).
+	calculateSpatialDistances() 
+
+	if dest == nil or dest == "" then
+		HUD.newAlert("Please specify a destination")
+		return
+	end
+
+	shortestPath("player", dest)
 end
 
 function playerGateAutoAngle ()
+	if Autopilot == nil then return end
+
 	local theObj = Autopilot.GateRoute[1]
 	if theObj == "player" then
+		-- this shouldn't happen
 	elseif #Autopilot.GateRoute == 0 then
+		-- neither should this
 	elseif #Autopilot.GateRoute == 1 then
 		local pi = Epiar.getPlanetInfo(theObj)
 		local playerX, playerY = PLAYER:GetPosition()
 		PLAYER:Rotate( PLAYER:directionTowards( pi.X, pi.Y ) )
-		if spatialDistance(playerX, playerY, pi.X, pi.Y) < 300 then
+		if distfrom(playerX, playerY, pi.X, pi.Y) < 300 then
 			table.remove(Autopilot.GateRoute, 1)
 			HUD.newAlert("You have arrived at your destination.")
+			Autopilot = nil
 		end
 	else
 		local gi = Epiar.getGateInfo(theObj)
-		--print ("rotating toward "..gi.Name.." at "..gi.X..","..gi.Y)
 		PLAYER:Rotate( PLAYER:directionTowards(gi.X, gi.Y) )
 
 		local playerX, playerY = PLAYER:GetPosition()
-		if spatialDistance(playerX, playerY, gi.X, gi.Y) < 500 then
+		if distfrom(playerX, playerY, gi.X, gi.Y) < 500 then
+			-- It's important to be calling this function as you are getting close to the gate so
+			-- the route can be updated before you go through. Also, if the route gets updated but
+			-- you miss the gate, you need to manually enter the gate and then resume auto-angling
+			-- as soon as you exit. (Better would be for the Autopilot state to be updated upon
+			-- successful gate travel.)
 			table.remove(Autopilot.GateRoute, 1)
-			showgateroute()
+			Autopilot.showGateRoute()
 			if #Autopilot.GateRoute % 2 == 1 then
 				-- don't tell the player to resume acceleration until he/she has cleared both the gate top and bottom
+				-- (this acceleration control could be automated)
 				HUD.newAlert("please resume acceleration")
-				APAllowAccel = true
+				Autopilot.AllowAccel = true
 			end
-		elseif spatialDistance(playerX, playerY, gi.X, gi.Y) < 2500 then
-			if APAllowAccel ~= false then
+		elseif distfrom(playerX, playerY, gi.X, gi.Y) < 2000 then
+			if Autopilot.AllowAccel ~= false then
 				HUD.newAlert("please stop acceleration")
-				APAllowAccel = false
+				Autopilot.AllowAccel = false
 			end
 		end
 	end
-	--showgateroute()
-end
-
-function showgateroute()
-	print ""
-	for num =1,#Autopilot.GateRoute do
-		print (string.format("   GR %d %s", num, Autopilot.GateRoute[num]))
-	end
+	--Autopilot.showGateRoute()
 end
 
 function showAPConfigDialog()
-	if APConfigDialog ~= nil then return end
+	if Autopilot == nil then APInit() end
+	if Autopilot.ConfigDialog ~= nil then return end
 
 	Epiar.pause()
 
-	APConfigDialog = UI.newWindow(400,250,300,150, "Configure autopilot")
-	APConfigDest = UI.newTextbox(30,30,200,1, "Ves")
-	local APConfigCompute = UI.newButton(30,60, 150, 30, "Compute gate route", "testsp( APConfigDest:GetText() )" )
-	APConfigDialog:add(APConfigDest, APConfigCompute)
+	Autopilot.ConfigDialog = UI.newWindow(400,250,300,150, "Configure autopilot")
+	Autopilot.ConfigDest = UI.newTextbox(30,30,200,1, "Ves")
+	local APConfigCompute = UI.newButton(30,60, 150, 30, "Compute gate route", "APCompute( Autopilot.ConfigDest:GetText() )" )
+	Autopilot.ConfigDialog:add(Autopilot.ConfigDest, APConfigCompute)
 end
