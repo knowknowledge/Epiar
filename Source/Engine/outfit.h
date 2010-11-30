@@ -15,12 +15,11 @@
 
 class Outfit : public Component {
 	public:
-
 		Outfit();
 
 		Outfit(
 				int _msrp,
-	            Image* _picture,
+				Image* _picture,
 				float _rotPerSecond,
 				float _maxSpeed,
 				float _forceOutput,
@@ -37,7 +36,6 @@ class Outfit : public Component {
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
-		void _dbg_PrintInfo( void );
 
 		int GetMSRP() { return msrp; }
 		void SetMSRP( int _msrp ) { msrp = _msrp; }
@@ -88,7 +86,6 @@ class Outfit : public Component {
 		int shieldStrength; ///< The amount of damage the shields can absorb.
 
 		// Offensive Stats
-		//TODO: What would go here?
 	private:
 };
 

@@ -160,7 +160,7 @@ void Tab::ResetScrollBars(){
 	}
 }
 
-/**\class Tab
+/**\class Tabs
  * \brief A grouping of tabs including a tab selection bar.
  */
 

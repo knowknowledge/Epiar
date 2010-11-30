@@ -14,16 +14,16 @@
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 
-/**\class Weapon
- *
- * \see Weapons
+/** \class Weapon
+ *  \brief A Ship Outfit used for attacking other Ships.
+ *  \see Weapons
  */
 
 /**\brief Empty constructor
  */
 Weapon::Weapon(void) :
-	sound(NULL),
 	image(NULL),
+	sound(NULL),
 	weaponType(0),
 	payload(0),
 	velocity(0),
@@ -77,8 +77,8 @@ Weapon& Weapon::operator=(const Weapon& other) {
 Weapon::Weapon( string _name, Image* _image, Image* _pic,
 		int _weaponType, int _payload, int _velocity, int _acceleration,
 		AmmoType _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
-	sound(_sound),
 	image(_image),
+	sound(_sound),
 	weaponType(_weaponType),
 	payload(_payload),
 	velocity(_velocity),
@@ -216,12 +216,6 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 
 	return section;
-}
-
-/**\brief Prints debugging information (not implemented)
- */
-void Weapon::_dbg_PrintInfo( void ) {
-	cout << "Weapon: " << name << endl;
 }
 
 /**\fn Weapon::GetImage( )

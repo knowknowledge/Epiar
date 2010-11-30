@@ -16,7 +16,8 @@
 class SpriteManager {
 	public:
 		static SpriteManager *Instance();
-
+		SpriteManager& operator=( SpriteManager& object );
+		
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
@@ -35,11 +36,7 @@ class SpriteManager {
 		void GetBoundaries(float *northEdge, float *southEdge, float *eastEdge, float *westEdge);
 
 		void Save();
-
-		//---------------experimental code from Dido------
-		SpriteManager& operator=(SpriteManager & object);
-		//---------------experimental code from Dido------END----
-
+				
 	protected:
 		SpriteManager();
 	private:

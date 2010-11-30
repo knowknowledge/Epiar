@@ -48,6 +48,7 @@ class AlertMessage {
 class StatusBar {
 	public:
 		StatusBar(string _title, int _width, QuadPosition _pos, string _updater);
+		StatusBar& operator=( StatusBar& object );
 		void Update();
 		void Draw(int x, int y);
 
@@ -60,11 +61,7 @@ class StatusBar {
 		QuadPosition GetPosition(){ return pos; }
 
 		void print ();
-
-		//---------------experimental code from Dido------
-		StatusBar& operator=(StatusBar & object);
-		//---------------experimental code from Dido------END----
-
+				
 	protected:
 		char title[40];
 		const int width;
@@ -91,7 +88,8 @@ class Hud {
 		static void AddStatus( StatusBar* bar );
 		static bool DeleteStatus( StatusBar* bar );
 		static bool DeleteStatus( string deleteTitle );
-		static bool DeleteStatusMatching( string deletePattern );
+		static void DeleteStatusIfExists( string deleteTitle );
+		static bool HasStatusMatching( string deletePattern );
 
 		static void SetMapDisplay( HudMap _newMapDisplay );
 
@@ -101,7 +99,8 @@ class Hud {
 		static int newAlert(lua_State *L);
 		static int newStatus(lua_State *L);
 		static int closeStatus(lua_State *L);
-		static int closeStatusMatching(lua_State *L);
+		static int closeStatusIfExists(lua_State *L);
+		static int HudHasStatusMatching(lua_State *L);
 		static int getTarget(lua_State *L);
 		static int setTarget(lua_State *L);
 		static int setMapDisplay(lua_State *L);

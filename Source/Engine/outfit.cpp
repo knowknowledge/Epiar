@@ -8,14 +8,15 @@
 #include "includes.h"
 #include "Engine/outfit.h"
 #include "Graphics/image.h"
+#include "Utilities/log.h"
 #include "Utilities/components.h"
 
 /** \class Outfit
  * \brief A piece of Ship Equipment.
  * \details There are two basic types of Outfit objects:
  *          -# Generic Outfit objects that only affect Ship stats (Tougher armor).
- *          -# Specific Ship equipments that require their own classes. (Engines, Weapons, Models)
- * \sa Engine, Model, Weapon
+ *          -# Specific Ship equipments that require their own classes. (Engines, Outfits, Models)
+ * \sa Engine, Model, Outfit
  */
 
 /** Default Constructor
@@ -213,12 +214,6 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 	return section;
 }
 
-/**\brief Prints debugging information (not implemented)
- */
-void Outfit::_dbg_PrintInfo( void ) {
-	cout << "Outfit: " << name << endl;
-}
-
 /**
  * \fn Outfit::GetMSRP()
  * \brief Get the msrp
@@ -290,6 +285,9 @@ void Outfit::_dbg_PrintInfo( void ) {
  * \brief Set the shieldStrength
  * \param _shieldStrength The new shieldStrength value
  */
+
+
+
 
 /**\class Outfits
  * \brief Collection of Outfit objects

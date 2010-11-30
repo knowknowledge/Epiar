@@ -163,16 +163,88 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		} else return false;
 	}
 
+	for( attr = FirstChildNamed(node,"Mission"); attr!=NULL; attr = NextSiblingNamed(attr,"Mission") ){
+		Mission *mission = Mission::FromXMLNode(doc,attr);
+		if( mission != NULL ) {
+			LogMsg(INFO, "Successfully loaded the %s mission of player '%s'", mission->GetName().c_str(), this->GetName().c_str() );
+			missions.push_back( mission );
+		} else {
+			LogMsg(INFO, "Aborted loading mission of player '%s'", this->GetName().c_str() );
+		}
+	}
+
+	if(this->ConfigureWeaponSlots(doc, node)){
+		// great - it worked
+		LogMsg( INFO, "Successfully loaded weapon slots");
+	}
+	else {
+		LogMsg( ERR, "Weapon slot XML helper failed to configure weapon slots");
+	}
+
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
 		lastLoadTime = NodeToInt(doc,attr);
 	} else {
 		lastLoadTime = (time_t)0;
 	}
 
-	// TODO: Load saved missions
+	return true;
+}
+
+/**\brief Configure the ship's weapon slots, first copying the default slots
+  * from the model, then updating it according to the saved player XML.
+ */
+bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
+
+	xmlNodePtr slotPtr;
+	string value;
+
+	// Grab the default slots from the player's ship model, then update it below.
+	// This makes a copy, not a pointer or reference, so we don't have to worry
+	// that it might alter the slots in the model.
+	this->weaponSlots = this->GetModel()->GetWeaponSlots();
+
+	for( slotPtr = FirstChildNamed(node,"weapSlot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"weapSlot") ){
+		ws_t *existingSlot = NULL;
+
+		xmlNodePtr attr;
+
+		string slotName;
+		if( (attr = FirstChildNamed(slotPtr,"name")) ){
+			value = NodeToString(doc,attr);
+			slotName = value;
+		} else return false;
+
+		for(unsigned int s = 0; s < weaponSlots.size(); s++){	// Being able to use a hash table lookup here to avoid turning
+			if(weaponSlots[s].name == slotName){		// O(n) into O(n^2) might be nice conceptually, but in reality 
+				existingSlot = &weaponSlots[s];		// the efficiency difference here would not be noticeable. For
+				break;					// a similar but more important issue to fix, see Ship::Fire().
+			}
+		}
+		if(!existingSlot) return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"content")) ){
+			// this check is necessary because NodeToString() won't translate <item></item> into ""
+			if(attr->xmlChildrenNode)
+				value = NodeToString(doc,attr);
+			else
+				value = ""; // slot is empty
+
+			existingSlot->content = value;
+		} else return false;
+
+		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
+			value = NodeToString(doc,attr);
+			existingSlot->firingGroup = (short)atoi(value.c_str());
+		} else return false;
+
+	}
+
+	// no need to push any ws_t back into the player's weaponSlots; slots were edited in place
 
 	return true;
 }
+
+
 
 /**\brief Save this Player to an xml node
  */
@@ -197,13 +269,14 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	snprintf(buff, sizeof(buff), "%d", this->GetCredits() );
 	xmlNewChild(section, NULL, BAD_CAST "credits", BAD_CAST buff );
 
-	// Ammo
-	map<Weapon*,int> weapons = this->GetWeaponsAndAmmo();
-	map<Weapon*,int>::iterator it = weapons.begin();
-	while( it!=weapons.end() ) {
-		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST ((*it).first)->GetName().c_str() );
-		++it;
+	// this part is becoming less important and may be removed at some point
+	for(unsigned int i = 0; i < weaponSlots.size(); i++){
+		char *w = (char*)weaponSlots[i].content.c_str();
+		if(strlen(w) > 0)
+			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST w);
 	}
+
+
 	for(int a=0;a<max_ammo;a++){
 		if(GetAmmo(AmmoType(a)) != 0 ){ // Don't save empty ammo Nodes
 			snprintf(buff, sizeof(buff), "%d", GetAmmo(AmmoType(a)) );
@@ -215,17 +288,32 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		}
 	}
 
+	// save info about whichever items players are able to change in their slot configuration (content and firing group)
+	char *ntos = (char*)malloc(256);
+	for(unsigned int w=0; w < weaponSlots.size(); w++){
+		ws_t *slot = &weaponSlots[w];
+		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "weapSlot");
+
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+
+		snprintf(ntos, 256, "%d", slot->firingGroup);
+		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
+		xmlAddChild(section, slotPtr); // saved player data is less structured than model data, so just add it here
+	}
+	free(ntos);
+
 	// Cargo
 	map<Commodity*,unsigned int> cargo = this->GetCargo();
-	map<Commodity*,unsigned int>::iterator iter;
-	for(iter = cargo.begin(); iter!=cargo.end(); ++iter) {
-		if( !(*iter).second )
+	map<Commodity*,unsigned int>::iterator iter_com;
+	for(iter_com = cargo.begin(); iter_com!=cargo.end(); ++iter_com) {
+		if( !(*iter_com).second )
 		{
 			continue; // Don't Save empty cargo Nodes
 		}
-		snprintf(buff, sizeof(buff), "%d", (*iter).second );
+		snprintf(buff, sizeof(buff), "%d", (*iter_com).second );
 		xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "cargo");
-		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter).first)->GetName().c_str() );
+		xmlNewChild(ammo, NULL, BAD_CAST "type", BAD_CAST ((*iter_com).first)->GetName().c_str() );
 		xmlNewChild(ammo, NULL, BAD_CAST "amount", BAD_CAST buff );
 		xmlAddChild(section, ammo);
 	}
@@ -234,6 +322,12 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	list<Outfit*> *outfits = this->GetOutfits();
 	for( list<Outfit*>::iterator it_w = outfits->begin(); it_w!=outfits->end(); ++it_w ){
 		xmlNewChild(section, NULL, BAD_CAST "outfit", BAD_CAST (*it_w)->GetName().c_str() );
+	}
+
+	// Missions
+	list<Mission*>::iterator iter_mission;
+	for(iter_mission = missions.begin(); iter_mission != missions.end(); ++iter_mission){
+		xmlAddChild( section,  (*iter_mission)->ToXMLNode() );
 	}
 
 	// Last Load Time
@@ -245,8 +339,6 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	timestamp = ctime( &lastLoadTime );
 	timestamp[strlen(timestamp)-1] = '\0';
 	xmlAddChild( section, xmlNewComment( BAD_CAST timestamp));
-
-	// TODO: Save Missions
 
 	return section;
 }
@@ -341,6 +433,13 @@ Player* Players::LoadPlayer(string playerName) {
 	assert( newPlayer->GetModelName() != "" );
 	assert( newPlayer->GetEngineName() != "" );
 
+	// Restart the missions that were ongoing.
+	list<Mission*>::iterator iter_m;
+	list<Mission*>* missions = newPlayer->GetMissions();
+	for( iter_m = missions->begin(); iter_m != missions->end(); ++iter_m) {
+		(*iter_m)->Accept(); ///< TODO: This should be a distinct function.  Mission::Load perhaps?
+	}
+
 	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
 	SpriteManager::Instance()->Add( newPlayer );
@@ -348,7 +447,7 @@ Player* Players::LoadPlayer(string playerName) {
 
 	Player::pInstance = newPlayer;
 
-	LogMsg(INFO, "Loaded the Player '%s'.",newPlayer->GetName().c_str() );
+	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
 	return newPlayer;
 }
 

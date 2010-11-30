@@ -24,6 +24,7 @@ class AI : public Ship {
 		void SetState(string _state)  { state = _state; }
 		void SetAlliance(Alliance* alliance) { allegiance = alliance; }
 		string GetName() { return name; }
+		void SetName(string newName) { name = newName; }
 		string GetStateMachine() { return stateMachine; }
 		string GetState() { return state; }
 		Alliance* GetAlliance() { return allegiance; }

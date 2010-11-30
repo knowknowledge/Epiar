@@ -34,12 +34,21 @@ playerCommands = {
 
 function playerStart()
 	PLAYER = Epiar.player()
+
+	-- give the player the standard weapons for this ship model
+	for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+		print ("giving the player a "..weap)
+		PLAYER:AddToWeaponList(weap)
+		-- don't worry about updating the HUD; createHUD() will handle it
+	end
+
 	createHUD()
 	registerCommands(playerCommands)
 end
 
 --- Target ship
 function targetShip()
+	if Epiar.ispaused()==1 then return end
 	local x,y = PLAYER:GetPosition()
 	local nearby = Epiar.ships(x,y,4096)
 	if #nearby==0 then return end
@@ -223,6 +232,10 @@ function playerFire()
 	elseif result == 2 then -- FireNotReady
 	elseif result == 3 then -- FireNoAmmo
 		HUD.newAlert("Out of Ammo!")
+		PLAYER:ChangeWeapon()
+	elseif result == 4 then -- FireEmptyGroup
+		HUD.newAlert("No weapons assigned to this firing group - switching...")
+		PLAYER:ChangeWeapon()
 	else
 	end
 end
@@ -252,9 +265,9 @@ function boardShip()
 
 		local targetMass = targettedShip:GetMass()
 
-		-- prob. divisor that attempt will succeed. greater player mass boosts this number.
-		local succ_max = 15 ^ ( targetMass / PLAYER:GetMass() )
-		-- prob. divisor that ship will destruct. greater player mass diminishes this number.
+		-- prob. divisor that attempt will succeed. greater player mass improves this ratio.
+		local succ_max = 4 ^ ( targetMass / PLAYER:GetMass() )
+		-- prob. divisor that ship will destruct. greater player mass makes this ratio worse.
 		local destruct_max = 5 ^ ( PLAYER:GetMass() / targetMass )
 
 		local captureProbPct = (1 / succ_max) * 100
@@ -301,7 +314,7 @@ function hailPlanet()
 	Epiar.pause()
 
 	-- show the dialog
-	hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
+	hailDialog = UI.newWindow(100, 50, 400, 150, "Communication channel")
 	hailReplyLabel = UI.newLabel(50, 50, "")
 
 	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
@@ -316,6 +329,11 @@ end
 ---Hail target ship
 function hailShip()
 	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+
+	if PLAYER:GetName() == nil then
+		HUD.newAlert("You can't hail a ship when you're dead!")
+		return
+	end
 
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
@@ -332,21 +350,107 @@ function hailShip()
 		HUD.newAlert("Hailing ship...")
 		Epiar.pause()
 
+		local planetNames = Epiar.planetNames()
+		local aiDest = planetNames[AIData[targettedShip:GetID()].destination]
+		if aiDest == nil then aiDest = "a port" end
+
+		local aiMachDescs = {
+			["Trading"]="I'm moving some goods.",
+			["Orbiting"]="Oh, I'm just orbiting here.",
+			["Hunting"]="If you must know, I'm pursuing a target.",
+			["Killing"]="I'm shooting at someone right now!",
+			["Docking"]=string.format("I'm docking here at %s.", aiDest),
+			["TooClose"]="I'm orbiting, but I'm too close!",
+			["TooFar"]="I'm orbiting, but I need to get closer!",
+			["Travelling"]=string.format("I'm on my way to %s.", aiDest),
+			["Accompanying"]="I'm accompanying another ship."
+		}
+
+		hailResponses = { ["Greetings"]="Hello there.",
+				  ["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
+				  ["What's the nearest port?"]="Sorry, I'm not sure about that.",
+				  ["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
+				  ["Do you know who I am?"]=string.format("Well, your identification reads '%s'.", PLAYER:GetName()),
+				  ["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
+				  ["Your ship looks like junk."]="--" }
+
+		if Epiar.nearestPlanet(targettedShip, 4096) ~= nil then
+			hailResponses["What's the nearest port?"] = string.format("I guess that would be %s",
+				Epiar.nearestPlanet(targettedShip, 4096):GetName())
+		end
+
+		local aiState, aiMach = targettedShip:GetState()
+		if aiMachDescs[aiMach] ~= nil then
+			hailResponses["What are you up to?"] = aiMachDescs[aiMach]
+		end
+
+		hailOption1 = "Greetings"
+		hailOption2 = "What's the nearest port?"
+
 		-- show the dialog
-		hailDialog = UI.newWindow(100, 100, 400, 150, "Communication channel")
-		hailReplyLabel = UI.newLabel(50, 50, "")
+		hailDialog = UI.newWindow(200, 300, 550, 135, "Communication channel")
 
-		hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
-		hailDialog:add( hailReplyLabel ) 
+		hailDialog:add( UI.newLabel(30, 30, string.format("Opened a channel to the %s:", targettedShip:GetModelName() ) ) )
+		hailReplyLabel = UI.newLabel(30, 45, "")
 
-		hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
-		hailDialog:add( UI.newButton(150, 100, 100, 30, "Beg for mercy", "doHailBFM()" ) )
-		hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+		hailDialog:add( UI.newButton(50, 75, 50, 20, "Say:", "doHailSay(hailOption1)") )
+		hailDialog:add( UI.newButton(250, 75, 50, 20, "Say:", "doHailSay(hailOption2)" ) )
+		hailDialog:add( UI.newButton(400, 75, 100, 20, "close channel", "doHailEnd()" ) )
+
+		hailOption1Label = UI.newLabel(50, 95, hailOption1)
+		hailOption2Label = UI.newLabel(250, 95, hailOption2)
+		--hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
+
+		hailDialog:add( hailReplyLabel, hailOption1Label, hailOption2Label ) 
 
 	else
 		HUD.newAlert("No reply.")
 	end
 end
+
+function doHailSay(said)
+	if hailDialog == nil then return end
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
+	local spritetype = targettedSprite:GetType()
+
+	print ("said "..said)
+
+	if said == "Your ship looks like junk." then
+		-- when an AI is in "hostile" mode, it will not abandon its target
+		AIData[ HUD.getTarget() ].target = PLAYER:GetID()
+		AIData[ HUD.getTarget() ].hostile = 1
+		HUD.newAlert( (string.format("%s: We'll see about that!", targettedSprite:GetModelName() ) ) )
+		doHailEnd()
+	elseif said == "Goodbye" then
+		HUD.newAlert (string.format("%s: Goodbye, %s.", targettedSprite:GetModelName(), PLAYER:GetName() ) ) 
+		doHailEnd()
+	end
+
+	local reply = hailResponses[said]
+
+	hailReplyLabel.setLabel(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
+	
+	hailResponses[said] = nil
+
+	hailOption1 = nil
+	hailOption2 = nil
+
+	hailResponses[said] = nil
+
+	for k,v in pairs(hailResponses) do
+		if v ~= nil then
+			if hailOption1 == nil then hailOption1 = k 
+			elseif hailOption2 == nil then hailOption2 = k end
+		end
+	end
+	if hailOption1 == nil then hailOption1 = "Goodbye" end
+	if hailOption2 == nil then hailOption2 = "Goodbye" end
+	
+	hailOption1Label.setLabel(hailOption1Label,hailOption1)
+	hailOption2Label.setLabel(hailOption2Label,hailOption2)
+
+end
+	
 
 function doHailGreet()
 	if hailDialog == nil then return end
@@ -380,7 +484,7 @@ function doHailInsult()
 
 	if r == 1 then
 		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
-		planet:SetForbidden(1)
+		planet:SetForbidden(1) -- FIXME need to store this kind of thing some kind of structure that gets saved when the game is closed
 	elseif r == 2 then
 		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
 		addcredits( 100 )
@@ -398,7 +502,7 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	local r = getRand( os.time() + targettedShip:GetID(), 25 )
+	local r = getRand( os.time() + targettedShip:GetID(), 8 )
 
 	if ( r == 1 ) then
 		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
@@ -406,7 +510,7 @@ function doHailBFM()
 		-- 'friendly' means will never arbitrary select player as a target unless provoked
 		targettedShip:SetFriendly(1)
 	else
-		hailReplyLabel.setLabel(hailReplyLabel,"I don't think so.")
+		hailReplyLabel.setLabel(hailReplyLabel, "I don't think so.")
 		didBFM = 1
 	end
 end
@@ -459,8 +563,6 @@ function doCapture(succ_max, destruct_max)
 	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
 	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
 
-	--print ( string.format("smax=%d dmax=%d rsucc=%d rdestruct=%d", succ_max, destruct_max, r_succ, r_selfdestruct) )
-
 	if r_selfdestruct == 1 then
 		HUD.newAlert(string.format("Your boarding party set off the %s's self-destruct mechanism.", targettedShip:GetModelName() ) )
 		endBoarding()
@@ -471,22 +573,30 @@ function doCapture(succ_max, destruct_max)
 		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
 
 		local oldPlayerModel = PLAYER:GetModelName() 
-		--local oldPlayerX, oldPlayerY = PLAYER:GetPosition() 
 		local oldPlayerHD = PLAYER:GetHullDamage() 
 		local oldPlayerSD = PLAYER:GetShieldDamage() 
 
-		--print (string.format ("opm=%s opp=%f,%f ophd=%d opsd=%d\n", oldPlayerModel, oldPlayerX, oldPlayerY, oldPlayerHD, oldPlayerSD) )
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			PLAYER:RemoveFromWeaponList(weap)
+			HUD.closeStatus(weap..":");
+		end
 
 		PLAYER:SetModel( targettedShip:GetModelName() )
-		--PLAYER:SetPosition( targettedShip:GetPosition() ) -- would like to swap positions too, but this is not critical
 		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
 		PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
 		PLAYER:Repair( 10 )
 
 		targettedShip:SetModel( oldPlayerModel ) 
-		--targettedShip:SetPosition( oldPlayerX, oldPlayerY ) 
 		targettedShip:SetHullDamage( oldPlayerHD ) 
 		targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+		-- SetModel() has already determined the slot contents for us, so use them
+		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+			PLAYER:AddToWeaponList(weap)
+			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+		end
+
+		PLAYER:ChangeWeapon()
 
 		endBoarding()
 
@@ -542,7 +652,6 @@ end
 
 ---Adds to the player's credits
 function addcredits( credits )
-	--print("adding " .. credits)
 	playerCredits=PLAYER:GetCredits( )
 	PLAYER:SetCredits( credits + playerCredits )
 end
@@ -574,9 +683,11 @@ function createHUD()
 	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
 	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
 	myweapons = {}
-	local weaponsAndAmmo = PLAYER:GetWeapons()
-	for weapon,ammo in pairs(weaponsAndAmmo) do
-		HUD.newStatus(weapon..":",130,0, string.format("playerAmmo('%s')",weapon))
+	--local weaponsAndAmmo = PLAYER:GetWeapons()
+	local weapSlotContents = PLAYER:GetWeaponSlotContents()
+	--for weapon,ammo in pairs(weaponsAndAmmo) do
+	for name,weap in pairs(weapSlotContents) do
+		HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
 	end
 
 	-- Target Bars
@@ -592,11 +703,13 @@ function playerAmmo(weaponName)
 		return ammo
 	end
 	if weaponsAndAmmo[weaponName] ~= nil then
-			ammo = string.format("%d",weaponsAndAmmo[weaponName])
+		ammo = string.format("%d",weaponsAndAmmo[weaponName])
 	end
-	if weaponName == PLAYER:GetCurrentWeapon() then
-		ammo = ammo .. " ARMED"
-	end
+
+	-- with weapon groups, this convention no longer makes sense
+	--if weaponName == PLAYER:GetCurrentWeapon() then -- FIXME need to make this also check which SLOT is being used
+	--	ammo = ammo .. " ARMED"
+	--end
 	return ammo
 end
 
@@ -699,6 +812,7 @@ function createNewPlayer()
 		return
 	end
 	Epiar.newPlayer(name)
+
 	loadingWin:close()
 	playerStart()
 	intro()
@@ -706,13 +820,17 @@ end
 
 function playerInformation()
 	if infoWin~=nil then
+		if descriptionWindow ~= nil then
+			descriptionWindow:close()
+			descriptionWindow = nil
+		end
 		infoWin:close()
 		infoWin = nil
 		return
 	end
 	local height = 500
 	local width = 300
-	infoWin = UI.newWindow( 600,200, width,height, "Player Info")
+	infoWin = UI.newWindow( 500,200, width,height, "Player Info")
 	local y = 30
 
 
@@ -766,9 +884,8 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			missionTab:add( UI.newLabel( 10, y, "["..key.."] "..mission.Name ) )
-			missionTab:add( UI.newButton(width-55, y+3, 10, 20, "x", string.format("PLAYER:RejectMission('%s')", mission.Name) ) )
-			y = y + 20
+			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription('%s','%s')", mission.Name, mission.Description ) ) )
+			y = y + 30
 		end
 	else
 		missionTab:add( UI.newLabel( 10, y, "You have no current jobs." ) )
@@ -778,3 +895,25 @@ function playerInformation()
 	infoTabs:add( outfitTab, missionTab )
 
 end
+
+----------------------------Experimental code by Dido--------------------------------------------------	
+-- Description window for individual mission in mission dialog
+	function ShowMissionDescription( _missionName, _missionDescription )
+		if descriptionWindow ~= nil then
+			descriptionWindow:close()
+			descriptionWindow = nil
+			--Epiar.unpause()
+			return
+		end
+		
+		--Epiar.pause()
+
+		--displayedDescription = _missionDescription
+		
+		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
+		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
+		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
+		--currentDescription:close() 
+		descriptionWindow:add( descriptionLable, rejectButton )
+	end
+---------------------------/Experimental code by Dido--------------------------------------------------

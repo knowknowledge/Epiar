@@ -30,12 +30,149 @@ function okayTarget(cur_ship, ship)
 	if cur_ship:GetFriendly() == 1 and ship:GetID() == 60 then
 		return false
 	end
+
+	if AIData[ship:GetID()] == nil then return true end
+
+	-- If the ship in question is accompanying either this ship or whichever one we are
+	-- accompanying, don't attack it.
+	if AIData[ship:GetID()].accompany == cur_ship:GetID() or
+	   AIData[ship:GetID()].accompany == AIData[cur_ship:GetID()].accompany then
+		return false
+	end
+
 	return true
 end
 
+function setAccompany(id, accid)
+	if AIData[id] == nil then
+		AIData[id] = { }
+	end
+	AIData[id].accompany = accid
+end
+
+function setHuntHostile(id, tid)
+	if AIData[id] == nil then
+		AIData[id] = { }
+	end
+	AIData[id].target = tid
+	AIData[id].hostile = 1
+	AIData[id].foundTarget = 0
+end
+
+--- Hunter AI
+Hunter = {
+	default = function(id,x,y,angle,speed,vector)
+		if AIData[id] == nil then
+			AIData[id] = { }
+		end
+		if AIData[id].foundTarget == 1 then
+			AIData[id].hostile = 0
+			AIData[id].foundTarget = 0
+		end
+		return "New_Planet"
+	end,
+	New_Planet = FindADestination,
+
+	Hunting = function(id,x,y,angle,speed,vector)
+		-- Approach the target
+		local cur_ship = Epiar.getSprite(id)
+		local tx,ty,dist
+		local target = Epiar.getSprite( AIData[id].target )
+		if target~=nil then
+			tx,ty = target:GetPosition()
+			dist = distfrom(tx,ty,x,y)
+		else
+			AIData[id].hostile = 0
+			return "default"
+		end
+		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
+
+		if math.abs(cur_ship:directionTowards(tx,ty)) == 0 then
+			cur_ship:Accelerate()
+		end
+
+		if dist<400 then
+			return "Killing"
+		end
+		if dist>1000 and AIData[id].hostile == 0 then
+			return "default"
+		end
+
+		return "Hunting"
+	end,
+	Killing = function(id,x,y,angle,speed,vector)
+		-- Attack the target
+		local cur_ship = Epiar.getSprite(id)
+		local tx,ty,dist
+		local target = Epiar.getSprite( AIData[id].target )
+		if target==nil or target:GetHull()==0 then
+			HUD.newAlert(string.format("%s #%d:Victory is Mine!",cur_ship:GetModelName(),id))
+			return "default"
+		else
+			tx,ty = target:GetPosition()
+			dist = distfrom(tx,ty,x,y)
+		end
+
+		if AIData[id].hostile == 1 and AIData[id].foundTarget == 0 then
+			AIData[id].foundTarget = 1
+			local machine, state = cur_ship:GetState()
+			HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
+		end
+
+		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
+		local fireResult = cur_ship:Fire( AIData[id].target )
+
+		-- if this firing group isn't doing anything, switch
+		if fireResult == 3 or fireResult == 4 then -- FireNoAmmo or FireEmptyGroup
+			cur_ship:ChangeWeapon()
+		end
+		
+		if dist>200 then
+			if cur_ship:directionTowards(tx,ty) == 0 then
+				cur_ship:Accelerate()
+			end
+		end
+		if dist>300 then
+			return "Hunting"
+		end
+	end,
+
+	Travelling = function(id,x,y,angle,speed,vector)
+		-- Find a new target
+		local cur_ship = Epiar.getSprite(id)
+		local closeShip= Epiar.nearestShip(cur_ship,1000)
+		local targetShip= nil
+		if AIData[id].target ~= nil then targetShip = Epiar.getSprite(AIData[id].target) end
+
+		if targetShip~=nil and okayTarget(cur_ship, targetShip) and AIData[id].hostile == 1 then
+			return "Hunting"
+		elseif closeShip~=nil and okayTarget(cur_ship, closeShip) then
+			AIData[id].hostile = 0
+			AIData[id].target = closeShip:GetID()
+			return "Hunting"
+		end
+
+
+		--print (string.format ("%s %s not hunting anything target %d\n", cur_ship:GetState(), AIData[id].target))
+
+		AIData[id].hostile = 0
+
+		local p = Epiar.getSprite( AIData[id].destination )
+		local px,py = p:GetPosition()
+		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
+		cur_ship:Accelerate()
+		if distfrom(px,py,x,y) < 800 then
+			return "New_Planet"
+		end
+	end,
+}
+
 --- Trader AI
 Trader = {
+	Hunting = Hunter.Hunting,
+	Killing = Hunter.Killing,
 	Docking = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		-- Stop on this planet
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
@@ -54,6 +191,7 @@ Trader = {
 		end
 	end,
 	Travelling = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		-- Get to the planet
 		local cur_ship = Epiar.getSprite(id)
 
@@ -68,83 +206,18 @@ Trader = {
 	New_Planet = FindADestination,
 	default = function(id,x,y,angle,speed,vector,state)
 		AIData[id] = {}
+		local cur_ship = Epiar.getSprite(id)
+
+		local traderNames = {	"S.S. Epiar", "S.S. Honorable", "S.S. Marvelous", "S.S. Delight",
+					"S.S. Honeycomb", "S.S. Woodpecker", "S.S. Crow", "S.S. Condor",
+					"S.S. Windowpane", "S.S. Marketplace", "S.S. Baker", "S.S. Momentous",
+					"S.S. Robinson", "S.S. Andersonville", "S.S. Ash", "S.S. Maple",
+					"S.S. Mangrove", "S.S. Cheetah", "S.S. Apricot", "S.S Amicable",
+					"S.S. Schumacher", "S.S. Bluebird", "S.S. Bluejay", "S.S. Hummingbird",
+					"S.S. Nightcap", "S.S. Starsplash", "S.S. Starrunner", "S.S. Starfinder" }
+		cur_ship:SetName(traderNames[math.random(#traderNames)])
+
 		return "New_Planet"
-	end,
-}
-
---- Hunter AI
-Hunter = {
-	default = function(id,x,y,angle,speed,vector)
-		AIData[id] = {}
-		return "New_Planet"
-	end,
-	New_Planet = FindADestination,
-
-	Hunting = function(id,x,y,angle,speed,vector)
-		-- Approach the target
-		local cur_ship = Epiar.getSprite(id)
-		local tx,ty,dist
-		local target = Epiar.getSprite( AIData[id].target )
-		if target~=nil then
-			tx,ty = target:GetPosition()
-			dist = distfrom(tx,ty,x,y)
-		else
-			return "default"
-		end
-		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
-
-		if cur_ship:directionTowards(tx,ty) == 0 then
-			cur_ship:Accelerate()
-		end
-
-
-		if dist<300 then
-			return "Killing"
-		end
-		if dist>1000 then
-			return "default"
-		end
-	end,
-	Killing = function(id,x,y,angle,speed,vector)
-		-- Attack the target
-		local cur_ship = Epiar.getSprite(id)
-		local tx,ty,dist
-		local target = Epiar.getSprite( AIData[id].target )
-		if target==nil or target:GetHull()==0 then
-			HUD.newAlert(string.format("%s #%d:Victory is Mine!",cur_ship:GetModelName(),id))
-			return "default"
-		else
-			tx,ty = target:GetPosition()
-			dist = distfrom(tx,ty,x,y)
-		end
-
-		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
-		cur_ship:Fire( AIData[id].target )
-		
-		if dist>200 then
-			if cur_ship:directionTowards(tx,ty) == 0 then
-				cur_ship:Accelerate()
-			end
-		end
-		if dist>300 then
-			return "Hunting"
-		end
-	end,
-
-	Travelling = function(id,x,y,angle,speed,vector)
-		-- Find a new target
-		local cur_ship = Epiar.getSprite(id)
-		local ship= Epiar.nearestShip(cur_ship,1000)
-		if ship~=nil and okayTarget(cur_ship, ship) then
-			tx,ty = ship:GetPosition()
-			AIData[id].target = ship:GetID()
-			return "Hunting"
-		end
-
-		local p = Epiar.getSprite( AIData[id].destination )
-		local px,py = p:GetPosition()
-		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
-		cur_ship:Accelerate()
 	end,
 }
 
@@ -163,8 +236,8 @@ Patrol = {
 	Hunting = Hunter.Hunting,
 	Killing = Hunter.Killing,
 	Travelling = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
-
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
@@ -174,9 +247,8 @@ Patrol = {
 		end
 	end,
 	Orbiting = function(id,x,y,angle,speed,vector)
-
+		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
-
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
@@ -198,6 +270,7 @@ Patrol = {
 		end
 	end,
 	TooClose = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
@@ -208,6 +281,7 @@ Patrol = {
 		end
 	end,
 	TooFar = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
@@ -230,11 +304,11 @@ Bully = {
 	Killing = Hunter.Killing,
 
 	Orbiting = function(id,x,y,angle,speed,vector)
+		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
 		local px,py = p:GetPosition()
 		local dist = distfrom(px,py,x,y)
-
 		local ship= Epiar.nearestShip(cur_ship,900)
 		if (ship~=nil) and (ship:GetID() ~= id) and (ship:GetHull() <= 0.9) and (okayTarget(cur_ship, ship)) then
 			AIData[id].target = ship:GetID()
@@ -252,5 +326,103 @@ Bully = {
 	end,
 }
 
-
 Pirate = Hunter
+
+Escort = {
+	default = function(id,x,y,angle,speed,vector)
+		if AIData[id] == nil then
+			AIData[id] = { }
+			AIData[id].accompany = -1
+		end
+		AIData[id].target = -1
+
+		-- Create some variation in how escort pilots behave
+		local mass = Epiar.getSprite(id):GetMass()
+		AIData[id].farThreshold = 225 * mass + math.random(50)
+		AIData[id].nearThreshold = 100 * mass + math.random(40)
+
+		if AIData[id].accompany < 0 then return "New_Planet" end
+		return "Accompanying"
+	end,
+	Travelling = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.Travelling(id,x,y,angle,speed,vector)
+	end,
+	New_Planet = FindADestination,
+	Orbiting = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.Orbiting(id,x,y,angle,speed,vector)
+	end,
+	TooClose = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.TooClose(id,x,y,angle,speed,vector)
+	end,
+	TooFar = function(id,x,y,angle,speed,vector)
+		if AIData[id].accompany > -1 then return "Accompanying" end
+		return Patrol.TooFar(id,x,y,angle,speed,vector)
+	end,
+	Hunting = Hunter.Hunting,
+	Killing = Hunter.Killing,
+	Accompanying = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local acc = AIData[id].accompany
+		local accompanySprite
+
+		if acc > -1 then
+			accompanySprite = Epiar.getSprite(AIData[id].accompany)
+			if AIData[id].hostile == 1 then return "Hunting" end
+		else
+			if AIData[id].destination ~= nil and AIData[id].destination > -1 then
+				return "Travelling"
+			else
+				return "New_Planet"
+			end
+		end
+
+		local ax = 0
+		local ay = 0
+		local distance
+
+		if accompanySprite~=nil and accompanySprite:GetHull() > 0 then
+			ax,ay = accompanySprite:GetPosition()
+
+			local aitype, aitask = accompanySprite:GetState()
+			if aitask == "Hunting" or aitask == "Killing" then
+				AIData[id].target = AIData[AIData[id].accompany].target
+				return "Hunting"
+			end
+		else
+			AIData[id].accompany = -1
+			AIData[id].hostile = -1
+			return "default"
+		end
+
+		distance = distfrom(ax,ay,x,y)
+
+		local accelDir = cur_ship:directionTowards(ax,ay)
+		local inverseMomentumDir = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
+		--print (string.format("accompanyDir=%d accompanyDirInverse=%d\n", accompanyDir, accompanyDirInverse))
+
+		if distance > AIData[id].farThreshold then
+			cur_ship:Rotate( accelDir )
+			if math.abs(accelDir) == 0 then
+				cur_ship:Accelerate()
+			end
+		else
+			if distance > AIData[id].nearThreshold then
+				cur_ship:Rotate( accelDir )
+				if distance % (math.sqrt(AIData[id].farThreshold - distance) + 1) < 2 and
+				   accelDir == 0 then
+					cur_ship:Accelerate()
+				end
+			else
+				cur_ship:Rotate( inverseMomentumDir )
+				--if math.abs(inverseMomentumDir) < 35 then
+				--	cur_ship:Accelerate()
+				--end
+			end
+		end
+
+		return "Accompanying"
+	end,
+}
