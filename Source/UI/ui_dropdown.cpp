@@ -39,9 +39,9 @@ Dropdown::~Dropdown() {
 
 /**\brief Adds a widget to the current Dropdown.
  */
-Widget *Dropdown::AddChild( Widget *widget ){
+//Widget *Dropdown::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
-	int vbnd = widget->GetY() + widget->GetH();
+	//int vbnd = widget->GetY() + widget->GetH();
 
 	//if ( vbnd > this->h ){
 		//if ( !this->vscrollbar ){
@@ -58,8 +58,8 @@ Widget *Dropdown::AddChild( Widget *widget ){
 		//this->vscrollbar->maxpos = vbnd;
 	//}
 
-	return UIContainer::AddChild( widget );
-}
+	//return UIContainer::AddChild( widget );
+//}
 
 /**\brief Determines focused widget based on scrolled position.*/
 Widget *Dropdown::DetermineMouseFocus( int relx, int rely ){

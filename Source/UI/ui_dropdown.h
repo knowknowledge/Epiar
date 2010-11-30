@@ -16,7 +16,7 @@ class Dropdown : public UIContainer {
 	public:
 		Dropdown( int x, int y, int w  );
 		~Dropdown();
-		Widget *AddChild( Widget *widget );
+		//Widget *AddChild( Widget *widget );
 		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	
