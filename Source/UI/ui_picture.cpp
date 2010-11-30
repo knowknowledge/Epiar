@@ -108,5 +108,7 @@ bool Picture::MouseLUp( int x, int y ){
 		snprintf(lua_call, 128, "%s(%d,%d)", luaClickCallback.c_str(), x, y);
 		Lua::Run(lua_call);
 		free(lua_call);
+		return true;
 	}
+	return false;
 } 
