@@ -343,6 +343,8 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	// One more point to finish the circle. (ang=0)
 	glVertex2d(radius + x, y);
 	glEnd();
+	// Reset Line Width
+	glLineWidth(1);
 }
 
 /**\brief Draw a filled circle.

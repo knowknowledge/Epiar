@@ -49,7 +49,7 @@ void Label::Draw(  int relx, int rely ) {
 		SansSerif->Render( x, y, *iter, xpositioning, ypositioning );
 	}
 
-	Widget::Draw(relx,rely);
+	Widget::Draw(relx,rely + SansSerif->TightHeight() / 2 );
 }
 
 void Label::SetText(string text) {
