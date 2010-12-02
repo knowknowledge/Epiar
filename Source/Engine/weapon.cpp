@@ -112,62 +112,99 @@ bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	if( (attr = FirstChildNamed(node,"weaponType")) ){
 		weaponType = (short int)NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node weaponType while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"imageName")) ){
 		image = Image::Get( NodeToString(doc,attr) );
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node imageName while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"picName")) ){
 		Image* pic = Image::Get( NodeToString(doc,attr) );
 		// This image can be accessed by either the path or the Weapon Name
 		Image::Store(name, pic);
 		SetPicture(pic);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node picName while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"payload")) ){
 		payload = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node payload while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"velocity")) ){
 		velocity = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node velocity while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"acceleration")) ){
 		acceleration = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node acceleration while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"ammoType")) ){
 		value = NodeToString(doc,attr);
 		ammoType = AmmoNameToType(value);
 		if(ammoType>=max_ammo) {
+			LogMsg(ERR,"ammoType is >= max_ammo in Weapons XML parsing");
 			return false;
 		}
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node ammoType while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"ammoConsumption")) ){
 		ammoConsumption = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node ammoConsumption while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"fireDelay")) ){
 		fireDelay = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node fireDelay while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"lifetime")) ){
 		lifetime = NodeToInt(doc,attr);
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node lifetime while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"tracking")) ){
 		float _tracking = NodeToFloat(doc,attr);
 		if (_tracking > 1.0f ) _tracking = 1.0f;
 		if (_tracking < 0.0001f ) _tracking = 0.0f;
 		tracking = _tracking;
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node tracking while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"msrp")) ){
 		value = NodeToString(doc,attr);
 		SetMSRP( (short int)atoi( value.c_str() ));
-	} else return false;
+	} else {
+		LogMsg(ERR,"Could not find child node msrp while searching component");
+		return false;
+	}
 
 	if( (attr = FirstChildNamed(node,"sound")) ){
 		string pathPrefix = "Resources/Audio/Weapons/";
@@ -177,8 +214,14 @@ bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		} else {
 			this->sound = Sound::Get( value.insert(0,pathPrefix) );
 		}
-		if( this->sound==NULL) return false;
-	} else return false;
+		if( this->sound==NULL) {
+			// Do not return false here - they may be disabling audio on purpose or audio may not be supported on their system
+			LogMsg(NOTICE,"Could not load sound file while searching component");
+		}
+	} else {
+		LogMsg(ERR,"Could not find child node sound while searching component");
+		return false;
+	}
 
 	return true;
 }
