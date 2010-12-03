@@ -33,7 +33,7 @@ CP= cp
 FIND= find
 INSTALL= install
 MKDIR= mkdir
-#RANLIB= ranlib
+LUA_RANLIB= $(RANLIB)
 
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
 
@@ -64,7 +64,7 @@ install: dummy
 	cd src && $(INSTALL_DATA) $(TO_INC) $(INSTALL_INC)
 	cd src && $(INSTALL_DATA) $(TO_LIB) $(INSTALL_LIB)
 	cd doc && $(INSTALL_DATA) $(TO_MAN) $(INSTALL_MAN)
-#	$(RANLIB) $(INSTALL_LIB)/$(TO_LIB)
+#	$(LUA_RANLIB) $(INSTALL_LIB)/$(TO_LIB)
 
 local:
 	$(MAKE) install INSTALL_TOP=.. INSTALL_EXEC="cp -p" INSTALL_DATA="cp -p"
