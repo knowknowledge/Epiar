@@ -33,7 +33,7 @@ CP= cp
 FIND= find
 INSTALL= install
 MKDIR= mkdir
-RANLIB= ranlib
+#RANLIB= ranlib
 
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
 
