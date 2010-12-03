@@ -42,27 +42,19 @@ class Model : public Outfit {
 		Image *GetImage( void ) { return image; }
 		int GetThrustOffset( void ) { return thrustOffset; }
 
-		// anticipated editor behavior: (remove these comments when it is implemented)
-		//    typedef struct Model::ws ws_t
-		//    [...]
-		//    vector<ws_t> slots = thisModel->GetWeaponSlots()    action: copy
-		//    [alter slots as requested by user]
-		//    thisModel->ConfigureWeaponSlots(slots);             action: pass reference
-		//    [existing behavior]
 		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
 		int GetWeaponSlotCount();
 		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
 		bool ConfigureWeaponSlots( vector<ws_t>& slots );
 		bool ConfigureWeaponSlots();
 
-		// Debug
-		void WSDebug(vector<ws_t>&);
-		void WSDebug(ws_t);
-
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.
 		short int thrustOffset; ///< The number of pixels engine flare animation offset
 		vector<ws_t> weaponSlots; ///< Slots for Weapons
+		// Debug
+		void WSDebug(vector<ws_t>&);
+		void WSDebug(ws_t);
 };
 
 // Class that holds list of all models; manages them
