@@ -398,8 +398,20 @@ bool UIContainer::KeyPress( SDLKey key ) {
 
 xmlNodePtr UIContainer::ToNode() {
 	xmlNodePtr thisNode;
+	char buff[256];
+
 	thisNode = xmlNewNode(NULL, BAD_CAST this->GetType().c_str() );
 	xmlSetProp( thisNode, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetX() );
+	xmlSetProp( thisNode, BAD_CAST "x", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetY() );
+	xmlSetProp( thisNode, BAD_CAST "y", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetW() );
+	xmlSetProp( thisNode, BAD_CAST "w", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%d", this->GetH() );
+	xmlSetProp( thisNode, BAD_CAST "h", BAD_CAST buff );
+
 	list<Widget *>::iterator i;
 	for( i = children.begin(); i != children.end(); ++i ) {
 		xmlAddChild(thisNode, (*i)->ToNode()  );

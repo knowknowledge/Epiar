@@ -214,10 +214,10 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			slotName = value;
 		} else return false;
 
-		for(unsigned int s = 0; s < weaponSlots.size(); s++){	// Being able to use a hash table lookup here to avoid turning
-			if(weaponSlots[s].name == slotName){		// O(n) into O(n^2) might be nice conceptually, but in reality 
-				existingSlot = &weaponSlots[s];		// the efficiency difference here would not be noticeable. For
-				break;					// a similar but more important issue to fix, see Ship::Fire().
+		for(unsigned int s = 0; s < weaponSlots.size(); s++){
+			if(weaponSlots[s].name == slotName){
+				existingSlot = &weaponSlots[s];
+				break;
 			}
 		}
 		if(!existingSlot) return false;

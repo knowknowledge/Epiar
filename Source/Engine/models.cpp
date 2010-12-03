@@ -276,15 +276,8 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			newSlot.firingGroup = (short)atoi(value.c_str());
 		} else return false;
 
-		//WSDebug(newSlot);
-
 		weaponSlots.push_back(newSlot);
-
-		//Model::ConfigureWeaponSlots( doc, node );
 	}
-
-	WSDebug(weaponSlots);
-
 
         return true;
 }

@@ -401,11 +401,10 @@ Escort = {
 
 		local accelDir = cur_ship:directionTowards(ax,ay)
 		local inverseMomentumDir = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
-		--print (string.format("accompanyDir=%d accompanyDirInverse=%d\n", accompanyDir, accompanyDirInverse))
 
 		if distance > AIData[id].farThreshold then
 			cur_ship:Rotate( accelDir )
-			if math.abs(accelDir) == 0 then
+			if accelDir == 0 then
 				cur_ship:Accelerate()
 			end
 		else
