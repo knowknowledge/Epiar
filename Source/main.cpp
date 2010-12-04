@@ -47,28 +47,33 @@ Image* newSplashScreen(){
 }
 
 typedef enum {
-	DoNothing,
-	Play,
-	Options,
-	Editor,
-	Quit,
+	Menu_DoNothing  = 0x0,
+	Menu_Play       = 0x1,
+	Menu_Options    = 0x2,
+	Menu_Editor     = 0x4,
+	Menu_Quit       = 0x8,
+	Menu_ALL        = 0xF,
 } menuOption;
 
-menuOption clicked = DoNothing;
+menuOption clicked = Menu_DoNothing;
 
 // Currently Static functions are the only way I could think of to have C only 
-void clickPlay() { clicked = Play; }
-void clickOptions() { clicked = Options; }
-void clickEditor() { clicked = Editor; }
-void clickQuit() { clicked = Quit; }
+void clickPlay() { clicked = Menu_Play; }
+void clickOptions() { clicked = Menu_Options; }
+void clickEditor() { clicked = Menu_Editor; }
+void clickQuit() { clicked = Menu_Quit; }
 
-void createMenu() {
+void createMenu( menuOption menus ) {
 	int x = OPTION( int, "options/video/w" ) - 200;
 	// Create UI
-	UI::Add( new Button(x, 200, 100, 30, "Play",    clickPlay    ) );
-	UI::Add( new Button(x, 300, 100, 30, "Options", clickOptions ) );
-	UI::Add( new Button(x, 400, 100, 30, "Editor",  clickEditor  ) );
-	UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
+	if( menus & Menu_Play )
+		UI::Add( new Button(x, 200, 100, 30, "Play",    clickPlay    ) );
+	if( menus & Menu_Editor )
+		UI::Add( new Button(x, 300, 100, 30, "Editor",  clickEditor  ) );
+	if( menus & Menu_Options )
+		UI::Add( new Button(x, 400, 100, 30, "Options", clickOptions ) );
+	if( menus & Menu_Quit )
+		UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
 }
 
 void mainmenu() {
@@ -76,9 +81,10 @@ void mainmenu() {
 	bool screenNeedsReset = false;
 	Input inputs;
 	list<InputEvent> events;
+	menuOption availableMenus = (menuOption)(Menu_Play | Menu_Editor | Menu_Quit);
 
 	Image* splash = newSplashScreen();
-	createMenu();
+	createMenu( availableMenus );
 
 	string simName = "Resources/Simulation/default";
 	Simulation debug;
@@ -87,13 +93,13 @@ void mainmenu() {
 	do {
 		if (screenNeedsReset) {
 			UI::Close();
-			createMenu();
+			createMenu( availableMenus );
 			splash = newSplashScreen();
 			screenNeedsReset = false;
 		}
 
 		// Forget about the last click
-		clicked = DoNothing;
+		clicked = Menu_DoNothing;
 
 		// Collect user input events
 		events = inputs.Update( quitSignal );
@@ -108,9 +114,11 @@ void mainmenu() {
 		Video::Update();
 
 		switch(clicked){
-			case Play:
+			case Menu_Play:
 				UI::Close();
 				screenNeedsReset = true;
+				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
+				availableMenus = (menuOption)(availableMenus | Menu_Options);
 
 				Video::Erase();
 				splash = newSplashScreen();
@@ -135,14 +143,16 @@ void mainmenu() {
 
 				break;
 
-			case Options:
-				UI::Close();
+			case Menu_Options:
+				assert( Lua::CurrentState() != NULL );
 				Lua::Call("options");
 				break;
 
-			case Editor:
+			case Menu_Editor:
 				UI::Close();
 				screenNeedsReset = true;
+				availableMenus = (menuOption)(availableMenus & ~Menu_Play);
+				availableMenus = (menuOption)(availableMenus | Menu_Options);
 
 				if( false == debug.isLoaded() )
 				{
@@ -151,6 +161,7 @@ void mainmenu() {
 						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 						break;
 					}
+					debug.SetupToEdit();
 				}
 
 				// Only attempt to Edit if the Simulation has loaded
@@ -160,7 +171,7 @@ void mainmenu() {
 
 				break;
 
-			case Quit:
+			case Menu_Quit:
 				quitSignal = true;
 				break;
 
