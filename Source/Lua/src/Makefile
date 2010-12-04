@@ -5,14 +5,19 @@
 # == CHANGE THE SETTINGS BELOW TO SUIT YOUR ENVIRONMENT =======================
 
 # Your platform. See PLATS for possible values.
-PLAT= none
+PLAT= generic
 
 CC= $(CXX)
 CFLAGS= -O2 -Wall $(MYCFLAGS)
 AR= ar rcu
-RANLIB= ranlib
+LUA_RANLIB=$(RANLIB)
 RM= rm -f
 LIBS= -lm $(MYLIBS)
+
+# If RANLIB was not exported already (MinGW does this, amongst others), assume it's just 'ranlib'
+ifeq ($(LUA_RANLIB),)
+	LUA_RANLIB=ranlib
+endif
 
 MYCFLAGS=
 MYLDFLAGS=
@@ -49,7 +54,7 @@ a:	$(ALL_A)
 
 $(LUA_A): $(CORE_O) $(LIB_O)
 	$(AR) $@ $?
-	$(RANLIB) $@
+	$(LUA_RANLIB) $@
 
 $(LUA_T): $(LUA_O) $(LUA_A)
 	$(CC) -o $@ $(MYLDFLAGS) $(LUA_O) $(LUA_A) $(LIBS)
@@ -68,7 +73,7 @@ echo:
 	@echo "CC = $(CC)"
 	@echo "CFLAGS = $(CFLAGS)"
 	@echo "AR = $(AR)"
-	@echo "RANLIB = $(RANLIB)"
+	@echo "RANLIB = $(LUA_RANLIB)"
 	@echo "RM = $(RM)"
 	@echo "MYCFLAGS = $(MYCFLAGS)"
 	@echo "MYLDFLAGS = $(MYLDFLAGS)"

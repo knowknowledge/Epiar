@@ -39,14 +39,9 @@ void Console::HandleInput( list<InputEvent> & events ) {
 
 		switch( i->type ) {
 		case KEY:
-            if( (i->key == SDLK_BACKQUOTE) && (i->kstate == KEYTYPED)) {
-                if( enabled ) {
-                    enabled = false;
-                } else {
-                    enabled = true;
-                }
-            }
-			else if( i->kstate == KEYTYPED) {
+			if( (i->key == SDLK_BACKQUOTE) && (i->kstate == KEYTYPED)) {
+				enabled = enabled ? false : true;
+			} else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
 					switch(i->key) {
 					// Ignore Modifiers
@@ -72,10 +67,12 @@ void Console::HandleInput( list<InputEvent> & events ) {
 					case SDLK_DOWN:
 						// TODO: add cursor history
 					break;
-					case '\n':
+					case SDLK_RETURN:
+					case SDLK_KP_ENTER:
+					case '\n': // this shouldn't be necessary but on os x the two above it don't seem to catch
 						RunCommand();
 					break;
-					case '\b':
+					case SDLK_BACKSPACE:
 						if(command.size() > 0) {
 							command.erase( --cursor, 1 );
 						}

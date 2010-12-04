@@ -30,7 +30,6 @@ class Window : public UIContainer {
 
 		Image *bitmaps[9];
 		
-		Scrollbar *hscrollbar;
 		Scrollbar *vscrollbar;
 };
 
