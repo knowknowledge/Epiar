@@ -2,7 +2,7 @@
 <planets>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <planet>
     <name>Alexandria</name>
     <alliance>Inter-Terran Conjunctive</alliance>
@@ -37,8 +37,8 @@
     <image>Resources/Graphics/planet6.png</image>
     <militia>7</militia>
     <sphereOfInfluence>3000</sphereOfInfluence>
-    <technology>Terran Medium-Scale Commerce</technology>
     <technology>Terran Small-Scale Commerce</technology>
+    <technology>Terran Medium-Scale Commerce</technology>
   </planet>
   <planet>
     <name>Castal</name>
@@ -62,8 +62,8 @@
     <image>Resources/Graphics/planet4.png</image>
     <militia>1</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Questionable Legality</technology>
     <technology>Vespian</technology>
+    <technology>Questionable Legality</technology>
   </planet>
   <planet>
     <name>Exudusous</name>
@@ -75,9 +75,9 @@
     <image>Resources/Graphics/planet5.png</image>
     <militia>4</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Terran Medium-Scale Commerce</technology>
-    <technology>Terran Small-Scale Commerce</technology>
     <technology>Terran War Fleet</technology>
+    <technology>Terran Small-Scale Commerce</technology>
+    <technology>Terran Medium-Scale Commerce</technology>
   </planet>
   <planet>
     <name>Facility 10</name>
@@ -101,8 +101,8 @@
     <image>Resources/Graphics/station1.png</image>
     <militia>1</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
-    <technology>Questionable Legality</technology>
     <technology>Vespian</technology>
+    <technology>Questionable Legality</technology>
   </planet>
   <planet>
     <name>Facility 33</name>
@@ -126,8 +126,8 @@
     <image>Resources/Graphics/planet4.png</image>
     <militia>1</militia>
     <sphereOfInfluence>6000</sphereOfInfluence>
-    <technology>Terran Defence</technology>
     <technology>Terran Small-Scale Commerce</technology>
+    <technology>Terran Defence</technology>
   </planet>
   <planet>
     <name>Fonral</name>
@@ -151,8 +151,8 @@
     <image>Resources/Graphics/planet7.png</image>
     <militia>1</militia>
     <sphereOfInfluence>8000</sphereOfInfluence>
-    <technology>Solaran Defence</technology>
     <technology>Solaran Outpost</technology>
+    <technology>Solaran Defence</technology>
   </planet>
   <planet>
     <name>Malche</name>
@@ -200,8 +200,8 @@
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
     <sphereOfInfluence>5000</sphereOfInfluence>
-    <technology>Questionable Legality</technology>
     <technology>Terran Medium-Scale Commerce</technology>
+    <technology>Questionable Legality</technology>
   </planet>
   <planet>
     <name>Outpost 17</name>
@@ -237,8 +237,8 @@
     <image>Resources/Graphics/planet17.png</image>
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Terran Medium-Scale Commerce</technology>
     <technology>Terran Small-Scale Commerce</technology>
+    <technology>Terran Medium-Scale Commerce</technology>
   </planet>
   <planet>
     <name>The Guild Hall</name>
@@ -250,8 +250,8 @@
     <image>Resources/Graphics/station1.png</image>
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Questionable Legality</technology>
     <technology>Terran Medium-Scale Commerce</technology>
+    <technology>Questionable Legality</technology>
   </planet>
   <planet>
     <name>Usian</name>
@@ -263,8 +263,8 @@
     <image>Resources/Graphics/planet12.png</image>
     <militia>1</militia>
     <sphereOfInfluence>6000</sphereOfInfluence>
-    <technology>Vespian</technology>
     <technology>Vespian Exploration</technology>
+    <technology>Vespian</technology>
   </planet>
   <planet>
     <name>Ves</name>
@@ -276,8 +276,8 @@
     <image>Resources/Graphics/planet13.png</image>
     <militia>5</militia>
     <sphereOfInfluence>8000</sphereOfInfluence>
-    <technology>Vespian</technology>
-    <technology>Vespian Exploration</technology>
     <technology>Vespian Guard</technology>
+    <technology>Vespian Exploration</technology>
+    <technology>Vespian</technology>
   </planet>
 </planets>

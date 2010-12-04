@@ -216,8 +216,16 @@ void Image::DrawCentered( int x, int y, float angle ) {
 /**\brief Draw the image stretched within to a box
  */
 void Image::DrawStretch( int x, int y, int box_w, int box_h, float angle ) {
-	float resize_ratio_w = static_cast<float>(box_w) / static_cast<float>(this->w);
-	float resize_ratio_h = static_cast<float>(box_h) / static_cast<float>(this->h);
+	if(!this) return;
+	assert(this);
+	assert(this->w);
+	assert(this->h);
+
+	float wf = static_cast<float>(this->w);
+	float hf = static_cast<float>(this->h);
+
+	float resize_ratio_w = static_cast<float>(box_w) / wf;
+	float resize_ratio_h = static_cast<float>(box_h) / hf;
 
 	_Draw(x, y, 1.f, 1.f, 1.f, 1.f, angle, resize_ratio_w, resize_ratio_h);
 }
@@ -329,8 +337,7 @@ void Image::DrawTiledAlpha( int x, int y, int fill_w, int fill_h, float alpha ) 
 
 /**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
  */
-void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
-{
+void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 	if( !image ) {
 		LogMsg(WARN, "Trying to draw without loading an image first." );
 		return;
@@ -352,13 +359,11 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 
 	glPushMatrix();
 
-	glEnable(GL_SCISSOR_TEST);
-	glScissor(x, Video::GetHeight() - y - fill_h, fill_w, fill_h); // for some reason, glScissor counts (0,0) as lower-left
+	Video::SetCropRect(x, y, fill_w, fill_h); // don't need to invert y here
 
 	glBegin( GL_QUADS );
 	for( int j = 0; j < fill_h; j += h) {
 		for( int i = 0; i < fill_w; i += w) {
-			//cout<<"Image "<<j<<","<<i<<endl;
 			glTexCoord2f( 0., 0. ); glVertex2f( static_cast<GLfloat>(x+i), static_cast<GLfloat>(y+j) ); // Lower Left
 			glTexCoord2f( scale_w, 0. ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+j)); // Lower Right
 			glTexCoord2f( scale_w, scale_h ); glVertex2f( static_cast<GLfloat>(x+w+i) , static_cast<GLfloat>(y+h+j) ); // Upper Right
@@ -367,7 +372,7 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha )
 	}
 	glEnd();
 
-	glDisable(GL_SCISSOR_TEST);
+	Video::UnsetCropRect();
 
 	glPopMatrix();
 

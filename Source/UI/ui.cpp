@@ -42,7 +42,10 @@ bool UI::Active( void ) {
 	return true;
 }
 
-/**\brief Adds a Widget to the base UI.*/
+/**\brief Adds a Widget to the base UI.
+ * \param[in] widget Widget pointer that should be added.
+ * \returns The same pointer to the widget that was passed as input.
+ */
 Widget *UI::Add( Widget *widget ) {
 	if( !widget ) return false;
 	
@@ -65,6 +68,9 @@ void UI::Draw( void ) {
 	UI::master.Draw( );
 }
 
+/**\brief Export The UI as an XML document.
+ *
+ */
 void UI::Save( void ) {
     xmlDocPtr doc = NULL;       /* document pointer */
     xmlNodePtr root_node = NULL;/* node pointers */

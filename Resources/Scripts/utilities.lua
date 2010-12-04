@@ -13,15 +13,29 @@ function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+-- Wrap lines of text to a specified maximum width or 72 characters by default.
+-- To-do: allow hard wrapping with blank lines.
 function linewrap(text, chars_per_line)
 	if chars_per_line == nil then chars_per_line = 72 end
-	local ret = ""
-	for line =1,math.ceil( text:len() / chars_per_line ) do
-		local partial = text:sub( (line-1)*chars_per_line, (line)*chars_per_line -1)
-		ret = ret .. partial .. "\n"
-	end
-	return ret
+	local wrapped = ""
+	local line = ""
+	string.gsub(text, "([^ \n]*)[ \n]*",
+	   function(w)
+	      local joined = string.format("%s %s", line, w)
+              if line == "" then joined = w end
+	      if string.len( joined ) <= chars_per_line  then
+		 line = joined
+	      else
+	         if wrapped == "" then wrapped = line
+	         else wrapped = string.format("%s\n%s", wrapped, line) end
+	         line = w
+	      end
+	      return ""
+	   end)
+	wrapped = string.format("%s\n%s", wrapped, line)
+	return wrapped
 end
+
 
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
@@ -82,5 +96,18 @@ end
 
 function choose( array )
 	return array[math.random(#array)]
+end
+
+-- Shuffle a table
+-- http://rosettacode.org/wiki/Knuth_shuffle#Lua
+function table.shuffle(t)
+  local n = #t
+  while n > 1 do
+    local k = math.random(n)
+    t[n], t[k] = t[k], t[n]
+    n = n - 1
+  end
+ 
+  return t
 end
 

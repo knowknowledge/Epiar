@@ -2,7 +2,7 @@
 <technologies>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <technology>
     <name>Questionable Legality</name>
     <model>Gate Enforcer</model>
@@ -16,7 +16,7 @@
   </technology>
   <technology>
     <name>Solaran Defence</name>
-    <model>Solaran Battle Cuiser</model>
+    <model>Solaran Battle Cruiser</model>
     <model>Patitu</model>
     <model>Kartanal</model>
     <weapon>Slow Missile</weapon>
@@ -24,8 +24,8 @@
     <weapon>Strong Laser</weapon>
     <engine>Ion Engines</engine>
     <outfit>Directional Thrusters</outfit>
-    <outfit>Copper Plating</outfit>
     <outfit>Shield Generator</outfit>
+    <outfit>Copper Plating</outfit>
     <outfit>Organic Plating</outfit>
   </technology>
   <technology>

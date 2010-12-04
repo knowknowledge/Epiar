@@ -96,14 +96,12 @@ bool Simulation::SetupToRun(){
 	Lua::Init();
 	L = Lua::CurrentState();
 
-	Simulation_Lua::StoreSimulation(L,this);
+	Simulation_Lua::StoreSimulation(L, this);
 
-	Simulation_Lua::RegisterSimulation(L);
+	// Load default Lua registers
+	LuaRegisters(L);
+	// Load ::Run()-specific Lua registers
 	AI_Lua::RegisterAI(L);
-	UI_Lua::RegisterUI(L);
-	Audio_Lua::RegisterAudio(L);
-	Planets_Lua::RegisterPlanets(L);
-	Hud::RegisterHud(L);
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
 		   && Lua::Load("Resources/Scripts/universe.lua")
@@ -137,6 +135,27 @@ bool Simulation::SetupToRun(){
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 
+	if( players->Load( Get("players"), true ) != true ) {
+		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
+		return false;
+	}
+
+	Coordinate startPos(0,0);
+	string startPlanet = Get("defaultPlayer/start");
+	if( planets->GetPlanet( startPlanet ) ) {
+		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
+	} else {
+		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
+	}
+	players->SetDefaults(
+		models->GetModel( Get("defaultPlayer/model") ),
+		engines->GetEngine( Get("defaultPlayer/engine") ),
+		convertTo<int>( Get("defaultPlayer/credits")),
+		startPos
+	);
+
+	// Message appear in reverse order, so this is upside down
+	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
 
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
@@ -296,12 +315,10 @@ bool Simulation::SetupToEdit() {
 
 	Simulation_Lua::StoreSimulation(L,this);
 
-	Simulation_Lua::RegisterSimulation(L);
+	// Load main Lua registers
+	LuaRegisters(L);
+	// Load ::Edit()-specific Lua registers
 	Simulation_Lua::RegisterEditor(L);
-	UI_Lua::RegisterUI(L);
-	Audio_Lua::RegisterAudio(L);
-	Planets_Lua::RegisterPlanets(L);
-	Hud::RegisterHud(L);
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
 		   && Lua::Load("Resources/Scripts/universe.lua")
@@ -361,6 +378,18 @@ bool Simulation::Edit() {
 	return true;
 }
 
+/**\brief Subroutine. Calls various Lua register functions needed by both Run and Edit
+ * \return true if successful
+ */
+void Simulation::LuaRegisters(lua_State *L) {
+	Simulation_Lua::RegisterSimulation(L);
+	UI_Lua::RegisterUI(L);
+	Audio_Lua::RegisterAudio(L);
+	Planets_Lua::RegisterPlanets(L);
+	Hud::RegisterHud(L);
+	Video::RegisterVideo(L);
+}
+
 /**\brief Parses an XML simulation file
  * \return true if successful
  */
@@ -407,29 +436,12 @@ bool Simulation::Parse( void ) {
 	    }
 	}
 
-	if( players->Load( Get("players"), true ) != true ) {
-		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
-		return false;
-	}
-
 	bgmusic = Song::Get( Get("music") );
 	if( bgmusic == NULL ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
 	}
 
-	Coordinate startPos(0,0);
-	string startPlanet = Get("defaultPlayer/start");
-	if( planets->GetPlanet( startPlanet ) ) {
-		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
-	} else {
-		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
-	}
-	players->SetDefaults(
-		models->GetModel( Get("defaultPlayer/model") ),
-		engines->GetEngine( Get("defaultPlayer/engine") ),
-		convertTo<int>( Get("defaultPlayer/credits")),
-		startPos
-	);
+
 
 	return true;
 }

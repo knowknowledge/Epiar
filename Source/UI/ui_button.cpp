@@ -36,6 +36,9 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	bitmap_mouseover = Image::Get( "Resources/Graphics/ui_button_mouseover.png" );
 	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
+
+	assert(bitmap_normal);
+	assert(bitmap_mouseover);
 	
 	// Load sounds
 	this->sound_click = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
@@ -77,29 +80,32 @@ void Button::Draw( int relx, int rely ) {
 	
 	Video::DrawRect( x, y, this->w, this->h, 1., 1., 1. );
 
+	assert(bitmap_current);
+
 	// draw the button (loaded image is simply scaled)
 	bitmap_current->DrawStretch( x, y, this->w, this->h );
 
 	// draw the label
-	//Video::SetCropRect(x,y,this->w,this->h);
+	Video::SetCropRect(x + 1, y + 1, this->w - 2, this->h - 2); // constants adjust for the 1px border
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
-	//Video::UnsetCropRect();
+	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);
 }
 
 /**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
-	if(OPTION(int, "options/sound/buttons"))
-		this->sound_click->Play();
+	if(OPTION(int, "options/sound/buttons")) this->sound_click->Play();
+
 	bitmap_current = bitmap_pressed;
+
 	return true;
 }
 
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
-	bitmap_current = bitmap_normal;
+	bitmap_current = bitmap_mouseover;
 
 	if( clickCallBack ){
 		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );

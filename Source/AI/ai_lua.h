@@ -14,6 +14,7 @@
 
 #define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship
 #define EPIAR_SHIP "Ship" ///< The Lua tag used to identify the Library for a Ship.
+#define EPIAR_OUTFIT "Outfit" ///< The Lua tag used to identify the Library for an Outfit
 
 class AI_Lua{
 	public:
@@ -21,6 +22,7 @@ class AI_Lua{
 		static void RegisterAI(lua_State *L);
 		//static void pushShip(lua_State *L,int id);
 		static AI *checkShip(lua_State *L, int index);
+		static Outfit *checkOutfit(lua_State *L, int index);
 		static int newShip(lua_State *L);
 
 		// Actions
@@ -32,12 +34,16 @@ class AI_Lua{
 		static int ShipRepair(lua_State* L);
 		static int ShipExplode(lua_State* L);
 		static int ShipRemove(lua_State* L);
-		static int ShipAddWeapon(lua_State* L);
+		static int ShipAddToWeaponList (lua_State* L);
+		static int ShipAddWeapon (lua_State* L);
+		static int ShipRemoveFromWeaponList (lua_State* L);
+		static int ShipRemoveWeapon (lua_State* L);
 		static int ShipChangeWeapon(lua_State* L);
 		static int ShipAddAmmo(lua_State* L);
 		static int ShipSetModel(lua_State* L);
 		static int ShipSetEngine(lua_State* L);
 		static int ShipAddOutfit(lua_State* L);
+		static int ShipRemoveOutfit(lua_State* L);
 		static int ShipSetCredits(lua_State* L);
 		static int ShipStoreCommodities(lua_State* L);
 		static int ShipDiscardCommodities(lua_State* L);
@@ -55,15 +61,18 @@ class AI_Lua{
 		// Current Ship State
 		static int ShipGetType(lua_State* L);
 		static int ShipGetID(lua_State* L);
+		static int ShipGetMass(lua_State* L);
 		static int ShipGetName(lua_State* L);
+		static int ShipSetName(lua_State* L);
 		static int ShipGetAlliance(lua_State* L);
 		static int ShipGetAngle(lua_State* L);
 		static int ShipGetPosition(lua_State* L);
+		//static int ShipSetPosition(lua_State* L);
 		static int ShipGetMomentumAngle(lua_State* L);
 		static int ShipGetMomentumSpeed(lua_State* L);
 		static int ShipGetDirectionTowards(lua_State* L); // Accepts either Angles or Coordinates
-		static int ShipGetCurrentWeapon(lua_State* L);
-		static int ShipGetCurrentAmmo(lua_State* L);
+		//static int ShipGetCurrentWeapon(lua_State* L);
+		//static int ShipGetCurrentAmmo(lua_State* L);
 		static int ShipGetWeapons(lua_State* L);
 		static int ShipGetState(lua_State* L);
 		static int ShipGetCredits(lua_State* L);
@@ -71,6 +80,19 @@ class AI_Lua{
 		static int ShipGetOutfits(lua_State* L);
 		static int ShipGetTotalCost(lua_State* L);
 		static int ShipIsDisabled(lua_State* L);
+		static int ShipGetShieldDamage(lua_State* L);
+		static int ShipSetShieldDamage(lua_State* L);
+		static int ShipGetHullDamage(lua_State* L);
+		static int ShipSetHullDamage(lua_State* L);
+
+		// Weapon slot related functions
+		static int ShipGetWeaponSlotCount(lua_State* L);
+		static int ShipGetWeaponSlotName(lua_State* L);
+		static int ShipGetWeaponSlotStatus(lua_State* L);
+		static int ShipSetWeaponSlotStatus(lua_State* L);
+		static int ShipGetWeaponSlotFG(lua_State* L);
+		static int ShipSetWeaponSlotFG(lua_State* L);
+		static int ShipGetWeaponSlotContents(lua_State* L);
 
 		// Ship Properties
 		static int ShipGetModelName(lua_State* L);
@@ -78,6 +100,10 @@ class AI_Lua{
 		static int ShipGetHull(lua_State* L);
 		static int ShipGetShield(lua_State* L);
 		static int ShipGetMissions(lua_State* L);
+
+		// Situational Awareness
+		static int ShipGetFriendly(lua_State* L);
+		static int ShipSetFriendly(lua_State* L);
 	private:
 };
 

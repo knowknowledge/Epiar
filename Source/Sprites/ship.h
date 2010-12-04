@@ -23,6 +23,9 @@ class Ship : public Sprite {
 		~Ship();
 		
 		bool SetModel( Model *model );
+
+		Model *GetModel(){ return model; };
+
 		bool SetEngine( Engine *engine );
 		Sprite *GetSprite();
 		string GetModelName();
@@ -39,12 +42,27 @@ class Ship : public Sprite {
 		bool ChangeWeapon( void );
 
 		// Outfitting Functions
-		void AddShipWeapon(Weapon *i);
-		void AddShipWeapon(string weaponName);
-		void RemoveShipWeapon(int pos);
+		void AddToShipWeaponList(Weapon *i);
+		void AddToShipWeaponList(string weaponName);
+		int AddShipWeapon(Weapon *i);
+		int AddShipWeapon(string weaponName);
+		void RemoveFromShipWeaponList(int pos);
+		void RemoveFromShipWeaponList(Weapon *i);
+		void RemoveFromShipWeaponList(string weaponName);
+		void RemoveShipWeapon(Weapon *i);
+		void RemoveShipWeapon(string weaponName);
 		void AddAmmo(AmmoType ammoType, int qty);
 		void AddOutfit(Outfit *outfit);
 		void AddOutfit(string outfitName);
+		void RemoveOutfit(Outfit *outfit);
+		void RemoveOutfit(string outfitName);
+		int GetWeaponSlotCount();
+		string GetWeaponSlotName(int i);
+		string GetWeaponSlotStatus(int i);
+		void SetWeaponSlotStatus(int i, string);
+		short int GetWeaponSlotFG(int i);
+		void SetWeaponSlotFG(int i, short int);
+		map<string,string> GetWeaponSlotContents();
 
 		// Economic Functions
 		void SetCredits(unsigned int _credits);
@@ -57,11 +75,18 @@ class Ship : public Sprite {
 		float GetDirectionTowards(float angle);
 		float GetHullIntegrityPct();
 		float GetShieldIntegrityPct();
-		Weapon* GetCurrentWeapon();
+		//Weapon* GetCurrentWeapon();
+		short int GetHullDamage(){ return status.hullDamage; }
+		void SetHullDamage(short int hd){ status.hullDamage = hd; }
+		short int GetShieldDamage(){ return status.shieldDamage; }
+		void SetShieldDamage(short int sd){ status.shieldDamage = sd; }
 
-		int GetCurrentAmmo();		int GetAmmo(AmmoType type);
+		//int GetCurrentAmmo();
+		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();
 		list<Outfit*>* GetOutfits() { return &outfits; }
+		void SetOutfits(list<Outfit*>* o) { outfits = *o; }
+
 		Engine* GetEngine( void ) const { return engine; }
 		unsigned int GetCredits() { return credits; }
 		unsigned int GetCargoSpaceUsed() { return status.cargoSpaceUsed; }
@@ -79,6 +104,14 @@ class Ship : public Sprite {
 		void SetShieldBoost(float shield) { shieldBooster = shield;}		
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
+
+		void SetFriendly(int f) { friendly = (f == 1); }
+		int GetFriendly() { return (friendly ? 1 : 0 ); }
+
+	protected:
+		typedef struct ws ws_t;
+
+		vector<ws_t> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
 	
 	private:
 		Model *model;
@@ -95,8 +128,9 @@ class Ship : public Sprite {
 			short int hullDamage; ///< Once the hull takes too much damage, your ship blows apart, hooray! :)
 			short int shieldDamage; ///< Your hull doesn`t take damage untill the shield is down
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
-			unsigned int lastFiredAt; ///< Number of ticks where last fire event occured
+			unsigned int lastFiredAt[32]; ///< Number of ticks where last fire event occured for a given weapon slot
 			unsigned int selectedWeapon; ///< Which weapon is currently selected
+			string selectedWeaponName; ///< Which weapon is currently selected
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
 			
 			/* Flags */
@@ -104,9 +138,12 @@ class Ship : public Sprite {
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
 
+		bool friendly; ///< Is this ship friendly to the player?
+
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship
-		vector<Weapon *> shipWeapons; ///< 
+
+		vector<Weapon *> shipWeapons; ///< The weapons installed on this ship
 
 		list<Outfit *> outfits;
 

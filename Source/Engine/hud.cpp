@@ -95,11 +95,10 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	assert(pos<=4);
 }
 
-//---------------experimental code from Dido------
 /**\brief Assignment operator for class StatusBar.
  * \return Pointer to StatusBar
  */
-StatusBar& StatusBar::operator=(StatusBar& object){
+StatusBar& StatusBar::operator=( StatusBar& object ){
 	strcpy( title, object.title );
 	strcpy( name, object.name );
 
@@ -108,8 +107,6 @@ StatusBar& StatusBar::operator=(StatusBar& object){
 
 	return * this;
 }
-//---------------experimental code from Dido------END----
-
 
 void StatusBar::print ()
 {
@@ -511,6 +508,18 @@ void Hud::DrawUniverseMap( void ) {
 				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
 		}
 	}
+
+	// Do a second pass to draw planet Names on top
+	for( iter = sprites->begin(); iter != sprites->end(); ++iter )
+	{
+		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
+		{
+			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
+			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
+			SansSerif->SetColor(1.f,1.f,1.f,1.f);
+			SansSerif->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
+		}
+	}
 	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;
 	posy = starty + Camera::Instance()->GetFocusCoordinate().GetY() * scale + halfsize;
 	Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
@@ -593,6 +602,36 @@ bool Hud::DeleteStatus( string deleteTitle ) {
 	return false;
 }
 
+/**\brief Deletes a StatusBar if it exists
+ */
+void Hud::DeleteStatusIfExists( string deleteTitle ) {
+	int i;
+	for(i = 0; i< MAX_STATUS_BARS; i++)
+	{
+		if( (Bars[i]!=NULL) && (Bars[i]->GetTitle()==deleteTitle) )
+		{
+			cout << Bars[i]->GetTitle() << " matches " << deleteTitle.c_str() << endl;
+			delete Bars[i];
+			Bars[i] = NULL;
+			return;
+		}
+	}
+}
+
+/**\brief Is there a matching status bar?
+ */
+bool Hud::HasStatusMatching( string matchPattern ) {
+	int i;
+	for(i = 0; i< MAX_STATUS_BARS; i++)
+	{
+		if( (Bars[i]!=NULL) && (  strstr(Bars[i]->GetTitle().c_str(), matchPattern.c_str() ) != NULL ) )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 
 /**\brief Select what kind of Map is displayed
  */
@@ -608,6 +647,8 @@ void Hud::RegisterHud(lua_State *L) {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},
 		{"closeStatus", &Hud::closeStatus},
+		{"closeStatusIfExists", &Hud::closeStatusIfExists},
+		{"HudHasStatusMatching", &Hud::HudHasStatusMatching},
 		{"newAlert", &Hud::newAlert},
 		{"getTarget", &Hud::getTarget},
 		{"setTarget", &Hud::setTarget},
@@ -617,6 +658,8 @@ void Hud::RegisterHud(lua_State *L) {
 	};
 
 	luaL_openlib(L, EPIAR_HUD, hudFunctions, 0);
+
+	lua_pop(L,1);
 }
 
 /**\brief Set's the visibility of the target (Lua callable)
@@ -678,6 +721,30 @@ int Hud::closeStatus(lua_State *L) {
 	}
 	return 0;
 }
+
+/**\brief Closes the status if it exists (Lua callable).
+ */
+int Hud::closeStatusIfExists(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (Title)", n);
+	string deleteTitle = luaL_checkstring(L,1);
+	DeleteStatusIfExists( deleteTitle );
+	return 0;
+}
+
+/**\brief Lua-callable for HasStatusMatching
+ */
+int Hud::HudHasStatusMatching(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (Pattern)", n);
+	string matchPattern = luaL_checkstring(L,1);
+	bool yes = HasStatusMatching( matchPattern );
+	lua_pushinteger(L, (yes?1:0) );
+	return 0;
+}
+
 
 /**\brief Returns the target (Lua callable).
  */
@@ -782,9 +849,15 @@ void Radar::Draw( void ) {
 		radarSize = int((sprite->GetRadarSize() / float(visibility)) * (RADAR_HEIGHT/4.0));
 		
 		if( radarSize >= 1 ) {
-			Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
+			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
+				Video::DrawCircle( blip, radarSize, 2, Color::Get(0xff, 0xff, 0xff));
+			else
+				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 		} else {
-			Video::DrawPoint( blip, sprite->GetRadarColor() );
+			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
+				Video::DrawCircle( blip, 1, 2, Color::Get(0xff, 0xff, 0xff));
+			else
+				Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}
 	}
 	delete spriteList;

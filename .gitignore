@@ -59,3 +59,8 @@ Resources/Definitions/saved-games.xml
 .DS_Store
 Epiar.tmproj
 *.swp
+
+### Eclipse IDE files
+.project
+.cproject
+

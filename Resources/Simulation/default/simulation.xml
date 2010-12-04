@@ -18,7 +18,7 @@
 	<music>Resources/Audio/Music/beyond_the_network.it</music>
 	<defaultPlayer>
 		<start>Alexandria</start>
-		<model>Terran FV-5 Frigate</model>
+		<model>Shuttle</model>
 		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
 		<credits>2000</credits>
 	</defaultPlayer>

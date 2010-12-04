@@ -2,7 +2,7 @@
 <models>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
   <model>
     <name>Escape Pod</name>
     <image>Resources/Graphics/podv.png</image>
@@ -14,6 +14,7 @@
     <shieldStrength>100</shieldStrength>
     <msrp>500</msrp>
     <cargoSpace>10</cargoSpace>
+    <weaponSlots/>
   </model>
   <model>
     <name>Fleet Guard</name>
@@ -26,6 +27,32 @@
     <shieldStrength>700</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-15.0</x>
+          <y>7.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>15.0</x>
+          <y>7.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Gate Enforcer</name>
@@ -38,6 +65,70 @@
     <shieldStrength>600</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>80</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>side slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-31.0</x>
+          <y>7.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>side slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>31.0</x>
+          <y>7.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
+  </model>
+  <model>
+    <name>Golden Uber</name>
+    <image>Resources/Graphics/golden_uber.png</image>
+    <mass>10.00</mass>
+    <rotationsPerSecond>0.30</rotationsPerSecond>
+    <thrustOffset>90</thrustOffset>
+    <maxSpeed>4.0</maxSpeed>
+    <hullStrength>5000</hullStrength>
+    <shieldStrength>5000</shieldStrength>
+    <msrp>15000</msrp>
+    <cargoSpace>1000</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>rear forward-facing 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-38.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>-4.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Gold Beam</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>rear forward-facing 4</name>
+        <coord>
+          <mode>manual</mode>
+          <x>36.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>4.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Gold Beam</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Hammer Freighter</name>
@@ -50,6 +141,20 @@
     <shieldStrength>800</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>center turret 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>360.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Kartanal</name>
@@ -62,6 +167,32 @@
     <shieldStrength>500</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>20</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-13.0</x>
+          <y>-12.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>13.0</x>
+          <y>-12.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Large Vesper</name>
@@ -74,6 +205,44 @@
     <shieldStrength>400</shieldStrength>
     <msrp>5000</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-5.0</x>
+          <y>24.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>5.0</x>
+          <y>24.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 3</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>1</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Mid Vesper</name>
@@ -86,6 +255,32 @@
     <shieldStrength>200</shieldStrength>
     <msrp>3500</msrp>
     <cargoSpace>10</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>turret slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>360.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>1</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Patitu</name>
@@ -98,6 +293,32 @@
     <shieldStrength>400</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>20</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>-1.2</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>-1.2</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Raven</name>
@@ -110,6 +331,32 @@
     <shieldStrength>300</shieldStrength>
     <msrp>3000</msrp>
     <cargoSpace>15</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>swivel slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-7.0</x>
+          <y>14.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>80.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>swivel slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>7.0</x>
+          <y>14.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>80.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Shuttle</name>
@@ -122,9 +369,23 @@
     <shieldStrength>300</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>50</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>-0.3</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
-    <name>Solaran Battle Cuiser</name>
+    <name>Solaran Battle Cruiser</name>
     <image>Resources/Graphics/btlcruiser.png</image>
     <mass>2.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
@@ -134,6 +395,68 @@
     <shieldStrength>2500</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>500</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-0.3</x>
+          <y>-3.5</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-0.2</x>
+          <y>-3.5</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Plasma Cannon</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 3</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.2</x>
+          <y>-3.5</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>1</firingGroup>
+      </slot>
+      <slot>
+        <name>rear swivel slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-50.0</x>
+          <y>-10.0</y>
+        </coord>
+        <angle>180.0</angle>
+        <motionAngle>145.0</motionAngle>
+        <content>Minigun</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>turret slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>1.2</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>360.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Assist</name>
@@ -146,6 +469,32 @@
     <shieldStrength>800</shieldStrength>
     <msrp>4000</msrp>
     <cargoSpace>120</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-25.0</x>
+          <y>-8.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>25.0</x>
+          <y>-8.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>1</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Corvert Mark I</name>
@@ -158,6 +507,32 @@
     <shieldStrength>700</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>left forward-facing</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-12.0</x>
+          <y>9.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right forward-facing</name>
+        <coord>
+          <mode>manual</mode>
+          <x>12.0</x>
+          <y>9.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Corvert Mark II</name>
@@ -170,6 +545,68 @@
     <shieldStrength>2000</shieldStrength>
     <msrp>8000</msrp>
     <cargoSpace>400</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>left forward-facing 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-20.0</x>
+          <y>5.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>left forward-facing 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-18.0</x>
+          <y>5.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right forward-facing 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>18.0</x>
+          <y>5.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right forward-facing 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>20.0</x>
+          <y>5.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>top turret</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>360.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Explorer</name>
@@ -182,6 +619,32 @@
     <shieldStrength>500</shieldStrength>
     <msrp>1500</msrp>
     <cargoSpace>80</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>40.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>rear swivel slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>-40.0</y>
+        </coord>
+        <angle>180.0</angle>
+        <motionAngle>100.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran FV-5 Frigate</name>
@@ -194,6 +657,32 @@
     <shieldStrength>500</shieldStrength>
     <msrp>2000</msrp>
     <cargoSpace>60</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>7.0</x>
+          <y>-6.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-7.0</x>
+          <y>-6.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran Miner</name>
@@ -206,6 +695,32 @@
     <shieldStrength>600</shieldStrength>
     <msrp>1000</msrp>
     <cargoSpace>75</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-6.0</x>
+          <y>13.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Minigun</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>auto</mode>
+          <x>6.0</x>
+          <y>13.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Terran XV</name>
@@ -218,6 +733,32 @@
     <shieldStrength>400</shieldStrength>
     <msrp>2500</msrp>
     <cargoSpace>30</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-0.2</x>
+          <y>-1.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.2</x>
+          <y>-1.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>1</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Uber</name>
@@ -230,6 +771,104 @@
     <shieldStrength>5000</shieldStrength>
     <msrp>15000</msrp>
     <cargoSpace>1000</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>rear forward-facing 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-38.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>-4.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>rear forward-facing 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-28.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>-3.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>rear forward-facing 3</name>
+        <coord>
+          <mode>manual</mode>
+          <x>28.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>3.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>rear forward-facing 4</name>
+        <coord>
+          <mode>manual</mode>
+          <x>36.0</x>
+          <y>-54.0</y>
+        </coord>
+        <angle>4.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-8.0</x>
+          <y>65.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>1</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-4.0</x>
+          <y>65.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 3</name>
+        <coord>
+          <mode>manual</mode>
+          <x>4.0</x>
+          <y>65.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 4</name>
+        <coord>
+          <mode>manual</mode>
+          <x>8.0</x>
+          <y>65.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>1</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
   <model>
     <name>Vespan Carrier</name>
@@ -242,5 +881,67 @@
     <shieldStrength>2250</shieldStrength>
     <msrp>10000</msrp>
     <cargoSpace>400</cargoSpace>
+    <weaponSlots>
+      <slot>
+        <name>side forward-facing 1</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-18.0</x>
+          <y>15.0</y>
+        </coord>
+        <angle>-2.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>side forward-facing 2</name>
+        <coord>
+          <mode>manual</mode>
+          <x>18.0</x>
+          <y>15.0</y>
+        </coord>
+        <angle>2.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 1</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-3.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>150.0</motionAngle>
+        <content>Missile</content>
+        <firingGroup>1</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot 2</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>150.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>turret slot</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>12.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>360.0</motionAngle>
+        <content>Strong Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+    </weaponSlots>
   </model>
 </models>

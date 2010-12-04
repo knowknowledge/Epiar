@@ -19,18 +19,23 @@ class Picture: public Widget {
 		void Default( int x, int y, int w, int h);
 		Picture( int x, int y, int w, int h, string filename );
 		Picture( int x, int y, int w, int h, Image *pic );
+		Picture( int w, int h, string filename );
 		void Draw( int relx, int rely );
 		void Rotate( double angle );
 		void Set( Image *img );
 		void Set( string filename );
 		void SetColor( float r, float g, float b, float a );
+		void SetLuaClickCallback( string );
+		bool MouseLUp( int, int );
 
 		string GetType( void ) {return string("Picture");}
+
 	private:
 		double rotation;
 		Image *bitmap;
 		Color color;
 		float alpha;
+		string luaClickCallback;
 };
 
 #endif // __H_UI_IMAGE 

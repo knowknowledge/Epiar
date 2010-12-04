@@ -58,6 +58,7 @@ ModelEditorLayout = {
 	{"MaxSpeed", "Integer"},
 	{"Cargo", "Integer"},
 	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
+	{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
 	}
 
 PlanetEditorLayout = {
@@ -152,6 +153,7 @@ function showComponent(kind,name,getterFunc)
 	
 	local theFields = {}
 	local thePics = {}
+	local theWeaponTables = {}
 	yoff=40 -- Buffer for the titlebar?
 	for i,layout in ipairs(EditorLayouts[kind]) do
 		local title,fieldType = layout[1],layout[2]
@@ -206,6 +208,17 @@ function showComponent(kind,name,getterFunc)
 				theWin:add(field[tech])
 				yoff = yoff+20
 			end
+		elseif fieldType == "Weapon slots" then
+
+			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
+			yoff = yoff+35
+
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s', '%s')",name,title)))
+			yoff = yoff+20+5
+
+			theInfo[title]["desiredLength"] = 16
+			theInfo[title]["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
+			theWeaponTables[title] = theInfo[title]
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 		end
@@ -213,29 +226,31 @@ function showComponent(kind,name,getterFunc)
 	end
 	
 	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo('%s')",name )) )
-	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics}
+	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics, weapontables=theWeaponTables}
 end
+
+-- see the further developed infoTable function later in this file
 
 --- Lays out a series of labels and textboxes
 -- Returns the checkboxes for later
 -- TODO This makes WAY too many assumptions about the size and shape of the window
 -- TODO The C++ engine should be able to auto-arrange these for us.
-function infoTable(info,win)
-	local y1,y2=155,140
-	local yoff=20
-	uiElements = {}
-	for title, value in pairs(info) do
-		-- Truncate decimal numbers to only 2 digits
-		if type(value)=="number" and math.floor(value) ~= value then
-			value = string.format("%.2f",value)
-		end
-		win:add(UI.newLabel( 10, y1, title))
-		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
-		win:add(uiElements[title])
-		y1,y2=y1+yoff,y2+yoff
-	end
-	return uiElements
-end
+--function infoTable(info,win)
+--	local y1,y2=155,140
+--	local yoff=20
+--	uiElements = {}
+--	for title, value in pairs(info) do
+--		-- Truncate decimal numbers to only 2 digits
+--		if type(value)=="number" and math.floor(value) ~= value then
+--			value = string.format("%.2f",value)
+--		end
+--		win:add(UI.newLabel( 10, y1, title))
+--		uiElements[title] = UI.newTextbox( 90, y2, 100, 1, value)
+--		win:add(uiElements[title])
+--		y1,y2=y1+yoff,y2+yoff
+--	end
+--	return uiElements
+--end
 
 --- Show Info for the current Target
 function showInfo()
@@ -256,6 +271,7 @@ function saveInfo(name)
 	if infoWindows[name] == nil then return end
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
+	local weapontables = infoWindows[name].weapontables
 	local win = infoWindows[name].win
 	local kind = infoWindows[name].kind
 	for i,layout in ipairs(EditorLayouts[kind]) do
@@ -279,6 +295,8 @@ function saveInfo(name)
 			else
 				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
 			end
+		elseif fieldType == "Weapon slots" then
+			info[title] = weapontables[title]
 		end
 	end
 	Epiar.setInfo(kind,info)
@@ -431,6 +449,144 @@ function ImagePicker(name,title)
 			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s','%s','%s')",name,title,"Resources/Graphics/"..picPath )))
 	end
 end
+
+-- Modified version of the infoTable function
+function infoTable(info, win, variables, widths, desiredSize)
+	local y2=50
+	local yoff=20
+
+	uiElements = {}
+
+	function numformat (value)
+		if type(value)=="number" and math.floor(value) ~= value then
+			local formatted = string.format("%.2f",value)
+			return formatted
+		end
+		return value
+	end
+
+	local xoff = 0
+
+	local length = info["length"]
+	local desiredLength = info["desiredLength"]
+
+	for colNum =0,(info["fields"]-1) do
+		local colKey = (string.format("%d", colNum))
+		local title = variables[colKey]
+		local w = widths[title]
+		win:add(UI.newLabel( 10 + xoff, y2 - 20, title))
+		xoff = xoff + w
+	end
+
+	for rowNum =0,(desiredLength-1) do
+
+		local rowElements = {}
+
+		rowKey = (string.format("%d", rowNum))
+
+		local thisrow
+		if rowNum <= (length-1) and info[rowKey]["enabled"] == "yes" then
+			thisrow = info[rowKey]
+		else
+			if info[rowKey] ~= nil and info[rowKey]["enabled"] == "yes" then -- user enabled another row
+				info["length"] = info["length"] + 1
+				thisrow = info[rowKey]
+			else
+				-- after we have run out of actual data, fill up the remaining lines with a template
+				-- which may or may not become part of the actual data depending on how the user edits it
+				thisrow = info["filler"] 
+			end
+		end
+
+		xoff = 0
+
+		for colNum =0,(info["fields"]-1) do
+			local colKey = (string.format("%d", colNum))
+			local title = variables[colKey]
+			local w = widths[title]
+			local value = thisrow[title]
+			rowElements[title] = UI.newTextbox( 10 + xoff, y2, w, 1, value)
+			win:add(rowElements[title])
+			xoff = xoff + w
+		end
+
+		y2 = y2 + yoff
+		uiElements[rowKey] = rowElements
+	end
+	
+	return uiElements
+end
+
+function EditWeaponSlots(name, title)
+	SlotEditor = {}
+	if editWeaponSlotsWin ~= nil then return end
+	editWeaponSlotsWin = UI.newWindow(200,200,800,500, "Edit Weapon Slots")
+	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
+
+	-- Grab the table
+	local table = infoWindows[name].weapontables[title]
+
+	-- Tell the table interface function to make extra rows until there are 16
+	table["desiredLength"] = 16
+	table["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
+
+	-- This ugly indexing trick is a workaround for Lua's apparent lack of sensible element ordering.
+	-- Clean it up if a better built-in solution can be found.
+
+	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y",
+		      ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
+
+	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40,
+			 ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
+
+	fieldTable = infoTable( table, editWeaponSlotsWin, variables, widths )
+	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
+
+	local imageName = infoWindows[name].texts["Image"]:GetText()
+
+	SlotEditor["calcPosX"] = 350
+	SlotEditor["calcPosY"] = 400
+	editWeaponSlotsWin:add( UI.newLabel(SlotEditor["calcPosX"] - 60, SlotEditor["calcPosY"] - 20, "Click on the image to extract X,Y offsets for that position.") )
+	local image = UI.newPicture(SlotEditor["calcPosX"], SlotEditor["calcPosY"], imageName)
+	local imageX, imageY, imageW, imageH = image:GetEdges()
+	SlotEditor["imageHH"] = imageH / 2
+	SlotEditor["imageHW"] = imageW / 2
+	SlotEditor["calcXLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"], "X: ")
+	SlotEditor["calcYLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"]+15, "Y: ")
+	image:setLuaClickCallback('calculateSlotOffset')
+	editWeaponSlotsWin:add(image, SlotEditor["calcXLabel"], SlotEditor["calcYLabel"])
+end
+
+function calculateSlotOffset(x, y)
+	local newY = x - SlotEditor["calcPosX"] - SlotEditor["imageHW"] -- flipping x and y here is intentional
+	local newX = y - SlotEditor["calcPosY"] - SlotEditor["imageHH"] -- (the image is sideways)
+	SlotEditor["calcXLabel"].setLabel(SlotEditor["calcXLabel"], (string.format("X: %d", newX)))
+	SlotEditor["calcYLabel"].setLabel(SlotEditor["calcYLabel"], (string.format("Y: %d", newY)))
+end
+
+function finishEditingWeaponSlots(name, title, desiredLength, fields)
+	for rowNum =0,(desiredLength-1) do
+		local r = {}
+		local rowKey = string.format("%d", rowNum)
+		for colNum =0,(fields-1) do
+			local fieldName = variables[(string.format("%d", colNum))]
+			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
+			r[fieldName] = value
+			if infoWindows[name].weapontables[title][rowKey] == nil then
+				infoWindows[name].weapontables[title][rowKey] = {}
+			end
+			infoWindows[name].weapontables[title][rowKey][fieldName] = value
+		end
+	end
+	
+	editWeaponSlotsWin:close()
+	editWeaponSlotsWin = nil
+	variables = nil
+	fieldTable = nil
+	uiElements = nil
+	SlotEditor = nil
+end
+	
 
 function goto(x,y)
 	Epiar.focusCamera(x,y)

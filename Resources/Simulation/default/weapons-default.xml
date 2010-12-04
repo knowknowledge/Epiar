@@ -2,7 +2,23 @@
 <weapons>
   <version-major>0</version-major>
   <version-minor>4</version-minor>
-  <version-macro>1</version-macro>
+  <version-macro>2</version-macro>
+  <weapon>
+    <name>Gold Beam</name>
+    <weaponType>0</weaponType>
+    <imageName>Resources/Graphics/goldbeam2.png</imageName>
+    <picName>Resources/Graphics/goldbeam.png</picName>
+    <payload>400</payload>
+    <velocity>26</velocity>
+    <acceleration>20</acceleration>
+    <ammoType>Energy</ammoType>
+    <ammoConsumption>0</ammoConsumption>
+    <fireDelay>1000</fireDelay>
+    <lifetime>550</lifetime>
+    <tracking>0.0000</tracking>
+    <sound>Resources/Audio/Weapons/goldbeam.ogg</sound>
+    <msrp>100</msrp>
+  </weapon>
   <weapon>
     <name>Laser</name>
     <weaponType>0</weaponType>
@@ -16,7 +32,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>1000</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/18397__inferno__smalllas.ogg</sound>
+    <sound>Resources/Audio/Weapons/laser.ogg</sound>
     <msrp>100</msrp>
   </weapon>
   <weapon>

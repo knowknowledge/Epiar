@@ -35,6 +35,8 @@ void Audio_Lua::RegisterAudio(lua_State *L){
 	lua_settable(L, -3);  /* metatable.__index = metatable */
 
 	luaL_openlib(L, EPIAR_AUDIO, auFunctions, 0);
+
+	lua_pop(L,2);
 }
 
 int Audio_Lua::setSoundVolume(lua_State *L){

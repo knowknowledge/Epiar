@@ -37,11 +37,10 @@ SpriteManager::SpriteManager() :
 	}
 }
 
-//---------------experimental code from Dido------
 /**\brief Assignment operator for class SpriteManager.
  * \return Pointer to SpriteManager
  */
-SpriteManager& SpriteManager::operator =( SpriteManager& object ){
+SpriteManager& SpriteManager::operator=( SpriteManager& object ){
 	if ( this == &object ) return * this; //block self assignment
 	
 	trees = object.trees;
@@ -65,9 +64,6 @@ SpriteManager& SpriteManager::operator =( SpriteManager& object ){
 
 	return * this;
 }
-
-//---------------experimental code from Dido------END----
-
 
 SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
 

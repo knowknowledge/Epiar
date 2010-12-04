@@ -46,7 +46,7 @@ Gate::Gate(int topID) {
 	partnerID = topID;
 }
 
-/**\brief
+/** \brief Load a Gate from XML
  */
 
 bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
@@ -77,7 +77,7 @@ bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	return true;
 }
 
-/**\brief
+/** \brief Save a Gate to an XML Node
  */
 
 xmlNodePtr Gate::ToXMLNode(string componentName) {
@@ -223,6 +223,10 @@ void Gate::SendRandomDistance(Sprite* ship) {
 					  -trig->GetSin( angle ) * distance );
 	ship->SetWorldPosition( destination );
 }
+
+/** \class Gates
+ *  \brief A collection of Gate Component objects.
+ */
 
 Gates *Gates::pInstance = 0; // initialize pointer
 

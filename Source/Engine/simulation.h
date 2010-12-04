@@ -35,6 +35,7 @@ class Simulation : public XMLFile {
 
 		bool Run();
 		bool Edit();
+		void LuaRegisters(lua_State *L);
 
 		bool HandleInput();
 

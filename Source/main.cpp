@@ -35,26 +35,11 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 
 Image* newSplashScreen(){
 	string splashScreens[] = {
-		"Resources/Art/EpiarFleetbig.png",
-		"Resources/Art/gatescene.png",
-		"Resources/Art/fight1.png",
-		"Resources/Art/fight2.png",
-		"Resources/Art/uberdone.png",
-		"Resources/Art/ubertextest.png",
-		"Resources/Graphics/btlcruiser_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty.png",
-		"Resources/Graphics/cargoclaw_pretty2.png",
-		"Resources/Graphics/corvet2_pretty.png",
-		"Resources/Graphics/hammerhead_pretty.png",
-		"Resources/Graphics/patrol_pretty.png",
-		"Resources/Graphics/pirate_pretty.png",
-		"Resources/Graphics/raven_pretty.png",
-		"Resources/Graphics/scivessel_pretty.png",
-		"Resources/Graphics/shuttle_pretty.png",
-		"Resources/Graphics/tugship_pretty.png",
-		"Resources/Graphics/tugship_pretty2.png",
-		"Resources/Graphics/uber_pretty.png",
-		"Resources/Graphics/xv-1_pretty.png",
+		"Resources/Art/menu1.png",
+		"Resources/Art/menu2.png",
+		"Resources/Art/menu3.png",
+		"Resources/Art/menu4.png",
+		"Resources/Art/menu5.png",
 	};
 	srand ( time(NULL) );
 	Video::Erase();
@@ -117,9 +102,8 @@ void mainmenu() {
 		// Draw Things
 		Video::Erase();
 		splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-		Serif->SetSize(64);
-		Serif->Render(OPTION( int, "options/video/w" )/2,50,"Epiar",Font::CENTER,Font::MIDDLE);
-		Serif->SetSize(12);
+		// Draw the "logo"
+		Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 		UI::Draw();
 		Video::Update();
 
@@ -131,9 +115,7 @@ void mainmenu() {
 				Video::Erase();
 				splash = newSplashScreen();
 				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-				Serif->SetSize(64);
-				Serif->Render(OPTION( int, "options/video/w" )/2, 50,"Loading",Font::CENTER,Font::MIDDLE);
-				Serif->SetSize(12);
+				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 				Video::Update();
 
 				if( false == debug.isLoaded() )
@@ -305,19 +287,21 @@ int main( int argc, char **argv ) {
 	string msgfilt = argparser.HaveValue("log-msg");
 	string loglvl = argparser.HaveValue("log-lvl");
 
-	if(""!=funfilt) Log::Instance().SetFunFilter(funfilt);
-	if(""!=msgfilt) Log::Instance().SetMsgFilter(msgfilt);
-	if(""!=loglvl)  Log::Instance().SetLevel( loglvl );
+	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
+	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
+	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
 
 	// Print unused options.
 	list<string> unused = argparser.GetUnused();
 	list<string>::iterator it;
-	for ( it=unused.begin() ; it != unused.end(); it++ )
-		cout << "\tUnknown options:\t" << (*it)<<endl;
-	if ( !unused.empty() ){
+	for ( it = unused.begin() ; it != unused.end(); it++ )
+		cout << "\tUnknown options:\t" << (*it) << endl;
+	if ( !unused.empty() ) {
 		argparser.PrintUsage();
+
 		// free the configuration file data
 		delete optionsfile;
+
 		return -1;
 	}
 
@@ -345,7 +329,6 @@ int main( int argc, char **argv ) {
 
 	Timer::Initialize();
 	Video::Initialize();
-
 
 	mainmenu();
 

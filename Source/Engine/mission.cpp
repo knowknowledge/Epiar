@@ -25,13 +25,13 @@ Mission::Mission(string _type, int _tableReference)
 Mission::~Mission()
 {
 	lua_State *L = Lua::CurrentState();
-	lua_pushinteger(L, tableReference);
-	luaL_ref(L, LUA_REGISTRYINDEX);
+	luaL_unref(L, LUA_REGISTRYINDEX, tableReference);
 }
 
 
-bool Mission::ValidateMission( string type, int tableReference){
+bool Mission::ValidateMission( string type, int tableReference, int expectedVersion ){
 	int i;
+	int currentVersion;
 	
 	// The Functions that every mission type must have
 	const char *requiredFunctions[] = {
@@ -55,11 +55,8 @@ bool Mission::ValidateMission( string type, int tableReference){
 	const int initialStackTop = lua_gettop(L);
 
 	// Check that this mission Type exists
-	lua_getglobal(L, type.c_str() );
-	if( ! lua_istable(L, lua_gettop(L)) )
-	{
-		LogMsg(ERR, "There is no Mission Type named '%s'!", type.c_str() );
-		lua_settop(L, initialStackTop);
+	if( Mission::GetMissionType(type) != 1 ) {
+		lua_settop(L, initialStackTop );
 		return false;
 	}
 
@@ -107,6 +104,32 @@ bool Mission::ValidateMission( string type, int tableReference){
 		lua_pop(L,1);
 	}
 
+	// Check the Version Number
+	if( expectedVersion > 0 )
+	{
+		lua_pushstring(L, "Version" );
+		lua_gettable(L, initialStackTop + 1);
+
+		// Check that the Version is actually a Number
+		if( ! lua_isnumber(L, lua_gettop(L)) )
+		{
+			lua_pushvalue(L, lua_gettop(L));
+			LogMsg(ERR, "This '%s' Mission has a corrupted version '%s'.", type.c_str(), lua_tostring(L, lua_gettop(L)) );
+			lua_settop(L, initialStackTop );
+			return false;
+		}
+
+		// Check that the version numbers match
+		currentVersion = lua_tonumber(L, lua_gettop(L));
+		if( expectedVersion != currentVersion )
+		{
+			lua_settop(L, initialStackTop );
+			LogMsg(ERR, "This '%s' Mission is from version %d rather than the current version %d.", type.c_str(), currentVersion, expectedVersion);
+			return false;
+		}
+	}
+
+	// Discard the entire stack.
 	lua_settop(L, initialStackTop );
 	return true;
 }
@@ -116,13 +139,13 @@ bool Mission::ValidateMission( string type, int tableReference){
  */
 bool Mission::Reject()
 {
-	LogMsg(INFO, "Rejecting");
+	LogMsg(INFO, "Rejecting Mission '%s'", GetName().c_str());
 	return (false == RunFunction( "Reject", true ) );
 }
 
 bool Mission::Accept()
 {
-	LogMsg(INFO, "Accepting");
+	LogMsg(INFO, "Accepting Mission '%s'", GetName().c_str());
 	return (false == RunFunction( "Accept", true ) );
 }
 
@@ -169,6 +192,39 @@ void Mission::PushMissionTable()
 	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
 }
 
+
+int Mission::GetVersion()
+{
+	int version;
+	lua_State *L = Lua::CurrentState();
+	const int initialStackTop = lua_gettop(L);
+
+	// Get the Mission Type Table
+	if( Mission::GetMissionType(type) != 1 ) {
+		LogMsg(ERR, "The Mission '%s' is missing.", type.c_str() );
+		lua_settop(L, initialStackTop );
+		return 0;
+	}
+
+	// Get the value of "Version" from the Mission Type Table
+	lua_pushstring(L, "Version" );
+	lua_gettable(L, initialStackTop + 1);
+
+	// Check that the Version is actually a number.
+	if( ! lua_isnumber(L, lua_gettop(L)) )
+	{
+		lua_pushvalue(L, lua_gettop(L));
+		LogMsg(ERR, "This '%s' Mission has a corrupted version '%s'.", type.c_str(), lua_tostring(L, lua_gettop(L)) );
+		lua_settop(L, initialStackTop );
+		return 0;
+	}
+
+	version = lua_tonumber(L, lua_gettop(L));
+
+	lua_settop(L, initialStackTop);
+	return version;
+}
+
 /**\brief
  * \returns Success Boolean if the function was successfully called
  */
@@ -177,13 +233,10 @@ bool Mission::RunFunction(string functionName, bool clearStack)
 	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
-	// Get the Mission
-	lua_getglobal(L, type.c_str() );
-	if( ! lua_istable(L,lua_gettop(L)) )
-	{
-		LogMsg(ERR, "There is no Mission Type named '%s'!", type.c_str() );
-		if( clearStack ) lua_settop(L,initialStackTop);
-		return false; // Invalid Mission, Delete it
+	if( Mission::GetMissionType(type) != 1 ) {
+		LogMsg(ERR, "Something bad happened?"); // TODO
+		lua_settop(L, initialStackTop );
+		return false;
 	}
 
 	// Get the Update 
@@ -237,53 +290,70 @@ string Mission::GetStringAttribute( string attribute )
 
 Mission* Mission::FromXMLNode( xmlDocPtr doc, xmlNodePtr node )
 {
-	xmlNodePtr  attr;
-	string _type;
-	int _tableReference;
-	lua_State *L = Lua::CurrentState();
-	
-	if( (attr = FirstChildNamed(node, "type"))){
-		_type = NodeToString(doc,attr);
-	} else return NULL;
+	string type;
+	int version = 0;;
+	int missionTable;
+	xmlNodePtr typeNode = FirstChildNamed(node,"type");
+	xmlNodePtr versionNode = FirstChildNamed(node,"version");
+	xmlNodePtr missionNode = FirstChildNamed(node,"value");
+	lua_State* L = Lua::CurrentState();
 
-	if( (attr = FirstChildNamed(node, "table"))){
-		string serializedTable = NodeToString(doc,attr);
-		printf("Serialized Table: %s\n", serializedTable.c_str() );
-		Lua::Run( string("print( ") + serializedTable + " )");
-		//Lua::Run( serializedTable);
-		//_tableReference = luaL_ref(L, LUA_REGISTRYINDEX); // Gets and pops the top of the stack, which should have the the missionTable.
-	} else return NULL;
+	type = NodeToString(doc, typeNode);
+	if( versionNode != NULL ) {
+		version = NodeToInt(doc, versionNode);
+	}
 
+	// Turn the XML data into a Table
+	Lua::ConvertFromXML(L, doc, missionNode);
+	// pop the name off the top of the stack.  It should just be "missionTable" anyway.
+	assert(lua_istable(L,lua_gettop(L)));
+	// Gets and pops the top of the stack, which should have the the missionTable.
+	missionTable = luaL_ref(L, LUA_REGISTRYINDEX); 
 
-	if( !Mission::ValidateMission(_type, _tableReference) ) {
+	assert(lua_isstring(L,lua_gettop(L)));
+	lua_pop(L,1); // Pop the Name
+
+	// Validate this Mission
+	if( !Mission::ValidateMission(type, missionTable, version) ) {
+		LogMsg(ERR, "Something important!");
 		return NULL;
 	}
 
-	return new Mission( _type, _tableReference);
+	return new Mission( type, missionTable);
 }
 
 xmlNodePtr Mission::ToXMLNode()
 {
+	char buff[256];
+
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST "Mission" );
 
 	xmlNewChild(section, NULL, BAD_CAST "type", BAD_CAST type.c_str() );
 
+	snprintf(buff, sizeof(buff), "%d", GetVersion() );
+	xmlNewChild(section, NULL, BAD_CAST "version", BAD_CAST buff );
+
 	lua_State *L = Lua::CurrentState();
-	const int initialStackTop = lua_gettop(L);
 
-	lua_getglobal(L, "serialize" );
+	lua_pushstring(L,"missionTable");
 	PushMissionTable();
-	if( lua_pcall(L, 1, 1, 0) != 0)
-	{
-		LogMsg(ERR,"Failed to Update %s: %s\n", type.c_str(), lua_tostring(L, -1));
-		lua_settop(L, initialStackTop);
-		return section; // Invalid Mission
-	}
 
-	printf("TABLE: %s",  lua_tostring(L, lua_gettop(L) ) );
-	
-	xmlNewChild(section, NULL, BAD_CAST "table", BAD_CAST lua_tostring(L, lua_gettop(L) ) );
-	
+	xmlAddChild(section, Lua::ConvertToXML(L, lua_gettop(L), lua_gettop(L)-1) );
+
+	lua_pop(L, 1); // Pop Table
+
 	return section;
+}
+
+int Mission::GetMissionType( string type )
+{
+	lua_State *L = Lua::CurrentState();
+	lua_getglobal(L, type.c_str() );
+	if( ! lua_istable(L, lua_gettop(L)) )
+	{
+		LogMsg(ERR, "There is no Mission Type named '%s'.", type.c_str() );
+		return 0;
+	}
+	return 1;
 }
 

@@ -57,6 +57,10 @@ normally but I was unable to get this working.)
 Be sure to test the final app bundle on a computer without Xcode or the
 frameworks installed to ensure static linking, etc. worked.
 
+Mac OS X has otool for analyzing object files.  Run "otool -L epiar" to check
+for dynamically linked libraries.  Only standard libraries should be included in a
+publicly distributed executable.
+
 OS X apps are typically distributed as a .dmg file, which is a compressed
 disk image file. Users are used to downloading these (they typically then
 auto-mount and open a Finder window) and then merely dragging the Epiar
