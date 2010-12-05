@@ -294,10 +294,11 @@ void Input::UnRegisterCallBack( InputEvent event ) {
 
 /**\brief Search an InputEvent list for a specific Event
  */
-bool Input::EventTriggered( list<InputEvent> & events, InputEvent trigger ) {
+bool Input::HandleSpecificEvent( list<InputEvent> & events, InputEvent trigger ) {
 	list<InputEvent>::iterator i = events.begin();
 	while( i != events.end() ) {
 		if( (*i) == trigger ) {
+			i = events.erase( i );
 			return true;
 		}
 		++i;

@@ -102,7 +102,7 @@ class Input {
 		void RegisterCallBack( InputEvent key, string command );
 		void UnRegisterCallBack( InputEvent key );
 
-		static bool EventTriggered( list<InputEvent> & events, InputEvent key );
+		static bool HandleSpecificEvent( list<InputEvent> & events, InputEvent key );
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );

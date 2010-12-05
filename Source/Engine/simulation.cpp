@@ -460,7 +460,7 @@ bool Simulation::HandleInput() {
 
 	inputs.HandleLuaCallBacks( events );
 	
-	return Input::EventTriggered( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
+	return Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
 }
 
 /**\fn Simulation::isPaused()

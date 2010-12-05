@@ -473,7 +473,7 @@ void Main_Menu( void ) {
 				break;
 		}
 
-		if( Input::EventTriggered( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
+		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;
 		}
 
