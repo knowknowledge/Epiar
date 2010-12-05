@@ -29,6 +29,7 @@ class Picture: public Widget {
 		bool MouseLUp( int, int );
 
 		string GetType( void ) {return string("Picture");}
+		virtual int GetMask( void ) { return WIDGET_PICTURE; }
 
 	private:
 		double rotation;

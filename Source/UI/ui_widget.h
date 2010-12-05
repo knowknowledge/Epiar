@@ -12,6 +12,24 @@
 
 #include "includes.h"
 
+#define WIDGET_LABEL               (0x00000001)
+#define WIDGET_BUTTON              (0x00000002)
+#define WIDGET_PICTURE             (0x00000004)
+#define WIDGET_TEXTBOX             (0x00000008)
+#define WIDGET_SLIDER              (0x00000010)
+#define WIDGET_DROPDOWN            (0x00000020)
+#define WIDGET_CHECKBOX            (0x00000040)
+#define WIDGET_SCROLLBAR           (0x00000080)
+
+#define WIDGET_CONTAINER           (0x00010000)
+#define WIDGET_FRAME               (0x00020000 | WIDGET_CONTAINER)
+#define WIDGET_WINDOW              (0x00040000 | WIDGET_CONTAINER) 
+#define WIDGET_TAB                 (0x00080000 | WIDGET_CONTAINER) 
+#define WIDGET_TABS                (0x00100000 | WIDGET_CONTAINER) 
+
+#define WIDGET_NONE                0x00000000
+#define WIDGET_ALL                 0xFFFFFFFF
+
 class Widget {
 	public:
 		Widget( void );
@@ -29,6 +47,7 @@ class Widget {
 		virtual void SetH( int _h ){ h = _h; }
 		
 		virtual string GetType( void ) { return string("GenericWidget"); }
+		virtual int GetMask( void ) { return WIDGET_NONE; }
 		string GetName( void ) { return this->name; }
 		bool IsActive( void ){return this->keyactivated;}
 

@@ -24,6 +24,7 @@ class Window : public UIContainer {
 		bool SetDragability( bool _draggable );
 
 		string GetType( void ) { return string("Window"); }
+		virtual int GetMask( void ) { return WIDGET_WINDOW; }
 
 	private:
 		bool draggable;

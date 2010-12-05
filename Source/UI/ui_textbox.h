@@ -17,6 +17,8 @@ class Textbox : public Widget {
 		Textbox( int x, int y, int w, int rows, string text = "", string label = "");
 		
 		string GetType( void ) {return string("Textbox");}
+		virtual int GetMask( void ) { return WIDGET_TEXTBOX; }
+
 		void Draw( int relx, int rely = 0 );
 		bool MouseLUp( int wx, int wy );
 		bool KeyPress( SDLKey key );

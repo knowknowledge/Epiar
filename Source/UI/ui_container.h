@@ -8,18 +8,21 @@
 #ifndef __H_UI_CONTAINER__
 #define __H_UI_CONTAINER__
 
+
 class UIContainer : public Widget {
 	public:
 		UIContainer(string _name = "UnspecifiedContainer", bool _mouseHandled = true );
 		virtual ~UIContainer( void );
 
 		virtual string GetType( void ) { return string("Container"); }
+		virtual int GetMask( void ) { return WIDGET_CONTAINER; }
 		bool IsEmpty( void ){return this->children.empty();}
 
 		virtual UIContainer *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
 		virtual bool Reset( void );
+
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 
 		virtual void Draw( int relx = 0, int rely = 0 );

@@ -23,7 +23,8 @@ class Dropdown : public UIContainer {
 		//bool MouseDrag( int x, int y );
 		//bool SetDragability( bool _draggable );
 
-		string GetType( void ) { return string("Dropdown"); }
+		virtual string GetType( void ) { return string("Dropdown"); }
+		virtual int GetMask( void ) { return WIDGET_DROPDOWN; }
 
 	private:
 		//bool draggable;

@@ -22,6 +22,7 @@ class Tab : public UIContainer {
 		void Draw( int relx = 0, int rely = 0 );
 
 		string GetType( void ) {return string("Tab");}
+		virtual int GetMask( void ) { return WIDGET_TAB; }
 
 		friend class Tabs;
 
@@ -41,6 +42,7 @@ class Tabs : public UIContainer {
 		void Draw( int relx = 0, int rely = 0 );
 		bool MouseLDown( int xi, int yi );
 		string GetType( void ) {return string("Tabs");}
+		virtual int GetMask( void ) { return WIDGET_TABS; }
 
 		void TabNext( void );
 	private:

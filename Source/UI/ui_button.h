@@ -26,7 +26,9 @@ class Button : public Widget {
 		bool MouseLRelease( void );
 		bool MouseEnter( int xi, int yi );
 		bool MouseLeave( void );
+
 		virtual string GetType( void ) {return string("Button");}
+		virtual int GetMask( void ) { return WIDGET_BUTTON; }
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
 		Image *bitmap_current, *bitmap_normal, *bitmap_mouseover, *bitmap_pressed;

@@ -22,6 +22,7 @@ class Label : public Widget {
 		string GetText(){return name;}
 	
 		string GetType( void ) {return string("Label");}
+		virtual int GetMask( void ) { return WIDGET_LABEL; }
 	
 	private:
 		vector<string> splitBy( const string& s, const char* tokens );

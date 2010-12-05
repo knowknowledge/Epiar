@@ -32,7 +32,10 @@ class Slider : public Widget {
 
 		bool MouseDrag( int xi, int yi );
 		bool MouseLDown( int xi, int yi );
+
 		string GetType( void ) {return string("Slider"); }
+		virtual int GetMask( void ) { return WIDGET_SLIDER; }
+
 		void SetVal( float value );
 
 	private:

@@ -22,6 +22,7 @@ class Frame : public UIContainer {
 		bool MouseDrag( int x, int y );
 
 		string GetType( void ) { return string("Frame"); }
+		virtual int GetMask( void ) { return WIDGET_FRAME; }
 
 	private:
 		Image *bitmaps[9];

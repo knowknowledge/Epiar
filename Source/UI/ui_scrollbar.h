@@ -30,6 +30,7 @@ class Scrollbar : public Widget {
 		bool MouseDrag( int xi, int yi );
 
 		string GetType( void ) { return string("Scrollbar");}
+		virtual int GetMask( void ) { return WIDGET_SCROLLBAR; }
 
 		void ScrollUp( int pix = SCROLLBAR_SCROLL );
 		void ScrollDown( int pix = SCROLLBAR_SCROLL );
