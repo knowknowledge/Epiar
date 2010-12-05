@@ -67,6 +67,15 @@ Font::~Font() {
 
 /**\brief Sets the new color and alpha value.
  */
+void Font::SetColor( Color c, float a ) {
+	this->r = c.r;
+	this->g = c.g;
+	this->b = c.b;
+	this->a = a;
+}
+
+/**\brief Sets the new color and alpha value.
+ */
 void Font::SetColor( float r, float g, float b, float a ) {
 	this->r = r;
 	this->g = g;

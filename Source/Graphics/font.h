@@ -38,6 +38,7 @@ class Font : public Resource {
 
 			void SetSize( int size=12 );
 			unsigned int GetSize( void );
+			void SetColor( Color c, float a=1.0f );
 			void SetColor( float r, float g, float b, float a=1.0f );
 
 			int TextWidth(const string& text);
