@@ -104,7 +104,7 @@ class Input {
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );
-		bool _UpdateHandleKeyDown( SDL_Event *event );
+		void _UpdateHandleKeyDown( SDL_Event *event );
 		bool _UpdateHandleKeyUp( SDL_Event *event );
 		void _UpdateHandleMouseDown( SDL_Event *event );
 		void _UpdateHandleMouseUp( SDL_Event *event );

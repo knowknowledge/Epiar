@@ -13,7 +13,7 @@
 class Tab : public UIContainer {
 	public:
 		Tab( const string& _caption );
-		Widget *AddChild( Widget *widget );
+		Tab *AddChild( Widget *widget );
 		Widget *DetermineMouseFocus( int relx, int rely );
 
 		bool MouseWUp( int xi, int yi );
@@ -35,7 +35,7 @@ class Tab : public UIContainer {
 class Tabs : public UIContainer {
 	public:
 		Tabs( int x, int y, int w, int h, const string& name );
-		Widget *AddChild( Widget *widget );
+		Tabs *AddChild( Widget *widget );
 		Widget *DetermineMouseFocus( int relx, int rely );
 
 		void Draw( int relx = 0, int rely = 0 );

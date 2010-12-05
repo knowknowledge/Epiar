@@ -80,8 +80,7 @@ list<InputEvent> Input::Update( bool &quitSignal ) {
 				break;
 			case SDL_KEYDOWN:
 			{
-				bool quitSignalUpdate = _UpdateHandleKeyDown( &event );
-				if( quitSignalUpdate ) quitSignal = quitSignalUpdate;
+				_UpdateHandleKeyDown( &event );
 				break;
 			}
 			case SDL_KEYUP:
@@ -192,24 +191,14 @@ void Input::_UpdateHandleMouseUp( SDL_Event *event ) {
 
 /**\brief Translates key down events to Epiar events.
  */
-bool Input::_UpdateHandleKeyDown( SDL_Event *event ) {
-	bool quitSignal = false;
-	
+void Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 	assert( event );
 
-	switch( event->key.keysym.sym ) {
-		case SDLK_ESCAPE:
-			quitSignal = true;
-			break;
-		default:
-			events.push_back( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
-			// typed events go here because SDL will repeat KEYDOWN events for us at the set SDL repeat rate
-			PushTypeEvent( events, event->key.keysym.sym );
-			heldKeys[ event->key.keysym.sym ] = 1;
-			break;
-	}
+	events.push_back( InputEvent( KEY, KEYDOWN, event->key.keysym.sym ) );
+	// typed events go here because SDL will repeat KEYDOWN events for us at the set SDL repeat rate
+	PushTypeEvent( events, event->key.keysym.sym );
+	heldKeys[ event->key.keysym.sym ] = 1;
 
-	return quitSignal;
 }
 
 /**\brief Translates key up events to Epiar events.

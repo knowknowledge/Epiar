@@ -40,7 +40,9 @@ Frame::Frame( int x, int y, int w, int h ):
 
 /**\brief Adds a widget to the current Frame.
  */
-Widget *Frame::AddChild( Widget *widget ){
+Frame *Frame::AddChild( Widget *widget ){
+	assert( widget != NULL );
+
 	// Check to see if widget is past the bounds.
 	int vbnd = widget->GetY() + widget->GetH();
 
@@ -58,7 +60,7 @@ Widget *Frame::AddChild( Widget *widget ){
 		this->vscrollbar->maxpos = vbnd;
 	}
 
-	return UIContainer::AddChild( widget );
+	return (Frame*)UIContainer::AddChild( widget );
 }
 
 /**\brief Determines focused widget based on scrolled position.*/

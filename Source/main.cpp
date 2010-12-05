@@ -20,6 +20,7 @@
 #include "Utilities/argparser.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/log.h"
+#include "Utilities/lua.h"
 #include "Utilities/xml.h"
 #include "Utilities/timer.h"
 
@@ -27,11 +28,210 @@
 #include "Tests/tests.h"
 #endif // EPIAR_COMPILE_TESTS
 
-
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
+
+Image* newSplashScreen(){
+	string splashScreens[] = {
+		"Resources/Art/menu1.png",
+		"Resources/Art/menu2.png",
+		"Resources/Art/menu3.png",
+		"Resources/Art/menu4.png",
+		"Resources/Art/menu5.png",
+	};
+	srand ( time(NULL) );
+	Video::Erase();
+	return Image::Get(splashScreens[rand()% (sizeof(splashScreens)/sizeof(splashScreens[0])) ]);
+}
+
+typedef enum {
+	Menu_DoNothing  = 0x0,
+	Menu_Play       = 0x1,
+	Menu_Options    = 0x2,
+	Menu_Editor     = 0x4,
+	Menu_Quit       = 0x8,
+	Menu_ALL        = 0xF,
+} menuOption;
+
+menuOption clicked = Menu_DoNothing;
+
+// Currently Static functions are the only way I could think of to have C only 
+void clickPlay() { clicked = Menu_Play; }
+void clickOptions() { clicked = Menu_Options; }
+void clickEditor() { clicked = Menu_Editor; }
+void clickQuit() { clicked = Menu_Quit; }
+
+int ui_demo = false;
+void ui_test();
+
+void createMenu( menuOption menus ) {
+	int x = OPTION( int, "options/video/w" ) - 200;
+	// Create UI
+	if( menus & Menu_Play )
+		UI::Add( new Button(x, 200, 100, 30, "Play",    clickPlay    ) );
+	if( menus & Menu_Editor )
+		UI::Add( new Button(x, 300, 100, 30, "Editor",  clickEditor  ) );
+	if( menus & Menu_Options )
+		UI::Add( new Button(x, 400, 100, 30, "Options", clickOptions ) );
+	if( menus & Menu_Quit )
+		UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
+
+	if( ui_demo ) {
+		ui_test();
+	}
+}
+
+void ui_test() {
+
+	// Example of Nestable UI Creation
+	UI::Add(
+		(new Tabs( 50,50,500,500, "TEST TABS"))
+		->AddChild( (new Tab( "Nested Frames" ))
+			->AddChild( (new Frame( 50,50,400,400 ))
+				->AddChild( (new Frame( 50,50,300,300 ))
+					->AddChild( (new Frame( 50,50,200,200 ))
+						->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+					)
+					->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+				)
+				->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+			)
+			->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+		)
+		->AddChild( (new Tab( "Scoll to Buttons" ))
+			->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
+			->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
+			->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
+			->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
+			->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
+			->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
+			->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			->AddChild( (new Frame( 250,50,300,300 ))
+				->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
+				->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
+				->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
+				->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
+				->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			)
+		)
+	);
+
+}
+
+
+void mainmenu() {
+	bool quitSignal = false;
+	bool screenNeedsReset = false;
+	Input inputs;
+	list<InputEvent> events;
+	menuOption availableMenus = (menuOption)(Menu_Play | Menu_Editor | Menu_Quit);
+
+	Image* splash = newSplashScreen();
+	createMenu( availableMenus );
+
+	string simName = "Resources/Simulation/default";
+	Simulation debug;
+
+	// Input Loop
+	do {
+		if (screenNeedsReset) {
+			UI::Close();
+			createMenu( availableMenus );
+			splash = newSplashScreen();
+			screenNeedsReset = false;
+		}
+
+		// Forget about the last click
+		clicked = Menu_DoNothing;
+
+		// Collect user input events
+		events = inputs.Update( quitSignal );
+		UI::HandleInput( &events );
+
+		// Draw Things
+		Video::Erase();
+		splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+		// Draw the "logo"
+		Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
+		UI::Draw();
+		Video::Update();
+
+		switch(clicked){
+			case Menu_Play:
+				UI::Close();
+				screenNeedsReset = true;
+				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
+				availableMenus = (menuOption)(availableMenus | Menu_Options);
+
+				Video::Erase();
+				splash = newSplashScreen();
+				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
+				Video::Update();
+
+				if( false == debug.isLoaded() )
+				{
+					if(	!debug.Load( simName ) )
+					{
+						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+						break;
+					}
+					debug.SetupToRun();
+				}
+
+				// Only attempt to Run if the Simulation has loaded
+				assert( debug.isLoaded() );
+
+				debug.Run();
+
+				break;
+
+			case Menu_Options:
+				assert( Lua::CurrentState() != NULL );
+				Lua::Call("options");
+				break;
+
+			case Menu_Editor:
+				UI::Close();
+				screenNeedsReset = true;
+				availableMenus = (menuOption)(availableMenus & ~Menu_Play);
+				availableMenus = (menuOption)(availableMenus | Menu_Options);
+
+				if( false == debug.isLoaded() )
+				{
+					if(	!debug.Load( simName ) )
+					{
+						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+						break;
+					}
+					debug.SetupToEdit();
+				}
+
+				// Only attempt to Edit if the Simulation has loaded
+				assert( debug.isLoaded() );
+
+				debug.Edit();
+
+				break;
+
+			case Menu_Quit:
+				quitSignal = true;
+				break;
+
+			default:
+				break;
+		}
+		
+
+		// Wait until the next click
+		Timer::Delay(50);
+	}while(!quitSignal);
+
+}
 
 /**Main runtime.
  * \return 0 always
@@ -76,6 +276,7 @@ int main( int argc, char **argv ) {
 	                                            "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
 	argparser.SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
 	argparser.SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
+	argparser.SetOpt(LONGOPT, "ui-demo",        "Runs the UI demo.");
 
 #ifdef EPIAR_COMPILE_TESTS
 	argparser.SetOpt(VALUEOPT, "run-test",      "Run specified test");
@@ -150,6 +351,8 @@ int main( int argc, char **argv ) {
 	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
 	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
 
+	ui_demo = argparser.HaveOpt("ui-demo");
+
 	// Print unused options.
 	list<string> unused = argparser.GetUnused();
 	list<string>::iterator it;
@@ -189,37 +392,7 @@ int main( int argc, char **argv ) {
 	Timer::Initialize();
 	Video::Initialize();
 
-	string splashScreen[] = {
-		"Resources/Art/menu1.png",
-		"Resources/Art/menu2.png",
-		"Resources/Art/menu3.png",
-		"Resources/Art/menu4.png",
-		"Resources/Art/menu5.png",
-	};
-
-	srand ( time(NULL) );
-
-	Video::Erase();
-
-	// Draw the background
-	Image::Get(splashScreen[rand()% (sizeof(splashScreen)/sizeof(splashScreen[0])) ])->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-	// Draw the "logo"
-	Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
-
-	Video::Update();
-
-	string simName = "Resources/Simulation/default";
-	Simulation debug;
-	if(	debug.Load( simName ) )
-	{
-		if( OPTION(int,"options/development/editor-mode") == 1 ) {
-			debug.Edit();
-		} else {
-			debug.Run();
-		}
-	} else {
-		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
-	}
+	mainmenu();
 
 	Video::Shutdown();
 	Audio::Instance().Shutdown();
