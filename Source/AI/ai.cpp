@@ -128,7 +128,7 @@ void AI::Draw(){
 	if( OPTION(int,"options/development/debug-ai") ) {
 		Coordinate position = this->GetWorldPosition();
 		Font* font = Font::GetSkin( "Font/Development" );
-		font->SetColor(1.0,1.0,1.0,1.0);
+		font->SetColor( WHITE );
 		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
 		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
 	}

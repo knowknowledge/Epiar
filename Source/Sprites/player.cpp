@@ -61,7 +61,7 @@ void Player::setLastPlanet( string planetName){
 /**\brief Constructor
  */
 Player::Player() {
-	this->SetRadarColor( Color::Get(0xFF,0xD7,0) );
+	this->SetRadarColor( GOLD );
 }
 
 /**\brief Destructor

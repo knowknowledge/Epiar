@@ -16,6 +16,17 @@
 
 #define EPIAR_VIDEO "Video"
 
+#define BLACK     ( Color::Get(0x00,0x00,0x00) )
+#define WHITE     ( Color::Get(0xFF,0xFF,0xFF) )
+#define RED       ( Color::Get(0xFF,0x00,0x00) )
+#define ORANGE    ( Color::Get(0xFF,0x7F,0x00) )
+#define YELLOW    ( Color::Get(0xFF,0xFF,0x00) )
+#define GREEN     ( Color::Get(0x00,0xFF,0x00) )
+#define BLUE      ( Color::Get(0x00,0x00,0xFF) )
+#define GREY      ( Color::Get(0x80,0x80,0x80) )
+#define GRAY      GREY
+#define GOLD      ( Color::Get(0xFF,0xD7,0x80) )
+
 class Color {
 	public:
 	float r, g, b;

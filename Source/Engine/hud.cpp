@@ -137,7 +137,7 @@ void StatusBar::Draw(int x, int y) {
 
 	Font *font = Font::Get( SKIN("Font/StatusBar") );
 	
-	font->SetColor(1.f, 1.f, 1.f, 1.f);
+	font->SetColor( WHITE );
 
 	// Draw the Title
 	int wTitle = font->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
@@ -314,15 +314,15 @@ void Hud::DrawMessages() {
 	
 	Font * font = Font::Get( SKIN("Font/Alert") );
 	font->SetSize(12);
-	font->SetColor(1.f,1.f,1.f,1.f);
+	font->SetColor( WHITE );
 	
 	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > alertFade){
-			font->SetColor(1.f,1.f,1.f, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
+			font->SetColor( WHITE, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
 		} else {
-			font->SetColor(1.f,1.f,1.f,1.f);
+			font->SetColor( WHITE );
 		}
 		font->Render( 15, Video::GetHeight() - (j * font->LineHeight()) - HUD_MESSAGE_BOTTOM_SPACING, (*i).message);
 	}
@@ -334,7 +334,7 @@ void Hud::DrawFPS( float fps ) {
 	char frameRate[16];
 	Font * font = Font::Get( SKIN("Font/FPS") );
 
-	font->SetColor(1.f,1.f,1.f,1.f);
+	font->SetColor( WHITE );
 	snprintf(frameRate, sizeof(frameRate), "%f fps", fps );
 	font->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
@@ -430,6 +430,7 @@ void Hud::DrawUniverseMap( void ) {
 	int startx, starty;
 	int posx, posy;
 	int posx2, posy2;
+	Coordinate pos, pos2;
 	Color col;
 	Color field;
 	int i;
@@ -484,26 +485,28 @@ void Hud::DrawUniverseMap( void ) {
 		col = (*iter)->GetRadarColor();
 		posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
 		posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
+		pos = Coordinate( posx, posy );
 
 		switch( (*iter)->GetDrawOrder() ) {
 			case DRAW_ORDER_PLAYER:
-				Video::DrawFilledCircle( posx, posy, 2, col.r,col.g,col.b, alpha );
+				Video::DrawFilledCircle( pos, 2, col, alpha );
 				break;
 			case DRAW_ORDER_PLANET:
 				field = ((Planet*)(*iter))->GetAlliance()->GetColor();
-				Video::DrawFilledCircle( posx, posy, ((Planet*)(*iter))->GetInfluence()*scale, field.r, field.g, field.b, alpha*.5f );
-				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
+				Video::DrawFilledCircle( pos, ((Planet*)(*iter))->GetInfluence()*scale, field, alpha*.5f );
+				Video::DrawCircle( pos, 3, 1, col, alpha );
 				break;
 			case DRAW_ORDER_SHIP:
-				Video::DrawFilledCircle( posx, posy, 2, col.r,col.g,col.b, alpha );
+				Video::DrawFilledCircle( pos, 2, col, alpha );
 				break;
 
 			case DRAW_ORDER_GATE_TOP:
-				Video::DrawCircle( posx, posy, 3, 1, col.r,col.g,col.b, alpha );
+				Video::DrawCircle( pos, 3, 1, col, alpha );
 				if( ((Gate*)(*iter))->GetExit() != NULL ) {
 					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
 					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
-					Video::DrawLine( posx,posy, posx2, posy2, 0,.6f,0, alpha*.5f );
+					pos2 = Coordinate( posx2, posy2 );
+					Video::DrawLine( pos, pos2, GREEN, alpha*.5f );
 				}
 				break;
 			default:
@@ -518,7 +521,7 @@ void Hud::DrawUniverseMap( void ) {
 		{
 			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
 			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
-			font->SetColor(1.f,1.f,1.f,1.f);
+			font->SetColor( WHITE );
 			font->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}

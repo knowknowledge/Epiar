@@ -42,7 +42,6 @@ class Player : public Ship , public Component {
 
 		void Update( void );
 
-		Color GetRadarColor( void ) { return Color::Get(0xFF,0xD7,0); }
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_PLAYER );
 		}

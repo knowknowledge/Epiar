@@ -24,7 +24,7 @@
 Alliance::Alliance() : attackSize(0),aggressiveness(0.0),currency("Credits")
 {
 	SetName("dead");
-	color = Color::Get(0xFF,0xFF,0xFF);
+	color = WHITE;
 }
 
 /**\brief Assignment constructor, copies field values.
