@@ -155,9 +155,6 @@ bool Simulation::SetupToRun(){
 		startPos
 	);
 
-	// Message appear in reverse order, so this is upside down
-	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
-
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
 		if( players->LoadLast()!=NULL ) {
@@ -452,10 +449,9 @@ bool Simulation::Parse( void ) {
  */
 bool Simulation::HandleInput() {
 	list<InputEvent> events;
-	bool quitSignal = false;
 
 	// Collect user input events
-	events = inputs.Update( quitSignal );
+	events = inputs.Update();
 
 	// Pass the Events to the systems that handle them.
 	UI::HandleInput( &events );
@@ -463,8 +459,8 @@ bool Simulation::HandleInput() {
 	Hud::HandleInput( events );
 
 	inputs.HandleLuaCallBacks( events );
-
-	return quitSignal;
+	
+	return Input::EventTriggered( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
 }
 
 /**\fn Simulation::isPaused()

@@ -68,16 +68,16 @@ Input::Input() {
 
 /**\brief Polls the event queue and sends the list of events to subsystems.
  */
-list<InputEvent> Input::Update( bool &quitSignal ) {
+list<InputEvent> Input::Update( ) {
 	SDL_Event event;
 	
 	events.clear();
 
 	while( SDL_PollEvent( &event ) ) {
 		switch( event.type ) {
-			case SDL_QUIT:
-				quitSignal = true;
-				break;
+			//case SDL_QUIT:
+			//	quitSignal = true;
+			//	break;
 			case SDL_KEYDOWN:
 			{
 				_UpdateHandleKeyDown( &event );
@@ -85,8 +85,7 @@ list<InputEvent> Input::Update( bool &quitSignal ) {
 			}
 			case SDL_KEYUP:
 			{
-				bool quitSignalUpdate = _UpdateHandleKeyUp( &event );
-				if( quitSignalUpdate ) quitSignal = quitSignalUpdate;
+				_UpdateHandleKeyUp( &event );
 				break;
 			}
 			case SDL_MOUSEMOTION:
@@ -203,22 +202,11 @@ void Input::_UpdateHandleKeyDown( SDL_Event *event ) {
 
 /**\brief Translates key up events to Epiar events.
  */
-bool Input::_UpdateHandleKeyUp( SDL_Event *event ) {
-	bool quitSignal = false;
-	
+void Input::_UpdateHandleKeyUp( SDL_Event *event ) {
 	assert( event );
 
-	switch( event->key.keysym.sym ) {
-		case SDLK_ESCAPE:
-			quitSignal = true;
-			break;
-		default:
-			events.push_back( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
-			heldKeys[ event->key.keysym.sym ] = 0;
-			break;
-	}
-
-	return quitSignal;
+	events.push_back( InputEvent( KEY, KEYUP, event->key.keysym.sym ) );
+	heldKeys[ event->key.keysym.sym ] = 0;
 }
 
 void Input::PushTypeEvent( list<InputEvent> & events, SDLKey key ) {
@@ -303,3 +291,16 @@ void Input::UnRegisterCallBack( InputEvent event ) {
 	eventMappings.erase(event);
 }
 
+
+/**\brief Search an InputEvent list for a specific Event
+ */
+bool Input::EventTriggered( list<InputEvent> & events, InputEvent trigger ) {
+	list<InputEvent>::iterator i = events.begin();
+	while( i != events.end() ) {
+		if( (*i) == trigger ) {
+			return true;
+		}
+		++i;
+	}
+	return false;
+}

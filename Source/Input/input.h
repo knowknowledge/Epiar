@@ -96,16 +96,19 @@ ostream& operator<<(ostream &out, const InputEvent&e);
 class Input {
 	public:
 		Input();
-		list<InputEvent> Update( bool &quitSignal );
+		list<InputEvent> Update( void );
 
 		void HandleLuaCallBacks( list<InputEvent> & events );
 		void RegisterCallBack( InputEvent key, string command );
 		void UnRegisterCallBack( InputEvent key );
+
+		static bool EventTriggered( list<InputEvent> & events, InputEvent key );
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );
+		void _UpdateHandleSignal( SDL_Event *event );
 		void _UpdateHandleKeyDown( SDL_Event *event );
-		bool _UpdateHandleKeyUp( SDL_Event *event );
+		void _UpdateHandleKeyUp( SDL_Event *event );
 		void _UpdateHandleMouseDown( SDL_Event *event );
 		void _UpdateHandleMouseUp( SDL_Event *event );
 		void _UpdateHandleMouseMotion( SDL_Event *event );

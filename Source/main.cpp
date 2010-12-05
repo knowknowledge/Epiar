@@ -348,7 +348,7 @@ void ui_test() {
  *
  */
 void Main_Menu( void ) {
-	bool quitSignal = false;
+	bool quitSignal = true;
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
@@ -396,7 +396,7 @@ void Main_Menu( void ) {
 		clicked = Menu_DoNothing;
 
 		// Collect user input events
-		events = inputs.Update( quitSignal );
+		events = inputs.Update();
 		UI::HandleInput( &events );
 
 		// Draw Things
@@ -406,6 +406,7 @@ void Main_Menu( void ) {
 		Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 		UI::Draw();
 		Video::Update();
+
 
 		switch(clicked){
 			case Menu_Play:
@@ -471,7 +472,10 @@ void Main_Menu( void ) {
 			default:
 				break;
 		}
-		
+
+		if( Input::EventTriggered( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
+			quitSignal = true;
+		}
 
 		// Wait until the next click
 		Timer::Delay(50);
