@@ -7,11 +7,11 @@
  */
 
 #include "includes.h"
-#include "Graphics/font.h"
-#include "includes.h"
-#include "Utilities/log.h"
+#include "common.h"
 #include <FTGL/ftgl.h>
+#include "Graphics/font.h"
 #include "Graphics/video.h"
+#include "Utilities/log.h"
 #include "Utilities/file.h"
 
 /**\class Font
@@ -25,7 +25,29 @@ Font::Font():r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {}
  * \param filename String containing file.
  */
 Font::Font( string filename ):r(1.f),g(1.f),b(1.f),a(1.f),font(NULL) {
-	SetFont( filename );
+	bool success;
+	success = Load( filename );
+	assert( success );
+}
+
+/**\brief Lazy fetch an Font
+ */
+Font* Font::Get( string filename ) {
+	Font* value;
+	value = static_cast<Font*>(Resource::Get(filename));
+	if( value == NULL ) {
+		value = new Font();
+		if(value->Load(filename)){
+			Resource::Store(filename,(Resource*)value);
+		} else {
+			LogMsg(DEBUG1,"Couldn't Find Font '%s'",filename.c_str());
+			delete value;
+			return NULL;
+		}
+	}
+	return value;
+}
+
 }
 
 /**\brief Destroys the font.*/
@@ -46,7 +68,7 @@ void Font::SetColor( float r, float g, float b, float a ) {
 /**\brief Loads the font (uses FTGL Texture Fonts).
  * \param filename Path to font file.
  */
-bool Font::SetFont( string filename ) {
+bool Font::Load( string filename ) {
 	File fontFile;
 	if( fontFile.OpenRead( filename.c_str() ) == false) {
 		LogMsg(ERR, "Font '%s' could not be loaded.", fontname.c_str() );

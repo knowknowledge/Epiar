@@ -12,8 +12,9 @@
 #include "includes.h"
 #include <FTGL/ftgl.h>
 #include "Graphics/video.h"
+#include "Utilities/resource.h"
 
-class Font {
+class Font : public Resource {
 		public:
 			enum XPos{
 				LEFT,   /**< Renders left aligned (default).*/
@@ -30,7 +31,10 @@ class Font {
 			Font( string filename );
 			~Font();
 
-			bool SetFont( string filename );
+			static Font* Get(string filename);
+
+			bool Load( string filename );
+
 			void SetSize( int size=12 );
 			unsigned int GetSize( void );
 			void SetColor( float r, float g, float b, float a=1.0f );
