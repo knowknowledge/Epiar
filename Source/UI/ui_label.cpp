@@ -16,10 +16,16 @@
 /**\class Label
  * \brief UI label. */
 
+Font *Label::font = NULL;
+
 /**\brief Constructor
  */
 Label::Label( int x, int y, string label, bool centered) {
 	Rect size;
+
+	if( font == NULL ) {
+		font = Font::GetSkin( "Font/UI/Label" );
+	}
 	
 	this->x=x;
 	this->y=y;
@@ -35,7 +41,6 @@ Label::Label( int x, int y, string label, bool centered) {
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	vector<string>::iterator iter;
-	Font* font = Font::GetSkin( "Font/UI/Label" );
 	
 	x = this->x + relx;
 	y = this->y + rely;
@@ -56,7 +61,6 @@ void Label::Draw(  int relx, int rely ) {
 void Label::SetText(string text) {
 	int maxwidth = 0;
 	vector<string>::iterator iter;
-	Font* font = Font::GetSkin( "Font/UI/Label" );
 
 	this->lines = TokenizedString( text, "\n" );
 	for(iter = lines.begin(); iter != lines.end() ; ++iter ) {

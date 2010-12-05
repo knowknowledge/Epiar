@@ -47,6 +47,7 @@ class Slider : public Widget {
 		
 		// Callback
 		string lua_callback;
+		static Font* font;
 };
 
 #endif // __H_SLIDER__

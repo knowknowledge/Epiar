@@ -28,6 +28,7 @@ class Console {
 		bool enabled;
 		string command;
 		unsigned int cursor;
+		static Font* consoleFont;
 };
 
 #endif // __h_console__

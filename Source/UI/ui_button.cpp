@@ -19,6 +19,8 @@
 /**\class Button
  * \brief UI button. */
 
+Font* Button::font = NULL;
+
 /**\brief Convenience function to initialize the button, used to prevent code repetition.
  */
 void Button::Initialize( int x, int y, int w, int h, string label ) {
@@ -46,6 +48,9 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 
 	this->clickCallBack = NULL;
 	this->lua_callback = "";
+	if( font == NULL ) {
+		font = Font::GetSkin( "Font/UI/Button" );
+	}
 }
 
 /**\brief Constructs a button with a C++ callback.*/
@@ -74,7 +79,6 @@ Button::~Button() {
 /**\brief Draws the button.*/
 void Button::Draw( int relx, int rely ) {
 	int x, y;
-	Font* font = Font::GetSkin( "Font/UI/Button" );
 	
 	x = this->x + relx;
 	y = this->y + rely;

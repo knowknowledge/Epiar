@@ -41,6 +41,11 @@ int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
 int Radar::visibility = 4096;
 HudMap Hud::mapDisplay = NoMap;
+Font* Hud::alertFont = NULL;
+Font* Hud::FPSFont = NULL;
+Font* Hud::mapFont = NULL;
+
+Font *StatusBar::statusFont = NULL;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -92,6 +97,9 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title, name, ratio);
 	assert(pos>=0);
 	assert(pos<=4);
+	if( statusFont == NULL ) {
+		statusFont = Font::Get( SKIN("Font/StatusBar") );
+	}
 }
 
 /**\brief Assignment operator for class StatusBar.
@@ -135,17 +143,15 @@ void StatusBar::Draw(int x, int y) {
 	BackgroundMiddle->DrawTiled(x, y, width, BackgroundMiddle->GetHeight());
 	BackgroundRight->Draw(x + width, y);
 
-	Font *font = Font::Get( SKIN("Font/StatusBar") );
-	
-	font->SetColor( WHITE );
+	statusFont->SetColor( WHITE );
 
 	// Draw the Title
-	int wTitle = font->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
+	int wTitle = statusFont->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wTitle;
 	x += wTitle + 5;
 
 	// Draw Name
-	int wName = font->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), name, Font::LEFT, Font::MIDDLE );
+	int wName = statusFont->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), name, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wName;
 	x += wName;
 
@@ -243,6 +249,9 @@ void StatusBar::SetName( string n )
  * \brief Heads-Up-Display. */
 
 void Hud::Init( void ) {
+	alertFont = Font::Get( SKIN("Font/Alert") );
+	FPSFont = Font::Get( SKIN("Font/FPS") );
+	mapFont = Font::Get( SKIN("Font/FPS") );
 }
 
 void Hud::Close( void ) {
@@ -312,19 +321,18 @@ void Hud::DrawMessages() {
 	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
 	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
 	
-	Font * font = Font::Get( SKIN("Font/Alert") );
-	font->SetSize(12);
-	font->SetColor( WHITE );
+	alertFont->SetSize(12);
+	alertFont->SetColor( WHITE );
 	
 	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > alertFade){
-			font->SetColor( WHITE, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
+			alertFont->SetColor( WHITE, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
 		} else {
-			font->SetColor( WHITE );
+			alertFont->SetColor( WHITE );
 		}
-		font->Render( 15, Video::GetHeight() - (j * font->LineHeight()) - HUD_MESSAGE_BOTTOM_SPACING, (*i).message);
+		alertFont->Render( 15, Video::GetHeight() - (j * alertFont->LineHeight()) - HUD_MESSAGE_BOTTOM_SPACING, (*i).message);
 	}
 }
 
@@ -332,17 +340,16 @@ void Hud::DrawMessages() {
  */
 void Hud::DrawFPS( float fps ) {
 	char frameRate[16];
-	Font * font = Font::Get( SKIN("Font/FPS") );
 
-	font->SetColor( WHITE );
+	FPSFont->SetColor( WHITE );
 	snprintf(frameRate, sizeof(frameRate), "%f fps", fps );
-	font->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
+	FPSFont->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
 	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
-	font->Render( Video::GetWidth()-100, Video::GetHeight() - 30, frameRate );
+	FPSFont->Render( Video::GetWidth()-100, Video::GetHeight() - 30, frameRate );
 
 	snprintf(frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
-	font->Render( Video::GetWidth()-100, Video::GetHeight() - 45, frameRate );
+	FPSFont->Render( Video::GetWidth()-100, Video::GetHeight() - 45, frameRate );
 }
 
 /**\brief Draws the status bar.
@@ -436,7 +443,6 @@ void Hud::DrawUniverseMap( void ) {
 	int i;
 	float alpha;
 	float n,s,e,w, edge;
-	Font* font = Font::Get( SKIN("Font/Map") );
 
 	// Configurable Settings
 	size = 700.0f;
@@ -444,6 +450,8 @@ void Hud::DrawUniverseMap( void ) {
 	startx = Video::GetHalfWidth()-halfsize;
 	starty = Video::GetHalfHeight()-halfsize;
 	alpha = .7;
+
+	mapFont->SetColor( WHITE );
 
 	// Strech the Map so that it covers all QuadTrees
 	SpriteManager::Instance()->GetBoundaries(&n,&s,&e,&w);
@@ -521,8 +529,7 @@ void Hud::DrawUniverseMap( void ) {
 		{
 			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
 			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
-			font->SetColor( WHITE );
-			font->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
+			mapFont->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
 	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;

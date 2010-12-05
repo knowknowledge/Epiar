@@ -17,6 +17,8 @@
  * \todo Some calculations are unnecessary here.
  */
 
+Font *Slider::font = NULL;
+
 /**\brief Constructs a slider with given parameters and a Lua callback
  */
 Slider::Slider( int x, int y, int w, int h, const string& label,
@@ -30,6 +32,9 @@ Slider::Slider( int x, int y, int w, int h, const string& label,
 	this->w=w;
 	this->h=h;
 	this->name=label;
+	if( font == NULL ) {
+		font = Font::GetSkin( "Font/UI/Slider" );
+	}
 }
 
 /**\fn Slider::GetVal( )
@@ -70,7 +75,7 @@ void Slider::Draw( int relx, int rely ){
 	// Render the value indicator
 	char value[20];
 	snprintf(value,20,"%.2f",this->val);
-	Font::GetSkin( "Font/UI/Slider" )->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
+	font->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.

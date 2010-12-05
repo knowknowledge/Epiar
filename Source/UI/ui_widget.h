@@ -11,6 +11,7 @@
 #define __H_UI_WIDGET__
 
 #include "includes.h"
+#include "Graphics/font.h"
 
 #define WIDGET_LABEL               (0x00000001)
 #define WIDGET_BUTTON              (0x00000002)
@@ -85,6 +86,7 @@ class Widget {
 		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag
 		string name;
 		bool keyactivated;		// remember if this widget has keyboard activation
+		static Font *font;
 };
 
 #endif // __H_UI_WIDGET__

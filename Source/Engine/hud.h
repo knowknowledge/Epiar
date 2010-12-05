@@ -69,6 +69,7 @@ class StatusBar {
 		char name[100]; // TODO: the name 'name' is bad
 		float ratio;
 		string lua_updater;
+		static Font* statusFont;
 };
 
 class Hud {
@@ -122,6 +123,9 @@ class Hud {
 		static int targetID;
 		static int timeTargeted;
 		static HudMap mapDisplay;
+		static Font* alertFont;
+		static Font* FPSFont;
+		static Font* mapFont;
 };
 
 class Radar {

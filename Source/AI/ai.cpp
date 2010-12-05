@@ -18,6 +18,8 @@
  *
  * */
 
+Font *AI::aiFont = NULL;
+
 /** \brief AI Constructor
  */
 
@@ -127,10 +129,12 @@ void AI::Draw(){
 	this->Ship::Draw();
 	if( OPTION(int,"options/development/debug-ai") ) {
 		Coordinate position = this->GetWorldPosition();
-		Font* font = Font::GetSkin( "Font/Development" );
-		font->SetColor( WHITE );
-		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
-		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
+		if( aiFont == NULL ) {
+			aiFont = Font::GetSkin( "Font/Development" );
+		}
+		aiFont->SetColor( WHITE );
+		aiFont->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
+		aiFont->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
 	}
 }
 

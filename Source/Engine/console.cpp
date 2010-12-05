@@ -20,6 +20,8 @@
 const char* PROMPT = "> ";
 const char* CURSOR = "_";
 
+Font *Console::consoleFont = NULL;
+
 /**\brief Initialize Console instance.
  */
 Console::Console() {
@@ -27,6 +29,9 @@ Console::Console() {
 	command = "";
 	enabled = false;
 	cursor = 0;
+	if (consoleFont == NULL) {
+		consoleFont = Font::Get( SKIN("Font/Console") );
+	}
 }
 
 /**\brief Handles a list of Input events.
@@ -103,7 +108,6 @@ void Console::HandleInput( list<InputEvent> & events ) {
 void Console::Draw() {
 	if( enabled ) {
 		int pos = 8;
-		Font* consoleFont = Font::Get( SKIN("Font/Console") );
 		// draw bg
 		Video::DrawRect(150, 5, 550, consoleFont->LineHeight()*(pos+1),
 				static_cast<float>(.5), static_cast<float>(.5),

@@ -31,6 +31,8 @@ class Tab : public UIContainer {
 
 		void ResetScrollBars();
 		Scrollbar *vscrollbar;
+
+		static Font* font;
 };
 
 class Tabs : public UIContainer {
