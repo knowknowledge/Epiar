@@ -48,6 +48,11 @@ function APInit()
 		end
 		return false
 	end
+	Autopilot.showAlert = function()
+		local dest = Autopilot.GateRoute[#Autopilot.GateRoute]
+		local next = Autopilot.GateRoute[1]
+		HUD.newAlert( (string.format("Autopilot: engaged, en route to %s, next object is %s", dest, next) ) )
+	end
 
 end
 
@@ -230,7 +235,30 @@ function playerGateAutoAngle ()
 	elseif #Autopilot.GateRoute == 1 then
 		local pi = Epiar.getPlanetInfo(theObj)
 		local playerX, playerY = PLAYER:GetPosition()
-		PLAYER:Rotate( PLAYER:directionTowards( pi.X, pi.Y ) )
+		local speed = PLAYER:GetMomentumSpeed()
+		-- Work on slowing down if we're getting close to the destination
+		if distfrom(playerX, playerY, pi.X, pi.Y) < 800 + 100*speed then
+			local inverseMomentumDir = - PLAYER:directionTowards( PLAYER:GetMomentumAngle() )
+			if speed > 3 then
+				if math.abs( PLAYER:directionTowards( PLAYER:GetMomentumAngle() ) ) > 176 then
+					Autopilot.AllowAccel = true
+				else
+					Autopilot.AllowAccel = false
+					PLAYER:Rotate( inverseMomentumDir )
+				end
+			else
+				-- going slow enough already; don't do anything
+				Autopilot.AllowAccel = false
+			end
+		-- Otherwise just keep going in the direction of the destination
+		else
+			PLAYER:Rotate( PLAYER:directionTowards( pi.X, pi.Y ) )
+			if PLAYER:directionTowards( pi.X, pi.Y ) == 0 then
+				Autopilot.AllowAccel = true
+			else
+				Autopilot.AllowAccel = false
+			end
+		end
 		if distfrom(playerX, playerY, pi.X, pi.Y) < 300 then
 			table.remove(Autopilot.GateRoute, 1)
 			HUD.newAlert("You have arrived at your destination.")
@@ -252,15 +280,42 @@ function playerGateAutoAngle ()
 			if #Autopilot.GateRoute % 2 == 1 then
 				-- don't tell the player to resume acceleration until he/she has cleared both the gate top and bottom
 				-- (this acceleration control could be automated)
-				HUD.newAlert("please resume acceleration")
+				--HUD.newAlert("please resume acceleration")
+				Autopilot.showAlert()
 				Autopilot.AllowAccel = true
 			end
-		elseif distfrom(playerX, playerY, gi.X, gi.Y) < 2000 then
+		elseif distfrom(playerX, playerY, gi.X, gi.Y) < 800 then
 			if Autopilot.AllowAccel ~= false then
-				HUD.newAlert("please stop acceleration")
+				--HUD.newAlert("please stop acceleration")
 				Autopilot.AllowAccel = false
 			end
 		end
+	end
+end
+
+function playerAutopilotRun ()
+	if Autopilot == nil then
+		PLAYER:SetLuaControlFunc("")
+		return
+	end
+	if Autopilot.AllowAccel ~= false then
+		PLAYER:Accelerate()
+	end
+	playerGateAutoAngle()
+end
+
+function playerAutopilotToggle ()
+	if Autopilot == nil then return end
+	if Autopilot.Control ~= true then
+		Autopilot.showAlert()
+		Autopilot.Control = true
+		Autopilot.AllowAccel = true
+		PLAYER:SetLuaControlFunc("playerAutopilotRun()")
+	else
+		HUD.newAlert("Autopilot disengaged")
+		Autopilot.Control = false
+		Autopilot.AllowAccel = false
+		PLAYER:SetLuaControlFunc("")
 	end
 end
 

@@ -22,6 +22,8 @@ class Player : public Ship , public Component {
 		void setLastPlanet( string planetName);
 		string GetLastPlanet() { return lastPlanet; }
 		string GetName() { return name; }
+		void SetLuaControlFunc( string _luaControlFunc ){ luaControlFunc = _luaControlFunc; }
+		void RemoveLuaControlFunc() { luaControlFunc = ""; }
 
 		void AcceptMission( Mission *mission );
 		void RejectMission( string missionName );
@@ -52,6 +54,7 @@ class Player : public Ship , public Component {
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
 		list<Mission*> missions;
+		string luaControlFunc;
 };
 
 class Players : public Components {
