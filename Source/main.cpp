@@ -59,25 +59,26 @@ int main( int argc, char **argv ) {
 #endif //_WIN32
 
 	// Parse command line options first.
-	ArgParser argparser(argc,argv);
-	argparser.SetOpt(SHORTOPT,"h",				"Display help screen");
-	argparser.SetOpt(LONGOPT,"help",			"Display help screen");
-	argparser.SetOpt(SHORTOPT,"v",				"Display program version");
-	argparser.SetOpt(LONGOPT,"version",			"Display program version");
-	argparser.SetOpt(LONGOPT,"editor-mode",		"Puts you in edit mode");
-	argparser.SetOpt(LONGOPT,"no-audio",		"Disables audio");
-	argparser.SetOpt(LONGOPT,"nolog-xml",		"(Default) Disable logging messages to xml files.");
-	argparser.SetOpt(LONGOPT,"log-xml",			"Log messages to xml files.");
-	argparser.SetOpt(LONGOPT,"log-out",			"(Default) Log messages to console.");
-	argparser.SetOpt(LONGOPT,"nolog-out",		"Disable logging messages to console.");
-	argparser.SetOpt(LONGOPT,"ships-worldmap",	"Displays ships on the world map.");
-	argparser.SetOpt(VALUEOPT,"log-lvl",		"Logging level.(None,Fatal,Critical,Error,"
-			"\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
-	argparser.SetOpt(VALUEOPT,"log-fun",		"Filter log messages by function name.");
-	argparser.SetOpt(VALUEOPT,"log-msg",		"Filter log messages by string content.");
+	ArgParser argparser(argc, argv);
+
+	argparser.SetOpt(SHORTOPT, "h",             "Display help screen");
+	argparser.SetOpt(LONGOPT, "help",           "Display help screen");
+	argparser.SetOpt(SHORTOPT, "v",             "Display program version");
+	argparser.SetOpt(LONGOPT, "version",        "Display program version");
+	argparser.SetOpt(LONGOPT, "editor-mode",    "Puts you in edit mode");
+	argparser.SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser.SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
+	argparser.SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
+	argparser.SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
+	argparser.SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
+	argparser.SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
+	argparser.SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
+	                                            "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
+	argparser.SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
+	argparser.SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
 
 #ifdef EPIAR_COMPILE_TESTS
-	argparser.SetOpt(VALUEOPT,"run-test",		"Run specified test");
+	argparser.SetOpt(VALUEOPT, "run-test",      "Run specified test");
 #endif // EPIAR_COMPILE_TESTS
 
 	// These are immediate options (I.E. they stop the argument processing immediately)
