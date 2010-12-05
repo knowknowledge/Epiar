@@ -26,6 +26,9 @@ class UIContainer : public Widget {
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 		virtual Widget *ChildNamed( string _name, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromTop( int pos, int mask = WIDGET_ALL );
+		virtual Widget *ChildFromBottom( int pos, int mask = WIDGET_ALL );
+		virtual Widget *NextChild( Widget* widget, int mask = WIDGET_ALL );
+		virtual Widget *PrevChild( Widget* widget, int mask = WIDGET_ALL );
 
 		virtual void Draw( int relx = 0, int rely = 0 );
 

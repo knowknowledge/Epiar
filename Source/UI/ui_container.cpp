@@ -149,6 +149,84 @@ Widget *UIContainer::ChildFromTop( int pos, int mask) {
 	return( NULL );
 }
 
+/**\brief Search for a child at a specific position
+ *
+ * pos == 0 is at the top.
+ *
+ * \param[in] pos position of the child
+ * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
+ */
+Widget *UIContainer::ChildFromBottom( int pos, int mask) {
+	int p = 0;
+	list<Widget *>::iterator i;
+
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & mask ) {
+			if( pos == p ) {
+				return (*i);
+			}
+			++p;
+		}
+	}
+	return( NULL );
+}
+/**\brief Search for a child at a specific position
+ *
+ * pos == 0 is at the top.
+ *
+ * \param[in] widget don't start checking until this widget is found.
+ * \param[in] mask Only consider Widgets of this type.
+ * \note This checks the children in the order that they are drawn so that Children 'on top' are searched last.
+ */
+Widget *UIContainer::NextChild( Widget* widget, int mask) {
+	list<Widget *>::iterator i;
+
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i) == widget ) {
+			// Found the previous widget, now keep going
+			++i;
+			for(; i != children.end(); ++i ) {
+				if( (*i)->GetMask() & mask ) {
+					return (*i);
+				}
+			}
+			// Never found another Widget that matched the mask
+			return( NULL );
+		}
+	}
+	// Never found the previous Widget
+	return( NULL );
+}
+
+/**\brief Search for a child at a specific position
+ *
+ * \param[in] widget don't start checking until this widget is found.
+ * \param[in] mask Only consider Widgets of this type.
+ * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
+ */
+Widget *UIContainer::PrevChild( Widget* widget, int mask) {
+	list<Widget *>::reverse_iterator i;
+
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.rbegin(); i != children.rend(); ++i ) {
+		if( (*i) == widget ) {
+			// Found the previous widget, now keep going
+			++i;
+			for(; i != children.rend(); ++i ) {
+				if( (*i)->GetMask() & mask ) {
+					return (*i);
+				}
+			}
+			// Never found another Widget that matched the mask
+			return( NULL );
+		}
+	}
+	// Never found the previous Widget
+	return( NULL );
+}
+
 /**\brief Draws this widget and all children widgets.
  */
 void UIContainer::Draw( int relx, int rely ) {
@@ -430,8 +508,29 @@ bool UIContainer::KeyboardLeave( void ){
 /**\brief Generic keyboard key press function.
  */
 bool UIContainer::KeyPress( SDLKey key ) {
-	if( keyboardFocus ) 
+	Widget *next;
+	if( keyboardFocus ) {
+		
+		// If this key is a TAB and the keyboard is currently focused on a Textbox,
+		// then move to the next textbox
+		if( (key == SDLK_TAB) && ( keyboardFocus->GetMask() & (WIDGET_TEXTBOX) ) ) {
+			
+			next = NextChild( keyboardFocus, WIDGET_TEXTBOX );
+			if( next == NULL ) {
+				// Wrap around to the top
+				next = ChildFromBottom( 0, WIDGET_TEXTBOX );
+			}
+			if( next ) {
+				keyboardFocus->KeyboardLeave();
+				keyboardFocus = next;
+				keyboardFocus->KeyboardEnter();
+			}
+			return true;
+		}
+
+		// Otherwise, pass the key Press normally
 		return keyboardFocus->KeyPress( key );
+	}
 	//LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return false;
 }
