@@ -293,15 +293,30 @@ void Input::UnRegisterCallBack( InputEvent event ) {
 
 
 /**\brief Search an InputEvent list for a specific Event
+ * \param[in] events The list of Events to search
+ * \param[in] trigger The trigger event to look for.
+ * \returns true if the event was found and removed.
  */
-bool Input::HandleSpecificEvent( list<InputEvent> & events, InputEvent trigger ) {
+bool Input::SearchSpecificEvent( list<InputEvent> & events, InputEvent trigger ) {
 	list<InputEvent>::iterator i = events.begin();
 	while( i != events.end() ) {
 		if( (*i) == trigger ) {
-			i = events.erase( i );
 			return true;
 		}
 		++i;
 	}
 	return false;
+}
+
+/**\brief Search an InputEvent list for a specific Event, then Remove it
+ * \param[in] events The list of Events to search
+ * \param[in] trigger The trigger event to look for and remove.
+ * \returns true if the event was found and removed.
+ */
+bool Input::HandleSpecificEvent( list<InputEvent> & events, InputEvent trigger ) {
+	bool found = SearchSpecificEvent(events,trigger);
+	if( found ) {
+		events.remove( trigger );
+	}
+	return found;
 }
