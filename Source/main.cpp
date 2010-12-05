@@ -32,18 +32,255 @@
 XMLFile *optionsfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
+ArgParser *argparser;
 
-Image* newSplashScreen(){
-	string splashScreens[] = {
-		"Resources/Art/menu1.png",
-		"Resources/Art/menu2.png",
-		"Resources/Art/menu3.png",
-		"Resources/Art/menu4.png",
-		"Resources/Art/menu5.png",
-	};
+void Main_OS                ( int argc, char **argv ); ///< Run OS Specific setup code
+void Main_Init_Singletons   ( int argc, char **argv ); ///< Initialize global Singletons
+void Main_Parse_Args        ( ); ///< Parse Command Line Arguments
+void Main_Log_Environment   ( void ); ///< Record Environment variables
+void Main_Menu              ( void ); ///< Run the Main Menu
+void Main_Close_Singletons  ( void ); ///< Close global Singletons
+
+/**Main
+ * \return 0 always
+ * \details
+ * This function does the following:
+ *  - Load options
+ *  - Load fonts
+ *  - Runs the Simulation routine
+ *  - Calls any cleanup code
+ */
+int main( int argc, char **argv ) {
+	// Basic Setup
+	Main_OS( argc, argv );
+	Main_Init_Singletons( argc, argv );
+
+	// Respond to Command Line Arguments
+	Main_Parse_Args();
+	Main_Log_Environment();
+
+	// THE GAME
+	Main_Menu();
+
+	// Close everything and Quit
+	Main_Close_Singletons();
+	return( 0 );
+}
+
+/** \details
+ *  The OS Specific code here sets up OS specific environment variables and
+ *  paths that are vital for normal operation.
+ * 	
+ *  Since nothing has is loaded or initialized before this code, do not use any
+ *  code that is epiar specific (OPTIONS, Log, Lua, etc).
+ *
+ *  \param[in] argc standard c argc
+ *  \param[in] argv standard c argv
+ */
+void Main_OS( int argc, char **argv ) {
+
+#ifdef __APPLE__
+	string path = argv[0];
+	if( path.find("MacOS/Epiar") ){ // If this is being run from inside a Bundle
+		// Chdir to the Bundle Contents
+		string ContentsPath = path.substr(0, path.find("MacOS/Epiar") );
+		chdir(ContentsPath.c_str());
+	}
+#endif
+
+#ifdef _WIN32
+	// This attaches a console to the parent process if it has a console
+	if(AttachConsole(ATTACH_PARENT_PROCESS)){
+		freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
+		freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
+	}
+	#if defined(_MSC_VER) && defined(DEBUG)
+		int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
+		// Turn on leak-checking bit
+		tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
+		// Set flag to the new value
+		_CrtSetDbgFlag( tmpFlag );
+	#endif//_MSC_VER
+#endif //_WIN32
+
+}
+
+/** \details
+ *  This will initialize the singletons for this Epiar instance:
+ *   - OPTIONS
+ *   - Audio
+ *   - Fonts
+ *   - Timer
+ *   - Video
+ *   - ArgParser
+ *
+ *  Singletons should be kept to a minimum whenever possible.
+ *
+ *  \param[in] argc standard c argc
+ *  \param[in] argv standard c argv
+ *
+ *  \TODO Remove Fonts with a style.
+ *  \TODO Add Logger
+ *
+ *  \warn This may exit early on Errors
+ */
+void Main_Init_Singletons( int argc, char **argv ) {
+	optionsfile = new XMLFile();
+	if( !optionsfile->Open("Resources/Definitions/options.xml") )
+	{
+		fprintf(stderr, "Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
+		exit(-1);
+	}
+
+	Audio::Instance().Initialize();
+	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
+	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
+
+	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
+	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
+	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
+	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+
+	Timer::Initialize();
+	Video::Initialize();
+
+	// Parse command line options first.
+	argparser = new ArgParser(argc, argv);
+
+	argparser->SetOpt(SHORTOPT, "h",             "Display help screen");
+	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
+	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
+	argparser->SetOpt(LONGOPT, "version",        "Display program version");
+	argparser->SetOpt(LONGOPT, "editor-mode",    "Puts you in edit mode");
+	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
+	argparser->SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
+	argparser->SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
+	argparser->SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
+	                                             "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
+	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
+	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
+	argparser->SetOpt(LONGOPT,  "ui-demo",       "Runs the UI demo.");
+
+#ifdef EPIAR_COMPILE_TESTS
+	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
+#endif // EPIAR_COMPILE_TESTS
+
 	srand ( time(NULL) );
-	Video::Erase();
-	return Image::Get(splashScreens[rand()% (sizeof(splashScreens)/sizeof(splashScreens[0])) ]);
+}
+
+/** \details
+ *  This cleanup is done for completeness, but the normal runtime should do all
+ *  of this automatically.
+ *  \warn Do not run any non-trivial code after calling this.
+ */
+void Main_Close_Singletons( void ) {
+	Video::Shutdown();
+	Audio::Instance().Shutdown();
+
+	// free the main font files
+	delete SansSerif;
+	delete BitType;
+	delete Serif;
+	delete Mono;
+
+	// free the configuration file data
+	delete optionsfile;
+
+	Log::Instance().Close();
+}
+
+/** \details
+ *  This processes all of the command line arguments using the ArgParser. As a
+ *  general rule there are two kinds of Arguments:
+ *   - Help Arguments that print the version, usage, etc.
+ *   - OPTION Arguments that override a normal OPTION value.
+ *   - Test Arguments that run Epiar Unit tests and then exit.
+ *  
+ *  \warn This may exit early.
+ */
+void Main_Parse_Args( ) {
+
+	// These are immediate options (I.E. they stop the argument processing immediately)
+	if ( argparser->HaveShort("h") || argparser->HaveLong("help") ){
+		argparser->PrintUsage();
+		exit( 0 );
+	}
+
+	if ( argparser->HaveShort("v") || argparser->HaveLong("version") ){
+		printf("\nEpiar version %s\n", EPIAR_VERSION_FULL );
+		exit( 0 );
+	}
+
+#ifdef EPIAR_COMPILE_TESTS
+	string testname = argparser->HaveValue("run-test");
+	if ( !(testname.empty()) ) {
+		Test testInst(testname);
+		exit( testInst.RunTest( argc, argv ) );
+	}
+#endif // EPIAR_COMPILE_TESTS
+
+	// Override OPTION values.
+
+	// Following are cumulative options (I.E. you can have multiple of them)
+	if ( argparser->HaveOpt("editor-mode") ){
+			SETOPTION("options/development/editor-mode",1);
+	}
+	if ( argparser->HaveOpt("no-audio") ) {
+			cout<<"turning off sound"<<endl;
+			SETOPTION("options/sound/background",0);
+			SETOPTION("options/sound/weapons",0);
+			SETOPTION("options/sound/engines",0);
+			SETOPTION("options/sound/explosions",0);
+			SETOPTION("options/sound/buttons",0);
+	}
+	if(argparser->HaveOpt("ships-worldmap"))
+	   SETOPTION("options/development/ships-worldmap",1);
+	if ( argparser->HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
+	else if ( argparser->HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
+	if ( argparser->HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
+	else if ( argparser->HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
+
+	string funfilt = argparser->HaveValue("log-fun");
+	string msgfilt = argparser->HaveValue("log-msg");
+	string loglvl = argparser->HaveValue("log-lvl");
+
+	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
+	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
+	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
+
+	// Print unused options.
+	list<string> unused = argparser->GetUnused();
+	list<string>::iterator it;
+	for ( it = unused.begin() ; it != unused.end(); it++ )
+		cout << "\tUnknown options:\t" << (*it) << endl;
+	if ( !unused.empty() ) {
+		argparser->PrintUsage();
+
+		// free the configuration file data
+		delete optionsfile;
+
+		exit( 1 );
+	}
+}
+
+/** \details
+ *  This records basic Epiar information about the current Environment.
+ */
+void Main_Log_Environment( void ) {
+	LogMsg(INFO, "Epiar Version %s", EPIAR_VERSION_FULL );
+
+#ifdef COMP_MSVC
+	LogMsg(INFO, "Compiled with MSVC vers: _MSC_VER" );
+#endif // COMP_MSVC
+
+#ifdef COMP_GCC
+	LogMsg(INFO, "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
+#endif // COMP_GCC
+
+	LogMsg(INFO,"Executable Path: %s", argparser->GetPath().c_str() );
 }
 
 typedef enum {
@@ -58,31 +295,14 @@ typedef enum {
 menuOption clicked = Menu_DoNothing;
 
 // Currently Static functions are the only way I could think of to have C only 
-void clickPlay() { clicked = Menu_Play; }
-void clickOptions() { clicked = Menu_Options; }
-void clickEditor() { clicked = Menu_Editor; }
-void clickQuit() { clicked = Menu_Quit; }
+void clickPlay() { clicked = Menu_Play; } ///< Signal the Main Menu to Play Simulation.
+void clickOptions() { clicked = Menu_Options; } ///< Signal the Main Menu to Open the Options.
+void clickEditor() { clicked = Menu_Editor; } ///< Signal the Main Menu to Run the Editor.
+void clickQuit() { clicked = Menu_Quit; } ///< Signal the Main Menu to Quit.
 
-int ui_demo = false;
-void ui_test();
-
-void createMenu( menuOption menus ) {
-	int x = OPTION( int, "options/video/w" ) - 200;
-	// Create UI
-	if( menus & Menu_Play )
-		UI::Add( new Button(x, 200, 100, 30, "Play",    clickPlay    ) );
-	if( menus & Menu_Editor )
-		UI::Add( new Button(x, 300, 100, 30, "Editor",  clickEditor  ) );
-	if( menus & Menu_Options )
-		UI::Add( new Button(x, 400, 100, 30, "Options", clickOptions ) );
-	if( menus & Menu_Quit )
-		UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
-
-	if( ui_demo ) {
-		ui_test();
-	}
-}
-
+/** \brief Create a simple UI test.
+ *  \todo Move this to the Unit Tests
+ */
 void ui_test() {
 
 	// Example of Nestable UI Creation
@@ -122,16 +342,32 @@ void ui_test() {
 
 }
 
-
-void mainmenu() {
+/** Epiar's Main Menu
+ *
+ *  This runs a while(1) loop collecting user input and drawing the screen.
+ *  While similar to the Run Loop in the Simulation, this should be simpler
+ *  since there is no HUD, Consol or Sprites.
+ *
+ */
+void Main_Menu( void ) {
 	bool quitSignal = false;
-	bool screenNeedsReset = false;
+	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
 	menuOption availableMenus = (menuOption)(Menu_Play | Menu_Editor | Menu_Quit);
+	int screenNum;
+	int button_x = OPTION( int, "options/video/w" ) - 200;
 
-	Image* splash = newSplashScreen();
-	createMenu( availableMenus );
+	string splashScreens[] = {
+		"Resources/Art/menu1.png",
+		"Resources/Art/menu2.png",
+		"Resources/Art/menu3.png",
+		"Resources/Art/menu4.png",
+		"Resources/Art/menu5.png",
+	};
+
+	screenNum = rand() % (sizeof(splashScreens) / sizeof(splashScreens[0]));
+	Image* splash = Image::Get( splashScreens[screenNum] );
 
 	string simName = "Resources/Simulation/default";
 	Simulation debug;
@@ -140,8 +376,21 @@ void mainmenu() {
 	do {
 		if (screenNeedsReset) {
 			UI::Close();
-			createMenu( availableMenus );
-			splash = newSplashScreen();
+
+			// Create UI
+			if( availableMenus & Menu_Play )
+				UI::Add( new Button(button_x, 200, 100, 30, "Play",    clickPlay    ) );
+			if( availableMenus & Menu_Editor )
+				UI::Add( new Button(button_x, 300, 100, 30, "Editor",  clickEditor  ) );
+			if( availableMenus & Menu_Options )
+				UI::Add( new Button(button_x, 400, 100, 30, "Options", clickOptions ) );
+			if( availableMenus & Menu_Quit )
+				UI::Add( new Button(button_x, 500, 100, 30, "Quit",    clickQuit    ) );
+
+			if( argparser->HaveOpt("ui-demo") ) {
+				ui_test();
+			}
+
 			screenNeedsReset = false;
 		}
 
@@ -168,7 +417,6 @@ void mainmenu() {
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
 
 				Video::Erase();
-				splash = newSplashScreen();
 				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
 				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 				Video::Update();
@@ -231,187 +479,6 @@ void mainmenu() {
 		Timer::Delay(50);
 	}while(!quitSignal);
 
-}
-
-/**Main runtime.
- * \return 0 always
- * \details
- * This function does the following:
- *  - Load options
- *  - Load fonts
- *  - Runs the Simulation routine
- *  - Calls any cleanup code
- */
-int main( int argc, char **argv ) {
-#ifdef _WIN32
-	// This attaches a console to the parent process if it has a console
-	if(AttachConsole(ATTACH_PARENT_PROCESS)){
-		freopen("CONOUT$","wb",stdout);  // reopen stout handle as console window output
-		freopen("CONOUT$","wb",stderr); // reopen stderr handle as console window output
-	}
-	#if defined(_MSC_VER) && defined(DEBUG)
-		int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
-		// Turn on leak-checking bit
-		tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
-		// Set flag to the new value
-		_CrtSetDbgFlag( tmpFlag );
-	#endif//_MSC_VER
-#endif //_WIN32
-
-	// Parse command line options first.
-	ArgParser argparser(argc, argv);
-
-	argparser.SetOpt(SHORTOPT, "h",             "Display help screen");
-	argparser.SetOpt(LONGOPT, "help",           "Display help screen");
-	argparser.SetOpt(SHORTOPT, "v",             "Display program version");
-	argparser.SetOpt(LONGOPT, "version",        "Display program version");
-	argparser.SetOpt(LONGOPT, "editor-mode",    "Puts you in edit mode");
-	argparser.SetOpt(LONGOPT, "no-audio",       "Disables audio");
-	argparser.SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
-	argparser.SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
-	argparser.SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
-	argparser.SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
-	argparser.SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
-	argparser.SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
-	                                            "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
-	argparser.SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
-	argparser.SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
-	argparser.SetOpt(LONGOPT, "ui-demo",        "Runs the UI demo.");
-
-#ifdef EPIAR_COMPILE_TESTS
-	argparser.SetOpt(VALUEOPT, "run-test",      "Run specified test");
-#endif // EPIAR_COMPILE_TESTS
-
-	// These are immediate options (I.E. they stop the argument processing immediately)
-	if ( argparser.HaveShort("h") || argparser.HaveLong("help") ){
-		argparser.PrintUsage();
-		return 0;
-	}
-	if ( argparser.HaveShort("v") || argparser.HaveLong("version") ){
-		printf("\nEpiar version %s", EPIAR_VERSION_FULL );
-		printf("\n");
-		return 0;
-	}
-
-#ifdef EPIAR_COMPILE_TESTS
-	string testname = argparser.HaveValue("run-test");
-	if ( !(testname.empty()) ) {
-		Test testInst(testname);
-		return testInst.RunTest( argc, argv );
-	}
-#endif // EPIAR_COMPILE_TESTS
-
-#ifdef USE_PHYSICSFS
-	// Use ".dat" extension for data files
-	Filesystem::Init( argv[0], "dat" );
-#endif
-
-#ifdef __APPLE__
-	string path = argv[0];
-	if( path.find("MacOS/Epiar") ){ // If this is being run from inside a Bundle
-		// Chdir to the Bundle Contents
-		string ContentsPath = path.substr(0, path.find("MacOS/Epiar") );
-		chdir(ContentsPath.c_str());
-	}
-#endif
-
-	// Unfortunately, we need to load the main configuration file (used throughout the tree)
-	// before parsing more options
-	optionsfile = new XMLFile();
-	if( !optionsfile->Open("Resources/Definitions/options.xml") )
-	{
-		printf("Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
-		return -1;
-	}
-
-	// Following are cumulative options (I.E. you can have multiple of them)
-	if ( argparser.HaveOpt("editor-mode") ){
-			SETOPTION("options/development/editor-mode",1);
-	}
-	if ( argparser.HaveOpt("no-audio") ) {
-			cout<<"turning off sound"<<endl;
-			SETOPTION("options/sound/background",0);
-			SETOPTION("options/sound/weapons",0);
-			SETOPTION("options/sound/engines",0);
-			SETOPTION("options/sound/explosions",0);
-			SETOPTION("options/sound/buttons",0);
-	}
-	if(argparser.HaveOpt("ships-worldmap"))
-	   SETOPTION("options/development/ships-worldmap",1);
-	if ( argparser.HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
-	else if ( argparser.HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
-	if ( argparser.HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
-	else if ( argparser.HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
-
-	string funfilt = argparser.HaveValue("log-fun");
-	string msgfilt = argparser.HaveValue("log-msg");
-	string loglvl = argparser.HaveValue("log-lvl");
-
-	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
-	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
-	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
-
-	ui_demo = argparser.HaveOpt("ui-demo");
-
-	// Print unused options.
-	list<string> unused = argparser.GetUnused();
-	list<string>::iterator it;
-	for ( it = unused.begin() ; it != unused.end(); it++ )
-		cout << "\tUnknown options:\t" << (*it) << endl;
-	if ( !unused.empty() ) {
-		argparser.PrintUsage();
-
-		// free the configuration file data
-		delete optionsfile;
-
-		return -1;
-	}
-
-	LogMsg(INFO, "Epiar %s starting up.", EPIAR_VERSION_FULL );
-
-#ifdef COMP_MSVC
-	LogMsg(INFO, "Compiled with MSVC vers: _MSC_VER" );
-#endif // COMP_MSVC
-#ifdef COMP_GCC
-	LogMsg(INFO, "Compiled with GCC vers: %d.%d.%d", __GNUC__, __GNUC_MINOR__, __GNUC_PATCHLEVEL__ );
-#endif // COMP_GCC
-
-	LogMsg(INFO,"Executable Path: %s", argv[0]);
-
-	Audio::Instance().Initialize();
-	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
-	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
-
-	LogMsg(INFO,"Using Font Engine: FreeType");
-
-	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
-	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
-	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
-	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
-
-	Timer::Initialize();
-	Video::Initialize();
-
-	mainmenu();
-
-	Video::Shutdown();
-	Audio::Instance().Shutdown();
-
 	LogMsg(INFO, "Epiar shutting down." );
-
-	// free the main font files
-	delete SansSerif;
-	delete BitType;
-	delete Serif;
-	delete Mono;
-	// free the configuration file data
-	delete optionsfile;
-
-#ifdef USE_PHYSICSFS
-	Filesystem::DeInit();
-#endif
-	Log::Instance().Close();
-
-	return( 0 );
 }
 
