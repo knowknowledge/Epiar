@@ -18,8 +18,10 @@ class ArgParser {
 		bool HaveArg( const string& arg );
 		void PrintUsage( void );
 		list<string> GetUnused( void );
+		string GetPath() { return path; }
 
 	private:
+		string path;
 		void Parse( int argc, char **argv );
 		argType CheckArg( const string& anarg );
 

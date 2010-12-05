@@ -203,6 +203,7 @@ list<string> ArgParser::GetUnused( void ){
 /**\brief Parses the args and fills in the data.*/
 void ArgParser::Parse( int argc, char **argv ){
 	string currarg;						// Current options
+	path = argv[0];
 	for( int i=1; i < argc; i ++ ){
 		currarg = argv[i];
 		argType type = this->CheckArg( currarg );
