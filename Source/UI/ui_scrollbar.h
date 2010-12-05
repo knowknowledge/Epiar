@@ -13,30 +13,28 @@
 #define SCROLLBAR_MINMARK	10	// Minimum marker size
 #define SCROLLBAR_BTN		18	// Scrollbar button size
 #define SCROLLBAR_SCROLL	20	// Amount of scrolling per click
-typedef enum{HORIZONTAL,VERTICAL} scrollbarType;
 
 class Scrollbar : public Widget {
 	public:
-		Scrollbar( int x, int y, int length,
-			scrollbarType type, Widget *parent );
+		Scrollbar( int x, int y, int length, Widget *parent );
 
 		~Scrollbar();
 
-		void Draw( int relx=0, int rely = 0 );
+		void Draw( int relx = 0, int rely = 0 );
 
 		// Use these when the encompassing window size changes
-		void SetPosition(int x, int y){this->x=x;this->y=y; }
+		void SetPosition(int x, int y) { this->x = x; this->y = y; }
 		void SetSize(int length);
 
 		bool MouseLDown( int xi, int yi );
 		bool MouseDrag( int xi, int yi );
 
-		string GetType( void ){ return string("Scrollbar");}
+		string GetType( void ) { return string("Scrollbar");}
 
-		void ScrollUp( int pix=SCROLLBAR_SCROLL );
-		void ScrollDown( int pix=SCROLLBAR_SCROLL );
+		void ScrollUp( int pix = SCROLLBAR_SCROLL );
+		void ScrollDown( int pix = SCROLLBAR_SCROLL );
 
-		int pos,maxpos;
+		int pos, maxpos;
 
 	private:
 		int GetMarkerSize( void );
@@ -45,7 +43,6 @@ class Scrollbar : public Widget {
 		int CheckPos( int newpos );
 
 		int markersize;
-		scrollbarType type;
 		Widget *parent;
 
 };

@@ -26,7 +26,6 @@ class Frame : public UIContainer {
 	private:
 		Image *bitmaps[9];
 
-		Scrollbar *hscrollbar;
 		Scrollbar *vscrollbar;
 };
 

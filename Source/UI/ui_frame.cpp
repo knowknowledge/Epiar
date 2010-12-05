@@ -19,11 +19,13 @@
 /**\brief Creates a new frame with specified parameters.
  */
 Frame::Frame( int x, int y, int w, int h ):
-		hscrollbar( NULL ),vscrollbar( NULL ){
+		vscrollbar( NULL ){
+
 	this->x=x;
 	this->y=y;
 	this->w=w;
 	this->h=h;
+
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_frame_up_left.png" );
 	bitmaps[1] = Image::Get( "Resources/Graphics/ui_frame_up.png" );
@@ -42,19 +44,7 @@ Frame *Frame::AddChild( Widget *widget ){
 	assert( widget != NULL );
 
 	// Check to see if widget is past the bounds.
-	int hbnd = widget->GetX()+widget->GetW();
-	int vbnd = widget->GetY()+widget->GetH();
-
-	if ( hbnd > this->w ){
-		if ( !this->hscrollbar ){
-			this->hscrollbar = new Scrollbar( SCROLLBAR_PAD,
-				this->h-SCROLLBAR_THICK-SCROLLBAR_PAD,
-				this->w-2*SCROLLBAR_PAD, HORIZONTAL,
-				this);
-			UIContainer::AddChild( this->hscrollbar );
-		}
-		this->hscrollbar->maxpos = hbnd;
-	}
+	int vbnd = widget->GetY() + widget->GetH();
 
 	if ( vbnd > this->h ){
 		if ( !this->vscrollbar ){
@@ -63,7 +53,7 @@ Frame *Frame::AddChild( Widget *widget ){
 				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
 				this->h-2*SCROLLBAR_PAD
 				-bitmaps[1]->GetHeight()
-				-SCROLLBAR_THICK, VERTICAL,
+				-SCROLLBAR_THICK,
 				this);
 			UIContainer::AddChild( this->vscrollbar );
 		}
@@ -77,7 +67,7 @@ Frame *Frame::AddChild( Widget *widget ){
 Widget *Frame::DetermineMouseFocus( int relx, int rely ){
 	list<Widget *>::iterator i;
 
-	int xoffset = this->hscrollbar ? this->hscrollbar->pos : 0;
+	int xoffset = 0;
 	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 
@@ -114,31 +104,28 @@ void Frame::Draw( int relx, int rely ) {
 	bitmaps[6]->DrawTiled( x + bitmaps[5]->GetWidth(), y + h - bitmaps[6]->GetHeight(), w - bitmaps[5]->GetWidth() - bitmaps[7]->GetWidth(), bitmaps[6]->GetHeight() );
 	bitmaps[7]->Draw( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight() );
 
-	// Crop when necessary
-	if ( this->hscrollbar || this->vscrollbar )
-		Video::SetCropRect(this->GetX(), this->GetY()+bitmaps[1]->GetHeight(), this->w-SCROLLBAR_PAD, this->h-SCROLLBAR_PAD-bitmaps[1]->GetHeight());
+	// Crop children
+	Video::SetCropRect(x, y + bitmaps[1]->GetHeight(), w, h - bitmaps[1]->GetHeight());
 	
 	// Draw any children
 	list<Widget *>::iterator i;
 	
 	for( i = children.begin(); i != children.end(); ++i ) {
 		// Skip scrollbars
-		if ( ((*i)==this->hscrollbar) ||
-				((*i)==this->vscrollbar) ){
+		if ( (*i) == this->vscrollbar ){
 			(*i)->Draw( x, y );
 			continue;
 		}
 		int xscroll=0;
 		int yscroll=0;
-		if ( this->hscrollbar )
-			xscroll = hscrollbar->pos;
+
 		if ( this->vscrollbar )
 			yscroll = vscrollbar->pos;
-		(*i)->Draw( x-xscroll,y-yscroll );
+
+		(*i)->Draw( x-xscroll, y-yscroll );
 	}
 	
-	if ( this->hscrollbar || this->vscrollbar )
-		Video::UnsetCropRect();
+	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);
 }

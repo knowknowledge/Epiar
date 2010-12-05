@@ -29,7 +29,6 @@ Tab::Tab( const string& _caption ){
 	this->w=0;
 	this->name=_caption;
 
-	this->hscrollbar = NULL;
 	this->vscrollbar = NULL;
 
 	this->capw = SansSerif->TextWidth( _caption );
@@ -49,9 +48,8 @@ Tab *Tab::AddChild( Widget *widget ){
 Widget *Tab::DetermineMouseFocus( int relx, int rely ){
 	list<Widget *>::iterator i;
 
-	int xoffset = this->hscrollbar ? this->hscrollbar->pos : 0;
+	int xoffset = 0;
 	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
-
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
@@ -91,16 +89,13 @@ void Tab::Draw( int relx, int rely ) {
 	
 	for( i = children.begin(); i != children.end(); ++i ) {
 		// Skip scrollbars
-		if ( ((*i)==this->hscrollbar) ||
-				((*i)==this->vscrollbar) ){
+		if ( (*i) == this->vscrollbar ){
 			(*i)->Draw( x, y );
 			continue;
 		}
 
 		int xscroll = 0;
 		int yscroll = 0;
-		if ( this->hscrollbar )
-			xscroll = hscrollbar->pos;
 		if ( this->vscrollbar )
 			yscroll = vscrollbar->pos;
 
@@ -137,27 +132,6 @@ void Tab::ResetScrollBars(){
 	}
 	max_height += SCROLLBAR_THICK + SCROLLBAR_PAD;
 
-	// Add a Horizontal ScrollBar if necessary
-	if ( max_width > GetW() || this->hscrollbar != NULL ){
-		int v_x = SCROLLBAR_PAD;
-		int v_y = this->h-SCROLLBAR_THICK-SCROLLBAR_PAD;
-		int v_l = this->w-2*SCROLLBAR_PAD;
-		// Only add a Scrollbar when it doesn't already exist
-		if ( this->hscrollbar ){
-			UIContainer::DelChild( this->hscrollbar );
-			this->hscrollbar = NULL;
-			LogMsg(INFO, "Changing Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-		} else {
-			LogMsg(INFO, "Adding Horiz ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-		}
-		this->hscrollbar = new Scrollbar(
-			v_x, v_y, v_l,
-			HORIZONTAL,
-			this);
-		UIContainer::AddChild( this->hscrollbar );
-		this->hscrollbar->maxpos = max_width;
-	}
-
 	// Add a Vertical ScrollBar if necessary
 	if ( max_height > GetH() || this->vscrollbar != NULL ){
 		int v_x = this->w-SCROLLBAR_THICK-SCROLLBAR_PAD;
@@ -172,11 +146,11 @@ void Tab::ResetScrollBars(){
 		} else {
 			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}
-		this->vscrollbar = new Scrollbar(
-			v_x, v_y, v_l,
-			VERTICAL,
-			this);
+
+		this->vscrollbar = new Scrollbar(v_x, v_y, v_l,this);
+
 		UIContainer::AddChild( this->vscrollbar );
+
 		this->vscrollbar->maxpos = max_height;
 	}
 }
