@@ -63,6 +63,9 @@ void clickOptions() { clicked = Menu_Options; }
 void clickEditor() { clicked = Menu_Editor; }
 void clickQuit() { clicked = Menu_Quit; }
 
+int ui_demo = false;
+void ui_test();
+
 void createMenu( menuOption menus ) {
 	int x = OPTION( int, "options/video/w" ) - 200;
 	// Create UI
@@ -74,6 +77,13 @@ void createMenu( menuOption menus ) {
 		UI::Add( new Button(x, 400, 100, 30, "Options", clickOptions ) );
 	if( menus & Menu_Quit )
 		UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
+
+	if( ui_demo ) {
+		ui_test();
+	}
+}
+
+void ui_test() {
 
 	// Example of Nestable UI Creation
 	UI::Add(
@@ -111,6 +121,7 @@ void createMenu( menuOption menus ) {
 	);
 
 }
+
 
 void mainmenu() {
 	bool quitSignal = false;
@@ -264,6 +275,7 @@ int main( int argc, char **argv ) {
 			"\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
 	argparser.SetOpt(VALUEOPT,"log-fun",		"Filter log messages by function name.");
 	argparser.SetOpt(VALUEOPT,"log-msg",		"Filter log messages by string content.");
+	argparser.SetOpt(LONGOPT,"ui-demo",         "Runs the UI demo.");
 
 #ifdef EPIAR_COMPILE_TESTS
 	argparser.SetOpt(VALUEOPT,"run-test",		"Run specified test");
@@ -337,6 +349,8 @@ int main( int argc, char **argv ) {
 	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
 	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
 	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
+
+	ui_demo = argparser.HaveOpt("ui-demo");
 
 	// Print unused options.
 	list<string> unused = argparser.GetUnused();
