@@ -31,7 +31,7 @@ Tab::Tab( const string& _caption ){
 
 	this->vscrollbar = NULL;
 
-	this->capw = SansSerif->TextWidth( _caption );
+	this->capw = Font::GetSkin( "Font/UI/Tab" )->TextWidth( _caption );
 }
 
 /**\brief Adds children to the Tab object.
@@ -240,7 +240,7 @@ void Tabs::Draw( int relx, int rely ){
 		if ( currtab == activetab )
 			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
 
-		SansSerif->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
+		Font::GetSkin( "Font/UI/Tab" )->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
 
 		xo += currtab->capw+TAB_PAD*2+1;
 	}

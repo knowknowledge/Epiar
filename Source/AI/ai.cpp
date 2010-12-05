@@ -126,10 +126,11 @@ void AI::Update() {
 void AI::Draw(){
 	this->Ship::Draw();
 	if( OPTION(int,"options/development/debug-ai") ) {
-		SansSerif->SetColor(1.0,1.0,1.0,1.0);
 		Coordinate position = this->GetWorldPosition();
-		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
-		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
+		Font* font = Font::GetSkin( "Font/Development" );
+		font->SetColor(1.0,1.0,1.0,1.0);
+		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
+		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
 	}
 }
 

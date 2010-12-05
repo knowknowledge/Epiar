@@ -74,6 +74,7 @@ Button::~Button() {
 /**\brief Draws the button.*/
 void Button::Draw( int relx, int rely ) {
 	int x, y;
+	Font* font = Font::GetSkin( "Font/UI/Button" );
 	
 	x = this->x + relx;
 	y = this->y + rely;
@@ -87,8 +88,8 @@ void Button::Draw( int relx, int rely ) {
 
 	// draw the label
 	Video::SetCropRect(x + 1, y + 1, this->w - 2, this->h - 2); // constants adjust for the 1px border
-	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
+	font->SetColor( 1., 1., 1. );
+	font->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);
