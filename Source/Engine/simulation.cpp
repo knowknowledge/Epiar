@@ -454,7 +454,7 @@ bool Simulation::HandleInput() {
 	events = inputs.Update();
 
 	// Pass the Events to the systems that handle them.
-	UI::HandleInput( &events );
+	UI::HandleInput( events );
 	console.HandleInput( events );
 	Hud::HandleInput( events );
 

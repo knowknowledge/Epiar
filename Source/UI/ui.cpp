@@ -95,12 +95,12 @@ void UI::Save( void ) {
  * to be handled by the next input handler.
  * The order of input handlers is in input.cpp.
  */
-void UI::HandleInput( list<InputEvent> *events ) {
+void UI::HandleInput( list<InputEvent> & events ) {
 	// Go through all input events to see if they apply to any top-level widget. top-level widgets
 	// (like windows) will then take the input and pass it to any children (like the ok button in the window)
 	// where appropriate
-	list<InputEvent>::iterator i = events->begin();
-	while( i != events->end() ){
+	list<InputEvent>::iterator i = events.begin();
+	while( i != events.end() ){
 		bool eventWasHandled = false;
 	
 		switch( i->type ) {
@@ -113,7 +113,7 @@ void UI::HandleInput( list<InputEvent> *events ) {
 		}
 
 		if( eventWasHandled ) {
-			i = events->erase( i );
+			i = events.erase( i );
 		} else {
 			i++;
 		}

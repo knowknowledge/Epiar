@@ -348,7 +348,7 @@ void ui_test() {
  *
  */
 void Main_Menu( void ) {
-	bool quitSignal = true;
+	bool quitSignal = false;
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
@@ -397,7 +397,7 @@ void Main_Menu( void ) {
 
 		// Collect user input events
 		events = inputs.Update();
-		UI::HandleInput( &events );
+		UI::HandleInput( events );
 
 		// Draw Things
 		Video::Erase();
