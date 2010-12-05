@@ -18,13 +18,9 @@
 /**\class Textbox
  * \brief UI textbox. */
 
-Font *Textbox::font = NULL;
-
 /**\brief This is used to construct the Textbox.*/
 Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
-	if( font == NULL ) {
-		font = Font::GetSkin( "Font/UI/Textbox" );
-	}
+	Font* font = Font::GetSkin( "Font/UI/Textbox" );
 
 	int rowHeight = ((font->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
 
@@ -45,6 +41,7 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 /**\brief Draws the textbox.*/
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
+	Font* font = Font::GetSkin( "Font/UI/Textbox" );
 	
 	x = GetX() + relx;
 	y = GetY() + rely;

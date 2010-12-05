@@ -36,7 +36,6 @@ class Button : public Widget {
 
 		string lua_callback;
 		void (*clickCallBack)();
-		static Font* font;
 };
 
 #endif // __H_BUTTON__

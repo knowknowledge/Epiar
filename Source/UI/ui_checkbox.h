@@ -30,8 +30,6 @@ class Checkbox : public Widget {
 	private:
 		string label;
 		bool checked;
-	
-		static Font* font;
 };
 
 #endif // __H_CHECKBOX__

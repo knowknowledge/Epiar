@@ -34,7 +34,6 @@ class AI : public Ship {
 		string stateMachine;
 		string state;
 		Alliance* allegiance;
-		static Font* aiFont;
 };
 
 #endif /*AI_H_*/

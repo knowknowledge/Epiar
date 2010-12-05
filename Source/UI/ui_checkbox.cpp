@@ -17,14 +17,10 @@
 /**\class Checkbox
  * \brief UI checkbox. */
 
-Font *Checkbox::font = NULL;
-
 /**\brief Constructs a new Checkbox.
  */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
-	if( font == NULL ) {
-		font = Font::GetSkin( "Font/UI/Checkbox" );
-	}
+	Font* font = Font::GetSkin( "Font/UI/Checkbox" );
 
 	this->x = x;
 	this->y = y;
@@ -40,6 +36,7 @@ Checkbox::Checkbox( int x, int y, bool checked, string label ) {
 
 void Checkbox::Draw( int relx, int rely ) {
 	int x, y;
+	Font* font = Font::GetSkin( "Font/UI/Checkbox" );
 	
 	x = this->x + relx;
 	y = this->y + rely;

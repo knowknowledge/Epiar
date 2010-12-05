@@ -32,7 +32,6 @@ class Window : public UIContainer {
 		Image *bitmaps[9];
 		
 		Scrollbar *vscrollbar;
-		static Font* font;
 };
 
 #endif // __H_WINDOW__

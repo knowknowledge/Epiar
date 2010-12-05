@@ -16,8 +16,6 @@
 /**\class Window
  * \brief Window handling. */
 
-Font *Window::font = NULL;
-
 /**\brief Creates a new window with specified parameters.
  */
 Window::Window( int x, int y, int w, int h, string caption ):
@@ -41,10 +39,6 @@ Window::Window( int x, int y, int w, int h, string caption ):
 	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
 	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
 	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
-
-	if( font == NULL ) {
-		font = Font::GetSkin( "Font/UI/Window" );
-	}
 }
 
 Window::~Window() {
@@ -114,6 +108,7 @@ Widget *Window::DetermineMouseFocus( int relx, int rely ){
 void Window::Draw( int relx, int rely ) {
 	int x, y;
 	static float alpha = 0.95f;
+	Font* font = Font::GetSkin( "Font/UI/Window" );
 	
 	x = GetX() + relx;
 	y = GetY() + rely;

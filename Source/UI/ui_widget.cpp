@@ -20,7 +20,6 @@
  *  \brief Empty function that should be overloaded for drawing the widget.
  */
 
-Font *Widget::font = NULL;
 
 /**\brief Constructor.
  */
@@ -28,18 +27,15 @@ Widget::Widget( void ):
 	hovering( false ), hidden( false ), disabled( false ),
 	x( 0 ),y( 0 ),w( 0 ),h( 0 ),
 	dragX( 0 ),dragY( 0 ),
-	name( "UnspecifiedWidget" ),keyactivated( false )
-{
+	name( "UnspecifiedWidget" ),keyactivated( false ){
 }
 
 void Widget::Draw( int relx, int rely ) {
 	if( hovering && OPTION(int,"options/development/debug-ui") ) {
-		if(font == NULL){
-			font = Font::Get( SKIN("Font/Development") );
-		}
 		int x, y;
 		char xbuff[6];
 		char ybuff[6];
+		Font* font = Font::Get( SKIN("Font/Development") );
 
 		x = this->x + relx;
 		y = this->y + rely;

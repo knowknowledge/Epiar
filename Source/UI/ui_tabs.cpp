@@ -20,8 +20,6 @@
  * \brief A single tab.
  */
 
-Font *Tab::font = NULL;
-
 /**\brief Constructs a single tab with caption.
  */
 Tab::Tab( const string& _caption ){
@@ -33,11 +31,7 @@ Tab::Tab( const string& _caption ){
 
 	this->vscrollbar = NULL;
 
-	if( font == NULL ) {
-		font = Font::GetSkin( "Font/UI/Tab" );
-	}
-
-	this->capw = font->TextWidth( _caption );
+	this->capw = Font::GetSkin( "Font/UI/Tab" )->TextWidth( _caption );
 }
 
 /**\brief Adds children to the Tab object.
