@@ -45,6 +45,7 @@ class Player : public Ship , public Component {
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_PLAYER );
 		}
+		Color GetRadarColor( void ) { return GOLD; }
 
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
 
