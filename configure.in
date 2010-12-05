@@ -25,23 +25,23 @@ then
 fi
 
 dnl Check for Freetype
-case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
-	PKG_CHECK_MODULES([freetype2], [freetype2 >= 9.22])
-	CFLAGS="$CFLAGS $freetype2_CFLAGS"
-	LIBS="$LIBS $freetype2_LIBS"
-esac
+dnl case "$target" in
+dnl	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
+dnl	PKG_CHECK_MODULES([freetype2], [freetype2 >= 9.22])
+dnl	CFLAGS="$CFLAGS $freetype2_CFLAGS"
+dnl	LIBS="$LIBS $freetype2_LIBS"
+dnl esac
 
 dnl Some additional flags for Freetype
-case "$target" in *-*-linux*)
-	CFLAGS="$CFLAGS -I/usr/include/freetype2"
-esac
-case "$target" in *-*-freebsd*)
-	CFLAGS="$CFLAGS -I/usr/local/include/freetype2"
-esac
-case "$target" in *-apple-darwin*)
-	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
-esac
+dnl case "$target" in *-*-linux*)
+dnl	CFLAGS="$CFLAGS -I/usr/include/freetype2"
+dnl esac
+dnl case "$target" in *-*-freebsd*)
+dnl	CFLAGS="$CFLAGS -I/usr/local/include/freetype2"
+dnl esac
+dnl case "$target" in *-apple-darwin*)
+dnl	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
+dnl esac
 
 dnl Include FTGL
 case "$target" in
@@ -126,7 +126,7 @@ dnl Set OS X specific options
 case "$target" in
 	*-apple-darwin*)
 		CFLAGS="$CFLAGS -DDARWIN"
-		LIBS="$LIBS -lz"
+		LIBS="$LIBS"
 		;;
 esac
 

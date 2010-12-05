@@ -103,7 +103,7 @@ void Frame::Draw( int relx, int rely ) {
 	bitmaps[7]->Draw( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight() );
 
 	// Crop children
-	Video::SetCropRect(this->GetX(), this->GetY()+bitmaps[1]->GetHeight(), this->w-SCROLLBAR_PAD, this->h-SCROLLBAR_PAD-bitmaps[1]->GetHeight());
+	Video::SetCropRect(x, y + bitmaps[1]->GetHeight(), w, h - bitmaps[1]->GetHeight());
 	
 	// Draw any children
 	list<Widget *>::iterator i;
