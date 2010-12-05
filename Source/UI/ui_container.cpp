@@ -110,6 +110,45 @@ Widget *UIContainer::DetermineMouseFocus( int relx, int rely ) {
 	return( NULL );
 }
 
+/**\brief Search for a child named
+ *
+ * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
+ */
+Widget *UIContainer::ChildNamed( string _name, int mask ) {
+	list<Widget *>::reverse_iterator i;
+
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.rbegin(); i != children.rend(); ++i ) {
+		if( ( (*i)->GetName() == _name ) && ( (*i)->GetMask() & mask ) ) {
+			return (*i);
+		}
+	}
+	return( NULL );
+}
+
+/**\brief Search for a child at a specific position
+ *
+ * pos == 0 is at the top.
+ *
+ * \param[in] pos position of the child
+ * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
+ */
+Widget *UIContainer::ChildFromTop( int pos, int mask) {
+	int p = 0;
+	list<Widget *>::reverse_iterator i;
+
+	// Check children from top (last drawn) to bottom (first drawn).
+	for( i = children.rbegin(); i != children.rend(); ++i ) {
+		if( (*i)->GetMask() & mask ) {
+			if( pos == p ) {
+				return (*i);
+			}
+			++p;
+		}
+	}
+	return( NULL );
+}
+
 /**\brief Draws this widget and all children widgets.
  */
 void UIContainer::Draw( int relx, int rely ) {
