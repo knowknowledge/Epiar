@@ -118,6 +118,14 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			i++;
 		}
 	}
+
+	// On Escape, close the top Widget
+	Widget* topContainer = UI::master.ChildFromTop(0, WIDGET_CONTAINER);
+	if( topContainer != NULL ) {
+		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
+			UI::master.DelChild( topContainer );
+		}
+	}
 }
 
 /**\brief Handles UI keyboard events.*/
