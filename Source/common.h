@@ -21,9 +21,12 @@
 // defined in main.cpp. used through the codebase
 extern XMLFile *optionsfile;
 extern Font *SansSerif, *BitType, *Serif, *Mono;
+extern XMLFile *skinfile;
 
 // to simply accessing the options file
 #define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
 #define SETOPTION(path, value) (optionsfile->Set((path),(value)) )
+
+#define SKIN(path) (skinfile->Get(path) )
 
 #endif // __H_COMMON__

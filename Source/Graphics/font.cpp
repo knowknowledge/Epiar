@@ -48,6 +48,15 @@ Font* Font::Get( string filename ) {
 	return value;
 }
 
+/**\brief Lazy fetch an Font
+ */
+Font* Font::GetSkin( string skinPath ) {
+	string path = SKIN( skinPath );
+	if( path == "" ) {
+		LogMsg(DEBUG1,"Couldn't Find Font '%s'",skinPath.c_str());
+		assert(0);
+	}
+	return Get( path );
 }
 
 /**\brief Destroys the font.*/

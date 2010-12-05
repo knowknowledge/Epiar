@@ -32,6 +32,7 @@ class Font : public Resource {
 			~Font();
 
 			static Font* Get(string filename);
+			static Font* GetSkin(string filename);
 
 			bool Load( string filename );
 

@@ -30,6 +30,7 @@
 
 // main configuration file, used through the tree (extern in common.h)
 XMLFile *optionsfile = NULL;
+XMLFile *skinfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 ArgParser *argparser;
@@ -132,6 +133,13 @@ void Main_Init_Singletons( int argc, char **argv ) {
 		exit(-1);
 	}
 
+	skinfile = new XMLFile();
+	if( !skinfile->Open("Resources/Definitions/skin.xml") )
+	{
+		fprintf(stderr, "Failed to find Skin file at 'Resources/Definitions/skin.xml'. Aborting Epiar.");
+		exit(-1);
+	}
+
 	Audio::Instance().Initialize();
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
@@ -188,6 +196,7 @@ void Main_Close_Singletons( void ) {
 
 	// free the configuration file data
 	delete optionsfile;
+	delete skinfile;
 
 	Log::Instance().Close();
 }
