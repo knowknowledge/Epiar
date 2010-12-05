@@ -12,6 +12,7 @@
     <weapon>Magnetic Mine</weapon>
     <weapon>Plasma Cannon</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
+    <outfit>Nav Aid</outfit>
     <outfit>Organic Plating</outfit>
   </technology>
   <technology>
@@ -36,6 +37,7 @@
     <engine>Ion Engines</engine>
     <outfit>Directional Thrusters</outfit>
     <outfit>Booster</outfit>
+    <outfit>Nav Aid</outfit>
     <outfit>Copper Plating</outfit>
   </technology>
   <technology>
@@ -51,14 +53,15 @@
   </technology>
   <technology>
     <name>Terran Medium-Scale Commerce</name>
+    <model>Hammer Freighter</model>
     <model>Terran Assist</model>
     <model>Terran Miner</model>
     <model>Terran FV-5 Frigate</model>
     <model>Terran Explorer</model>
-    <model>Hammer Freighter</model>
     <weapon>Laser</weapon>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <outfit>Mass Shipping License</outfit>
+    <outfit>Nav Aid</outfit>
     <outfit>Carbon Plating</outfit>
     <outfit>Shipping License</outfit>
   </technology>
@@ -103,6 +106,7 @@
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <outfit>Directional Thrusters</outfit>
     <outfit>Booster</outfit>
+    <outfit>Nav Aid</outfit>
   </technology>
   <technology>
     <name>Vespian Guard</name>

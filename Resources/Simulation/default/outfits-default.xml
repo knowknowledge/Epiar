@@ -59,6 +59,17 @@
     <shield>0</shield>
   </outfit>
   <outfit>
+    <name>Nav Aid</name>
+    <msrp>50000</msrp>
+    <picName>Resources/Graphics/nav_device.png</picName>
+    <rotsPerSecond>0.000000</rotsPerSecond>
+    <maxSpeed>0.000000</maxSpeed>
+    <force>0.000000</force>
+    <mass>0.000000</mass>
+    <hull>0</hull>
+    <shield>0</shield>
+  </outfit>
+  <outfit>
     <name>Organic Plating</name>
     <msrp>500</msrp>
     <picName>Resources/Graphics/hp_organic.png</picName>

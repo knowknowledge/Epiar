@@ -85,6 +85,10 @@ void Player::Update( void ) {
 		}
 	}
 
+	if(luaControlFunc != ""){
+		Lua::Run(luaControlFunc);
+	}
+
 	Ship::Update();
 }
 
@@ -186,6 +190,8 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else {
 		lastLoadTime = (time_t)0;
 	}
+
+	RemoveLuaControlFunc();
 
 	return true;
 }
@@ -373,6 +379,7 @@ Player* Players::CreateNew(string playerName) {
 	newPlayer->SetEngine( defaultEngine );
 	newPlayer->SetCredits( defaultCredits );
 	newPlayer->SetWorldPosition( defaultLocation );
+	newPlayer->RemoveLuaControlFunc();
 
 	newPlayer->lastLoadTime = time(NULL);
 
@@ -428,6 +435,8 @@ Player* Players::LoadPlayer(string playerName) {
 	} else {
 		newPlayer->SetWorldPosition( defaultLocation );
 	}
+
+	newPlayer->RemoveLuaControlFunc();
 
 	// We can't start the game with bad player Information
 	assert( newPlayer->GetModelName() != "" );

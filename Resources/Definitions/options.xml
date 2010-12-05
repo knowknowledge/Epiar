@@ -17,7 +17,7 @@
 		<fps>60</fps>
 	</video>
 	<sound>
-		<musicvolume>0.5</musicvolume>
+		<musicvolume>0</musicvolume>
 		<soundvolume>0.5</soundvolume>
 		<background>1</background>
 		<weapons>1</weapons>

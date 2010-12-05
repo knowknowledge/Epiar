@@ -47,6 +47,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Explode", &AI_Lua::ShipExplode},
 		{"Remove", &AI_Lua::ShipRemove},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
+		{"SetLuaControlFunc", &AI_Lua::ShipSetLuaControlFunc},
 		
 		//Power Distribution
 		{"GetShieldBooster", &AI_Lua::ShipGetShieldBooster},
@@ -1538,4 +1539,19 @@ int AI_Lua::ShipGetWeaponSlotContents(lua_State* L){
 		++it;
 	}
 	return 1;
+}
+
+/**\brief Lua callable function to set the player's Lua control function
+ */
+int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		Player *p = (Player *)checkShip(L,1);
+		if(p==NULL) return 0;
+		string controlFunc = luaL_checkstring (L, 2);
+		(p)->SetLuaControlFunc( controlFunc );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, controlFunc)", n);
+	}
+	return 0;
 }
