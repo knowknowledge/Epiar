@@ -15,7 +15,7 @@
 class Frame : public UIContainer {
 	public:
 		Frame( int x, int y, int w, int h );
-		Widget *AddChild( Widget *widget );
+		Frame *AddChild( Widget *widget );
 		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	

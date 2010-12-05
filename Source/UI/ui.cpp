@@ -47,7 +47,10 @@ bool UI::Active( void ) {
  * \returns The same pointer to the widget that was passed as input.
  */
 Widget *UI::Add( Widget *widget ) {
-	if( !widget ) return false;
+	if( widget == NULL ) {
+		LogMsg(ERR, "Attempt to add a NULL Widget! Widget not Added." );
+		return (Widget*)NULL;
+	}
 	
 	return UI::master.AddChild( widget );
 }

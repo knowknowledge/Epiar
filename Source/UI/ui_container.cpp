@@ -41,11 +41,12 @@ UIContainer::~UIContainer( void ) {
 
 /**\brief Adds a child to the current container.
  */
-Widget *UIContainer::AddChild( Widget *widget ) {
-	if( !widget)
-		return NULL;
-	children.push_back( widget );
-	return widget;
+UIContainer *UIContainer::AddChild( Widget *widget ) {
+	assert( widget != NULL );
+	if( widget != NULL ) {
+		children.push_back( widget );
+	}
+	return this;
 }
 
 /**\brief Deletes a child from the current container.

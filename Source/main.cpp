@@ -74,6 +74,42 @@ void createMenu( menuOption menus ) {
 		UI::Add( new Button(x, 400, 100, 30, "Options", clickOptions ) );
 	if( menus & Menu_Quit )
 		UI::Add( new Button(x, 500, 100, 30, "Quit",    clickQuit    ) );
+
+	// Example of Nestable UI Creation
+	UI::Add(
+		(new Tabs( 50,50,500,500, "TEST TABS"))
+		->AddChild( (new Tab( "Nested Frames" ))
+			->AddChild( (new Frame( 50,50,400,400 ))
+				->AddChild( (new Frame( 50,50,300,300 ))
+					->AddChild( (new Frame( 50,50,200,200 ))
+						->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+					)
+					->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+				)
+				->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+			)
+			->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+		)
+		->AddChild( (new Tab( "Scoll to Buttons" ))
+			->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
+			->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
+			->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
+			->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
+			->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
+			->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
+			->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			->AddChild( (new Frame( 250,50,300,300 ))
+				->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
+				->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
+				->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
+				->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
+				->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			)
+		)
+	);
+
 }
 
 void mainmenu() {

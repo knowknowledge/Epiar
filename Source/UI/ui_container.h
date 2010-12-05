@@ -16,7 +16,7 @@ class UIContainer : public Widget {
 		virtual string GetType( void ) { return string("Container"); }
 		bool IsEmpty( void ){return this->children.empty();}
 
-		virtual Widget *AddChild( Widget *widget );
+		virtual UIContainer *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
 		virtual bool Reset( void );
