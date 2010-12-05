@@ -63,7 +63,6 @@ Window::~Window() {
  */
 Widget *Window::AddChild( Widget *widget ){
 	// Check to see if widget is past the bounds.
-	int hbnd = widget->GetX() + widget->GetW();
 	int vbnd = widget->GetY() + widget->GetH();
 
 	if ( vbnd > this->h ){
@@ -133,7 +132,7 @@ void Window::Draw( int relx, int rely ) {
 	SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
 
 	// Crop children drawing
-	Video::SetCropRect(this->GetX(), this->GetY()+bitmaps[1]->GetHeight(), this->w-SCROLLBAR_PAD, this->h-SCROLLBAR_PAD - bitmaps[1]->GetHeight());
+	Video::SetCropRect(x, y + bitmaps[1]->GetHeight(), w, h - bitmaps[1]->GetHeight());
 	
 	// Draw any children
 	list<Widget *>::iterator i;
