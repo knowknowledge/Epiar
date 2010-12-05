@@ -40,7 +40,7 @@ class UI {
 		static void Draw( void );
 		static void Close( void );
 		static void Close( Widget *widget );
-		static void HandleInput( list<InputEvent> *events );
+		static void HandleInput( list<InputEvent> & events );
 		static void ResetInput(void);
 		static bool Active(void);
 		
