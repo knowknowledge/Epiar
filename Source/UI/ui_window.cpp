@@ -108,7 +108,6 @@ Widget *Window::DetermineMouseFocus( int relx, int rely ){
 void Window::Draw( int relx, int rely ) {
 	int x, y;
 	static float alpha = 0.95f;
-	Font* font = Font::GetSkin( "Font/UI/Window" );
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
@@ -131,8 +130,8 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[7]->DrawAlpha( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight(), alpha );
 
 	// Draw the window title
-	font->SetColor( 1., 1., 1. );
-	font->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
+	SansSerif->SetColor( 1., 1., 1. );
+	SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
 
 	// Crop children drawing
 	Video::SetCropRect(x, y + bitmaps[1]->GetHeight(), w, h - bitmaps[1]->GetHeight());

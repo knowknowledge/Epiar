@@ -103,18 +103,17 @@ void Console::HandleInput( list<InputEvent> & events ) {
 void Console::Draw() {
 	if( enabled ) {
 		int pos = 8;
-		Font* consoleFont = Font::Get( SKIN("Font/Console") );
 		// draw bg
-		Video::DrawRect(150, 5, 550, consoleFont->LineHeight()*(pos+1),
+		Video::DrawRect(150, 5, 550, Mono->LineHeight()*(pos+1), 
 				static_cast<float>(.5), static_cast<float>(.5),
 				static_cast<float>(.5), static_cast<float>(.3) );
 
-		consoleFont->SetColor(.9f,.9f,.9f,1.0);
+		Mono->SetColor(.9f,.9f,.9f,1.0);
 
-		consoleFont->Render(155, pos-- * consoleFont->LineHeight() + 5,  PROMPT + command.substr(0,cursor) + CURSOR + command.substr(cursor)  );
+		Mono->Render(155, pos-- * Mono->LineHeight() + 5,  PROMPT + command.substr(0,cursor) + CURSOR + command.substr(cursor)  );
 	
 		for(int i = Buffer.size() - 1; i >= 0 && pos > 0; --i, --pos) {
-			consoleFont->Render(155, pos * consoleFont->LineHeight() + 5, Buffer[i]);
+			Mono->Render(155, pos * Mono->LineHeight() + 5, Buffer[i]);
 		}
 	}
 }

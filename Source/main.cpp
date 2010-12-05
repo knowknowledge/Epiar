@@ -144,6 +144,11 @@ void Main_Init_Singletons( int argc, char **argv ) {
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
+	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
+	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
+	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
+	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+
 	Timer::Initialize();
 	Video::Initialize();
 
@@ -182,6 +187,12 @@ void Main_Init_Singletons( int argc, char **argv ) {
 void Main_Close_Singletons( void ) {
 	Video::Shutdown();
 	Audio::Instance().Shutdown();
+
+	// free the main font files
+	delete SansSerif;
+	delete BitType;
+	delete Serif;
+	delete Mono;
 
 	// free the configuration file data
 	delete optionsfile;

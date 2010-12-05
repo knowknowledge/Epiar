@@ -20,6 +20,7 @@
 
 // defined in main.cpp. used through the codebase
 extern XMLFile *optionsfile;
+extern Font *SansSerif, *BitType, *Serif, *Mono;
 extern XMLFile *skinfile;
 
 // to simply accessing the options file

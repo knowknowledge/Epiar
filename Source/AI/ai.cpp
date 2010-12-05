@@ -127,10 +127,9 @@ void AI::Draw(){
 	this->Ship::Draw();
 	if( OPTION(int,"options/development/debug-ai") ) {
 		Coordinate position = this->GetWorldPosition();
-		Font* font = Font::GetSkin( "Font/Development" );
-		font->SetColor( WHITE );
-		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
-		font->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
+		SansSerif->SetColor( WHITE );
+		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight(),stateMachine);
+		SansSerif->Render(position.GetScreenX(),position.GetScreenY()+GetImage()->GetHalfHeight()+20,state);
 	}
 }
 
