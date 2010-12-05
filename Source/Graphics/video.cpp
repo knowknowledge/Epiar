@@ -283,6 +283,20 @@ void Video::DrawPoint( Coordinate c, Color col ) {
 	DrawPoint( (int)c.GetX(), (int)c.GetY(), col.r, col.g, col.b );
 }
 
+/**\brief Draw a Line.
+ */
+void Video::DrawLine( Coordinate p1, Coordinate p2, Color c, float a ) {
+	DrawLine( p1.GetX(), p1.GetY(), p2.GetX(), p2.GetY(), c.r, c.g, c.b, a );
+}
+
+/**\brief Draw a Line.
+ */
+void Video::DrawLine( int x1, int y1, int x2, int y2, Color c, float a ) {
+	DrawLine( x1, y1, x2, y2, c.r, c.g, c.b, a );
+}
+
+/**\brief Draw a Line.
+ */
 void Video::DrawLine( int x1, int y1, int x2, int y2, float r, float g, float b, float a ) {
 	glColor4f( r, g, b, a );
 	glBegin(GL_LINES);
@@ -291,6 +305,7 @@ void Video::DrawLine( int x1, int y1, int x2, int y2, float r, float g, float b,
 	glEnd();
 }
 
+
 /**\brief Draws a filled rectangle
  */
 void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, float a ) {
@@ -298,6 +313,18 @@ void Video::DrawRect( int x, int y, int w, int h, float r, float g, float b, flo
 	glEnable(GL_BLEND);
 	glColor4f( r, g, b, a );
 	glRecti( x, y, x + w, y + h );
+}
+
+void Video::DrawRect( int x, int y, int w, int h, Color c, float a ) {
+	DrawRect( x, y, w, h, c.r, c.g, c.b, a );
+}
+
+void Video::DrawRect( Coordinate p, int w, int h, Color c, float a ) {
+	DrawRect( p.GetX(), p.GetY(), w, h, c.r, c.g, c.b, a );
+}
+
+void Video::DrawBox( int x, int y, int w, int h, Color c, float a ) {
+	DrawBox( x, y, w, h, c.r, c.g, c.b, a );
 }
 
 /**\brief Draws an unfilled rectangle
@@ -345,6 +372,14 @@ void Video::DrawCircle( int x, int y, int radius, float line_width, float r, flo
 	glEnd();
 	// Reset Line Width
 	glLineWidth(1);
+}
+
+void Video::DrawFilledCircle( Coordinate p, int radius, Color c, float a) {
+	DrawFilledCircle( p.GetX(), p.GetY(), radius, c.r, c.g, c.b, a );
+}
+
+void Video::DrawFilledCircle( int x, int y, int radius, Color c, float a) {
+	DrawFilledCircle( x, y, radius, c.r, c.g, c.b, a );
 }
 
 /**\brief Draw a filled circle.
