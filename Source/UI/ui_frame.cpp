@@ -19,12 +19,12 @@
 /**\brief Creates a new frame with specified parameters.
  */
 Frame::Frame( int x, int y, int w, int h ):
-		vscrollbar( NULL ){
+		vscrollbar( NULL ) {
 
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
 
 	// Load the bitmaps needed for drawing
 	bitmaps[0] = Image::Get( "Resources/Graphics/ui_frame_up_left.png" );
@@ -49,9 +49,9 @@ Frame *Frame::AddChild( Widget *widget ){
 	if ( vbnd > this->h ){
 		if ( !this->vscrollbar ){
 			this->vscrollbar = new Scrollbar(
-				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
-				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
-				this->h-2*SCROLLBAR_PAD
+				this->w - SCROLLBAR_THICK - SCROLLBAR_PAD,
+				SCROLLBAR_PAD + bitmaps[1]->GetHeight(),
+				this->h - 2 * SCROLLBAR_PAD
 				-bitmaps[1]->GetHeight()
 				-SCROLLBAR_THICK,
 				this);
@@ -69,12 +69,12 @@ Widget *Frame::DetermineMouseFocus( int relx, int rely ){
 
 	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
-
 	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i)->Contains(relx, rely+yoffset) ) {
+		if( (*i)->Contains(relx, rely + yoffset) ) {
 			return (*i);
 		}
 	}
+
 	return( NULL );
 }
 

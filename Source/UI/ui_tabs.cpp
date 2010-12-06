@@ -22,12 +22,12 @@
 
 /**\brief Constructs a single tab with caption.
  */
-Tab::Tab( const string& _caption ){
-	this->x=x;
-	this->y=TAB_HEADER;
-	this->h=0;
-	this->w=0;
-	this->name=_caption;
+Tab::Tab( const string& _caption ) {
+	this->x = x;
+	this->y = TAB_HEADER;
+	this->h = 0;
+	this->w = 0;
+	this->name = _caption;
 
 	this->vscrollbar = NULL;
 
@@ -36,7 +36,7 @@ Tab::Tab( const string& _caption ){
 
 /**\brief Adds children to the Tab object.
  */
-Tab *Tab::AddChild( Widget *widget ){
+Tab *Tab::AddChild( Widget *widget ) {
 	assert( widget != NULL );
 	UIContainer::AddChild( widget );
 	// Check to see if widget is past the bounds.
@@ -56,17 +56,18 @@ Widget *Tab::DetermineMouseFocus( int relx, int rely ){
 			return (*i);
 		}
 	}
+
 	return( NULL );
 }
 
 /**\brief Implements scroll wheel up.*/
-bool Tab::MouseWUp( int xi, int yi ){
+bool Tab::MouseWUp( int xi, int yi ) {
 	if( this->vscrollbar) this->vscrollbar->ScrollUp();
 	return true;
 }
 
 /**\brief Implements scroll wheel down.*/
-bool Tab::MouseWDown( int xi, int yi ){
+bool Tab::MouseWDown( int xi, int yi ) {
 	if( this->vscrollbar ) this->vscrollbar->ScrollDown();
 	return true;
 }
@@ -109,14 +110,14 @@ void Tab::Draw( int relx, int rely ) {
 /**\brief Move the Scrollbars to the edges.
  */
 
-void Tab::ResetScrollBars(){
-	int widget_height,widget_width;
-	int max_height,max_width;
-	max_height=0;
-	max_width=0;
+void Tab::ResetScrollBars() {
+	int widget_height, widget_width;
+	int max_height, max_width;
+	max_height = 0;
+	max_width = 0;
 
 	// It doesn't make sense to add scrollbars for a TAB without a size
-	if(this->w==0 || this->h==0 ) return;
+	if(this->w == 0 || this->h == 0 ) return;
 
 	// Find the Max edges
 	Widget* widget;
@@ -132,9 +133,9 @@ void Tab::ResetScrollBars(){
 
 	// Add a Vertical ScrollBar if necessary
 	if ( max_height > GetH() || this->vscrollbar != NULL ){
-		int v_x = this->w-SCROLLBAR_THICK-SCROLLBAR_PAD;
+		int v_x = this->w - SCROLLBAR_THICK - SCROLLBAR_PAD;
 		int v_y = SCROLLBAR_PAD;
-		int v_l = this->h-2*SCROLLBAR_PAD;
+		int v_l = this->h - 2 * SCROLLBAR_PAD;
 		// Only add a Scrollbar when it doesn't already exist
 		if ( this->vscrollbar ){
 			UIContainer::DelChild( this->vscrollbar );
@@ -161,12 +162,12 @@ void Tab::ResetScrollBars(){
  * \param name (not shown) Tabs collection don't really have a caption.
  */
 Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
-	activetab( NULL ){
-	this->x=x;
-	this->y=y;
-	this->w=_w;
-	this->h=_h;
-	this->name=name;
+	activetab( NULL ) {
+	this->x = x;
+	this->y = y;
+	this->w = _w;
+	this->h = _h;
+	this->name = name;
 }
 
 /**\brief Adds a Tab to the Tabs collection.
