@@ -247,9 +247,9 @@ void Main_Parse_Args( ) {
 	}
 	if(argparser->HaveOpt("ships-worldmap"))
 	   SETOPTION("options/development/ships-worldmap",1);
-	if ( argparser->HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
+	if      ( argparser->HaveOpt("log-xml") ) 	{ SETOPTION("options/log/xml", 1);}
 	else if ( argparser->HaveOpt("nolog-xml") ) 	{ SETOPTION("options/log/xml", 0);}
-	if ( argparser->HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
+	if      ( argparser->HaveOpt("log-out") ) 	{ SETOPTION("options/log/out", 1);}
 	else if ( argparser->HaveOpt("nolog-out") ) 	{ SETOPTION("options/log/out", 0);}
 
 	string funfilt = argparser->HaveValue("log-fun");
@@ -259,6 +259,8 @@ void Main_Parse_Args( ) {
 	if("" != funfilt) Log::Instance().SetFunFilter(funfilt);
 	if("" != msgfilt) Log::Instance().SetMsgFilter(msgfilt);
 	if("" != loglvl)  Log::Instance().SetLevel( loglvl );
+
+	argparser->HaveLong("ui-demo");
 
 	// Print unused options.
 	list<string> unused = argparser->GetUnused();
@@ -318,16 +320,16 @@ void ui_test() {
 	UI::Add(
 		(new Tabs( 50,50,500,500, "TEST TABS"))
 		->AddChild( (new Tab( "Nested Frames" ))
+			->AddChild( (new Button(10, 10, 100, 30, "Quit 1",    clickQuit    )) )
 			->AddChild( (new Frame( 50,50,400,400 ))
+				->AddChild( (new Button(10, 10, 100, 30, "Quit 2",    clickQuit    )) )
 				->AddChild( (new Frame( 50,50,300,300 ))
+					->AddChild( (new Button(10, 10, 100, 30, "Quit 3",    clickQuit    )) )
 					->AddChild( (new Frame( 50,50,200,200 ))
-						->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
+						->AddChild( (new Button(10, 10, 100, 30, "Quit 4",    clickQuit    )) )
 					)
-					->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
 				)
-				->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
 			)
-			->AddChild( (new Button(10, 10, 100, 30, "Quit",    clickQuit    )) )
 		)
 		->AddChild( (new Tab( "Scoll to Buttons" ))
 			->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
@@ -349,6 +351,19 @@ void ui_test() {
 		)
 	);
 
+	assert( NULL != UI::Search("/[0]/") );
+	assert( NULL != UI::Search("/Tabs/") );
+	assert( NULL != UI::Search("/(100,100)/") );
+	assert( NULL != UI::Search("/'TEST TABS'/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'TEST TABS'/[0]/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab[1]/") );
+	assert( NULL != UI::Search("/'TEST TABS'/[0]/Frame/") );
+	assert( NULL != UI::Search("/'TEST TABS'/[0]/(60,60)/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Button/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
 }
 
 /** Epiar's Main Menu
@@ -396,7 +411,7 @@ void Main_Menu( void ) {
 			if( availableMenus & Menu_Quit )
 				UI::Add( new Button(button_x, 500, 100, 30, "Quit",    clickQuit    ) );
 
-			if( argparser->HaveOpt("ui-demo") ) {
+			if( argparser->HaveLong("ui-demo") ) {
 				ui_test();
 			}
 

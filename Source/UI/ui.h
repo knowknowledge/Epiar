@@ -47,6 +47,8 @@ class UI {
 		static void RegisterKeyboardFocus( Widget *widget );
 		static Widget *DetermineMouseFocus( int x, int y );
 
+		static Widget *Search( string query );
+
 		static void Save( void );
 		
 	private:

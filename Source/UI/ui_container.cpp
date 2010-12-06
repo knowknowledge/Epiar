@@ -7,6 +7,7 @@
 
 #include "includes.h"
 #include "UI/ui.h"
+#include "Utilities/xml.h"
 
 /**\class Container
  * \brief Container is a container class for other widgets.
@@ -108,6 +109,162 @@ Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 		}
 	}
 	return( NULL );
+}
+
+/**\brief Search this Container for a Widget
+ *
+ * \see Container::Search
+ */
+Widget *Container::Search( string full_query ) {
+	int section = 0;
+	char token;
+	string subquery;
+	string tokens = "/[]\"'(,)";
+	vector<string> tokenized;
+	vector<string>::iterator iter;
+	list<Widget *>::iterator i;
+
+	Container *current = this;
+
+	// Temporary query values
+	typedef struct {
+		union {
+			int flags;
+			struct {
+				int FOUND_COORD :1;
+				int FOUND_TYPE  :1;
+				int FOUND_NAME  :1;
+				int FOUND_INDEX :1;
+			};
+		};
+		int x,y;
+		string type;
+		string name;
+		int index;
+	} Query;
+	Query query = {{0},0,0,"","",0};
+
+	// Tokenize the String
+	tokenized = TokenizedString( full_query, tokens );
+
+	// Check the Start of the Query
+	iter = tokenized.begin();
+	if( (tokenized.size() >= 2) && (tokenized[0] == "") && (tokenized[1] == "/") ) {
+		++iter; ++iter;
+		++section;
+	} else {
+		LogMsg(ERR, "Query '%s' does not start with '/'.", full_query.c_str() );
+		return NULL;
+	}
+	
+	// Search all the tokens
+	LogMsg(INFO, "QUERY: '%s'", full_query.c_str() );
+	for(; iter != tokenized.end(); ++iter ) {
+		subquery = (*iter);
+		// LogMsg(INFO, "token: '%s'", (*iter).c_str() );
+		token = subquery[0];
+		if( subquery == "" ) { continue; }
+
+		// If we're checking a Token, we need to be in a Container
+		if( !( (current->GetMask()) & WIDGET_CONTAINER ) ) {
+			LogMsg(INFO, "The query '%s' reached a non-container Widget and aborted at section %d.", full_query.c_str(), section );
+			return NULL;
+		}
+
+		// If this is not a token then it is Widget Type
+		if( subquery.find_first_of(tokens) != string::npos) {
+			assert( subquery.size() == 1 );
+
+			switch( token ) {
+				// Boundary: Search the Children
+				case '/':
+				{
+					int ind = 0;
+					assert( (current->GetMask()) & WIDGET_CONTAINER );
+					for( i = current->children.begin(); i != current->children.end(); ++i ) {
+						// LogMsg(DEBUG1, "Checking %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
+						if( query.FOUND_NAME && (query.name != (*i)->GetName()) ) {
+							continue;
+						}
+						if( query.FOUND_TYPE && (query.type != (*i)->GetType()) ) {
+							continue;
+						}
+						if( query.FOUND_COORD && ((*i)->Contains(query.x, query.y) == false) ) {
+							continue;
+						}
+						if( query.FOUND_INDEX && (query.index != ind) ) {
+							ind++;
+							continue;
+						} 
+						// Found a match!
+						current = (Container*)(*i);
+						// Forget about the current query
+						query.flags = 0;
+						break;
+					}
+					
+					if( i == current->children.end() ) {
+						LogMsg(INFO, "The query '%s' failed to find a widget using the query '%s' at section %d", full_query.c_str(), section );
+						return NULL;
+					}
+					++section;
+					break;
+				}
+
+				// Bracketed number: Container Index
+				case '[':
+				{
+					query.FOUND_INDEX = 1;
+					query.index = convertTo<int>( *(++iter) );
+					assert( *(++iter) == "]" );
+					break;
+				}
+
+				// Quoted String: Widget Name
+				case '\'':
+				case '"':
+				{
+					query.FOUND_NAME = 1;
+					query.name = *(++iter);
+					++iter;
+					assert( (*(iter) == "\"") || (*(iter) == "'") );
+					break;
+				}
+
+				// Paren Tuple: Widget's Relative coordinate
+				case '(': 
+				{
+					query.FOUND_COORD = 1;
+					query.x = convertTo<int>( *(++iter) );
+					assert( *(++iter) == "," );
+					query.y = convertTo<int>( *(++iter) );
+					assert( *(++iter) == ")" );
+					break;
+				}
+
+				default:
+					LogMsg(ERR, "Unexpected token '%c' in query '%s'", token, full_query.c_str() );
+					assert(0);
+					return NULL;
+			}
+		}
+
+		// Plain String: Widget Type
+		else if( subquery.size() > 0 ) {
+			query.FOUND_TYPE = 1;
+			query.type = subquery;
+		}
+
+		// Empty String, skip it.
+		else { }
+	}
+
+	if( query.flags != 0 ) {
+		LogMsg(WARN, "Query '%s' did not end with a '/'", full_query.c_str() );
+	}
+
+	LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
+	return current;
 }
 
 /**\brief Search for a child named

@@ -24,6 +24,8 @@ class Container : public Widget {
 		virtual bool Reset( void );
 
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
+
+		virtual Widget *Search( string path );
 		virtual Widget *ChildNamed( string _name, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromTop( int pos, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromBottom( int pos, int mask = WIDGET_ALL );

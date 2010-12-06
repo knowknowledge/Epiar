@@ -71,6 +71,14 @@ void UI::Draw( void ) {
 	UI::master.Draw( );
 }
 
+/**\brief Search the UI for a Widget
+ *
+ * \see Container::Search
+ */
+Widget* UI::Search( string query ) {
+	return UI::master.Search( query );
+}
+
 /**\brief Export The UI as an XML document.
  *
  */
