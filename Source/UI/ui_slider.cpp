@@ -70,7 +70,7 @@ void Slider::Draw( int relx, int rely ){
 	// Render the value indicator
 	char value[20];
 	snprintf(value,20,"%.2f",this->val);
-	Font::GetSkin( "Font/UI/Slider" )->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
+	SansSerif->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.

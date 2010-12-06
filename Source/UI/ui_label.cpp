@@ -35,36 +35,34 @@ Label::Label( int x, int y, string label, bool centered) {
 void Label::Draw(  int relx, int rely ) {
 	int x, y;
 	vector<string>::iterator iter;
-	Font* font = Font::GetSkin( "Font/UI/Label" );
 	
 	x = this->x + relx;
 	y = this->y + rely;
 	
 	// draw the label
-	font->SetColor( 1., 1., 1. );
+	SansSerif->SetColor( 1., 1., 1. );
 	Font::XPos xpositioning = (centered) ? (Font::CENTER) : (Font::LEFT);
 	Font::YPos ypositioning = (centered) ? (Font::MIDDLE) : (Font::TOP);
 
-	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += font->TightHeight() )
+	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += SansSerif->TightHeight() )
 	{
-		font->Render( x, y, *iter, xpositioning, ypositioning );
+		SansSerif->Render( x, y, *iter, xpositioning, ypositioning );
 	}
 
-	Widget::Draw(relx,rely + font->TightHeight() / 2 );
+	Widget::Draw(relx,rely + SansSerif->TightHeight() / 2 );
 }
 
 void Label::SetText(string text) {
 	int maxwidth = 0;
 	vector<string>::iterator iter;
-	Font* font = Font::GetSkin( "Font/UI/Label" );
 
 	this->lines = TokenizedString( text, "\n" );
 	for(iter = lines.begin(); iter != lines.end() ; ++iter ) {
-		int linelength = font->TextWidth( *iter );
+		int linelength = SansSerif->TextWidth( *iter );
 		if( linelength > maxwidth ) maxwidth = linelength;
 	}
 
 	this->name = text;
 	this->w = maxwidth;
-	this->h = lines.size() * font->TightHeight( );
+	this->h = lines.size() * SansSerif->TightHeight( );
 }

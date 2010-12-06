@@ -20,11 +20,9 @@
 
 /**\brief This is used to construct the Textbox.*/
 Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
-	Font* font = Font::GetSkin( "Font/UI/Textbox" );
+	int rowHeight = ((Mono->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
 
-	int rowHeight = ((font->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
-
-	rowPad = (rowHeight - font->LineHeight()) / 2; // Pad the text to center it in the row
+	rowPad = (rowHeight - Mono->LineHeight()) / 2; // Pad the text to center it in the row
 
 	this->x = x;
 	this->y = y;
@@ -41,7 +39,6 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 /**\brief Draws the textbox.*/
 void Textbox::Draw( int relx, int rely ) {
 	int x, y;
-	Font* font = Font::GetSkin( "Font/UI/Textbox" );
 	
 	x = GetX() + relx;
 	y = GetY() + rely;
@@ -52,8 +49,8 @@ void Textbox::Draw( int relx, int rely ) {
 
 	// draw the text
 	Video::SetCropRect(x, y, this->w, this->h);
-	font->SetColor( 1., 1., 1. );
-	int tw = font->Render( x + rowPad, y + rowPad, text );
+	Mono->SetColor( 1., 1., 1. );
+	int tw = Mono->Render( x + rowPad, y + rowPad, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {

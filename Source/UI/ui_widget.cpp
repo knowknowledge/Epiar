@@ -35,11 +35,8 @@ void Widget::Draw( int relx, int rely ) {
 		int x, y;
 		char xbuff[6];
 		char ybuff[6];
-		Font* font = Font::Get( SKIN("Font/Development") );
-
 		x = this->x + relx;
 		y = this->y + rely;
-
 		Video::DrawBox(x,y,w,h,0,1,0,1);
 		Video::DrawLine(relx,y,x,y,1,0,0,1);
 		Video::DrawLine(x,rely,x,y,1,0,0,1);
@@ -47,11 +44,11 @@ void Widget::Draw( int relx, int rely ) {
 		snprintf( xbuff, sizeof(xbuff), "%d", this->x );
 		snprintf( ybuff, sizeof(xbuff), "%d", this->y );
 
-		Video::DrawRect(relx+this->x/2, y, 30, font->LineHeight(), 0,0,0,1);
-		font->RenderTight( relx + this->x/2, y, xbuff );
+		Video::DrawRect(relx+this->x/2, y, 30, SansSerif->LineHeight(), 0,0,0,1);
+		SansSerif->RenderTight( relx + this->x/2, y, xbuff );
 
-		Video::DrawRect(x, rely+this->y/2, 30, font->LineHeight(), 0,0,0,1);
-		font->RenderTight( x, rely + this->y/2, ybuff );
+		Video::DrawRect(x, rely+this->y/2, 30, SansSerif->LineHeight(), 0,0,0,1);
+		SansSerif->RenderTight( x, rely + this->y/2, ybuff );
 	}
 }
 
