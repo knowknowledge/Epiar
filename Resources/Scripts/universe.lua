@@ -654,7 +654,7 @@ function landingDialog(id)
 	landingWin:add(storeframe)
 
 	-- Shipyard
-	shipyard = UI.newTab("Ship Yard")
+	shipyard = UI.newTab("Shipyard")
 	local yoff = 5
 	local models = planet:GetModels()
 	for i,name in ipairs(models) do
