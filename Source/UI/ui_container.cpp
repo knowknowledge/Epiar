@@ -8,22 +8,22 @@
 #include "includes.h"
 #include "UI/ui.h"
 
-/**\class UIContainer
- * \brief UIContainer is a container class for other widgets.
+/**\class Container
+ * \brief Container is a container class for other widgets.
  */
 
 /**\brief Constructor, initializes default values.*/
-UIContainer::UIContainer( string _name, bool _mouseHandled ):
+Container::Container( string _name, bool _mouseHandled ):
 	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
 	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ){
 	name = _name;
 }
 
 /**\brief Destructor, destroys all children.
- * \todo Implement a UIContainer::Hide routine that doesn't destroy children.
+ * \todo Implement a Container::Hide routine that doesn't destroy children.
  * \bug This will cause a segfault on statically allocated widget children
  */
-UIContainer::~UIContainer( void ) {
+Container::~Container( void ) {
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -41,7 +41,7 @@ UIContainer::~UIContainer( void ) {
 
 /**\brief Adds a child to the current container.
  */
-UIContainer *UIContainer::AddChild( Widget *widget ) {
+Container *Container::AddChild( Widget *widget ) {
 	assert( widget != NULL );
 	if( widget != NULL ) {
 		children.push_back( widget );
@@ -51,7 +51,7 @@ UIContainer *UIContainer::AddChild( Widget *widget ) {
 
 /**\brief Deletes a child from the current container.
  */
-bool UIContainer::DelChild( Widget *widget ){
+bool Container::DelChild( Widget *widget ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -70,7 +70,7 @@ bool UIContainer::DelChild( Widget *widget ){
 }
 
 /**\brief Empties all children.*/
-bool UIContainer::Empty( void ){
+bool Container::Empty( void ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -84,7 +84,7 @@ bool UIContainer::Empty( void ){
 }
 
 /**\brief Reset focus and events.*/
-bool UIContainer::Reset( void ){
+bool Container::Reset( void ){
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
 	this->lmouseDown = NULL;
@@ -98,7 +98,7 @@ bool UIContainer::Reset( void ){
  *
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
-Widget *UIContainer::DetermineMouseFocus( int relx, int rely ) {
+Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::reverse_iterator i;
 
 	// Check children from top (last drawn) to bottom (first drawn).
@@ -114,7 +114,7 @@ Widget *UIContainer::DetermineMouseFocus( int relx, int rely ) {
  *
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
-Widget *UIContainer::ChildNamed( string _name, int mask ) {
+Widget *Container::ChildNamed( string _name, int mask ) {
 	list<Widget *>::reverse_iterator i;
 
 	// Check children from top (last drawn) to bottom (first drawn).
@@ -133,7 +133,7 @@ Widget *UIContainer::ChildNamed( string _name, int mask ) {
  * \param[in] pos position of the child
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
-Widget *UIContainer::ChildFromTop( int pos, int mask) {
+Widget *Container::ChildFromTop( int pos, int mask) {
 	int p = 0;
 	list<Widget *>::reverse_iterator i;
 
@@ -156,7 +156,7 @@ Widget *UIContainer::ChildFromTop( int pos, int mask) {
  * \param[in] pos position of the child
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
-Widget *UIContainer::ChildFromBottom( int pos, int mask) {
+Widget *Container::ChildFromBottom( int pos, int mask) {
 	int p = 0;
 	list<Widget *>::iterator i;
 
@@ -179,7 +179,7 @@ Widget *UIContainer::ChildFromBottom( int pos, int mask) {
  * \param[in] mask Only consider Widgets of this type.
  * \note This checks the children in the order that they are drawn so that Children 'on top' are searched last.
  */
-Widget *UIContainer::NextChild( Widget* widget, int mask) {
+Widget *Container::NextChild( Widget* widget, int mask) {
 	list<Widget *>::iterator i;
 
 	// Check children from top (last drawn) to bottom (first drawn).
@@ -206,7 +206,7 @@ Widget *UIContainer::NextChild( Widget* widget, int mask) {
  * \param[in] mask Only consider Widgets of this type.
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
  */
-Widget *UIContainer::PrevChild( Widget* widget, int mask) {
+Widget *Container::PrevChild( Widget* widget, int mask) {
 	list<Widget *>::reverse_iterator i;
 
 	// Check children from top (last drawn) to bottom (first drawn).
@@ -229,7 +229,7 @@ Widget *UIContainer::PrevChild( Widget* widget, int mask) {
 
 /**\brief Draws this widget and all children widgets.
  */
-void UIContainer::Draw( int relx, int rely ) {
+void Container::Draw( int relx, int rely ) {
 	// Draw any children
 	list<Widget *>::iterator i;
 	
@@ -239,7 +239,7 @@ void UIContainer::Draw( int relx, int rely ) {
 
 /**\brief Mouse is currently moving over the widget, without button down.
  */
-bool UIContainer::MouseMotion( int xi, int yi ){
+bool Container::MouseMotion( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -282,7 +282,7 @@ bool UIContainer::MouseMotion( int xi, int yi ){
 
 /**\brief Generic mouse up function.
  */
-bool UIContainer::MouseLUp( int xi, int yi ){
+bool Container::MouseLUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -308,7 +308,7 @@ bool UIContainer::MouseLUp( int xi, int yi ){
 
 /**\brief Generic mouse down function.
  */
-bool UIContainer::MouseLDown( int xi, int yi ) {
+bool Container::MouseLDown( int xi, int yi ) {
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -347,7 +347,7 @@ bool UIContainer::MouseLDown( int xi, int yi ) {
  * \details Unlike the MouseLUp function, this is called when the user releases
  * the mouse on a different widget.
  */
-bool UIContainer::MouseLRelease( void ){
+bool Container::MouseLRelease( void ){
 	// Pass event onto children if needed
 	if( this->lmouseDown )
 		return this->lmouseDown->MouseLRelease();
@@ -357,7 +357,7 @@ bool UIContainer::MouseLRelease( void ){
 
 /**\brief Generic middle mouse up function.
  */
-bool UIContainer::MouseMUp( int xi, int yi ){
+bool Container::MouseMUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -380,7 +380,7 @@ bool UIContainer::MouseMUp( int xi, int yi ){
 
 /**\brief Generic middle mouse down function.
  */
-bool UIContainer::MouseMDown( int xi, int yi ){
+bool Container::MouseMDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -398,7 +398,7 @@ bool UIContainer::MouseMDown( int xi, int yi ){
  * \details Unlike the MouseMUp function, this is called when the user releases
  * the mouse on a different widget.
  */
-bool UIContainer::MouseMRelease( void ){
+bool Container::MouseMRelease( void ){
 	// Pass event onto children if needed
 	if( this->mmouseDown )
 		return this->mmouseDown->MouseMRelease();
@@ -408,7 +408,7 @@ bool UIContainer::MouseMRelease( void ){
 
 /**\brief Generic right mouse up function.
  */
-bool UIContainer::MouseRUp( int xi, int yi ){
+bool Container::MouseRUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -431,7 +431,7 @@ bool UIContainer::MouseRUp( int xi, int yi ){
 
 /**\brief Generic right mouse down function.
  */
-bool UIContainer::MouseRDown( int xi, int yi ){
+bool Container::MouseRDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -449,7 +449,7 @@ bool UIContainer::MouseRDown( int xi, int yi ){
  * \details Unlike the MouseRUp function, this is called when the user releases
  * the mouse on a different widget.
  */
-bool UIContainer::MouseRRelease( void ){
+bool Container::MouseRRelease( void ){
 	// Pass event onto children if needed
 	if( this->rmouseDown )
 		return this->rmouseDown->MouseRRelease();
@@ -459,7 +459,7 @@ bool UIContainer::MouseRRelease( void ){
 
 /**\brief Generic mouse wheel up function.
  */
-bool UIContainer::MouseWUp( int xi, int yi ){
+bool Container::MouseWUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -473,7 +473,7 @@ bool UIContainer::MouseWUp( int xi, int yi ){
 
 /**\brief Generic mouse wheel down function.
  */
-bool UIContainer::MouseWDown( int xi, int yi ){
+bool Container::MouseWDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
@@ -487,7 +487,7 @@ bool UIContainer::MouseWDown( int xi, int yi ){
 
 /**\brief Generic keyboard focus function.
  */
-bool UIContainer::KeyboardEnter( void ){
+bool Container::KeyboardEnter( void ){
 	this->keyactivated=true;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardEnter();
@@ -497,7 +497,7 @@ bool UIContainer::KeyboardEnter( void ){
 
 /**\brief Generic keyboard unfocus function.
  */
-bool UIContainer::KeyboardLeave( void ){
+bool Container::KeyboardLeave( void ){
 	this->keyactivated=false;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardLeave();
@@ -507,7 +507,7 @@ bool UIContainer::KeyboardLeave( void ){
 
 /**\brief Generic keyboard key press function.
  */
-bool UIContainer::KeyPress( SDLKey key ) {
+bool Container::KeyPress( SDLKey key ) {
 	Widget *next;
 	if( keyboardFocus ) {
 		
@@ -535,7 +535,7 @@ bool UIContainer::KeyPress( SDLKey key ) {
 	return false;
 }
 
-xmlNodePtr UIContainer::ToNode() {
+xmlNodePtr Container::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
 

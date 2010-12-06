@@ -12,7 +12,7 @@
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
-class Window : public UIContainer {
+class Window : public Container {
 	public:
 		Window( int x, int y, int w, int h, string caption );
 		~Window();

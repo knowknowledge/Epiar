@@ -54,7 +54,7 @@ Window::~Window() {
 
 	// Do not delete the scrollbar:
 	// If these are non-NULL then they are children.
-	// Therefore they will be deleted by the UIContainer destructor.
+	// Therefore they will be deleted by the Container destructor.
 	vscrollbar = NULL;
 
 }
@@ -69,7 +69,7 @@ Window *Window::AddChild( Widget *widget ){
 
 	if ( vbnd > this->h ){
 		if ( !this->vscrollbar ){
-			UIContainer::DelChild( this->vscrollbar );
+			Container::DelChild( this->vscrollbar );
 			this->vscrollbar = new Scrollbar(
 				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
 				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
@@ -78,13 +78,13 @@ Window *Window::AddChild( Widget *widget ){
 				-SCROLLBAR_THICK,
 				this);
 
-			UIContainer::AddChild( this->vscrollbar );
+			Container::AddChild( this->vscrollbar );
 		}
 
 		this->vscrollbar->maxpos = vbnd;
 	}
 
-	return (Window*)UIContainer::AddChild( widget );
+	return (Window*)Container::AddChild( widget );
 }
 
 /**\brief Determines focused widget based on scrolled position.*/
@@ -170,7 +170,7 @@ bool Window::MouseDrag( int x, int y ){
 			this->y=y - dy;
 		} else {
 		// Pass the event onto widget if not handling it.
-			UIContainer::MouseDrag( x, y );
+			Container::MouseDrag( x, y );
 		}
 	
 	return true;

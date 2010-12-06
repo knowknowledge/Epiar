@@ -9,16 +9,16 @@
 #define __H_UI_CONTAINER__
 
 
-class UIContainer : public Widget {
+class Container : public Widget {
 	public:
-		UIContainer(string _name = "UnspecifiedContainer", bool _mouseHandled = true );
-		virtual ~UIContainer( void );
+		Container(string _name = "UnspecifiedContainer", bool _mouseHandled = true );
+		virtual ~Container( void );
 
 		virtual string GetType( void ) { return string("Container"); }
 		virtual int GetMask( void ) { return WIDGET_CONTAINER; }
 		bool IsEmpty( void ){return this->children.empty();}
 
-		virtual UIContainer *AddChild( Widget *widget );
+		virtual Container *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
 		virtual bool Reset( void );

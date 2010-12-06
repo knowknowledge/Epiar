@@ -32,7 +32,7 @@ Dropdown::Dropdown( int x, int y, int w ):
 Dropdown::~Dropdown() {
 	// Do not delete the scrollbars:
 	// If these are non-NULL then they are children.
-	// Therefore they will be deleted by the UIContainer destructor.
+	// Therefore they will be deleted by the Container destructor.
 	vscrollbar = NULL;
 
 }
@@ -45,7 +45,7 @@ Dropdown::~Dropdown() {
 
 	//if ( vbnd > this->h ){
 		//if ( !this->vscrollbar ){
-			//UIContainer::DelChild( this->vscrollbar );
+			//Container::DelChild( this->vscrollbar );
 			//this->vscrollbar = new Scrollbar(
 				//this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
 				//SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
@@ -53,12 +53,12 @@ Dropdown::~Dropdown() {
 				//-bitmaps[1]->GetHeight()
 				//-SCROLLBAR_THICK, VERTICAL,
 				//this);
-			//UIContainer::AddChild( this->vscrollbar );
+			//Container::AddChild( this->vscrollbar );
 		//}
 		//this->vscrollbar->maxpos = vbnd;
 	//}
 
-	//return UIContainer::AddChild( widget );
+	//return Container::AddChild( widget );
 //}
 
 /**\brief Determines focused widget based on scrolled position.*/

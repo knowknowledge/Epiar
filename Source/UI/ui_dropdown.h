@@ -12,7 +12,7 @@
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
-class Dropdown : public UIContainer {
+class Dropdown : public Container {
 	public:
 		Dropdown( int x, int y, int w  );
 		~Dropdown();

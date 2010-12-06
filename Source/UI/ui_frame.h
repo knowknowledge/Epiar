@@ -12,7 +12,7 @@
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
-class Frame : public UIContainer {
+class Frame : public Container {
 	public:
 		Frame( int x, int y, int w, int h );
 		Frame *AddChild( Widget *widget );

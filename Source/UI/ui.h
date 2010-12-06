@@ -55,7 +55,7 @@ class UI {
 
 		// Use a master widget to handle events,
 		// so we don't need to duplicate code.
-		static UIContainer master;
+		static Container master;
 };
 
 #endif // __H_UI__

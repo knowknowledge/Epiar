@@ -56,8 +56,8 @@ class Widget {
 
 		virtual xmlNodePtr ToNode();
 
-		// Only allow UIContainer to send events
-		friend class UIContainer;
+		// Only allow Container to send events
+		friend class Container;
 
 	protected:
 		// Input events

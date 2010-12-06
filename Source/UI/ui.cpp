@@ -19,12 +19,12 @@
 /**\class UI
  * \brief UI. */
 
-UIContainer UI::master("Master", false);
+Container UI::master("Master", false);
 
 /**\brief This constructor resets the input.
  */
 UI::UI() {
-	//UI::master = UIContainer("Master", false);
+	//UI::master = Container("Master", false);
 	ResetInput();
 }
 
