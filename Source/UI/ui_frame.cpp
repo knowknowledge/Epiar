@@ -67,12 +67,11 @@ Frame *Frame::AddChild( Widget *widget ){
 Widget *Frame::DetermineMouseFocus( int relx, int rely ){
 	list<Widget *>::iterator i;
 
-	int xoffset = 0;
 	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 
 	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i)->Contains(relx+xoffset, rely+yoffset) ) {
+		if( (*i)->Contains(relx, rely+yoffset) ) {
 			return (*i);
 		}
 	}

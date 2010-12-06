@@ -48,12 +48,11 @@ Tab *Tab::AddChild( Widget *widget ){
 Widget *Tab::DetermineMouseFocus( int relx, int rely ){
 	list<Widget *>::iterator i;
 
-	int xoffset = 0;
 	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
-		    || (*i)->Contains(relx+xoffset, rely+yoffset) ) { // Non-Tabs
+		    || (*i)->Contains(relx, rely + yoffset) ) { // Non-Tabs
 			return (*i);
 		}
 	}
@@ -94,17 +93,16 @@ void Tab::Draw( int relx, int rely ) {
 			continue;
 		}
 
-		int xscroll = 0;
 		int yscroll = 0;
 		if ( this->vscrollbar )
 			yscroll = vscrollbar->pos;
 
-		(*i)->Draw( x - xscroll, y - yscroll );
+		(*i)->Draw( x, y - yscroll );
 	}
 	
 	Video::UnsetCropRect();
 	
-	Widget::Draw(relx,rely);
+	Widget::Draw(relx, rely);
 }
 
 
