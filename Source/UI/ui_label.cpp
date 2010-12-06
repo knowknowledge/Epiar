@@ -54,10 +54,14 @@ void Label::Draw(  int relx, int rely ) {
 
 void Label::SetText(string text) {
 	int maxwidth = 0;
+	vector<string> temp;
 	vector<string>::iterator iter;
 
-	this->lines = TokenizedString( text, "\n" );
-	for(iter = lines.begin(); iter != lines.end() ; ++iter ) {
+	temp = TokenizedString( text, "\n" );
+	for(iter = temp.begin(); iter != temp.end() ; ++iter ) {
+		// Skip tokens (newlines)
+		if( (*iter) ==  "\n" ) { continue; }
+		lines.push_back( (*iter) );
 		int linelength = SansSerif->TextWidth( *iter );
 		if( linelength > maxwidth ) maxwidth = linelength;
 	}

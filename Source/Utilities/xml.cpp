@@ -107,7 +107,7 @@ void XMLFile::Set( const string& path, const int value ) {
 	assert( stringvalue == Get(path));
 }
 
-vector<string> TokenizedString( const string& path, const char* tokens ) {
+vector<string> TokenizedString( const string& path, const string& tokens ) {
 	string partialString;
 	size_t pos, prevpos, len;
 	vector<string> tokenized;
@@ -119,7 +119,9 @@ vector<string> TokenizedString( const string& path, const char* tokens ) {
 		len = (pos==string::npos)?pos:pos-prevpos;
 		partialString = path.substr(prevpos, len); // Get the substring until the next token.
 		tokenized.push_back( partialString ); // Record the substring
-		//printf("Path: '%s'\n", partialPath.c_str() );
+		if( pos!=string::npos ) {
+			tokenized.push_back( path.substr(pos, 1) ); // Record the substring
+		}
 		prevpos = pos+1; // record where to start next time.
 	} while ( pos != string::npos );
 	
@@ -128,6 +130,7 @@ vector<string> TokenizedString( const string& path, const char* tokens ) {
 
 xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 	xmlNodePtr cur,parent;
+	string tokens = "/";
 	vector<string> tokenized;
 	vector<string>::iterator iter;
 	string partialPath;
@@ -149,7 +152,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 		return( (xmlNodePtr)NULL );
 	}
 	
-	tokenized = TokenizedString(path, "/");
+	tokenized = TokenizedString(path, tokens);
 	iter = tokenized.begin();
 
 	// The root is optional since it isn't a Child.
@@ -161,6 +164,9 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 	// If FirstChildNamed() doesn't find the path, it will return NULL
 	for(; iter != tokenized.end(); ++iter) {
 		partialPath = *iter;
+		if( partialPath.find_first_of(tokens) != string::npos) {
+			continue;
+		}
 		//printf("XML: '%s' @ '%s'\n", partialPath.c_str(), cur->name);
 		parent = cur;
 		cur = FirstChildNamed(parent, partialPath.c_str());

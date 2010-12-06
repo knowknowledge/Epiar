@@ -37,7 +37,7 @@ class XMLFile {
 		xmlNodePtr FindNode( const string& path, bool createIfMissing=false );
 };
 
-vector<string> TokenizedString(const string& path, const char* tokens);
+vector<string> TokenizedString(const string& path, const string& tokens);
 
 #define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 #define NodeNameIs( node, text ) ( !xmlStrcmp( ((node)->name), (const xmlChar *)(text) ) )
