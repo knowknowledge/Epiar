@@ -265,26 +265,22 @@ int UI_Lua::newTab(lua_State *L){
 int UI_Lua::newTextbox(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( n < 4  )
-		return luaL_error(L, "Got %d arguments expected 3, 4, or 5 (x, y, w, h, [text], [code])", n);
+		return luaL_error(L, "Got %d arguments expected 3, 4, or 5 (x, y, w, h, [text], [name])", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
 	int w = int(luaL_checknumber (L, 3));
 	int h = int(luaL_checknumber (L, 4));
-	string code = "";
 	string text = "";
+	string name = "";
 	if(n>=5) text = luaL_checkstring (L, 5);
-	if(n>=7) code = luaL_checkstring (L, 7);
+	if(n>=6) name = luaL_checkstring (L, 6);
 
 	// Allocate memory for a pointer to object
 	Textbox **textbox = (Textbox**)lua_newuserdata(L, sizeof(Textbox**));
     luaL_getmetatable(L, EPIAR_UI);
     lua_setmetatable(L, -2);
-	*textbox = new Textbox(x, y, w, h, text);
-
-	// Note: We're not putting this button anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
+	*textbox = new Textbox(x, y, w, h, text, name);
 
 	return 1;
 }
@@ -308,10 +304,6 @@ int UI_Lua::newLabel(lua_State *L){
 		bool centered = luaL_checknumber (L, 4) != 0.;
 		*label = new Label(x,y,caption,centered);
 	}
-
-	// Note: We're not putting this Label anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
 
 	return 1;
 }
@@ -352,10 +344,6 @@ int UI_Lua::newPicture(lua_State *L){
 	else
 		*pic = new Picture(x,y, picname );
 	(*pic)->SetColor(red,blue,green,alpha);
-
-	// Note: We're not putting this Label anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
 
 	return 1;
 }

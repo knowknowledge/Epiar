@@ -409,8 +409,8 @@ function buyShip(model)
 		print('Buying ',model)
 	end
 	print('Buying ',model)
-	price = Epiar.getMSRP(model)
-	player_credits = PLAYER:GetCredits()
+	local price = Epiar.getMSRP(model)
+	local player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
 		currentModel = PLAYER:GetModelName()
 		if currentModel ~= model then
@@ -573,8 +573,8 @@ end
 
 --- Trade a Commodity
 function tradeCommodity(transaction, commodity, count, price)
-	player_credits = PLAYER:GetCredits()
-	cargo,stored,storable = PLAYER:GetCargo()
+	local player_credits = PLAYER:GetCredits()
+	local cargo,stored,storable = PLAYER:GetCargo()
 	print "Trading..."
 	if transaction=="buy" then
 		print("Tonnage available:",storable-stored)
@@ -602,6 +602,13 @@ function tradeCommodity(transaction, commodity, count, price)
 	else
 		error( string.format( "Sorry, trading Commodities doesn't understand transaction '%s'", transaction ) )
 	end
+	
+	local commodityBox = UI.search(string.format("/Window/'Store'/'Trade'/Textbox'%s'/", commodity))
+	if commodityBox ~= nil then
+		local cargo,stored,storable = PLAYER:GetCargo()
+		commodityBox:setText( cargo[commodity] )
+	end
+
 	print "Done Trading..."
 	return 1
 end
@@ -763,7 +770,7 @@ function landingDialog(id)
 		--print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
-		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0)
+		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0, commodity)
 		trade:add( tradeCounts[commodity] )
 		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
 		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
