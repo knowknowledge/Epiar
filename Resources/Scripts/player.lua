@@ -244,7 +244,7 @@ end
 
 ---Board closest ship if possible
 function boardShip()
-	if boardingDialog ~= nil then return end -- Abort if the player is already boarding something.
+	if UI.search("/'Boarding Ship'/") ~= nil then return end -- Abort if the player is already boarding something.
 
 	local x, y = PLAYER:GetPosition()
 	local targettedShip = Epiar.getSprite( HUD.getTarget() ) -- acquire target
@@ -274,7 +274,7 @@ function boardShip()
 
 		local captureProbPct = (1 / succ_max) * 100
 
-		boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
+		local boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
 		boardingDialog:add( UI.newLabel(50, 30,  string.format("You have boarded the ship." ) ) )
 		boardingDialog:add( UI.newLabel(50, 60,  string.format("  Class: %s", targettedShip:GetModelName() ) ) )
 		boardingDialog:add( UI.newLabel(50, 90,  string.format("  Credits on board: %d", moneyOnBoard ) ) )
@@ -542,21 +542,22 @@ end
 
 --- Callback for the UI button in boarding ship dialog (see above)
 function doBoarding( reward )
-	if boardingDialog == nil then return end --- this should never happen
+	if UI.search("/'Boarding Ship'/") == nil then return end --- this should never happen
 
 	addcredits( reward )
 
 	Epiar.getSprite( HUD.getTarget() ) : SetCredits( 0 )
 
 	Epiar.unpause()
-	boardingDialog:close()
-	boardingDialog = nil
+	UI.search("/'Boarding Ship'/"):close()
 end
 
 function endBoarding()
 	Epiar.unpause()
-	boardingDialog:close()
-	boardingDialog = nil
+	local boardingDialog = UI.search("/'Boarding Ship'/")
+	if boardingDialog ~= nil then
+		boardingDialog:close()
+	end
 end
 
 function doCapture(succ_max, destruct_max)
@@ -610,7 +611,7 @@ end
 
 --- Try to land
 function attemptLanding()
-	if landingWin ~= nil then return end
+	if UI.search("/Window/Tabs'Store'") ~= nil then return end
 
 	local x,y = PLAYER:GetPosition()
 	local planet = Epiar.nearestPlanet(PLAYER, 4096)

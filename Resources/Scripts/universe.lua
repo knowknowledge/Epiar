@@ -149,7 +149,7 @@ end
 --- List of options
 function options()
 	Epiar.pause()
-	if optionWindow ~= nil then
+	if UI.search("/Window'Options'/") ~= nil then
 		closeOptions()
 		return
 	end
@@ -157,9 +157,12 @@ function options()
 	local height=400
 	local tabwidth=width-20
 	local tabheight=height-100
-	optionWindow = UI.newWindow( 30,100,width,height,"Options")
 	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
-	optionWindow:add(optionTabs)
+	UI.newWindow( 30,100,width,height,"Options",
+		optionTabs,
+		UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
+		UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" )
+	)
 
 	-- General Game Options
 	-- ( No developer stuff here. )
@@ -271,12 +274,9 @@ function options()
 		end
 	end
 	function closeOptions()
-		optionWindow:close();
-		optionWindow=nil;
+		UI.search("/Window'Options'/"):close();
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
-						UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" ))
 end
 
 function createSystems(seed)
@@ -640,7 +640,7 @@ end
 --- Land on a planet
 function landingDialog(id)
 	-- Create the Planet Landing Screen
-	if landingWin ~= nil then return end
+	if UI.search("/Window/Tabs'Store'") ~= nil then return end
 
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
@@ -815,7 +815,7 @@ function intro()
 end
 
 function introComplete()
-	if introWin == nil then return end
+	if UI.search("/Window'Welcome to Epiar'/") == nil then return end
 	introWin:close()
 	introWin = nil
 	-- Unpause if the player loading screen isn't active
@@ -824,7 +824,7 @@ end
 
 --- UI demo
 function ui_demo()
-	if demo_win ~= nil then return end
+	if UI.search("/Window'User Interface Demo'/") ~= nil then return end
 
 	-- Create the widgets
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
@@ -850,7 +850,7 @@ end
 
 -- interactive weapon slot configuration
 function weaponConfigDialog()
-	if wcDialog ~= nil then return end
+	if UI.search("/Weapon Configuration/") ~= nil then return end
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
