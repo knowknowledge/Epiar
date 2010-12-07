@@ -149,8 +149,8 @@ int UI_Lua::close(lua_State *L){
 		UI::Close();
 	}
 	else if(n == 1) {
-		Widget** window= (Widget**)lua_touserdata(L,1);
-		UI::Close(*window);
+		Widget** widget = (Widget**)lua_touserdata(L,1);
+		UI::Close(*widget);
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 0 or 1 ([window])", n); 

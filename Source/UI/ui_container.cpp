@@ -55,6 +55,7 @@ Container *Container::AddChild( Widget *widget ) {
 bool Container::DelChild( Widget *widget ){
 	list<Widget *>::iterator i;
 
+	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == widget ) {
 			// FIXME BROKEN Uncommenting this delete causes memory corruption crashes on MSVC 2008 and 2010. PLEASE FIX!
@@ -64,6 +65,15 @@ bool Container::DelChild( Widget *widget ){
 			Reset();
 
 			return true;
+		}
+	}
+
+	// Scan all of the children's children
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			if( ((Container*)(*i))->DelChild( widget ) ) {
+				return true;
+			}
 		}
 	}
 
