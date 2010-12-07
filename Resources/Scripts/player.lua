@@ -661,6 +661,14 @@ end
 
 --- Teleport to any location via a new gate
 function goto(x,y)
+	-- If x is a planet name, go to that instead
+	for i,planet in pairs( Epiar.planetNames() ) do
+		if x == planet then
+			x,y = Planet.Get( planet ):GetPosition()
+			x = x + about(1000)
+			y = y + about(1000)
+		end
+	end
 	local px,py = PLAYER:GetPosition()
 	Epiar.NewGatePair(x,y,px,py)
 end
