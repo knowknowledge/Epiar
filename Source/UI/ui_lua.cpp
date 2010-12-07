@@ -37,6 +37,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTabCont", &UI_Lua::newTabCont},
 		{"newTab", &UI_Lua::newTab},
 		{"add", &UI_Lua::addWidget},
+		{"search", &UI_Lua::search},
 		{NULL, NULL}
 	};
 
@@ -392,6 +393,26 @@ int UI_Lua::addWidget(lua_State *L) {
 	return 0;
 }
 
+int UI_Lua::search(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1){
+		return luaL_error(L, "Got %d arguments expected 1 (query)", n);
+	}
+
+	string query = luaL_checkstring (L, 1);
+	Widget *result = UI::Search( query );
+	if( result == NULL ) {
+		LogMsg(WARN, "Failed to find a widget with the query '%s'.", query.c_str() );
+		return 0;
+	}
+
+	Widget **passback = (Widget**)lua_newuserdata(L, sizeof(Widget**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+	*passback = result;
+
+	return 1;
+}
 
 int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments

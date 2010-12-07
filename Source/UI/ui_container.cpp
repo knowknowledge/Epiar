@@ -204,7 +204,7 @@ Widget *Container::Search( string full_query ) {
 					}
 					
 					if( i == current->children.end() ) {
-						LogMsg(INFO, "The query '%s' failed to find a widget using the query '%s' at section %d", full_query.c_str(), section );
+						LogMsg(INFO, "The query '%s' failed to find a widget at section %d", full_query.c_str(), section );
 						return NULL;
 					}
 					++section;
