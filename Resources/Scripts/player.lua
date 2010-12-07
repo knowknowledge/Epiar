@@ -670,7 +670,7 @@ function radarZoomKeys()
 	for k =1,9 do
 		kn = string.byte(k)
 		ks = string.format("%d",1000*math.pow(2,k-1))
-		Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
+		Epiar.RegisterKey(kn, KEYTYPED, "HUD.setVisibity("..ks..")")
 	end
 end
 radarZoomKeys()

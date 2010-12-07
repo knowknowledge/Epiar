@@ -629,7 +629,7 @@ function debugZoomKeys()
         local vis = 1000*math.pow(2,k-1)
         local delta = 10*math.pow(2,k-1)
         local cmd = string.format("DX,DY=%f,%f;HUD.setVisibity(%d)",delta,delta,vis)
-        Epiar.RegisterKey(keyval, KEYPRESSED, cmd)
+        Epiar.RegisterKey(keyval, KEYTYPED, cmd)
     end
 end
 debugZoomKeys()
