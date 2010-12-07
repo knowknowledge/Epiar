@@ -372,7 +372,7 @@ function hailShip()
 				  ["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
 				  ["What's the nearest port?"]="Sorry, I'm not sure about that.",
 				  ["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
-				  ["Do you know who I am?"]=string.format("Well, your identification reads '%s'.", PLAYER:GetName()),
+				  ["Do you know who I am?"]=string.format("Well, your identification reads %q.", PLAYER:GetName()),
 				  ["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
 				  ["Your ship looks like junk."]="--" }
 
@@ -596,7 +596,7 @@ function doCapture(succ_max, destruct_max)
 		-- SetModel() has already determined the slot contents for us, so use them
 		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 			PLAYER:AddToWeaponList(weap)
-			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+			HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 		end
 
 		PLAYER:ChangeWeapon()
@@ -698,7 +698,7 @@ function createHUD()
 	local weapSlotContents = PLAYER:GetWeaponSlotContents()
 	--for weapon,ammo in pairs(weaponsAndAmmo) do
 	for name,weap in pairs(weapSlotContents) do
-		HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+		HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 	end
 
 	-- Target Bars
@@ -895,7 +895,7 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription('%s','%s')", mission.Name, mission.Description ) ) )
+			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription(%q,%q)", mission.Name, mission.Description ) ) )
 			y = y + 30
 		end
 	else
@@ -923,7 +923,7 @@ end
 		
 		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
 		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
-		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
+		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); descriptionWindow:close()", _missionName) )
 		--currentDescription:close() 
 		descriptionWindow:add( descriptionLable, rejectButton )
 	end

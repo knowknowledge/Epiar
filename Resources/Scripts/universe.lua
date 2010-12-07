@@ -267,7 +267,7 @@ function options()
 				if newkey ~= oldkey then
 					Epiar.UnRegisterKey(sdlkey(oldkey), commands[i][4])
 					Epiar.RegisterKey(sdlkey(newkey), commands[i][4], commands[i][3])
-					HUD.newAlert(string.format("Registered '%s' to %s", newkey, name))
+					HUD.newAlert(string.format("Registered %q to %q", newkey, name))
 					commands[i][1] = keyinput[name]:GetText()
 				end
 			end
@@ -435,7 +435,7 @@ function buyShip(model)
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 
 				PLAYER:ChangeWeapon()
 			end
@@ -502,7 +502,7 @@ function buyOutfit(outfit)
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
-		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
+		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -608,7 +608,7 @@ function tradeCommodity(transaction, commodity, count, price)
 	elseif transaction=="sell" then
 		print("Tonnage stored:",cargo[commodity] or 0)
 		print("Tonnage requested:",count)
-		trueCount = math.min(count,cargo[commodity]) -- Can't sell more than this
+		trueCount = math.min(count,cargo[commodity] or 0) -- Can't sell more than this
 		print("Discarding "..trueCount.." Tonnes")
 		discarded = PLAYER:DiscardCommodities( commodity,trueCount )
 		print("Discarded "..discarded.." Tonnes")
@@ -618,13 +618,13 @@ function tradeCommodity(transaction, commodity, count, price)
 		PLAYER:SetCredits( player_credits + trueCount*price )
 		HUD.newAlert(string.format("You sold %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
 	else
-		error( string.format( "Sorry, trading Commodities doesn't understand transaction '%s'", transaction ) )
+		error( string.format( "Sorry, trading Commodities doesn't understand transaction %q", transaction ) )
 	end
 	
-	local commodityBox = UI.search(string.format("/Window/'Store'/'Trade'/Textbox'%s'/", commodity))
+	local commodityBox = UI.search(string.format("/Window/'Store'/'Trade'/Textbox%q/", commodity))
 	if commodityBox ~= nil then
 		local cargo,stored,storable = PLAYER:GetCargo()
-		commodityBox:setText( cargo[commodity] )
+		commodityBox:setText( cargo[commodity] or 0)
 	end
 
 	print "Done Trading..."
@@ -752,8 +752,8 @@ function landingDialog(id)
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
 		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0, commodity)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy',%q,%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell',%q,%d,%d)",commodity,count,price )))
 	end
 	storeframe:add(trade)
 
