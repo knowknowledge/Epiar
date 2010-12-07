@@ -244,7 +244,7 @@ end
 
 ---Board closest ship if possible
 function boardShip()
-	if boardingDialog ~= nil then return end -- Abort if the player is already boarding something.
+	if UI.search("/'Boarding Ship'/") ~= nil then return end -- Abort if the player is already boarding something.
 
 	local x, y = PLAYER:GetPosition()
 	local targettedShip = Epiar.getSprite( HUD.getTarget() ) -- acquire target
@@ -274,7 +274,7 @@ function boardShip()
 
 		local captureProbPct = (1 / succ_max) * 100
 
-		boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
+		local boardingDialog = UI.newWindow(100, 100, 450, 190, "Boarding Ship")
 		boardingDialog:add( UI.newLabel(50, 30,  string.format("You have boarded the ship." ) ) )
 		boardingDialog:add( UI.newLabel(50, 60,  string.format("  Class: %s", targettedShip:GetModelName() ) ) )
 		boardingDialog:add( UI.newLabel(50, 90,  string.format("  Credits on board: %d", moneyOnBoard ) ) )
@@ -372,7 +372,7 @@ function hailShip()
 				  ["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
 				  ["What's the nearest port?"]="Sorry, I'm not sure about that.",
 				  ["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
-				  ["Do you know who I am?"]=string.format("Well, your identification reads '%s'.", PLAYER:GetName()),
+				  ["Do you know who I am?"]=string.format("Well, your identification reads %q.", PLAYER:GetName()),
 				  ["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
 				  ["Your ship looks like junk."]="--" }
 
@@ -542,21 +542,22 @@ end
 
 --- Callback for the UI button in boarding ship dialog (see above)
 function doBoarding( reward )
-	if boardingDialog == nil then return end --- this should never happen
+	if UI.search("/'Boarding Ship'/") == nil then return end --- this should never happen
 
 	addcredits( reward )
 
 	Epiar.getSprite( HUD.getTarget() ) : SetCredits( 0 )
 
 	Epiar.unpause()
-	boardingDialog:close()
-	boardingDialog = nil
+	UI.search("/'Boarding Ship'/"):close()
 end
 
 function endBoarding()
 	Epiar.unpause()
-	boardingDialog:close()
-	boardingDialog = nil
+	local boardingDialog = UI.search("/'Boarding Ship'/")
+	if boardingDialog ~= nil then
+		boardingDialog:close()
+	end
 end
 
 function doCapture(succ_max, destruct_max)
@@ -595,7 +596,7 @@ function doCapture(succ_max, destruct_max)
 		-- SetModel() has already determined the slot contents for us, so use them
 		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 			PLAYER:AddToWeaponList(weap)
-			HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+			HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 		end
 
 		PLAYER:ChangeWeapon()
@@ -610,7 +611,7 @@ end
 
 --- Try to land
 function attemptLanding()
-	if landingWin ~= nil then return end
+	if UI.search("/Window/Tabs'Store'") ~= nil then return end
 
 	local x,y = PLAYER:GetPosition()
 	local planet = Epiar.nearestPlanet(PLAYER, 4096)
@@ -660,6 +661,14 @@ end
 
 --- Teleport to any location via a new gate
 function goto(x,y)
+	-- If x is a planet name, go to that instead
+	for i,planet in pairs( Epiar.planetNames() ) do
+		if x == planet then
+			x,y = Planet.Get( planet ):GetPosition()
+			x = x + about(1000)
+			y = y + about(1000)
+		end
+	end
 	local px,py = PLAYER:GetPosition()
 	Epiar.NewGatePair(x,y,px,py)
 end
@@ -669,7 +678,7 @@ function radarZoomKeys()
 	for k =1,9 do
 		kn = string.byte(k)
 		ks = string.format("%d",1000*math.pow(2,k-1))
-		Epiar.RegisterKey(kn, KEYPRESSED, "HUD.setVisibity("..ks..")")
+		Epiar.RegisterKey(kn, KEYTYPED, "HUD.setVisibity("..ks..")")
 	end
 end
 radarZoomKeys()
@@ -689,7 +698,7 @@ function createHUD()
 	local weapSlotContents = PLAYER:GetWeaponSlotContents()
 	--for weapon,ammo in pairs(weaponsAndAmmo) do
 	for name,weap in pairs(weapSlotContents) do
-		HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+		HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 	end
 
 	-- Target Bars
@@ -886,7 +895,7 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription('%s','%s')", mission.Name, mission.Description ) ) )
+			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription(%q,%q)", mission.Name, mission.Description ) ) )
 			y = y + 30
 		end
 	else
@@ -914,7 +923,7 @@ end
 		
 		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
 		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
-		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission('%s'); descriptionWindow:close()", _missionName) )
+		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); descriptionWindow:close()", _missionName) )
 		--currentDescription:close() 
 		descriptionWindow:add( descriptionLable, rejectButton )
 	end

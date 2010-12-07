@@ -125,24 +125,24 @@ EditorLayouts = {
 --- Creates a generic list of Component buttons
 -- TODO: This window should have an "Add Component" button
 function componentViewer(kind,listFunc,getStr)
-	if componentWins[kind] ~= nil then return end
+	if UI.search( string.format("/Window%q/", kind) ) ~= nil then return end
 	list = listFunc()
 	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+90,kind)
 	for i = 1,#list do
 		s = list[i]
-		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent('%s','%s',%s)",kind,s,getStr)))
+		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q,%s)",kind,s,getStr)))
 	end
-    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent('%s','%s',%s)",kind,'',getStr)))
-	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins['%s']:close();componentWins['%s']=nil",kind,kind)))
+    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q,%s)",kind,'',getStr)))
+	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins[%q]:close();componentWins[%q]=nil",kind,kind)))
 end
 
 function showComponent(kind,name,getterFunc)
-	if infoWindows[name] ~= nil then return end
+	if UI.search( string.format("/Window%q/", name) ) ~= nil then return end
 	local height=700
 	local width=250
 	local theInfo = getterFunc( name )
 	local theWin = UI.newWindow(150,100,width,height,name,
-		UI.newButton( 15,5,15,15,"X", string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
+		UI.newButton( 15,5,15,15,"X", string.format("infoWindows[%q].win:close();infoWindows[%q]=nil",name,name)))
 
     if kind=="Planet" and name~="" then
         planet = Planet.Get(name)
@@ -187,7 +187,7 @@ function showComponent(kind,name,getterFunc)
 			field = UI.newTextbox( 10, yoff,width-30,1, value)
 			theWin:add(field)
 			yoff = yoff+20
-			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker('%s','%s')",name,title)))
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker(%q,%q)",name,title)))
 			yoff = yoff+20+5
 		elseif fieldType == "Technologies" then
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
@@ -213,7 +213,7 @@ function showComponent(kind,name,getterFunc)
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
 
-			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots('%s', '%s')",name,title)))
+			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots(%q, %q)",name,title)))
 			yoff = yoff+20+5
 
 			theInfo[title]["desiredLength"] = 16
@@ -225,7 +225,7 @@ function showComponent(kind,name,getterFunc)
 		theFields[title] = field
 	end
 	
-	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo('%s')",name )) )
+	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo(%q)",name )) )
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics, weapontables=theWeaponTables}
 end
 
@@ -268,7 +268,7 @@ end
 
 --- Saves information
 function saveInfo(name)
-	if infoWindows[name] == nil then return end
+	if UI.search( string.format("/Window%q/", name) ) == nil then return end
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
 	local weapontables = infoWindows[name].weapontables
@@ -308,12 +308,12 @@ end
 
 --- View technology
 function technologyViewer()
-	if technologiesWindow ~= nil then return end
+	if UI.search( "/Window'Technologies'/" ) ~= nil then return end
 	technologies = Epiar.technologies()
 	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+90,"Technologies")
 	for i = 1,#technologies do
 		name = technologies[i]
-		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo('%s')",name)))
+		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo(%q)",name)))
 	end
     technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
 	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
@@ -321,7 +321,7 @@ end
 
 --- Save technology
 function saveTech(name)
-	if infoWindows[name] == nil then return end
+	if UI.search( string.format("/Window%q/", name) ) == nil then return end
 	local win = infoWindows[name].win
 	local boxes = infoWindows[name].boxes
 	local nameField = infoWindows[name].name
@@ -347,7 +347,7 @@ end
 
 --- Show technology information
 function showTechInfo(name)
-	if infoWindows[name]~= nil then return end
+	if UI.search( string.format("/Window%q/", name) ) ~= nil then return end
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()
 	local allengines = Epiar.engines()
@@ -386,8 +386,8 @@ function showTechInfo(name)
 	showTable("Engines",allengines)
 	showTable("Outfits",alloutfits)
 	infoWindows[name] = {kind='Technology',win=theWin,name=nameField,boxes=checkedTechs}
-	theWin:add( UI.newButton(width-25,5,15,15,"X",string.format("infoWindows['%s'].win:close();infoWindows['%s']=nil",name,name)))
-	theWin:add(UI.newButton(width-120,height-40,100,30,"Save", string.format("saveTech('%s')",name) ))
+	theWin:add( UI.newButton(width-25,5,15,15,"X",string.format("infoWindows[%q].win:close();infoWindows[%q]=nil",name,name)))
+	theWin:add(UI.newButton(width-120,height-40,100,30,"Save", string.format("saveTech(%q)",name) ))
 end
 
 --- Show ship information
@@ -395,9 +395,10 @@ function showShipInfo(ship)
 	shipID = ship:GetID()
 	modelName = ship:GetModelName()
 	Epiar.focusCamera(shipID)
-	if infoWindows[shipID] ~= nil then return end
 	shipModel = ship:GetModelName()
 	shipname = string.format("%s #%d",shipModel, shipID)
+	if UI.search( string.format("/Window%q/", shipname) ) ~= nil then return end
+
 	shipInfoWin = UI.newWindow(150,100,200,400,shipname)
 	shipInfoWin:add( UI.newPicture( 20,25,160,100,shipModel))
 	y1,y2=155,140
@@ -428,25 +429,23 @@ function showShipInfo(ship)
 end
 
 function ImagePicker(name,title)
-	if imagePickerWin ~=nil then return end
-	imagePickerWin = UI.newWindow(700,150,250,700, "Image Picker")
+	if UI.search( "/Window'Image Picker'/" ) ~= nil then return end
+	local imagePickerWin = UI.newWindow(700,150,250,700, "Image Picker")
 	--TODO: Preserve the textbox assosciated with this window.
 	--      When imagePick is called, set the textbox value to the image path
 
 	function imagePick(name,title,path)
-		if imagePickerWin ==nil then return end
+		if UI.search( "/Window'Image Picker'/" ) ==nil then return end
 		infoWindows[name]["texts"][title]:setText( path )
 		infoWindows[name]["pics"][title]:setPicture( path )
-		imagePickerWin:close()
-		imagePickerWin = nil
+		UI.search( "/Window'Image Picker'/" ):close()
 		print( "Picture Path:", path )
 	end
 
-	pics = Epiar.listImages()
-	for i,picPath in ipairs(pics) do
+	for i,picPath in pairs( Epiar.listImages()) do
 		imagePickerWin:add(
 			UI.newPicture(25,25+300*(i-1),200,200,"Resources/Graphics/"..picPath),
-			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick('%s','%s','%s')",name,title,"Resources/Graphics/"..picPath )))
+			UI.newButton( 25,225+300*(i-1),200,30, picPath,string.format("imagePick(%q,%q,%q)",name,title,"Resources/Graphics/"..picPath )))
 	end
 end
 
@@ -519,7 +518,7 @@ end
 
 function EditWeaponSlots(name, title)
 	SlotEditor = {}
-	if editWeaponSlotsWin ~= nil then return end
+	if UI.search( "/Window'Edit Weapon Slots'/" ) ~= nil then return end
 	editWeaponSlotsWin = UI.newWindow(200,200,800,500, "Edit Weapon Slots")
 	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
 
@@ -593,24 +592,20 @@ function goto(x,y)
 end
 
 function gotoButton()
-	goto( gotoX:GetText(), gotoY:GetText() )
-	gotoWin:close()
-	gotoWin = nil
+	goto( UI.search("/'Go to Location'/Textbox[0]/"):GetText(),
+          UI.search("/'Go to Location'/Textbox[1]/"):GetText() )
+	UI.search("/'Go to Location'/"):close()
 end
 
 function gotoCommand()
-	if gotoWin~=nil then gotoButton(); return end
+	if UI.search( "/'Go to Location'/" ) ~= nil then gotoButton(); return end
 	local cx,cy = Epiar.getCamera()
 	local width = 160
 	local height = 100
-	gotoWin = UI.newWindow(WIDTH/2-100,HEIGHT/2-100,width,height,"Go to Location")
-	gotoWin:add(UI.newLabel(10,30,"X"))
-	gotoX = UI.newTextbox(20,30,50,1,cx)
-	gotoWin:add(gotoX)
-	gotoWin:add(UI.newLabel(90,30,"Y"))
-	gotoY = UI.newTextbox(100,30,50,1,cy)
-	gotoWin:add(gotoY)
-	gotoWin:add(UI.newButton(width/2-40,55,80,30,"Go","gotoButton()"))
+	UI.newWindow( WIDTH/2-100, HEIGHT/2-100, width, height, "Go to Location",
+		UI.newLabel(10,30,"X"), UI.newTextbox(20,30,50,1,cx),
+		UI.newLabel(90,30,"Y"), UI.newTextbox(100,30,50,1,cy),
+		UI.newButton(width/2-40,55,80,30,"Go","gotoButton()"))
 end
 
 DX,DY = 20,20
@@ -634,7 +629,7 @@ function debugZoomKeys()
         local vis = 1000*math.pow(2,k-1)
         local delta = 10*math.pow(2,k-1)
         local cmd = string.format("DX,DY=%f,%f;HUD.setVisibity(%d)",delta,delta,vis)
-        Epiar.RegisterKey(keyval, KEYPRESSED, cmd)
+        Epiar.RegisterKey(keyval, KEYTYPED, cmd)
     end
 end
 debugZoomKeys()

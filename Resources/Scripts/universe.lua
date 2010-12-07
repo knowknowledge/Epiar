@@ -149,7 +149,7 @@ end
 --- List of options
 function options()
 	Epiar.pause()
-	if optionWindow ~= nil then
+	if UI.search("/Window'Options'/") ~= nil then
 		closeOptions()
 		return
 	end
@@ -157,9 +157,12 @@ function options()
 	local height=400
 	local tabwidth=width-20
 	local tabheight=height-100
-	optionWindow = UI.newWindow( 30,100,width,height,"Options")
 	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
-	optionWindow:add(optionTabs)
+	UI.newWindow( 30,100,width,height,"Options",
+		optionTabs,
+		UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
+		UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" )
+	)
 
 	-- General Game Options
 	-- ( No developer stuff here. )
@@ -264,19 +267,16 @@ function options()
 				if newkey ~= oldkey then
 					Epiar.UnRegisterKey(sdlkey(oldkey), commands[i][4])
 					Epiar.RegisterKey(sdlkey(newkey), commands[i][4], commands[i][3])
-					HUD.newAlert(string.format("Registered '%s' to %s", newkey, name))
+					HUD.newAlert(string.format("Registered %q to %q", newkey, name))
 					commands[i][1] = keyinput[name]:GetText()
 				end
 			end
 		end
 	end
 	function closeOptions()
-		optionWindow:close();
-		optionWindow=nil;
+		UI.search("/Window'Options'/"):close();
 		Epiar.unpause()
 	end
-	optionWindow:add( UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
-						UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" ))
 end
 
 function createSystems(seed)
@@ -405,12 +405,18 @@ end
 --- Buys a ship
 function buyShip(model)
 	if model==nil then
-		model = shipstats["Name"]:GetText()
-		print('Buying ',model)
+		local viewerLabel = UI.search("/Window/Tabs'Store'/'Ship Yard'/Frame[1]/Label[0]/")
+		if viewerLabel ~= nil then
+			model = viewerLabel:GetText()
+			print('Buying ',model)
+		else
+			print('Could not interpret nil model for buyShip()')
+			return
+		end
 	end
 	print('Buying ',model)
-	price = Epiar.getMSRP(model)
-	player_credits = PLAYER:GetCredits()
+	local price = Epiar.getMSRP(model)
+	local player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
 		currentModel = PLAYER:GetModelName()
 		if currentModel ~= model then
@@ -429,7 +435,7 @@ function buyShip(model)
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo('%s')",weap))
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 
 				PLAYER:ChangeWeapon()
 			end
@@ -447,8 +453,14 @@ end
 
 function buyOutfit(outfit)
 	if outfit==nil then
-		outfit = outfitstats["Name"]:GetText()
-		print("Buying Outfit ("..outfit..")")
+		local viewerLabel = UI.search("/Window/Tabs'Store'/'Outfitting'/Frame[1]/Label[0]/")
+		if viewerLabel ~= nil then
+			outfit = viewerLabel:GetText()
+			print('Buying ',outfit)
+		else
+			print('Could not interpret nil model for buyShip()')
+			return
+		end
 	end
 	local price = Epiar.getMSRP(outfit)
 	local player_credits = PLAYER:GetCredits()
@@ -490,7 +502,7 @@ function buyOutfit(outfit)
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
-		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo('%s')",outfit))
+		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -507,8 +519,14 @@ end
 
 function sellOutfit(outfit)
 	if outfit==nil then
-		outfit = outfitstats["Name"]:GetText()
-		print("Selling Outfit ("..outfit..")")
+		local viewerLabel = UI.search("/Window/Tabs'Store'/'Outfitting'/Frame[1]/Label[0]/")
+		if viewerLabel ~= nil then
+			outfit = viewerLabel:GetText()
+			print('Selling ',outfit)
+		else
+			print('Could not interpret nil model for buyShip()')
+			return
+		end
 	end
 
 	print("Removing Outfit...")
@@ -573,8 +591,8 @@ end
 
 --- Trade a Commodity
 function tradeCommodity(transaction, commodity, count, price)
-	player_credits = PLAYER:GetCredits()
-	cargo,stored,storable = PLAYER:GetCargo()
+	local player_credits = PLAYER:GetCredits()
+	local cargo,stored,storable = PLAYER:GetCargo()
 	print "Trading..."
 	if transaction=="buy" then
 		print("Tonnage available:",storable-stored)
@@ -590,7 +608,7 @@ function tradeCommodity(transaction, commodity, count, price)
 	elseif transaction=="sell" then
 		print("Tonnage stored:",cargo[commodity] or 0)
 		print("Tonnage requested:",count)
-		trueCount = math.min(count,cargo[commodity]) -- Can't sell more than this
+		trueCount = math.min(count,cargo[commodity] or 0) -- Can't sell more than this
 		print("Discarding "..trueCount.." Tonnes")
 		discarded = PLAYER:DiscardCommodities( commodity,trueCount )
 		print("Discarded "..discarded.." Tonnes")
@@ -600,13 +618,20 @@ function tradeCommodity(transaction, commodity, count, price)
 		PLAYER:SetCredits( player_credits + trueCount*price )
 		HUD.newAlert(string.format("You sold %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
 	else
-		error( string.format( "Sorry, trading Commodities doesn't understand transaction '%s'", transaction ) )
+		error( string.format( "Sorry, trading Commodities doesn't understand transaction %q", transaction ) )
 	end
+	
+	local commodityBox = UI.search(string.format("/Window/'Store'/'Trade'/Textbox%q/", commodity))
+	if commodityBox ~= nil then
+		local cargo,stored,storable = PLAYER:GetCargo()
+		commodityBox:setText( cargo[commodity] or 0)
+	end
+
 	print "Done Trading..."
 	return 1
 end
 
-function storeView(storestats, itemType, itemName )
+function storeView(containerPath, itemType, itemName )
 	local getters = {
 		["ship"]=Epiar.getModelInfo,
 		["weapon"]=Epiar.getWeaponInfo,
@@ -614,140 +639,102 @@ function storeView(storestats, itemType, itemName )
 		["outfit"]=Epiar.getOutfitInfo,
 	}
 	local iteminfo = getters[itemType](itemName)
-	--print( "viewing "..itemName)
-	--for infoname,infovalue in pairs(iteminfo) do
-	--	print(infoname,infovalue)
-	--end
-	--print('----------')
-	for statname,statlabel in pairs(storestats) do
-		if iteminfo[statname] == nil then
-			iteminfo[statname] = ""
-		end
-		--print(statname, iteminfo[statname] )
-		if statname=="Picture"  or statname=="Image" then
-			statlabel:setPicture( iteminfo[statname] )
+
+	-- Reset the Item Viewer
+	local viewer = UI.search( containerPath .. "Frame[1]/")
+	if viewer ~= nil then viewer:close() end
+	viewer = UI.newFrame( 180, 10, 390, 325)
+	UI.search( containerPath ):add( viewer )
+
+	viewer:add( UI.newLabel(195, 15, iteminfo["Name"], 1) )
+	viewer:add( UI.newLabel(195, 35, iteminfo["MSRP"] .. " Credits", 1) )
+
+	local yoff = 50
+	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
+
+	for statname,value in pairs(iteminfo) do
+		print(statname, value )
+		-- Skip these kinds
+		if statname == "Name"
+		or statname == "MSRP"
+		or statname == "Picture"
+		or statname == "Image"
+		or statname == "Sound"
+		or statname == "Animation"
+		or type(value) == "table" then
 		else
-			value = iteminfo[statname]
 			if type(value)=="number" and math.floor(value) ~= value then
-				value = string.format("%.2f", value )
+				value = string.format("%.2f", value)
 			end
-			statlabel:setLabel( value )
+			viewer:add( UI.newLabel(220, yoff, statname) )
+			viewer:add( UI.newLabel(330, yoff, value) )
+			yoff = yoff + 21
 		end
 	end
-	--print('----------')
+
 end
 
 --- Land on a planet
 function landingDialog(id)
 	-- Create the Planet Landing Screen
-	if landingWin ~= nil then return end
+	if UI.search("/Window/Tabs'Store'/") ~= nil then return end
 
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
 	
 	local height = 500
 	local width = 600
-	local boxsize = 80
+	local boxsize = 120
 
 	landingWin = UI.newWindow( 200,100,width,height, string.format("%s",planet:GetName()))
 	storeframe = UI.newTabCont( 10, 30, width - 20, height - 80,"Store")
 	landingWin:add(storeframe)
 
-	-- Shipyard
-	shipyard = UI.newTab("Ship Yard")
-	local yoff = 5
-	local models = planet:GetModels()
-	for i,name in ipairs(models) do
-		shipyard:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
-		yoff = yoff+boxsize
-		shipyard:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(shipstats,'ship','%s')",name)))
-		yoff = yoff+30
+	function addToStoreList( storeList, list, yoff, cmd, container )
+		for i,name in ipairs(list) do
+			storeList:add( UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
+			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, string.format( cmd, container, name ) ))
+			yoff = yoff + 30 + boxsize
+		end
+		return yoff
 	end
 
-	--function label_y(num) num*20+10 end
-	shipstats = {}
-	shipstats["Name"] = UI.newLabel(440, 10+21*(0),"",1)
-	shipstats["Image"] = UI.newPicture(120,10,200,200,"",0,0,0,1)
-	shipyard:add(shipstats["Name"], shipstats["Image"])
-	local statnames = {
-		{title= "Hull Strength",statname= "MaxHull"},
-		{title= "Shield Strength",statname= "MaxShield"},
-		{title= "Mass",statname= "Mass"},
-		{title= "Speed",statname= "MaxSpeed"},
-		{title= "Cargo Space",statname= "Cargo"},
-		{title= "Surface Area",statname= "SurfaceArea"},
-		{title= "Rotation Speed",statname= "Rotation"},
-		{title= "Cost",statname= "MSRP"},
-	}
-	for i,stat in ipairs(statnames) do
-		yoff = 10+21*(i)
-		title = UI.newLabel(340, yoff,stat.title)
-		value = UI.newLabel(440, yoff,"")
-		shipyard:add(title,value)
-		shipstats[stat.statname] = value
+	-- Shipyard
+	local shipyard = UI.newTab("Ship Yard")
+	local shipList = UI.newFrame( 10, 10, 160, 360 )
+	shipyard:add( shipList )
+	local yoff = 10
+	local models = planet:GetModels()
+	for i,name in ipairs(models) do
+		shipList:add(UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
+		yoff = yoff+boxsize
+		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'Ship Yard'/", name)))
+		yoff = yoff+30
 	end
-	storeView(shipstats,'ship',models[1])
-	shipyard:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyShip()" ))
+	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
+	storeframe:add(shipyard)
+
+	storeView( "/Window/Tabs'Store'/'Ship Yard'/" , 'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
+	local outfitList = UI.newFrame( 10, 10, 160, 360 )
+	outfitting:add( outfitList )
+	yoff = 10
 	local weapons = planet:GetWeapons()
 	local engines = planet:GetEngines()
 	local outfits = planet:GetOutfits()
-	local yoff = 5
-	for i,name in ipairs(weapons) do
-		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
-		yoff = yoff+boxsize
-		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'weapon','%s')",name)))
-		yoff = yoff+30
-	end
-	for i,name in ipairs(engines) do
-		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
-		yoff = yoff+boxsize
-		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'engine','%s')",name)))
-		yoff = yoff+30
-	end
-	for i,name in ipairs(outfits) do
-		outfitting:add(UI.newPicture(5,yoff,boxsize,boxsize,name,0,0,0,1))
-		yoff = yoff+boxsize
-		outfitting:add( UI.newButton( 5,yoff,boxsize,20,name, string.format("storeView(outfitstats,'outfit','%s')",name)))
-		yoff = yoff+30
-	end
+	yoff = addToStoreList( outfitList, weapons, yoff, "storeView(%q, 'weapon', %q)", "/Window/Tabs'Store'/'Outfitting'/")
+	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", "/Window/Tabs'Store'/'Outfitting'/")
+	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", "/Window/Tabs'Store'/'Outfitting'/")
+	storeframe:add(outfitting)
+	outfitting:add( UI.newButton( width-200,340,100,30,"Buy","buyOutfit()" ))
+	outfitting:add( UI.newButton( width-200,340,100,30,"Sell","sellOutfit()" ))
 
-	outfitstats = {}
-	outfitstats["Name"] = UI.newLabel(440, 10+21*(0),"",1)
-	outfitstats["Picture"] = UI.newPicture(120,10,200,200,"",0,0,0,1)
-	outfitting:add(outfitstats["Name"], outfitstats["Picture"])
-	local statnames = {
-		{title= "Payload",statname= "Payload"},
-		{title= "Lifetime",statname= "Lifetime"},
-		{title= "Fire Delay",statname= "FireDelay"},
-		{title= "Tracking",statname= "Tracking"},
-		{title= "Speed",statname= "MaxSpeed"},
-		{title= "Force Output",statname= "Force"},
-		{title= "Rotation Speed",statname= "Rotation"},
-		{title= "Hull",statname= "MaxHull"},
-		{title= "Shield",statname= "MaxShield"},
-		{title= "Mass",statname= "Mass"},
-		{title= "Cargo Space",statname= "Cargo"},
-		{title= "Cost",statname= "MSRP"},
-	}
-	for i,stat in ipairs(statnames) do
-		yoff = 10+21*(i)
-		title = UI.newLabel(340, yoff,stat.title)
-		value = UI.newLabel(440, yoff,"")
-		outfitting:add(title,value)
-		outfitstats[stat.statname] = value
+	if #weapons > 0 then     storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'weapon', weapons[1])
+	elseif #engines > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'engine', engines[1])
+	elseif #outfits > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'outfit', outfits[1])
 	end
-	if #weapons then
-		storeView(outfitstats,'weapon',weapons[1])
-	elseif #engines then
-		storeView(outfitstats,'engine',engines[1])
-	elseif #outfits then
-		storeView(outfitstats,'outfit',outfits[1])
-	end
-	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+20,100,30,"Buy","buyOutfit()" ))
-	outfitting:add( UI.newButton( width-200,math.max(210,yoff)+50,100,30,"Sell","sellOutfit()" ))
 
 	-- Trade
 	trade = UI.newTab("Trade")
@@ -763,11 +750,12 @@ function landingDialog(id)
 		--print (commodity.."is "..priceMeanings[price_offset+4].." at "..price.." instead of "..msrp)
 		local count = 10
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
-		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0)
+		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0, commodity)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy','%s',%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell','%s',%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy',%q,%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell',%q,%d,%d)",commodity,count,price )))
 	end
+	storeframe:add(trade)
 
 	-- Employment
 	missions = UI.newTab("Employment")
@@ -793,8 +781,7 @@ function landingDialog(id)
 		)
 		yoff = yoff + 170
 	end
-
-	storeframe:add(shipyard, outfitting, trade, missions)
+	storeframe:add(missions)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 110,height-40,100,30,"Weapon Config","weaponConfigDialog()" ))
@@ -815,7 +802,7 @@ function intro()
 end
 
 function introComplete()
-	if introWin == nil then return end
+	if UI.search("/Window'Welcome to Epiar'/") == nil then return end
 	introWin:close()
 	introWin = nil
 	-- Unpause if the player loading screen isn't active
@@ -824,7 +811,7 @@ end
 
 --- UI demo
 function ui_demo()
-	if demo_win ~= nil then return end
+	if UI.search("/Window'User Interface Demo'/") ~= nil then return end
 
 	-- Create the widgets
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
@@ -850,7 +837,7 @@ end
 
 -- interactive weapon slot configuration
 function weaponConfigDialog()
-	if wcDialog ~= nil then return end
+	if UI.search("/Weapon Configuration/") ~= nil then return end
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 

@@ -42,6 +42,7 @@ class UI_Lua {
 		static int newTabCont(lua_State *L);
 		static int newTab(lua_State *L);
 		static int addWidget(lua_State *L);
+		static int search(lua_State *L);
 
 		// Fuctions to get Widget information
 		static int IsChecked(lua_State *L);

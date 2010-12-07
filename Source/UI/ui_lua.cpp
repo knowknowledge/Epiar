@@ -37,6 +37,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTabCont", &UI_Lua::newTabCont},
 		{"newTab", &UI_Lua::newTab},
 		{"add", &UI_Lua::addWidget},
+		{"search", &UI_Lua::search},
 		{NULL, NULL}
 	};
 
@@ -148,8 +149,8 @@ int UI_Lua::close(lua_State *L){
 		UI::Close();
 	}
 	else if(n == 1) {
-		Widget** window= (Widget**)lua_touserdata(L,1);
-		UI::Close(*window);
+		Widget** widget = (Widget**)lua_touserdata(L,1);
+		UI::Close(*widget);
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 0 or 1 ([window])", n); 
@@ -264,26 +265,22 @@ int UI_Lua::newTab(lua_State *L){
 int UI_Lua::newTextbox(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( n < 4  )
-		return luaL_error(L, "Got %d arguments expected 3, 4, or 5 (x, y, w, h, [text], [code])", n);
+		return luaL_error(L, "Got %d arguments expected 3, 4, or 5 (x, y, w, h, [text], [name])", n);
 
 	int x = int(luaL_checknumber (L, 1));
 	int y = int(luaL_checknumber (L, 2));
 	int w = int(luaL_checknumber (L, 3));
 	int h = int(luaL_checknumber (L, 4));
-	string code = "";
 	string text = "";
+	string name = "";
 	if(n>=5) text = luaL_checkstring (L, 5);
-	if(n>=7) code = luaL_checkstring (L, 7);
+	if(n>=6) name = luaL_checkstring (L, 6);
 
 	// Allocate memory for a pointer to object
 	Textbox **textbox = (Textbox**)lua_newuserdata(L, sizeof(Textbox**));
     luaL_getmetatable(L, EPIAR_UI);
     lua_setmetatable(L, -2);
-	*textbox = new Textbox(x, y, w, h, text);
-
-	// Note: We're not putting this button anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
+	*textbox = new Textbox(x, y, w, h, text, name);
 
 	return 1;
 }
@@ -307,10 +304,6 @@ int UI_Lua::newLabel(lua_State *L){
 		bool centered = luaL_checknumber (L, 4) != 0.;
 		*label = new Label(x,y,caption,centered);
 	}
-
-	// Note: We're not putting this Label anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
 
 	return 1;
 }
@@ -352,10 +345,6 @@ int UI_Lua::newPicture(lua_State *L){
 		*pic = new Picture(x,y, picname );
 	(*pic)->SetColor(red,blue,green,alpha);
 
-	// Note: We're not putting this Label anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
-
 	return 1;
 }
 
@@ -392,6 +381,26 @@ int UI_Lua::addWidget(lua_State *L) {
 	return 0;
 }
 
+int UI_Lua::search(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1){
+		return luaL_error(L, "Got %d arguments expected 1 (query)", n);
+	}
+
+	string query = luaL_checkstring (L, 1);
+	Widget *result = UI::Search( query );
+	if( result == NULL ) {
+		LogMsg(WARN, "Failed to find a widget with the query '%s'.", query.c_str() );
+		return 0;
+	}
+
+	Widget **passback = (Widget**)lua_newuserdata(L, sizeof(Widget**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+	*passback = result;
+
+	return 1;
+}
 
 int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments

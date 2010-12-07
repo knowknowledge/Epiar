@@ -55,6 +55,7 @@ Container *Container::AddChild( Widget *widget ) {
 bool Container::DelChild( Widget *widget ){
 	list<Widget *>::iterator i;
 
+	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == widget ) {
 			// FIXME BROKEN Uncommenting this delete causes memory corruption crashes on MSVC 2008 and 2010. PLEASE FIX!
@@ -64,6 +65,15 @@ bool Container::DelChild( Widget *widget ){
 			Reset();
 
 			return true;
+		}
+	}
+
+	// Scan all of the children's children
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			if( ((Container*)(*i))->DelChild( widget ) ) {
+				return true;
+			}
 		}
 	}
 
@@ -204,7 +214,7 @@ Widget *Container::Search( string full_query ) {
 					}
 					
 					if( i == current->children.end() ) {
-						LogMsg(INFO, "The query '%s' failed to find a widget using the query '%s' at section %d", full_query.c_str(), section );
+						LogMsg(INFO, "The query '%s' failed to find a widget at section %d", full_query.c_str(), section );
 						return NULL;
 					}
 					++section;
