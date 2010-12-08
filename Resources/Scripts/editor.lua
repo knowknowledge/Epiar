@@ -13,11 +13,9 @@ function componentDebugger()
 		UI.newButton(500,0,100,30,"Gate","componentViewer('Gate',Epiar.gateNames,'Epiar.getGateInfo')" ),
 		UI.newButton(600,0,100,30,"Technology","technologyViewer()"),
 		UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
+		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" ),
+    	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 	)
-    UI.newWindow( 452, 700,120,70, "Save Components",
-		UI.newButton(10,30,100,30,"Save","Epiar.saveComponents()" )
-    )
 end
 componentDebugger()
 

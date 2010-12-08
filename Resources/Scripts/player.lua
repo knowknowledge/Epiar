@@ -365,16 +365,18 @@ function hailShip()
 			["TooClose"]="I'm orbiting, but I'm too close!",
 			["TooFar"]="I'm orbiting, but I need to get closer!",
 			["Travelling"]=string.format("I'm on my way to %s.", aiDest),
-			["Accompanying"]="I'm accompanying another ship."
+			["Accompanying"]="I'm accompanying another ship.",
 		}
 
-		hailResponses = { ["Greetings"]="Hello there.",
-				  ["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
-				  ["What's the nearest port?"]="Sorry, I'm not sure about that.",
-				  ["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
-				  ["Do you know who I am?"]=string.format("Well, your identification reads %q.", PLAYER:GetName()),
-				  ["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
-				  ["Your ship looks like junk."]="--" }
+		hailResponses = {
+			["Greetings"]="Hello there.",
+			["What are you up to?"]="Huh, I'm not quite sure what I'm doing right now.",
+			["What's the nearest port?"]="Sorry, I'm not sure about that.",
+			["Who are you?"]=string.format("This is %s.",targettedShip:GetName()),
+			["Do you know who I am?"]=string.format("Well, your identification reads %q.", PLAYER:GetName()),
+			["How can I earn money?"]="Try landing on a planet or station and looking in the Employment section.",
+			["Your ship looks like junk."]="--",
+		}
 
 		if Epiar.nearestPlanet(targettedShip, 4096) ~= nil then
 			hailResponses["What's the nearest port?"] = string.format("I guess that would be %s",
@@ -788,8 +790,7 @@ function loadingWindow()
 		for i=1,#players do
 			local player = players[i]
 			-- TODO: show a preview of the player (curret ship, location, equipment)
-			player = string.gsub(player, "([\\\"])", "\\%1")
-			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(\"%s\")",player)))
+			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(%q)",player)))
 			yoff = yoff + 40
 		end
 		yoff = yoff + 30
