@@ -40,6 +40,8 @@ function APHardInit()
 	APPersistent.numObjects = function() return APPersistent.numObjectsVal end
 	APPersistent.numObjectsIncr = function() APPersistent.numObjectsVal = APPersistent.numObjectsVal + 1 end
 	APPersistent.SpatialDistStatic = { }
+	APPersistent.gateInfoCache = { }
+	APPersistent.planetInfoCache = { }
 end
 
 -- Constructor-like routine for any autopilot object (table must be grabbed from the return value now).
@@ -64,11 +66,12 @@ function APInit( _name, _id )
 	}
 	self.SpatialDistDynamic = { }
 	self.GateRoute = { }
-	self.destGateInfo = { }
 	self.control = false
 	self.allowAccel = false
 	self.name = _name
 	self.id = _id
+	self.spcr = nil -- shortestPath() coroutine
+	self.spcrConclude = nil
 	return self
 end
 
@@ -113,7 +116,7 @@ end
 
 -- Show a HUD alert when something happens on the way to the destination
 APFuncs.showAlert = function(self)
-	if self.name ~= "player" then return end
+	if self == nil or self.name ~= "player" then return end
 	local dest = self.GateRoute[#self.GateRoute]
 	local next = self.GateRoute[1]
 	HUD.newAlert( (string.format("Autopilot: engaged, en route to %s, next object is %s", dest, next) ) )
@@ -164,46 +167,80 @@ function APFuncs.shortestPath(self, dest)
 
 	-- Fortunately, this only has to run each time the player chooses to calculate a new route, which is rare.
 
-	print "Begin Bellman-Ford"
-	for i =1,self:numObjects()-1 do -- <--- repeat (numObjects - 1) times
-		for i1,u in pairs(self.V) do -- <----------\_______________ for each
-			for i2,v in pairs(self.V) do -- <--/                edge (u,v)
-				if self.S[v] == nil then -- such that v not in S
-					if( u ~= v ) then self.relax( u, v ) end
-					relaxations = relaxations + 1
+	self.spcr = coroutine.create(function()
+		local spcr_finished = false
+
+		for i =1,self:numObjects()-1 do -- <--- repeat (numObjects - 1) times
+			for i1,u in pairs(self.V) do -- <----------\_______________ for each
+				for i2,v in pairs(self.V) do -- <--/                edge (u,v)
+					if self.S[v] == nil then -- such that v not in S
+						if( u ~= v ) then self.relax( u, v ) end
+						relaxations = relaxations + 1
+					end
 				end
-				cycles = cycles + 1
+				-- since the moving object is no longer listed, need to do this relax individually
+				-- note: the fact that we are considering that u (rather than v) may be unexplored deviates
+				-- from the algorithm spec a bit, but with the way things are implemented here it does not
+				-- cause a problem
+				if(self.S[u] == nil) then self.relax( (self.name .. self.id), u) end
+				if i1 % 7 == 1 then coroutine.yield() end
 			end
-			-- since the moving object is no longer listed, need to do this relax individually
-			-- note: the fact that we are considering that u may be unexplored deviates from the
-			-- algorithm spec a bit
-			if(self.S[u] == nil) then self.relax( (self.name .. self.id), u) end
-		end
-	end
-	print "End Bellman-Ford"
-
-	print ("relaxations: "..relaxations)
-	print ("cycles: "..cycles)
-
-	if dest == self.s then
-		-- this should not happen unless the player asks the for a route to "player"
-	else
-		self.GateRoute = { }
-
-		self.buildRoute = function(obj)
-			table.insert(self.GateRoute, 0, obj)
-			if obj == (self.name .. self.id) or obj == nil then return true end
-			return self.buildRoute(self.pred[obj])
+			coroutine.yield()
 		end
 
-		self.buildRoute(dest)
+		spcr_finished = true
+
+		return spcr_finished
+	end)
+
+	self.spcrConclude = function()
+		spcr = nil
+		if self.name == "player" then PLAYER:SetLuaControlFunc("") end
+
+		--print ("relaxations: "..relaxations)
+
+		if dest == self.s then
+			-- this should not happen unless the player asks the for a route to "player"
+		else
+			self.GateRoute = { }
+
+			self.buildRoute = function(obj)
+				table.insert(self.GateRoute, 0, obj)
+				if obj == (self.name .. self.id) or obj == nil then return true end
+				return self.buildRoute(self.pred[obj])
+			end
+
+			self.buildRoute(dest)
+		end
+		--self:showGateRoute()
+
+		if self.name == "player" then
+			HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#self.GateRoute/2) ) )
+		end
+
+		return true
 	end
-	self:showGateRoute()
+
+	self.spcrTick = function()
+		--print "SPCR TICK"
+		coroutine.resume(self.spcr)
+		local status, spcr_finished = coroutine.resume(self.spcr)
+		if spcr_finished then
+			--print "coroutine finished"
+			return self.spcrConclude()
+		else
+			--print "coroutine did not finish yet"
+			return false
+		end
+	end
+
+	if self.name == "player" then
+		PLAYER:SetLuaControlFunc("Autopilot.spcrTick()")
+		HUD.newAlert("Working...")
+	end
 end
 
 function APFuncs.calculateSpatialDistances (self, moving_type, moving_id)
-	local theGates = Epiar.gates()
-	local thePlanets = Epiar.planets()
 	local movingX, movingY, moving_object
 	if moving_type == "player" then
 		movingX, movingY = PLAYER:GetPosition()
@@ -215,13 +252,25 @@ function APFuncs.calculateSpatialDistances (self, moving_type, moving_id)
 	local updateOnly = true
 	if self:numObjects() == 1 then updateOnly = false end
 
-	for num,gate1 in pairs(theGates) do
-		local gi1 = Epiar.getGateInfo(gate1:GetID())
+	if APPersistent.doneCaching ~= true then
+		local theGates = Epiar.gates()
+		local thePlanets = Epiar.planets()
+		for num,gate in pairs(theGates) do
+			local gi = Epiar.getGateInfo(gate:GetID())
+			APPersistent.gateInfoCache[gi.Name] = gi
+		end
+		for num,planet in pairs(thePlanets) do
+			local pi = Epiar.getPlanetInfo(planet:GetID())
+			APPersistent.planetInfoCache[pi.Name] = pi
+		end
+		APPersistent.doneCaching = true
+	end
+
+	for gname1,gi1 in pairs(APPersistent.gateInfoCache) do
 
 		-- loop to calculate spatial distances between all gate pairs (including partners, which are recorded as zero distance)
-		for num,gate2 in pairs(theGates) do
+		for gname2,gi2 in pairs(APPersistent.gateInfoCache) do
 			if updateOnly then break end
-			local gi2 = Epiar.getGateInfo(gate2:GetID())
 			local edge = self:graphEdge(gi1.Name, gi2.Name)
 			APPersistent.SpatialDistStatic[edge] = distfrom( gi1.X, gi1.Y, gi2.X, gi2.Y )
 			if gi1.Exit == gi2.Name then 
@@ -236,9 +285,7 @@ function APFuncs.calculateSpatialDistances (self, moving_type, moving_id)
 		self.SpatialDistDynamic[edge] = distfrom( gi1.X, gi1.Y, movingX, movingY )
 
 		-- loop to calculate distances Gate-Planet and moving_object-Planet
-		for num,planet in pairs(thePlanets) do
-			local pi = Epiar.getPlanetInfo(planet:GetID())
-
+		for pname,pi in pairs(APPersistent.planetInfoCache) do
 			if updateOnly == false then
 				local edge = self:graphEdge(gi1.Name, pi.Name)
 				APPersistent.SpatialDistStatic[edge] = distfrom( gi1.X, gi1.Y, pi.X, pi.Y )
@@ -261,9 +308,8 @@ function APFuncs.calculateSpatialDistances (self, moving_type, moving_id)
 
 	-- once the gate loop is finished, run through the planets
 	-- one time and insert them into the list of objects
-	for num,planet in pairs(thePlanets) do
+	for pname,pi in pairs(APPersistent.planetInfoCache) do
 		if updateOnly then break end
-		local pi = Epiar.getPlanetInfo(planet:GetID())
 		table.insert(APPersistent.Objects, pi.Name)
 		APPersistent.numObjectsIncr()
 	end
@@ -300,13 +346,13 @@ function APFuncs.compute (self, dest)
 	end
 
 	if dest == nil or dest == "" or exists(dest) == false then
-		HUD.newAlert("Please specify a real destination.")
+		if self.name == "player" then
+			HUD.newAlert("Please specify a real destination.")
+		end
 		return
 	end
 
 	self:shortestPath(dest)
-
-	HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#self.GateRoute/2) ) )
 end
 
 -- Function to handle ship rotation and thrust suggestions. Returns true until arrival at the destination. then false.
@@ -322,7 +368,7 @@ function APFuncs.autoAngle (self)
 	elseif #self.GateRoute == 0 then
 		-- neither should this
 	elseif #self.GateRoute == 1 then
-		local pi = Epiar.getPlanetInfo(theObj)
+		local pi = APPersistent.planetInfoCache[theObj]
 		local movingX, movingY = mySprite:GetPosition()
 		local speed = mySprite:GetMomentumSpeed()
 		-- Work on slowing down if we're getting close to the destination
@@ -350,15 +396,15 @@ function APFuncs.autoAngle (self)
 		end
 		if distfrom(movingX, movingY, pi.X, pi.Y) < 300 then
 			table.remove(self.GateRoute, 1)
-			if self.name == "player" then HUD.newAlert("You have arrived at your destination.") end
+			if self.name == "player" then
+				HUD.newAlert("You have arrived at your destination.")
+				Autopilot = nil
+			end
 			self = nil
 			return false
 		end
 	else
-		if self.destGateInfo[theObj] == nil then
-			self.destGateInfo[theObj] = Epiar.getGateInfo(theObj)
-		end
-		local gi = self.destGateInfo[theObj]
+		local gi = APPersistent.gateInfoCache[theObj]
 		mySprite:Rotate( mySprite:directionTowards(gi.X, gi.Y) )
 
 		local movingX, movingY = mySprite:GetPosition()
@@ -369,7 +415,7 @@ function APFuncs.autoAngle (self)
 			-- as soon as you exit. (Better would be for the self state to be updated upon
 			-- successful gate travel.)
 			table.remove(self.GateRoute, 1)
-			self:showGateRoute()
+			--self:showGateRoute()
 			if #self.GateRoute % 2 == 1 then
 				-- don't tell the moving to resume acceleration until he/she has cleared both the gate top and bottom
 				-- (this acceleration control could be automated)
@@ -426,6 +472,11 @@ function showAPConfigDialog()
 		return
 	end
 	if Autopilot.ConfigDialog ~= nil then return end
+
+	-- if it's already in control, turn it off for a moment (helps avoid having to hit the same key twice)
+	if Autopilot.control == true then
+		playerAutopilotToggle()
+	end
 
 	Epiar.pause()
 
