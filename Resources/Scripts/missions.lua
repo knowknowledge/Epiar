@@ -438,7 +438,7 @@ ProtectFreighter = {
 			-- Add freighter
 			local freighter = Ship.new(
 			   string.format("%s", missionTable.freighterName), playerX-100,playerY, "Hammer Freighter",
-			   "Altaire Corp. NM66 Sublight Thrusters", type,"Independent" )
+			   "Ion Engines", type, "Independent" )
 			missionTable.freighter = freighter:GetID()
 			local id = missionTable.freighter
 			freighter:SetRadarColor(0,255,0)
@@ -468,7 +468,6 @@ ProtectFreighter = {
 			-- Clean up
 			freighterDialog:close()
 			freighterDialog = nil
-			freighterCreate = nil
 		end
 	end,
 	Reject = function( missionTable )

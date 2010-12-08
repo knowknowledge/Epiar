@@ -67,7 +67,7 @@ function APInit( _name, _id )
 	self.SpatialDistDynamic = { }
 	self.GateRoute = { }
 	self.control = false
-	self.allowAccel = false
+	self.AllowAccel = false
 	self.name = _name
 	self.id = _id
 	self.spcr = nil -- shortestPath() coroutine
@@ -212,7 +212,7 @@ function APFuncs.shortestPath(self, dest)
 
 			self.buildRoute(dest)
 		end
-		self:showGateRoute()
+		--self:showGateRoute()
 
 		if self.name == "player" then
 			HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#self.GateRoute/2) ) )
@@ -363,6 +363,8 @@ function APFuncs.autoAngle (self)
 	local mySprite = Epiar.getSprite(self.id)
 	if self.name ~= "AI" and self:hasAutopilot(mySprite) == false then return end
 
+	self.AllowAccel = false
+
 	local theObj = self.GateRoute[1]
 	if theObj == (self.name .. self.id) then
 		-- this shouldn't happen
@@ -372,6 +374,7 @@ function APFuncs.autoAngle (self)
 		local pi = APPersistent.planetInfoCache[theObj]
 		local movingX, movingY = mySprite:GetPosition()
 		local speed = mySprite:GetMomentumSpeed()
+		self.AllowAccel = false
 		-- Work on slowing down if we're getting close to the destination
 		if distfrom(movingX, movingY, pi.X, pi.Y) < 800 + 100*speed then
 			local inverseMomentumDir = - mySprite:directionTowards( mySprite:GetMomentumAngle() )
@@ -389,11 +392,7 @@ function APFuncs.autoAngle (self)
 		-- Otherwise just keep going in the direction of the destination
 		else
 			mySprite:Rotate( mySprite:directionTowards( pi.X, pi.Y ) )
-			if mySprite:directionTowards( pi.X, pi.Y ) == 0 then
-				self.AllowAccel = true
-			else
-				self.AllowAccel = false
-			end
+			self.AllowAccel = (mySprite:directionTowards( pi.X, pi.Y ) == 0)
 		end
 		if distfrom(movingX, movingY, pi.X, pi.Y) < 300 then
 			table.remove(self.GateRoute, 1)
@@ -407,6 +406,7 @@ function APFuncs.autoAngle (self)
 	else
 		local gi = APPersistent.gateInfoCache[theObj]
 		mySprite:Rotate( mySprite:directionTowards(gi.X, gi.Y) )
+		self.AllowAccel = false
 
 		local movingX, movingY = mySprite:GetPosition()
 		if distfrom(movingX, movingY, gi.X, gi.Y) < 500 then
@@ -416,19 +416,24 @@ function APFuncs.autoAngle (self)
 			-- as soon as you exit. (Better would be for the self state to be updated upon
 			-- successful gate travel.)
 			table.remove(self.GateRoute, 1)
+			theObj = self.GateRoute[1]
+			local oi = APPersistent.gateInfoCache[theObj]
+			if oi == nil then oi = APPersistent.planetInfoCache[theObj] end
 			--self:showGateRoute()
 			if #self.GateRoute % 2 == 1 then
 				-- don't tell the moving to resume acceleration until he/she has cleared both the gate top and bottom
 				-- (this acceleration control could be automated)
 				--HUD.newAlert("please resume acceleration")
+				self.AllowAccel = (mySprite:directionTowards( oi.X, oi.Y ) == 0)
 				self:showAlert()
-				self.AllowAccel = true
 			end
 		elseif distfrom(movingX, movingY, gi.X, gi.Y) < 800 then
 			if self.AllowAccel ~= false then
 				--HUD.newAlert("please stop acceleration")
 				self.AllowAccel = false
 			end
+		else
+			self.AllowAccel = (#self.GateRoute % 2 == 1 and mySprite:directionTowards( gi.X, gi.Y ) == 0)
 		end
 	end
 	return true
