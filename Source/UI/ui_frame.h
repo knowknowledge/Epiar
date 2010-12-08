@@ -22,7 +22,7 @@ class Frame : public Container {
 		bool MouseDrag( int x, int y );
 
 		string GetType( void ) { return string("Frame"); }
-		virtual int GetMask( void ) { return WIDGET_FRAME; }
+		virtual int GetMask( void ) { return WIDGET_FRAME | WIDGET_CONTAINER; }
 
 	private:
 		Image *bitmaps[9];

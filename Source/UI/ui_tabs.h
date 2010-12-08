@@ -22,7 +22,7 @@ class Tab : public Container {
 		void Draw( int relx = 0, int rely = 0 );
 
 		string GetType( void ) {return string("Tab");}
-		virtual int GetMask( void ) { return WIDGET_TAB; }
+		virtual int GetMask( void ) { return WIDGET_TAB | WIDGET_CONTAINER; }
 
 		friend class Tabs;
 
@@ -42,7 +42,7 @@ class Tabs : public Container {
 		void Draw( int relx = 0, int rely = 0 );
 		bool MouseLDown( int xi, int yi );
 		string GetType( void ) {return string("Tabs");}
-		virtual int GetMask( void ) { return WIDGET_TABS; }
+		virtual int GetMask( void ) { return WIDGET_TABS | WIDGET_CONTAINER; }
 
 		void TabNext( void );
 	private:

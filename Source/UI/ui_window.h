@@ -24,7 +24,7 @@ class Window : public Container {
 		bool SetDragability( bool _draggable );
 
 		string GetType( void ) { return string("Window"); }
-		virtual int GetMask( void ) { return WIDGET_WINDOW; }
+		virtual int GetMask( void ) { return WIDGET_WINDOW | WIDGET_CONTAINER; }
 
 	private:
 		bool draggable;

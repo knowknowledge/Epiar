@@ -22,10 +22,10 @@
 #define WIDGET_SCROLLBAR           (0x00000080)
 
 #define WIDGET_CONTAINER           (0x00010000)
-#define WIDGET_FRAME               (0x00020000 | WIDGET_CONTAINER)
-#define WIDGET_WINDOW              (0x00040000 | WIDGET_CONTAINER) 
-#define WIDGET_TAB                 (0x00080000 | WIDGET_CONTAINER) 
-#define WIDGET_TABS                (0x00100000 | WIDGET_CONTAINER) 
+#define WIDGET_FRAME               (0x00020000)
+#define WIDGET_WINDOW              (0x00040000)
+#define WIDGET_TAB                 (0x00080000)
+#define WIDGET_TABS                (0x00100000)
 
 #define WIDGET_NONE                0x00000000
 #define WIDGET_ALL                 0xFFFFFFFF
