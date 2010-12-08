@@ -212,7 +212,7 @@ function APFuncs.shortestPath(self, dest)
 
 			self.buildRoute(dest)
 		end
-		--self:showGateRoute()
+		self:showGateRoute()
 
 		if self.name == "player" then
 			HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#self.GateRoute/2) ) )
@@ -358,9 +358,10 @@ end
 -- Function to handle ship rotation and thrust suggestions. Returns true until arrival at the destination. then false.
 function APFuncs.autoAngle (self)
 	if self == nil then return end
-	-- check the outfit list to make sure this ship actually has an autopilot installed
+	-- if it's not an AI, check the outfit list to make sure this ship actually has an autopilot installed
+	-- (currently, AIs are allowed free use of autopilot functions so you don't have to worry about installing outfits on AIs)
 	local mySprite = Epiar.getSprite(self.id)
-	--if self:hasAutopilot(mySprite) == false then return end
+	if self.name ~= "AI" and self:hasAutopilot(mySprite) == false then return end
 
 	local theObj = self.GateRoute[1]
 	if theObj == (self.name .. self.id) then

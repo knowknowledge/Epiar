@@ -19,12 +19,15 @@ AIData = {}
 function FindADestination(id,x,y,angle,speed,vector)
 	-- Choose a planet
 	local cur_ship = Epiar.getSprite(id)
+
+	if AIData[id].destinationName ~= nil and AIData[id].alwaysGateTravel == true then
+		return GateTraveler.ComputingRoute(id,x,y,angle,speed,vector)
+	end
+
 	local planetNames = Epiar.planetNames()
 	local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
 	AIData[id].destination = destination:GetID()
 	AIData[id].destinationName = destination:GetName()
-	local mach, state = cur_ship:GetState()
-	if mach == "Trader" then return GateTraveler.ComputingRoute(id,x,y,angle,speed,vector) end
 	return "Travelling"
 end
 
@@ -93,8 +96,12 @@ GateTraveler = {
 		if AIData[id].Autopilot.AllowAccel ~= false then
 			cur_ship:Accelerate()
 		end
+
 		local enroute = AIData[id].Autopilot:autoAngle()
 		if enroute then return "GateTravelling" end
+
+		AIData[id].destination = -1
+		AIData[id].destinationName = nil
 		return "Travelling" -- Once the autopilot finishes up, revert back to standard Travelling state
 	end
 }
@@ -240,6 +247,7 @@ Trader = {
 		local cur_ship = Epiar.getSprite(id)
 
 		local p = Epiar.getSprite( AIData[id].destination )
+		if p == nil then return "New_Planet" end
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
@@ -249,7 +257,7 @@ Trader = {
 	end,
 	New_Planet = FindADestination,
 	default = function(id,x,y,angle,speed,vector,state)
-		AIData[id] = {}
+		if AIData[id] == nil then AIData[id] = { } end
 		local cur_ship = Epiar.getSprite(id)
 
 		local traderNames = {	"S.S. Epiar", "S.S. Honorable", "S.S. Marvelous", "S.S. Delight",
