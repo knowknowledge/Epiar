@@ -39,9 +39,7 @@
 	</timing>
 	<development>
         <ships-worldmap>1</ships-worldmap>
-		<editor-mode>0</editor-mode>
 		<debug-ai>1</debug-ai>
 		<debug-ui>0</debug-ui>
-		<override-tgz>1</override-tgz>
 	</development>
 </options>

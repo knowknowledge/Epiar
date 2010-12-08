@@ -172,8 +172,7 @@ function options()
 	fullScreen      = UI.newCheckbox(20,  30, ( Epiar.getoption("options/video/fullscreen") ), "Run as Full Screen")
 	randomUniverse  = UI.newCheckbox(20,  50, ( Epiar.getoption("options/simulation/random-universe") ), "Create a Random Universe")
 	autoLoad        = UI.newCheckbox(20,  70, ( Epiar.getoption("options/simulation/automatic-load") ), "Automatically Load the last Player")
-	editorMode      = UI.newCheckbox(20,  90, ( Epiar.getoption("options/development/editor-mode") ), "Run in Editor Mode")
-	gameTab:add( gameLabel, fullScreen, randomUniverse, autoLoad, editorMode )
+	gameTab:add( gameLabel, fullScreen, randomUniverse, autoLoad)
 
 	-- Sounds
 	soundsTab = UI.newTab("Audio")
@@ -241,7 +240,6 @@ function options()
 		Epiar.setoption("options/video/fullscreen",           fullScreen      :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/simulation/random-universe", randomUniverse  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/simulation/automatic-load",  autoLoad        :IsChecked() and 1 or 0 )
-		Epiar.setoption("options/development/editor-mode",    editorMode      :IsChecked() and 1 or 0 )
 
 		-- Sound Options
 		Epiar.setoption("options/sound/background", backgroundSound :IsChecked() and 1 or 0 )
@@ -320,7 +318,8 @@ function createSystems(seed)
 	end
 
 	-- Create a system at 0,0 so that new players are attached to the gate grid
-	table.insert( system, { ["x"]=0,
+	table.insert( system, { 
+		              ["x"]=0,
 		              ["y"]=0,
 		              ["alliance"]=alliances[ math.random(#alliances) ],
 		              ["numPlanets"]=0,

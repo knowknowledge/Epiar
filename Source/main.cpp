@@ -159,7 +159,6 @@ void Main_Init_Singletons( int argc, char **argv ) {
 	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
 	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
 	argparser->SetOpt(LONGOPT, "version",        "Display program version");
-	argparser->SetOpt(LONGOPT, "editor-mode",    "Puts you in edit mode");
 	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
 	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
 	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
@@ -234,9 +233,6 @@ void Main_Parse_Args( ) {
 	// Override OPTION values.
 
 	// Following are cumulative options (I.E. you can have multiple of them)
-	if ( argparser->HaveOpt("editor-mode") ){
-			SETOPTION("options/development/editor-mode",1);
-	}
 	if ( argparser->HaveOpt("no-audio") ) {
 			cout<<"turning off sound"<<endl;
 			SETOPTION("options/sound/background",0);
