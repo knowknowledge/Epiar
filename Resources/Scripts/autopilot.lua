@@ -23,12 +23,8 @@
 -- How to use it:
 --   0) buy the "Nav Aid" outfit (it won't work until you do)
 --   1) hit 'T' (capital) and choose your destination (must be a valid planet/station name)
---   2) hold down Left Alt and accelerate in the direction it takes you.
---   3) if you think you are headed completely in the right direction or if it tells you to stop,
---      stop accelerating, but keep Left Alt held down. (this could be automated)
---   4) when you are through the gate and it tells you to resume acceleration, start accelerating
---      again with Left Alt still held.
---   5) repeat until you arrive at your destination
+--   2) press Left Alt
+--   3) either wait until you arrive at your destination or hit Left Alt again to deactivate
 --
 
 APPersistent = nil	-- this table is non-volatile but is safe to reset if needed
@@ -64,11 +60,11 @@ function APInit( _name, _id )
 		calculateSpatialDistances
 				= APFuncs.calculateSpatialDistances,
 		compute		= APFuncs.compute,
-		autoAngle
-				= APFuncs.autoAngle
+		autoAngle	= APFuncs.autoAngle
 	}
 	self.SpatialDistDynamic = { }
 	self.GateRoute = { }
+	self.destGateInfo = { }
 	self.control = false
 	self.allowAccel = false
 	self.name = _name
@@ -130,7 +126,7 @@ function APFuncs.shortestPath(self, dest)
 
 	self.d = { }  -- shortest path distances from s; e.g., d["Ves"] is the length of the shortest known route to from s to Ves.
 	self.pred = { } -- predecessor list; e.g., pred["Ves"] is the gate (if any -- else origin) that the player exits before reaching Ves
-	self.s = self.name -- starting point (most likely "player")
+	self.s = (self.name .. self.id) -- starting point (most likely "player")
 	self.V = APPersistent.Objects -- names of planets, stations, and gates
 	self.S = { }
 	self.l = function(edge) return self:spatialDistance(edge) end
@@ -168,6 +164,7 @@ function APFuncs.shortestPath(self, dest)
 
 	-- Fortunately, this only has to run each time the player chooses to calculate a new route, which is rare.
 
+	print "Begin Bellman-Ford"
 	for i =1,self:numObjects()-1 do -- <--- repeat (numObjects - 1) times
 		for i1,u in pairs(self.V) do -- <----------\_______________ for each
 			for i2,v in pairs(self.V) do -- <--/                edge (u,v)
@@ -180,9 +177,10 @@ function APFuncs.shortestPath(self, dest)
 			-- since the moving object is no longer listed, need to do this relax individually
 			-- note: the fact that we are considering that u may be unexplored deviates from the
 			-- algorithm spec a bit
-			if(self.S[u] == nil) then self.relax(self.name, u) end
+			if(self.S[u] == nil) then self.relax( (self.name .. self.id), u) end
 		end
 	end
+	print "End Bellman-Ford"
 
 	print ("relaxations: "..relaxations)
 	print ("cycles: "..cycles)
@@ -193,10 +191,8 @@ function APFuncs.shortestPath(self, dest)
 		self.GateRoute = { }
 
 		self.buildRoute = function(obj)
-			-- note: inserting at zero here means that the last thing to be inserted
-			-- (self's name) will be included but will not be examined in a normal loop
 			table.insert(self.GateRoute, 0, obj)
-			if obj == self.name or obj == nil then return true end
+			if obj == (self.name .. self.id) or obj == nil then return true end
 			return self.buildRoute(self.pred[obj])
 		end
 
@@ -211,11 +207,10 @@ function APFuncs.calculateSpatialDistances (self, moving_type, moving_id)
 	local movingX, movingY, moving_object
 	if moving_type == "player" then
 		movingX, movingY = PLAYER:GetPosition()
-		moving_object = moving_type
-	elseif moving_type == "ai" then
+	elseif moving_type == "AI" then
 		movingX, movingY = Epiar.getSprite(moving_id):GetPosition()
-		moving_object = string.format("%s%d", moving_type, moving_id)
 	end
+	moving_object = (moving_type .. moving_id)
 
 	local updateOnly = true
 	if self:numObjects() == 1 then updateOnly = false end
@@ -314,13 +309,15 @@ function APFuncs.compute (self, dest)
 	HUD.newAlert( string.format("Computed a route to %s: %d gate pair(s).", dest, math.floor(#self.GateRoute/2) ) )
 end
 
-function APFuncs.autoAngle (self, mySprite)
+-- Function to handle ship rotation and thrust suggestions. Returns true until arrival at the destination. then false.
+function APFuncs.autoAngle (self)
 	if self == nil then return end
 	-- check the outfit list to make sure this ship actually has an autopilot installed
-	if self:hasAutopilot(mySprite) == false then return end
+	local mySprite = Epiar.getSprite(self.id)
+	--if self:hasAutopilot(mySprite) == false then return end
 
 	local theObj = self.GateRoute[1]
-	if theObj == self.name then
+	if theObj == (self.name .. self.id) then
 		-- this shouldn't happen
 	elseif #self.GateRoute == 0 then
 		-- neither should this
@@ -355,9 +352,13 @@ function APFuncs.autoAngle (self, mySprite)
 			table.remove(self.GateRoute, 1)
 			if self.name == "player" then HUD.newAlert("You have arrived at your destination.") end
 			self = nil
+			return false
 		end
 	else
-		local gi = Epiar.getGateInfo(theObj)
+		if self.destGateInfo[theObj] == nil then
+			self.destGateInfo[theObj] = Epiar.getGateInfo(theObj)
+		end
+		local gi = self.destGateInfo[theObj]
 		mySprite:Rotate( mySprite:directionTowards(gi.X, gi.Y) )
 
 		local movingX, movingY = mySprite:GetPosition()
@@ -383,6 +384,7 @@ function APFuncs.autoAngle (self, mySprite)
 			end
 		end
 	end
+	return true
 end
 
 ------------------------------------------
@@ -397,7 +399,7 @@ function playerAutopilotRun ()
 	if Autopilot.AllowAccel ~= false then
 		PLAYER:Accelerate()
 	end
-	Autopilot:autoAngle(PLAYER)
+	Autopilot:autoAngle()
 end
 
 function playerAutopilotToggle ()

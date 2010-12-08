@@ -22,7 +22,11 @@ function FindADestination(id,x,y,angle,speed,vector)
 	local planetNames = Epiar.planetNames()
 	local destination = Planet.Get(planetNames[ math.random(#planetNames) ])
 	AIData[id].destination = destination:GetID()
-	return "Travelling"
+	AIData[id].destinationName = destination:GetName()
+	print "destination name is"
+	print (AIData[id].destinationName)
+	return GateTraveler.ComputingRoute(id,x,y,angle,speed,vector)
+	--return "Travelling"
 end
 
 function okayTarget(cur_ship, ship)
@@ -58,6 +62,34 @@ function setHuntHostile(id, tid)
 	AIData[id].hostile = 1
 	AIData[id].foundTarget = 0
 end
+
+GateTraveler = {
+	default = function(id,x,y,angle,speed,vector)
+		print "WARNING: GateTraveler default state was invoked. This should not happen."
+		local cur_ship = Epiar.getSprite(id)
+		cur_ship:Explode()
+		return "default"
+	end,
+	ComputingRoute = function(id,x,y,angle,speed,vector)
+		if AIData[id].Autopilot == nil then
+			AIData[id].Autopilot = APInit( "AI", id )
+		end
+		AIData[id].Autopilot:compute( AIData[id].destinationName )
+		return "GateTravelling"
+	end,
+	GateTravelling = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		if AIData[id].Autopilot == nil then
+			return "default"
+		end
+		if AIData[id].Autopilot.AllowAccel ~= false then
+			cur_ship:Accelerate()
+		end
+		local enroute = AIData[id].Autopilot:autoAngle()
+		if enroute then return "GateTravelling" end
+		return "Travelling" -- Once the autopilot finishes up, revert back to standard Travelling state
+	end
+}
 
 --- Hunter AI
 Hunter = {
@@ -137,6 +169,7 @@ Hunter = {
 		end
 	end,
 
+	GateTravelling = GateTraveler.GateTravelling,
 	Travelling = function(id,x,y,angle,speed,vector)
 		-- Find a new target
 		local cur_ship = Epiar.getSprite(id)
@@ -190,6 +223,7 @@ Trader = {
 			return "New_Planet"
 		end
 	end,
+	GateTravelling = GateTraveler.GateTravelling,
 	Travelling = function(id,x,y,angle,speed,vector)
 		if AIData[id].hostile == 1 then return "Hunting" end
 		-- Get to the planet
@@ -235,6 +269,7 @@ Patrol = {
 	New_Planet = FindADestination,
 	Hunting = Hunter.Hunting,
 	Killing = Hunter.Killing,
+	GateTravelling = GateTraveler.GateTravelling,
 	Travelling = function(id,x,y,angle,speed,vector)
 		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
@@ -297,6 +332,7 @@ Patrol = {
 Bully = {
 	default = Patrol.default,
 	New_Planet = FindADestination,
+	GateTravelling = GateTraveler.GateTravelling,
 	Travelling = Patrol.Travelling,
 	TooClose = Patrol.TooClose,
 	TooFar = Patrol.TooFar,
@@ -344,6 +380,7 @@ Escort = {
 		if AIData[id].accompany < 0 then return "New_Planet" end
 		return "Accompanying"
 	end,
+	GateTravelling = GateTraveler.GateTravelling,
 	Travelling = function(id,x,y,angle,speed,vector)
 		if AIData[id].accompany > -1 then return "Accompanying" end
 		return Patrol.Travelling(id,x,y,angle,speed,vector)
@@ -425,3 +462,4 @@ Escort = {
 		return "Accompanying"
 	end,
 }
+
