@@ -39,6 +39,7 @@ end
 
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
+	if pt1_x == nil or pt1_y == nil or pt2_x == nil or pt2_y == nil then return nil end
 	x_diff = (pt1_x - pt2_x)
 	y_diff = pt1_y - pt2_y
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
