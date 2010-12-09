@@ -319,7 +319,7 @@ bool Simulation::SetupToEdit() {
 	Simulation_Lua::RegisterEditor(L);
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
-		   && Lua::Load("Resources/Scripts/universe.lua")
+	       && Lua::Load("Resources/Scripts/universe.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/editor.lua");
 

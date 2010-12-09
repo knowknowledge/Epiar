@@ -110,14 +110,14 @@ OutfitEditorLayout = {
 	}
 
 EditorLayouts = {
-	Alliance=AllianceEditorLayout,
-	Commodity=CommodityEditorLayout,
-	Engine=EngineEditorLayout,
-	Model=ModelEditorLayout,
-	Planet=PlanetEditorLayout,
-	Gate=GateEditorLayout,
-	Weapon=WeaponEditorLayout,
-	Outfit=OutfitEditorLayout,
+	Alliance = AllianceEditorLayout,
+	Commodity = CommodityEditorLayout,
+	Engine = EngineEditorLayout,
+	Model = ModelEditorLayout,
+	Planet = PlanetEditorLayout,
+	Gate = GateEditorLayout,
+	Weapon = WeaponEditorLayout,
+	Outfit = OutfitEditorLayout,
 }
 
 --- Creates a generic list of Component buttons
@@ -291,7 +291,7 @@ function saveInfo(name)
 				end
 				info[title] = techs
 			else
-				print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
+				print("Hmmm, it looks like '"..fieldType.."' hasn't been implemented yet.")
 			end
 		elseif fieldType == "Weapon slots" then
 			info[title] = weapontables[title]

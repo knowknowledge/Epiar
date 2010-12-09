@@ -27,8 +27,8 @@
 #define WIDGET_TAB                 (0x00080000)
 #define WIDGET_TABS                (0x00100000)
 
-#define WIDGET_NONE                0x00000000
-#define WIDGET_ALL                 0xFFFFFFFF
+#define WIDGET_NONE                (0x00000000)
+#define WIDGET_ALL                 (0xFFFFFFFF)
 
 class Widget {
 	public:
@@ -80,7 +80,7 @@ class Widget {
 		virtual bool KeyboardLeave( void );
 		virtual bool KeyPress( SDLKey key );
 
-		bool hovering, hidden,disabled;	// If this widget should be hidden or disabled
+		bool hovering, hidden, disabled;	// If this widget should be hidden or disabled
 		int x, y, w, h;
 		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag
 		string name;
