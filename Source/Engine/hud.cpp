@@ -783,7 +783,7 @@ int Hud::setMapDisplay(lua_State *L) {
 	} else if( maptype == "UNIVERSE" ) {
 		SetMapDisplay( UniverseMap );
 	} else {
-		LogMsg( ERR, "The Hud does not understand the Map Type '%s'.  Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'." );
+		LogMsg( ERR, "The Hud does not understand the Map Type '%s'.  Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'.", maptype.c_str() );
 		SetMapDisplay( NoMap );
 	}
 	return 0;

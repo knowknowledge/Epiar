@@ -32,9 +32,15 @@
 /**\brief Blank Constructor
  */
 Planet::Planet(){
+	Component::SetName("");
 	SetRadarColor(Color::Get(48, 160, 255));
-	lastTrafficTime = 0;
+	alliance = NULL;
+	landable = true;
 	forbidden = false;
+	traffic = 0;
+	militiaSize = 0;
+	sphereOfInfluence = 0;
+	lastTrafficTime = 0;
 }
 
 /**\brief Copy Constructor

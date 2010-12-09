@@ -894,7 +894,9 @@ int Simulation_Lua::getPlanetInfo(lua_State *L) {
 	Lua::setField("Image", (p->GetImage()!=NULL)
 	                ? (p->GetImage()->GetPath().c_str())
 	                : "" );
-	Lua::setField("Alliance", p->GetAlliance()->GetName().c_str());
+	Lua::setField("Alliance", (p->GetAlliance()!=NULL)
+	                ? (p->GetAlliance()->GetName().c_str())
+	                : "" );
 	Lua::setField("Traffic", p->GetTraffic());
 	Lua::setField("Militia", p->GetMilitiaSize());
 	Lua::setField("Landable", p->GetLandable());
