@@ -14,7 +14,7 @@
 
 class Component {
 	public:
-		Component() {};
+		Component();
 		string GetName() const { return name; }
 		void SetName(string _name) { name = _name; }
 		virtual bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) = 0;
@@ -33,6 +33,9 @@ class Components {
 
 		bool Load(string filename, bool optional=false);
 		bool Save();
+
+		void SetFileName( const string& _filepath ) { filepath = _filepath; }
+		string GetFileName( ) { return filepath; }
 	protected:
 
 		Components() {};  ///< Protected default constuctor

@@ -25,6 +25,27 @@ XMLFile::XMLFile( const string& filename ) {
 	Open( filename );
 }
 
+bool XMLFile::New( const string& _filename, const string& rootName ) {
+	char buff[256];
+	assert( xmlPtr == NULL );
+	filename = _filename;
+
+	LogMsg(INFO, "New XML File: %s", filename.c_str());
+
+	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
+
+	xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST rootName.c_str() );
+    xmlDocSetRootElement(xmlPtr, root_node);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
+	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
+
+	return true;
+}
+
 bool XMLFile::Open( const string& filename ) {
 	char *buf = NULL;
 	long bufSize = 0;
@@ -60,6 +81,12 @@ bool XMLFile::Save() {
 	return true;
 }
 
+bool XMLFile::Save( const string& filename ) {
+	LogMsg(INFO, "Saving XML File '%s'.",filename.c_str() );
+	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
+	return true;
+}
+
 bool XMLFile::Close() {
 	if( xmlPtr ) xmlFreeDoc( xmlPtr );
 	xmlPtr = NULL;
@@ -81,7 +108,9 @@ string XMLFile::Get( const string& path ) {
 
 void XMLFile::Set( const string& path, const string& value ) {
 	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
-	xmlNodeSetContent(FindNode(path,true), BAD_CAST value.c_str() );
+	xmlNodePtr p =  FindNode(path,true);
+	xmlNodeSetContent(p, BAD_CAST value.c_str() );
+	LogMsg(INFO,"Done Overriding Option['%s'] to '%s'",path.c_str(),Get(path).c_str());
 	assert( value == Get(path));
 }
 
@@ -103,7 +132,8 @@ void XMLFile::Set( const string& path, const int value ) {
 	val_ss << value;
 	val_ss >> stringvalue;
 	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
-	xmlNodeSetContent(FindNode(path,true), BAD_CAST stringvalue.c_str() );
+	xmlNodePtr p =  FindNode(path,true);
+	xmlNodeSetContent(p, BAD_CAST stringvalue.c_str() );
 	assert( stringvalue == Get(path));
 }
 
@@ -167,7 +197,6 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 		if( partialPath.find_first_of(tokens) != string::npos) {
 			continue;
 		}
-		//printf("XML: '%s' @ '%s'\n", partialPath.c_str(), cur->name);
 		parent = cur;
 		cur = FirstChildNamed(parent, partialPath.c_str());
 		if( (createIfMissing) && (cur==NULL) )
@@ -177,7 +206,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 	}
 
 	// Memoize this result for later
-	values.insert(make_pair(path,cur));
+	values[path] = cur;
 
 	return( cur );
 }
@@ -246,7 +275,7 @@ string NodeToString( xmlDocPtr doc, xmlNodePtr node )
 {
 	string value;
 	xmlChar *xmlString;
-	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
 	value = (const char *)xmlString;
 	xmlFree( xmlString );
 	return value;
@@ -262,7 +291,7 @@ int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
 {
 	int value;
 	xmlChar *xmlString;
-	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
 	value = atoi( (const char *)xmlString );
 	xmlFree( xmlString );
 	return value;
@@ -278,7 +307,7 @@ float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 {
 	float value;
 	xmlChar *xmlString;
-	xmlString = xmlNodeListGetString(doc, node->xmlChildrenNode, 1);
+	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
 	value = atof( (const char *)xmlString );
 	xmlFree( xmlString );
 	return value;

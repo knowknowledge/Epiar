@@ -61,6 +61,9 @@
  *          Component class being stored is not going to be the same size as a
  *          pure Component.
  */
+Component::Component() {
+	name = "";
+}
 
 /**\brief Get the Names of all Components in this collection
  */
@@ -156,6 +159,8 @@ bool Components::Load(string filename, bool optional) {
 		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
 		return optional;
 	}
+
+	LogMsg(INFO, "Loading '%s' for parsing.", filename.c_str() );
 	
 	cur = xmlDocGetRootElement( doc );
 	
@@ -235,6 +240,8 @@ bool Components::Save() {
 		section = i->second->ToXMLNode(componentName);
 		xmlAddChild(root_node, section);
 	}
+
+	LogMsg(INFO, "Saving %s file '%s'", rootName.c_str(), filepath.c_str());
 	xmlSaveFormatFileEnc( filepath.c_str(), doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
 	return true;
