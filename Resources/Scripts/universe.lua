@@ -836,7 +836,7 @@ end
 
 -- interactive weapon slot configuration
 function weaponConfigDialog()
-	if UI.search("/Weapon Configuration/") ~= nil then return end
+	if UI.search("/Window'Weapon Configuration'/") ~= nil then return end
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
@@ -868,7 +868,7 @@ function weaponConfigDialog()
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
-	wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
+	local wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
 
 	wcDialog:add(shipLabel)
 	wcDialog:add(leftFrame, rightFrame);
@@ -929,7 +929,9 @@ end
 
 function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
+	local wcDialog = UI.search("/Window'Weapon Configuration'/")
 	wcDialog:close()
 	slotButtons = nil
+	pickedSlot = nil
 	wcDialog = nil
 end
