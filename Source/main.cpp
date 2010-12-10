@@ -294,9 +294,10 @@ typedef enum {
 	Menu_DoNothing  = 0x0,
 	Menu_Play       = 0x1,
 	Menu_Options    = 0x2,
-	Menu_Editor     = 0x4,
-	Menu_Quit       = 0x8,
-	Menu_ALL        = 0xF,
+	Menu_NewSim     = 0x4,
+	Menu_Editor     = 0x8,
+	Menu_Quit       = 0x10,
+	Menu_ALL        = 0xFF,
 } menuOption;
 
 menuOption clicked = Menu_DoNothing;
@@ -304,6 +305,7 @@ menuOption clicked = Menu_DoNothing;
 // Currently Static functions are the only way I could think of to have C only 
 void clickPlay() { clicked = Menu_Play; } ///< Signal the Main Menu to Play Simulation.
 void clickOptions() { clicked = Menu_Options; } ///< Signal the Main Menu to Open the Options.
+void clickNewSim() { clicked = Menu_NewSim; } ///< Signal the Main Menu to Run the Editor.
 void clickEditor() { clicked = Menu_Editor; } ///< Signal the Main Menu to Run the Editor.
 void clickQuit() { clicked = Menu_Quit; } ///< Signal the Main Menu to Quit.
 
@@ -374,7 +376,7 @@ void Main_Menu( void ) {
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
-	menuOption availableMenus = (menuOption)(Menu_Play | Menu_Editor | Menu_Quit);
+	menuOption availableMenus = (menuOption)(Menu_Play | Menu_NewSim | Menu_Editor | Menu_Quit);
 	int screenNum;
 	int button_x = OPTION( int, "options/video/w" ) - 200;
 
@@ -400,10 +402,19 @@ void Main_Menu( void ) {
 			// Create UI
 			if( availableMenus & Menu_Play )
 				UI::Add( new Button(button_x, 200, 100, 30, "Play",    clickPlay    ) );
-			if( availableMenus & Menu_Editor )
+			if( availableMenus & Menu_Editor ) {
 				UI::Add( new Button(button_x, 300, 100, 30, "Editor",  clickEditor  ) );
+				if( false == debug.isLoaded() )
+				{
+					UI::Add( new Textbox(button_x, 330, 100, 1, "default", "Old Name") );
+				}
+			}
+			if( availableMenus & Menu_NewSim ) {
+				UI::Add( new Button(button_x, 380, 100, 30, "New Simulation", clickNewSim ) );
+				UI::Add( new Textbox(button_x, 410, 100, 1, "", "New Name") );
+			}
 			if( availableMenus & Menu_Options )
-				UI::Add( new Button(button_x, 400, 100, 30, "Options", clickOptions ) );
+				UI::Add( new Button(button_x, 460, 100, 30, "Options", clickOptions ) );
 			if( availableMenus & Menu_Quit )
 				UI::Add( new Button(button_x, 500, 100, 30, "Quit",    clickQuit    ) );
 
@@ -464,27 +475,35 @@ void Main_Menu( void ) {
 				Lua::Call("options");
 				break;
 
+			case Menu_NewSim:
 			case Menu_Editor:
-				UI::Close();
 				screenNeedsReset = true;
 				availableMenus = (menuOption)(availableMenus & ~Menu_Play);
+				availableMenus = (menuOption)(availableMenus & ~Menu_NewSim);
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
 
 				if( false == debug.isLoaded() )
 				{
-					if(	!debug.Load( simName ) )
-					{
-						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
-						break;
+					if( clicked == Menu_Editor ) {
+						assert( NULL != UI::Search("/Textbox'Old Name'/") );
+						simName = "Resources/Simulation/" + ((Textbox*)UI::Search("/Textbox'Old Name'/"))->GetText();
+						if( !debug.Load( simName ) )
+						{
+							LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+							break;
+						}
+					} else {
+						assert( NULL != UI::Search("/Textbox'New Name'/") );
+						simName = "Resources/Simulation/" + ((Textbox*)UI::Search("/Textbox'New Name'/"))->GetText();
+						debug.New( simName );
 					}
+
 					debug.SetupToEdit();
 				}
 
-				// Only attempt to Edit if the Simulation has loaded
-				assert( debug.isLoaded() );
+				UI::Close();
 
 				debug.Edit();
-
 				break;
 
 			case Menu_Quit:

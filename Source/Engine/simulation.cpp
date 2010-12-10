@@ -56,6 +56,50 @@ Simulation::Simulation( void ) {
 	loaded = false;
 }
 
+bool Simulation::New( string _folderpath ) {
+#ifdef _WIN32
+	LogMsg(INFO, "Cannot create folders in Windows yet.");
+	return false;
+#endif
+	LogMsg(INFO, "New Simulation: '%s'.", _folderpath.c_str() );
+
+	folderpath = _folderpath + "/";
+
+	if( mkdir( folderpath.c_str(), 0777) != 0) {
+		LogMsg(INFO, "Cannot create folder '%s'.", _folderpath.c_str() );
+		// TODO: ensure that the folder exists
+	}
+
+	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
+	
+	// Set the File Names
+	commodities->SetFileName( folderpath + "commodities.xml" );
+	engines->SetFileName( folderpath + "engines.xml" );
+	planets->SetFileName( folderpath + "planets.xml" );
+	gates->SetFileName( folderpath + "gates.xml" );
+	models->SetFileName( folderpath + "models.xml" );
+	weapons->SetFileName( folderpath + "weapons.xml" );
+	alliances->SetFileName( folderpath + "alliances.xml" );
+	technologies->SetFileName( folderpath + "technologies.xml" );
+	outfits->SetFileName( folderpath + "outfits.xml" );
+	players->SetFileName( folderpath + "players.xml" );
+
+	Set("simulation/commodities", commodities->GetFileName() );
+	Set("simulation/commodities", commodities->GetFileName() );
+	Set("simulation/engines", engines->GetFileName() );
+	Set("simulation/planets", planets->GetFileName() );
+	Set("simulation/gates", gates->GetFileName() );
+	Set("simulation/models", models->GetFileName() );
+	Set("simulation/weapons", weapons->GetFileName() );
+	Set("simulation/alliances", alliances->GetFileName() );
+	Set("simulation/technologies", technologies->GetFileName() );
+	Set("simulation/outfits", outfits->GetFileName() );
+	Set("simulation/players", players->GetFileName() );
+
+	loaded = true;
+	return true;
+}
+
 /**\brief Loads the XML file.
  * \param filename Name of the file
  * \return true if success
@@ -331,15 +375,15 @@ bool Simulation::SetupToEdit() {
 	if( OPTION(int, "options/simulation/random-universe") ) {
 		Lua::Call("createSystems");
 	} else {
-	    list<string>* planetNames = planets->GetNames();
-	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
-		    sprites->Add(  planets->GetPlanet(*pname) );
-	    }
-
-	    list<string>* gateNames = gates->GetNames();
-	    for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
-		    sprites->Add(  gates->GetGate(*gname) );
-	    }
+		list<string>* planetNames = planets->GetNames();
+		for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
+			sprites->Add(  planets->GetPlanet(*pname) );
+		}
+		
+		list<string>* gateNames = gates->GetNames();
+		for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
+			sprites->Add(  gates->GetGate(*gname) );
+		}
 	}
 
 	return true;

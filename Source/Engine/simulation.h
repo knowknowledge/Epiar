@@ -27,8 +27,8 @@ class Simulation : public XMLFile {
 	public:
 		Simulation();
 
-		bool Load( string filename );
-		//bool Save();
+		bool New( string _folderpath );
+		bool Load( string _folderpath );
 
 		bool SetupToRun();
 		bool SetupToEdit();

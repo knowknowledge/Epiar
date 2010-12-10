@@ -37,11 +37,12 @@ CommodityEditorLayout = {
 
 EngineEditorLayout = {
 	{"Name", "String"},
-	--{"Animation", "Animation"}, -- Animation Picker
 	{"Picture", "Picture"}, -- Picture Picker
 	{"MSRP", "Integer"},
 	{"Force", "Integer"},
 	{"Fold Drive", "Integer"},
+	{"Sound", "String"}, -- TODO: Should be Sound Picker
+	{"Animation", "String"}, -- TODO: Should be Animation Picker
 	}
 
 ModelEditorLayout = {
@@ -135,11 +136,13 @@ function componentViewer(kind,listFunc,getStr)
 end
 
 function showComponent(kind,name,getterFunc)
-	if UI.search( string.format("/Window%q/", name) ) ~= nil then return end
+	local windowName = kind..": "..name
+	if name == "" then windowName = "New "..kind end
+	if UI.search( string.format("/Window%q/", windowName) ) ~= nil then return end
 	local height=700
 	local width=250
 	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,width,height,name,
+	local theWin = UI.newWindow(150,100,width,height,windowName,
 		UI.newButton( 15,5,15,15,"X", string.format("infoWindows[%q].win:close();infoWindows[%q]=nil",name,name)))
 
     if kind=="Planet" and name~="" then
@@ -266,7 +269,6 @@ end
 
 --- Saves information
 function saveInfo(name)
-	if UI.search( string.format("/Window%q/", name) ) == nil then return end
 	local info = infoWindows[name].info
 	local texts = infoWindows[name].texts
 	local weapontables = infoWindows[name].weapontables
@@ -319,6 +321,8 @@ end
 
 --- Save technology
 function saveTech(name)
+	local windowName = "Technology: "..name
+	if name == "" then windowName = "New Technology" end
 	if UI.search( string.format("/Window%q/", name) ) == nil then return end
 	local win = infoWindows[name].win
 	local boxes = infoWindows[name].boxes
@@ -345,17 +349,19 @@ end
 
 --- Show technology information
 function showTechInfo(name)
-	if UI.search( string.format("/Window%q/", name) ) ~= nil then return end
+	local windowName = "Technology: "..name
+	if name == "" then windowName = "New Technology" end
+	if UI.search( string.format("/Window%q/", windowName) ) ~= nil then return end
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()
 	local allengines = Epiar.engines()
 	local alloutfits = Epiar.outfits()
 	local techs = Epiar.getTechnologyInfo(name)
 	local models,weapons,engines,outfits = techs[1],techs[2],techs[3],techs[4]
-	local height = 50 + math.max(#allweapons,#allmodels,#allengines,#alloutfits)*20
+	local height = math.max(400, 50 + math.max(#allweapons,#allmodels,#allengines,#alloutfits)*20)
 	local width = 400
-	local theWin = UI.newWindow(150,100,width,height,name)
-	theWin:add(UI.newLabel( 15, 45, "Name:"))
+	local theWin = UI.newWindow(150, 100, width, height, windowName)
+	theWin:add(UI.newLabel( 15, 30, "Name:"))
 	local nameField= UI.newTextbox( 90, 30, 200, 1, name)
 	theWin:add(nameField)
 	local optionTabs = UI.newTabCont( 10, 65, width-30, height-120,"Options Tabs")
