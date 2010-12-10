@@ -8,6 +8,8 @@
 #ifndef __H_SCROLLBAR__
 #define __H_SCROLLBAR__
 
+#include "UI/ui.h"
+
 #define SCROLLBAR_THICK		15
 #define SCROLLBAR_PAD		8
 #define SCROLLBAR_MINMARK	10	// Minimum marker size

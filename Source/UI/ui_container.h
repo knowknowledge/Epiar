@@ -8,6 +8,9 @@
 #ifndef __H_UI_CONTAINER__
 #define __H_UI_CONTAINER__
 
+#include "UI/ui.h"
+#include "ui_widget.h"
+#include "ui_scrollbar.h"
 
 class Container : public Widget {
 	public:
@@ -33,6 +36,8 @@ class Container : public Widget {
 		virtual Widget *PrevChild( Widget* widget, int mask = WIDGET_ALL );
 
 		virtual void Draw( int relx = 0, int rely = 0 );
+
+		void ResetScrollBars();
 
 		xmlNodePtr ToNode();
 
@@ -68,6 +73,7 @@ class Container : public Widget {
 		Widget *lmouseDown,
 			*mmouseDown,*rmouseDown;	// remember which widget was clicked on
 
+		Scrollbar *vscrollbar;
 };
 
 #endif//__H_UI_CONTAINER__

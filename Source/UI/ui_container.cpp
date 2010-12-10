@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/xml.h"
+#include "UI/ui_container.h"
 
 /**\class Container
  * \brief Container is a container class for other widgets.
@@ -16,7 +17,9 @@
 /**\brief Constructor, initializes default values.*/
 Container::Container( string _name, bool _mouseHandled ):
 	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
-	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ){
+	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ),
+	vscrollbar( NULL )
+{
 	name = _name;
 }
 
@@ -47,6 +50,8 @@ Container *Container::AddChild( Widget *widget ) {
 	if( widget != NULL ) {
 		children.push_back( widget );
 	}
+	// Check to see if widget is past the bounds.
+	ResetScrollBars();
 	return this;
 }
 
@@ -112,9 +117,13 @@ bool Container::Reset( void ){
 Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::reverse_iterator i;
 
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+
 	// Check children from top (last drawn) to bottom (first drawn).
 	for( i = children.rbegin(); i != children.rend(); ++i ) {
-		if( (*i)->Contains(relx, rely) ) {
+		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
+		    || (*i)->Contains(relx, rely + yoffset) ) // Non-Tabs
+		{ 
 			return (*i);
 		}
 	}
@@ -397,11 +406,34 @@ Widget *Container::PrevChild( Widget* widget, int mask) {
 /**\brief Draws this widget and all children widgets.
  */
 void Container::Draw( int relx, int rely ) {
+	int x, y;
+	
+	x = GetX() + relx;
+	y = GetY() + rely;
+
+	// Crop to prevent child widgets from spilling
+	Video::SetCropRect(x, y + 2, this->w - SCROLLBAR_PAD, this->h - SCROLLBAR_PAD + 4);
+	
 	// Draw any children
 	list<Widget *>::iterator i;
 	
-	for( i = children.begin(); i != children.end(); i++ )
-		(*i)->Draw( this->x + relx, this->y + rely );
+	for( i = children.begin(); i != children.end(); ++i ) {
+		// Skip scrollbars
+		if ( (*i) == this->vscrollbar ){
+			(*i)->Draw( x, y );
+			continue;
+		}
+
+		int yscroll = 0;
+		if ( this->vscrollbar )
+			yscroll = vscrollbar->pos;
+
+		(*i)->Draw( x, y - yscroll );
+	}
+	
+	Video::UnsetCropRect();
+	
+	Widget::Draw(relx, rely);
 }
 
 /**\brief Mouse is currently moving over the widget, without button down.
@@ -632,8 +664,13 @@ bool Container::MouseWUp( int xi, int yi ){
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
-		return event_on->MouseWUp( xr,yr );
+	if( event_on && event_on->MouseWUp( xr,yr ) ) {
+		return true;
+	}
+	if( vscrollbar ) {
+		vscrollbar->ScrollUp();
+		return true;
+	}
 	//LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
@@ -646,8 +683,13 @@ bool Container::MouseWDown( int xi, int yi ){
 	int yr = yi - this->y;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
-		return event_on->MouseWDown( xr,yr );
+	if( event_on && event_on->MouseWDown( xr,yr ) ) {
+		return true;
+	}
+	if( vscrollbar ) {
+		vscrollbar->ScrollDown();
+		return true;
+	}
 	//LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
@@ -702,6 +744,53 @@ bool Container::KeyPress( SDLKey key ) {
 	return false;
 }
 
+/**\brief Move the Scrollbars to the edges.
+ */
+
+void Container::ResetScrollBars() {
+	int widget_height, widget_width;
+	int max_height, max_width;
+	max_height = 0;
+	max_width = 0;
+
+	// It doesn't make sense to add scrollbars for a TAB without a size
+	if(this->w == 0 || this->h == 0 ) return;
+
+	// Find the Max edges
+	Widget* widget;
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		widget = *i;
+		widget_width = widget->GetX()+widget->GetW();
+		widget_height = widget->GetY()+widget->GetH();
+		if( widget_height > max_height) max_height=widget_height;
+		if( widget_width > max_width) max_width=widget_width;
+	}
+	//max_height += SCROLLBAR_THICK + SCROLLBAR_PAD;
+
+	// Add a Vertical ScrollBar if necessary
+	if ( max_height > GetH() || this->vscrollbar != NULL ){
+		int v_x = this->w - SCROLLBAR_THICK - SCROLLBAR_PAD;
+		int v_y = SCROLLBAR_PAD;
+		int v_l = this->h - 2 * SCROLLBAR_PAD;
+		// Only add a Scrollbar when it doesn't already exist
+		if ( this->vscrollbar ){
+			Container::DelChild( this->vscrollbar );
+			this->vscrollbar = NULL;
+			LogMsg(INFO, "Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+			
+		} else {
+			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+		}
+
+		this->vscrollbar = new Scrollbar(v_x, v_y, v_l,this);
+
+		children.push_back( this->vscrollbar );
+
+		this->vscrollbar->maxpos = max_height;
+	}
+}
+
 xmlNodePtr Container::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
@@ -725,4 +814,5 @@ xmlNodePtr Container::ToNode() {
 	return thisNode;
 
 }
+
 

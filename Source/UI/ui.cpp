@@ -24,8 +24,6 @@ Container UI::master("Master", false);
 /**\brief This constructor resets the input.
  */
 UI::UI() {
-	//UI::master = Container("Master", false);
-	ResetInput();
 }
 
 
@@ -33,6 +31,18 @@ UI::UI() {
  */
 UI::~UI() {
 	UI::Close();
+}
+
+bool UI::Initialize() {
+	printf("UI created\n");
+	ResetInput();
+
+	master.SetX( 0 );
+	master.SetY( 0 );
+	master.SetW( Video::GetWidth() );
+	master.SetH( Video::GetHeight() );
+
+	return true;
 }
 
 /**\brief Checks to see if there are UI elements.

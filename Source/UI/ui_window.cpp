@@ -19,8 +19,7 @@
 /**\brief Creates a new window with specified parameters.
  */
 Window::Window( int x, int y, int w, int h, string caption ):
-		draggable( true ),
-		vscrollbar( NULL )
+		draggable( true )
 {
 
 	this->x = x;
@@ -51,55 +50,14 @@ Window::~Window() {
 	bitmaps[6] = NULL;
 	bitmaps[7] = NULL;
 	bitmaps[8] = NULL;
-
-	// Do not delete the scrollbar:
-	// If these are non-NULL then they are children.
-	// Therefore they will be deleted by the Container destructor.
-	vscrollbar = NULL;
-
 }
 
 /**\brief Adds a widget to the current Window.
  */
 Window *Window::AddChild( Widget *widget ){
 	assert( widget != NULL );
-
-	// Check to see if widget is past the bounds.
-	int vbnd = widget->GetY() + widget->GetH();
-
-	if ( vbnd > this->h ){
-		if ( !this->vscrollbar ){
-			Container::DelChild( this->vscrollbar );
-			this->vscrollbar = new Scrollbar(
-				this->w-SCROLLBAR_THICK-SCROLLBAR_PAD,
-				SCROLLBAR_PAD+bitmaps[1]->GetHeight(),
-				this->h-2*SCROLLBAR_PAD
-				-bitmaps[1]->GetHeight()
-				-SCROLLBAR_THICK,
-				this);
-
-			Container::AddChild( this->vscrollbar );
-		}
-
-		this->vscrollbar->maxpos = vbnd;
-	}
-
-	return (Window*)Container::AddChild( widget );
-}
-
-/**\brief Determines focused widget based on scrolled position.*/
-Widget *Window::DetermineMouseFocus( int relx, int rely ){
-	list<Widget *>::iterator i;
-
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
-
-
-	for( i = children.begin(); i != children.end(); ++i ) {
-		if( (*i)->Contains(relx, rely+yoffset) ) {
-			return (*i);
-		}
-	}
-	return( NULL );
+	Container::AddChild( widget );
+	return this;
 }
 
 /**\brief Draws the current window.
@@ -132,31 +90,7 @@ void Window::Draw( int relx, int rely ) {
 	SansSerif->SetColor( 1., 1., 1. );
 	SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
 
-	// Crop children drawing
-	Video::SetCropRect(x, y + bitmaps[1]->GetHeight(), w, h - bitmaps[1]->GetHeight());
-	
-	// Draw any children
-	list<Widget *>::iterator i;
-	
-	for( i = children.begin(); i != children.end(); ++i ) {
-		// Skip scrollbars
-		if ( (*i) == this->vscrollbar ) {
-			(*i)->Draw( x, y );
-			continue;
-		}
-
-		int xscroll = 0;
-		int yscroll = 0;
-
-		if ( this->vscrollbar )
-			yscroll = vscrollbar->pos;
-
-		(*i)->Draw( x-xscroll, y-yscroll );
-	}
-	
-	Video::UnsetCropRect();
-
-	Widget::Draw(relx,rely);
+	Container::Draw(relx,rely);
 }
 
 bool Window::MouseDrag( int x, int y ){

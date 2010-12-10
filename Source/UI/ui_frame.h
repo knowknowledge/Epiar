@@ -16,7 +16,6 @@ class Frame : public Container {
 	public:
 		Frame( int x, int y, int w, int h );
 		Frame *AddChild( Widget *widget );
-		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	
 		bool MouseDrag( int x, int y );
@@ -26,8 +25,6 @@ class Frame : public Container {
 
 	private:
 		Image *bitmaps[9];
-
-		Scrollbar *vscrollbar;
 };
 
 #endif // __H_FRAME__

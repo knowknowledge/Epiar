@@ -17,7 +17,6 @@ class Window : public Container {
 		Window( int x, int y, int w, int h, string caption );
 		~Window();
 		Window *AddChild( Widget *widget );
-		Widget *DetermineMouseFocus( int relx, int rely );
 		void Draw( int relx = 0, int rely = 0 );
 	
 		bool MouseDrag( int x, int y );
@@ -30,8 +29,6 @@ class Window : public Container {
 		bool draggable;
 
 		Image *bitmaps[9];
-		
-		Scrollbar *vscrollbar;
 };
 
 #endif // __H_WINDOW__
