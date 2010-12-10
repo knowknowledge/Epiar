@@ -153,14 +153,14 @@ bool Widget::MouseRRelease( void ){
  */
 bool Widget::MouseWUp( int xi, int yi ){
 	LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
-	return true;
+	return false;
 }
 
 /**\brief Generic mouse wheel down function.
  */
 bool Widget::MouseWDown( int xi, int yi ){
 	LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
-	return true;
+	return false;
 }
 
 /**\brief Generic keyboard focus function.

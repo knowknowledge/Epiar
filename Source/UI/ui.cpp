@@ -195,6 +195,6 @@ bool UI::HandleMouse( InputEvent i ) {
 // Clears current input to prevent accidental usage of invalid values
 // Use this whenever the UI removes focusable widgets
 void UI::ResetInput() {
-	UI::master.Reset();
+	UI::master.ResetInput();
 }
 

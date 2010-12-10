@@ -24,7 +24,8 @@ class Container : public Widget {
 		virtual Container *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual bool Empty( void );
-		virtual bool Reset( void );
+		virtual bool ResetInput( void );
+		virtual void ResetScrollBars();
 
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 
@@ -37,7 +38,6 @@ class Container : public Widget {
 
 		virtual void Draw( int relx = 0, int rely = 0 );
 
-		void ResetScrollBars();
 
 		xmlNodePtr ToNode();
 

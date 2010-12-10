@@ -67,7 +67,7 @@ bool Container::DelChild( Widget *widget ){
 			//cout << "delchild called on " << (*i)->GetType() << endl;
 			//delete (*i);
 			i = children.erase( i );
-			Reset();
+			ResetInput();
 
 			return true;
 		}
@@ -94,13 +94,28 @@ bool Container::Empty( void ){
 	}
 
 	children.clear();
-	Reset();
+	ResetInput();
 
 	return true;
 }
 
 /**\brief Reset focus and events.*/
-bool Container::Reset( void ){
+bool Container::ResetInput( void ){
+	list<Widget *>::iterator i;
+
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			((Container*)(*i))->ResetInput();
+		}
+	}
+
+	// Leave the children
+	if(this->keyboardFocus != NULL) this->keyboardFocus ->KeyboardLeave();
+	if(   this->mouseHover != NULL)    this->mouseHover ->MouseLeave();
+	if(   this->lmouseDown != NULL)    this->lmouseDown ->MouseLeave();
+	if(   this->mmouseDown != NULL)    this->mmouseDown ->MouseLeave();
+	if(   this->rmouseDown != NULL)    this->rmouseDown ->MouseLeave();
+
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
 	this->lmouseDown = NULL;
@@ -672,7 +687,7 @@ bool Container::MouseWUp( int xi, int yi ){
 		return true;
 	}
 	//LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
-	return this->mouseHandled;
+	return false;
 }
 
 /**\brief Generic mouse wheel down function.
@@ -691,7 +706,7 @@ bool Container::MouseWDown( int xi, int yi ){
 		return true;
 	}
 	//LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
-	return this->mouseHandled;
+	return false;
 }
 
 /**\brief Generic keyboard focus function.
