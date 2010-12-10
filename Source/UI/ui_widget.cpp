@@ -55,7 +55,7 @@ void Widget::Draw( int relx, int rely ) {
 /**\brief Tests if point is within a rectangle.
  */
 bool Widget::Contains(int relx, int rely) {
-	return WITHIN_BOUNDS(relx,rely,this->x,this->y,this->w,this->h);
+	return WITHIN_BOUNDS(relx, rely, this->x, this->y, this->w, this->h);
 }
 
 /**\brief Widget is currently being dragged.
