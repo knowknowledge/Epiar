@@ -23,6 +23,7 @@
 #define YELLOW    ( Color(0xFF,0xFF,0x00) )
 #define GREEN     ( Color(0x00,0xFF,0x00) )
 #define BLUE      ( Color(0x00,0x00,0xFF) )
+#define PURPLE    ( Color(0x80,0x00,0x80) )
 #define GREY      ( Color(0x80,0x80,0x80) )
 #define GRAY      GREY
 #define GOLD      ( Color(0xFF,0xD7,0x80) )
@@ -37,6 +38,8 @@ class Color {
 	Color( int r, int g, int b );
 	Color( float r, float g, float b );
 	Color( string str );
+
+	Color operator*(float delta);
 };
 
 class Rect {

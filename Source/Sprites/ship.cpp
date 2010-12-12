@@ -274,7 +274,7 @@ void Ship::Update( void ) {
 	momentum.EnforceMagnitude( shipStats.GetMaxSpeed()*engineBooster );
 	// Show the hits taken as part of the radar color
 	if(IsDisabled()) SetRadarColor( GREY );
-	else SetRadarColor( Color(int(255 *GetHullIntegrityPct()), 0, 0) );
+	else SetRadarColor( RED * GetHullIntegrityPct() );
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!

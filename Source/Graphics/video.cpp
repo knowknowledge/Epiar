@@ -38,6 +38,7 @@ Color& Color::operator=(Color other)
 	r = other.r;
 	g = other.g;
 	b = other.b;
+	return *this;
 }
 
 /** \brief Color Constructor from Integers
@@ -82,6 +83,36 @@ Color::Color( string str )
 	r = ((n >> 16) & 0xFF ) / 255.0f;
 	g = ((n >>  8) & 0xFF ) / 255.0f;
 	b = ((n      ) & 0xFF ) / 255.0f;
+}
+
+/** \brief Enforce that a float is between 0.0 and 1.0
+ *  \todo This should be moved to a math utilities file.
+ */
+inline float enforce_ratio(float x)
+{
+	if( x < 0.0f )
+		return 0.0f;
+	if( x > 1.0f )
+		return 1.0f;
+	return x;
+}
+
+/** \brief Color Multiplier
+ *	\note Colors can't be darker than black or brighter than white.  This is enforced.
+ */
+Color Color::operator*(float ratio)
+{
+	Color out = *this;
+
+	out.r *= ratio;
+	out.g *= ratio;
+	out.b *= ratio;
+
+	out.r = enforce_ratio( out.r );
+	out.g = enforce_ratio( out.g );
+	out.b = enforce_ratio( out.b );
+
+	return out;
 }
 
 /**\class Rect
