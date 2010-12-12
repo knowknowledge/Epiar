@@ -245,7 +245,7 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 		int red = (int) luaL_checknumber (L, 2);
 		int green = (int) luaL_checknumber (L, 3);
 		int blue = (int) luaL_checknumber (L, 4);
-		(ai)->SetRadarColor(Color::Get(red,green,blue));
+		(ai)->SetRadarColor(Color(red,green,blue));
 	} else {
 		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n);
 	}

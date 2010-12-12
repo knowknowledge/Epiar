@@ -35,7 +35,7 @@ Projectile::Projectile(float damageBooster, float angleToFire, Coordinate worldP
 	ownerID = 0;
 	targetID = 0;
 	start = Timer::GetTicks();
-	SetRadarColor (Color::Get(0x55,0x55,0x55));
+	SetRadarColor (Color(0x55,0x55,0x55));
 
 	// These are based off of the Ship firing this projectile
 	SetWorldPosition( worldPosition );

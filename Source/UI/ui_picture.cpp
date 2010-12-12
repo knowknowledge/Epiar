@@ -26,7 +26,7 @@ void Picture::Default( int x, int y, int w, int h ){
 	rotation=0.;
 	bitmap = NULL;
 
-	color = Color::Get(0,0,0);
+	color = BLACK;
 	alpha = 0.0f;
 
 	this->luaClickCallback = "";
@@ -94,7 +94,7 @@ void Picture::Set( string filename ){
 }
 
 void Picture::SetColor( float r, float g, float b, float a) {
-	color = Color::Get(r,g,b);
+	color = Color(r,g,b);
 	alpha = a;
 }
 

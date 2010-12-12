@@ -33,7 +33,7 @@
  */
 Planet::Planet(){
 	Component::SetName("");
-	SetRadarColor(Color::Get(48, 160, 255));
+	SetRadarColor(Color(48, 160, 255));
 	alliance = NULL;
 	landable = true;
 	forbidden = false;
@@ -90,7 +90,7 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, Alliance* _alli
 	SetName(_name);
 	SetImage(_image);
 	Image::Store(name,GetImage());
-	SetRadarColor(Color::Get(48, 160, 255));
+	SetRadarColor(Color(48, 160, 255));
 }
 
 /**\brief Destructor
