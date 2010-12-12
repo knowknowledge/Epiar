@@ -55,7 +55,7 @@ Sprite::Sprite() {
 	image = NULL;
 	
 	radarSize = 1;
-	radarColor = Color::Get(0.7f, 0.7f, 0.7f);
+	radarColor = Color(0.7f, 0.7f, 0.7f);
 
 	lastUpdateFrame = Timer::GetLogicalFrameCount();
 }

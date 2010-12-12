@@ -65,7 +65,7 @@ Ship::Ship()
 
 	shipStats = Outfit();
 
-	SetRadarColor(Color::Get(255,0,0));
+	SetRadarColor( RED );
 	SetAngle( float( rand() %360 ) );
 }
 
@@ -273,8 +273,8 @@ void Ship::Update( void ) {
 	Coordinate momentum	= GetMomentum();
 	momentum.EnforceMagnitude( shipStats.GetMaxSpeed()*engineBooster );
 	// Show the hits taken as part of the radar color
-	if(IsDisabled()) SetRadarColor( Color::Get( 128, 128, 128 ) );
-	else SetRadarColor( Color::Get(int(255 *GetHullIntegrityPct()), 0, 0) );
+	if(IsDisabled()) SetRadarColor( GREY );
+	else SetRadarColor( Color(int(255 *GetHullIntegrityPct()), 0, 0) );
 	
 	// Ship has taken as much damage as possible...
 	// It Explodes!

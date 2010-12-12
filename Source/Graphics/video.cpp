@@ -13,11 +13,6 @@
 #include "Utilities/trig.h"
 
 /**\class Color
- * \brief Wrapper for RGB color.
- * \fn Color::Get( int r, int g, int b)
- *  \brief Creates the Color object.
- * \fn Color::Get( float r, float g, float b )
- *  \brief Creates the Color object (float version)
  * \var Color::r
  *  \brief Red component
  */
@@ -27,6 +22,67 @@
 /** \var Color::b
  *  \brief Blue component
  */
+
+/** \brief Default Color Constructor
+ *  \details Defaults to White
+ */
+Color::Color()
+{
+	r = g = b = 1.0f;
+}
+
+/** \brief Color Assignment Opererator
+ */
+Color& Color::operator=(Color other)
+{
+	r = other.r;
+	g = other.g;
+	b = other.b;
+}
+
+/** \brief Color Constructor from Integers
+ *  \param[in] red Red percentage as int between 0x00 and 0xFF.
+ *  \param[in] green Green percentage as int between 0x00 and 0xFF.
+ *  \param[in] blue Blue percentage as int between 0x00 and 0xFF.
+ */
+Color::Color( int red, int green, int blue )
+{
+	r = static_cast<float> (red   / 255.0f);
+	g = static_cast<float> (green / 255.0f);
+	b = static_cast<float> (blue  / 255.0f);
+}
+
+/** \brief Color Constructor from Floats
+ *  \param[in] red Red percentage as int between 0.0f and 1.0f.
+ *  \param[in] green Green percentage as int between 0.0f and 1.0f.
+ *  \param[in] blue Blue percentage as int between 0.0f and 1.0f.
+ */
+Color::Color( float red, float green, float blue )
+{
+	r = red;
+	g = green;
+	b = blue;
+}
+
+/** \brief Color Constructor from Hex String
+ *  \param[in] str A string of the form RRGGBB where RR, GG, and BB are the
+ *  hex values of the Red, Green and Blue components of the color.
+ *  This can be optionally preceeded by "0x" or "0X".
+ *
+ *  \example "0xFF0000" is Red
+ */
+Color::Color( string str )
+{
+	// string must be in hex format.
+	int n;
+	stringstream ss;
+	ss << std::hex << str;
+	ss >> n;
+
+	r = ((n >> 16) & 0xFF ) / 255.0f;
+	g = ((n >>  8) & 0xFF ) / 255.0f;
+	b = ((n      ) & 0xFF ) / 255.0f;
+}
 
 /**\class Rect
  * \brief Wrapper for a rectangle.
