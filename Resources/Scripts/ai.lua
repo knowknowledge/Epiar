@@ -53,7 +53,11 @@ function setAccompany(id, accid)
 	if AIData[id] == nil then
 		AIData[id] = { }
 	end
-	AIData[id].accompany = accid
+	if Epiar.getSprite(accid) ~= nil then
+		AIData[id].accompany = accid
+	else
+		AIData[id].accompany = -1
+	end
 end
 
 function setHuntHostile(id, tid)
@@ -293,6 +297,7 @@ Patrol = {
 		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
+		if p == nil then return "default" end
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
@@ -397,8 +402,11 @@ Escort = {
 		AIData[id].farThreshold = 225 * mass + math.random(50)
 		AIData[id].nearThreshold = 100 * mass + math.random(40)
 
-		if AIData[id].accompany < 0 then return "New_Planet" end
-		return "Accompanying"
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then setAccompany(id, myFleet:getLeader() ) end
+
+		if AIData[id].accompany >= 0 then return "Accompanying" end
+		return "New_Planet"
 	end,
 	ComputingRoute = GateTraveler.ComputingRoute,
 	GateTravelling = GateTraveler.GateTravelling,
@@ -429,6 +437,12 @@ Escort = {
 		if acc > -1 then
 			accompanySprite = Epiar.getSprite(AIData[id].accompany)
 			if AIData[id].hostile == 1 then return "Hunting" end
+			local ns = AIData[id].nextState
+			if ns ~= nil then
+				AIData[id].nextState = nil
+				return ns
+			end
+		elseif Fleets:getShipFleet(id).state == "Hunting" then return "Hunting"
 		else
 			if AIData[id].destination ~= nil and AIData[id].destination > -1 then
 				return "Travelling"
