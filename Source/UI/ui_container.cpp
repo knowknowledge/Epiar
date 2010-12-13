@@ -16,7 +16,7 @@
 
 /**\brief Constructor, initializes default values.*/
 Container::Container( string _name, bool _mouseHandled ):
-	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
+	mouseHandled( _mouseHandled ), keyboardFocus( NULL ), mouseHover( NULL ),
 	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ),
 	vscrollbar( NULL )
 {
@@ -92,8 +92,8 @@ bool Container::Empty( void ){
 	for( i = children.begin(); i != children.end(); ++i ) {
 		delete (*i);
 	}
-
 	children.clear();
+
 	ResetInput();
 
 	return true;
@@ -108,13 +108,6 @@ bool Container::ResetInput( void ){
 			((Container*)(*i))->ResetInput();
 		}
 	}
-
-	// Leave the children
-	if(this->keyboardFocus != NULL) this->keyboardFocus ->KeyboardLeave();
-	if(   this->mouseHover != NULL)    this->mouseHover ->MouseLeave();
-	if(   this->lmouseDown != NULL)    this->lmouseDown ->MouseLeave();
-	if(   this->mmouseDown != NULL)    this->mmouseDown ->MouseLeave();
-	if(   this->rmouseDown != NULL)    this->rmouseDown ->MouseLeave();
 
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
