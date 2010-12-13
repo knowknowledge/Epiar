@@ -5,15 +5,15 @@ componentWins = {}
 --- View components
 function componentDebugger()
 	UI.add(
-		UI.newButton(  0,0,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
-		UI.newButton(100,0,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
-		UI.newButton(200,0,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
-		UI.newButton(300,0,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
-		UI.newButton(400,0,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
-		UI.newButton(500,0,100,30,"Gate","componentViewer('Gate',Epiar.gateNames,'Epiar.getGateInfo')" ),
-		UI.newButton(600,0,100,30,"Technology","technologyViewer()"),
-		UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" ),
+		UI.newButton(  0, 0, 100, 30,"Alliance","componentViewer('Alliance', Epiar.alliances)" ),
+		UI.newButton(100, 0, 100, 30,"Commodity","componentViewer('Commodity', Epiar.commodities)" ),
+		UI.newButton(200, 0, 100, 30,"Engine","componentViewer('Engine', Epiar.engines)" ),
+		UI.newButton(300, 0, 100, 30,"Model","componentViewer('Model', Epiar.models)" ),
+		UI.newButton(400, 0, 100, 30,"Planet","componentViewer('Planet', Epiar.planetNames)" ),
+		UI.newButton(500, 0, 100, 30,"Gate","componentViewer('Gate', Epiar.gateNames,'Epiar.getGateInfo')" ),
+		UI.newButton(600, 0, 100, 30,"Technology","technologyViewer()"),
+		UI.newButton(700, 0, 100, 30,"Weapon","componentViewer('Weapon', Epiar.weapons)" ),
+		UI.newButton(800, 0, 100, 30,"Outfit","componentViewer('Outfit', Epiar.outfits)" ),
     	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 	)
 end
@@ -121,29 +121,39 @@ EditorLayouts = {
 	Outfit = OutfitEditorLayout,
 }
 
+EditorGetters = {
+	Alliance = Epiar.getAllianceInfo,
+	Commodity = Epiar.getCommodityInfo,
+	Engine = Epiar.getEngineInfo,
+	Model = Epiar.getModelInfo,
+	Planet = Epiar.getPlanetInfo,
+	Gate = Epiar.getGateInfo,
+	Weapon = Epiar.getWeaponInfo,
+	Outfit = Epiar.getOutfitInfo,
+}
+
 --- Creates a generic list of Component buttons
 -- TODO: This window should have an "Add Component" button
-function componentViewer(kind,listFunc,getStr)
+function componentViewer(kind, listFunc)
 	if UI.search( string.format("/Window%q/", kind) ) ~= nil then return end
 	list = listFunc()
 	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+90,kind)
 	for i = 1,#list do
 		s = list[i]
-		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q,%s)",kind,s,getStr)))
+		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
 	end
-    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q,%s)",kind,'',getStr)))
+    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
 	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins[%q]:close();componentWins[%q]=nil",kind,kind)))
 end
 
-function showComponent(kind,name,getterFunc)
+function showComponent(kind, name)
 	local windowName = kind..": "..name
 	if name == "" then windowName = "New "..kind end
 	if UI.search( string.format("/Window%q/", windowName) ) ~= nil then return end
 	local height=700
 	local width=250
-	local theInfo = getterFunc( name )
-	local theWin = UI.newWindow(150,100,width,height,windowName,
-		UI.newButton( 15,5,15,15,"X", string.format("infoWindows[%q].win:close();infoWindows[%q]=nil",name,name)))
+	local theInfo = EditorGetters[ kind ]( name )
+	local theWin = UI.newWindow(150, 50, width, height, windowName )
 
     if kind=="Planet" and name~="" then
         planet = Planet.Get(name)
