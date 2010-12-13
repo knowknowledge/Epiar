@@ -63,9 +63,9 @@ bool Container::DelChild( Widget *widget ){
 	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == widget ) {
-			// FIXME BROKEN Uncommenting this delete causes memory corruption crashes on MSVC 2008 and 2010. PLEASE FIX!
-			//cout << "delchild called on " << (*i)->GetType() << endl;
-			//delete (*i);
+			// Ticket #96: The below delete had caused memory corruption on MSVC Compilations.
+			// The source of this bug has been fixed.
+			delete (*i);
 			i = children.erase( i );
 			ResetInput();
 
