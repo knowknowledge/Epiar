@@ -406,6 +406,7 @@ void Main_Menu( void ) {
 				UI::Add( new Button(button_x, 300, 100, 30, "Editor",  clickEditor  ) );
 				if( false == debug.isLoaded() )
 				{
+					 // This should be a dropdown of all the simulations in the Resources/Simulations/ directory.
 					UI::Add( new Textbox(button_x, 330, 100, 1, "default", "Old Name") );
 				}
 			}
@@ -446,6 +447,7 @@ void Main_Menu( void ) {
 				UI::Close();
 				screenNeedsReset = true;
 				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
+				availableMenus = (menuOption)(availableMenus & ~Menu_NewSim);
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
 
 				Video::Erase();
@@ -498,10 +500,9 @@ void Main_Menu( void ) {
 						debug.New( simName );
 					}
 
+					UI::Close();
 					debug.SetupToEdit();
 				}
-
-				UI::Close();
 
 				debug.Edit();
 				break;
