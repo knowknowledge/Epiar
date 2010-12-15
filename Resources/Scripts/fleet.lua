@@ -40,7 +40,8 @@ function Fleet.create(_name)
 		checkSprite = Fleet.checkSprite,
 		isLeader = Fleet.isLeader,
 		getLeader = Fleet.getLeader,
-		getLeaderRoute = Fleet.getLeaderRoute
+		getLeaderRoute = Fleet.getLeaderRoute,
+		fleetmateProx = Fleet.fleetmateProx
 	}
 	Fleets.list[_name] = self
 	return self
@@ -158,6 +159,27 @@ function Fleet.getLeaderRoute(self)
 	else
 		return nil
 	end
+end
+
+function Fleet.fleetmateProx(self, id)
+	local cur_ship = Epiar.getSprite(id)
+	local myX, myY = cur_ship:GetPosition()
+	local min_dist = nil
+	for fm_id,yes in pairs(self.members) do
+		if fm_id ~= id then
+			local sprite = Epiar.getSprite(fm_id)
+			if sprite == nil then
+				self:remove(fm_id)
+			else
+				local fmX, fmY = sprite:GetPosition()
+				local dist = distfrom( myX, myY, fmX, fmY )
+				if min_dist == nil or dist < min_dist then
+					min_dist = dist
+				end
+			end
+		end
+	end
+	return min_dist
 end
 
 --

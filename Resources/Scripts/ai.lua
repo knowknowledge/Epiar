@@ -136,6 +136,7 @@ Hunter = {
 			AIData[id].hostile = 0
 			return "default"
 		end
+
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 
 		if math.abs(cur_ship:directionTowards(tx,ty)) == 0 then
@@ -427,8 +428,37 @@ Escort = {
 		if AIData[id].accompany > -1 then return "Accompanying" end
 		return Patrol.TooFar(id,x,y,angle,speed,vector)
 	end,
-	Hunting = Hunter.Hunting,
-	Killing = Hunter.Killing,
+	Hunting = function(id,x,y,angle,speed,vector)
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then
+			local prox = myFleet:fleetmateProx(id)
+			if prox ~= nil and prox < 45 then return "NewPattern" end
+		end
+		return Hunter.Hunting(id,x,y,angle,speed,vector)
+	end,
+	Killing = function(id,x,y,angle,speed,vector)
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then
+			local prox = myFleet:fleetmateProx(id)
+			if prox ~= nil and prox < 45 then return "NewPattern" end
+		end
+		return Hunter.Killing(id,x,y,angle,speed,vector)
+	end,
+	NewPattern = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local momentumAngle = cur_ship:GetMomentumAngle()
+		if AIData[id].correctAgainst == nil then
+			AIData[id].correctAgainst = momentumAngle
+			AIData[id].correctOffset = math.random(-90,90)
+		end
+		cur_ship:Rotate( cur_ship:directionTowards( AIData[id].correctAgainst + AIData[id].correctOffset ) )
+		cur_ship:Accelerate()
+		if cur_ship:directionTowards( AIData[id].correctAgainst + AIData[id].correctOffset ) == 0 then
+			AIData[id].correctAgainst = nil
+			AIData[id].correctOffset = nil
+			return "Hunting"
+		end
+	end,
 	Accompanying = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 		local acc = AIData[id].accompany
