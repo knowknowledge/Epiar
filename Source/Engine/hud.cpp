@@ -853,12 +853,12 @@ void Radar::Draw( void ) {
 		
 		if( radarSize >= 1 ) {
 			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
-				Video::DrawCircle( blip, radarSize, 2, Color::Get(0xff, 0xff, 0xff));
+				Video::DrawCircle( blip, radarSize, 2, WHITE );
 			else
 				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 		} else {
 			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
-				Video::DrawCircle( blip, 1, 2, Color::Get(0xff, 0xff, 0xff));
+				Video::DrawCircle( blip, 1, 2, WHITE );
 			else
 				Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}

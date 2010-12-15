@@ -77,7 +77,7 @@ bool Alliance::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 
 	if( (attr = FirstChildNamed(node,"color")) ) {
 		value = NodeToString(doc,attr);
-		color = Color::Get(value);
+		color = Color(value);
 	} else return false;
 	
 	return true;
