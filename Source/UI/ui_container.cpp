@@ -450,6 +450,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -470,7 +471,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	if( !this->mouseHover ){
 		// We're on a widget, but nothing was hovered on before
 		// send enter event only
-		event_on->MouseEnter( xr,yr );
+		event_on->MouseEnter( xr,yr + yoffset );
 		this->mouseHover=event_on;
 		return true;
 	}
@@ -478,11 +479,11 @@ bool Container::MouseMotion( int xi, int yi ){
 		// We're on a widget, and leaving another widget
 		// send both enter and leave event
 		this->mouseHover->MouseLeave();
-		event_on->MouseEnter( x,y );
+		event_on->MouseEnter( xr,yr + yoffset );
 		this->mouseHover=event_on;
 	}
 
-	event_on->MouseMotion( xr, yr );
+	event_on->MouseMotion( xr, yr + yoffset );
 
 	return true;
 }
@@ -493,13 +494,14 @@ bool Container::MouseLUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( this->lmouseDown ){
 		if (this->lmouseDown == event_on) {
 			// Mouse up is on the same widget as the mouse down, send up event
-			event_on->MouseLUp( xr,yr );
+			event_on->MouseLUp( xr,yr + yoffset );
 			this->lmouseDown = NULL;
 			return true;
 		}else{
@@ -519,6 +521,7 @@ bool Container::MouseLDown( int xi, int yi ) {
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	// update drag coordinates in case this is draggable
 	dragX = xr;
@@ -535,7 +538,7 @@ bool Container::MouseLDown( int xi, int yi ) {
 		return this->mouseHandled;
 	}
 	// We clicked on a widget
-	event_on->MouseLDown( xr, yr );
+	event_on->MouseLDown( xr, yr + yoffset );
 	this->lmouseDown = event_on;
 	if( !this->keyboardFocus )
 		// No widget had keyboard focus before
@@ -568,13 +571,14 @@ bool Container::MouseMUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
 		if ( this->mmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->mmouseDown = NULL;
-			return event_on->MouseMUp( xr, yr );
+			return event_on->MouseMUp( xr, yr + yoffset );
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->mmouseDown->MouseMRelease( );
@@ -591,11 +595,12 @@ bool Container::MouseMDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->mmouseDown=event_on;
-		return event_on->MouseMDown( xr, yr );
+		return event_on->MouseMDown( xr, yr + yoffset );
 	}
 	//LogMsg(INFO,"Mouse Middle down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
@@ -619,13 +624,14 @@ bool Container::MouseRUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
 		if ( this->rmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->rmouseDown = NULL;
-			return event_on->MouseRUp( xr, yr );
+			return event_on->MouseRUp( xr, yr + yoffset);
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->rmouseDown->MouseRRelease();
@@ -642,11 +648,12 @@ bool Container::MouseRDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->rmouseDown=event_on;
-		return event_on->MouseRDown( xr, yr );
+		return event_on->MouseRDown( xr, yr + yoffset );
 	}
 	//LogMsg(INFO,"Mouse Right down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
@@ -670,9 +677,10 @@ bool Container::MouseWUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on && event_on->MouseWUp( xr,yr ) ) {
+	if( event_on && event_on->MouseWUp( xr,yr + yoffset ) ) {
 		return true;
 	}
 	if( vscrollbar ) {
@@ -689,9 +697,10 @@ bool Container::MouseWDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on && event_on->MouseWDown( xr,yr ) ) {
+	if( event_on && event_on->MouseWDown( xr,yr + yoffset ) ) {
 		return true;
 	}
 	if( vscrollbar ) {
