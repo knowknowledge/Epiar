@@ -432,7 +432,7 @@ function doHailSay(said)
 
 	local reply = hailResponses[said]
 
-	hailReplyLabel.setLabel(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
+	hailReplyLabel.setText(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
 	
 	hailResponses[said] = nil
 
@@ -450,8 +450,8 @@ function doHailSay(said)
 	if hailOption1 == nil then hailOption1 = "Goodbye" end
 	if hailOption2 == nil then hailOption2 = "Goodbye" end
 	
-	hailOption1Label.setLabel(hailOption1Label,hailOption1)
-	hailOption2Label.setLabel(hailOption2Label,hailOption2)
+	hailOption1Label.setText(hailOption1Label,hailOption1)
+	hailOption2Label.setText(hailOption2Label,hailOption2)
 
 end
 	
@@ -463,12 +463,12 @@ function doHailGreet()
 
 	if spritetype == 0x01 then
 		if targettedSprite:GetForbidden() == 1 then
-			hailReplyLabel.setLabel(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
+			hailReplyLabel.setText(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
 		else
-			hailReplyLabel.setLabel(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
+			hailReplyLabel.setText(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
 		end
 	elseif spritetype == 0x08 then
-		hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+		hailReplyLabel.setText(hailReplyLabel,"Hello there.")
 	else
 		-- should not happen
 	end
@@ -479,7 +479,7 @@ function doHailInsult()
 	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
 
 	if targettedPlanet:GetForbidden() == 1 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
 		return
 	end
 
@@ -487,13 +487,13 @@ function doHailInsult()
 	local r = getRand( os.time() + targettedPlanet:GetID(), 10 )
 
 	if r == 1 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
 		planet:SetForbidden(1) -- FIXME need to store this kind of thing some kind of structure that gets saved when the game is closed
 	elseif r == 2 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
 		addcredits( 100 )
 	else 
-		hailReplyLabel.setLabel(hailReplyLabel,"We are saddened by your insults.")
+		hailReplyLabel.setText(hailReplyLabel,"We are saddened by your insults.")
 	end
 end
 	
@@ -509,12 +509,12 @@ function doHailBFM()
 	local r = getRand( os.time() + targettedShip:GetID(), 8 )
 
 	if ( r == 1 ) then
-		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
+		hailReplyLabel.setText(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
 		-- 'friendly' means will never arbitrary select player as a target unless provoked
 		targettedShip:SetFriendly(1)
 	else
-		hailReplyLabel.setLabel(hailReplyLabel, "I don't think so.")
+		hailReplyLabel.setText(hailReplyLabel, "I don't think so.")
 		didBFM = 1
 	end
 end

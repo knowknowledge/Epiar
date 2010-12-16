@@ -59,7 +59,6 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"setPicture", &UI_Lua::setPicture},
 		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 		// Label Modification
-		{"setLabel", &UI_Lua::setLabel},
 		{"setText", &UI_Lua::setText},
 		// Checkbox Modification
 		{"setChecked", &UI_Lua::setChecked},
@@ -476,28 +475,53 @@ int UI_Lua::rotatePicture(lua_State *L){
 	return 1;
 }
 
+/** \brief Set Widget Text
+ *  \todo This should support more widget types.
+ */
 int UI_Lua::setText(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
 
-	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	Widget **widget = (Widget**)lua_touserdata(L,1);
 	string text = luaL_checkstring(L, 2);
-	(*box)->SetText(text);
 
-	return 1;
-}
+	if( widget == NULL ) {
+		return luaL_error(L, "Cannot setText to NULL Widget.");
+	}
 
-int UI_Lua::setLabel(lua_State *L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 2)
-		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
+	int mask = (*widget)->GetMask();
+	mask &= ~WIDGET_CONTAINER; // Turn off the Container flag.
+	switch( mask ) {
+		// These Widget types currently support setText
+		case WIDGET_LABEL:
+			((Label*)(*widget))->SetText( text );
+			break;
+		case WIDGET_TEXTBOX:
+			((Textbox*)(*widget))->SetText( text );
+			break;
 
-	Label **label= (Label**)lua_touserdata(L,1);
-	string text = luaL_checkstring(L, 2);
-	(*label)->SetText(text);
+		// TODO These Widget Types do not currently accept setText, but they should.
+		case WIDGET_TAB:
+		case WIDGET_WINDOW:
+		case WIDGET_BUTTON:
+			return luaL_error(L, "Epiar does not currently calling setText on Widgets of type '%s'.", (*widget)->GetType().c_str() );
+			break;
 
-	return 1;
+		// These Widget Types can't accept setText.
+		case WIDGET_TABS:
+		case WIDGET_FRAME:
+		case WIDGET_SLIDER:
+		case WIDGET_PICTURE:
+		case WIDGET_DROPDOWN:
+		case WIDGET_CHECKBOX:
+		case WIDGET_SCROLLBAR:
+		case WIDGET_CONTAINER:
+		default:
+			return luaL_error(L, "Cannot setText to Widget of type '%s'.", (*widget)->GetType().c_str() );
+	}
+
+	return 0;
 }
 
 int UI_Lua::IsChecked(lua_State *L){

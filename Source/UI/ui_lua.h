@@ -55,7 +55,6 @@ class UI_Lua {
 		static int close(lua_State *L);
 		static int rotatePicture(lua_State *L);
 		static int setText(lua_State *L);
-		static int setLabel(lua_State *L);
 		static int setPicture(lua_State *L);
 		static int setLuaClickCallback(lua_State *L);
 		static int setChecked(lua_State *L);

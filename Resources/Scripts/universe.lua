@@ -904,7 +904,6 @@ end
 function assignWeaponToSlot(slot)
 	if(pickedSlot == nil) then
 		pickedSlot = slot
-		--slotButtons[pickedSlot]:setLabel("This causes a UI problem. See ticket #113.")
 	else
 		-- swap contents of pickedSlot and slot
 		local s = PLAYER:GetWeaponSlotStatus(slot)
