@@ -37,6 +37,7 @@ function Fleet.create(_name)
 		hunt = Fleet.hunt,
 		gateTravel = Fleet.gateTravel,
 		formation = Fleet.formation,
+		hold = Fleet.hold,
 		checkSprite = Fleet.checkSprite,
 		isLeader = Fleet.isLeader,
 		getLeader = Fleet.getLeader,
@@ -69,7 +70,9 @@ function Fleet.remove(self, id)
 end
 
 function Fleet.size(self)
-	return #self.members
+	local size = 0
+	for k,v in pairs(self.members) do size = size + 1 end
+	return size
 end
 
 function Fleet.hasBoth(self, first, second)
@@ -77,7 +80,6 @@ function Fleet.hasBoth(self, first, second)
 end
 
 function Fleet.target(self, t)
-	print ("fleet " .. self.name .. " wants to target sprite " .. t)
 	for n,id in pairs(self.members) do
 		local sprite = self:checkSprite(id)
 		if sprite ~= nil and AIData[id] ~= nil then
@@ -88,16 +90,19 @@ function Fleet.target(self, t)
 end
 
 function Fleet.hunt(self, t)
-	--print ("fleet " .. self.name .. " wants to hunt sprite " .. t)
-	--if t ~= nil then self:target(t) end
+	-- if it doesn't have a GetHull function, it's not a valid target
+	if Epiar.getSprite(t).GetHull == nil then return false end
+	local permitted = false
 	for id,yes in pairs(self.members) do
 		local sprite = self:checkSprite(id)
 		if sprite ~= nil and AIData[id] ~= nil and Fleets:fleetmates(id, t) == false then
 			setHuntHostile(id, t)
+			AIData[id].nextState = "Hunting"
+			permitted = true
 		end
 	end
 	self.state = "Hunting"
-	return self
+	return permitted
 end
 
 function Fleet.gateTravel(self, dest, route)
@@ -133,6 +138,22 @@ function Fleet.formation(self)
 			AIData[id].nextState = "default"
 		end
 	end
+	self.state = "Accompanying"
+end
+
+function Fleet.hold(self)
+	for id,yes in pairs(self.members) do
+		local sprite = self:checkSprite(id)
+		if sprite ~= nil and AIData[id] ~= nil then
+			AIData[id].hostile = nil
+			AIData[id].target = -1
+			AIData[id].destination = -1
+			AIData[id].destinationName = nil
+			AIData[id].Autopilot = nil
+			AIData[id].nextState = "HoldingPosition"
+		end
+	end
+	self.state = "HoldingPosition"
 end
 
 function Fleet.checkSprite(self, id)
@@ -271,15 +292,34 @@ end
 
 function playerFleetHunt()
 	local f = Fleets:getShipFleet( PLAYER:GetID() )
-	if f ~= nil then
-		f:hunt( HUD.getTarget() )
+	if f ~= nil and f:size() > 0 then
+		HUD.newAlert(
+		   f:hunt( HUD.getTarget() ) and
+		     "Escorts pursuing designated target." or
+		     "That is not an acceptable target!"
+		)
+	else
+		HUD.newAlert("You have no escorts.")
 	end
 end
 
 function playerFleetFormation()
 	local f = Fleets:getShipFleet( PLAYER:GetID() )
-	if f ~= nil then
+	if f ~= nil and f:size() > 0 then
+		HUD.newAlert("Escorts returning to formation.")
 		f:formation()
+	else
+		HUD.newAlert("You have no escorts.")
+	end
+end
+
+function playerFleetHold()
+	local f = Fleets:getShipFleet( PLAYER:GetID() )
+	if f ~= nil and f:size() > 0 then
+		HUD.newAlert("Escorts holding position.")
+		f:hold()
+	else
+		HUD.newAlert("You have no escorts.")
 	end
 end
 

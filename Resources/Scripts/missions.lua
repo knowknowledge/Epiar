@@ -447,10 +447,6 @@ ProtectFreighter = {
 			escort:SetRadarColor(255,0,0)
 			setAccompany(escort:GetID(), pirate:GetID())
 			setHuntHostile(pirate:GetID(), freighter:GetID())
-
-			-- Clean up
-			freighterDialog:close()
-			freighterDialog = nil
 		end
 		createFreighter("Escort")
 	end,

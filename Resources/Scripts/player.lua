@@ -33,7 +33,8 @@ playerCommands = {
 	{'lalt', "Toggle autopilot", "playerAutopilotToggle()", KEYTYPED},
 	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED},
 	{'f', "Tell fleet to hunt target", "playerFleetHunt()", KEYTYPED},
-	{'g', "Return to formation", "playerFleetFormation()", KEYTYPED}
+	{'g', "Return to formation", "playerFleetFormation()", KEYTYPED},
+	{'v', "Hold position", "playerFleetHold()", KEYTYPED}
 }
 
 function playerStart()

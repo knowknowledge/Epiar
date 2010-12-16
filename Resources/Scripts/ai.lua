@@ -459,6 +459,21 @@ Escort = {
 			return "Hunting"
 		end
 	end,
+	HoldingPosition = function(id,x,y,angle,speed,vector)
+		local ns = AIData[id].nextState
+		if ns ~= nil then
+			AIData[id].nextState = nil
+			return ns
+		end
+
+		local cur_ship = Epiar.getSprite(id)
+		local inverseMomentumOffset = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
+		cur_ship:Rotate( inverseMomentumOffset )
+		if math.abs( cur_ship:directionTowards( cur_ship:GetMomentumAngle() ) ) >= 176 and speed > 0.1 then
+			cur_ship:Accelerate()
+		end
+		return "HoldingPosition"
+	end,
 	Accompanying = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 		local acc = AIData[id].accompany
@@ -472,7 +487,6 @@ Escort = {
 				AIData[id].nextState = nil
 				return ns
 			end
-		elseif Fleets:getShipFleet(id).state == "Hunting" then return "Hunting"
 		else
 			if AIData[id].destination ~= nil and AIData[id].destination > -1 then
 				return "Travelling"
