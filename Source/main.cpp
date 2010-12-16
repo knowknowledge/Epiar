@@ -151,6 +151,7 @@ void Main_Init_Singletons( int argc, char **argv ) {
 
 	Timer::Initialize();
 	Video::Initialize();
+	UI::Initialize();
 
 	// Parse command line options first.
 	argparser = new ArgParser(argc, argv);

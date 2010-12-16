@@ -19,6 +19,7 @@ class Label : public Widget {
 		void Draw(  int relx = 0, int rely = 0 );
 
 		void SetText(string text);
+		void AppendText(string text);
 		string GetText(){return name;}
 	
 		string GetType( void ) {return string("Label");}

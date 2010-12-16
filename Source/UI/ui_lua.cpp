@@ -17,8 +17,13 @@
 #include "ui_tabs.h"
 #include "Engine/models.h"
 
-/**\class UI_Lua
- * \brief Lua bridge fro UI. */
+/** \class UI_Lua
+ *  \brief Lua bridge for working with the UI.
+ *  \todo Widgets are being stored as plain userdata pointers.
+ *        This is very unsafe as it allows Lua to attempt to use deallocated memory.
+ *  \todo The Widget interface should be better defined.
+ *        There should be more utility functions to allow creative uses of the UI.
+ */
 
 void UI_Lua::RegisterUI(lua_State *L){
 	// These Functions create new UI Elements
@@ -59,7 +64,6 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"setPicture", &UI_Lua::setPicture},
 		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 		// Label Modification
-		{"setLabel", &UI_Lua::setLabel},
 		{"setText", &UI_Lua::setText},
 		// Checkbox Modification
 		{"setChecked", &UI_Lua::setChecked},
@@ -80,6 +84,11 @@ void UI_Lua::RegisterUI(lua_State *L){
 	lua_pop(L,2);
 }
 
+/** \brief Create a new Window
+ *
+ *  \note Unlike most UI_Lua Widget creators, this implicitely Adds the Window to the UI.
+ *  \returns Lua userdata containing pointer to Window.
+ */
 int UI_Lua::newWindow(lua_State *L){
 	int arg = 6;
 	int n = lua_gettop(L);  // Number of arguments
@@ -116,6 +125,10 @@ int UI_Lua::newWindow(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Frame
+ *
+ *  \returns Lua userdata containing pointer to Frame.
+ */
 int UI_Lua::newFrame(lua_State *L){
 	int arg;
 	int n = lua_gettop(L);  // Number of arguments
@@ -136,12 +149,20 @@ int UI_Lua::newFrame(lua_State *L){
 	// Collect 'extra' widgets and Add them as children
 	for(arg=5; arg <= n;arg++){
 		Widget** widget= (Widget**)lua_touserdata(L,arg);
+		if( widget == NULL ) {
+			return luaL_error(L, "argument %d to setLuaClickCallback is NULL", arg);
+		}
 		(*frame)->AddChild(*widget);
 	}
 	
 	return 1;
 }
 
+/** \brief Close a Widget
+ *
+ *  \details When passed with no arguments, this will close all Widgets.
+ *  When passed with one argument, it will treat
+ */
 int UI_Lua::close(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 
@@ -158,6 +179,10 @@ int UI_Lua::close(lua_State *L){
 	return 0;
 }
 
+/** \brief Create a new Button
+ *
+ *  \returns Lua userdata containing pointer to Button.
+ */
 int UI_Lua::newButton(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( (n != 5) && (n != 6) )
@@ -184,6 +209,10 @@ int UI_Lua::newButton(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Slider
+ *
+ *  \returns Lua userdata containing pointer to Slider.
+ */
 int UI_Lua::newSlider(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( (n != 5) && (n != 6) && (n != 7) )
@@ -223,7 +252,9 @@ int UI_Lua::newSlider(lua_State *L){
 	return 1;
 }
 
-/**\brief Creates a new Tabs container.
+/** \brief Create a new Tabs Widget
+ *
+ *  \returns Lua userdata containing pointer to Tabs Widget.
  */
 int UI_Lua::newTabCont(lua_State *L){
 	int n = lua_gettop(L);	// Number of arguments
@@ -245,6 +276,10 @@ int UI_Lua::newTabCont(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Tab Widget
+ *
+ *  \returns Lua userdata containing pointer to Tab Widget.
+ */
 int UI_Lua::newTab(lua_State *L){
 	int n = lua_gettop(L);	// Number of arguments
 	if ( (n != 1 ) )
@@ -262,6 +297,10 @@ int UI_Lua::newTab(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Textbox
+ *
+ *  \returns Lua userdata containing pointer to Textbox.
+ */
 int UI_Lua::newTextbox(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( n < 4  )
@@ -285,6 +324,10 @@ int UI_Lua::newTextbox(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Label
+ *
+ *  \returns Lua userdata containing pointer to Label.
+ */
 int UI_Lua::newLabel(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ((n != 3) && (n != 4))
@@ -308,6 +351,10 @@ int UI_Lua::newLabel(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Picture
+ *
+ *  \returns Lua userdata containing pointer to Picture.
+ */
 int UI_Lua::newPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if ( (n != 3) && (n != 5) && (n != 9))
@@ -348,6 +395,10 @@ int UI_Lua::newPicture(lua_State *L){
 	return 1;
 }
 
+/** \brief Create a new Checkbox
+ *
+ *  \returns Lua userdata containing pointer to Checkbox.
+ */
 int UI_Lua::newCheckbox(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 4){
@@ -367,6 +418,10 @@ int UI_Lua::newCheckbox(lua_State *L) {
 	return 1;
 }
 
+/** \brief Add widgets to the UI.
+ *
+ *  \details This accepts multiple Widgets.
+ */
 int UI_Lua::addWidget(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 0){
@@ -381,6 +436,11 @@ int UI_Lua::addWidget(lua_State *L) {
 	return 0;
 }
 
+/** \brief Add widgets to the UI.
+ *
+ *  \details This accepts multiple Widgets.
+ *  \see UI::search, Container::search
+ */
 int UI_Lua::search(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1){
@@ -402,10 +462,18 @@ int UI_Lua::search(lua_State *L) {
 	return 1;
 }
 
+/** \brief Change the Image in a Picture Widget
+ *
+ */
 int UI_Lua::setPicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2){
 		Picture** pic = (Picture**)lua_touserdata(L,1);
+		if( pic == NULL ) {
+			return luaL_error(L, "first argument to setPicture is NULL");
+		} else if( ((*pic)->GetMask() & WIDGET_PICTURE) == 0) {
+			return luaL_error(L, "first argument to setPicture is not a Picture");
+		}
 		string picname = luaL_checkstring (L, 2);
 		(*pic)->Set( picname );
 	
@@ -415,11 +483,18 @@ int UI_Lua::setPicture(lua_State *L){
 	return 0;
 }
 
-/* set the Lua callback name for clicks within pictures */
+/** \brief Set the Lua callback for clicks within pictures
+ *  \todo, this functionality should be extended to non-Pictures.
+ */
 int UI_Lua::setLuaClickCallback(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2){
 		Picture** pic = (Picture**)lua_touserdata(L,1);
+		if( pic == NULL ) {
+			return luaL_error(L, "first argument to setLuaClickCallback is NULL");
+		} else if( ((*pic)->GetMask() & WIDGET_PICTURE) == 0) {
+			return luaL_error(L, "first argument to setLuaClickCallback is not a Picture");
+		}
 		string callback = luaL_checkstring (L, 2);
 		(*pic)->SetLuaClickCallback( callback );
 	
@@ -429,12 +504,24 @@ int UI_Lua::setLuaClickCallback(lua_State *L){
 	return 0;
 }
 
+/** \brief add Widgets to a Container
+ *  \details This accepts multiple Widgets.
+ *
+ */
 int UI_Lua::add(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n >= 2){
 		Container** ptrOuter = static_cast<Container**>(lua_touserdata(L,1));
+		if( ptrOuter == NULL ) {
+			return luaL_error(L, "first argument to add is NULL");
+		} else if( ((*ptrOuter)->GetMask() & WIDGET_CONTAINER) == 0) {
+			return luaL_error(L, "first argument to add is not a Container");
+		}
 		for(int i=2; i<=n; i++){
 			Widget** ptrInner = (Widget**)lua_touserdata(L,i);
+			if( ptrInner == NULL ) {
+				return luaL_error(L, "argument %d to add is NULL", i);
+			}
 			(*ptrOuter)->AddChild(*ptrInner);
 		}
 	} else {
@@ -443,6 +530,9 @@ int UI_Lua::add(lua_State *L){
 	return 0;
 }
 
+/** \brief Resize a Widget
+ *
+ */
 int UI_Lua::move(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 5)
@@ -455,6 +545,10 @@ int UI_Lua::move(lua_State *L){
 	int w = luaL_checkinteger(L, 3);
 	int h = luaL_checkinteger(L, 4);
 
+	if( widget == NULL ) {
+		return luaL_error(L, "Cannot move NULL Widget");
+	}
+
 	// Move the widget
 	(*widget)->SetX( x );
 	(*widget)->SetY( y );
@@ -464,6 +558,9 @@ int UI_Lua::move(lua_State *L){
 	return 0;
 }
 
+/** \brief Rotate a Picture Widget
+ *
+ */
 int UI_Lua::rotatePicture(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -471,46 +568,90 @@ int UI_Lua::rotatePicture(lua_State *L){
 
 	Picture **pic= (Picture**)lua_touserdata(L,1);
 	double angle = luaL_checknumber (L, 2);
+
+	if( pic == NULL ) {
+		return luaL_error(L, "Argument 1 to rotatePicture is NULL");
+	} else if( ((*pic)->GetMask() & WIDGET_PICTURE) == 0) {
+		return luaL_error(L, "Argument 1 to rotatePicture is not a Picture");
+	}
+
 	(*pic)->Rotate(angle);
 
 	return 1;
 }
 
+/** \brief Set Widget Text
+ *  \todo This should support more widget types.
+ */
 int UI_Lua::setText(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
 		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
 
-	Textbox **box= (Textbox**)lua_touserdata(L,1);
+	Widget **widget = (Widget**)lua_touserdata(L,1);
 	string text = luaL_checkstring(L, 2);
-	(*box)->SetText(text);
 
-	return 1;
+	if( widget == NULL ) {
+		return luaL_error(L, "Cannot setText to NULL Widget.");
+	}
+
+	int mask = (*widget)->GetMask();
+	mask &= ~WIDGET_CONTAINER; // Turn off the Container flag.
+	switch( mask ) {
+		// These Widget types currently support setText
+		case WIDGET_LABEL:
+			((Label*)(*widget))->SetText( text );
+			break;
+		case WIDGET_TEXTBOX:
+			((Textbox*)(*widget))->SetText( text );
+			break;
+
+		// TODO These Widget Types do not currently accept setText, but they should.
+		case WIDGET_TAB:
+		case WIDGET_WINDOW:
+		case WIDGET_BUTTON:
+			return luaL_error(L, "Epiar does not currently calling setText on Widgets of type '%s'.", (*widget)->GetType().c_str() );
+			break;
+
+		// These Widget Types can't accept setText.
+		case WIDGET_TABS:
+		case WIDGET_FRAME:
+		case WIDGET_SLIDER:
+		case WIDGET_PICTURE:
+		case WIDGET_DROPDOWN:
+		case WIDGET_CHECKBOX:
+		case WIDGET_SCROLLBAR:
+		case WIDGET_CONTAINER:
+		default:
+			return luaL_error(L, "Cannot setText to Widget of type '%s'.", (*widget)->GetType().c_str() );
+	}
+
+	return 0;
 }
 
-int UI_Lua::setLabel(lua_State *L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 2)
-		return luaL_error(L, "Got %d arguments expected 2 (self, text)", n);
-
-	Label **label= (Label**)lua_touserdata(L,1);
-	string text = luaL_checkstring(L, 2);
-	(*label)->SetText(text);
-
-	return 1;
-}
-
+/** \brief Test if a checkbox is checked.
+ *  \returns true if the Checkbox is checked.
+ */
 int UI_Lua::IsChecked(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 
 	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
+
+	if( box == NULL ) {
+		return luaL_error(L, "Argument to IsChecked is NULL");
+	} else if( ((*box)->GetMask() & WIDGET_CHECKBOX) == 0) {
+		return luaL_error(L, "Argument to IsChecked is not a Checkbox");
+	}
+
 	lua_pushboolean(L, (int) (*box)->IsChecked() );
 
 	return 1;
 }
 
+/** \brief Check or Uncheck a checkbox
+ */
 int UI_Lua::setChecked(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -518,12 +659,20 @@ int UI_Lua::setChecked(lua_State *L){
 
 	Checkbox **box= (Checkbox**)lua_touserdata(L,1);
 	bool checked = lua_toboolean(L, 2) != 0;
+
+	if( box == NULL ) {
+		return luaL_error(L, "Argument to SetChecked is NULL");
+	} else if( ((*box)->GetMask() & WIDGET_CHECKBOX) == 0) {
+		return luaL_error(L, "Argument to SetChecked is not a Checkbox");
+	}
+
 	(*box)->Set(checked);
 
 	return 0;
 }
 
-
+/** \brief Set a Slider Value
+ */
 int UI_Lua::setSliderValue(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 2)
@@ -531,27 +680,66 @@ int UI_Lua::setSliderValue(lua_State *L){
 	
 	Slider **slide= (Slider**)lua_touserdata(L,1);
 	float percent= (float)lua_tonumber(L, 2);
+
+	if( slide == NULL ) {
+		return luaL_error(L, "Argument to setSliderValue is NULL");
+	} else if( ((*slide)->GetMask() & WIDGET_SLIDER) == 0) {
+		return luaL_error(L, "Argument to setSliderValue is not a Slider");
+	}
+
 	(*slide)->SetVal(percent);
 	
 	return 0;
 }
 
+/** \brief Get the Text Value of a Widget
+ *  \todo Currently this only supports Labels and Textboxes, but it shouls support more Widget types.
+ *  \returns string or nil
+ */
 int UI_Lua::GetText(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 
 	Widget **widget= (Widget**)lua_touserdata(L,1);
-	string type = (*widget)->GetType();
-	if( type=="Label" ) {
-		lua_pushstring(L, ((Label*)(*widget))->GetText().c_str() );
-		return 1;
-	} else if( type=="Textbox" ) {
-		lua_pushstring(L, ((Textbox*)(*widget))->GetText().c_str() );
-		return 1;
-	} else {
-		return 0;
+
+	if( widget == NULL ) {
+		return luaL_error(L, "Cannot getText from NULL Widget.");
 	}
+
+	int mask = (*widget)->GetMask();
+	mask &= ~WIDGET_CONTAINER; // Turn off the Container flag.
+	switch( mask ) {
+		// These Widget types currently support setText
+		case WIDGET_LABEL:
+			lua_pushstring(L, ((Label*)(*widget))->GetText().c_str() );
+			return 1;
+			break;
+		case WIDGET_TEXTBOX:
+			lua_pushstring(L, ((Textbox*)(*widget))->GetText().c_str() );
+			return 1;
+			break;
+
+		// TODO These Widget Types do not currently accept setText, but they should.
+		case WIDGET_TAB:
+		case WIDGET_WINDOW:
+		case WIDGET_BUTTON:
+			return luaL_error(L, "Epiar does not currently calling getText on Widgets of type '%s'.", (*widget)->GetType().c_str() );
+			break;
+
+		// These Widget Types can't accept setText.
+		case WIDGET_TABS:
+		case WIDGET_FRAME:
+		case WIDGET_SLIDER:
+		case WIDGET_PICTURE:
+		case WIDGET_DROPDOWN:
+		case WIDGET_CHECKBOX:
+		case WIDGET_SCROLLBAR:
+		case WIDGET_CONTAINER:
+		default:
+			return luaL_error(L, "Cannot getText to Widget of type '%s'.", (*widget)->GetType().c_str() );
+	}
+
 	return 0;
 }
 

@@ -404,7 +404,7 @@ end
 --- Buys a ship
 function buyShip(model)
 	if model==nil then
-		local viewerLabel = UI.search("/Window/Tabs'Store'/'Ship Yard'/Frame[1]/Label[0]/")
+		local viewerLabel = UI.search("/Window/Tabs'Store'/'ShipYard'/Frame[1]/Label[0]/")
 		if viewerLabel ~= nil then
 			model = viewerLabel:GetText()
 			print('Buying ',model)
@@ -699,7 +699,7 @@ function landingDialog(id)
 	end
 
 	-- Shipyard
-	local shipyard = UI.newTab("Ship Yard")
+	local shipyard = UI.newTab("ShipYard")
 	local shipList = UI.newFrame( 10, 10, 160, 360 )
 	shipyard:add( shipList )
 	local yoff = 10
@@ -707,13 +707,13 @@ function landingDialog(id)
 	for i,name in ipairs(models) do
 		shipList:add(UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
 		yoff = yoff+boxsize
-		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'Ship Yard'/", name)))
+		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'ShipYard'/", name)))
 		yoff = yoff+30
 	end
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
-	storeView( "/Window/Tabs'Store'/'Ship Yard'/" , 'ship',models[1])
+	storeView( "/Window/Tabs'Store'/'ShipYard'/" , 'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
@@ -904,7 +904,6 @@ end
 function assignWeaponToSlot(slot)
 	if(pickedSlot == nil) then
 		pickedSlot = slot
-		--slotButtons[pickedSlot]:setLabel("This causes a UI problem. See ticket #113.")
 	else
 		-- swap contents of pickedSlot and slot
 		local s = PLAYER:GetWeaponSlotStatus(slot)

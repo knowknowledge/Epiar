@@ -53,6 +53,11 @@ void Label::Draw(  int relx, int rely ) {
 }
 
 void Label::SetText(string text) {
+	lines.clear();
+	AppendText( text );
+}
+
+void Label::AppendText(string text) {
 	int maxwidth = 0;
 	vector<string> temp;
 	vector<string>::iterator iter;

@@ -55,7 +55,7 @@ void Widget::Draw( int relx, int rely ) {
 /**\brief Tests if point is within a rectangle.
  */
 bool Widget::Contains(int relx, int rely) {
-	return WITHIN_BOUNDS(relx,rely,this->x,this->y,this->w,this->h);
+	return WITHIN_BOUNDS(relx, rely, this->x, this->y, this->w, this->h);
 }
 
 /**\brief Widget is currently being dragged.
@@ -153,14 +153,14 @@ bool Widget::MouseRRelease( void ){
  */
 bool Widget::MouseWUp( int xi, int yi ){
 	LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
-	return true;
+	return false;
 }
 
 /**\brief Generic mouse wheel down function.
  */
 bool Widget::MouseWDown( int xi, int yi ){
 	LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
-	return true;
+	return false;
 }
 
 /**\brief Generic keyboard focus function.

@@ -35,6 +35,8 @@ class UI {
 	public:
 		UI();
 		~UI();
+
+		static bool Initialize( void );
 		
 		static Widget *Add( Widget *widget );
 		static void Draw( void );

@@ -557,8 +557,8 @@ end
 function calculateSlotOffset(x, y)
 	local newY = x - SlotEditor["calcPosX"] - SlotEditor["imageHW"] -- flipping x and y here is intentional
 	local newX = y - SlotEditor["calcPosY"] - SlotEditor["imageHH"] -- (the image is sideways)
-	SlotEditor["calcXLabel"].setLabel(SlotEditor["calcXLabel"], (string.format("X: %d", newX)))
-	SlotEditor["calcYLabel"].setLabel(SlotEditor["calcYLabel"], (string.format("Y: %d", newY)))
+	SlotEditor["calcXLabel"].setText(SlotEditor["calcXLabel"], (string.format("X: %d", newX)))
+	SlotEditor["calcYLabel"].setText(SlotEditor["calcYLabel"], (string.format("Y: %d", newY)))
 end
 
 function finishEditingWeaponSlots(name, title, desiredLength, fields)
