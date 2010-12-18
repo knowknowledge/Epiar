@@ -739,8 +739,6 @@ int UI_Lua::GetText(lua_State *L){
 		default:
 			return luaL_error(L, "Cannot getText to Widget of type '%s'.", (*widget)->GetType().c_str() );
 	}
-
-	return 0;
 }
 
 int UI_Lua::GetEdges(lua_State *L){
