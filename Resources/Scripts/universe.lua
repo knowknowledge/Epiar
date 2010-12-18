@@ -691,8 +691,11 @@ function landingDialog(id)
 
 	function addToStoreList( storeList, list, yoff, cmd, container )
 		for i,name in ipairs(list) do
-			storeList:add( UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, string.format( cmd, container, name ) ))
+			local callback = string.format( cmd, container, name )
+			local pic = UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
+			pic:setLuaClickCallback( callback )
+			storeList:add( pic )
+			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, callback ))
 			yoff = yoff + 30 + boxsize
 		end
 		return yoff
@@ -704,12 +707,7 @@ function landingDialog(id)
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
-	for i,name in ipairs(models) do
-		shipList:add(UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-		yoff = yoff+boxsize
-		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'ShipYard'/", name)))
-		yoff = yoff+30
-	end
+	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)",  "/Window/Tabs'Store'/'ShipYard'/" )
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
