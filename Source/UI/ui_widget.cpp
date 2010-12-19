@@ -24,10 +24,16 @@
 /**\brief Constructor.
  */
 Widget::Widget( void ):
-	hovering( false ), hidden( false ), disabled( false ),
-	x( 0 ),y( 0 ),w( 0 ),h( 0 ),
-	dragX( 0 ),dragY( 0 ),
-	name( "UnspecifiedWidget" ),keyactivated( false ){
+	name( "UnspecifiedWidget" ),
+	hovering( false ),
+	hidden( false ),
+	disabled( false ),
+	keyactivated( false ),
+	x( 0 ), y( 0 ),
+	w( 0 ), h( 0 ),
+	dragX( 0 ), dragY( 0 )
+{
+
 }
 
 void Widget::Draw( int relx, int rely ) {
