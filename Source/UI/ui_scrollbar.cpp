@@ -10,33 +10,58 @@
 #include "UI/ui.h"
 #include "Utilities/log.h"
 
+#define SCROLLBAR_MINMARK	10	///< Minimum marker size
+
 /**\class Scrollbar
  * \brief Implements a scrollbar that can be attached to certain widgets.
  */
 
 /**\brief Attaches Scrollbar to the widget specified.
+ * \note Unlike all other widgets, the x value here represents the right side of the widget.
+ *       This is used to align the Scrollbar with the edge of a Container.
  */
-Scrollbar::Scrollbar( int x, int y, int length,
-	Widget *parent):
-		pos( 0 ),maxpos( 0 ),
-		parent( parent ){
-
+Scrollbar::Scrollbar( int x, int y, int length, int maxpos):
+		pos( 0 ),
+		maxpos( maxpos )
+{
 	this->x = x;
 	this->y = y;
 	this->name = "Vertical";
+
+	assert(maxpos != 0);
+
+	// This is the Scrollbar Background Image.
+	bitmaps[0] = Image::Get("Resources/Graphics/ui_scrollbar_bg.png");
+
+	// These are the Up and down Arrows
+	bitmaps[1] = Image::Get("Resources/Graphics/ui_scrollbar_up.png");
+	bitmaps[2] = Image::Get("Resources/Graphics/ui_scrollbar_down.png");
+
+	// These Describe the the Marker / Handle
+	bitmaps[3] = Image::Get("Resources/Graphics/ui_scrollbar_handle_up.png");
+	bitmaps[4] = Image::Get("Resources/Graphics/ui_scrollbar_handle_bg.png");
+	bitmaps[5] = Image::Get("Resources/Graphics/ui_scrollbar_handle_down.png");
+
+	this->x -= bitmaps[0]->GetWidth();
 
 	SetSize(length);
 }
 
 Scrollbar::~Scrollbar() {
-	parent = NULL; // do not free parent, it is merely assigned
+	// Set these bitmaps to NULL, but don't delete them.
+	bitmaps[0] = NULL;
+	bitmaps[1] = NULL;
+	bitmaps[2] = NULL;
+	bitmaps[3] = NULL;
+	bitmaps[4] = NULL;
+	bitmaps[5] = NULL;
 }
 
 /**\brief Set the Length and Height of a Scrollbar.
  */
 
 void Scrollbar::SetSize(int length) {
-	this->w = SCROLLBAR_THICK;
+	this->w = bitmaps[0]->GetWidth();
 	this->h = length;
 }
 
@@ -48,21 +73,19 @@ void Scrollbar::Draw( int relx, int rely ){
 	x = GetX() + relx;
 	y = GetY() + rely;
 
-	Video::DrawRect( x, y, this->w,this->h,
-		0.4f, 0.4f, 0.4f);
+	// Draw the Background
+	bitmaps[0] -> DrawStretch( x, y, w, h );
 
-	Video::DrawRect( x+1, y+SCROLLBAR_BTN-2,
-		this->w-2,this->h-(2*SCROLLBAR_BTN)+4,
-		0.15f, 0.15f, 0.15f);
-	Video::DrawRect( x+1,y+1,
-			SCROLLBAR_THICK-2,SCROLLBAR_BTN-4,
-			0.15f, 0.15f, 0.15f );
-	Video::DrawRect( x+1,y+this->h-SCROLLBAR_BTN+3,
-			SCROLLBAR_THICK-2,SCROLLBAR_BTN-4,
-			0.15f, 0.15f, 0.15f );
-	Video::DrawRect( x+3, y+this->MarkerPosToPixel(),
-		SCROLLBAR_THICK-6, this->GetMarkerSize(),
-		0.4f, 0.4f, 0.4f);
+	// Draw the Arrows
+	bitmaps[1] -> Draw( x, y );
+	bitmaps[2] -> Draw( x, y + h - bitmaps[2]->GetHeight() );
+
+	// Draw the Marker
+	bitmaps[3] -> Draw( x, y + MarkerPosToPixel() );
+	bitmaps[4] -> DrawStretch( x, y + MarkerPosToPixel() + bitmaps[3]->GetHeight(), w, GetMarkerSize() - bitmaps[3]->GetHeight() - bitmaps[5]->GetHeight()  );
+	bitmaps[5] -> Draw( x, y + MarkerPosToPixel() + GetMarkerSize() - bitmaps[5]->GetHeight() );
+
+	Widget::Draw( relx, rely );
 }
 
 /**\brief Scroll to position on mouse down.
@@ -74,14 +97,18 @@ bool Scrollbar::MouseLDown( int x, int y ){
 
 	int newpos;
 
-	if( yr<SCROLLBAR_BTN )
-		newpos = pos-SCROLLBAR_SCROLL;
-	else if ( yr>(this->h-SCROLLBAR_BTN) )
-		newpos = pos+SCROLLBAR_SCROLL;
-	else
-		newpos = this->MarkerPixelToPos( xr, yr );
+	if( yr < bitmaps[1]->GetHeight() ) {
+		// Click on the UP arrow
+		newpos = 0; //pos - SCROLLBAR_SCROLL;
+	} else if ( yr > (h - bitmaps[2]->GetHeight()) ) {
+		// Click on the Down arrow
+		newpos = maxpos; // pos + SCROLLBAR_SCROLL;
+	} else {
+		// Click somewhere in the middle
+		newpos = MarkerPixelToPos( xr, yr );
+	}
 
-	this->pos = this->CheckPos( newpos );
+	pos = CheckPos( newpos );
 	return true;
 }
 
@@ -113,13 +140,15 @@ void Scrollbar::ScrollDown( int pix ){
 int Scrollbar::GetMarkerSize( void ){
 	int visiblelen;
 
-	visiblelen = this->h+2*SCROLLBAR_PAD;
+	visiblelen = this->h;
 
 	// Calculate the size of the marker
 	int markersize = this->h * visiblelen / maxpos;
+
 	// Don't have super small marker size
 	if ( markersize < SCROLLBAR_MINMARK )
 		markersize = SCROLLBAR_MINMARK;
+
 	return markersize;
 }
 
@@ -130,10 +159,10 @@ int Scrollbar::MarkerPosToPixel( void ){
 	int effectivelen;
 	float posratio;		// 0 - 1 ratio of marker position
 
-	effectivelen = this->h - 2 * SCROLLBAR_BTN - this->GetMarkerSize();
-	posratio = TO_FLOAT(pos) / TO_FLOAT(maxpos - (this-> h + 2 * SCROLLBAR_PAD));
+	effectivelen = this->h - GetMarkerSize() - bitmaps[1]->GetHeight() - bitmaps[2]->GetHeight();
+	posratio = TO_FLOAT(pos) / TO_FLOAT(maxpos - (this-> h ));
 
-	markerpos = SCROLLBAR_BTN + static_cast<int>(effectivelen* posratio);
+	markerpos = bitmaps[1]->GetHeight() + static_cast<int>(effectivelen* posratio);
 
 	return markerpos;
 }
@@ -142,14 +171,12 @@ int Scrollbar::MarkerPosToPixel( void ){
  */
 int Scrollbar::MarkerPixelToPos( int xr, int yr ){
 	int effectivelen;
-	int screenlen;
 	int newpos;
 	int marksize = this->GetMarkerSize();
-	int effectivestart = SCROLLBAR_BTN + marksize / 2;
+	int effectivestart = bitmaps[2]->GetHeight() + marksize / 2;
 
-	effectivelen = this->h - 2 * SCROLLBAR_BTN - marksize;
-	screenlen = this->h + 2 * SCROLLBAR_PAD;
-	newpos = TO_INT(TO_FLOAT(yr - effectivestart) / TO_FLOAT(effectivelen) * (maxpos - screenlen));
+	effectivelen = this->h - marksize - bitmaps[1]->GetHeight() - bitmaps[2]->GetHeight();
+	newpos = TO_INT(TO_FLOAT(yr - effectivestart) / TO_FLOAT(effectivelen) * (maxpos - h));
 
 	return newpos;
 }
@@ -158,14 +185,11 @@ int Scrollbar::MarkerPixelToPos( int xr, int yr ){
 /**\brief Checks that the pos value is valid.
  */
 int Scrollbar::CheckPos( int newpos ){
-	int screenlen;
-
-	screenlen = this->h + 2 * SCROLLBAR_PAD;
-	
-	if ( newpos < 0 )
+	if ( newpos <= 0 )
 		newpos = 0;
-	else if ( newpos > (maxpos - screenlen) )
-		newpos = (maxpos - screenlen);
+	else if ( newpos > (maxpos - h) )
+		newpos = (maxpos - h);
+	printf("New Pos %d\n", newpos);
 
 	return newpos;
 }

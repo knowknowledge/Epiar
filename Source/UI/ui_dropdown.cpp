@@ -65,7 +65,7 @@ Dropdown::~Dropdown() {
 Widget *Dropdown::DetermineMouseFocus( int relx, int rely ){
 	list<Widget *>::iterator i;
 
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i)->Contains(relx, rely + yoffset) ) {
@@ -100,7 +100,7 @@ void Dropdown::Draw( int relx, int rely ) {
 		}
 		int yscroll = 0;
 		if ( this->vscrollbar )
-			yscroll = vscrollbar->pos;
+			yscroll = vscrollbar->GetPos();
 		(*i)->Draw( x, y - yscroll );
 	}
 	
