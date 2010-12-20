@@ -135,6 +135,8 @@ class Ship : public Sprite {
 			
 			/* Flags */
 			bool isAccelerating; ///< Cleared by update, set by accelerate (so it's always updated twice a loop)
+			bool isRotatingLeft;  ///< Cleared by update, set by turning left (so it's always updated twice a loop)
+			bool isRotatingRight;  ///< Cleared by update, set by turning right (so it's always updated twice a loop)
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
 
