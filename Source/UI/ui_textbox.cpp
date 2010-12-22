@@ -15,14 +15,27 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
+Font *Textbox::font = NULL;
+Color Textbox::foreground = WHITE;
+Color Textbox::background = GREY;
+Color Textbox::edge = BLACK;
+
 /**\class Textbox
  * \brief UI textbox. */
 
 /**\brief This is used to construct the Textbox.*/
 Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
-	int rowHeight = ((Mono->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
+	int rowHeight;
 
-	rowPad = (rowHeight - Mono->LineHeight()) / 2; // Pad the text to center it in the row
+	if ( font == NULL ) {
+		font = new Font( SKIN( "Skin/UI/Textbox/Font" ) );
+		foreground = Color( SKIN( "Skin/UI/Textbox/Color/Foreground" ) );
+		background = Color( SKIN( "Skin/UI/Textbox/Color/Background" ) );
+		edge       = Color( SKIN( "Skin/UI/Textbox/Color/Edge" ) );
+	}
+
+	rowHeight = ((font->LineHeight()+9)/10)*10; // Round the rowHeight up to the nearest 10 pixels
+	rowPad = (rowHeight - font->LineHeight()) / 2; // Pad the text to center it in the row
 
 	this->x = x;
 	this->y = y;
@@ -44,17 +57,17 @@ void Textbox::Draw( int relx, int rely ) {
 	y = GetY() + rely;
 
 	// draw the button (loaded image is simply scaled)
-	Video::DrawRect( x, y, w, h, 0.4f, 0.4f, 0.4f );
-	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, 0.15f, 0.15f, 0.15f );
+	Video::DrawRect( x, y, w, h, background );
+	Video::DrawRect( x + 1, y + 1, w - 2, h - 2, edge );
 
 	// draw the text
 	Video::SetCropRect(x, y, this->w, this->h);
-	Mono->SetColor( 1., 1., 1. );
-	int tw = Mono->Render( x + rowPad, y + rowPad, text );
+	font->SetColor( 1., 1., 1. );
+	int tw = font->Render( x + rowPad, y + rowPad, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
-		Video::DrawRect( x + 6 + tw, y + 3, 1, h - 6, .8f, .8f, .8f );
+		Video::DrawRect( x + 6 + tw, y + 3, 1, h - 6, foreground );
 	}
 	Video::UnsetCropRect();
 

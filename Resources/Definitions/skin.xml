@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<Font>
-	<SansSerif>Resources/Fonts/FreeSans.ttf</SansSerif>
-	<BitType>Resources/Fonts/visitor2.ttf</BitType>
-	<Serif>Resources/Fonts/FreeSans.ttf</Serif>
-	<Mono>Resources/Fonts/FreeMono.ttf</Mono>
-	<Development>Resources/Fonts/FreeSans.ttf</Development>
-	<Console>Resources/Fonts/FreeSans.ttf</Console>
-	<Alert>Resources/Fonts/FreeSans.ttf</Alert>
-	<FPS>Resources/Fonts/visitor2.ttf</FPS>
-	<StatusBar>Resources/Fonts/visitor2.ttf</StatusBar>
-	<Map>Resources/Fonts/FreeSans.ttf</Map>
+<Skin>
 	<UI>
-		<Tab>Resources/Fonts/FreeSans.ttf</Tab>
-		<Checkbox>Resources/Fonts/FreeSans.ttf</Checkbox>
-		<Slider>Resources/Fonts/FreeSans.ttf</Slider>
-		<Label>Resources/Fonts/FreeSans.ttf</Label>
-		<Window>Resources/Fonts/FreeSans.ttf</Window>
-		<Button>Resources/Fonts/FreeSans.ttf</Button>
-		<Textbox>Resources/Fonts/FreeMono.ttf</Textbox>
+		<Textbox>
+			<Font>Resources/Fonts/FreeMono.ttf</Font>
+			<Color>
+				<Foreground>0xCCCCCC</Foreground>
+				<Background>0x666666</Background>
+				<Edge>0x262626</Edge>
+			</Color>
+		</Textbox>
 	</UI>
-</Font>
+	<Font>
+		<SansSerif>Resources/Fonts/FreeSans.ttf</SansSerif>
+		<BitType>Resources/Fonts/visitor2.ttf</BitType>
+		<Serif>Resources/Fonts/FreeSans.ttf</Serif>
+		<Mono>Resources/Fonts/FreeMono.ttf</Mono>
+		<Development>Resources/Fonts/FreeSans.ttf</Development>
+		<Console>Resources/Fonts/FreeSans.ttf</Console>
+		<Alert>Resources/Fonts/FreeSans.ttf</Alert>
+		<FPS>Resources/Fonts/visitor2.ttf</FPS>
+		<StatusBar>Resources/Fonts/visitor2.ttf</StatusBar>
+		<Map>Resources/Fonts/FreeSans.ttf</Map>
+		<UI>
+			<Tab>Resources/Fonts/FreeSans.ttf</Tab>
+			<Checkbox>Resources/Fonts/FreeSans.ttf</Checkbox>
+			<Slider>Resources/Fonts/FreeSans.ttf</Slider>
+			<Label>Resources/Fonts/FreeSans.ttf</Label>
+			<Window>Resources/Fonts/FreeSans.ttf</Window>
+			<Button>Resources/Fonts/FreeSans.ttf</Button>
+			<Textbox>Resources/Fonts/FreeMono.ttf</Textbox>
+		</UI>
+	</Font>
+</Skin>
