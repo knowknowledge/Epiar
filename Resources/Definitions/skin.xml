@@ -9,6 +9,14 @@
 				<Edge>0x262626</Edge>
 			</Color>
 		</Textbox>
+		<Tab>
+			<Font>Resources/Fonts/FreeSans.ttf</Font>
+			<Color>
+				<Caption>0xFFFFFF</Caption>
+				<Active>0x393939</Active>
+				<Inactive>0x262626</Inactive>
+			</Color>
+		</Tab>
 	</UI>
 	<Font>
 		<SansSerif>Resources/Fonts/FreeSans.ttf</SansSerif>
