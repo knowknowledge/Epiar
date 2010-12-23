@@ -26,12 +26,6 @@
 				<Background>0x262626</Background>
 			</Color>
 		</Slider>
-		<Checkbox>
-			<Color>
-				<Edge>0x666666</Edge>
-				<Background>0x262626</Background>
-			</Color>
-		</Checkbox>
 	</UI>
 	<HUD>
 		<Alert>

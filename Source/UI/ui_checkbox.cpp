@@ -17,22 +17,18 @@
 /**\class Checkbox
  * \brief UI checkbox. */
 
-Color Checkbox::edge = GREY;
-Color Checkbox::background = BLACK;
-
 /**\brief Constructs a new Checkbox.
  */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
-	edge       = Color( SKIN("Skin/UI/Checkbox/Color/Edge") );
-	background = Color( SKIN("Skin/UI/Checkbox/Color/Background") );
+	blank_box = Image::Get( "Resources/Graphics/ui_checkbox_blank.png" );
+	check_box = Image::Get( "Resources/Graphics/ui_checkbox_check.png" );
 
 	this->x = x;
 	this->y = y;
-	this->w = UI::font->TextWidth(label) + CHECKBOX_W + 5;
-	this->h = ( UI::font->LineHeight() > CHECKBOX_H )
+	this->w = UI::font->TextWidth(label) + check_box->GetWidth() + 5;
+	this->h = ( UI::font->LineHeight() > check_box->GetHeight() )
 	          ? UI::font->LineHeight()
-	          : CHECKBOX_H;
-	this->w = CHECKBOX_W ? w : CHECKBOX_W;
+	          : check_box->GetHeight();
 	
 	this->name = label;
 	this->checked = checked;
@@ -44,13 +40,14 @@ void Checkbox::Draw( int relx, int rely ) {
 	x = this->x + relx;
 	y = this->y + rely;
 	
-	Video::DrawRect( x, y, CHECKBOX_W, CHECKBOX_H, edge );
-	Video::DrawRect( x + 1, y + 1, CHECKBOX_W - 2, CHECKBOX_H - 2, background );
-
-	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, edge );
+	if( checked ) {
+		check_box->Draw( x,y );
+	} else {
+		blank_box->Draw( x,y );
+	}
 
 	// draw the label
-	UI::font->RenderTight( x+CHECKBOX_W+5, y, name );
+	UI::font->RenderTight( x + check_box->GetWidth() + 5, y, name );
 
 	Widget::Draw(relx,rely);
 }

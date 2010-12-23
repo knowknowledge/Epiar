@@ -11,9 +11,6 @@
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
-#define CHECKBOX_W 10
-#define CHECKBOX_H 10
-
 class Checkbox : public Widget {
 	public:
 		Checkbox( int x, int y, bool checked, string label);
@@ -31,8 +28,8 @@ class Checkbox : public Widget {
 		string label;
 		bool checked;
 
-		static Color edge;
-		static Color background;
+		Image *check_box;
+		Image *blank_box;
 };
 
 #endif // __H_CHECKBOX__
