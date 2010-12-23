@@ -17,6 +17,9 @@
  * \todo Some calculations are unnecessary here.
  */
 
+Color Slider::edge = GREY;
+Color Slider::background = BLACK;
+
 /**\brief Constructs a slider with given parameters and a Lua callback
  */
 Slider::Slider( int x, int y, int w, int h, const string& label,
@@ -25,6 +28,10 @@ Slider::Slider( int x, int y, int w, int h, const string& label,
 		minval( 0.000f ), maxval( 1.000f ), val( value ),
 		lua_callback( string(callback) )
 {
+
+	edge       = Color( SKIN("Skin/UI/Slider/Color/Edge") );
+	background = Color( SKIN("Skin/UI/Slider/Color/Background") );
+
 	this->x=x;
 	this->y=y;
 	this->w=w;
@@ -53,19 +60,15 @@ void Slider::Draw( int relx, int rely ){
 	int markerx = x + markerxr;
 	
 	// Draw slider background
-	Video::DrawRect( x, y+(GetH()/2)-SLIDER_H/2, GetW(), SLIDER_H,
-			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( x+1, y+(GetH()/2)-SLIDER_H/2+1, GetW()-2, SLIDER_H-2,
-			0.15f, 0.15f, 0.15f);
+	Video::DrawRect( x, y+(GetH()/2)-SLIDER_H/2, GetW(), SLIDER_H, edge );
+	Video::DrawRect( x+1, y+(GetH()/2)-SLIDER_H/2+1, GetW()-2, SLIDER_H-2, background );
 	Video::DrawRect( x+3, y+(GetH()/2)-SLIDER_H/2+3, 
 			markerxr-3, SLIDER_H-6,
-			0.4f, 0.4f, 0.4f);
+			edge );
 
 	// Draw marker
-	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, GetH(),
-			0.4f, 0.4f, 0.4f);
-	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, GetH()-2,
-			0.15f, 0.15f, 0.15f);
+	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, GetH(), edge );
+	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, GetH()-2, background );
 
 	// Render the value indicator
 	char value[20];

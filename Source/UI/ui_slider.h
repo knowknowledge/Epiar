@@ -47,6 +47,9 @@ class Slider : public Widget {
 		
 		// Callback
 		string lua_callback;
+
+		static Color edge;
+		static Color background;
 };
 
 #endif // __H_SLIDER__

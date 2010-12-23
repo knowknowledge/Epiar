@@ -20,6 +20,12 @@
 				<Inactive>0x262626</Inactive>
 			</Color>
 		</Tab>
+		<Slider>
+			<Color>
+				<Edge>0x666666</Edge>
+				<Background>0x262626</Background>
+			</Color>
+		</Slider>
 	</UI>
 	<HUD>
 		<Alert>
