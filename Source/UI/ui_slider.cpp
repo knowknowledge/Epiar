@@ -17,9 +17,6 @@
  * \todo Some calculations are unnecessary here.
  */
 
-Color Slider::edge = GREY;
-Color Slider::background = BLACK;
-
 /**\brief Constructs a slider with given parameters and a Lua callback
  */
 Slider::Slider( int x, int y, int w, int h, const string& label,
@@ -28,15 +25,19 @@ Slider::Slider( int x, int y, int w, int h, const string& label,
 		minval( 0.000f ), maxval( 1.000f ), val( value ),
 		lua_callback( string(callback) )
 {
+	left = Image::Get( "Resources/Graphics/ui_slider_left.png" );
+	right = Image::Get( "Resources/Graphics/ui_slider_right.png" );
+	background = Image::Get( "Resources/Graphics/ui_slider_background.png" );
+	bar = Image::Get( "Resources/Graphics/ui_slider_bar.png" );
+	handle = Image::Get( "Resources/Graphics/ui_slider_handle.png" );
 
-	edge       = Color( SKIN("Skin/UI/Slider/Color/Edge") );
-	background = Color( SKIN("Skin/UI/Slider/Color/Background") );
-
-	this->x=x;
-	this->y=y;
-	this->w=w;
-	this->h=h;
-	this->name=label;
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = ( handle->GetHeight() > background->GetHeight() )
+	          ? handle->GetHeight()
+	          : background->GetHeight();
+	this->name = label;
 }
 
 /**\fn Slider::GetVal( )
@@ -56,24 +57,25 @@ void Slider::Draw( int relx, int rely ){
 	x = GetX() + relx;
 	y = GetY() + rely;
 
-	int markerxr = this->ValToPixel( this->val );
-	int markerx = x + markerxr;
+	int markerx_pix = ValToPixel( val );
 	
 	// Draw slider background
-	Video::DrawRect( x, y+(GetH()/2)-SLIDER_H/2, GetW(), SLIDER_H, edge );
-	Video::DrawRect( x+1, y+(GetH()/2)-SLIDER_H/2+1, GetW()-2, SLIDER_H-2, background );
-	Video::DrawRect( x+3, y+(GetH()/2)-SLIDER_H/2+3, 
-			markerxr-3, SLIDER_H-6,
-			edge );
+	left->Draw( x, y );
+	background->DrawTiled( x + left->GetWidth(), y, w - left->GetWidth() - right->GetWidth(), background->GetHeight() );
+	right->Draw( x + w - right->GetWidth(), y );
+
+	// Draw the Bar
+	bar->DrawTiled( x + left->GetWidth(),
+	                y + background->GetHalfHeight() - bar->GetHalfHeight(),
+	                markerx_pix, bar->GetHeight() );
 
 	// Draw marker
-	Video::DrawRect( markerx-SLIDER_MW/2, y, SLIDER_MW, GetH(), edge );
-	Video::DrawRect( markerx-SLIDER_MW/2+1, y+1, SLIDER_MW-2, GetH()-2, background );
+	handle->Draw( x + markerx_pix, y + background->GetHalfHeight() - handle->GetHalfHeight() );
 
 	// Render the value indicator
 	char value[20];
 	snprintf(value,20,"%.2f",this->val);
-	UI::font->Render( markerx, y, value,Font::CENTER,Font::BOTTOM );
+	UI::font->Render( x + markerx_pix, y, value,Font::CENTER,Font::BOTTOM );
 }
 
 /**\brief Slider mouse drag call back.
@@ -133,9 +135,9 @@ void Slider::SetVal( float value ){
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
  int Slider::ValToPixel( float value ){
-	return static_cast<int>((GetW() - SLIDER_MW) *
+	return static_cast<int>((GetW() - handle->GetWidth() ) *
 		((this->val - this->minval)/
-		(this->maxval - this->minval)) + SLIDER_MW/2);
+		(this->maxval - this->minval)) + handle->GetHalfWidth() );
  }
 
 /**\brief Calculates the value from pixel offset
@@ -143,12 +145,12 @@ void Slider::SetVal( float value ){
  float Slider::PixelToVal( int pixels ){
 	float value;
 	if ( this->maxval < this->minval )
-		value = (TO_FLOAT(pixels - SLIDER_MW/2 ) 
-			/ TO_FLOAT(GetW() - SLIDER_MW))
+		value = (TO_FLOAT(pixels - handle->GetHalfWidth() ) 
+			/ TO_FLOAT(GetW() - handle->GetWidth()))
 			* ( minval - maxval) + maxval;
 	else
-		value = (TO_FLOAT(pixels - SLIDER_MW/2)
-			/ TO_FLOAT(GetW() - SLIDER_MW))
+		value = (TO_FLOAT(pixels - handle->GetHalfWidth() )
+			/ TO_FLOAT(GetW() - handle->GetWidth()))
 			* ( maxval - minval) + minval;
 	return value;
  }

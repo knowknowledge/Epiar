@@ -10,13 +10,6 @@
 
 #include "UI/ui.h"
 
-// Slider bg height
-#define SLIDER_H 8
-// Marker width
-#define SLIDER_MW 4
-// Padding above slider to display number
-#define SLIDER_VALPAD 2
-
 class Slider : public Widget {
 	public:
 		Slider( int x, int y, int w, int h, const string& label,
@@ -48,8 +41,11 @@ class Slider : public Widget {
 		// Callback
 		string lua_callback;
 
-		static Color edge;
-		static Color background;
+		Image *left;
+		Image *right;
+		Image *background;
+		Image *bar;
+		Image *handle;
 };
 
 #endif // __H_SLIDER__
