@@ -134,15 +134,15 @@ void Slider::SetVal( float value ){
 // Private functions
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
- int Slider::ValToPixel( float value ){
+int Slider::ValToPixel( float value ){
 	return static_cast<int>((GetW() - handle->GetWidth() ) *
 		((this->val - this->minval)/
 		(this->maxval - this->minval)) + handle->GetHalfWidth() );
- }
+}
 
 /**\brief Calculates the value from pixel offset
  */
- float Slider::PixelToVal( int pixels ){
+float Slider::PixelToVal( int pixels ){
 	float value;
 	if ( this->maxval < this->minval )
 		value = (TO_FLOAT(pixels - handle->GetHalfWidth() ) 
@@ -153,5 +153,5 @@ void Slider::SetVal( float value ){
 			/ TO_FLOAT(GetW() - handle->GetWidth()))
 			* ( maxval - minval) + minval;
 	return value;
- }
-	
+}
+
