@@ -23,7 +23,6 @@ class Tab : public Container {
 	private:
 		int capw;
 
-		static Font* font;
 		static Color inactive;
 		static Color active;
 };

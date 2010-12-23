@@ -86,8 +86,7 @@ void Dropdown::Draw( int relx, int rely ) {
 	y = GetY() + rely;
 	
 	// Draw the window title
-	//SansSerif->SetColor( 1., 1., 1. );
-	//SansSerif->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
+	//UI::font->RenderTight(x + (w / 2), y + bitmaps[1]->GetHalfHeight(), name, Font::CENTER,Font::MIDDLE);
 
 	// Draw any children
 	list<Widget *>::iterator i;

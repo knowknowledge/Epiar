@@ -52,6 +52,8 @@ class UI {
 		static Widget *Search( string query );
 
 		static void Save( void );
+
+		static Font* font;
 		
 	private:
 		static bool HandleKeyboard( InputEvent i );

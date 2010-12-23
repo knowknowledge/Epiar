@@ -20,13 +20,13 @@
 /**\brief Constructs a new Checkbox.
  */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
-	this->x=x;
-	this->y=y;
-	this->w=SansSerif->TextWidth(label) + CHECKBOX_W + 5;
-	this->h=( SansSerif->LineHeight() > CHECKBOX_H )
-	       ? SansSerif->LineHeight()
-	       : CHECKBOX_H;
-	this->w=CHECKBOX_W?w:CHECKBOX_W;
+	this->x = x;
+	this->y = y;
+	this->w = UI::font->TextWidth(label) + CHECKBOX_W + 5;
+	this->h = ( UI::font->LineHeight() > CHECKBOX_H )
+	          ? UI::font->LineHeight()
+	          : CHECKBOX_H;
+	this->w = CHECKBOX_W ? w : CHECKBOX_W;
 	
 	this->name = label;
 	this->checked = checked;
@@ -44,7 +44,7 @@ void Checkbox::Draw( int relx, int rely ) {
 	if( checked ) Video::DrawRect( x + 3, y + 3, CHECKBOX_W - 6, CHECKBOX_H - 6, 0.4f, 0.4f, 0.4f );
 
 	// draw the label
-	SansSerif->RenderTight( x+CHECKBOX_W+5, y, name );
+	UI::font->RenderTight( x+CHECKBOX_W+5, y, name );
 
 	Widget::Draw(relx,rely);
 }

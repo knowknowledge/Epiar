@@ -40,16 +40,15 @@ void Label::Draw(  int relx, int rely ) {
 	y = this->y + rely;
 	
 	// draw the label
-	SansSerif->SetColor( 1., 1., 1. );
 	Font::XPos xpositioning = (centered) ? (Font::CENTER) : (Font::LEFT);
 	Font::YPos ypositioning = (centered) ? (Font::MIDDLE) : (Font::TOP);
 
-	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += SansSerif->TightHeight() )
+	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += UI::font->TightHeight() )
 	{
-		SansSerif->Render( x, y, *iter, xpositioning, ypositioning );
+		UI::font->Render( x, y, *iter, xpositioning, ypositioning );
 	}
 
-	Widget::Draw(relx,rely + SansSerif->TightHeight() / 2 );
+	Widget::Draw(relx,rely + UI::font->TightHeight() / 2 );
 }
 
 void Label::SetText(string text) {
@@ -67,11 +66,11 @@ void Label::AppendText(string text) {
 		// Skip tokens (newlines)
 		if( (*iter) ==  "\n" ) { continue; }
 		lines.push_back( (*iter) );
-		int linelength = SansSerif->TextWidth( *iter );
+		int linelength = UI::font->TextWidth( *iter );
 		if( linelength > maxwidth ) maxwidth = linelength;
 	}
 
 	this->name = text;
 	this->w = maxwidth;
-	this->h = lines.size() * SansSerif->TightHeight( );
+	this->h = lines.size() * UI::font->TightHeight( );
 }

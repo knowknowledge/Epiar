@@ -78,7 +78,7 @@ void Button::Draw( int relx, int rely ) {
 	x = this->x + relx;
 	y = this->y + rely;
 	
-	Video::DrawRect( x, y, this->w, this->h, 1., 1., 1. );
+	Video::DrawRect( x, y, this->w, this->h, WHITE );
 
 	assert(bitmap_current);
 
@@ -87,8 +87,7 @@ void Button::Draw( int relx, int rely ) {
 
 	// draw the label
 	Video::SetCropRect(x + 1, y + 1, this->w - 2, this->h - 2); // constants adjust for the 1px border
-	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
+	UI::font->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);

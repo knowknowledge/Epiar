@@ -16,7 +16,6 @@
 #define TAB_PAD 8
 #define TAB_TEXT_ALIGNMENT 2
 
-Font *Tab::font = NULL;
 Color Tab::inactive = GREY;
 Color Tab::active = WHITE;
 
@@ -27,12 +26,8 @@ Color Tab::active = WHITE;
 /**\brief Constructs a single tab with caption.
  */
 Tab::Tab( const string& _caption ) {
-	if( font == NULL ) {
-		font = new Font( SKIN( "Skin/UI/Tab/Font" ) );
-		inactive = Color( SKIN( "Skin/UI/Tab/Color/Inactive" ) );
-		active   = Color( SKIN( "Skin/UI/Tab/Color/Active" ) );
-		font->SetColor( SKIN( "Skin/UI/Tab/Color/Caption" ) );
-	}
+	inactive = Color( SKIN( "Skin/UI/Tab/Color/Inactive" ) );
+	active   = Color( SKIN( "Skin/UI/Tab/Color/Active" ) );
 
 	this->x = x;
 	this->y = TAB_HEADER;
@@ -40,7 +35,7 @@ Tab::Tab( const string& _caption ) {
 	this->w = 0;
 	this->name = _caption;
 
-	this->capw = font->TextWidth( _caption );
+	this->capw = UI::font->TextWidth( _caption );
 }
 
 /**\brief Adds children to the Tab object.
@@ -138,7 +133,7 @@ void Tabs::Draw( int relx, int rely ){
 			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, Tab::active );
 		}
 
-		Tab::font->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
+		UI::font->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
 
 		xo += currtab->capw+TAB_PAD*2+1;
 	}

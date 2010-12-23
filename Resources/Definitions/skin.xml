@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <Skin>
 	<UI>
+		<Default>
+			<Font>Resources/Fonts/FreeSans.ttf</Font>
+			<Color>0xFFFFFF</Color>
+			<Size>12</Size>
+		</Default>
 		<Textbox>
 			<Font>Resources/Fonts/FreeMono.ttf</Font>
 			<Color>
@@ -10,9 +15,7 @@
 			</Color>
 		</Textbox>
 		<Tab>
-			<Font>Resources/Fonts/FreeSans.ttf</Font>
 			<Color>
-				<Caption>0xFFFFFF</Caption>
 				<Active>0x393939</Active>
 				<Inactive>0x262626</Inactive>
 			</Color>

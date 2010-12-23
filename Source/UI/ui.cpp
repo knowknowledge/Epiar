@@ -7,8 +7,8 @@
  */
 
 #include "includes.h"
-#include "Graphics/video.h"
 #include "common.h"
+#include "Graphics/video.h"
 #include "Utilities/log.h"
 #include "UI/ui.h"
 
@@ -20,6 +20,7 @@
  * \brief UI. */
 
 Container UI::master("Master", false);
+Font *UI::font = NULL;
 
 /**\brief This constructor resets the input.
  */
@@ -31,6 +32,8 @@ UI::UI() {
  */
 UI::~UI() {
 	UI::Close();
+
+	delete font;
 }
 
 bool UI::Initialize() {
@@ -41,6 +44,10 @@ bool UI::Initialize() {
 	master.SetY( 0 );
 	master.SetW( Video::GetWidth() );
 	master.SetH( Video::GetHeight() );
+
+	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
+	font->SetColor( Color( SKIN( "Skin/UI/Default/Color" ) ) );
+	font->SetSize( convertTo<int>( SKIN("Skin/UI/Default/Size") ) );
 
 	return true;
 }

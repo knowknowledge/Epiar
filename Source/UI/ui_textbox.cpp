@@ -62,7 +62,6 @@ void Textbox::Draw( int relx, int rely ) {
 
 	// draw the text
 	Video::SetCropRect(x, y, this->w, this->h);
-	font->SetColor( 1., 1., 1. );
 	int tw = font->Render( x + rowPad, y + rowPad, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
