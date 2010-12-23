@@ -30,6 +30,9 @@ class Checkbox : public Widget {
 	private:
 		string label;
 		bool checked;
+
+		static Color edge;
+		static Color background;
 };
 
 #endif // __H_CHECKBOX__
