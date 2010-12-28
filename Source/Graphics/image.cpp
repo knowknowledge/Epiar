@@ -331,10 +331,6 @@ bool Image::ConvertToTexture( SDL_Surface *s ) {
 	return( true );
 }
 
-void Image::DrawTiledAlpha( int x, int y, int fill_w, int fill_h, float alpha ) {
-	DrawTiled( x, y, fill_w, fill_h, alpha );
-}
-
 /**\brief Draw the image tiled to fill a rectangle of w/h - will crop to meet w/h and won't overflow
  */
 void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {

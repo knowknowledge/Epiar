@@ -70,7 +70,7 @@ void Window::Draw( int relx, int rely ) {
 	y = GetY() + rely;
 	
 	// Draw the background
-	bitmaps[8]->DrawTiledAlpha( x + bitmaps[3]->GetWidth(), y + bitmaps[1]->GetHeight(), w - bitmaps[3]->GetWidth() - bitmaps[4]->GetWidth(), h - bitmaps[1]->GetHeight() - bitmaps[6]->GetHeight(), alpha );
+	bitmaps[8]->DrawTiled( x + bitmaps[3]->GetWidth(), y + bitmaps[1]->GetHeight(), w - bitmaps[3]->GetWidth() - bitmaps[4]->GetWidth(), h - bitmaps[1]->GetHeight() - bitmaps[6]->GetHeight(), alpha );
 	
 	// Draw the top section
 	bitmaps[0]->Draw( x, y );
@@ -78,12 +78,12 @@ void Window::Draw( int relx, int rely ) {
 	bitmaps[2]->Draw( x + w - bitmaps[2]->GetWidth(), y );
 	
 	// Draw the left and right sections
-	bitmaps[3]->DrawTiledAlpha( x, y + bitmaps[0]->GetHeight(), bitmaps[3]->GetWidth(), h - bitmaps[0]->GetHeight() - bitmaps[5]->GetHeight(), alpha );
-	bitmaps[4]->DrawTiledAlpha( x + w - bitmaps[4]->GetWidth(), y + bitmaps[0]->GetHeight(), bitmaps[4]->GetWidth(), h - bitmaps[0]->GetHeight() - bitmaps[5]->GetHeight(), alpha );
+	bitmaps[3]->DrawTiled( x, y + bitmaps[0]->GetHeight(), bitmaps[3]->GetWidth(), h - bitmaps[0]->GetHeight() - bitmaps[5]->GetHeight(), alpha );
+	bitmaps[4]->DrawTiled( x + w - bitmaps[4]->GetWidth(), y + bitmaps[0]->GetHeight(), bitmaps[4]->GetWidth(), h - bitmaps[0]->GetHeight() - bitmaps[5]->GetHeight(), alpha );
 	
 	// Draw the bottom section
 	bitmaps[5]->DrawAlpha( x, y + h - bitmaps[5]->GetHeight(), alpha );
-	bitmaps[6]->DrawTiledAlpha( x + bitmaps[5]->GetWidth(), y + h - bitmaps[6]->GetHeight(), w - bitmaps[5]->GetWidth() - bitmaps[7]->GetWidth(), bitmaps[6]->GetHeight(), alpha );
+	bitmaps[6]->DrawTiled( x + bitmaps[5]->GetWidth(), y + h - bitmaps[6]->GetHeight(), w - bitmaps[5]->GetWidth() - bitmaps[7]->GetWidth(), bitmaps[6]->GetHeight(), alpha );
 	bitmaps[7]->DrawAlpha( x + w - bitmaps[7]->GetWidth(), y + h - bitmaps[7]->GetHeight(), alpha );
 
 	// Draw the window title
