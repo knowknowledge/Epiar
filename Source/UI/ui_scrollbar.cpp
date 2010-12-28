@@ -47,6 +47,8 @@ Scrollbar::Scrollbar( int x, int y, int length, int maxpos):
 	SetSize(length);
 }
 
+/**\brief Scrollbar Destructor
+ */
 Scrollbar::~Scrollbar() {
 	// Set these bitmaps to NULL, but don't delete them.
 	bitmaps[0] = NULL;
@@ -74,7 +76,7 @@ void Scrollbar::Draw( int relx, int rely ){
 	y = GetY() + rely;
 
 	// Draw the Background
-	bitmaps[0] -> DrawStretch( x, y, w, h );
+	bitmaps[0] -> DrawTiled( x, y, w, h );
 
 	// Draw the Arrows
 	bitmaps[1] -> Draw( x, y );
@@ -82,7 +84,7 @@ void Scrollbar::Draw( int relx, int rely ){
 
 	// Draw the Marker
 	bitmaps[3] -> Draw( x, y + MarkerPosToPixel() );
-	bitmaps[4] -> DrawStretch( x, y + MarkerPosToPixel() + bitmaps[3]->GetHeight(), w, GetMarkerSize() - bitmaps[3]->GetHeight() - bitmaps[5]->GetHeight()  );
+	bitmaps[4] -> DrawTiled( x, y + MarkerPosToPixel() + bitmaps[3]->GetHeight(), w, GetMarkerSize() - bitmaps[3]->GetHeight() - bitmaps[5]->GetHeight()  );
 	bitmaps[5] -> Draw( x, y + MarkerPosToPixel() + GetMarkerSize() - bitmaps[5]->GetHeight() );
 
 	Widget::Draw( relx, rely );
@@ -189,7 +191,6 @@ int Scrollbar::CheckPos( int newpos ){
 		newpos = 0;
 	else if ( newpos > (maxpos - h) )
 		newpos = (maxpos - h);
-	printf("New Pos %d\n", newpos);
 
 	return newpos;
 }
