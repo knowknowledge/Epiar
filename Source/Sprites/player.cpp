@@ -18,17 +18,34 @@
  * \brief Main player-specific functions and handle. */
 
 Player *Player::pInstance = 0;
+
 /**\brief Fetch the current player Instance
  */
 Player *Player::Instance( void ) {
-	if( pInstance == NULL ) { // is this the first call?
-		LogMsg(ERR,"Attempting to use Player information when no player is loaded!");
+	if( pInstance == NULL ) {
+		LogMsg(ERR, "Attempting to use Player information when no player is loaded!");
 		assert(0);
 	}
 
 	return( pInstance );
 }
 
+/**\brief Set a function to control the Player
+ */
+void Player::SetLuaControlFunc( string _luaControlFunc ) {
+	LogMsg(INFO, "Setting Player control to '%s'", _luaControlFunc.c_str() );
+	luaControlFunc = _luaControlFunc;
+}
+
+/**\brief Return full control to the player.
+ */
+void Player::RemoveLuaControlFunc() {
+	LogMsg(INFO, "Clearing Player control '%s'", luaControlFunc.c_str() );
+	luaControlFunc = "";
+}
+
+/**\brief Fetch the current player Instance
+ */
 void Player::AcceptMission( Mission *mission ) {
 	assert( mission != NULL );
 	mission->Accept();
@@ -36,6 +53,8 @@ void Player::AcceptMission( Mission *mission ) {
 	LogMsg(INFO, "Player has accepted the Mission to %s", mission->GetName().c_str() );
 }
 
+/**\brief Fetch the current player Instance
+ */
 void Player::RejectMission( string missionName ) {
 	list<Mission*>::iterator iter;
 	for( iter=missions.begin(); iter!=missions.end(); ++iter )
@@ -55,7 +74,7 @@ void Player::RejectMission( string missionName ) {
 /**\brief set name of last planet visited
  */
 void Player::setLastPlanet( string planetName){
-	lastPlanet=planetName;
+	lastPlanet = planetName;
 }
 
 /**\brief Constructor

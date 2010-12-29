@@ -20,15 +20,21 @@ class Player : public Ship , public Component {
 
 		static bool IsLoaded() { return pInstance!=NULL; }
 		void setLastPlanet( string planetName);
+
+		// Generic Getters
 		string GetLastPlanet() { return lastPlanet; }
 		string GetName() { return name; }
-		void SetLuaControlFunc( string _luaControlFunc ){ luaControlFunc = _luaControlFunc; }
-		void RemoveLuaControlFunc() { luaControlFunc = ""; }
 
+		// Autopilot Related Functions
+		void SetLuaControlFunc( string _luaControlFunc );
+		void RemoveLuaControlFunc();
+
+		// Mission Related Functions
 		void AcceptMission( Mission *mission );
 		void RejectMission( string missionName );
 		list<Mission*>* GetMissions() { return &missions; }
 
+		// Saving and Loading this Player to XML
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
