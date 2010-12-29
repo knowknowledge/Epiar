@@ -70,12 +70,15 @@ void Slider::Draw( int relx, int rely ){
 	                markerx_pix, bar->GetHeight() );
 
 	// Draw marker
-	handle->Draw( x + markerx_pix, y + background->GetHalfHeight() - handle->GetHalfHeight() );
+	handle->Draw( x + markerx_pix - handle->GetHalfWidth(),
+	              y + background->GetHalfHeight() - handle->GetHalfHeight() );
 
 	// Render the value indicator
 	char value[20];
 	snprintf(value,20,"%.2f",this->val);
 	UI::font->Render( x + markerx_pix, y, value,Font::CENTER,Font::BOTTOM );
+
+	Widget::Draw(relx, rely);
 }
 
 /**\brief Slider mouse drag call back.
@@ -135,23 +138,16 @@ void Slider::SetVal( float value ){
 /**\brief Calculates the pixel offset from the beginning to marker.
  */
 int Slider::ValToPixel( float value ){
-	return static_cast<int>((GetW() - handle->GetWidth() ) *
-		((this->val - this->minval)/
-		(this->maxval - this->minval)) + handle->GetHalfWidth() );
+	return static_cast<int>( w * ((this->val - this->minval) / (this->maxval - this->minval)) );
 }
 
 /**\brief Calculates the value from pixel offset
  */
 float Slider::PixelToVal( int pixels ){
 	float value;
-	if ( this->maxval < this->minval )
-		value = (TO_FLOAT(pixels - handle->GetHalfWidth() ) 
-			/ TO_FLOAT(GetW() - handle->GetWidth()))
-			* ( minval - maxval) + maxval;
-	else
-		value = (TO_FLOAT(pixels - handle->GetHalfWidth() )
-			/ TO_FLOAT(GetW() - handle->GetWidth()))
-			* ( maxval - minval) + minval;
+	value = (TO_FLOAT(pixels) / TO_FLOAT(w)); // Ratio of the pixels
+	value *= (maxval - minval); // Multiply by range
+	value += minval; // Add Baseline
 	return value;
 }
 
