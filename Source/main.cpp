@@ -315,52 +315,56 @@ void ui_test() {
 
 	// Example of Nestable UI Creation
 	UI::Add(
-		(new Tabs( 50,50,500,500, "TEST TABS"))
-		->AddChild( (new Tab( "Nested Frames" ))
-			->AddChild( (new Button(10, 10, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Frame( 50,50,400,400 ))
-				->AddChild( (new Button(10, 10, 100, 30, "Quit 2",    clickQuit    )) )
-				->AddChild( (new Frame( 50,50,300,300 ))
-					->AddChild( (new Button(10, 10, 100, 30, "Quit 3",    clickQuit    )) )
-					->AddChild( (new Frame( 50,50,200,200 ))
-						->AddChild( (new Button(10, 10, 100, 30, "Quit 4",    clickQuit    )) )
+		(new Window( 20, 20, 600, 600, "A Window"))
+		->AddChild( (new Tabs( 50, 50, 500, 500, "TEST TABS"))
+			->AddChild( (new Tab( "Nested Frames" ))
+				->AddChild( (new Button(10, 10, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Frame( 50,50,400,400 ))
+					->AddChild( (new Button(10, 10, 100, 30, "Quit 2",    clickQuit    )) )
+					->AddChild( (new Frame( 50,50,300,300 ))
+						->AddChild( (new Button(10, 10, 100, 30, "Quit 3",    clickQuit    )) )
+						->AddChild( (new Frame( 50,50,200,200 ))
+							->AddChild( (new Button(10, 10, 100, 30, "Quit 4",    clickQuit    )) )
+						)
 					)
 				)
 			)
-		)
-		->AddChild( (new Tab( "Scoll to Buttons" ))
-			->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
-			->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
-			->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
-			->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
-			->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
-			->AddChild( (new Frame( 250,50,300,300 ))
-				->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
-				->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
-				->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
-				->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
-				->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
-				->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
-				->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			->AddChild( (new Tab( "Scoll to Buttons" ))
+				->AddChild( (new Label(10,   0, "Scroll Down")) )
+				->AddChild( (new Frame( 150, 50, 200, 300 ))
+					->AddChild( (new Label(10,   0, "Scroll Down")) )
+					->AddChild( (new Button(10, 300, 100, 30, "Quit",    clickQuit    )) )
+					->AddChild( (new Label(10, 600, "Scroll Up")) )
+				)
+				->AddChild( (new Label(10, 600, "Scroll Up")) )
+			)
+			->AddChild( (new Tab("A Picture"))
+				->AddChild( (new Picture(10, 0, 400, 400, "Resources/Art/menu2.png")) )
+			)
+			->AddChild( (new Tab("Some Inputs"))
+				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
+				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
+				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f, "" )) )
+				->AddChild( (new Button(10, 300, 100, 30, "Quit", clickQuit )) )
 			)
 		)
 	);
 
-	assert( NULL != UI::Search("/[0]/") );
-	assert( NULL != UI::Search("/Tabs/") );
+	// Check that the UI Searching is working
+	assert( NULL != UI::Search("/[0]/") ); 
+	assert( NULL != UI::Search("/Window/") );
+	assert( NULL != UI::Search("/Window/Tabs/") );
 	assert( NULL != UI::Search("/(100,100)/") );
-	assert( NULL != UI::Search("/'TEST TABS'/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab[1]/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/Frame/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/(60,60)/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Button/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Button/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab[1]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/Frame/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/(60,60)/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
 }
 
 /** Epiar's Main Menu
