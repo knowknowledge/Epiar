@@ -232,7 +232,6 @@ int UI_Lua::newSlider(lua_State *L){
 			position = TO_FLOAT( luaL_checknumber(L,  index) );
 		} else if ( lua_isstring(L, index) ) {
 			callback = luaL_checkstring(L,  index); 
-			printf("Callback: %s\n", luaL_checkstring(L,  index) );
 		}
 	}
 
@@ -450,7 +449,6 @@ int UI_Lua::search(lua_State *L) {
 	string query = luaL_checkstring (L, 1);
 	Widget *result = UI::Search( query );
 	if( result == NULL ) {
-		LogMsg(WARN, "Failed to find a widget with the query '%s'.", query.c_str() );
 		return 0;
 	}
 

@@ -373,6 +373,14 @@ Players *Players::Instance( void ) {
 Player* Players::CreateNew(string playerName) {
 	Player* newPlayer = new Player;
 
+	LogMsg(INFO, "Creating New Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+		playerName.c_str(),
+		defaultModel->GetName().c_str(),
+		defaultEngine->GetName().c_str(),
+		defaultCredits,
+		defaultLocation.GetX(), defaultLocation.GetY()
+	);
+
 	newPlayer->name = playerName;
 
 	newPlayer->SetModel( defaultModel );
@@ -457,6 +465,13 @@ Player* Players::LoadPlayer(string playerName) {
 	Player::pInstance = newPlayer;
 
 	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
+	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+		newPlayer->GetName().c_str(),
+		newPlayer->GetModel()->GetName().c_str(),
+		newPlayer->GetEngine()->GetName().c_str(),
+		newPlayer->GetCredits(),
+		newPlayer->GetWorldPosition().GetX(), newPlayer->GetWorldPosition().GetY()
+	);
 	return newPlayer;
 }
 

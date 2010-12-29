@@ -128,7 +128,7 @@ bool Button::MouseLRelease( void ){
 bool Button::MouseEnter( int xi, int yi ){
 	bitmap_current = bitmap_mouseover;
 	hovering = true;
-	LogMsg(INFO,"Mouse enter detect in %s.",this->name.c_str());
+	LogMsg(INFO,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
 
@@ -137,6 +137,6 @@ bool Button::MouseEnter( int xi, int yi ){
 bool Button::MouseLeave( void ){
 	bitmap_current = bitmap_normal;
 	hovering = false;
-	LogMsg(INFO,"Mouse leave detect in %s.",this->name.c_str());
+	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }

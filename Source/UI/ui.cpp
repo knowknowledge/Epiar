@@ -74,12 +74,14 @@ Widget *UI::Add( Widget *widget ) {
 
 /**\brief This removes all widgets from the base.*/
 void UI::Close( void ) {
+	LogMsg(INFO, "Closing all Widgets." );
 	UI::master.Empty();
 	ResetInput();
 }
 
 /**\brief This removes a single base widget.*/
 void UI::Close( Widget *widget ) {
+	LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
 	UI::master.DelChild( widget );
 }
 

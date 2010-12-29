@@ -31,6 +31,8 @@ Slider::Slider( int x, int y, int w, int h, const string& label,
 	bar = Image::Get( "Resources/Graphics/ui_slider_bar.png" );
 	handle = Image::Get( "Resources/Graphics/ui_slider_handle.png" );
 
+	LogMsg(INFO, "New Slider '%s' with callback = %s\n", label.c_str(), callback.c_str() );
+
 	this->x = x;
 	this->y = y;
 	this->w = w;

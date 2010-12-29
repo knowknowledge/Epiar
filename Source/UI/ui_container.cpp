@@ -287,10 +287,10 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	if( query.flags != 0 ) {
-		LogMsg(WARN, "Query '%s' did not end with a '/'", full_query.c_str() );
+		LogMsg(ERR, "Query '%s' did not end with a '/'", full_query.c_str() );
 	}
 
-	LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
+	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
 	return current;
 }
 
@@ -800,8 +800,6 @@ void Container::ResetScrollBars() {
 		if ( this->vscrollbar ){
 			Container::DelChild( this->vscrollbar );
 			this->vscrollbar = NULL;
-			LogMsg(INFO, "Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			
 		} else {
 			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
 		}

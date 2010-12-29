@@ -49,7 +49,6 @@ end
 
 --- Pause the game
 function togglePause()
-	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
 		Epiar.unpause()
 	else
