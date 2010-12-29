@@ -56,9 +56,16 @@ Container *Container::AddChild( Widget *widget ) {
 }
 
 /**\brief Deletes a child from the current container.
+ * \details This performs a breadth-first search to find the specified widget.
+ * \warn The search will stop as soon as it finds the first instance of the Widget pointer.
+ *       This means that if there are duplicate pointers to the same Widget, the
+ *       second instance will cause a seg fault since the Widget object will have been freed.
  */
 bool Container::DelChild( Widget *widget ){
+	bool not_scrollbar;
 	list<Widget *>::iterator i;
+
+	not_scrollbar = ( widget->GetMask() != WIDGET_SCROLLBAR );
 
 	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -68,6 +75,12 @@ bool Container::DelChild( Widget *widget ){
 			delete (*i);
 			i = children.erase( i );
 			ResetInput();
+
+			// Don't reset the Scrollbars when it is a scrollbar being deleted
+			// This will cause a stack overflow.
+			if( not_scrollbar ) {
+				ResetScrollBars();
+			}
 
 			return true;
 		}
@@ -769,9 +782,13 @@ bool Container::KeyPress( SDLKey key ) {
 }
 
 /**\brief Move the Scrollbars to the edges.
+ * \details This will always delete the current Scrollbars even if the size of
+ * the container hasn't fundamentally changed.  This is so that the Scrollbars
+ * are always the last Widgets in the Container.
  */
 
 void Container::ResetScrollBars() {
+	bool has_vscrollbar;
 	int widget_height, widget_width;
 	int max_height, max_width;
 	max_height = 0;
@@ -779,6 +796,13 @@ void Container::ResetScrollBars() {
 
 	// It doesn't make sense to add scrollbars for a Container without a size
 	if(this->w == 0 || this->h == 0 ) return;
+
+	// Remove the Current Scrollbar
+	has_vscrollbar = (vscrollbar != NULL);
+	if( this->vscrollbar != NULL ) {
+		Container::DelChild( this->vscrollbar );
+		this->vscrollbar = NULL;
+	}
 
 	// Find the Max edges
 	Widget* widget;
@@ -792,21 +816,21 @@ void Container::ResetScrollBars() {
 	}
 
 	// Add a Vertical ScrollBar if necessary
-	if ( max_height > GetH() || this->vscrollbar != NULL ){
+	if ( max_height > GetH() ){
 		int v_x = this->w;
 		int v_y = 0;
 		int v_l = this->h;
-		// Only add a Scrollbar when it doesn't already exist
-		if ( this->vscrollbar ){
-			Container::DelChild( this->vscrollbar );
-			this->vscrollbar = NULL;
-		} else {
-			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+
+		// Don't Log extra messages when the ScrollBar is simply being replaced.
+		if( !has_vscrollbar ) {
+			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]", GetName().c_str(),v_x,v_y,v_l );
 		}
 
 		this->vscrollbar = new Scrollbar(v_x, v_y, v_l, max_height);
 
 		children.push_back( this->vscrollbar );
+	} else if ( has_vscrollbar ) {
+		LogMsg(INFO, "Removing Vert ScrollBar to %s", GetName().c_str() );
 	}
 }
 
