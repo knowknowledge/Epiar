@@ -231,6 +231,13 @@ Fleets = {
 	--    Otherwise, create one and make single the leader.
 	join = function(self, first, second)
 		local f = Fleets:getShipFleet(first)
+
+		--print (second .. " is joining " .. first .. "'s fleet")
+		--f PLAYER ~= nil and PLAYER:GetID() == first then
+		--	f = Fleets:createOrGet("player's fleet")
+		--	f:add(PLAYER:GetID(), true)
+		--end
+			
 		if f == nil then
 			f = Fleet.create( first .. " fleet " .. os.time() )
 			f:add(first, true)

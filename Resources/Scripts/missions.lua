@@ -418,25 +418,27 @@ ProtectFreighter = {
 		missionTable.freighterName = freighterName
 		missionTable.planet = planetName
 		missionTable.reward = reward
+		local pX, pY = PLAYER:GetPosition();
+		missionTable.fX = pX - 100
+		missionTable.fY = pY
+		missionTable.playerName = PLAYER:GetName()
 		return missionTable
 	end,
 	Accept = function( missionTable )
 		local planetName = missionTable.planet
 		local p = Planet.Get( planetName )
 		local pX, pY = p:GetPosition()
-		local playerX, playerY = PLAYER:GetPosition()
 
 		local createFreighter = function(type)
 			-- Add freighter
 			local freighter = Ship.new(
-			   string.format("%s", missionTable.freighterName), playerX-100,playerY, "Hammer Freighter",
+			   string.format("%s", missionTable.freighterName), missionTable.fX, missionTable.fY, "Hammer Freighter",
 			   "Ion Engines", type, "Independent" )
 			missionTable.freighter = freighter:GetID()
-			local id = missionTable.freighter
-			Fleets:join( PLAYER:GetID(), id )
 			freighter:SetRadarColor(0,255,0)
 			HUD.newAlert( (string.format("%s: \"Thank you for agreeing to help, %s\"",
-			   missionTable.freighterName, PLAYER:GetName() ) ) )
+			   missionTable.freighterName, missionTable.playerName ) ) )
+			missionTable.joined = false
 
 			-- Add pirates
 			local pirateX = pX + math.random(7000) - 3500
@@ -458,12 +460,21 @@ ProtectFreighter = {
 	Update = function( missionTable )
 		local freighter = Epiar.getSprite( missionTable.freighter )
 		local p = Planet.Get( missionTable.planet )
+
+		if missionTable.joined == false then
+			local id = missionTable.freighter
+			Fleets:join(PLAYER:GetID(), id)
+			missionTable.joined = true
+		end
+
 		if freighter ~= nil and p ~= nil then
 			local fX, fY = freighter:GetPosition()
 			local pX, pY = p:GetPosition()
 			if distfrom( fX, fY, pX, pY ) < 350 then
 				return true
 			end
+			missionTable.fX = fX
+			missionTable.fY = fY
 		else
 			return false
 		end
