@@ -123,6 +123,7 @@ class Hud {
 		static int timeTargeted;
 		static HudMap mapDisplay;
 		static Font *AlertFont;
+		static Color AlertColor;
 };
 
 class Radar {

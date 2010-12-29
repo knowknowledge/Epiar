@@ -22,6 +22,9 @@ class Tab : public Container {
 
 	private:
 		int capw;
+
+		static Color inactive;
+		static Color active;
 };
 
 class Tabs : public Container {

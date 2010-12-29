@@ -43,7 +43,6 @@ class UI {
 		static void Close( void );
 		static void Close( Widget *widget );
 		static void HandleInput( list<InputEvent> & events );
-		static void ResetInput(void);
 		static bool Active(void);
 		
 		static void RegisterKeyboardFocus( Widget *widget );
@@ -52,6 +51,8 @@ class UI {
 		static Widget *Search( string query );
 
 		static void Save( void );
+
+		static Font* font;
 		
 	private:
 		static bool HandleKeyboard( InputEvent i );

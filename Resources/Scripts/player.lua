@@ -616,10 +616,12 @@ end
 
 --- Try to land
 function attemptLanding()
-	if UI.search("/Window/Tabs'Store'") ~= nil then return end
+	if UI.search("/Window/Tabs'Store'/") ~= nil then return end
 
 	local x,y = PLAYER:GetPosition()
 	local planet = Epiar.nearestPlanet(PLAYER, 4096)
+	if planet == nil then return end
+
 	local px,py = planet:GetPosition()
 	local distance = distfrom(px, py, x,y)
 	local message = ""
@@ -775,7 +777,7 @@ function HudTargetShield()
 end
 
 function loadingWindow()
-	if loadingWin~=nil then return end
+	if UI.search("/'Load a Player'/") ~= nil then return end -- Abort if the loading window is already visible
 	Epiar.pause()
 	local width=300
 	local height=300
@@ -783,7 +785,7 @@ function loadingWindow()
 	local videoWidth = Video.getWidth()
 	local videoHeight = Video.getHeight()
 
-	loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
+	local loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
 
 	--- Load an old Player
 	yoff = 30
@@ -811,9 +813,9 @@ end
 
 function loadPlayer(playerName)
 	Epiar.loadPlayer(playerName)
-	if loadingWin~=nil then
+	local loadingWin = UI.search("/'Load a Player'/")
+	if loadingWin ~= nil then
 		loadingWin:close()
-		loadingWin=nil
 	end
 	playerStart()
 	Epiar.unpause()
@@ -828,12 +830,16 @@ function createNewPlayer()
 	end
 	Epiar.newPlayer(name)
 
-	loadingWin:close()
+	local loadingWin = UI.search("/'Load a Player'/")
+	if loadingWin ~= nil then
+		loadingWin:close()
+	end
 	playerStart()
 	intro()
 end
 
 function playerInformation()
+	local infoWin = UI.search("/'Player Info'/")
 	if infoWin~=nil then
 		if descriptionWindow ~= nil then
 			descriptionWindow:close()

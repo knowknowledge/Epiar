@@ -16,6 +16,9 @@
 #define TAB_PAD 8
 #define TAB_TEXT_ALIGNMENT 2
 
+Color Tab::inactive = GREY;
+Color Tab::active = WHITE;
+
 /**\class Tab
  * \brief A single tab.
  */
@@ -23,13 +26,16 @@
 /**\brief Constructs a single tab with caption.
  */
 Tab::Tab( const string& _caption ) {
+	inactive = Color( SKIN( "Skin/UI/Tab/Color/Inactive" ) );
+	active   = Color( SKIN( "Skin/UI/Tab/Color/Active" ) );
+
 	this->x = x;
 	this->y = TAB_HEADER;
 	this->h = 0;
 	this->w = 0;
 	this->name = _caption;
 
-	this->capw = SansSerif->TextWidth( _caption );
+	this->capw = UI::font->TextWidth( _caption );
 }
 
 /**\brief Adds children to the Tab object.
@@ -111,9 +117,10 @@ void Tabs::Draw( int relx, int rely ){
 	int x = GetX() + relx;
 	int y = GetY() + rely;
 
+
 	// Draw tabs outline
-	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, 0.15f, 0.15f, 0.15f );
-	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, 0.223f, 0.223f, 0.223f );
+	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, Tab::inactive );
+	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, Tab::active );
 
 	list<Widget *>::iterator i;
 
@@ -121,11 +128,12 @@ void Tabs::Draw( int relx, int rely ){
 	for( i = Container::children.begin(); i != Container::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
 		
-		Video::DrawRect( xo + x, y, currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
-		if ( currtab == activetab )
-			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
+		Video::DrawRect( xo + x, y, currtab->capw+TAB_PAD*2, TAB_HEADER, Tab::inactive );
+		if ( currtab == activetab ) {
+			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, Tab::active );
+		}
 
-		SansSerif->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
+		UI::font->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
 
 		xo += currtab->capw+TAB_PAD*2+1;
 	}

@@ -56,9 +56,16 @@ Container *Container::AddChild( Widget *widget ) {
 }
 
 /**\brief Deletes a child from the current container.
+ * \details This performs a breadth-first search to find the specified widget.
+ * \warn The search will stop as soon as it finds the first instance of the Widget pointer.
+ *       This means that if there are duplicate pointers to the same Widget, the
+ *       second instance will cause a seg fault since the Widget object will have been freed.
  */
 bool Container::DelChild( Widget *widget ){
+	bool not_scrollbar;
 	list<Widget *>::iterator i;
+
+	not_scrollbar = ( widget->GetMask() != WIDGET_SCROLLBAR );
 
 	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -68,6 +75,12 @@ bool Container::DelChild( Widget *widget ){
 			delete (*i);
 			i = children.erase( i );
 			ResetInput();
+
+			// Don't reset the Scrollbars when it is a scrollbar being deleted
+			// This will cause a stack overflow.
+			if( not_scrollbar ) {
+				ResetScrollBars();
+			}
 
 			return true;
 		}
@@ -125,7 +138,7 @@ bool Container::ResetInput( void ){
 Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::reverse_iterator i;
 
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	// Check children from top (last drawn) to bottom (first drawn).
 	for( i = children.rbegin(); i != children.rend(); ++i ) {
@@ -287,10 +300,10 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	if( query.flags != 0 ) {
-		LogMsg(WARN, "Query '%s' did not end with a '/'", full_query.c_str() );
+		LogMsg(ERR, "Query '%s' did not end with a '/'", full_query.c_str() );
 	}
 
-	LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
+	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
 	return current;
 }
 
@@ -420,7 +433,7 @@ void Container::Draw( int relx, int rely ) {
 	y = GetY() + rely;
 
 	// Crop to prevent child widgets from spilling
-	Video::SetCropRect(x, y + 2, this->w - SCROLLBAR_PAD, this->h - SCROLLBAR_PAD + 4);
+	Video::SetCropRect(x, y + 2, this->w, this->h);
 	
 	// Draw any children
 	list<Widget *>::iterator i;
@@ -434,7 +447,7 @@ void Container::Draw( int relx, int rely ) {
 
 		int yscroll = 0;
 		if ( this->vscrollbar )
-			yscroll = vscrollbar->pos;
+			yscroll = vscrollbar->GetPos();
 
 		(*i)->Draw( x, y - yscroll );
 	}
@@ -450,7 +463,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -494,7 +507,7 @@ bool Container::MouseLUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -521,7 +534,7 @@ bool Container::MouseLDown( int xi, int yi ) {
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	// update drag coordinates in case this is draggable
 	dragX = xr;
@@ -529,16 +542,23 @@ bool Container::MouseLDown( int xi, int yi ) {
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
-	if( !event_on  ){
+	// If Nothing was clicked on
+	if( !event_on ){
 		//LogMsg(INFO,"Mouse Left down detect in %s.",this->name.c_str());
-		// Nothing was clicked on
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
 		this->keyboardFocus = NULL;
 		return this->mouseHandled;
 	}
+
 	// We clicked on a widget
-	event_on->MouseLDown( xr, yr + yoffset );
+	
+	if( event_on == vscrollbar ) {
+		event_on->MouseLDown( xr, yr );
+	} else {
+		event_on->MouseLDown( xr, yr + yoffset );
+	}
+
 	this->lmouseDown = event_on;
 	if( !this->keyboardFocus )
 		// No widget had keyboard focus before
@@ -571,7 +591,7 @@ bool Container::MouseMUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
@@ -595,7 +615,7 @@ bool Container::MouseMDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
@@ -624,7 +644,7 @@ bool Container::MouseRUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
@@ -648,7 +668,7 @@ bool Container::MouseRDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
@@ -677,7 +697,7 @@ bool Container::MouseWUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWUp( xr,yr + yoffset ) ) {
@@ -697,7 +717,7 @@ bool Container::MouseWDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWDown( xr,yr + yoffset ) ) {
@@ -762,49 +782,55 @@ bool Container::KeyPress( SDLKey key ) {
 }
 
 /**\brief Move the Scrollbars to the edges.
+ * \details This will always delete the current Scrollbars even if the size of
+ * the container hasn't fundamentally changed.  This is so that the Scrollbars
+ * are always the last Widgets in the Container.
  */
 
 void Container::ResetScrollBars() {
+	bool has_vscrollbar;
 	int widget_height, widget_width;
 	int max_height, max_width;
 	max_height = 0;
 	max_width = 0;
 
-	// It doesn't make sense to add scrollbars for a TAB without a size
+	// It doesn't make sense to add scrollbars for a Container without a size
 	if(this->w == 0 || this->h == 0 ) return;
+
+	// Remove the Current Scrollbar
+	has_vscrollbar = (vscrollbar != NULL);
+	if( this->vscrollbar != NULL ) {
+		Container::DelChild( this->vscrollbar );
+		this->vscrollbar = NULL;
+	}
 
 	// Find the Max edges
 	Widget* widget;
 	list<Widget *>::iterator i;
 	for( i = children.begin(); i != children.end(); ++i ) {
 		widget = *i;
-		widget_width = widget->GetX()+widget->GetW();
-		widget_height = widget->GetY()+widget->GetH();
-		if( widget_height > max_height) max_height=widget_height;
-		if( widget_width > max_width) max_width=widget_width;
+		widget_width  = widget->GetX() + widget->GetW();
+		widget_height = widget->GetY() + widget->GetH();
+		if( widget_height > max_height) max_height = widget_height;
+		if( widget_width > max_width) max_width = widget_width;
 	}
-	//max_height += SCROLLBAR_THICK + SCROLLBAR_PAD;
 
 	// Add a Vertical ScrollBar if necessary
-	if ( max_height > GetH() || this->vscrollbar != NULL ){
-		int v_x = this->w - SCROLLBAR_THICK - SCROLLBAR_PAD;
-		int v_y = SCROLLBAR_PAD;
-		int v_l = this->h - 2 * SCROLLBAR_PAD;
-		// Only add a Scrollbar when it doesn't already exist
-		if ( this->vscrollbar ){
-			Container::DelChild( this->vscrollbar );
-			this->vscrollbar = NULL;
-			LogMsg(INFO, "Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			
-		} else {
-			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
+	if ( max_height > GetH() ){
+		int v_x = this->w;
+		int v_y = 0;
+		int v_l = this->h;
+
+		// Don't Log extra messages when the ScrollBar is simply being replaced.
+		if( !has_vscrollbar ) {
+			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]", GetName().c_str(),v_x,v_y,v_l );
 		}
 
-		this->vscrollbar = new Scrollbar(v_x, v_y, v_l,this);
+		this->vscrollbar = new Scrollbar(v_x, v_y, v_l, max_height);
 
 		children.push_back( this->vscrollbar );
-
-		this->vscrollbar->maxpos = max_height;
+	} else if ( has_vscrollbar ) {
+		LogMsg(INFO, "Removing Vert ScrollBar to %s", GetName().c_str() );
 	}
 }
 

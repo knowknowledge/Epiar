@@ -176,8 +176,8 @@ int Font::RenderWrapped( int x, int y, const string& text, int w ){
 
 /**\brief Internal rendering function.*/
 int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YPos ypos) {
-	int xn;
-	int yn;
+	int xn = 0;
+	int yn = 0;
 
 	switch( xpos ) {
 		case LEFT:

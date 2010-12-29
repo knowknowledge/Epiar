@@ -58,6 +58,8 @@ Ship::Ship()
 	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
+	status.isRotatingLeft = false;
+	status.isRotatingRight = false;
 	status.isDisabled = false;
 	for(int a=0;a<max_ammo;a++){
 		ammo[a]=0;
@@ -183,10 +185,13 @@ void Ship::Rotate( float direction ) {
 
 	// Cap the ship rotation
 	if (fabs(direction) > maxturning){
-		if (direction > 0 )
+		if (direction > 0 ){
 			angle += maxturning;
-		else
+			status.isRotatingLeft = true;
+		}else{
 			angle -= maxturning;
+			status.isRotatingRight = true;
+		}
 	} else {
 		angle += direction;
 	}
@@ -195,6 +200,14 @@ void Ship::Rotate( float direction ) {
 	angle = normalizeAngle(angle);
 	
 	SetAngle( angle );
+	
+	// Play engine sound
+	float engvol = OPTION(float,"options/sound/engines");
+	Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
+	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+		engvol = engvol * NON_PLAYER_SOUND_RATIO ;
+	this->engine->GetSound()->SetVolume( engvol );
+	this->engine->GetSound()->PlayNoRestart( offset );
 }
 
 /**\brief Accelerates the ship.
@@ -266,7 +279,9 @@ void Ship::Repair(short int damage) {
 void Ship::Update( void ) {
 	Sprite::Update(); // update momentum and other generic sprite attributes
 	
-	if( status.isAccelerating == false ) {
+	if( status.isAccelerating == false 
+		&& status.isRotatingLeft == false
+		&& status.isRotatingRight == false) {
 		flareAnimation->Reset();
 	}
 	flareAnimation->Update();
@@ -327,6 +342,22 @@ void Ship::Draw( void ) {
 		flareAnimation->Draw( (int)tx, (int)ty, direction );
 		
 		status.isAccelerating = false;
+	}
+	//TODO: draw flare tilted in the coresponding direction
+	if( status.isRotatingLeft || status.isRotatingRight ) {
+		float direction = GetAngle();
+		float tx, ty;
+		
+		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
+						(flareAnimation->GetHalfWidth() + model->GetThrustOffset()) )),
+				static_cast<float>(position.GetScreenY()),
+				static_cast<float>(position.GetScreenX()),
+				static_cast<float>(position.GetScreenY()), &tx, &ty,
+				static_cast<float>( trig->DegToRad( direction ) ));
+		flareAnimation->Draw( (int)tx, (int)ty, direction );
+		
+		status.isRotatingLeft = false;
+		status.isRotatingRight = false;
 	}
 }
 
@@ -407,7 +438,7 @@ FireStatus Ship::Fire( int target ) {
 					SpriteManager *sprites = SpriteManager::Instance();
 					Sprite *targetSprite = sprites->GetSpriteByID(target);
 
-					float projectileAngle;
+					float projectileAngle = 0.0f;
 					bool angleAcceptable = true;
 
 					if(weaponSlots[slot].motionAngle == 0){ // a regular fixed weapon slot

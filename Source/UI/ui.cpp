@@ -7,40 +7,48 @@
  */
 
 #include "includes.h"
-#include "Graphics/video.h"
 #include "common.h"
+#include "Graphics/video.h"
 #include "Utilities/log.h"
 #include "UI/ui.h"
-
-// for ui_demo()
 #include "Input/input.h"
-#include "Utilities/timer.h"
 
 /**\class UI
- * \brief UI. */
+ * \brief The User Interface is a collection of Widgets
+ * \details This is the main Interface for all User Interface manipulations.
+ */
 
+/**\brief This container is contains everything on the screen.
+ */
 Container UI::master("Master", false);
 
-/**\brief This constructor resets the input.
+/**\brief This is the default UI Font.
  */
-UI::UI() {
-}
-
+Font *UI::font = NULL;
 
 /**\brief Destroys the UI interface and all UI elements.
  */
 UI::~UI() {
 	UI::Close();
+
+	delete font;
 }
 
+/**\brief Initializes the User Interface.
+ * \details This Initializes the master container as the full screen and the loads the default UI font.
+ */
 bool UI::Initialize() {
-	printf("UI created\n");
-	ResetInput();
-
+	// The master Container contains all other Widgets
 	master.SetX( 0 );
 	master.SetY( 0 );
 	master.SetW( Video::GetWidth() );
 	master.SetH( Video::GetHeight() );
+	master.ResetInput();
+
+	// This is the Default UI Font
+	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
+	font->SetColor( Color( SKIN( "Skin/UI/Default/Color" ) ) );
+	font->SetSize( convertTo<int>( SKIN("Skin/UI/Default/Size") ) );
 
 	return true;
 }
@@ -65,18 +73,24 @@ Widget *UI::Add( Widget *widget ) {
 	return UI::master.AddChild( widget );
 }
 
-/**\brief This removes all widgets from the base.*/
+/**\brief This removes all widgets from the base.
+ */
 void UI::Close( void ) {
+	LogMsg(INFO, "Closing all Widgets." );
 	UI::master.Empty();
-	ResetInput();
 }
 
-/**\brief This removes a single base widget.*/
+/**\brief This removes a single widget.
+ * \details DelChild will search the UI Tree so the widget does not have to be at the top level.
+ *          breadth-first search to find the specified widget.
+ */
 void UI::Close( Widget *widget ) {
+	LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
 	UI::master.DelChild( widget );
 }
 
-/**\brief Drawing function.*/
+/**\brief Drawing function.
+ */
 void UI::Draw( void ) {
 	UI::master.Draw( );
 }
@@ -141,7 +155,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	Widget* topContainer = UI::master.ChildFromTop(0, WIDGET_CONTAINER);
 	if( topContainer != NULL ) {
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
-			UI::master.DelChild( topContainer );
+			UI::Close( topContainer );
 		}
 	}
 }
@@ -156,7 +170,8 @@ bool UI::HandleKeyboard( InputEvent i ) {
 	}
 }
 
-/**\brief Handles UI mouse events.*/
+/**\brief Handles UI mouse events.
+ */
 bool UI::HandleMouse( InputEvent i ) {
 	int x, y;
 	
@@ -188,13 +203,5 @@ bool UI::HandleMouse( InputEvent i ) {
 		}
 
 	return false;
-}
-
-
-
-// Clears current input to prevent accidental usage of invalid values
-// Use this whenever the UI removes focusable widgets
-void UI::ResetInput() {
-	UI::master.ResetInput();
 }
 

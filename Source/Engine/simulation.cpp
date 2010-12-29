@@ -52,7 +52,6 @@ Simulation::Simulation( void ) {
 	folderpath = "";
 	currentFPS = 0.;
 	paused = false;
-	willsave = false;
 	loaded = false;
 }
 
@@ -72,15 +71,17 @@ bool Simulation::Load( string _folderpath ) {
 /**\brief Pauses the simulation
  */
 void Simulation::pause(){
+	LogMsg(INFO, "Pausing.");
 	paused = true;
 }
 
 void Simulation::save(){
-	willsave=true;
+	Players::Instance()->Save();
 }
 /**\brief Unpauses the simulation
  */
 void Simulation::unpause(){
+	LogMsg(INFO, "Unpausing.");
 	paused = false;
 }
 
@@ -88,8 +89,9 @@ bool Simulation::SetupToRun(){
 	bool luaLoad = true;
 	lua_State *L;
 
+	LogMsg(INFO, "Simulation Setup Started");
+
 	Timer::Update(); // Start the Timer
-	
 
 	// Start the Lua Universe
 	// Register these functions to their own lua namespaces
@@ -111,6 +113,7 @@ bool Simulation::SetupToRun(){
 	       && Lua::Load("Resources/Scripts/player.lua")
 	       && Lua::Load("Resources/Scripts/autopilot.lua")
 	       && Lua::Load("Resources/Scripts/fleet.lua");
+
 	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
 		return false;
@@ -163,9 +166,8 @@ bool Simulation::SetupToRun(){
 			Lua::Call("playerStart");
 		}
 	}
-	if( !Player::IsLoaded() ) {
-		Lua::Call("loadingWindow");
-	}
+
+	LogMsg(INFO, "Simulation Setup Complete");
 
 	return true;
 }
@@ -179,6 +181,14 @@ bool Simulation::Run() {
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 	fpsTS = Timer::GetTicks();
+
+	LogMsg(INFO, "Simulation Started");
+
+	if( !Player::IsLoaded() ) {
+		Lua::Call("loadingWindow");
+	} else {
+		printf("The player has already been loadeded.\n");
+	}
 
 	Hud::Init();
 	// Message appear in reverse order, so this is upside down
@@ -249,7 +259,7 @@ bool Simulation::Run() {
 			if( currentFPS < -0.1f )
 			{
 				// The game has effectively stopped..
-				LogMsg(ERR,"Sorry, the framerate has dropped to zero. Please report this as a bug to 'epiar-devel@epiar.net'");
+				LogMsg(ERR, "The framerate has dropped to zero. Please report this as a bug to 'epiar-devel@epiar.net'");
 				UI::Save();
 				sprites->Save();
 				quit = true;
@@ -290,22 +300,21 @@ bool Simulation::Run() {
 				sprites->Save();
 			}
 		}
-		if(willsave){
-			Players::Instance()->Save();
-			willsave=false;
-		}
 	}
 	optionsfile->Save();
 	
 	Hud::Close();
 
-	LogMsg(INFO,"Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
+	LogMsg(INFO,"Simulation Stopped: Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
+
 	return true;
 }
 
 bool Simulation::SetupToEdit() {
 	bool luaLoad = true;
 	lua_State *L;
+
+	LogMsg(INFO, "Simulation Edit Setup Starting");
 
 	// Start the Lua Universe
 	// Register these functions to their own lua namespaces
@@ -343,6 +352,8 @@ bool Simulation::SetupToEdit() {
 	    }
 	}
 
+	LogMsg(INFO, "Simulation Edit Setup Complete");
+
 	return true;
 }
 
@@ -350,6 +361,10 @@ bool Simulation::Edit() {
 	bool quit = false;
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
+
+	LogMsg(INFO, "Simulation Edit Starting");
+
+	Lua::Call("componentDebugger");
 
 	while( !quit ) {
 		quit = HandleInput();
@@ -373,6 +388,8 @@ bool Simulation::Edit() {
 		// Don't kill the CPU (play nice)
 		Timer::Delay( 50 );
 	}
+
+	LogMsg(INFO, "Simulation Edit Stopping");
 
 	return true;
 }

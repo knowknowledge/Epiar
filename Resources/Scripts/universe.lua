@@ -49,7 +49,6 @@ end
 
 --- Pause the game
 function togglePause()
-	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
 		Epiar.unpause()
 	else
@@ -652,7 +651,7 @@ function storeView(containerPath, itemType, itemName )
 	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
 
 	for statname,value in pairs(iteminfo) do
-		print(statname, value )
+		-- print(statname, value )
 		-- Skip these kinds
 		if statname == "Name"
 		or statname == "MSRP"
@@ -691,8 +690,11 @@ function landingDialog(id)
 
 	function addToStoreList( storeList, list, yoff, cmd, container )
 		for i,name in ipairs(list) do
-			storeList:add( UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, string.format( cmd, container, name ) ))
+			local callback = string.format( cmd, container, name )
+			local pic = UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
+			pic:setLuaClickCallback( callback )
+			storeList:add( pic )
+			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, callback ))
 			yoff = yoff + 30 + boxsize
 		end
 		return yoff
@@ -704,12 +706,7 @@ function landingDialog(id)
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
-	for i,name in ipairs(models) do
-		shipList:add(UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-		yoff = yoff+boxsize
-		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'ShipYard'/", name)))
-		yoff = yoff+30
-	end
+	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)",  "/Window/Tabs'Store'/'ShipYard'/" )
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
@@ -727,8 +724,8 @@ function landingDialog(id)
 	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", "/Window/Tabs'Store'/'Outfitting'/")
 	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", "/Window/Tabs'Store'/'Outfitting'/")
 	storeframe:add(outfitting)
-	outfitting:add( UI.newButton( width-200,340,100,30,"Buy","buyOutfit()" ))
-	outfitting:add( UI.newButton( width-200,340,100,30,"Sell","sellOutfit()" ))
+	outfitting:add( UI.newButton( width-250,340,100,30,"Sell","sellOutfit()" ))
+	outfitting:add( UI.newButton( width-150,340,100,30,"Buy","buyOutfit()" ))
 
 	if #weapons > 0 then     storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'weapon', weapons[1])
 	elseif #engines > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'engine', engines[1])
