@@ -86,7 +86,6 @@ class Simulation : public XMLFile {
 		string folderpath;
 		float currentFPS;
 		bool paused;
-		bool willsave;
 		bool loaded;
 };
 

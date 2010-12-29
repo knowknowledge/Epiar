@@ -17,7 +17,6 @@ function componentDebugger()
     	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 	)
 end
-componentDebugger()
 
 --- The EditorLayouts describe the ordering and type of the component attributes
 --- This could be hardcoded into the c++ engine

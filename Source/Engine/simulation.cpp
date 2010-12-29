@@ -52,7 +52,6 @@ Simulation::Simulation( void ) {
 	folderpath = "";
 	currentFPS = 0.;
 	paused = false;
-	willsave = false;
 	loaded = false;
 }
 
@@ -77,7 +76,7 @@ void Simulation::pause(){
 }
 
 void Simulation::save(){
-	willsave=true;
+	Players::Instance()->Save();
 }
 /**\brief Unpauses the simulation
  */
@@ -113,6 +112,7 @@ bool Simulation::SetupToRun(){
 	       && Lua::Load("Resources/Scripts/missions.lua")
 	       && Lua::Load("Resources/Scripts/player.lua")
 	       && Lua::Load("Resources/Scripts/autopilot.lua");
+
 	if (!luaLoad) {
 		LogMsg(ERR,"Fatal error starting Lua.");
 		return false;
@@ -165,9 +165,6 @@ bool Simulation::SetupToRun(){
 			Lua::Call("playerStart");
 		}
 	}
-	if( !Player::IsLoaded() ) {
-		Lua::Call("loadingWindow");
-	}
 
 	LogMsg(INFO, "Simulation Setup Complete");
 
@@ -185,6 +182,12 @@ bool Simulation::Run() {
 	fpsTS = Timer::GetTicks();
 
 	LogMsg(INFO, "Simulation Started");
+
+	if( !Player::IsLoaded() ) {
+		Lua::Call("loadingWindow");
+	} else {
+		printf("The player has already been loadeded.\n");
+	}
 
 	Hud::Init();
 	// Message appear in reverse order, so this is upside down
@@ -296,10 +299,6 @@ bool Simulation::Run() {
 				sprites->Save();
 			}
 		}
-		if(willsave){
-			Players::Instance()->Save();
-			willsave=false;
-		}
 	}
 	optionsfile->Save();
 	
@@ -363,6 +362,8 @@ bool Simulation::Edit() {
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
 	LogMsg(INFO, "Simulation Edit Starting");
+
+	Lua::Call("componentDebugger");
 
 	while( !quit ) {
 		quit = HandleInput();
