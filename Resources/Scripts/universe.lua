@@ -651,7 +651,7 @@ function storeView(containerPath, itemType, itemName )
 	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
 
 	for statname,value in pairs(iteminfo) do
-		print(statname, value )
+		-- print(statname, value )
 		-- Skip these kinds
 		if statname == "Name"
 		or statname == "MSRP"
