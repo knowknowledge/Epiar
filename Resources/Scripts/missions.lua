@@ -427,7 +427,7 @@ ProtectFreighter = {
 		local playerX, playerY = PLAYER:GetPosition()
 
 		local mach
-		freighterDialog = UI.newWindow(100,100, 500, 140, "Communication channel" )
+		local freighterDialog = UI.newWindow(100,100, 500, 140, "Communication channel" )
 		freighterDialog:add( UI.newLabel( 50, 30, (string.format("%s opened a communication channel to your ship.", missionTable.freighterName) ) ) )
 		freighterDialog:add( UI.newLabel( 50, 60, (string.format("\"%s, thank you for your assistance!", PLAYER:GetName() ) ) ) )
 		freighterDialog:add( UI.newLabel( 50, 75, (string.format(" Would you prefer that I follow you or simply proceed on my normal route?\"", PLAYER:GetName() ) ) ) )
@@ -466,8 +466,7 @@ ProtectFreighter = {
 			setHuntHostile(pirate:GetID(), freighter:GetID())
 
 			-- Clean up
-			freighterDialog:close()
-			freighterDialog = nil
+			UI.search("/Window'Communication channel'/"):close()
 		end
 	end,
 	Reject = function( missionTable )
