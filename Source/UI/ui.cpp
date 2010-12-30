@@ -103,6 +103,19 @@ Widget* UI::Search( string query ) {
 	return UI::master.Search( query );
 }
 
+/**\brief Check if a Widget attached to the the current UI
+ *
+ * \warn Do not run any methods on the possible Widget.  It may not exist.
+ *       Even calling possible->GetMask() will Segfault.
+ * \note If this returns true, then the Widget must be properly allocated, but
+ *       if this returns false the the widget may or may not be allocated.
+ *       Not all Widgets are added to the User Interface immediately.
+ * \see Container::IsAttached
+ */
+bool UI::IsAttached( Widget* possible ) {
+	return UI::master.IsAttached( possible );
+}
+
 /**\brief Export The UI as an XML document.
  *
  */
