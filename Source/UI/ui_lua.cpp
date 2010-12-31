@@ -441,7 +441,7 @@ int UI_Lua::addWidget(lua_State *L) {
 	}
 
 	for(int i=1; i<=n; i++){
-		Widget* widget = checkWidget(L,1);
+		Widget* widget = checkWidget(L,i);
 		luaL_argcheck(L, false == UI::IsAttached( widget ), i, "This Widget is already attached to the User Interface.");
 		UI::Add(widget);
 	}
