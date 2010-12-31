@@ -20,7 +20,9 @@ class Button : public Widget {
 		~Button();
 		
 		void Draw( int relx = 0, int rely = 0 );
-		
+
+		void Activate();
+
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
 		bool MouseLRelease( void );
