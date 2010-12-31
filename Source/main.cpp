@@ -118,15 +118,78 @@ void Main_Load_Settings() {
 	optionsfile = new XMLFile();
 	if( !optionsfile->Open("Resources/Definitions/options.xml") )
 	{
-		fprintf(stderr, "Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
-		exit(-1);
+		// Create the default Options file
+		optionsfile->New("Resources/Definitions/options.xml", "options");
+
+		// Logging
+		SETOPTION( "options/log/xml", 0 );
+		SETOPTION( "options/log/out", 1 );
+		SETOPTION( "options/log/ui", 0 );
+		SETOPTION( "options/log/sprites", 0 );
+
+		// Video
+		SETOPTION( "options/video/w", 1024 );
+		SETOPTION( "options/video/h", 768 );
+		SETOPTION( "options/video/bpp", 32 );
+		SETOPTION( "options/video/fullscreen", 0 );
+		SETOPTION( "options/video/fps", 60 );
+
+		// Sound
+		SETOPTION( "options/sound/musicvolume", 0.5f );
+		SETOPTION( "options/sound/soundvolume", 0.5f );
+		SETOPTION( "options/sound/background", 1 );
+		SETOPTION( "options/sound/weapons", 1 );
+		SETOPTION( "options/sound/engines", 1 );
+		SETOPTION( "options/sound/explosions", 1 );
+		SETOPTION( "options/sound/buttons", 1 );
+
+		// Simultaion
+		SETOPTION( "options/simulation/starfield-density", 750 );
+		SETOPTION( "options/simulation/automatic-load", 0 );
+		SETOPTION( "options/simulation/random-universe", 0 );
+		SETOPTION( "options/simulation/random-seed", 0 );
+
+		// Timing
+		SETOPTION( "options/timing/mouse-fade", 500 );
+		SETOPTION( "options/timing/target-zoom", 500 );
+		SETOPTION( "options/timing/alert-drop", 3500 );
+		SETOPTION( "options/timing/alert-fade", 2500 );
+
+		// Development
+		SETOPTION( "options/development/ships-worldmap", 0 );
+		SETOPTION( "options/development/debug-ai", 0 );
+		SETOPTION( "options/development/debug-ui", 0 );
+
+		optionsfile->Save();
 	}
 
 	skinfile = new XMLFile();
 	if( !skinfile->Open("Resources/Definitions/skin.xml") )
 	{
-		fprintf(stderr, "Failed to find Skin file at 'Resources/Definitions/skin.xml'. Aborting Epiar.");
-		exit(-1);
+		// Create the default Skin file
+		skinfile->New("Resources/Definitions/skin.xml", "Skin");
+
+		// UI - Default
+		skinfile->Set( "Skin/UI/Default/Font", "Resources/Fonts/FreeSans.ttf");
+		skinfile->Set( "Skin/UI/Default/Color", "0xFFFFFF");
+		skinfile->Set( "Skin/UI/Default/Size", 12);
+
+		// UI - Textbox
+		skinfile->Set( "Skin/UI/Textbox/Font", "Resources/Fonts/FreeMono.ttf");
+		skinfile->Set( "Skin/UI/Textbox/Color/Foreground", "0xCCCCCC");
+		skinfile->Set( "Skin/UI/Textbox/Color/Background", "0x666666");
+		skinfile->Set( "Skin/UI/Textbox/Color/Edge", "0x262626");
+
+		// UI - Tab
+		skinfile->Set( "Skin/UI/Tab/Color/Active", "0x393939");
+		skinfile->Set( "Skin/UI/Tab/Color/Inactive", "0x262626");
+
+		// HUD - Alert
+		skinfile->Set( "Skin/HUD/Alert/Font", "Resources/Fonts/FreeSans.ttf");
+		skinfile->Set( "Skin/HUD/Alert/Color", "0xFFFFFF");
+		skinfile->Set( "Skin/HUD/Alert/Size", 12);
+
+		skinfile->Save();
 	}
 }
 
