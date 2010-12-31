@@ -450,6 +450,11 @@ void ui_test() {
 	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Button/") );
 	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Button/") );
 	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
+
+	// Set a test Form button
+	((Tab*)( UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/"))) ->SetFormButton(
+		(Button*) UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/Button'Quit'/")
+	);
 }
 
 /** Epiar's Main Menu

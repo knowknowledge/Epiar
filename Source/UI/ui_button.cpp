@@ -93,6 +93,18 @@ void Button::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
+void Button::Activate() {
+	if( clickCallBack ){
+		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
+		clickCallBack();
+	} else if("" != lua_callback){
+		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
+		Lua::Run(lua_callback);
+	} else {
+		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
+	}
+}
+
 /**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
 	if(OPTION(int, "options/sound/buttons")) this->sound_click->Play();
@@ -105,16 +117,7 @@ bool Button::MouseLDown( int xi, int yi ) {
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
 	bitmap_current = bitmap_mouseover;
-
-	if( clickCallBack ){
-		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack();
-	} else if("" != lua_callback){
-		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
-		Lua::Run(lua_callback);
-	} else {
-		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
-	}
+	Activate();
 	return true;
 }
 

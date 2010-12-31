@@ -18,7 +18,8 @@
 Container::Container( string _name, bool _mouseHandled ):
 	mouseHandled( _mouseHandled ), keyboardFocus( NULL ), mouseHover( NULL ),
 	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ),
-	vscrollbar( NULL )
+	vscrollbar( NULL ),
+	formbutton( NULL )
 {
 	name = _name;
 }
@@ -41,6 +42,9 @@ Container::~Container( void ) {
 	lmouseDown = NULL;
 	mmouseDown = NULL;
 	rmouseDown = NULL;
+	
+	vscrollbar = NULL;
+	formbutton = NULL;
 }
 
 /**\brief Adds a child to the current container.
@@ -805,8 +809,16 @@ bool Container::KeyPress( SDLKey key ) {
 		}
 
 		// Otherwise, pass the key Press normally
-		return keyboardFocus->KeyPress( key );
+		if( keyboardFocus->KeyPress( key ) ) {
+			return true;
+		}
 	}
+
+	// If the key is an ENTER then activate the form button when it has been assigned
+	if( (key == '\n') && (formbutton != NULL) ) {
+		formbutton->Activate();
+	}
+
 	//LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return false;
 }
@@ -862,6 +874,21 @@ void Container::ResetScrollBars() {
 	} else if ( has_vscrollbar ) {
 		LogMsg(INFO, "Removing Vert ScrollBar to %s", GetName().c_str() );
 	}
+}
+
+Container* Container::SetFormButton( Button* button ) {
+	if( button == NULL ) {
+		LogMsg(INFO, "Clearing the Form Button for %s %s", GetType().c_str(), GetName().c_str() );
+		formbutton = NULL;
+	} else if( ! IsAttached( button ) ) {
+		LogMsg(INFO, "Cannot set %s to the Form Button for %s %s because it is not a childe of the Container.", button->GetName().c_str(), GetType().c_str(), GetName().c_str() );
+	} else {
+		LogMsg(INFO, "Setting %s to the Form Button for %s %s", button->GetName().c_str(), GetType().c_str(), GetName().c_str() );
+		assert( button->GetMask() & WIDGET_BUTTON );
+		formbutton = button;
+	}
+	ResetInput();
+	return this;
 }
 
 xmlNodePtr Container::ToNode() {
