@@ -192,7 +192,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 
 	// Walk the tokenized path
 	// If FirstChildNamed() doesn't find the path, it will return NULL
-	for(; iter != tokenized.end(); ++iter) {
+	for(; iter != tokenized.end() && cur != NULL; ++iter) {
 		partialPath = *iter;
 		if( partialPath.find_first_of(tokens) != string::npos) {
 			continue;
