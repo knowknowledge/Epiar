@@ -11,6 +11,7 @@
 #include "UI/ui.h"
 #include "ui_widget.h"
 #include "ui_scrollbar.h"
+#include "ui_button.h"
 
 class Container : public Widget {
 	public:
@@ -27,6 +28,8 @@ class Container : public Widget {
 		virtual bool ResetInput( void );
 		virtual void ResetScrollBars();
 
+		virtual Container *SetFormButton( Button* button );
+
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 
 		virtual bool IsAttached( Widget* possible );
@@ -39,7 +42,6 @@ class Container : public Widget {
 		virtual Widget *PrevChild( Widget* widget, int mask = WIDGET_ALL );
 
 		virtual void Draw( int relx = 0, int rely = 0 );
-
 
 		xmlNodePtr ToNode();
 
@@ -70,12 +72,14 @@ class Container : public Widget {
 		bool mouseHandled;
 
 	private:
-		Widget *keyboardFocus;			// remembers which child last had focus
-		Widget *mouseHover;				// remember which widget mouse is hovering over
-		Widget *lmouseDown,
-			*mmouseDown,*rmouseDown;	// remember which widget was clicked on
+		Widget *keyboardFocus; ///< Remembers which child last had focus
+		Widget *mouseHover; ///< Remember which widget mouse is hovering over
+		Widget *lmouseDown; ///< Remember which widget was last L-clicked on.
+		Widget *mmouseDown; ///< Remember which widget was last M-clicked on.
+		Widget *rmouseDown; ///< Remember which widget was last R-clicked on.
 
-		Scrollbar *vscrollbar;
+		Scrollbar *vscrollbar; ///< The Vertical Scrollbar widget if it exists.
+		Button *formbutton; ///< This Button will is activated on keyboard events.
 };
 
 #endif//__H_UI_CONTAINER__
