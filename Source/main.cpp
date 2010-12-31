@@ -36,8 +36,9 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 ArgParser *argparser;
 
 void Main_OS                ( int argc, char **argv ); ///< Run OS Specific setup code
-void Main_Init_Singletons   ( int argc, char **argv ); ///< Initialize global Singletons
-void Main_Parse_Args        ( ); ///< Parse Command Line Arguments
+void Main_Load_Settings     (); ///< Load the settings files
+void Main_Init_Singletons   (); ///< Initialize global Singletons
+void Main_Parse_Args        ( int argc, char **argv ); ///< Parse Command Line Arguments
 void Main_Log_Environment   ( void ); ///< Record Environment variables
 void Main_Menu              ( void ); ///< Run the Main Menu
 void Main_Close_Singletons  ( void ); ///< Close global Singletons
@@ -54,13 +55,14 @@ void Main_Close_Singletons  ( void ); ///< Close global Singletons
 int main( int argc, char **argv ) {
 	// Basic Setup
 	Main_OS( argc, argv );
-	Main_Init_Singletons( argc, argv );
+	Main_Load_Settings();
 
 	// Respond to Command Line Arguments
-	Main_Parse_Args();
+	Main_Parse_Args( argc, argv );
 	Main_Log_Environment();
 
 	// THE GAME
+	Main_Init_Singletons();
 	Main_Menu();
 
 	// Close everything and Quit
@@ -106,9 +108,32 @@ void Main_OS( int argc, char **argv ) {
 
 }
 
+/** \brief Load the options files
+ *  \details This will load the options.xml and skin.xml files.
+ *           The options.xml file defines miscellaneous flags and numerical settings.
+ *           The skin.xml file defines the non-png aspects of the User Interface.
+ *  \todo If these files do not exist, reasonable defaults should be loaded instead.
+ */
+void Main_Load_Settings() {
+	optionsfile = new XMLFile();
+	if( !optionsfile->Open("Resources/Definitions/options.xml") )
+	{
+		fprintf(stderr, "Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
+		exit(-1);
+	}
+
+	skinfile = new XMLFile();
+	if( !skinfile->Open("Resources/Definitions/skin.xml") )
+	{
+		fprintf(stderr, "Failed to find Skin file at 'Resources/Definitions/skin.xml'. Aborting Epiar.");
+		exit(-1);
+	}
+}
+
 /** \details
  *  This will initialize the singletons for this Epiar instance:
- *   - OPTIONS
+ *   - OPTIONS (optionsfile)
+ *   - SKIN (skinfile)
  *   - Audio
  *   - Fonts
  *   - Timer
@@ -125,21 +150,7 @@ void Main_OS( int argc, char **argv ) {
  *
  *  \warn This may exit early on Errors
  */
-void Main_Init_Singletons( int argc, char **argv ) {
-	optionsfile = new XMLFile();
-	if( !optionsfile->Open("Resources/Definitions/options.xml") )
-	{
-		fprintf(stderr, "Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
-		exit(-1);
-	}
-
-	skinfile = new XMLFile();
-	if( !skinfile->Open("Resources/Definitions/skin.xml") )
-	{
-		fprintf(stderr, "Failed to find Skin file at 'Resources/Definitions/skin.xml'. Aborting Epiar.");
-		exit(-1);
-	}
-
+void Main_Init_Singletons() {
 	Audio::Instance().Initialize();
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
@@ -152,29 +163,6 @@ void Main_Init_Singletons( int argc, char **argv ) {
 	Timer::Initialize();
 	Video::Initialize();
 	UI::Initialize();
-
-	// Parse command line options first.
-	argparser = new ArgParser(argc, argv);
-
-	argparser->SetOpt(SHORTOPT, "h",             "Display help screen");
-	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
-	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
-	argparser->SetOpt(LONGOPT, "version",        "Display program version");
-	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
-	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
-	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
-	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
-	argparser->SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
-	argparser->SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
-	argparser->SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
-	                                             "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
-	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
-	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
-	argparser->SetOpt(LONGOPT,  "ui-demo",       "Runs the UI demo.");
-
-#ifdef EPIAR_COMPILE_TESTS
-	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
-#endif // EPIAR_COMPILE_TESTS
 
 	srand ( time(NULL) );
 }
@@ -210,7 +198,29 @@ void Main_Close_Singletons( void ) {
  *  
  *  \warn This may exit early.
  */
-void Main_Parse_Args( ) {
+void Main_Parse_Args( int argc, char **argv ) {
+	// Parse command line options first.
+	argparser = new ArgParser(argc, argv);
+
+	argparser->SetOpt(SHORTOPT, "h",             "Display help screen");
+	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
+	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
+	argparser->SetOpt(LONGOPT, "version",        "Display program version");
+	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
+	argparser->SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
+	argparser->SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
+	argparser->SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
+	                                             "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
+	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
+	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
+	argparser->SetOpt(LONGOPT,  "ui-demo",       "Runs the UI demo.");
+
+#ifdef EPIAR_COMPILE_TESTS
+	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
+#endif // EPIAR_COMPILE_TESTS
 
 	// These are immediate options (I.E. they stop the argument processing immediately)
 	if ( argparser->HaveShort("h") || argparser->HaveLong("help") ){
