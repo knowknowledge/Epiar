@@ -14,7 +14,8 @@
 #include "Utilities/components.h"
 
 /**\class XMLFile
- * \brief XML handling. */
+ * \brief XML handling.
+ */
 
 XMLFile::XMLFile() {
 	xmlPtr = NULL;
@@ -35,7 +36,7 @@ bool XMLFile::New( const string& _filename, const string& rootName ) {
 	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
 
 	xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST rootName.c_str() );
-    xmlDocSetRootElement(xmlPtr, root_node);
+	xmlDocSetRootElement(xmlPtr, root_node);
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
 	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST buff);
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
@@ -96,6 +97,9 @@ bool XMLFile::Close() {
 
 string XMLFile::Get( const string& path ) {
 	xmlNodePtr cur;
+	if( xmlPtr == NULL ) {
+		return "";
+	}
 
 	// Look for the Node
 	cur = FindNode( path );
@@ -175,10 +179,14 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 		}
 	}
 
+	if( xmlPtr == NULL ) {
+		return( (xmlNodePtr)NULL );
+	}
+
 	// Initialize the xml navigation cursor
 	cur = xmlDocGetRootElement( xmlPtr );
 	if( cur == NULL ) {
-		LogMsg(WARN, "XML file (%s) appears to be empty.",filename.c_str() );
+		LogMsg(WARN, "XML file (%s) appears to be empty.", filename.c_str() );
 		return( (xmlNodePtr)NULL );
 	}
 	
@@ -192,7 +200,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 
 	// Walk the tokenized path
 	// If FirstChildNamed() doesn't find the path, it will return NULL
-	for(; iter != tokenized.end(); ++iter) {
+	for(; iter != tokenized.end() && cur != NULL; ++iter) {
 		partialPath = *iter;
 		if( partialPath.find_first_of(tokens) != string::npos) {
 			continue;
@@ -201,7 +209,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 		cur = FirstChildNamed(parent, partialPath.c_str());
 		if( (createIfMissing) && (cur==NULL) )
 		{
-			cur = xmlNewChild(parent, NULL, BAD_CAST partialPath.c_str(), BAD_CAST "" );
+			cur = xmlNewChild(parent, NULL, BAD_CAST partialPath.c_str(), NULL );
 		}
 	}
 
@@ -224,11 +232,12 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
  * ...
  * }
  * \endcode
- * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
  */
 
 xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
 {
+	assert( node != NULL );
+	assert( text != NULL );
 	xmlNodePtr child = node->xmlChildrenNode;
 	while( child != NULL )
 	{
@@ -245,10 +254,11 @@ xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text )
  * \param child The previous child node that we are searching.
  * \param text The text name that we are searching for.
  * \sa FirstChildNamed
- * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
  */
 xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
 {
+	assert( child != NULL );
+	assert( text != NULL );
 	child = child->next;
 	while( child != NULL )
 	{
@@ -269,10 +279,11 @@ xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
  * It's easier to deal with C++ strings than xmlStrings, since the C++ strings have destructors.
  *
  * \sa NodeToInt, NodeToFloat
- * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
  */
 string NodeToString( xmlDocPtr doc, xmlNodePtr node )
 {
+	assert( doc != NULL );
+	assert( node != NULL );
 	string value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
@@ -285,10 +296,11 @@ string NodeToString( xmlDocPtr doc, xmlNodePtr node )
  * \param doc The document that contains this node.
  * \param node The node itself
  * \sa NodeToString, NodeToFloat
- * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
  */
 int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
 {
+	assert( doc != NULL );
+	assert( node != NULL );
 	int value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
@@ -301,10 +313,11 @@ int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
  * \param doc The document that contains this node.
  * \param node The node itself
  * \sa NodeToString, NodeToInt
- * \todo This applies to all XML files, not just component files.  It should be moved somewhere else.
  */
 float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 {
+	assert( doc != NULL );
+	assert( node != NULL );
 	float value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );

@@ -30,6 +30,8 @@ class UI_Lua {
 		// Functions to communicate with Lua
 		static void RegisterUI(lua_State *L);
 
+		static Widget* checkWidget(lua_State *L, int index);
+
 		// Functions to create new Widgets
 		static int newWindow(lua_State *L);
 		static int newFrame(lua_State *L);

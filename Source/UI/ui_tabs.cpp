@@ -13,11 +13,6 @@
 #include "Utilities/log.h"
 
 #define TAB_HEADER 20
-#define TAB_PAD 8
-#define TAB_TEXT_ALIGNMENT 2
-
-Color Tab::inactive = GREY;
-Color Tab::active = WHITE;
 
 /**\class Tab
  * \brief A single tab.
@@ -26,16 +21,31 @@ Color Tab::active = WHITE;
 /**\brief Constructs a single tab with caption.
  */
 Tab::Tab( const string& _caption ) {
-	inactive = Color( SKIN( "Skin/UI/Tab/Color/Inactive" ) );
-	active   = Color( SKIN( "Skin/UI/Tab/Color/Active" ) );
-
 	this->x = x;
 	this->y = TAB_HEADER;
 	this->h = 0;
 	this->w = 0;
 	this->name = _caption;
 
+	active_left = Image::Get("Resources/Graphics/active-tab-left.png");
+	active_middle = Image::Get("Resources/Graphics/active-tab-middle.png");
+	active_right = Image::Get("Resources/Graphics/active-tab-right.png");
+
+	inactive_left = Image::Get("Resources/Graphics/inactive-tab-left.png");
+	inactive_middle = Image::Get("Resources/Graphics/inactive-tab-middle.png");
+	inactive_right = Image::Get("Resources/Graphics/inactive-tab-right.png");
+
 	this->capw = UI::font->TextWidth( _caption );
+}
+
+Tab::~Tab() {
+	active_left = NULL;
+	active_middle = NULL;
+	active_right = NULL;
+
+	inactive_left = NULL;
+	inactive_middle = NULL;
+	inactive_right = NULL;
 }
 
 /**\brief Adds children to the Tab object.
@@ -44,6 +54,26 @@ Tab *Tab::AddChild( Widget *widget ) {
 	assert( widget != NULL );
 	Container::AddChild( widget );
 	return this;
+}
+
+void Tab::DrawHandle( int realx, int realy, bool active ) {
+	Image* left = active ? active_left : inactive_left;
+	Image* middle = active ? active_middle : inactive_middle;
+	Image* right = active ? active_right : inactive_right;
+	
+	left->Draw( realx, realy );
+	middle->DrawTiled( realx + left->GetWidth(), realy, capw, middle->GetHeight() );
+	right->Draw( realx + left->GetWidth() + capw , realy );
+
+	UI::font->Render( realx + left->GetWidth(), realy, GetName() );
+}
+
+int Tab::GetHandleWidth( bool active ) {
+	if( active ) {
+		return active_left->GetWidth() + capw + active_right->GetWidth();
+	} else {
+		return inactive_left->GetWidth() + capw + inactive_right->GetWidth();
+	}
 }
 
 /**\class Tabs
@@ -55,6 +85,9 @@ Tab *Tab::AddChild( Widget *widget ) {
  */
 Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
 	activetab( NULL ) {
+	background = Color( SKIN( "Skin/UI/Tab/Color/Background" ) );
+	edge = Color( SKIN( "Skin/UI/Tab/Color/Edge" ) );
+
 	this->x = x;
 	this->y = y;
 	this->w = _w;
@@ -80,8 +113,8 @@ Tabs *Tabs::AddChild( Widget *widget ){
 		this->activetab = tabwidget;
 
 	// Adjust Scrollbars to this container
-	tabwidget->w = GetW();
-	tabwidget->h = GetH()-TAB_HEADER;
+	tabwidget->SetW( GetW() );
+	tabwidget->SetH( GetH() - TAB_HEADER );
 	tabwidget->ResetScrollBars();
 
 	return this;
@@ -117,25 +150,24 @@ void Tabs::Draw( int relx, int rely ){
 	int x = GetX() + relx;
 	int y = GetY() + rely;
 
+	// Draw the Background and Edge
+	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, background );
+	Video::DrawBox( x, y+TAB_HEADER, w, h-TAB_HEADER, edge );
 
-	// Draw tabs outline
-	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, Tab::inactive );
-	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, Tab::active );
-
+	int xo = x;
 	list<Widget *>::iterator i;
-
-	int xo = 0;
 	for( i = Container::children.begin(); i != Container::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
-		
-		Video::DrawRect( xo + x, y, currtab->capw+TAB_PAD*2, TAB_HEADER, Tab::inactive );
-		if ( currtab == activetab ) {
-			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, Tab::active );
+
+		currtab->DrawHandle( xo, y, ( currtab == activetab ) );
+
+		// For the Active tab, draw a background colored line to make this tab
+		// look like it is attached to the currently visible Container.
+		if( currtab == activetab ) {
+			Video::DrawLine( xo, y + TAB_HEADER, xo + currtab->GetHandleWidth(true), y + TAB_HEADER, background );
 		}
 
-		UI::font->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
-
-		xo += currtab->capw+TAB_PAD*2+1;
+		xo += currtab->GetHandleWidth( currtab == activetab );
 	}
 
 	if (activetab){
@@ -166,9 +198,9 @@ Tab* Tabs::CheckTabClicked( int xr, int yr ){
 	int xo = 0;
 	for( i = Container::children.begin(); i != Container::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
-		if ( xr < (currtab->capw+xo+TAB_PAD*2) )
+		if ( xr < xo + currtab->GetHandleWidth(currtab == activetab) )
 			return currtab;
-		xo += currtab->capw+TAB_PAD*2+1;
+		xo += currtab->GetHandleWidth(currtab == activetab);
 	}
 	// Active Tab didn't change
 	return this->activetab;

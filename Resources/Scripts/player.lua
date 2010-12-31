@@ -841,6 +841,7 @@ end
 function playerInformation()
 	local infoWin = UI.search("/'Player Info'/")
 	if infoWin~=nil then
+		local descriptionWindow = UI.search("/Window'Mission Description'/")
 		if descriptionWindow ~= nil then
 			descriptionWindow:close()
 			descriptionWindow = nil
@@ -917,24 +918,24 @@ function playerInformation()
 
 end
 
-----------------------------Experimental code by Dido--------------------------------------------------	
 -- Description window for individual mission in mission dialog
-	function ShowMissionDescription( _missionName, _missionDescription )
-		if descriptionWindow ~= nil then
-			descriptionWindow:close()
-			descriptionWindow = nil
-			--Epiar.unpause()
-			return
-		end
-		
-		--Epiar.pause()
-
-		--displayedDescription = _missionDescription
-		
-		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
-		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
-		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); descriptionWindow:close()", _missionName) )
-		--currentDescription:close() 
-		descriptionWindow:add( descriptionLable, rejectButton )
+function ShowMissionDescription( _missionName, _missionDescription )
+	local descriptionWindow = UI.search("/Window'Mission Description'/")
+	if descriptionWindow ~= nil then
+		descriptionWindow:close()
+		descriptionWindow = nil
+		--Epiar.unpause()
+		return
 	end
----------------------------/Experimental code by Dido--------------------------------------------------
+
+	--Epiar.pause()
+
+	--displayedDescription = _missionDescription
+	
+	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
+	descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
+	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
+	--currentDescription:close()
+	descriptionWindow:add( descriptionLable, rejectButton )
+end
+

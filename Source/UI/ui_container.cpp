@@ -50,6 +50,7 @@ Container *Container::AddChild( Widget *widget ) {
 	if( widget != NULL ) {
 		children.push_back( widget );
 	}
+	LogMsg(INFO, "Adding %s %s %p to %s", widget->GetType().c_str(), widget->GetName().c_str(), widget, GetName().c_str() );
 	// Check to see if widget is past the bounds.
 	ResetScrollBars();
 	return this;
@@ -151,9 +152,38 @@ Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	return( NULL );
 }
 
+/**\brief Check if a Widget exists in this Container
+ *
+ * \warn Do not run any methods on the possible Widget.  It may not exist.
+ *       Even calling possible->GetMask() will Segfault.
+ */
+bool Container::IsAttached( Widget* possible ) {
+	list<Widget *>::iterator i;
+	
+	// Search the direct children.
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i) == possible ) {
+			LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
+			return true;
+		}
+	}
+	
+	// Search the grandchildren
+	// This is a breadth first search.
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			if( ((Container*)(*i))->IsAttached( possible ) ) {
+				return true;
+			}
+		}
+	}
+
+	// Not found
+	return false;
+}
+
 /**\brief Search this Container for a Widget
  *
- * \see Container::Search
  */
 Widget *Container::Search( string full_query ) {
 	int section = 0;
