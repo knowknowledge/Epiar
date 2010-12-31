@@ -42,6 +42,7 @@ int Hud::timeTargeted = 0;
 int Radar::visibility = 4096;
 HudMap Hud::mapDisplay = NoMap;
 Font *Hud::AlertFont = NULL;
+Color Hud::AlertColor = WHITE;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -242,8 +243,9 @@ void StatusBar::SetName( string n )
  * \brief Heads-Up-Display. */
 
 void Hud::Init( void ) {
-	AlertFont = new Font( "Resources/Fonts/FreeSans.ttf" );
-	AlertFont->SetSize( 12 );
+	AlertFont = new Font( SKIN("Skin/HUD/Alert/Font") );
+	AlertColor = Color( SKIN("Skin/HUD/Alert/Color") );
+	AlertFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Alert/Size") ) );
 }
 
 void Hud::Close( void ) {
@@ -314,15 +316,13 @@ void Hud::DrawMessages() {
 	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
 	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
 	
-	AlertFont->SetColor( WHITE );
-	
 	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > alertFade){
-			AlertFont->SetColor(1.f,1.f,1.f, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
+			AlertFont->SetColor( AlertColor, 1.f - float((age-alertFade))/float(alertDrop-alertFade) );
 		} else {
-			AlertFont->SetColor(1.f,1.f,1.f,1.f);
+			AlertFont->SetColor( AlertColor, 1.f);
 		}
 		AlertFont->Render( 15, Video::GetHeight() - (j * AlertFont->LineHeight()) - HUD_MESSAGE_BOTTOM_SPACING, (*i).message);
 	}
@@ -853,12 +853,12 @@ void Radar::Draw( void ) {
 		
 		if( radarSize >= 1 ) {
 			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
-				Video::DrawCircle( blip, radarSize, 2, Color::Get(0xff, 0xff, 0xff));
+				Video::DrawCircle( blip, radarSize, 2, WHITE );
 			else
 				Video::DrawCircle( blip, radarSize, 1, sprite->GetRadarColor() );
 		} else {
 			if(sprite->GetID() == Hud::GetTarget() && Timer::GetTicks() % 1000 < 100)
-				Video::DrawCircle( blip, 1, 2, Color::Get(0xff, 0xff, 0xff));
+				Video::DrawCircle( blip, 1, 2, WHITE );
 			else
 				Video::DrawPoint( blip, sprite->GetRadarColor() );
 		}

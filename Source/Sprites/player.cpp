@@ -18,17 +18,34 @@
  * \brief Main player-specific functions and handle. */
 
 Player *Player::pInstance = 0;
+
 /**\brief Fetch the current player Instance
  */
 Player *Player::Instance( void ) {
-	if( pInstance == NULL ) { // is this the first call?
-		LogMsg(ERR,"Attempting to use Player information when no player is loaded!");
+	if( pInstance == NULL ) {
+		LogMsg(ERR, "Attempting to use Player information when no player is loaded!");
 		assert(0);
 	}
 
 	return( pInstance );
 }
 
+/**\brief Set a function to control the Player
+ */
+void Player::SetLuaControlFunc( string _luaControlFunc ) {
+	LogMsg(INFO, "Setting Player control to '%s'", _luaControlFunc.c_str() );
+	luaControlFunc = _luaControlFunc;
+}
+
+/**\brief Return full control to the player.
+ */
+void Player::RemoveLuaControlFunc() {
+	LogMsg(INFO, "Clearing Player control '%s'", luaControlFunc.c_str() );
+	luaControlFunc = "";
+}
+
+/**\brief Fetch the current player Instance
+ */
 void Player::AcceptMission( Mission *mission ) {
 	assert( mission != NULL );
 	mission->Accept();
@@ -36,6 +53,8 @@ void Player::AcceptMission( Mission *mission ) {
 	LogMsg(INFO, "Player has accepted the Mission to %s", mission->GetName().c_str() );
 }
 
+/**\brief Fetch the current player Instance
+ */
 void Player::RejectMission( string missionName ) {
 	list<Mission*>::iterator iter;
 	for( iter=missions.begin(); iter!=missions.end(); ++iter )
@@ -55,7 +74,7 @@ void Player::RejectMission( string missionName ) {
 /**\brief set name of last planet visited
  */
 void Player::setLastPlanet( string planetName){
-	lastPlanet=planetName;
+	lastPlanet = planetName;
 }
 
 /**\brief Constructor
@@ -373,6 +392,14 @@ Players *Players::Instance( void ) {
 Player* Players::CreateNew(string playerName) {
 	Player* newPlayer = new Player;
 
+	LogMsg(INFO, "Creating New Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+		playerName.c_str(),
+		defaultModel->GetName().c_str(),
+		defaultEngine->GetName().c_str(),
+		defaultCredits,
+		defaultLocation.GetX(), defaultLocation.GetY()
+	);
+
 	newPlayer->name = playerName;
 
 	newPlayer->SetModel( defaultModel );
@@ -457,6 +484,13 @@ Player* Players::LoadPlayer(string playerName) {
 	Player::pInstance = newPlayer;
 
 	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
+	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+		newPlayer->GetName().c_str(),
+		newPlayer->GetModel()->GetName().c_str(),
+		newPlayer->GetEngine()->GetName().c_str(),
+		newPlayer->GetCredits(),
+		newPlayer->GetWorldPosition().GetX(), newPlayer->GetWorldPosition().GetY()
+	);
 	return newPlayer;
 }
 

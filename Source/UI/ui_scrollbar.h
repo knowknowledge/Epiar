@@ -8,15 +8,14 @@
 #ifndef __H_SCROLLBAR__
 #define __H_SCROLLBAR__
 
-#define SCROLLBAR_THICK		15
-#define SCROLLBAR_PAD		8
-#define SCROLLBAR_MINMARK	10	// Minimum marker size
-#define SCROLLBAR_BTN		18	// Scrollbar button size
-#define SCROLLBAR_SCROLL	20	// Amount of scrolling per click
+#include "Graphics/image.h"
+#include "UI/ui.h"
+
+#define SCROLLBAR_SCROLL	20	///< Amount of scrolling per click
 
 class Scrollbar : public Widget {
 	public:
-		Scrollbar( int x, int y, int length, Widget *parent );
+		Scrollbar( int x, int y, int length, int maxpos );
 
 		~Scrollbar();
 
@@ -35,7 +34,7 @@ class Scrollbar : public Widget {
 		void ScrollUp( int pix = SCROLLBAR_SCROLL );
 		void ScrollDown( int pix = SCROLLBAR_SCROLL );
 
-		int pos, maxpos;
+		int GetPos() { return pos; }
 
 	private:
 		int GetMarkerSize( void );
@@ -43,9 +42,11 @@ class Scrollbar : public Widget {
 		int MarkerPixelToPos( int xr, int yr );
 		int CheckPos( int newpos );
 
-		int markersize;
-		Widget *parent;
+		int pos;        ///< The current Marker position
+		int maxpos;     ///< The Highest Marker position
+		int markersize; ///< The Size of the Marker
 
+		Image* bitmaps[6]; ///< The Scrollbar Images
 };
 
 #endif // __H_SCROLLBAR__

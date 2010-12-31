@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "UI/ui.h"
 #include "Utilities/xml.h"
+#include "UI/ui_container.h"
 
 /**\class Container
  * \brief Container is a container class for other widgets.
@@ -15,8 +16,11 @@
 
 /**\brief Constructor, initializes default values.*/
 Container::Container( string _name, bool _mouseHandled ):
-	mouseHandled( _mouseHandled ), keyboardFocus( NULL ),mouseHover( NULL ),
-	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ){
+	mouseHandled( _mouseHandled ), keyboardFocus( NULL ), mouseHover( NULL ),
+	lmouseDown( NULL ), mmouseDown( NULL ), rmouseDown( NULL ),
+	vscrollbar( NULL ),
+	formbutton( NULL )
+{
 	name = _name;
 }
 
@@ -38,6 +42,9 @@ Container::~Container( void ) {
 	lmouseDown = NULL;
 	mmouseDown = NULL;
 	rmouseDown = NULL;
+	
+	vscrollbar = NULL;
+	formbutton = NULL;
 }
 
 /**\brief Adds a child to the current container.
@@ -47,22 +54,38 @@ Container *Container::AddChild( Widget *widget ) {
 	if( widget != NULL ) {
 		children.push_back( widget );
 	}
+	LogMsg(INFO, "Adding %s %s %p to %s", widget->GetType().c_str(), widget->GetName().c_str(), widget, GetName().c_str() );
+	// Check to see if widget is past the bounds.
+	ResetScrollBars();
 	return this;
 }
 
 /**\brief Deletes a child from the current container.
+ * \details This performs a breadth-first search to find the specified widget.
+ * \warn The search will stop as soon as it finds the first instance of the Widget pointer.
+ *       This means that if there are duplicate pointers to the same Widget, the
+ *       second instance will cause a seg fault since the Widget object will have been freed.
  */
 bool Container::DelChild( Widget *widget ){
+	bool not_scrollbar;
 	list<Widget *>::iterator i;
+
+	not_scrollbar = ( widget->GetMask() != WIDGET_SCROLLBAR );
 
 	// Scan all of the children
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == widget ) {
-			// FIXME BROKEN Uncommenting this delete causes memory corruption crashes on MSVC 2008 and 2010. PLEASE FIX!
-			//cout << "delchild called on " << (*i)->GetType() << endl;
-			//delete (*i);
+			// Ticket #96: The below delete had caused memory corruption on MSVC Compilations.
+			// The source of this bug has been fixed.
+			delete (*i);
 			i = children.erase( i );
-			Reset();
+			ResetInput();
+
+			// Don't reset the Scrollbars when it is a scrollbar being deleted
+			// This will cause a stack overflow.
+			if( not_scrollbar ) {
+				ResetScrollBars();
+			}
 
 			return true;
 		}
@@ -87,15 +110,23 @@ bool Container::Empty( void ){
 	for( i = children.begin(); i != children.end(); ++i ) {
 		delete (*i);
 	}
-
 	children.clear();
-	Reset();
+
+	ResetInput();
 
 	return true;
 }
 
 /**\brief Reset focus and events.*/
-bool Container::Reset( void ){
+bool Container::ResetInput( void ){
+	list<Widget *>::iterator i;
+
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			((Container*)(*i))->ResetInput();
+		}
+	}
+
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
 	this->lmouseDown = NULL;
@@ -112,18 +143,51 @@ bool Container::Reset( void ){
 Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	list<Widget *>::reverse_iterator i;
 
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
+
 	// Check children from top (last drawn) to bottom (first drawn).
 	for( i = children.rbegin(); i != children.rend(); ++i ) {
-		if( (*i)->Contains(relx, rely) ) {
+		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
+		    || (*i)->Contains(relx, rely + yoffset) ) // Non-Tabs
+		{ 
 			return (*i);
 		}
 	}
 	return( NULL );
 }
 
+/**\brief Check if a Widget exists in this Container
+ *
+ * \warn Do not run any methods on the possible Widget.  It may not exist.
+ *       Even calling possible->GetMask() will Segfault.
+ */
+bool Container::IsAttached( Widget* possible ) {
+	list<Widget *>::iterator i;
+	
+	// Search the direct children.
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i) == possible ) {
+			LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
+			return true;
+		}
+	}
+	
+	// Search the grandchildren
+	// This is a breadth first search.
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			if( ((Container*)(*i))->IsAttached( possible ) ) {
+				return true;
+			}
+		}
+	}
+
+	// Not found
+	return false;
+}
+
 /**\brief Search this Container for a Widget
  *
- * \see Container::Search
  */
 Widget *Container::Search( string full_query ) {
 	int section = 0;
@@ -270,10 +334,10 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	if( query.flags != 0 ) {
-		LogMsg(WARN, "Query '%s' did not end with a '/'", full_query.c_str() );
+		LogMsg(ERR, "Query '%s' did not end with a '/'", full_query.c_str() );
 	}
 
-	LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
+	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
 	return current;
 }
 
@@ -397,11 +461,34 @@ Widget *Container::PrevChild( Widget* widget, int mask) {
 /**\brief Draws this widget and all children widgets.
  */
 void Container::Draw( int relx, int rely ) {
+	int x, y;
+	
+	x = GetX() + relx;
+	y = GetY() + rely;
+
+	// Crop to prevent child widgets from spilling
+	Video::SetCropRect(x, y + 2, this->w, this->h);
+	
 	// Draw any children
 	list<Widget *>::iterator i;
 	
-	for( i = children.begin(); i != children.end(); i++ )
-		(*i)->Draw( this->x + relx, this->y + rely );
+	for( i = children.begin(); i != children.end(); ++i ) {
+		// Skip scrollbars
+		if ( (*i) == this->vscrollbar ){
+			(*i)->Draw( x, y );
+			continue;
+		}
+
+		int yscroll = 0;
+		if ( this->vscrollbar )
+			yscroll = vscrollbar->GetPos();
+
+		(*i)->Draw( x, y - yscroll );
+	}
+	
+	Video::UnsetCropRect();
+	
+	Widget::Draw(relx, rely);
 }
 
 /**\brief Mouse is currently moving over the widget, without button down.
@@ -410,6 +497,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -430,7 +518,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	if( !this->mouseHover ){
 		// We're on a widget, but nothing was hovered on before
 		// send enter event only
-		event_on->MouseEnter( xr,yr );
+		event_on->MouseEnter( xr,yr + yoffset );
 		this->mouseHover=event_on;
 		return true;
 	}
@@ -438,11 +526,11 @@ bool Container::MouseMotion( int xi, int yi ){
 		// We're on a widget, and leaving another widget
 		// send both enter and leave event
 		this->mouseHover->MouseLeave();
-		event_on->MouseEnter( x,y );
+		event_on->MouseEnter( xr,yr + yoffset );
 		this->mouseHover=event_on;
 	}
 
-	event_on->MouseMotion( xr, yr );
+	event_on->MouseMotion( xr, yr + yoffset );
 
 	return true;
 }
@@ -453,13 +541,14 @@ bool Container::MouseLUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( this->lmouseDown ){
 		if (this->lmouseDown == event_on) {
 			// Mouse up is on the same widget as the mouse down, send up event
-			event_on->MouseLUp( xr,yr );
+			event_on->MouseLUp( xr,yr + yoffset );
 			this->lmouseDown = NULL;
 			return true;
 		}else{
@@ -479,6 +568,7 @@ bool Container::MouseLDown( int xi, int yi ) {
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	// update drag coordinates in case this is draggable
 	dragX = xr;
@@ -486,16 +576,23 @@ bool Container::MouseLDown( int xi, int yi ) {
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
-	if( !event_on  ){
+	// If Nothing was clicked on
+	if( !event_on ){
 		//LogMsg(INFO,"Mouse Left down detect in %s.",this->name.c_str());
-		// Nothing was clicked on
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
 		this->keyboardFocus = NULL;
 		return this->mouseHandled;
 	}
+
 	// We clicked on a widget
-	event_on->MouseLDown( xr, yr );
+	
+	if( event_on == vscrollbar ) {
+		event_on->MouseLDown( xr, yr );
+	} else {
+		event_on->MouseLDown( xr, yr + yoffset );
+	}
+
 	this->lmouseDown = event_on;
 	if( !this->keyboardFocus )
 		// No widget had keyboard focus before
@@ -528,13 +625,14 @@ bool Container::MouseMUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
 		if ( this->mmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->mmouseDown = NULL;
-			return event_on->MouseMUp( xr, yr );
+			return event_on->MouseMUp( xr, yr + yoffset );
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->mmouseDown->MouseMRelease( );
@@ -551,11 +649,12 @@ bool Container::MouseMDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->mmouseDown=event_on;
-		return event_on->MouseMDown( xr, yr );
+		return event_on->MouseMDown( xr, yr + yoffset );
 	}
 	//LogMsg(INFO,"Mouse Middle down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
@@ -579,13 +678,14 @@ bool Container::MouseRUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
 		if ( this->rmouseDown == event_on ){
 			// Mouse up is on the same widget as mouse down, send event
 			this->rmouseDown = NULL;
-			return event_on->MouseRUp( xr, yr );
+			return event_on->MouseRUp( xr, yr + yoffset);
 		}else{
 			// Mouse up is on a different widget, send release event to old
 			this->rmouseDown->MouseRRelease();
@@ -602,11 +702,12 @@ bool Container::MouseRDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->rmouseDown=event_on;
-		return event_on->MouseRDown( xr, yr );
+		return event_on->MouseRDown( xr, yr + yoffset );
 	}
 	//LogMsg(INFO,"Mouse Right down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
@@ -630,12 +731,18 @@ bool Container::MouseWUp( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
-		return event_on->MouseWUp( xr,yr );
+	if( event_on && event_on->MouseWUp( xr,yr + yoffset ) ) {
+		return true;
+	}
+	if( vscrollbar ) {
+		vscrollbar->ScrollUp();
+		return true;
+	}
 	//LogMsg(INFO,"Mouse Wheel up detect in %s.",this->name.c_str());
-	return this->mouseHandled;
+	return false;
 }
 
 /**\brief Generic mouse wheel down function.
@@ -644,12 +751,18 @@ bool Container::MouseWDown( int xi, int yi ){
 	// Relative coordinate - to current widget
 	int xr = xi - this->x;
 	int yr = yi - this->y;
+	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
-	if( event_on )
-		return event_on->MouseWDown( xr,yr );
+	if( event_on && event_on->MouseWDown( xr,yr + yoffset ) ) {
+		return true;
+	}
+	if( vscrollbar ) {
+		vscrollbar->ScrollDown();
+		return true;
+	}
 	//LogMsg(INFO,"Mouse Wheel down detect in %s.",this->name.c_str());
-	return this->mouseHandled;
+	return false;
 }
 
 /**\brief Generic keyboard focus function.
@@ -696,10 +809,86 @@ bool Container::KeyPress( SDLKey key ) {
 		}
 
 		// Otherwise, pass the key Press normally
-		return keyboardFocus->KeyPress( key );
+		if( keyboardFocus->KeyPress( key ) ) {
+			return true;
+		}
 	}
+
+	// If the key is an ENTER then activate the form button when it has been assigned
+	if( (key == '\n') && (formbutton != NULL) ) {
+		formbutton->Activate();
+	}
+
 	//LogMsg(INFO,"Key press detect in %s.",this->name.c_str());
 	return false;
+}
+
+/**\brief Move the Scrollbars to the edges.
+ * \details This will always delete the current Scrollbars even if the size of
+ * the container hasn't fundamentally changed.  This is so that the Scrollbars
+ * are always the last Widgets in the Container.
+ */
+
+void Container::ResetScrollBars() {
+	bool has_vscrollbar;
+	int widget_height, widget_width;
+	int max_height, max_width;
+	max_height = 0;
+	max_width = 0;
+
+	// It doesn't make sense to add scrollbars for a Container without a size
+	if(this->w == 0 || this->h == 0 ) return;
+
+	// Remove the Current Scrollbar
+	has_vscrollbar = (vscrollbar != NULL);
+	if( this->vscrollbar != NULL ) {
+		Container::DelChild( this->vscrollbar );
+		this->vscrollbar = NULL;
+	}
+
+	// Find the Max edges
+	Widget* widget;
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		widget = *i;
+		widget_width  = widget->GetX() + widget->GetW();
+		widget_height = widget->GetY() + widget->GetH();
+		if( widget_height > max_height) max_height = widget_height;
+		if( widget_width > max_width) max_width = widget_width;
+	}
+
+	// Add a Vertical ScrollBar if necessary
+	if ( max_height > GetH() ){
+		int v_x = this->w;
+		int v_y = 0;
+		int v_l = this->h;
+
+		// Don't Log extra messages when the ScrollBar is simply being replaced.
+		if( !has_vscrollbar ) {
+			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]", GetName().c_str(),v_x,v_y,v_l );
+		}
+
+		this->vscrollbar = new Scrollbar(v_x, v_y, v_l, max_height);
+
+		children.push_back( this->vscrollbar );
+	} else if ( has_vscrollbar ) {
+		LogMsg(INFO, "Removing Vert ScrollBar to %s", GetName().c_str() );
+	}
+}
+
+Container* Container::SetFormButton( Button* button ) {
+	if( button == NULL ) {
+		LogMsg(INFO, "Clearing the Form Button for %s %s", GetType().c_str(), GetName().c_str() );
+		formbutton = NULL;
+	} else if( ! IsAttached( button ) ) {
+		LogMsg(INFO, "Cannot set %s to the Form Button for %s %s because it is not a childe of the Container.", button->GetName().c_str(), GetType().c_str(), GetName().c_str() );
+	} else {
+		LogMsg(INFO, "Setting %s to the Form Button for %s %s", button->GetName().c_str(), GetType().c_str(), GetName().c_str() );
+		assert( button->GetMask() & WIDGET_BUTTON );
+		formbutton = button;
+	}
+	ResetInput();
+	return this;
 }
 
 xmlNodePtr Container::ToNode() {
@@ -725,4 +914,5 @@ xmlNodePtr Container::ToNode() {
 	return thisNode;
 
 }
+
 

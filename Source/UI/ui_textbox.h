@@ -9,6 +9,8 @@
 #ifndef __H_TEXTBOX__
 #define __H_TEXTBOX__
 
+#include "Graphics/video.h"
+#include "Graphics/font.h"
 #include "Graphics/image.h"
 #include "UI/ui.h"
 
@@ -31,6 +33,11 @@ class Textbox : public Widget {
 
 		string lua_callback;
 		void (*clickCallBack)();
+
+		static Font* font;
+		static Color foreground;
+		static Color background;
+		static Color edge;
 };
 
 #endif // __H_TEXTBOX__

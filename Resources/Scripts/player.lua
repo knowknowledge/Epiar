@@ -432,7 +432,7 @@ function doHailSay(said)
 
 	local reply = hailResponses[said]
 
-	hailReplyLabel.setLabel(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
+	hailReplyLabel.setText(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
 	
 	hailResponses[said] = nil
 
@@ -450,8 +450,8 @@ function doHailSay(said)
 	if hailOption1 == nil then hailOption1 = "Goodbye" end
 	if hailOption2 == nil then hailOption2 = "Goodbye" end
 	
-	hailOption1Label.setLabel(hailOption1Label,hailOption1)
-	hailOption2Label.setLabel(hailOption2Label,hailOption2)
+	hailOption1Label.setText(hailOption1Label,hailOption1)
+	hailOption2Label.setText(hailOption2Label,hailOption2)
 
 end
 	
@@ -463,12 +463,12 @@ function doHailGreet()
 
 	if spritetype == 0x01 then
 		if targettedSprite:GetForbidden() == 1 then
-			hailReplyLabel.setLabel(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
+			hailReplyLabel.setText(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
 		else
-			hailReplyLabel.setLabel(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
+			hailReplyLabel.setText(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
 		end
 	elseif spritetype == 0x08 then
-		hailReplyLabel.setLabel(hailReplyLabel,"Hello there.")
+		hailReplyLabel.setText(hailReplyLabel,"Hello there.")
 	else
 		-- should not happen
 	end
@@ -479,7 +479,7 @@ function doHailInsult()
 	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
 
 	if targettedPlanet:GetForbidden() == 1 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Stop wasting our time, %s.",PLAYER:GetName()) )
 		return
 	end
 
@@ -487,13 +487,13 @@ function doHailInsult()
 	local r = getRand( os.time() + targettedPlanet:GetID(), 10 )
 
 	if r == 1 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
 		planet:SetForbidden(1) -- FIXME need to store this kind of thing some kind of structure that gets saved when the game is closed
 	elseif r == 2 then
-		hailReplyLabel.setLabel(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
+		hailReplyLabel.setText(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
 		addcredits( 100 )
 	else 
-		hailReplyLabel.setLabel(hailReplyLabel,"We are saddened by your insults.")
+		hailReplyLabel.setText(hailReplyLabel,"We are saddened by your insults.")
 	end
 end
 	
@@ -509,12 +509,12 @@ function doHailBFM()
 	local r = getRand( os.time() + targettedShip:GetID(), 8 )
 
 	if ( r == 1 ) then
-		hailReplyLabel.setLabel(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
+		hailReplyLabel.setText(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
 		-- 'friendly' means will never arbitrary select player as a target unless provoked
 		targettedShip:SetFriendly(1)
 	else
-		hailReplyLabel.setLabel(hailReplyLabel, "I don't think so.")
+		hailReplyLabel.setText(hailReplyLabel, "I don't think so.")
 		didBFM = 1
 	end
 end
@@ -613,10 +613,12 @@ end
 
 --- Try to land
 function attemptLanding()
-	if UI.search("/Window/Tabs'Store'") ~= nil then return end
+	if UI.search("/Window/Tabs'Store'/") ~= nil then return end
 
 	local x,y = PLAYER:GetPosition()
 	local planet = Epiar.nearestPlanet(PLAYER, 4096)
+	if planet == nil then return end
+
 	local px,py = planet:GetPosition()
 	local distance = distfrom(px, py, x,y)
 	local message = ""
@@ -772,7 +774,7 @@ function HudTargetShield()
 end
 
 function loadingWindow()
-	if loadingWin~=nil then return end
+	if UI.search("/'Load a Player'/") ~= nil then return end -- Abort if the loading window is already visible
 	Epiar.pause()
 	local width=300
 	local height=300
@@ -780,7 +782,7 @@ function loadingWindow()
 	local videoWidth = Video.getWidth()
 	local videoHeight = Video.getHeight()
 
-	loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
+	local loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
 
 	--- Load an old Player
 	yoff = 30
@@ -808,9 +810,9 @@ end
 
 function loadPlayer(playerName)
 	Epiar.loadPlayer(playerName)
-	if loadingWin~=nil then
+	local loadingWin = UI.search("/'Load a Player'/")
+	if loadingWin ~= nil then
 		loadingWin:close()
-		loadingWin=nil
 	end
 	playerStart()
 	Epiar.unpause()
@@ -825,13 +827,18 @@ function createNewPlayer()
 	end
 	Epiar.newPlayer(name)
 
-	loadingWin:close()
+	local loadingWin = UI.search("/'Load a Player'/")
+	if loadingWin ~= nil then
+		loadingWin:close()
+	end
 	playerStart()
 	intro()
 end
 
 function playerInformation()
+	local infoWin = UI.search("/'Player Info'/")
 	if infoWin~=nil then
+		local descriptionWindow = UI.search("/Window'Mission Description'/")
 		if descriptionWindow ~= nil then
 			descriptionWindow:close()
 			descriptionWindow = nil
@@ -908,24 +915,24 @@ function playerInformation()
 
 end
 
-----------------------------Experimental code by Dido--------------------------------------------------	
 -- Description window for individual mission in mission dialog
-	function ShowMissionDescription( _missionName, _missionDescription )
-		if descriptionWindow ~= nil then
-			descriptionWindow:close()
-			descriptionWindow = nil
-			--Epiar.unpause()
-			return
-		end
-		
-		--Epiar.pause()
-
-		--displayedDescription = _missionDescription
-		
-		descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" ) 
-		descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
-		rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); descriptionWindow:close()", _missionName) )
-		--currentDescription:close() 
-		descriptionWindow:add( descriptionLable, rejectButton )
+function ShowMissionDescription( _missionName, _missionDescription )
+	local descriptionWindow = UI.search("/Window'Mission Description'/")
+	if descriptionWindow ~= nil then
+		descriptionWindow:close()
+		descriptionWindow = nil
+		--Epiar.unpause()
+		return
 	end
----------------------------/Experimental code by Dido--------------------------------------------------
+
+	--Epiar.pause()
+
+	--displayedDescription = _missionDescription
+	
+	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
+	descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
+	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
+	--currentDescription:close()
+	descriptionWindow:add( descriptionLable, rejectButton )
+end
+

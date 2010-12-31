@@ -33,15 +33,16 @@
 
 class UI {
 	public:
-		UI();
+		UI() {}
 		~UI();
+
+		static bool Initialize( void );
 		
 		static Widget *Add( Widget *widget );
 		static void Draw( void );
 		static void Close( void );
 		static void Close( Widget *widget );
 		static void HandleInput( list<InputEvent> & events );
-		static void ResetInput(void);
 		static bool Active(void);
 		
 		static void RegisterKeyboardFocus( Widget *widget );
@@ -49,7 +50,11 @@ class UI {
 
 		static Widget *Search( string query );
 
+		static bool IsAttached( Widget* possible );
+
 		static void Save( void );
+
+		static Font* font;
 		
 	private:
 		static bool HandleKeyboard( InputEvent i );

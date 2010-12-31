@@ -78,7 +78,7 @@ void Button::Draw( int relx, int rely ) {
 	x = this->x + relx;
 	y = this->y + rely;
 	
-	Video::DrawRect( x, y, this->w, this->h, 1., 1., 1. );
+	Video::DrawRect( x, y, this->w, this->h, WHITE );
 
 	assert(bitmap_current);
 
@@ -87,11 +87,22 @@ void Button::Draw( int relx, int rely ) {
 
 	// draw the label
 	Video::SetCropRect(x + 1, y + 1, this->w - 2, this->h - 2); // constants adjust for the 1px border
-	SansSerif->SetColor( 1., 1., 1. );
-	SansSerif->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
+	UI::font->RenderTight( x + (w / 2), y + (h / 2), this->name, Font::CENTER,Font::MIDDLE );
 	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);
+}
+
+void Button::Activate() {
+	if( clickCallBack ){
+		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
+		clickCallBack();
+	} else if("" != lua_callback){
+		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
+		Lua::Run(lua_callback);
+	} else {
+		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
+	}
 }
 
 /**\brief When Left mouse is down on the button.*/
@@ -106,16 +117,7 @@ bool Button::MouseLDown( int xi, int yi ) {
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
 	bitmap_current = bitmap_mouseover;
-
-	if( clickCallBack ){
-		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack();
-	} else if("" != lua_callback){
-		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
-		Lua::Run(lua_callback);
-	} else {
-		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
-	}
+	Activate();
 	return true;
 }
 
@@ -129,7 +131,7 @@ bool Button::MouseLRelease( void ){
 bool Button::MouseEnter( int xi, int yi ){
 	bitmap_current = bitmap_mouseover;
 	hovering = true;
-	LogMsg(INFO,"Mouse enter detect in %s.",this->name.c_str());
+	LogMsg(INFO,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
 
@@ -138,6 +140,6 @@ bool Button::MouseEnter( int xi, int yi ){
 bool Button::MouseLeave( void ){
 	bitmap_current = bitmap_normal;
 	hovering = false;
-	LogMsg(INFO,"Mouse leave detect in %s.",this->name.c_str());
+	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }

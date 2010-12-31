@@ -129,9 +129,12 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 		}
 
 		fprintf(fp, "<log>\n");
-		fprintf(fp, "\t<function>%s</function>\n\t<type>%s</type>\n\t<time>%s</time>\n\t<message>", func.c_str(), lvlStrings[lvl].c_str(), timestamp );
-		fprintf(fp, "%s", logBuffer );
-		fprintf(fp, "</message>\n</log>\n" );
+		fprintf(fp, "\t<function>%s</function>\n", func.c_str() );
+		fprintf(fp, "\t<type>%s</type>\n", lvlStrings[lvl].c_str() );
+		fprintf(fp, "\t<time>%s</time>\n", timestamp );
+		fprintf(fp, "\t<message>%s</message>\n", logBuffer );
+		fprintf(fp, "</log>\n" );
+		fflush( fp );
 	}
 }
 

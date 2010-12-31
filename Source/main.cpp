@@ -36,8 +36,9 @@ Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
 ArgParser *argparser;
 
 void Main_OS                ( int argc, char **argv ); ///< Run OS Specific setup code
-void Main_Init_Singletons   ( int argc, char **argv ); ///< Initialize global Singletons
-void Main_Parse_Args        ( ); ///< Parse Command Line Arguments
+void Main_Load_Settings     (); ///< Load the settings files
+void Main_Init_Singletons   (); ///< Initialize global Singletons
+void Main_Parse_Args        ( int argc, char **argv ); ///< Parse Command Line Arguments
 void Main_Log_Environment   ( void ); ///< Record Environment variables
 void Main_Menu              ( void ); ///< Run the Main Menu
 void Main_Close_Singletons  ( void ); ///< Close global Singletons
@@ -54,13 +55,14 @@ void Main_Close_Singletons  ( void ); ///< Close global Singletons
 int main( int argc, char **argv ) {
 	// Basic Setup
 	Main_OS( argc, argv );
-	Main_Init_Singletons( argc, argv );
+	Main_Load_Settings();
 
 	// Respond to Command Line Arguments
-	Main_Parse_Args();
+	Main_Parse_Args( argc, argv );
 	Main_Log_Environment();
 
 	// THE GAME
+	Main_Init_Singletons();
 	Main_Menu();
 
 	// Close everything and Quit
@@ -106,9 +108,95 @@ void Main_OS( int argc, char **argv ) {
 
 }
 
+/** \brief Load the options files
+ *  \details This will load the options.xml and skin.xml files.
+ *           The options.xml file defines miscellaneous flags and numerical settings.
+ *           The skin.xml file defines the non-png aspects of the User Interface.
+ *  \todo If these files do not exist, reasonable defaults should be loaded instead.
+ */
+void Main_Load_Settings() {
+	optionsfile = new XMLFile();
+	if( !optionsfile->Open("Resources/Definitions/options.xml") )
+	{
+		// Create the default Options file
+		optionsfile->New("Resources/Definitions/options.xml", "options");
+
+		// Logging
+		SETOPTION( "options/log/xml", 0 );
+		SETOPTION( "options/log/out", 1 );
+		SETOPTION( "options/log/ui", 0 );
+		SETOPTION( "options/log/sprites", 0 );
+
+		// Video
+		SETOPTION( "options/video/w", 1024 );
+		SETOPTION( "options/video/h", 768 );
+		SETOPTION( "options/video/bpp", 32 );
+		SETOPTION( "options/video/fullscreen", 0 );
+		SETOPTION( "options/video/fps", 60 );
+
+		// Sound
+		SETOPTION( "options/sound/musicvolume", 0.5f );
+		SETOPTION( "options/sound/soundvolume", 0.5f );
+		SETOPTION( "options/sound/background", 1 );
+		SETOPTION( "options/sound/weapons", 1 );
+		SETOPTION( "options/sound/engines", 1 );
+		SETOPTION( "options/sound/explosions", 1 );
+		SETOPTION( "options/sound/buttons", 1 );
+
+		// Simultaion
+		SETOPTION( "options/simulation/starfield-density", 750 );
+		SETOPTION( "options/simulation/automatic-load", 0 );
+		SETOPTION( "options/simulation/random-universe", 0 );
+		SETOPTION( "options/simulation/random-seed", 0 );
+
+		// Timing
+		SETOPTION( "options/timing/mouse-fade", 500 );
+		SETOPTION( "options/timing/target-zoom", 500 );
+		SETOPTION( "options/timing/alert-drop", 3500 );
+		SETOPTION( "options/timing/alert-fade", 2500 );
+
+		// Development
+		SETOPTION( "options/development/ships-worldmap", 0 );
+		SETOPTION( "options/development/debug-ai", 0 );
+		SETOPTION( "options/development/debug-ui", 0 );
+
+		optionsfile->Save();
+	}
+
+	skinfile = new XMLFile();
+	if( !skinfile->Open("Resources/Definitions/skin.xml") )
+	{
+		// Create the default Skin file
+		skinfile->New("Resources/Definitions/skin.xml", "Skin");
+
+		// UI - Default
+		skinfile->Set( "Skin/UI/Default/Font", "Resources/Fonts/FreeSans.ttf");
+		skinfile->Set( "Skin/UI/Default/Color", "0xFFFFFF");
+		skinfile->Set( "Skin/UI/Default/Size", 12);
+
+		// UI - Textbox
+		skinfile->Set( "Skin/UI/Textbox/Font", "Resources/Fonts/FreeMono.ttf");
+		skinfile->Set( "Skin/UI/Textbox/Color/Foreground", "0xCCCCCC");
+		skinfile->Set( "Skin/UI/Textbox/Color/Background", "0x666666");
+		skinfile->Set( "Skin/UI/Textbox/Color/Edge", "0x262626");
+
+		// UI - Tab
+		skinfile->Set( "Skin/UI/Tab/Color/Active", "0x393939");
+		skinfile->Set( "Skin/UI/Tab/Color/Inactive", "0x262626");
+
+		// HUD - Alert
+		skinfile->Set( "Skin/HUD/Alert/Font", "Resources/Fonts/FreeSans.ttf");
+		skinfile->Set( "Skin/HUD/Alert/Color", "0xFFFFFF");
+		skinfile->Set( "Skin/HUD/Alert/Size", 12);
+
+		skinfile->Save();
+	}
+}
+
 /** \details
  *  This will initialize the singletons for this Epiar instance:
- *   - OPTIONS
+ *   - OPTIONS (optionsfile)
+ *   - SKIN (skinfile)
  *   - Audio
  *   - Fonts
  *   - Timer
@@ -125,21 +213,7 @@ void Main_OS( int argc, char **argv ) {
  *
  *  \warn This may exit early on Errors
  */
-void Main_Init_Singletons( int argc, char **argv ) {
-	optionsfile = new XMLFile();
-	if( !optionsfile->Open("Resources/Definitions/options.xml") )
-	{
-		fprintf(stderr, "Failed to find Options file at 'Resources/Definitions/options.xml'. Aborting Epiar.");
-		exit(-1);
-	}
-
-	skinfile = new XMLFile();
-	if( !skinfile->Open("Resources/Definitions/skin.xml") )
-	{
-		fprintf(stderr, "Failed to find Skin file at 'Resources/Definitions/skin.xml'. Aborting Epiar.");
-		exit(-1);
-	}
-
+void Main_Init_Singletons() {
 	Audio::Instance().Initialize();
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
@@ -151,29 +225,7 @@ void Main_Init_Singletons( int argc, char **argv ) {
 
 	Timer::Initialize();
 	Video::Initialize();
-
-	// Parse command line options first.
-	argparser = new ArgParser(argc, argv);
-
-	argparser->SetOpt(SHORTOPT, "h",             "Display help screen");
-	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
-	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
-	argparser->SetOpt(LONGOPT, "version",        "Display program version");
-	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
-	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
-	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
-	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
-	argparser->SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
-	argparser->SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
-	argparser->SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
-	                                             "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
-	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
-	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
-	argparser->SetOpt(LONGOPT,  "ui-demo",       "Runs the UI demo.");
-
-#ifdef EPIAR_COMPILE_TESTS
-	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
-#endif // EPIAR_COMPILE_TESTS
+	UI::Initialize();
 
 	srand ( time(NULL) );
 }
@@ -209,7 +261,29 @@ void Main_Close_Singletons( void ) {
  *  
  *  \warn This may exit early.
  */
-void Main_Parse_Args( ) {
+void Main_Parse_Args( int argc, char **argv ) {
+	// Parse command line options first.
+	argparser = new ArgParser(argc, argv);
+
+	argparser->SetOpt(SHORTOPT, "h",             "Display help screen");
+	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
+	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
+	argparser->SetOpt(LONGOPT, "version",        "Display program version");
+	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
+	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
+	argparser->SetOpt(LONGOPT, "nolog-out",      "Disable logging messages to console.");
+	argparser->SetOpt(LONGOPT, "ships-worldmap", "Displays ships on the world map.");
+	argparser->SetOpt(VALUEOPT, "log-lvl",       "Logging level.(None,Fatal,Critical,Error,"
+	                                             "\n\t\t\t\tWarn,Alert,Notice,Info,Verbose[1-3],Debug[1-4])");
+	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
+	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
+	argparser->SetOpt(LONGOPT,  "ui-demo",       "Runs the UI demo.");
+
+#ifdef EPIAR_COMPILE_TESTS
+	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
+#endif // EPIAR_COMPILE_TESTS
 
 	// These are immediate options (I.E. they stop the argument processing immediately)
 	if ( argparser->HaveShort("h") || argparser->HaveLong("help") ){
@@ -316,52 +390,73 @@ void ui_test() {
 
 	// Example of Nestable UI Creation
 	UI::Add(
-		(new Tabs( 50,50,500,500, "TEST TABS"))
-		->AddChild( (new Tab( "Nested Frames" ))
-			->AddChild( (new Button(10, 10, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Frame( 50,50,400,400 ))
-				->AddChild( (new Button(10, 10, 100, 30, "Quit 2",    clickQuit    )) )
-				->AddChild( (new Frame( 50,50,300,300 ))
-					->AddChild( (new Button(10, 10, 100, 30, "Quit 3",    clickQuit    )) )
-					->AddChild( (new Frame( 50,50,200,200 ))
-						->AddChild( (new Button(10, 10, 100, 30, "Quit 4",    clickQuit    )) )
+		(new Window( 20, 20, 600, 600, "A Window"))
+		->AddChild( (new Tabs( 50, 50, 500, 500, "TEST TABS"))
+			->AddChild( (new Tab( "Nested Frames" ))
+				->AddChild( (new Button(10, 10, 100, 30, "Quit 1",    clickQuit    )) )
+				->AddChild( (new Frame( 50,50,400,400 ))
+					->AddChild( (new Button(10, 10, 100, 30, "Quit 2",    clickQuit    )) )
+					->AddChild( (new Frame( 50,50,300,300 ))
+						->AddChild( (new Button(10, 10, 100, 30, "Quit 3",    clickQuit    )) )
+						->AddChild( (new Frame( 50,50,200,200 ))
+							->AddChild( (new Button(10, 10, 100, 30, "Quit 4",    clickQuit    )) )
+						)
 					)
 				)
 			)
-		)
-		->AddChild( (new Tab( "Scoll to Buttons" ))
-			->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
-			->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
-			->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
-			->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
-			->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
-			->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
-			->AddChild( (new Frame( 250,50,300,300 ))
-				->AddChild( (new Button(10,   0, 100, 30, "Quit 1",    clickQuit    )) )
-				->AddChild( (new Button(10, 100, 100, 30, "Quit 1",    clickQuit    )) )
-				->AddChild( (new Button(10, 200, 100, 30, "Quit 2",    clickQuit    )) )
-				->AddChild( (new Button(10, 300, 100, 30, "Quit 3",    clickQuit    )) )
-				->AddChild( (new Button(10, 400, 100, 30, "Quit 4",    clickQuit    )) )
-				->AddChild( (new Button(10, 500, 100, 30, "Quit 5",    clickQuit    )) )
-				->AddChild( (new Button(10, 600, 100, 30, "Quit 6",    clickQuit    )) )
+			->AddChild( (new Tab( "Scoll to Buttons" ))
+				->AddChild( (new Label(10,   0, "Scroll Down")) )
+				->AddChild( (new Frame( 150, 50, 200, 300 ))
+					->AddChild( (new Label(10,   0, "Scroll Down")) )
+					->AddChild( (new Button(10, 300, 100, 30, "Quit",    clickQuit    )) )
+					->AddChild( (new Label(10, 600, "Scroll Up")) )
+				)
+				->AddChild( (new Label(10, 600, "Scroll Up")) )
+			)
+			->AddChild( (new Tab("A Picture"))
+				->AddChild( (new Picture(10, 0, 400, 400, "Resources/Art/menu2.png")) )
+			)
+			->AddChild( (new Tab("Some Inputs"))
+				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
+				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
+				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f, "" )) )
+				->AddChild( (new Button(10, 300, 100, 30, "Quit", clickQuit )) )
+				->AddChild( (new Dropdown(200, 200, 100, 30))
+					->AddOption("Lorem")
+					->AddOption("Ipsum")
+					->AddOption("Dolar")
+					->AddOption("Sit")
+				)
+				->AddChild( (new Dropdown(300, 200, 100, 20))
+					->AddOption("One Fish")
+					->AddOption("Two Fish")
+					->AddOption("Red Fish")
+					->AddOption("Blue Fish")
+				)
 			)
 		)
 	);
 
-	assert( NULL != UI::Search("/[0]/") );
-	assert( NULL != UI::Search("/Tabs/") );
+	// Check that the UI Searching is working
+	assert( NULL != UI::Search("/[0]/") ); 
+	assert( NULL != UI::Search("/Window/") );
+	assert( NULL != UI::Search("/Window/Tabs/") );
 	assert( NULL != UI::Search("/(100,100)/") );
-	assert( NULL != UI::Search("/'TEST TABS'/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab[1]/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/Frame/") );
-	assert( NULL != UI::Search("/'TEST TABS'/[0]/(60,60)/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Button/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Button/") );
-	assert( NULL != UI::Search("/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab[1]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/Frame/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/(60,60)/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
+
+	// Set a test Form button
+	((Tab*)( UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/"))) ->SetFormButton(
+		(Button*) UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/Button'Quit'/")
+	);
 }
 
 /** Epiar's Main Menu

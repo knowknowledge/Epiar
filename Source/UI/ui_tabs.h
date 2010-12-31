@@ -13,24 +13,26 @@
 class Tab : public Container {
 	public:
 		Tab( const string& _caption );
+		~Tab();
 		Tab *AddChild( Widget *widget );
-		Widget *DetermineMouseFocus( int relx, int rely );
 
-		bool MouseWUp( int xi, int yi );
-		bool MouseWDown( int xi, int yi );
+		void DrawHandle( int realx, int realy, bool active );
 
-		void Draw( int relx = 0, int rely = 0 );
+		int GetHandleWidth( bool active );
 
 		string GetType( void ) {return string("Tab");}
 		virtual int GetMask( void ) { return WIDGET_TAB | WIDGET_CONTAINER; }
 
-		friend class Tabs;
-
 	private:
 		int capw;
 
-		void ResetScrollBars();
-		Scrollbar *vscrollbar;
+		Image *active_left;
+		Image *active_middle;
+		Image *active_right;
+
+		Image *inactive_left;
+		Image *inactive_middle;
+		Image *inactive_right;
 };
 
 class Tabs : public Container {
@@ -48,6 +50,9 @@ class Tabs : public Container {
 	private:
 		Tab* CheckTabClicked( int xr, int yr );
 		Tab* activetab;
+
+		Color background;
+		Color edge;
 };
 
 

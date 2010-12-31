@@ -49,7 +49,6 @@ end
 
 --- Pause the game
 function togglePause()
-	io.write("Toggling...\n")
 	if 1 == Epiar.ispaused() then
 		Epiar.unpause()
 	else
@@ -404,7 +403,7 @@ end
 --- Buys a ship
 function buyShip(model)
 	if model==nil then
-		local viewerLabel = UI.search("/Window/Tabs'Store'/'Ship Yard'/Frame[1]/Label[0]/")
+		local viewerLabel = UI.search("/Window/Tabs'Store'/'ShipYard'/Frame[1]/Label[0]/")
 		if viewerLabel ~= nil then
 			model = viewerLabel:GetText()
 			print('Buying ',model)
@@ -652,7 +651,7 @@ function storeView(containerPath, itemType, itemName )
 	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
 
 	for statname,value in pairs(iteminfo) do
-		print(statname, value )
+		-- print(statname, value )
 		-- Skip these kinds
 		if statname == "Name"
 		or statname == "MSRP"
@@ -691,29 +690,27 @@ function landingDialog(id)
 
 	function addToStoreList( storeList, list, yoff, cmd, container )
 		for i,name in ipairs(list) do
-			storeList:add( UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, string.format( cmd, container, name ) ))
+			local callback = string.format( cmd, container, name )
+			local pic = UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
+			pic:setLuaClickCallback( callback )
+			storeList:add( pic )
+			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, callback ))
 			yoff = yoff + 30 + boxsize
 		end
 		return yoff
 	end
 
 	-- Shipyard
-	local shipyard = UI.newTab("Ship Yard")
+	local shipyard = UI.newTab("ShipYard")
 	local shipList = UI.newFrame( 10, 10, 160, 360 )
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
-	for i,name in ipairs(models) do
-		shipList:add(UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1))
-		yoff = yoff+boxsize
-		shipList:add( UI.newButton( 15, yoff, boxsize, 20, name, string.format("storeView(%q, 'ship', %q)", "/Window/Tabs'Store'/'Ship Yard'/", name)))
-		yoff = yoff+30
-	end
+	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)",  "/Window/Tabs'Store'/'ShipYard'/" )
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
-	storeView( "/Window/Tabs'Store'/'Ship Yard'/" , 'ship',models[1])
+	storeView( "/Window/Tabs'Store'/'ShipYard'/" , 'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
@@ -727,8 +724,8 @@ function landingDialog(id)
 	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", "/Window/Tabs'Store'/'Outfitting'/")
 	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", "/Window/Tabs'Store'/'Outfitting'/")
 	storeframe:add(outfitting)
-	outfitting:add( UI.newButton( width-200,340,100,30,"Buy","buyOutfit()" ))
-	outfitting:add( UI.newButton( width-200,340,100,30,"Sell","sellOutfit()" ))
+	outfitting:add( UI.newButton( width-250,340,100,30,"Sell","sellOutfit()" ))
+	outfitting:add( UI.newButton( width-150,340,100,30,"Buy","buyOutfit()" ))
 
 	if #weapons > 0 then     storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'weapon', weapons[1])
 	elseif #engines > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'engine', engines[1])
@@ -836,7 +833,7 @@ end
 
 -- interactive weapon slot configuration
 function weaponConfigDialog()
-	if UI.search("/Weapon Configuration/") ~= nil then return end
+	if UI.search("/Window'Weapon Configuration'/") ~= nil then return end
 
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
@@ -868,7 +865,7 @@ function weaponConfigDialog()
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
-	wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
+	local wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
 
 	wcDialog:add(shipLabel)
 	wcDialog:add(leftFrame, rightFrame);
@@ -904,7 +901,6 @@ end
 function assignWeaponToSlot(slot)
 	if(pickedSlot == nil) then
 		pickedSlot = slot
-		--slotButtons[pickedSlot]:setLabel("This causes a UI problem. See ticket #113.")
 	else
 		-- swap contents of pickedSlot and slot
 		local s = PLAYER:GetWeaponSlotStatus(slot)
@@ -929,7 +925,9 @@ end
 
 function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
+	local wcDialog = UI.search("/Window'Weapon Configuration'/")
 	wcDialog:close()
 	slotButtons = nil
+	pickedSlot = nil
 	wcDialog = nil
 end

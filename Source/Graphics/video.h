@@ -16,54 +16,30 @@
 
 #define EPIAR_VIDEO "Video"
 
-#define BLACK     ( Color::Get(0x00,0x00,0x00) )
-#define WHITE     ( Color::Get(0xFF,0xFF,0xFF) )
-#define RED       ( Color::Get(0xFF,0x00,0x00) )
-#define ORANGE    ( Color::Get(0xFF,0x7F,0x00) )
-#define YELLOW    ( Color::Get(0xFF,0xFF,0x00) )
-#define GREEN     ( Color::Get(0x00,0xFF,0x00) )
-#define BLUE      ( Color::Get(0x00,0x00,0xFF) )
-#define GREY      ( Color::Get(0x80,0x80,0x80) )
+#define BLACK     ( Color(0x00,0x00,0x00) )
+#define WHITE     ( Color(0xFF,0xFF,0xFF) )
+#define RED       ( Color(0xFF,0x00,0x00) )
+#define ORANGE    ( Color(0xFF,0x7F,0x00) )
+#define YELLOW    ( Color(0xFF,0xFF,0x00) )
+#define GREEN     ( Color(0x00,0xFF,0x00) )
+#define BLUE      ( Color(0x00,0x00,0xFF) )
+#define PURPLE    ( Color(0x80,0x00,0x80) )
+#define GREY      ( Color(0x80,0x80,0x80) )
 #define GRAY      GREY
-#define GOLD      ( Color::Get(0xFF,0xD7,0x80) )
+#define GOLD      ( Color(0xFF,0xD7,0x80) )
 
 class Color {
 	public:
 	float r, g, b;
 
-	static Color Get( int r, int g, int b ) {
-		Color clr;
+	Color();
+	Color& operator=(Color other);
 
-		clr.r = static_cast<float> (r / 255.);
-		clr.g = static_cast<float> (g / 255.);
-		clr.b = static_cast<float> (b / 255.);
+	Color( int r, int g, int b );
+	Color( float r, float g, float b );
+	Color( string str );
 
-		return clr;
-	}
-	static Color Get( float r, float g, float b ) {
-		Color clr;
-
-		clr.r = r;
-		clr.g = g;
-		clr.b = b;
-
-		return clr;
-	}
-	static Color Get( string str ) {
-		// string must be in hex format.
-		int n;
-		Color clr;
-
-		stringstream ss;
-		ss << std::hex << str;
-		ss >> n;
-
-		clr.r = ((n >> 16) & 0xFF ) / 255.0f;
-		clr.g = ((n >>  8) & 0xFF ) / 255.0f;
-		clr.b = ((n      ) & 0xFF ) / 255.0f;
-
-		return clr;
-	}
+	Color operator*(float delta);
 };
 
 class Rect {

@@ -80,11 +80,14 @@ class Widget {
 		virtual bool KeyboardLeave( void );
 		virtual bool KeyPress( SDLKey key );
 
-		bool hovering, hidden, disabled;	// If this widget should be hidden or disabled
-		int x, y, w, h;
-		int dragX, dragY;		// if dragging, this is the offset from (x,y) to the point of click for the drag
-		string name;
-		bool keyactivated;		// remember if this widget has keyboard activation
+		string name;            ///< This widget's Name.  Names should be relatively unique.
+		bool hovering;          ///< Is the user currently hovering over this widget?
+		bool hidden;            ///< Is this widget is hidden?
+		bool disabled;          ///< Is this widget is disabled?
+		bool keyactivated;		///< Is this widget has keyboard activation.
+		int x, y;               ///< The Location of this widget.
+		int w, h;               ///< The Width and Height of this widget.
+		int dragX, dragY;		///< if dragging, this is the offset from (x,y) to the point of click for the drag
 };
 
 #endif // __H_UI_WIDGET__

@@ -13,8 +13,6 @@
 #include "Utilities/log.h"
 
 #define TAB_HEADER 20
-#define TAB_PAD 8
-#define TAB_TEXT_ALIGNMENT 2
 
 /**\class Tab
  * \brief A single tab.
@@ -22,136 +20,59 @@
 
 /**\brief Constructs a single tab with caption.
  */
-Tab::Tab( const string& _caption ){
-	this->x=x;
-	this->y=TAB_HEADER;
-	this->h=0;
-	this->w=0;
-	this->name=_caption;
+Tab::Tab( const string& _caption ) {
+	this->x = x;
+	this->y = TAB_HEADER;
+	this->h = 0;
+	this->w = 0;
+	this->name = _caption;
 
-	this->vscrollbar = NULL;
+	active_left = Image::Get("Resources/Graphics/active-tab-left.png");
+	active_middle = Image::Get("Resources/Graphics/active-tab-middle.png");
+	active_right = Image::Get("Resources/Graphics/active-tab-right.png");
 
-	this->capw = SansSerif->TextWidth( _caption );
+	inactive_left = Image::Get("Resources/Graphics/inactive-tab-left.png");
+	inactive_middle = Image::Get("Resources/Graphics/inactive-tab-middle.png");
+	inactive_right = Image::Get("Resources/Graphics/inactive-tab-right.png");
+
+	this->capw = UI::font->TextWidth( _caption );
+}
+
+Tab::~Tab() {
+	active_left = NULL;
+	active_middle = NULL;
+	active_right = NULL;
+
+	inactive_left = NULL;
+	inactive_middle = NULL;
+	inactive_right = NULL;
 }
 
 /**\brief Adds children to the Tab object.
  */
-Tab *Tab::AddChild( Widget *widget ){
+Tab *Tab::AddChild( Widget *widget ) {
 	assert( widget != NULL );
 	Container::AddChild( widget );
-	// Check to see if widget is past the bounds.
-	ResetScrollBars();
 	return this;
 }
 
-/**\brief Determines focused widget based on scrolled position.*/
-Widget *Tab::DetermineMouseFocus( int relx, int rely ){
-	list<Widget *>::iterator i;
+void Tab::DrawHandle( int realx, int realy, bool active ) {
+	Image* left = active ? active_left : inactive_left;
+	Image* middle = active ? active_middle : inactive_middle;
+	Image* right = active ? active_right : inactive_right;
+	
+	left->Draw( realx, realy );
+	middle->DrawTiled( realx + left->GetWidth(), realy, capw, middle->GetHeight() );
+	right->Draw( realx + left->GetWidth() + capw , realy );
 
-	int xoffset = 0;
-	int yoffset = this->vscrollbar ? this->vscrollbar->pos : 0;
-
-	for( i = children.begin(); i != children.end(); ++i ) {
-		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
-		    || (*i)->Contains(relx+xoffset, rely+yoffset) ) { // Non-Tabs
-			return (*i);
-		}
-	}
-	return( NULL );
+	UI::font->Render( realx + left->GetWidth(), realy, GetName() );
 }
 
-/**\brief Implements scroll wheel up.*/
-bool Tab::MouseWUp( int xi, int yi ){
-	if( this->vscrollbar) this->vscrollbar->ScrollUp();
-	return true;
-}
-
-/**\brief Implements scroll wheel down.*/
-bool Tab::MouseWDown( int xi, int yi ){
-	if( this->vscrollbar ) this->vscrollbar->ScrollDown();
-	return true;
-}
-
-
-/**\brief Draws the Tab contents.
- */
-void Tab::Draw( int relx, int rely ) {
-	int x, y;
-	
-	x = GetX() + relx;
-	y = GetY() + rely;
-
-	// Crop to prevent child widgets from spilling
-	Video::SetCropRect(x, y + 2, this->w - SCROLLBAR_PAD, this->h - SCROLLBAR_PAD + 4);
-	
-	// Draw any children
-	list<Widget *>::iterator i;
-	
-	for( i = children.begin(); i != children.end(); ++i ) {
-		// Skip scrollbars
-		if ( (*i) == this->vscrollbar ){
-			(*i)->Draw( x, y );
-			continue;
-		}
-
-		int xscroll = 0;
-		int yscroll = 0;
-		if ( this->vscrollbar )
-			yscroll = vscrollbar->pos;
-
-		(*i)->Draw( x - xscroll, y - yscroll );
-	}
-	
-	Video::UnsetCropRect();
-	
-	Widget::Draw(relx,rely);
-}
-
-
-/**\brief Move the Scrollbars to the edges.
- */
-
-void Tab::ResetScrollBars(){
-	int widget_height,widget_width;
-	int max_height,max_width;
-	max_height=0;
-	max_width=0;
-
-	// It doesn't make sense to add scrollbars for a TAB without a size
-	if(this->w==0 || this->h==0 ) return;
-
-	// Find the Max edges
-	Widget* widget;
-	list<Widget *>::iterator i;
-	for( i = children.begin(); i != children.end(); ++i ) {
-		widget = *i;
-		widget_width = widget->GetX()+widget->GetW();
-		widget_height = widget->GetY()+widget->GetH();
-		if( widget_height > max_height) max_height=widget_height;
-		if( widget_width > max_width) max_width=widget_width;
-	}
-	max_height += SCROLLBAR_THICK + SCROLLBAR_PAD;
-
-	// Add a Vertical ScrollBar if necessary
-	if ( max_height > GetH() || this->vscrollbar != NULL ){
-		int v_x = this->w-SCROLLBAR_THICK-SCROLLBAR_PAD;
-		int v_y = SCROLLBAR_PAD;
-		int v_l = this->h-2*SCROLLBAR_PAD;
-		// Only add a Scrollbar when it doesn't already exist
-		if ( this->vscrollbar ){
-			Container::DelChild( this->vscrollbar );
-			this->vscrollbar = NULL;
-			LogMsg(INFO, "Changing Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-			
-		} else {
-			LogMsg(INFO, "Adding Vert ScrollBar to %s: (%d,%d) [%d]\n", GetName().c_str(),v_x,v_y,v_l );
-		}
-
-		this->vscrollbar = new Scrollbar(v_x, v_y, v_l,this);
-
-		Container::AddChild( this->vscrollbar );
-
-		this->vscrollbar->maxpos = max_height;
+int Tab::GetHandleWidth( bool active ) {
+	if( active ) {
+		return active_left->GetWidth() + capw + active_right->GetWidth();
+	} else {
+		return inactive_left->GetWidth() + capw + inactive_right->GetWidth();
 	}
 }
 
@@ -163,12 +84,15 @@ void Tab::ResetScrollBars(){
  * \param name (not shown) Tabs collection don't really have a caption.
  */
 Tabs::Tabs( int x, int y, int _w, int _h, const string& name ):
-	activetab( NULL ){
-	this->x=x;
-	this->y=y;
-	this->w=_w;
-	this->h=_h;
-	this->name=name;
+	activetab( NULL ) {
+	background = Color( SKIN( "Skin/UI/Tab/Color/Background" ) );
+	edge = Color( SKIN( "Skin/UI/Tab/Color/Edge" ) );
+
+	this->x = x;
+	this->y = y;
+	this->w = _w;
+	this->h = _h;
+	this->name = name;
 }
 
 /**\brief Adds a Tab to the Tabs collection.
@@ -189,8 +113,8 @@ Tabs *Tabs::AddChild( Widget *widget ){
 		this->activetab = tabwidget;
 
 	// Adjust Scrollbars to this container
-	tabwidget->w = GetW();
-	tabwidget->h = GetH()-TAB_HEADER;
+	tabwidget->SetW( GetW() );
+	tabwidget->SetH( GetH() - TAB_HEADER );
 	tabwidget->ResetScrollBars();
 
 	return this;
@@ -226,23 +150,24 @@ void Tabs::Draw( int relx, int rely ){
 	int x = GetX() + relx;
 	int y = GetY() + rely;
 
-	// Draw tabs outline
-	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, 0.15f, 0.15f, 0.15f );
-	Video::DrawRect( x+1, y+TAB_HEADER+1, w-2, h-TAB_HEADER-2, 0.223f, 0.223f, 0.223f );
+	// Draw the Background and Edge
+	Video::DrawRect( x, y+TAB_HEADER, w, h-TAB_HEADER, background );
+	Video::DrawBox( x, y+TAB_HEADER, w, h-TAB_HEADER, edge );
 
+	int xo = x;
 	list<Widget *>::iterator i;
-
-	int xo = 0;
 	for( i = Container::children.begin(); i != Container::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
-		
-		Video::DrawRect( xo + x, y, currtab->capw+TAB_PAD*2, TAB_HEADER, 0.15f, 0.15f, 0.15f );
-		if ( currtab == activetab )
-			Video::DrawRect( xo + x + 1, y + 1, currtab->capw+TAB_PAD*2-2, TAB_HEADER, 0.223f, 0.223f, 0.223f );
 
-		SansSerif->Render(xo + x + TAB_PAD + currtab->capw / 2, y + TAB_HEADER / 2 - TAB_TEXT_ALIGNMENT, currtab->name,Font::CENTER,Font::MIDDLE);
+		currtab->DrawHandle( xo, y, ( currtab == activetab ) );
 
-		xo += currtab->capw+TAB_PAD*2+1;
+		// For the Active tab, draw a background colored line to make this tab
+		// look like it is attached to the currently visible Container.
+		if( currtab == activetab ) {
+			Video::DrawLine( xo, y + TAB_HEADER, xo + currtab->GetHandleWidth(true), y + TAB_HEADER, background );
+		}
+
+		xo += currtab->GetHandleWidth( currtab == activetab );
 	}
 
 	if (activetab){
@@ -273,9 +198,9 @@ Tab* Tabs::CheckTabClicked( int xr, int yr ){
 	int xo = 0;
 	for( i = Container::children.begin(); i != Container::children.end(); ++i ) {
 		Tab* currtab = static_cast<Tab*>(*i);
-		if ( xr < (currtab->capw+xo+TAB_PAD*2) )
+		if ( xr < xo + currtab->GetHandleWidth(currtab == activetab) )
 			return currtab;
-		xo += currtab->capw+TAB_PAD*2+1;
+		xo += currtab->GetHandleWidth(currtab == activetab);
 	}
 	// Active Tab didn't change
 	return this->activetab;

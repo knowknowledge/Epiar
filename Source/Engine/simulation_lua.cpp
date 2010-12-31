@@ -1102,7 +1102,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		int attack = Lua::getIntField(2,"AttackSize");
 		float aggressiveness = Lua::getNumField(2,"Aggressiveness");
 		string currency = Lua::getStringField(2,"Currency");
-		Color color = Color::Get( Lua::getStringField(2,"Color") );
+		Color color = Color( Lua::getStringField(2,"Color") );
 
 		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency,color);
 		GetSimulation(L)->GetAlliances()->AddOrReplace( thisAlliance );
