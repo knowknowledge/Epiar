@@ -19,8 +19,8 @@
     </Textbox>
     <Tab>
       <Color>
-        <Active>0x393939</Active>
-        <Inactive>0x262626</Inactive>
+        <Background>0x393939</Background>
+        <Edge>0x262626</Edge>
       </Color>
     </Tab>
   </UI>
