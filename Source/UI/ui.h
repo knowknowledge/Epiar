@@ -33,7 +33,7 @@
 
 class UI {
 	public:
-		UI();
+		UI() {}
 		~UI();
 
 		static bool Initialize( void );
@@ -49,6 +49,8 @@ class UI {
 		static Widget *DetermineMouseFocus( int x, int y );
 
 		static Widget *Search( string query );
+
+		static bool IsAttached( Widget* possible );
 
 		static void Save( void );
 
