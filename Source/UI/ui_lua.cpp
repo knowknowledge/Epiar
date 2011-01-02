@@ -41,6 +41,8 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newSlider", &UI_Lua::newSlider},
 		{"newTabCont", &UI_Lua::newTabCont},
 		{"newTab", &UI_Lua::newTab},
+		{"newDropdown", &UI_Lua::newDropdown},
+
 		{"add", &UI_Lua::addWidget},
 		{"search", &UI_Lua::search},
 		{NULL, NULL}
@@ -59,15 +61,22 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Windowing Layout
 		{"add", &UI_Lua::add},
 		{"close", &UI_Lua::close},
+
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
 		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
+
 		// Label Modification
 		{"setText", &UI_Lua::setText},
+
 		// Checkbox Modification
 		{"setChecked", &UI_Lua::setChecked},
 		{"setSliderValue", &UI_Lua::setSliderValue},
+
+		// Dropdown Modification
+		{"addOption", &UI_Lua::AddOption},
+
 		{NULL, NULL}
 	};
 
@@ -430,6 +439,35 @@ int UI_Lua::newCheckbox(lua_State *L) {
 	return 1;
 }
 
+/** \brief Create a new Checkbox
+ *
+ *  \returns Lua userdata containing pointer to Checkbox.
+ */
+int UI_Lua::newDropdown(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n >= 4){
+		int x = int(luaL_checknumber (L, 1));
+		int y = int(luaL_checknumber (L, 2));
+		int w = int(luaL_checknumber (L, 3));
+		int h = int(luaL_checknumber (L, 4));
+		
+		Dropdown **dropdown = (Dropdown**)lua_newuserdata(L, sizeof(Dropdown**));
+		luaL_getmetatable(L, EPIAR_UI);
+		lua_setmetatable(L, -2);
+		*dropdown = new Dropdown(x, y, w, h);
+	
+		// Collect options
+		for(int arg = 5; arg <= n; ++arg){
+			string option = lua_tostring(L, arg);
+			(*dropdown)->AddOption( option );
+		}
+	} else {
+		return luaL_error(L, "Got %d arguments expected at least 4 (x, y, w, h, [options ...])", n);
+	}
+	
+	return 1;
+}
+
 /** \brief Add widgets to the UI.
  *
  *  \details This accepts multiple Widgets.
@@ -449,7 +487,7 @@ int UI_Lua::addWidget(lua_State *L) {
 	return 0;
 }
 
-/** \brief Add widgets to the UI.
+/** \brief Find widgets in the UI
  *
  *  \details This accepts multiple Widgets.
  *  \see UI::search, Container::search
@@ -693,6 +731,10 @@ int UI_Lua::GetText(lua_State *L){
 			lua_pushstring(L, ((Textbox*)(widget))->GetText().c_str() );
 			return 1;
 			break;
+		case WIDGET_DROPDOWN:
+			lua_pushstring(L, ((Dropdown*)(widget))->GetText().c_str() );
+			return 1;
+			break;
 
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:
@@ -706,7 +748,6 @@ int UI_Lua::GetText(lua_State *L){
 		case WIDGET_FRAME:
 		case WIDGET_SLIDER:
 		case WIDGET_PICTURE:
-		case WIDGET_DROPDOWN:
 		case WIDGET_CHECKBOX:
 		case WIDGET_SCROLLBAR:
 		case WIDGET_CONTAINER:
@@ -727,5 +768,25 @@ int UI_Lua::GetEdges(lua_State *L){
 	lua_pushinteger(L, widget->GetH() );
 
 	return 4;
+}
+
+/**\brief Append an option to this Dropdown
+ */
+int UI_Lua::AddOption(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n < 2)
+		return luaL_error(L, "Got %d arguments expected at least 2 (self OPTION [OPTION ...])", n);
+
+	Widget *widget = checkWidget(L, 1);
+	luaL_argcheck(L, widget->GetMask() & WIDGET_DROPDOWN, 1, "`Dropdown' expected.");
+	Dropdown *dropdown = (Dropdown*)widget;
+
+	// Add the options
+	for( int arg = 2; arg <= n; ++arg ) {
+		string option = lua_tostring(L, arg);
+		dropdown->AddOption( option );
+	}
+
+	return 0;
 }
 

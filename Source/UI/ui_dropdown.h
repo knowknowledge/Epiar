@@ -30,7 +30,7 @@ class Dropdown : public Widget {
 		virtual string GetType( void ) { return string("Dropdown"); }
 		virtual int GetMask( void ) { return WIDGET_DROPDOWN; }
 
-		string GetSelectedOption() { return options[selected]; }
+		string GetText() { return options[selected]; }
 
 	private:
 		void open();
