@@ -12,6 +12,10 @@
 #include "UI/ui_tabs.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 #define TAB_HEADER 20
 
 /**\class Tab
@@ -210,3 +214,5 @@ Tab* Tabs::CheckTabClicked( int xr, int yr ){
 /** \fn Tabs::GetType
  *  \brief For Tabs container, it is always "Tabs"
  */
+
+/** @} */

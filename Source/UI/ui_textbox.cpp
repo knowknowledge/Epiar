@@ -15,6 +15,10 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 Font *Textbox::font = NULL;
 Color Textbox::foreground = WHITE;
 Color Textbox::background = GREY;
@@ -128,3 +132,6 @@ bool Textbox::KeyPress( SDLKey key ) {
 	
 	return true;
 }
+
+/** @} */
+

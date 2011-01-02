@@ -43,6 +43,8 @@ class UI_Lua {
 		static int newSlider(lua_State *L);
 		static int newTabCont(lua_State *L);
 		static int newTab(lua_State *L);
+		static int newDropdown(lua_State *L);
+
 		static int addWidget(lua_State *L);
 		static int search(lua_State *L);
 
@@ -52,15 +54,17 @@ class UI_Lua {
 		static int GetEdges(lua_State *L);
 
 		// Functions to manipulate Widgets
-		static int add(lua_State *L);
 		static int move(lua_State *L);
 		static int close(lua_State *L);
+		static int add(lua_State *L);
+		static int setFormButton(lua_State *L);
 		static int rotatePicture(lua_State *L);
 		static int setText(lua_State *L);
 		static int setPicture(lua_State *L);
 		static int setLuaClickCallback(lua_State *L);
 		static int setChecked(lua_State *L);
 		static int setSliderValue(lua_State *L);
+		static int AddOption(lua_State *L);
 
 	private:
 };

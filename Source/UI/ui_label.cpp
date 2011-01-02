@@ -13,6 +13,10 @@
 #include "UI/ui.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Label
  * \brief UI label. */
 
@@ -51,11 +55,15 @@ void Label::Draw(  int relx, int rely ) {
 	Widget::Draw(relx,rely + UI::font->TightHeight() / 2 );
 }
 
+/**\brief Set the text string of this Widget
+ */
 void Label::SetText(string text) {
 	lines.clear();
 	AppendText( text );
 }
 
+/**\brief Append some text to the current text
+ */
 void Label::AppendText(string text) {
 	int maxwidth = 0;
 	vector<string> temp;
@@ -74,3 +82,5 @@ void Label::AppendText(string text) {
 	this->w = maxwidth;
 	this->h = lines.size() * UI::font->TightHeight( );
 }
+
+/** @} */

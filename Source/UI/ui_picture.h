@@ -16,7 +16,6 @@
 
 class Picture: public Widget {
 	public:
-		void Default( int x, int y, int w, int h);
 		Picture( int x, int y, int w, int h, string filename );
 		Picture( int x, int y, int w, int h, Image *pic );
 		Picture( int w, int h, string filename );
@@ -32,6 +31,8 @@ class Picture: public Widget {
 		virtual int GetMask( void ) { return WIDGET_PICTURE; }
 
 	private:
+		void Default( int x, int y, int w, int h);
+
 		double rotation;
 		Image *bitmap;
 		Color color;

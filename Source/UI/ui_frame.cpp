@@ -13,6 +13,10 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Frame
  * \brief Frame handling. */
 
@@ -88,3 +92,4 @@ bool Frame::MouseDrag( int x, int y ){
 	return true;
 }
 
+/** @} */

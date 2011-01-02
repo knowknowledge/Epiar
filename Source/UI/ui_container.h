@@ -24,8 +24,8 @@ class Container : public Widget {
 
 		virtual Container *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
-		virtual bool Empty( void );
-		virtual bool ResetInput( void );
+		virtual void Empty( void );
+		virtual void ResetInput( void );
 		virtual void ResetScrollBars();
 
 		virtual Container *SetFormButton( Button* button );
@@ -34,7 +34,7 @@ class Container : public Widget {
 
 		virtual bool IsAttached( Widget* possible );
 
-		virtual Widget *Search( string path );
+		virtual Widget *Search( string full_query);
 		virtual Widget *ChildNamed( string _name, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromTop( int pos, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromBottom( int pos, int mask = WIDGET_ALL );
