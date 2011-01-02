@@ -24,8 +24,8 @@ class Container : public Widget {
 
 		virtual Container *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
-		virtual bool Empty( void );
-		virtual bool ResetInput( void );
+		virtual void Empty( void );
+		virtual void ResetInput( void );
 		virtual void ResetScrollBars();
 
 		virtual Container *SetFormButton( Button* button );

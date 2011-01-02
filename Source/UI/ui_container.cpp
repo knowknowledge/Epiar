@@ -103,8 +103,9 @@ bool Container::DelChild( Widget *widget ){
 	return false;
 }
 
-/**\brief Empties all children.*/
-bool Container::Empty( void ){
+/**\brief Empties all children.
+ */
+void Container::Empty( void ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -113,12 +114,12 @@ bool Container::Empty( void ){
 	children.clear();
 
 	ResetInput();
-
-	return true;
 }
 
-/**\brief Reset focus and events.*/
-bool Container::ResetInput( void ){
+/**\brief Reset focus and events.
+ *
+ */
+void Container::ResetInput( void ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -132,8 +133,6 @@ bool Container::ResetInput( void ){
 	this->lmouseDown = NULL;
 	this->mmouseDown = NULL;
 	this->rmouseDown = NULL;
-
-	return true;
 }
 
 /**\brief Checks to see if point is inside a child
@@ -229,7 +228,7 @@ bool Container::IsAttached( Widget* possible ) {
  * \todo The query validation needs to be improved.  /(Foobar,4)/ will attempt
  *       to convert the string "Foobar" to a string.
  *
- * \param[in] full_query A specially formatted string that describes which child to find.
+ * \param[in] full_query A specially formatted string 
  * \returns A pointer to the first matching Widget or NULL.
  */
 Widget *Container::Search( string full_query ) {
