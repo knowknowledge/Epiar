@@ -57,10 +57,13 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"GetText", &UI_Lua::GetText},
 		{"GetEdges", &UI_Lua::GetEdges},
 
-		// Widget Setters
-		// Windowing Layout
-		{"add", &UI_Lua::add},
+		// Generic Widget Modification
+		{"move", &UI_Lua::move},
 		{"close", &UI_Lua::close},
+
+		// Container Modification
+		{"add", &UI_Lua::add},
+		{"setFormButton", &UI_Lua::setFormButton},
 
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
@@ -547,6 +550,7 @@ int UI_Lua::setLuaClickCallback(lua_State *L){
 	return 0;
 }
 
+
 /** \brief add Widgets to a Container
  *  \details This accepts multiple Widgets.
  *
@@ -576,22 +580,36 @@ int UI_Lua::move(lua_State *L){
 		return luaL_error(L, "Got %d arguments expected 1 (self, x,y,w,h)", n);
 	
 	// Get the new postition
-	Widget** widget = (Widget**)lua_touserdata(L,1);
-	int x = luaL_checkinteger(L, 1);
-	int y = luaL_checkinteger(L, 2);
-	int w = luaL_checkinteger(L, 3);
-	int h = luaL_checkinteger(L, 4);
-
-	if( widget == NULL ) {
-		return luaL_error(L, "Cannot move NULL Widget");
-	}
+	Widget* widget = checkWidget(L, 1);
+	int x = luaL_checkinteger(L, 2);
+	int y = luaL_checkinteger(L, 3);
+	int w = luaL_checkinteger(L, 4);
+	int h = luaL_checkinteger(L, 5);
 
 	// Move the widget
-	(*widget)->SetX( x );
-	(*widget)->SetY( y );
-	(*widget)->SetW( w );
-	(*widget)->SetH( h );
+	widget->SetX( x );
+	widget->SetY( y );
+	widget->SetW( w );
+	widget->SetH( h );
 
+	return 0;
+}
+
+/** \brief Set the Form Button for 'Enter' keys to thie Container
+ */
+int UI_Lua::setFormButton(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2){
+		Container* container = (Container*)checkWidget(L,1);
+		luaL_argcheck(L, container->GetMask() & WIDGET_CONTAINER, 1, "`Container' expected.");
+
+		Button* button = (Button*)checkWidget(L,2);
+		luaL_argcheck(L, button->GetMask() & WIDGET_BUTTON, 2, "`Button' expected.");
+
+		container->SetFormButton( button );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
+	}
 	return 0;
 }
 

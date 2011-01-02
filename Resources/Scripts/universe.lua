@@ -823,12 +823,14 @@ function ui_demo()
 		demo_text2:setText(s1)
 	end
 
+	demo_button = UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()")
+
 	-- Attach the widgets to the window
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
-	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
+	demo_win:add(demo_button)
 
-	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
+	demo_win:setFormButton( demo_button )
 end
 
 -- interactive weapon slot configuration
