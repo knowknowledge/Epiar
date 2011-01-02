@@ -12,6 +12,10 @@
 #include "UI/ui_slider.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Slider
  * \brief Slider widget.
  * \todo Some calculations are unnecessary here.
@@ -153,3 +157,4 @@ float Slider::PixelToVal( int pixels ){
 	return value;
 }
 
+/** @} */

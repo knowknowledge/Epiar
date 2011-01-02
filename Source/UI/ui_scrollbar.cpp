@@ -10,6 +10,10 @@
 #include "UI/ui.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 #define SCROLLBAR_MINMARK	10	///< Minimum marker size
 
 /**\class Scrollbar
@@ -194,3 +198,5 @@ int Scrollbar::CheckPos( int newpos ){
 
 	return newpos;
 }
+
+/** @} */

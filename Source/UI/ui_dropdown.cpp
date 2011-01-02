@@ -13,6 +13,10 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Dropdown
  * \brief Dropdown handling. */
 
@@ -121,3 +125,5 @@ void Dropdown::close() {
 	h = baseheight;
 	opened = false;
 }
+
+/** @} */

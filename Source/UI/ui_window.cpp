@@ -13,6 +13,10 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Window
  * \brief Window handling. */
 
@@ -112,3 +116,5 @@ bool Window::SetDragability( bool _draggable ){
 	draggable = _draggable;
 	return true;
 }
+
+/** @} */

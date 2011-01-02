@@ -10,6 +10,10 @@
 #include "Utilities/xml.h"
 #include "UI/ui_container.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Container
  * \brief Container is a container class for other widgets.
  */
@@ -921,6 +925,8 @@ void Container::ResetScrollBars() {
 	}
 }
 
+/**\brief Set the button to activate when the user hits ENTER in thie Container
+ */
 Container* Container::SetFormButton( Button* button ) {
 	if( button == NULL ) {
 		LogMsg(INFO, "Clearing the Form Button for %s %s", GetType().c_str(), GetName().c_str() );
@@ -936,6 +942,8 @@ Container* Container::SetFormButton( Button* button ) {
 	return this;
 }
 
+/**\brief Generate an XML Node of this Container and it's children
+ */
 xmlNodePtr Container::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
@@ -960,4 +968,4 @@ xmlNodePtr Container::ToNode() {
 
 }
 
-
+/** @} */

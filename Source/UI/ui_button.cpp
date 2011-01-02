@@ -16,6 +16,10 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Button
  * \brief UI button. */
 
@@ -143,3 +147,5 @@ bool Button::MouseLeave( void ){
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
+
+/** @} */

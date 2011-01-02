@@ -12,6 +12,10 @@
 #include "Utilities/log.h"
 #include "Graphics/video.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Widget
  * \brief A user interface widget, widgets do not have children.
  * \fn Widget::Draw()
@@ -214,3 +218,5 @@ xmlNodePtr Widget::ToNode() {
 	
 	return thisNode;
 }
+
+/** @} */
