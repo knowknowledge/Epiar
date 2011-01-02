@@ -62,9 +62,9 @@ Container *Container::AddChild( Widget *widget ) {
 
 /**\brief Deletes a child from the current container.
  * \details This performs a breadth-first search to find the specified widget.
- * \warn The search will stop as soon as it finds the first instance of the Widget pointer.
- *       This means that if there are duplicate pointers to the same Widget, the
- *       second instance will cause a seg fault since the Widget object will have been freed.
+ * \warn The widget needs to be a correctly allocated.
+ * \param[in] A pointer to a valid widget.
+ * \returns true if the child was correctly found.
  */
 bool Container::DelChild( Widget *widget ){
 	bool not_scrollbar;
@@ -188,6 +188,49 @@ bool Container::IsAttached( Widget* possible ) {
 
 /**\brief Search this Container for a Widget
  *
+ * \details
+ *
+ * The Container Search is used for traversing the Widget tree
+ * starting at this Container.  The query is a list of Widget
+ * descriptions surrounded by slashes.  Each widget description is a
+ * collection of tokens that will narrow down which specific widget is
+ * being referred to.
+ *
+ * The form of the Query:
+ *  - The query always starts and ends with a slash.
+ *  - Between slashes is a widget descriptor.
+ *  - Each internal slash tells the search to step down to the described child.
+ *  - The widget descriptor is a combinations of one or more widget characteristics.
+ *
+ * The Tokens:
+ *  - TYPE : A Type Name restricts this search to this specific Type.
+ *  - [N] : A number inside square brackets designates that this search must be
+ *        (N-1)th match for this particular search. Indexes start at zero.
+ *  - "NAME" or 'NAME' : This will find a specifically named Widget.  Either
+ *        kind of Quote can be used.
+ *  - (X,Y) :  This will find the Widget at the relative coordinates (X,Y).
+ *  - / : The Slash is used as a boundary between Widget queries.
+ *
+ * Examples Search Queries:
+ *  - /2/ This will find the 3rd child of this Container.
+ *  - /Tab/ This will find the first Tab in this Container.
+ *  - /"Foobar"/ This will find the first Widget named Foobar.
+ *  - /(50,50)/ This will find the first Widget at (50,50).
+ *  - /Frame[2]/ This will find the 3rd Frame of this Container.
+ *  - /Window[2]/Checkbox/ This will find the first Checkbox in the 3rd
+ *                         Window of this Container.
+ *
+ * \warn Repeating the same same Token type within the same Widget descriptor
+ *       will overwrite the previous token.  For example, /Button[0]Textbox/
+ *       will find the first Textbox not the first Button.
+ * \warn The name cannot contain any of the special-character tokens, or else it will not
+ *       be properly captured.
+ *
+ * \todo The query validation needs to be improved.  /(Foobar,4)/ will attempt
+ *       to convert the string "Foobar" to a string.
+ *
+ * \param[in] full_query A specially formatted string that describes which child to find.
+ * \returns A pointer to the first matching Widget or NULL.
  */
 Widget *Container::Search( string full_query ) {
 	int section = 0;

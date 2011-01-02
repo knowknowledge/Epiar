@@ -34,7 +34,7 @@ class Container : public Widget {
 
 		virtual bool IsAttached( Widget* possible );
 
-		virtual Widget *Search( string path );
+		virtual Widget *Search( string full_query);
 		virtual Widget *ChildNamed( string _name, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromTop( int pos, int mask = WIDGET_ALL );
 		virtual Widget *ChildFromBottom( int pos, int mask = WIDGET_ALL );
