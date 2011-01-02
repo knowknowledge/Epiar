@@ -447,9 +447,13 @@ function ImagePicker(name,title)
 end
 
 -- Modified version of the infoTable function
-function infoTable(info, win, variables, widths, desiredSize)
+function infoTable(info, win, variables, fieldDesc, desiredSize)
 	local y2=50
 	local yoff=20
+
+	local fieldWidth  = function(f) return fieldDesc[f][1] end
+	local fieldType   = function(f) return fieldDesc[f][2] end
+	local fieldOptions = function(f) return fieldDesc[f][3] end
 
 	uiElements = {}
 
@@ -469,12 +473,15 @@ function infoTable(info, win, variables, widths, desiredSize)
 	for colNum =0,(info["fields"]-1) do
 		local colKey = (string.format("%d", colNum))
 		local title = variables[colKey]
-		local w = widths[title]
+		local w = fieldWidth(title)
 		win:add(UI.newLabel( 10 + xoff, y2 - 20, title))
 		xoff = xoff + w
 	end
 
-	for rowNum =0,(desiredLength-1) do
+	-- add these rows from the bottom up so the active dropdown will not be obscured by other dropdown widgets
+	y2 = yoff * desiredLength + 30
+	for invRowNum =0,(desiredLength-1) do
+		local rowNum = desiredLength - 1 - invRowNum
 
 		local rowElements = {}
 
@@ -499,14 +506,25 @@ function infoTable(info, win, variables, widths, desiredSize)
 		for colNum =0,(info["fields"]-1) do
 			local colKey = (string.format("%d", colNum))
 			local title = variables[colKey]
-			local w = widths[title]
+			local w = fieldWidth(title)
 			local value = thisrow[title]
-			rowElements[title] = UI.newTextbox( 10 + xoff, y2, w, 1, value)
+			if fieldType(title) == 'textbox' then
+				rowElements[title] = UI.newTextbox( 10 + xoff, y2, w, 1, value)
+			elseif fieldType(title) == 'dropdown' then
+				rowElements[title] = UI.newDropdown( 10 + xoff, y2, w, yoff)
+				for n,opt in pairs( fieldOptions(title) ) do
+					rowElements[title]:addOption(opt)
+				end
+				--rowElements[title]:setValue(value)   -- need something like this for the Dropdown widget
+			else
+				-- no other types known at the moment
+			end
 			win:add(rowElements[title])
 			xoff = xoff + w
 		end
 
-		y2 = y2 + yoff
+		--y2 = y2 + yoff
+		y2 = y2 - yoff
 		uiElements[rowKey] = rowElements
 	end
 	
@@ -520,11 +538,11 @@ function EditWeaponSlots(name, title)
 	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
 
 	-- Grab the table
-	local table = infoWindows[name].weapontables[title]
+	local tab = infoWindows[name].weapontables[title]
 
 	-- Tell the table interface function to make extra rows until there are 16
-	table["desiredLength"] = 16
-	table["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
+	tab["desiredLength"] = 16
+	tab["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 
 	-- This ugly indexing trick is a workaround for Lua's apparent lack of sensible element ordering.
 	-- Clean it up if a better built-in solution can be found.
@@ -532,11 +550,24 @@ function EditWeaponSlots(name, title)
 	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y",
 		      ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
 
-	local widths = { ["enabled"]=90, ["name"]=170, ["mode"]=70, ["x"]=40, ["y"]=40,
-			 ["angle"]=50, ["motionAngle"]=75, ["content"]=100, ["firingGroup"]=75 }
+	local contentOptions = Epiar.weapons()
+	table.insert(contentOptions, 1, "(empty)")
+	-- the description format for each field is: width, type, table of possible values (if applicable)
+	local fieldDesc = {
+		["enabled"]	= { 90, 'dropdown', {'yes','no'} },
+		["name"]	= { 170,'textbox', nil },
+		["mode"]	= { 70, 'dropdown', {'auto', 'manual'} },
+		["x"]		= { 40, 'textbox', nil },
+		["y"]		= { 40, 'textbox', nil },
+		["angle"]	= { 50, 'textbox', nil },
+		["motionAngle"]	= { 75, 'textbox', nil },
+		["content"]	= { 100,'dropdown', contentOptions }, -- should change this to be a dropdown of all weapons + empty
+		["firingGroup"]	= { 75, 'dropdown', {0, 1} }
+	}
 
-	fieldTable = infoTable( table, editWeaponSlotsWin, variables, widths )
-	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, table["desiredLength"], table["fields"]) ) ) )
+	fieldTable = infoTable( tab, editWeaponSlotsWin, variables, fieldDesc )
+
+	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, tab["desiredLength"], tab["fields"]) ) ) )
 
 	local imageName = infoWindows[name].texts["Image"]:GetText()
 
@@ -567,6 +598,7 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 		for colNum =0,(fields-1) do
 			local fieldName = variables[(string.format("%d", colNum))]
 			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
+			if value == '(empty)' then value = '' end
 			r[fieldName] = value
 			if infoWindows[name].weapontables[title][rowKey] == nil then
 				infoWindows[name].weapontables[title][rowKey] = {}
