@@ -235,9 +235,12 @@ Widget *Container::Search( string full_query ) {
 	LogMsg(INFO, "QUERY: '%s'", full_query.c_str() );
 	for(; iter != tokenized.end(); ++iter ) {
 		subquery = (*iter);
-		// LogMsg(INFO, "token: '%s'", (*iter).c_str() );
-		token = subquery[0];
+		// LogMsg(INFO, "token: '%s'", subquery.c_str() );
 		if( subquery == "" ) { continue; }
+
+        // The tokens are always going to be single characters
+        assert( subquery.size() >= 1 );
+		token = subquery[0];
 
 		// If we're checking a Token, we need to be in a Container
 		if( !( (current->GetMask()) & WIDGET_CONTAINER ) ) {
