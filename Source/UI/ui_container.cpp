@@ -65,7 +65,7 @@ Container *Container::AddChild( Widget *widget ) {
 }
 
 /**\brief Deletes a child from the current container.
- * \details This performs a breadth-first search to find the specified widget.
+ * \details This performs a semi-breadth-first search to find the specified widget.
  * \warn The widget needs to be a correctly allocated.
  * \param[in] A pointer to a valid widget.
  * \returns true if the child was correctly found.
@@ -167,7 +167,7 @@ Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 bool Container::IsAttached( Widget* possible ) {
 	list<Widget *>::iterator i;
 	
-	// Search the direct children.
+	// Check the direct children.
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == possible ) {
 			LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
@@ -175,8 +175,7 @@ bool Container::IsAttached( Widget* possible ) {
 		}
 	}
 	
-	// Search the grandchildren
-	// This is a breadth first search.
+	// Check the grandchildren
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
 			if( ((Container*)(*i))->IsAttached( possible ) ) {
@@ -302,6 +301,7 @@ Widget *Container::Search( string full_query ) {
 				// Boundary: Search the Children
 				case '/':
 				{
+					bool found = false;
 					int ind = 0;
 					assert( (current->GetMask()) & WIDGET_CONTAINER );
 					for( i = current->children.begin(); i != current->children.end(); ++i ) {
@@ -320,16 +320,18 @@ Widget *Container::Search( string full_query ) {
 							continue;
 						} 
 						// Found a match!
+						found = true;
 						current = (Container*)(*i);
-						// Forget about the current query
+						// Forget about the old query
 						query.flags = 0;
 						break;
 					}
 					
-					if( i == current->children.end() ) {
+					if( found == false ) {
 						LogMsg(INFO, "The query '%s' failed to find a widget at section %d", full_query.c_str(), section );
 						return NULL;
 					}
+
 					++section;
 					break;
 				}
@@ -387,7 +389,7 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
-	return current;
+	return (Widget*)current;
 }
 
 /**\brief Search for a child named
