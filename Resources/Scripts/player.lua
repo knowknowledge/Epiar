@@ -31,7 +31,10 @@ playerCommands = {
 	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
 	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED},
 	{'lalt', "Toggle autopilot", "playerAutopilotToggle()", KEYTYPED},
-	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED}
+	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED},
+	{'f', "Tell fleet to hunt target", "playerFleetHunt()", KEYTYPED},
+	{'g', "Return to formation", "playerFleetFormation()", KEYTYPED},
+	{'v', "Hold position", "playerFleetHold()", KEYTYPED}
 }
 
 function playerStart()
