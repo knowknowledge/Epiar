@@ -68,6 +68,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
+		{"setBackground", &UI_Lua::setBackground},
 		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 
 		// Label Modification
@@ -536,6 +537,31 @@ int UI_Lua::setPicture(lua_State *L){
 		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
 		string picname = luaL_checkstring (L, 2);
 		pic->Set( picname );
+	
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
+	}
+	return 0;
+}
+
+/** \brief Change the Background of a Picture Widget
+ *
+ */
+int UI_Lua::setBackground(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if ((n == 4) || (n == 5)){
+		Picture* pic = (Picture*)checkWidget(L,1);
+		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
+
+		float r = luaL_checknumber (L, 2);
+		float g = luaL_checknumber (L, 3);
+		float b = luaL_checknumber (L, 4);
+		float a = pic->GetAlpha();
+		if( n == 5 ) {
+			a = luaL_checknumber (L, 5);
+		}
+
+		pic->SetColor( r, g, b, a );
 	
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
