@@ -78,18 +78,4 @@ void Frame::Draw( int relx, int rely ) {
 	Container::Draw(relx,rely);
 }
 
-bool Frame::MouseDrag( int x, int y ){
-	int dx = this->dragX;
-	int dy = this->dragY;
-	// Only drag by titlebar
-	if ( dy < bitmaps[1]->GetHeight() ) {
-		this->x = x - dx;
-		this->y = y - dy;
-	} else {
-	// Pass the event onto widget if not handling it.
-		Container::MouseDrag( x, y );
-	}
-	return true;
-}
-
 /** @} */
