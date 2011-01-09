@@ -316,7 +316,7 @@ void Hud::DrawMessages() {
 	Uint32 alertFade = OPTION(Uint32,"options/timing/alert-fade");
 	Uint32 alertDrop = OPTION(Uint32,"options/timing/alert-drop");
 	
-	for( i= AlertMessages.rbegin(), j=1; i != AlertMessages.rend(); ++i,++j ){
+	for( i= AlertMessages.rbegin(), j=1; (i != AlertMessages.rend()) && (j <= MAX_ALERTS); ++i,++j ){
 		//printf("[%d] %s\n", j, (*i).message.c_str() );
 		age = now - (*i).start;
 		if(age > alertFade){
