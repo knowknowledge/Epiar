@@ -813,6 +813,7 @@ function ui_demo()
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
+	demo_drop = UI.newDropdown( 250, 100, 100, 30, {"A","B","C"})
 	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
 
 	-- Modify the Widgets
@@ -829,6 +830,7 @@ function ui_demo()
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
 	demo_win:add(demo_button)
+	demo_win:add(demo_drop)
 
 	demo_win:setFormButton( demo_button )
 end

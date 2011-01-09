@@ -67,7 +67,8 @@ void Dropdown::Draw( int relx, int rely ) {
 		bitmap_normal->DrawStretch( x, y, w, h);
 		UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[selected], Font::CENTER,Font::MIDDLE );
 	} else {
-		for( int i = 0; i < options.size(); ++i ) {
+		unsigned int i;
+		for( i = 0; i < options.size(); ++i ) {
 			if( i == hovered ) {
 				bitmap_mouseover->DrawStretch( x, y, w, baseheight);
 			} else if( i == selected ) {

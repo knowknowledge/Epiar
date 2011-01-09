@@ -444,6 +444,7 @@ int UI_Lua::newCheckbox(lua_State *L) {
 
 /** \brief Create a new Checkbox
  *
+ *  \note Tables of strings will be flattened and added
  *  \returns Lua userdata containing pointer to Checkbox.
  */
 int UI_Lua::newDropdown(lua_State *L) {
@@ -461,8 +462,18 @@ int UI_Lua::newDropdown(lua_State *L) {
 	
 		// Collect options
 		for(int arg = 5; arg <= n; ++arg){
-			string option = lua_tostring(L, arg);
-			(*dropdown)->AddOption( option );
+			if( lua_istable(L, arg) ) {
+				// Tables can be lists of strings
+				list<string>::iterator i;
+				list<string> values = Lua::getStringListField( arg );
+				for(i = values.begin(); i != values.end(); ++i) {
+					(*dropdown)->AddOption( (*i) );
+				}
+			} else {
+				// Everything else is converted into a string
+				string option = lua_tostring(L, arg);
+				(*dropdown)->AddOption( option );
+			}
 		}
 	} else {
 		return luaL_error(L, "Got %d arguments expected at least 4 (x, y, w, h, [options ...])", n);
@@ -774,6 +785,8 @@ int UI_Lua::GetText(lua_State *L){
 	}
 }
 
+/**\brief Get the Position and size of a Widget
+ */
 int UI_Lua::GetEdges(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -789,6 +802,7 @@ int UI_Lua::GetEdges(lua_State *L){
 }
 
 /**\brief Append an option to this Dropdown
+ * \note Tables of strings will be flattened and added
  */
 int UI_Lua::AddOption(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -800,9 +814,19 @@ int UI_Lua::AddOption(lua_State *L){
 	Dropdown *dropdown = (Dropdown*)widget;
 
 	// Add the options
-	for( int arg = 2; arg <= n; ++arg ) {
-		string option = lua_tostring(L, arg);
-		dropdown->AddOption( option );
+	for(int arg = 2; arg <= n; ++arg){
+		if( lua_istable(L, arg) ) {
+			// Tables can be lists of strings
+			list<string>::iterator i;
+			list<string> values = Lua::getStringListField( arg );
+			for(i = values.begin(); i != values.end(); ++i) {
+				dropdown->AddOption( (*i) );
+			}
+		} else {
+			// Everything else is converted into a string
+			string option = lua_tostring(L, arg);
+			dropdown->AddOption( option );
+		}
 	}
 
 	return 0;
