@@ -124,6 +124,7 @@ void Main_Load_Settings() {
 		// Logging
 		SETOPTION( "options/log/xml", 0 );
 		SETOPTION( "options/log/out", 1 );
+		SETOPTION( "options/log/alert", 0 );
 		SETOPTION( "options/log/ui", 0 );
 		SETOPTION( "options/log/sprites", 0 );
 

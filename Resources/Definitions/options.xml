@@ -6,6 +6,7 @@
   <log>
     <xml>0</xml>
     <out>1</out>
+    <alert>0</alert>
     <ui>0</ui>
     <sprites>0</sprites>
   </log>

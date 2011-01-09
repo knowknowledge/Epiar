@@ -9,6 +9,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Utilities/log.h"
+#include "Engine/hud.h"
 
 /**\class Log
  * \brief Main logging facilities for the code base. */
@@ -115,11 +116,17 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	vsnprintf( logBuffer, sizeof(logBuffer), message, args );
 	va_end( args );
 
+	// Trim the final '\n' if necessary
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
 	// Print the message:
-	if( OPTION(int, "options/log/out") == 1 )
-		cout<<func<<" ("<<lvlStrings[lvl]<<") - "<< logBuffer <<endl;;
+	if( OPTION(int, "options/log/out") == 1 ) {
+		printf("%s (%s)- %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+	}
+
+	if( OPTION(int, "options/log/alert") == 1 ) {
+		Hud::Alert("%s - %s", lvlStrings[lvl].c_str(), logBuffer);
+	}
 	
 	// Save the message to a file
 	if( OPTION(int, "options/log/xml") == 1 ) {
@@ -136,6 +143,7 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 		fprintf(fp, "</log>\n" );
 		fflush( fp );
 	}
+
 }
 
 /**\brief Constructor, used to initialize variables.*/
