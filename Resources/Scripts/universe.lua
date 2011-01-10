@@ -884,6 +884,7 @@ function weaponConfigDialog()
 	pickedSlot = nil
 
 	slotButtons = { }
+	slotFGButtons = { }
 
 	for slot =0,(slotCount-1) do
 		local slotName = PLAYER:GetWeaponSlotName(slot)
@@ -894,8 +895,8 @@ function weaponConfigDialog()
 
 		local slotLabel = UI.newLabel( 15, 45+(40*slot), (string.format("%s:", slotName)), 0)
 		slotButtons[slot] = UI.newButton( 50, 45+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
-		local slotFGButton = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
-		leftFrame:add(slotLabel,slotButtons[slot],slotFGButton);
+		slotFGButtons[slot] = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
+		leftFrame:add(slotLabel,slotButtons[slot],slotFGButtons[slot]);
 	end
 
 	local w = 0
@@ -911,9 +912,11 @@ function assignWeaponToSlot(slot)
 		PLAYER:SetWeaponSlotStatus(slot, PLAYER:GetWeaponSlotStatus(pickedSlot) )
 		PLAYER:SetWeaponSlotStatus(pickedSlot, s)
 
-		-- FIXME super crude window update trick
-		weaponConfigFinish()
-		weaponConfigDialog()
+		-- now they have been swapped, so update the buttons
+		slotButtons[slot]:setText( PLAYER:GetWeaponSlotStatus(slot) )
+		slotButtons[pickedSlot]:setText( PLAYER:GetWeaponSlotStatus(pickedSlot) )
+
+		pickedSlot = nil
 	end
 end
 
@@ -921,17 +924,12 @@ function alternateFiringGroup(slot)
 	local fg = PLAYER:GetWeaponSlotFG(slot)
 	fg = (fg+1)%2
 	PLAYER:SetWeaponSlotFG(slot, fg)
-
-	-- FIXME super crude window update trick
-	weaponConfigFinish()
-	weaponConfigDialog()
+	slotFGButtons[slot]:setText( (PLAYER:GetWeaponSlotFG(slot) == 0 and "Primary" or "Secondary") )
 end
 
 function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
 	local wcDialog = UI.search("/Window'Weapon Configuration'/")
+	-- this should cover all widget cleanup
 	wcDialog:close()
-	slotButtons = nil
-	pickedSlot = nil
-	wcDialog = nil
 end

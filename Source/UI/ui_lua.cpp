@@ -664,10 +664,12 @@ int UI_Lua::setText(lua_State *L){
 			((Textbox*)(widget))->SetText( text );
 			break;
 
+		case WIDGET_BUTTON:
+			((Button*)(widget))->SetText( text );
+			break;
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
-		case WIDGET_BUTTON:
 			return luaL_error(L, "Epiar does not currently calling setText on Widgets of type '%s'.", (widget)->GetType().c_str() );
 			break;
 
@@ -764,11 +766,13 @@ int UI_Lua::GetText(lua_State *L){
 			lua_pushstring(L, ((Dropdown*)(widget))->GetText().c_str() );
 			return 1;
 			break;
-
-		// TODO These Widget Types do not currently accept setText, but they should.
+		case WIDGET_BUTTON:
+			lua_pushstring(L, ((Button*)(widget))->GetText().c_str() );
+			return 1;
+			break;
+		// TODO These Widget Types do not currently accept getText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
-		case WIDGET_BUTTON:
 			return luaL_error(L, "Epiar does not currently calling getText on Widgets of type '%s'.", (widget)->GetType().c_str() );
 			break;
 
