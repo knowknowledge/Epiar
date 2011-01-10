@@ -132,11 +132,16 @@ void Container::ResetInput( void ){
 		}
 	}
 
+	// Forget about these:
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
 	this->lmouseDown = NULL;
 	this->mmouseDown = NULL;
 	this->rmouseDown = NULL;
+
+	// Don't forget about these:
+	//this->vscrollbar = NULL;
+	//this->formbutton = NULL;
 }
 
 /**\brief Checks to see if point is inside a child

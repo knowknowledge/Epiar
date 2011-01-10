@@ -209,12 +209,13 @@ function options()
 	debugLabel      = UI.newLabel(20, 5, "Debug Options:", 0)
 	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
 	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	uiLogging       = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
-	spriteLogging   = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
-	aiStateDisplay  = UI.newCheckbox(20,110, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
-	uiDebugging     = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
-	spritesMap      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/ships-worldmap") ), "Display Ships on the Universe Map")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging, spritesMap )
+	alertLogging    = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/alert") ), "Alert Log Messages")
+	uiLogging       = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
+	spriteLogging   = UI.newCheckbox(20,110 , ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
+	aiStateDisplay  = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
+	uiDebugging     = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
+	spritesMap      = UI.newCheckbox(20,170, ( Epiar.getoption("options/development/ships-worldmap") ), "Display Ships on the Universe Map")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, alertLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging, spritesMap )
 
 	-- Command Keys
 	keyTab = UI.newTab( "Keyboard")
@@ -250,6 +251,7 @@ function options()
 		-- Developer Options
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/alert",        alertLogging    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/ui",           uiLogging       :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/sprites",      spriteLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
@@ -660,6 +662,7 @@ function storeView(containerPath, itemType, itemName )
 		or statname == "Sound"
 		or statname == "Animation"
 		or type(value) == "table" then
+			-- Do Nothing
 		else
 			if type(value)=="number" and math.floor(value) ~= value then
 				value = string.format("%.2f", value)

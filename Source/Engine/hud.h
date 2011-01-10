@@ -18,6 +18,7 @@
 #define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
 #define MAX_STATUS_BARS 20
+#define MAX_ALERTS 10
 
 // Hud Bitflags to determine what should be drawn
 #define HUD_NONE        0x0000

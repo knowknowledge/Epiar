@@ -27,7 +27,10 @@ class Picture: public Widget {
 		void SetLuaClickCallback( string );
 		bool MouseLUp( int, int );
 
-		string GetType( void ) {return string("Picture");}
+		Color GetColor( void ) { return color; }
+		float GetAlpha( void ) { return alpha; }
+
+		string GetType( void ) { return string("Picture"); }
 		virtual int GetMask( void ) { return WIDGET_PICTURE; }
 
 	private:

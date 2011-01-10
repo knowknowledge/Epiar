@@ -33,15 +33,15 @@ Window::Window( int x, int y, int w, int h, string caption ):
 	this->name = caption;
 
 	// Load the bitmaps needed for drawing
-	bitmaps[0] = Image::Get( "Resources/Graphics/ui_wnd_up_left.png" );
-	bitmaps[1] = Image::Get( "Resources/Graphics/ui_wnd_up.png" );
-	bitmaps[2] = Image::Get( "Resources/Graphics/ui_wnd_up_right.png" );
-	bitmaps[3] = Image::Get( "Resources/Graphics/ui_wnd_left.png" );
-	bitmaps[4] = Image::Get( "Resources/Graphics/ui_wnd_right.png" );
-	bitmaps[5] = Image::Get( "Resources/Graphics/ui_wnd_low_left.png" );
-	bitmaps[6] = Image::Get( "Resources/Graphics/ui_wnd_low.png" );
-	bitmaps[7] = Image::Get( "Resources/Graphics/ui_wnd_low_right.png" );
-	bitmaps[8] = Image::Get( "Resources/Graphics/ui_wnd_back.png" );
+	bitmaps[0] = Image::Get( "Resources/Skin/ui_wnd_up_left.png" );
+	bitmaps[1] = Image::Get( "Resources/Skin/ui_wnd_up.png" );
+	bitmaps[2] = Image::Get( "Resources/Skin/ui_wnd_up_right.png" );
+	bitmaps[3] = Image::Get( "Resources/Skin/ui_wnd_left.png" );
+	bitmaps[4] = Image::Get( "Resources/Skin/ui_wnd_right.png" );
+	bitmaps[5] = Image::Get( "Resources/Skin/ui_wnd_low_left.png" );
+	bitmaps[6] = Image::Get( "Resources/Skin/ui_wnd_low.png" );
+	bitmaps[7] = Image::Get( "Resources/Skin/ui_wnd_low_right.png" );
+	bitmaps[8] = Image::Get( "Resources/Skin/ui_wnd_back.png" );
 }
 
 Window::~Window() {
