@@ -121,7 +121,7 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 
 	// Print the message:
 	if( OPTION(int, "options/log/out") == 1 ) {
-		printf("%s (%s)- %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+		printf("%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
 	}
 
 	if( OPTION(int, "options/log/alert") == 1 ) {
