@@ -865,7 +865,7 @@ function weaponConfigDialog()
 
 				Grouping missiles into a salvo is a possibility if you have more than one launcher.]]
 
-	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32 )
+	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32, true )
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
