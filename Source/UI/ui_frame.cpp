@@ -13,6 +13,10 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Frame
  * \brief Frame handling. */
 
@@ -27,15 +31,26 @@ Frame::Frame( int x, int y, int w, int h )
 	this->h = h;
 
 	// Load the bitmaps needed for drawing
-	bitmaps[0] = Image::Get( "Resources/Graphics/ui_frame_up_left.png" );
-	bitmaps[1] = Image::Get( "Resources/Graphics/ui_frame_up.png" );
-	bitmaps[2] = Image::Get( "Resources/Graphics/ui_frame_up_right.png" );
-	bitmaps[3] = Image::Get( "Resources/Graphics/ui_frame_left.png" );
-	bitmaps[4] = Image::Get( "Resources/Graphics/ui_frame_right.png" );
-	bitmaps[5] = Image::Get( "Resources/Graphics/ui_frame_low_left.png" );
-	bitmaps[6] = Image::Get( "Resources/Graphics/ui_frame_low.png" );
-	bitmaps[7] = Image::Get( "Resources/Graphics/ui_frame_low_right.png" );
-	bitmaps[8] = Image::Get( "Resources/Graphics/ui_frame_back.png" );
+	bitmaps[0] = Image::Get( "Resources/Skin/ui_frame_up_left.png" );
+	bitmaps[1] = Image::Get( "Resources/Skin/ui_frame_up.png" );
+	bitmaps[2] = Image::Get( "Resources/Skin/ui_frame_up_right.png" );
+	bitmaps[3] = Image::Get( "Resources/Skin/ui_frame_left.png" );
+	bitmaps[4] = Image::Get( "Resources/Skin/ui_frame_right.png" );
+	bitmaps[5] = Image::Get( "Resources/Skin/ui_frame_low_left.png" );
+	bitmaps[6] = Image::Get( "Resources/Skin/ui_frame_low.png" );
+	bitmaps[7] = Image::Get( "Resources/Skin/ui_frame_low_right.png" );
+	bitmaps[8] = Image::Get( "Resources/Skin/ui_frame_back.png" );
+
+	// All of these must exist
+	assert( bitmaps[0] != NULL );
+	assert( bitmaps[1] != NULL );
+	assert( bitmaps[2] != NULL );
+	assert( bitmaps[3] != NULL );
+	assert( bitmaps[4] != NULL );
+	assert( bitmaps[5] != NULL );
+	assert( bitmaps[6] != NULL );
+	assert( bitmaps[7] != NULL );
+	assert( bitmaps[8] != NULL );
 }
 
 /**\brief Adds a widget to the current Frame.
@@ -74,17 +89,4 @@ void Frame::Draw( int relx, int rely ) {
 	Container::Draw(relx,rely);
 }
 
-bool Frame::MouseDrag( int x, int y ){
-	int dx = this->dragX;
-	int dy = this->dragY;
-	// Only drag by titlebar
-	if ( dy < bitmaps[1]->GetHeight() ) {
-		this->x = x - dx;
-		this->y = y - dy;
-	} else {
-	// Pass the event onto widget if not handling it.
-		Container::MouseDrag( x, y );
-	}
-	return true;
-}
-
+/** @} */

@@ -30,8 +30,12 @@ playerCommands = {
 	{'c', "Decrease Power", "changePower(0.5,-1,0.5)", KEYTYPED},
 	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
 	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED},
+	{'=', "Equalize Power Management", "equlizePowerManagement()", KEYTYPED},
 	{'lalt', "Toggle autopilot", "playerAutopilotToggle()", KEYTYPED},
-	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED}
+	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED},
+	{'f', "Tell fleet to hunt target", "playerFleetHunt()", KEYTYPED},
+	{'g', "Return to formation", "playerFleetFormation()", KEYTYPED},
+	{'v', "Hold position", "playerFleetHold()", KEYTYPED}
 }
 
 function playerStart()
@@ -115,26 +119,32 @@ function powerManagement()
 									
 end
 
+function equlizePowerManagement()
+	PLAYER:SetEngineBooster( 1 )
+	PLAYER:SetShieldBooster( 1 )
+	PLAYER:SetDamageBooster( 1 )
+end
+
 -- functions required to communicate between slider and ship settings
 function powerShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetDamageBooster())/3.0) * 100
 	local compensate =(-change)/2  
-	print("power shift value=" .. value)
+	--print("power shift value=" .. value)
 	changePower(compensate, change ,compensate)
 end
 function shieldShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetShieldBooster())/3.0) * 100
 	local compensate =(-change)/2  
-	print("shield shift value=" .. value)
+	--print("shield shift value=" .. value)
 	changePower(change, compensate ,compensate)
 end
 function engineShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetEngineBooster())/3.0) * 100
 	local compensate =(-change)/2  
-	print("power engine value=" .. value)
+	--print("power engine value=" .. value)
 	changePower(compensate, compensate ,change)
 end
  	
@@ -145,7 +155,7 @@ function changePower( shield ,damage ,engine)
 	damage = damage*0.03
 	engine = engine*0.03
 	local s = PLAYER:GetShieldBooster()
-	print("PLAYER:GetShieldBooster()=" .. s ..'\n')
+	--print("PLAYER:GetShieldBooster()=" .. s ..'\n')
 	local newshield = shield + PLAYER:GetShieldBooster()
 	local newdamage = damage + PLAYER:GetDamageBooster()
 	local newengine = engine + PLAYER:GetEngineBooster()
@@ -181,11 +191,11 @@ function changePower( shield ,damage ,engine)
 		shieldSlider:setSliderValue(newshield/3.0)
 		engineSlider:setSliderValue(newengine/3.0)
 	end
-	print("end of power management function shield=" ..newshield .. "power=" ..newdamage .. "engine=" .. newengine)
-	newengine = math.floor(newengine * 333 + 0.5)/10
-	newshield = math.floor(newshield * 333 + 0.5)/10
-	newdamage = math.floor(newdamage * 333 + 0.5)/10
-	HUD.newAlert("Power Distribution: shields " .. (newshield) .. "%% power " .. (newdamage) .. "%% engine " .. (newengine) .. "%%")
+	--print("end of power management function shield=" ..newshield .. "power=" ..newdamage .. "engine=" .. newengine)
+	--newengine = math.floor(newengine * 333 + 0.5)/10
+	--newshield = math.floor(newshield * 333 + 0.5)/10
+	--newdamage = math.floor(newdamage * 333 + 0.5)/10
+	--HUD.newAlert("Power Distribution: shields " .. (newshield) .. "%% power " .. (newdamage) .. "%% engine " .. (newengine) .. "%%")
 end
 
 function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for power management function
@@ -705,10 +715,16 @@ function createHUD()
 		HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
 	end
 
+	-- Power Level
+	HUD.newStatus("Power Shield:",130,1, "(PLAYER:GetShieldBooster() or 0)/3")
+	HUD.newStatus("Power Damage:",130,1, "(PLAYER:GetDamageBooster() or 0)/3")
+	HUD.newStatus("Power Engine:",130,1, "(PLAYER:GetEngineBooster() or 0)/3")
+
 	-- Target Bars
 	HUD.newStatus("Target (N):",130,1, "HudTargetName()")
 	HUD.newStatus("Target (H):",130,1, "HudTargetHull()")
 	HUD.newStatus("Target (S):",130,1, "HudTargetShield()")
+
 end
 
 function playerAmmo(weaponName)

@@ -29,6 +29,9 @@ class Button : public Widget {
 		bool MouseEnter( int xi, int yi );
 		bool MouseLeave( void );
 
+		void SetText(string text) { this->name = text; }
+		string GetText() { return this->name; }
+
 		virtual string GetType( void ) {return string("Button");}
 		virtual int GetMask( void ) { return WIDGET_BUTTON; }
 	private:

@@ -68,6 +68,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
+		{"setBackground", &UI_Lua::setBackground},
 		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 
 		// Label Modification
@@ -444,6 +445,7 @@ int UI_Lua::newCheckbox(lua_State *L) {
 
 /** \brief Create a new Checkbox
  *
+ *  \note Tables of strings will be flattened and added
  *  \returns Lua userdata containing pointer to Checkbox.
  */
 int UI_Lua::newDropdown(lua_State *L) {
@@ -461,8 +463,18 @@ int UI_Lua::newDropdown(lua_State *L) {
 	
 		// Collect options
 		for(int arg = 5; arg <= n; ++arg){
-			string option = lua_tostring(L, arg);
-			(*dropdown)->AddOption( option );
+			if( lua_istable(L, arg) ) {
+				// Tables can be lists of strings
+				list<string>::iterator i;
+				list<string> values = Lua::getStringListField( arg );
+				for(i = values.begin(); i != values.end(); ++i) {
+					(*dropdown)->AddOption( (*i) );
+				}
+			} else {
+				// Everything else is converted into a string
+				string option = lua_tostring(L, arg);
+				(*dropdown)->AddOption( option );
+			}
 		}
 	} else {
 		return luaL_error(L, "Got %d arguments expected at least 4 (x, y, w, h, [options ...])", n);
@@ -525,6 +537,31 @@ int UI_Lua::setPicture(lua_State *L){
 		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
 		string picname = luaL_checkstring (L, 2);
 		pic->Set( picname );
+	
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
+	}
+	return 0;
+}
+
+/** \brief Change the Background of a Picture Widget
+ *
+ */
+int UI_Lua::setBackground(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if ((n == 4) || (n == 5)){
+		Picture* pic = (Picture*)checkWidget(L,1);
+		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
+
+		float r = luaL_checknumber (L, 2);
+		float g = luaL_checknumber (L, 3);
+		float b = luaL_checknumber (L, 4);
+		float a = pic->GetAlpha();
+		if( n == 5 ) {
+			a = luaL_checknumber (L, 5);
+		}
+
+		pic->SetColor( r, g, b, a );
 	
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
@@ -653,10 +690,12 @@ int UI_Lua::setText(lua_State *L){
 			((Textbox*)(widget))->SetText( text );
 			break;
 
+		case WIDGET_BUTTON:
+			((Button*)(widget))->SetText( text );
+			break;
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
-		case WIDGET_BUTTON:
 			return luaL_error(L, "Epiar does not currently calling setText on Widgets of type '%s'.", (widget)->GetType().c_str() );
 			break;
 
@@ -753,11 +792,13 @@ int UI_Lua::GetText(lua_State *L){
 			lua_pushstring(L, ((Dropdown*)(widget))->GetText().c_str() );
 			return 1;
 			break;
-
-		// TODO These Widget Types do not currently accept setText, but they should.
+		case WIDGET_BUTTON:
+			lua_pushstring(L, ((Button*)(widget))->GetText().c_str() );
+			return 1;
+			break;
+		// TODO These Widget Types do not currently accept getText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
-		case WIDGET_BUTTON:
 			return luaL_error(L, "Epiar does not currently calling getText on Widgets of type '%s'.", (widget)->GetType().c_str() );
 			break;
 
@@ -774,6 +815,8 @@ int UI_Lua::GetText(lua_State *L){
 	}
 }
 
+/**\brief Get the Position and size of a Widget
+ */
 int UI_Lua::GetEdges(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 1)
@@ -789,6 +832,7 @@ int UI_Lua::GetEdges(lua_State *L){
 }
 
 /**\brief Append an option to this Dropdown
+ * \note Tables of strings will be flattened and added
  */
 int UI_Lua::AddOption(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
@@ -800,9 +844,19 @@ int UI_Lua::AddOption(lua_State *L){
 	Dropdown *dropdown = (Dropdown*)widget;
 
 	// Add the options
-	for( int arg = 2; arg <= n; ++arg ) {
-		string option = lua_tostring(L, arg);
-		dropdown->AddOption( option );
+	for(int arg = 2; arg <= n; ++arg){
+		if( lua_istable(L, arg) ) {
+			// Tables can be lists of strings
+			list<string>::iterator i;
+			list<string> values = Lua::getStringListField( arg );
+			for(i = values.begin(); i != values.end(); ++i) {
+				dropdown->AddOption( (*i) );
+			}
+		} else {
+			// Everything else is converted into a string
+			string option = lua_tostring(L, arg);
+			dropdown->AddOption( option );
+		}
 	}
 
 	return 0;

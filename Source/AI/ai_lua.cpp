@@ -429,7 +429,6 @@ int AI_Lua::ShipGetShieldBooster(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		double s=(double) (ai)->GetShieldBoost();
-		printf( "GetShieldBooster= %f \n", (double) (ai)->GetShieldBoost());
 		lua_pushnumber (L, s);
 
 	}
@@ -590,7 +589,6 @@ int AI_Lua::ShipAddOutfit(lua_State* L){
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
 		(ai)->AddOutfit( Outfits::Instance()->GetOutfit(outfitName) );
-		printf("Adding outfit: %s\n",outfitName.c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
 	}
@@ -607,7 +605,6 @@ int AI_Lua::ShipRemoveOutfit(lua_State* L){
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
 		(ai)->RemoveOutfit( Outfits::Instance()->GetOutfit(outfitName) );
-		printf("Removing outfit: %s\n",outfitName.c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, outfitName)", n);
 	}

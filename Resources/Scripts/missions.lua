@@ -418,42 +418,27 @@ ProtectFreighter = {
 		missionTable.freighterName = freighterName
 		missionTable.planet = planetName
 		missionTable.reward = reward
+		local pX, pY = PLAYER:GetPosition();
+		missionTable.fX = pX - 100
+		missionTable.fY = pY
+		missionTable.playerName = PLAYER:GetName()
 		return missionTable
 	end,
 	Accept = function( missionTable )
 		local planetName = missionTable.planet
 		local p = Planet.Get( planetName )
 		local pX, pY = p:GetPosition()
-		local playerX, playerY = PLAYER:GetPosition()
 
-		local mach
-		local freighterDialog = UI.newWindow(100,100, 500, 140, "Communication channel" )
-		freighterDialog:add( UI.newLabel( 50, 30, (string.format("%s opened a communication channel to your ship.", missionTable.freighterName) ) ) )
-		freighterDialog:add( UI.newLabel( 50, 60, (string.format("\"%s, thank you for your assistance!", PLAYER:GetName() ) ) ) )
-		freighterDialog:add( UI.newLabel( 50, 75, (string.format(" Would you prefer that I follow you or simply proceed on my normal route?\"", PLAYER:GetName() ) ) ) )
-                freighterDialog:add( UI.newButton(125, 110, 75, 20, "Follow", "freighterCreate('Escort')" ) )
-                freighterDialog:add( UI.newButton(225, 110, 75, 20, "Normal route", "freighterCreate('Trader')" ) )
-		
-		freighterCreate = function(type)
+		local createFreighter = function(type)
 			-- Add freighter
 			local freighter = Ship.new(
-			   string.format("%s", missionTable.freighterName), playerX-100,playerY, "Hammer Freighter",
+			   string.format("%s", missionTable.freighterName), missionTable.fX, missionTable.fY, "Hammer Freighter",
 			   "Ion Engines", type, "Independent" )
 			missionTable.freighter = freighter:GetID()
-			local id = missionTable.freighter
 			freighter:SetRadarColor(0,255,0)
-			if type == "Escort" then
-				setAccompany(id, PLAYER:GetID())
-				HUD.newAlert( (string.format("%s: \"I will let you lead the way, %s\"",
-				   missionTable.freighterName, PLAYER:GetName() ) ) )
-			else
-				if AIData[id] == nil then AIData[id] = { } end
-				AIData[id].alwaysGateTravel = true
-				AIData[id].destination = p:GetID()
-				AIData[id].destinationName = planetName
-				HUD.newAlert( (string.format("%s: \"I will follow my usual route.\"",
-				   missionTable.freighterName) ) )
-			end
+			HUD.newAlert( (string.format("%s: \"Thank you for agreeing to help, %s\"",
+			   missionTable.freighterName, missionTable.playerName ) ) )
+			missionTable.joined = false
 
 			-- Add pirates
 			local pirateX = pX + math.random(7000) - 3500
@@ -464,24 +449,32 @@ ProtectFreighter = {
 			escort:SetRadarColor(255,0,0)
 			setAccompany(escort:GetID(), pirate:GetID())
 			setHuntHostile(pirate:GetID(), freighter:GetID())
-
-			-- Clean up
-			UI.search("/Window'Communication channel'/"):close()
 		end
+		createFreighter("Escort")
 	end,
 	Reject = function( missionTable )
 		HUD.newAlert( (string.format("%s: \"%s! I find your betrayal most disappointing.\"", missionTable.freighterName, PLAYER:GetName() ) ) )
 		setAccompany(missionTable.freighter, -1)
+		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
 	end,
 	Update = function( missionTable )
 		local freighter = Epiar.getSprite( missionTable.freighter )
 		local p = Planet.Get( missionTable.planet )
+
+		if missionTable.joined == false then
+			local id = missionTable.freighter
+			Fleets:join(PLAYER:GetID(), id)
+			missionTable.joined = true
+		end
+
 		if freighter ~= nil and p ~= nil then
 			local fX, fY = freighter:GetPosition()
 			local pX, pY = p:GetPosition()
 			if distfrom( fX, fY, pX, pY ) < 350 then
 				return true
 			end
+			missionTable.fX = fX
+			missionTable.fY = fY
 		else
 			return false
 		end
@@ -490,6 +483,7 @@ ProtectFreighter = {
 		HUD.newAlert("Mission succeeded.")
 		addcredits(missionTable.reward)
 		setAccompany(missionTable.freighter, -1)
+		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
 	end,
 	Failure = function( missionTable )
 		HUD.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )

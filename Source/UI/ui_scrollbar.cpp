@@ -10,6 +10,10 @@
 #include "UI/ui.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 #define SCROLLBAR_MINMARK	10	///< Minimum marker size
 
 /**\class Scrollbar
@@ -31,16 +35,16 @@ Scrollbar::Scrollbar( int x, int y, int length, int maxpos):
 	assert(maxpos != 0);
 
 	// This is the Scrollbar Background Image.
-	bitmaps[0] = Image::Get("Resources/Graphics/ui_scrollbar_bg.png");
+	bitmaps[0] = Image::Get("Resources/Skin/ui_scrollbar_bg.png");
 
 	// These are the Up and down Arrows
-	bitmaps[1] = Image::Get("Resources/Graphics/ui_scrollbar_up.png");
-	bitmaps[2] = Image::Get("Resources/Graphics/ui_scrollbar_down.png");
+	bitmaps[1] = Image::Get("Resources/Skin/ui_scrollbar_up.png");
+	bitmaps[2] = Image::Get("Resources/Skin/ui_scrollbar_down.png");
 
 	// These Describe the the Marker / Handle
-	bitmaps[3] = Image::Get("Resources/Graphics/ui_scrollbar_handle_up.png");
-	bitmaps[4] = Image::Get("Resources/Graphics/ui_scrollbar_handle_bg.png");
-	bitmaps[5] = Image::Get("Resources/Graphics/ui_scrollbar_handle_down.png");
+	bitmaps[3] = Image::Get("Resources/Skin/ui_scrollbar_handle_up.png");
+	bitmaps[4] = Image::Get("Resources/Skin/ui_scrollbar_handle_bg.png");
+	bitmaps[5] = Image::Get("Resources/Skin/ui_scrollbar_handle_down.png");
 
 	this->x -= bitmaps[0]->GetWidth();
 
@@ -194,3 +198,5 @@ int Scrollbar::CheckPos( int newpos ){
 
 	return newpos;
 }
+
+/** @} */

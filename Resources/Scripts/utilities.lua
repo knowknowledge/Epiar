@@ -14,21 +14,44 @@ function trim(s)
 end
 
 -- Wrap lines of text to a specified maximum width or 72 characters by default.
--- To-do: allow hard wrapping with blank lines.
-function linewrap(text, chars_per_line)
+function linewrap(text, chars_per_line, do_justify)
+	-- Note: this justify function only works properly for fixed-width fonts,
+	-- but it does still offer a slight improvement for other fonts.
+	local justify = function(the_line)
+		local puffed = 0
+		local done = false
+		local new_line = the_line
+		while done == false do
+			local newer_line = string.gsub(new_line, "([a-z]) ", function(c)
+				if string.len(the_line) + puffed < chars_per_line then
+					puffed = puffed + 1
+					return (c .. "  ")
+				end
+				done = true
+				return (c .. " ")
+			end)
+			-- if there was no change or the change is too dramatic, stick with the previous version
+			if newer_line == new_line or string.match(newer_line, "    ") then return new_line end
+			new_line = newer_line
+		end
+		return new_line
+	end
+
 	if chars_per_line == nil then chars_per_line = 72 end
 	local wrapped = ""
 	local line = ""
+	text = string.gsub(text, "\n\n", "\n__HARDWRAP__ ")
 	string.gsub(text, "([^ \n]*)[ \n]*",
 	   function(w)
 	      local joined = string.format("%s %s", line, w)
               if line == "" then joined = w end
-	      if string.len( joined ) <= chars_per_line  then
+	      if string.len( joined ) <= chars_per_line and w ~= "__HARDWRAP__" then
 		 line = joined
 	      else
+		 if(do_justify) then line = justify(line) end
 	         if wrapped == "" then wrapped = line
-	         else wrapped = string.format("%s\n%s", wrapped, line) end
-	         line = w
+	         else wrapped = string.format("%s\n%s%s", wrapped, line, (w == "__HARDWRAP__" and "\n" or "")) end
+	         line = (w == "__HARDWRAP__" and "" or w)
 	      end
 	      return ""
 	   end)

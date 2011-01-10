@@ -12,6 +12,10 @@
 #include "Utilities/log.h"
 #include "Graphics/video.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Widget
  * \brief A user interface widget, widgets do not have children.
  * \fn Widget::Draw()
@@ -208,9 +212,13 @@ xmlNodePtr Widget::ToNode() {
 	xmlSetProp( thisNode, BAD_CAST "w", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", this->GetH() );
 	xmlSetProp( thisNode, BAD_CAST "h", BAD_CAST buff );
+	snprintf(buff, sizeof(buff), "%p", this );
+	xmlSetProp( thisNode, BAD_CAST "address", BAD_CAST buff );
 
 	if(hidden) xmlSetProp( thisNode, BAD_CAST "hidden", BAD_CAST "true" );
 	if(disabled) xmlSetProp( thisNode, BAD_CAST "disabled", BAD_CAST "true" );
 	
 	return thisNode;
 }
+
+/** @} */

@@ -16,6 +16,10 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Button
  * \brief UI button. */
 
@@ -32,9 +36,9 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	this->name = label;
 	
 	// Load the bitmaps needed for drawing
-	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
-	bitmap_mouseover = Image::Get( "Resources/Graphics/ui_button_mouseover.png" );
-	bitmap_pressed = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
+	bitmap_normal = Image::Get( "Resources/Skin/ui_button.png" );
+	bitmap_mouseover = Image::Get( "Resources/Skin/ui_button_mouseover.png" );
+	bitmap_pressed = Image::Get( "Resources/Skin/ui_button_pressed.png" );
 	bitmap_current = bitmap_normal;
 
 	assert(bitmap_normal);
@@ -143,3 +147,5 @@ bool Button::MouseLeave( void ){
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
+
+/** @} */

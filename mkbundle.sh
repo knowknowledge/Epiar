@@ -11,12 +11,11 @@ mkdir -p $APP_LOC/Contents/MacOS
 cp Epiar $APP_LOC/Contents/MacOS
 cp -r Resources $APP_LOC/Contents/
 cp Info.plist $APP_LOC/Contents/
-cp Resources/Graphics/Epiar_Icon.icns $APP_LOC/Contents/Resources/
+cp Resources/Icons/Epiar_Icon.icns $APP_LOC/Contents/Resources/
 
-# The .xcf files aren't used at run time
-# Deleting them saves 5.5 Megabytes
-echo "Removing unneeded files."
-rm -rf $APP_LOC/Contents/Resources/Graphics/*.xcf
+# The Blueprint files are used for creating the Art.
+echo "Removing blueprint files."
+rm -rf $APP_LOC/Contents/Resources/Blueprints
 
 echo "Adding README and LICENSE files."
 cp AUTHORS $DMG_LOC

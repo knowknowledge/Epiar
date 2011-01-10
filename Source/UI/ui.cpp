@@ -13,6 +13,10 @@
 #include "UI/ui.h"
 #include "Input/input.h"
 
+/** \defgroup UI
+ * @{
+ */
+
 /**\class UI
  * \brief The User Interface is a collection of Widgets
  * \details This is the main Interface for all User Interface manipulations.
@@ -218,3 +222,4 @@ bool UI::HandleMouse( InputEvent i ) {
 	return false;
 }
 
+/** @} */
