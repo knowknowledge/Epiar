@@ -165,10 +165,10 @@ void Main_Load_Settings() {
 	}
 
 	skinfile = new XMLFile();
-	if( !skinfile->Open("Resources/Definitions/skin.xml") )
+	if( !skinfile->Open("Resources/Skin/skin.xml") )
 	{
 		// Create the default Skin file
-		skinfile->New("Resources/Definitions/skin.xml", "Skin");
+		skinfile->New("Resources/Skin/skin.xml", "Skin");
 
 		// UI - Default
 		skinfile->Set( "Skin/UI/Default/Font", "Resources/Fonts/FreeSans.ttf");

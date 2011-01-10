@@ -29,11 +29,11 @@ Slider::Slider( int x, int y, int w, int h, const string& label,
 		minval( 0.000f ), maxval( 1.000f ), val( value ),
 		lua_callback( string(callback) )
 {
-	left = Image::Get( "Resources/Graphics/ui_slider_left.png" );
-	right = Image::Get( "Resources/Graphics/ui_slider_right.png" );
-	background = Image::Get( "Resources/Graphics/ui_slider_background.png" );
-	bar = Image::Get( "Resources/Graphics/ui_slider_bar.png" );
-	handle = Image::Get( "Resources/Graphics/ui_slider_handle.png" );
+	left = Image::Get( "Resources/Skin/ui_slider_left.png" );
+	right = Image::Get( "Resources/Skin/ui_slider_right.png" );
+	background = Image::Get( "Resources/Skin/ui_slider_background.png" );
+	bar = Image::Get( "Resources/Skin/ui_slider_bar.png" );
+	handle = Image::Get( "Resources/Skin/ui_slider_handle.png" );
 
 	LogMsg(INFO, "New Slider '%s' with callback = %s\n", label.c_str(), callback.c_str() );
 

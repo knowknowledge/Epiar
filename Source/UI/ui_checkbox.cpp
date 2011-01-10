@@ -20,8 +20,8 @@
 /**\brief Constructs a new Checkbox.
  */
 Checkbox::Checkbox( int x, int y, bool checked, string label ) {
-	blank_box = Image::Get( "Resources/Graphics/ui_checkbox_blank.png" );
-	check_box = Image::Get( "Resources/Graphics/ui_checkbox_check.png" );
+	blank_box = Image::Get( "Resources/Skin/ui_checkbox_blank.png" );
+	check_box = Image::Get( "Resources/Skin/ui_checkbox_check.png" );
 
 	this->x = x;
 	this->y = y;

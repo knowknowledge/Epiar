@@ -123,9 +123,9 @@ void StatusBar::print ()
 void StatusBar::Draw(int x, int y) {
 	int widthRemaining = this->width;
 
-	Image *BackgroundLeft = Image::Get( "Resources/Graphics/hud_bar_left.png" );
-	Image *BackgroundMiddle = Image::Get( "Resources/Graphics/hud_bar_middle.png" );
-	Image *BackgroundRight= Image::Get( "Resources/Graphics/hud_bar_right.png" );
+	Image *BackgroundLeft = Image::Get( "Resources/Skin/hud_bar_left.png" );
+	Image *BackgroundMiddle = Image::Get( "Resources/Skin/hud_bar_middle.png" );
+	Image *BackgroundRight= Image::Get( "Resources/Skin/hud_bar_right.png" );
 
 	if(pos == UPPER_RIGHT || pos == LOWER_RIGHT) {
 		x = Video::GetWidth() - BackgroundLeft->GetWidth() - width - BackgroundRight->GetWidth();
@@ -151,9 +151,9 @@ void StatusBar::Draw(int x, int y) {
 
 	// Draw the Bar
 	if ( (int)(ratio*widthRemaining) > 0 ) {
-		Image *BarLeft = Image::Get( "Resources/Graphics/hud_hullstr_leftbar.png" );
-		Image *BarMiddle = Image::Get( "Resources/Graphics/hud_hullstr_bar.png" );
-		Image *BarRight = Image::Get( "Resources/Graphics/hud_hullstr_rightbar.png" );
+		Image *BarLeft = Image::Get( "Resources/Skin/hud_hullstr_leftbar.png" );
+		Image *BarMiddle = Image::Get( "Resources/Skin/hud_hullstr_bar.png" );
+		Image *BarRight = Image::Get( "Resources/Skin/hud_hullstr_rightbar.png" );
 
 		int bar_y = y + BackgroundLeft->GetHalfHeight() - BarLeft->GetHalfHeight();
 		BarLeft->Draw( x, bar_y );
@@ -347,10 +347,10 @@ void Hud::DrawFPS( float fps ) {
  */
 void Hud::DrawStatusBars() {
 	// Initialize the starting Coordinates
-	int barHeight = Image::Get( "Resources/Graphics/hud_bar_left.png" )->GetHeight()+5;
+	int barHeight = Image::Get( "Resources/Skin/hud_bar_left.png" )->GetHeight()+5;
 	Coordinate startCoords[4];
-	startCoords[UPPER_LEFT]  = Coordinate(5,Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->GetHeight()+5);
-	startCoords[UPPER_RIGHT] = Coordinate(5,Image::Get( "Resources/Graphics/hud_radarnav.png" )->GetHeight()+5);
+	startCoords[UPPER_LEFT]  = Coordinate(5,Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->GetHeight()+5);
+	startCoords[UPPER_RIGHT] = Coordinate(5,Image::Get( "Resources/Skin/hud_radarnav.png" )->GetHeight()+5);
 	startCoords[LOWER_LEFT]  = Coordinate(5,Video::GetHeight()-barHeight);
 	startCoords[LOWER_RIGHT] = Coordinate(5,Video::GetHeight()-barHeight);
 	Coordinate offsetCoords[4]= {
@@ -376,13 +376,13 @@ void Hud::DrawStatusBars() {
 /**\brief Draw the shield bar.
  */
 void Hud::DrawShieldIntegrity() {
-	Image::Get( "Resources/Graphics/hud_shieldintegrity.png" )->Draw( 35, 5 );
+	Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->Draw( 35, 5 );
 }
 
 /**\brief Draw the radar.
  */
 void Hud::DrawRadarNav( void ) {
-	Image::Get( "Resources/Graphics/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
+	Image::Get( "Resources/Skin/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	Video::SetCropRect( Video::GetWidth() - 125, 9, RADAR_WIDTH-8, RADAR_HEIGHT-8 );
 	Radar::Draw();
 	Video::UnsetCropRect();
