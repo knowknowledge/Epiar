@@ -320,20 +320,21 @@ void AI::RegisterTarget(int t){
 	lua_getglobal(L, "setHuntHostile" );
 	lua_pushnumber(L, this->GetID());
 	lua_pushnumber(L, t);
-	if(lua_pcall(L,2,0,0)!=0)
+	if(lua_pcall(L,2,0,0)!=0) {
 		LogMsg(ERR,"Failed to run setHuntHostile\n");
-	else
-		printf("Successfully Registered target %d\n",t);
+	} else {
+		//printf("Successfully Registered target %d\n",t);
+	}
 }
 
 /**\brief checks if a potential target is within targeting range
  *
  */
 bool InRange(Coordinate a, Coordinate b){
-	printf("InRange check\n");
+	//printf("InRange check\n");
 	int x=a.GetX() - b.GetX();
 	int y=a.GetY() - b.GetY();
-	printf("finished InRange check\n");
+	//printf("finished InRange check\n");
 	return(x*x + y*y <=COMBAT_RANGE_SQUARED);
 	
 }

@@ -168,7 +168,7 @@ Hunter = {
 		if AIData[id].hostile == 1 and AIData[id].foundTarget == 0 then
 			AIData[id].foundTarget = 1
 			local machine, state = cur_ship:GetState()
-			HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
+			--HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
 		end
 
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
