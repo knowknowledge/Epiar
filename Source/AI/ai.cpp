@@ -271,7 +271,12 @@ void AI::SetTarget(int t){
  */
 void AI::AddEnemy(int e, int damage){
 	//printf("Adding Enemy %d with damage %d\n",e,damage);
-	int drawOrder = SpriteManager::Instance()->GetSpriteByID(e)->GetDrawOrder();
+	Sprite *spr = SpriteManager::Instance()->GetSpriteByID(e);
+	if(!spr){
+		this->RemoveEnemy(e);
+		return;
+	}
+	int drawOrder = spr->GetDrawOrder();
 	if( !(drawOrder==DRAW_ORDER_SHIP || drawOrder == DRAW_ORDER_PLAYER) ){
 		//printf("Error %d is not a ship/player\n",e);
 		return;

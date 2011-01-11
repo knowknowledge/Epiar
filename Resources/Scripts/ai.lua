@@ -33,7 +33,11 @@ end
 
 function okayTarget(cur_ship, ship)
 	-- if friendly (merciful) mode is on and the nearest target is the player, forbid this target
-	if cur_ship:GetFriendly() == 1 and ship:GetID() == 60 then
+	if cur_ship:GetFriendly() == 1 and PLAYER ~= nil and PLAYER:GetID() == ship:GetID() then
+		return false
+	end
+
+	if Fleets:fleetmates( cur_ship:GetID(), ship:GetID() ) then
 		return false
 	end
 
@@ -64,9 +68,13 @@ function setHuntHostile(id, tid)
 	if AIData[id] == nil then
 		AIData[id] = { }
 	end
-	AIData[id].target = tid
-	AIData[id].hostile = 1
-	AIData[id].foundTarget = 0
+	local cur_ship = Epiar.getSprite(id)
+	local target_ship = Epiar.getSprite(tid)
+	if cur_ship ~= nil and target_ship ~= nil and okayTarget(cur_ship, target_ship) then
+		AIData[id].target = tid
+		AIData[id].hostile = 1
+		AIData[id].foundTarget = 0
+	end
 end
 
 -- Gate Traveler AI to be used by others
