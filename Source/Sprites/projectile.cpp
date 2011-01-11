@@ -14,6 +14,7 @@
 #include "Sprites/effects.h"
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
+#include "AI/ai.h"
 
 /**\class Projectile
  * \brief Projectiles are the missiles, bullets and lasers as they are flying through space.
@@ -82,7 +83,10 @@ void Projectile::Update( void ) {
 	// Check for projectile collisions
 	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 	if( (impact != NULL) && (impact->GetID() != ownerID) && ((this->GetWorldPosition() - impact->GetWorldPosition()).GetMagnitude() < impact->GetRadarSize() )) {
-		((Ship*)impact)->Damage( (weapon->GetPayload())*damageBoost );
+		int damageDone=(weapon->GetPayload())*damageBoost;
+		((Ship*)impact)->Damage( damageDone );
+		if(impact->GetDrawOrder()==DRAW_ORDER_SHIP)
+			((AI*)impact)->AddEnemy(ownerID,damageDone);
 		sprites->Delete( (Sprite*)this );
 		
 		// Create a fire burst where this projectile hit the ship's shields.
