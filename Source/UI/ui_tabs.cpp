@@ -12,6 +12,10 @@
 #include "UI/ui_tabs.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 #define TAB_HEADER 20
 
 /**\class Tab
@@ -27,13 +31,13 @@ Tab::Tab( const string& _caption ) {
 	this->w = 0;
 	this->name = _caption;
 
-	active_left = Image::Get("Resources/Graphics/active-tab-left.png");
-	active_middle = Image::Get("Resources/Graphics/active-tab-middle.png");
-	active_right = Image::Get("Resources/Graphics/active-tab-right.png");
+	active_left = Image::Get("Resources/Skin/active-tab-left.png");
+	active_middle = Image::Get("Resources/Skin/active-tab-middle.png");
+	active_right = Image::Get("Resources/Skin/active-tab-right.png");
 
-	inactive_left = Image::Get("Resources/Graphics/inactive-tab-left.png");
-	inactive_middle = Image::Get("Resources/Graphics/inactive-tab-middle.png");
-	inactive_right = Image::Get("Resources/Graphics/inactive-tab-right.png");
+	inactive_left = Image::Get("Resources/Skin/inactive-tab-left.png");
+	inactive_middle = Image::Get("Resources/Skin/inactive-tab-middle.png");
+	inactive_right = Image::Get("Resources/Skin/inactive-tab-right.png");
 
 	this->capw = UI::font->TextWidth( _caption );
 }
@@ -210,3 +214,5 @@ Tab* Tabs::CheckTabClicked( int xr, int yr ){
 /** \fn Tabs::GetType
  *  \brief For Tabs container, it is always "Tabs"
  */
+
+/** @} */

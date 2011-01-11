@@ -18,8 +18,6 @@ class Frame : public Container {
 		Frame *AddChild( Widget *widget );
 		void Draw( int relx = 0, int rely = 0 );
 	
-		bool MouseDrag( int x, int y );
-
 		string GetType( void ) { return string("Frame"); }
 		virtual int GetMask( void ) { return WIDGET_FRAME | WIDGET_CONTAINER; }
 

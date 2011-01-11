@@ -209,12 +209,13 @@ function options()
 	debugLabel      = UI.newLabel(20, 5, "Debug Options:", 0)
 	xmlfileLogging  = UI.newCheckbox(20, 30, ( Epiar.getoption("options/log/xml") ), "Save Log Messages")
 	stdoutLogging   = UI.newCheckbox(20, 50, ( Epiar.getoption("options/log/out") ), "Print Log Messages")
-	uiLogging       = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
-	spriteLogging   = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
-	aiStateDisplay  = UI.newCheckbox(20,110, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
-	uiDebugging     = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
-	spritesMap      = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/ships-worldmap") ), "Display Ships on the Universe Map")
-	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging, spritesMap )
+	alertLogging    = UI.newCheckbox(20, 70, ( Epiar.getoption("options/log/alert") ), "Alert Log Messages")
+	uiLogging       = UI.newCheckbox(20, 90, ( Epiar.getoption("options/log/ui") ), "Save UI as XML")
+	spriteLogging   = UI.newCheckbox(20,110 , ( Epiar.getoption("options/log/sprites") ), "Save Sprites as XML")
+	aiStateDisplay  = UI.newCheckbox(20,130, ( Epiar.getoption("options/development/debug-ai") ), "Display AI State Machine")
+	uiDebugging     = UI.newCheckbox(20,150, ( Epiar.getoption("options/development/debug-ui") ), "Display UI Debug Information")
+	spritesMap      = UI.newCheckbox(20,170, ( Epiar.getoption("options/development/ships-worldmap") ), "Display Ships on the Universe Map")
+	debugTab:add( debugLabel, xmlfileLogging, stdoutLogging, alertLogging, uiLogging, spriteLogging, aiStateDisplay, uiDebugging, spritesMap )
 
 	-- Command Keys
 	keyTab = UI.newTab( "Keyboard")
@@ -250,6 +251,7 @@ function options()
 		-- Developer Options
 		Epiar.setoption("options/log/xml",          xmlfileLogging  :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/out",          stdoutLogging   :IsChecked() and 1 or 0 )
+		Epiar.setoption("options/log/alert",        alertLogging    :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/ui",           uiLogging       :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/log/sprites",      spriteLogging   :IsChecked() and 1 or 0 )
 		Epiar.setoption("options/development/debug-ai", aiStateDisplay :IsChecked() and 1 or 0 )
@@ -660,6 +662,7 @@ function storeView(containerPath, itemType, itemName )
 		or statname == "Sound"
 		or statname == "Animation"
 		or type(value) == "table" then
+			-- Do Nothing
 		else
 			if type(value)=="number" and math.floor(value) ~= value then
 				value = string.format("%.2f", value)
@@ -813,6 +816,7 @@ function ui_demo()
 	demo_win = UI.newWindow( 200, 100, 400, 300, "User Interface Demo")
 	demo_text1 = UI.newTextbox( 50, 50, 100, 1)
 	demo_text2 = UI.newTextbox( 250, 50, 100, 1)
+	demo_drop = UI.newDropdown( 250, 100, 100, 30, {"A","B","C"})
 	io.write("DEBUG '"..( Epiar.getoption("options/development/debug-quadtree") ).."'\n")
 
 	-- Modify the Widgets
@@ -823,12 +827,15 @@ function ui_demo()
 		demo_text2:setText(s1)
 	end
 
+	demo_button = UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()")
+
 	-- Attach the widgets to the window
 	demo_win:add(demo_text1)
 	demo_win:add(demo_text2)
-	demo_win:add(UI.newButton( 175, 50, 14*3, 18, "<->", "demo_swap()"))
+	demo_win:add(demo_button)
+	demo_win:add(demo_drop)
 
-	demo_win:add(UI.newFrame( 10, 10, 100, 80 ) )
+	demo_win:setFormButton( demo_button )
 end
 
 -- interactive weapon slot configuration
@@ -861,7 +868,7 @@ function weaponConfigDialog()
 
 				Grouping missiles into a salvo is a possibility if you have more than one launcher.]]
 
-	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32 )
+	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32, true )
 
 	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
 
@@ -880,6 +887,7 @@ function weaponConfigDialog()
 	pickedSlot = nil
 
 	slotButtons = { }
+	slotFGButtons = { }
 
 	for slot =0,(slotCount-1) do
 		local slotName = PLAYER:GetWeaponSlotName(slot)
@@ -890,8 +898,8 @@ function weaponConfigDialog()
 
 		local slotLabel = UI.newLabel( 15, 45+(40*slot), (string.format("%s:", slotName)), 0)
 		slotButtons[slot] = UI.newButton( 50, 45+(40*slot)+20, 100, 20, (string.format("%s", slotStatus)), (string.format("assignWeaponToSlot(%d)", slot)))
-		local slotFGButton = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
-		leftFrame:add(slotLabel,slotButtons[slot],slotFGButton);
+		slotFGButtons[slot] = UI.newButton( 150, 45+(40*slot)+20, 75, 20, slotFGName, (string.format("alternateFiringGroup(%d)", slot)))
+		leftFrame:add(slotLabel,slotButtons[slot],slotFGButtons[slot]);
 	end
 
 	local w = 0
@@ -907,9 +915,11 @@ function assignWeaponToSlot(slot)
 		PLAYER:SetWeaponSlotStatus(slot, PLAYER:GetWeaponSlotStatus(pickedSlot) )
 		PLAYER:SetWeaponSlotStatus(pickedSlot, s)
 
-		-- FIXME super crude window update trick
-		weaponConfigFinish()
-		weaponConfigDialog()
+		-- now they have been swapped, so update the buttons
+		slotButtons[slot]:setText( PLAYER:GetWeaponSlotStatus(slot) )
+		slotButtons[pickedSlot]:setText( PLAYER:GetWeaponSlotStatus(pickedSlot) )
+
+		pickedSlot = nil
 	end
 end
 
@@ -917,17 +927,12 @@ function alternateFiringGroup(slot)
 	local fg = PLAYER:GetWeaponSlotFG(slot)
 	fg = (fg+1)%2
 	PLAYER:SetWeaponSlotFG(slot, fg)
-
-	-- FIXME super crude window update trick
-	weaponConfigFinish()
-	weaponConfigDialog()
+	slotFGButtons[slot]:setText( (PLAYER:GetWeaponSlotFG(slot) == 0 and "Primary" or "Secondary") )
 end
 
 function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
 	local wcDialog = UI.search("/Window'Weapon Configuration'/")
+	-- this should cover all widget cleanup
 	wcDialog:close()
-	slotButtons = nil
-	pickedSlot = nil
-	wcDialog = nil
 end

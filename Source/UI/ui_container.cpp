@@ -10,6 +10,10 @@
 #include "Utilities/xml.h"
 #include "UI/ui_container.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Container
  * \brief Container is a container class for other widgets.
  */
@@ -61,10 +65,10 @@ Container *Container::AddChild( Widget *widget ) {
 }
 
 /**\brief Deletes a child from the current container.
- * \details This performs a breadth-first search to find the specified widget.
- * \warn The search will stop as soon as it finds the first instance of the Widget pointer.
- *       This means that if there are duplicate pointers to the same Widget, the
- *       second instance will cause a seg fault since the Widget object will have been freed.
+ * \details This performs a semi-breadth-first search to find the specified widget.
+ * \warn The widget needs to be a correctly allocated.
+ * \param[in] A pointer to a valid widget.
+ * \returns true if the child was correctly found.
  */
 bool Container::DelChild( Widget *widget ){
 	bool not_scrollbar;
@@ -103,8 +107,9 @@ bool Container::DelChild( Widget *widget ){
 	return false;
 }
 
-/**\brief Empties all children.*/
-bool Container::Empty( void ){
+/**\brief Empties all children.
+ */
+void Container::Empty( void ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -113,12 +118,12 @@ bool Container::Empty( void ){
 	children.clear();
 
 	ResetInput();
-
-	return true;
 }
 
-/**\brief Reset focus and events.*/
-bool Container::ResetInput( void ){
+/**\brief Reset focus and events.
+ *
+ */
+void Container::ResetInput( void ){
 	list<Widget *>::iterator i;
 
 	for( i = children.begin(); i != children.end(); ++i ) {
@@ -127,13 +132,16 @@ bool Container::ResetInput( void ){
 		}
 	}
 
+	// Forget about these:
 	this->keyboardFocus = NULL;
 	this->mouseHover = NULL;
 	this->lmouseDown = NULL;
 	this->mmouseDown = NULL;
 	this->rmouseDown = NULL;
 
-	return true;
+	// Don't forget about these:
+	//this->vscrollbar = NULL;
+	//this->formbutton = NULL;
 }
 
 /**\brief Checks to see if point is inside a child
@@ -164,7 +172,7 @@ Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 bool Container::IsAttached( Widget* possible ) {
 	list<Widget *>::iterator i;
 	
-	// Search the direct children.
+	// Check the direct children.
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == possible ) {
 			LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
@@ -172,8 +180,7 @@ bool Container::IsAttached( Widget* possible ) {
 		}
 	}
 	
-	// Search the grandchildren
-	// This is a breadth first search.
+	// Check the grandchildren
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
 			if( ((Container*)(*i))->IsAttached( possible ) ) {
@@ -188,6 +195,49 @@ bool Container::IsAttached( Widget* possible ) {
 
 /**\brief Search this Container for a Widget
  *
+ * \details
+ *
+ * The Container Search is used for traversing the Widget tree
+ * starting at this Container.  The query is a list of Widget
+ * descriptions surrounded by slashes.  Each widget description is a
+ * collection of tokens that will narrow down which specific widget is
+ * being referred to.
+ *
+ * The form of the Query:
+ *  - The query always starts and ends with a slash.
+ *  - Between slashes is a widget descriptor.
+ *  - Each internal slash tells the search to step down to the described child.
+ *  - The widget descriptor is a combinations of one or more widget characteristics.
+ *
+ * The Tokens:
+ *  - TYPE : A Type Name restricts this search to this specific Type.
+ *  - [N] : A number inside square brackets designates that this search must be
+ *        (N-1)th match for this particular search. Indexes start at zero.
+ *  - "NAME" or 'NAME' : This will find a specifically named Widget.  Either
+ *        kind of Quote can be used.
+ *  - (X,Y) :  This will find the Widget at the relative coordinates (X,Y).
+ *  - / : The Slash is used as a boundary between Widget queries.
+ *
+ * Examples Search Queries:
+ *  - /2/ This will find the 3rd child of this Container.
+ *  - /Tab/ This will find the first Tab in this Container.
+ *  - /"Foobar"/ This will find the first Widget named Foobar.
+ *  - /(50,50)/ This will find the first Widget at (50,50).
+ *  - /Frame[2]/ This will find the 3rd Frame of this Container.
+ *  - /Window[2]/Checkbox/ This will find the first Checkbox in the 3rd
+ *                         Window of this Container.
+ *
+ * \warn Repeating the same same Token type within the same Widget descriptor
+ *       will overwrite the previous token.  For example, /Button[0]Textbox/
+ *       will find the first Textbox not the first Button.
+ * \warn The name cannot contain any of the special-character tokens, or else it will not
+ *       be properly captured.
+ *
+ * \todo The query validation needs to be improved.  /(Foobar,4)/ will attempt
+ *       to convert the string "Foobar" to a string.
+ *
+ * \param[in] full_query A specially formatted string 
+ * \returns A pointer to the first matching Widget or NULL.
  */
 Widget *Container::Search( string full_query ) {
 	int section = 0;
@@ -235,9 +285,12 @@ Widget *Container::Search( string full_query ) {
 	LogMsg(INFO, "QUERY: '%s'", full_query.c_str() );
 	for(; iter != tokenized.end(); ++iter ) {
 		subquery = (*iter);
-		// LogMsg(INFO, "token: '%s'", (*iter).c_str() );
-		token = subquery[0];
+		// LogMsg(INFO, "token: '%s'", subquery.c_str() );
 		if( subquery == "" ) { continue; }
+
+        // The tokens are always going to be single characters
+        assert( subquery.size() >= 1 );
+		token = subquery[0];
 
 		// If we're checking a Token, we need to be in a Container
 		if( !( (current->GetMask()) & WIDGET_CONTAINER ) ) {
@@ -253,6 +306,7 @@ Widget *Container::Search( string full_query ) {
 				// Boundary: Search the Children
 				case '/':
 				{
+					bool found = false;
 					int ind = 0;
 					assert( (current->GetMask()) & WIDGET_CONTAINER );
 					for( i = current->children.begin(); i != current->children.end(); ++i ) {
@@ -271,16 +325,18 @@ Widget *Container::Search( string full_query ) {
 							continue;
 						} 
 						// Found a match!
+						found = true;
 						current = (Container*)(*i);
-						// Forget about the current query
+						// Forget about the old query
 						query.flags = 0;
 						break;
 					}
 					
-					if( i == current->children.end() ) {
+					if( found == false ) {
 						LogMsg(INFO, "The query '%s' failed to find a widget at section %d", full_query.c_str(), section );
 						return NULL;
 					}
+
 					++section;
 					break;
 				}
@@ -338,7 +394,7 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
-	return current;
+	return (Widget*)current;
 }
 
 /**\brief Search for a child named
@@ -876,6 +932,8 @@ void Container::ResetScrollBars() {
 	}
 }
 
+/**\brief Set the button to activate when the user hits ENTER in thie Container
+ */
 Container* Container::SetFormButton( Button* button ) {
 	if( button == NULL ) {
 		LogMsg(INFO, "Clearing the Form Button for %s %s", GetType().c_str(), GetName().c_str() );
@@ -891,6 +949,8 @@ Container* Container::SetFormButton( Button* button ) {
 	return this;
 }
 
+/**\brief Generate an XML Node of this Container and it's children
+ */
 xmlNodePtr Container::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
@@ -915,4 +975,4 @@ xmlNodePtr Container::ToNode() {
 
 }
 
-
+/** @} */

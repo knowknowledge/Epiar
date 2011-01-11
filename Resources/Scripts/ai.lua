@@ -53,7 +53,11 @@ function setAccompany(id, accid)
 	if AIData[id] == nil then
 		AIData[id] = { }
 	end
-	AIData[id].accompany = accid
+	if Epiar.getSprite(accid) ~= nil then
+		AIData[id].accompany = accid
+	else
+		AIData[id].accompany = -1
+	end
 end
 
 function setHuntHostile(id, tid)
@@ -132,6 +136,7 @@ Hunter = {
 			AIData[id].hostile = 0
 			return "default"
 		end
+
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
 
 		if math.abs(cur_ship:directionTowards(tx,ty)) == 0 then
@@ -163,7 +168,7 @@ Hunter = {
 		if AIData[id].hostile == 1 and AIData[id].foundTarget == 0 then
 			AIData[id].foundTarget = 1
 			local machine, state = cur_ship:GetState()
-			HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
+			--HUD.newAlert(string.format("%s %s: Die, %s!", machine, cur_ship:GetModelName(), target:GetName()))
 		end
 
 		cur_ship:Rotate( cur_ship:directionTowards(tx,ty) )
@@ -293,6 +298,7 @@ Patrol = {
 		if AIData[id].hostile == 1 then return "Hunting" end
 		local cur_ship = Epiar.getSprite(id)
 		local p = Epiar.getSprite( AIData[id].destination )
+		if p == nil then return "default" end
 		local px,py = p:GetPosition()
 		cur_ship:Rotate( cur_ship:directionTowards(px,py) )
 		cur_ship:Accelerate()
@@ -397,8 +403,11 @@ Escort = {
 		AIData[id].farThreshold = 225 * mass + math.random(50)
 		AIData[id].nearThreshold = 100 * mass + math.random(40)
 
-		if AIData[id].accompany < 0 then return "New_Planet" end
-		return "Accompanying"
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then setAccompany(id, myFleet:getLeader() ) end
+
+		if AIData[id].accompany >= 0 then return "Accompanying" end
+		return "New_Planet"
 	end,
 	ComputingRoute = GateTraveler.ComputingRoute,
 	GateTravelling = GateTraveler.GateTravelling,
@@ -419,8 +428,52 @@ Escort = {
 		if AIData[id].accompany > -1 then return "Accompanying" end
 		return Patrol.TooFar(id,x,y,angle,speed,vector)
 	end,
-	Hunting = Hunter.Hunting,
-	Killing = Hunter.Killing,
+	Hunting = function(id,x,y,angle,speed,vector)
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then
+			local prox = myFleet:fleetmateProx(id)
+			if prox ~= nil and prox < 45 then return "NewPattern" end
+		end
+		return Hunter.Hunting(id,x,y,angle,speed,vector)
+	end,
+	Killing = function(id,x,y,angle,speed,vector)
+		local myFleet = Fleets:getShipFleet(id)
+		if myFleet ~= nil then
+			local prox = myFleet:fleetmateProx(id)
+			if prox ~= nil and prox < 45 then return "NewPattern" end
+		end
+		return Hunter.Killing(id,x,y,angle,speed,vector)
+	end,
+	NewPattern = function(id,x,y,angle,speed,vector)
+		local cur_ship = Epiar.getSprite(id)
+		local momentumAngle = cur_ship:GetMomentumAngle()
+		if AIData[id].correctAgainst == nil then
+			AIData[id].correctAgainst = momentumAngle
+			AIData[id].correctOffset = math.random(-90,90)
+		end
+		cur_ship:Rotate( cur_ship:directionTowards( AIData[id].correctAgainst + AIData[id].correctOffset ) )
+		cur_ship:Accelerate()
+		if cur_ship:directionTowards( AIData[id].correctAgainst + AIData[id].correctOffset ) == 0 then
+			AIData[id].correctAgainst = nil
+			AIData[id].correctOffset = nil
+			return "Hunting"
+		end
+	end,
+	HoldingPosition = function(id,x,y,angle,speed,vector)
+		local ns = AIData[id].nextState
+		if ns ~= nil then
+			AIData[id].nextState = nil
+			return ns
+		end
+
+		local cur_ship = Epiar.getSprite(id)
+		local inverseMomentumOffset = - cur_ship:directionTowards( cur_ship:GetMomentumAngle() )
+		cur_ship:Rotate( inverseMomentumOffset )
+		if math.abs( cur_ship:directionTowards( cur_ship:GetMomentumAngle() ) ) >= 176 and speed > 0.1 then
+			cur_ship:Accelerate()
+		end
+		return "HoldingPosition"
+	end,
 	Accompanying = function(id,x,y,angle,speed,vector)
 		local cur_ship = Epiar.getSprite(id)
 		local acc = AIData[id].accompany
@@ -429,6 +482,11 @@ Escort = {
 		if acc > -1 then
 			accompanySprite = Epiar.getSprite(AIData[id].accompany)
 			if AIData[id].hostile == 1 then return "Hunting" end
+			local ns = AIData[id].nextState
+			if ns ~= nil then
+				AIData[id].nextState = nil
+				return ns
+			end
 		else
 			if AIData[id].destination ~= nil and AIData[id].destination > -1 then
 				return "Travelling"

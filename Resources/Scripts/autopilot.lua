@@ -194,7 +194,7 @@ function APFuncs.shortestPath(self, dest)
 	end)
 
 	self.spcrConclude = function()
-		spcr = nil
+		self.spcr = nil
 		if self.name == "player" then PLAYER:SetLuaControlFunc("") end
 
 		--print ("relaxations: "..relaxations)
@@ -461,11 +461,13 @@ function playerAutopilotToggle ()
 		Autopilot.control = true
 		Autopilot.AllowAccel = true
 		PLAYER:SetLuaControlFunc("playerAutopilotRun()")
+		Fleets:getShipFleet(PLAYER:GetID()):gateTravel(nil, Autopilot.GateRoute)
 	else
 		HUD.newAlert("Autopilot disengaged")
 		Autopilot.control = false
 		Autopilot.AllowAccel = false
 		PLAYER:SetLuaControlFunc("")
+		Fleets:getShipFleet(PLAYER:GetID()):formation()
 	end
 end
 

@@ -13,6 +13,10 @@
 #include "Utilities/debug.h"
 #include "Utilities/log.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Dropdown
  * \brief Dropdown handling. */
 
@@ -21,9 +25,9 @@
 Dropdown::Dropdown( int x, int y, int w, int _baseheight )
 {
 	// TODO The Dropdowns really need their own Art.
-	bitmap_normal = Image::Get( "Resources/Graphics/ui_button.png" );
-	bitmap_mouseover = Image::Get( "Resources/Graphics/ui_button_mouseover.png" );
-	bitmap_selected = Image::Get( "Resources/Graphics/ui_button_pressed.png" );
+	bitmap_normal = Image::Get( "Resources/Skin/ui_button.png" );
+	bitmap_mouseover = Image::Get( "Resources/Skin/ui_button_mouseover.png" );
+	bitmap_selected = Image::Get( "Resources/Skin/ui_button_pressed.png" );
 
 	this->x = x;
 	this->y = y;
@@ -63,7 +67,8 @@ void Dropdown::Draw( int relx, int rely ) {
 		bitmap_normal->DrawStretch( x, y, w, h);
 		UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[selected], Font::CENTER,Font::MIDDLE );
 	} else {
-		for( int i = 0; i < options.size(); ++i ) {
+		unsigned int i;
+		for( i = 0; i < options.size(); ++i ) {
 			if( i == hovered ) {
 				bitmap_mouseover->DrawStretch( x, y, w, baseheight);
 			} else if( i == selected ) {
@@ -121,3 +126,17 @@ void Dropdown::close() {
 	h = baseheight;
 	opened = false;
 }
+
+
+void Dropdown::SetText(string text){
+	for(int i = 0; i < options.size(); i++){
+		if(options[i] == text){
+			selected = i;
+			break;
+		}
+	}
+	LogMsg(WARN, "Tried to set selected dropdown option: '%s', but that option doesn't exist.", text.c_str() );
+}
+
+
+/** @} */
