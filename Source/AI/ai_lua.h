@@ -86,7 +86,8 @@ class AI_Lua{
 		static int ShipSetShieldDamage(lua_State* L);
 		static int ShipGetHullDamage(lua_State* L);
 		static int ShipSetHullDamage(lua_State* L);
-
+		static int SetTarget(lua_State* L);
+	
 		// Weapon slot related functions
 		static int ShipGetWeaponSlotCount(lua_State* L);
 		static int ShipGetWeaponSlotName(lua_State* L);

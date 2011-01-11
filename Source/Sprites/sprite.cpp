@@ -84,7 +84,7 @@ void Sprite::Update( void ) {
 	// Apply their momentum to change their coordinates - apply it as often as the num frames that we've skipped
 	worldPosition += (momentum * framesSinceUpdate);
 	
-	// update acceleration - we do not care about the framesSinceUpdate for updating these
+	// update acceleration - we do not care about the framesSinceUpdate for updating thesef
 	acceleration = lastMomentum - momentum; 
 	lastMomentum = momentum;
 }

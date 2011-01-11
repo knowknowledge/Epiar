@@ -11,15 +11,32 @@
 
 #include "Sprites/ship.h"
 #include "Engine/alliances.h"
+#include "includes.h"
+#define COMBAT_RANGE 1000 //radius of ships involved in any specific battle
+#define COMBAT_RANGE_SQUARED 1000000
 
 // Sprites have an AI object which is used to manipulate their attributes
 // to run an AI simulation
+
+
+//relevant enemy information
+typedef struct{
+	int damage;
+	int id; 
+}enemy;
+
+
+
+
+
 class AI : public Ship {
 	public:
 		AI(string name, string machine);
 		void Update();
 		void Draw();
 		void Decide();
+		void SetTarget(int t);
+		int GetTarget(){return target;}
 		void SetStateMachine(string _machine) { stateMachine = _machine; }
 		void SetState(string _state)  { state = _state; }
 		void SetAlliance(Alliance* alliance) { allegiance = alliance; }
@@ -28,12 +45,24 @@ class AI : public Ship {
 		string GetStateMachine() { return stateMachine; }
 		string GetState() { return state; }
 		Alliance* GetAlliance() { return allegiance; }
+		void AddEnemy(int e, int damage);
+		void RemoveEnemy(int e);
 
 	private:
+		int CalcCost(int threat, int damage);
+		int ChooseTarget();
+		void RegisterTarget(int t);
+		list<enemy> enemies;
+		int target;
 		string name;
 		string stateMachine;
 		string state;
 		Alliance* allegiance;
+		
 };
+
+bool CompAI(Sprite* a, Sprite* b);
+
+bool InRange(Coordinate a, Coordinate b);
 
 #endif /*AI_H_*/

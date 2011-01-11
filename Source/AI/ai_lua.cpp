@@ -114,7 +114,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeaponSlotContents", &AI_Lua::ShipGetWeaponSlotContents}, // builds a Lua table; no setter for this one
 		{"GetWeaponSlotFG", &AI_Lua::ShipGetWeaponSlotFG},
 		{"SetWeaponSlotFG", &AI_Lua::ShipSetWeaponSlotFG},
-
+		{"SetTarget", &AI_Lua::SetTarget},
 		{NULL, NULL}
 	};
 
@@ -1380,6 +1380,22 @@ int AI_Lua::ShipSetHullDamage(lua_State* L){
 	return 0;
 }
 
+
+/**\brief Lua callable function to set the ai's current target
+ */
+int AI_Lua::SetTarget(lua_State* L){
+	int n=lua_gettop(L);//Number of arguments
+	if(n==2){
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		int target = luaL_checknumber(L,2);
+		ai->SetTarget(target);
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 arguments (self, target)",n);
+	}
+	return 0;
+}
+
 /**\brief Lua callable function to get the model of a ship
  */
 /*int AI_Lua::ShipGetModel(lua_State* L){
@@ -1555,3 +1571,4 @@ int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
 	}
 	return 0;
 }
+
