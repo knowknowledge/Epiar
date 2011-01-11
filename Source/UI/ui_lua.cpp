@@ -693,6 +693,9 @@ int UI_Lua::setText(lua_State *L){
 		case WIDGET_BUTTON:
 			((Button*)(widget))->SetText( text );
 			break;
+		case WIDGET_DROPDOWN:
+			((Dropdown*)(widget))->SetText( text );
+			break;
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
@@ -704,7 +707,6 @@ int UI_Lua::setText(lua_State *L){
 		case WIDGET_FRAME:
 		case WIDGET_SLIDER:
 		case WIDGET_PICTURE:
-		case WIDGET_DROPDOWN:
 		case WIDGET_CHECKBOX:
 		case WIDGET_SCROLLBAR:
 		case WIDGET_CONTAINER:

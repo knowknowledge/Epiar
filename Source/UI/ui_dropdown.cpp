@@ -127,4 +127,16 @@ void Dropdown::close() {
 	opened = false;
 }
 
+
+void Dropdown::SetText(string text){
+	for(int i = 0; i < options.size(); i++){
+		if(options[i] == text){
+			selected = i;
+			break;
+		}
+	}
+	LogMsg(WARN, "Tried to set selected dropdown option: '%s', but that option doesn't exist.", text.c_str() );
+}
+
+
 /** @} */

@@ -515,7 +515,7 @@ function infoTable(info, win, variables, fieldDesc, desiredSize)
 				for n,opt in pairs( fieldOptions(title) ) do
 					rowElements[title]:addOption(opt)
 				end
-				--rowElements[title]:setValue(value)   -- need something like this for the Dropdown widget
+				rowElements[title]:setText(value)
 			else
 				-- no other types known at the moment
 			end
@@ -561,7 +561,7 @@ function EditWeaponSlots(name, title)
 		["y"]		= { 40, 'textbox', nil },
 		["angle"]	= { 50, 'textbox', nil },
 		["motionAngle"]	= { 75, 'textbox', nil },
-		["content"]	= { 100,'dropdown', contentOptions }, -- should change this to be a dropdown of all weapons + empty
+		["content"]	= { 100,'dropdown', contentOptions },
 		["firingGroup"]	= { 75, 'dropdown', {0, 1} }
 	}
 
