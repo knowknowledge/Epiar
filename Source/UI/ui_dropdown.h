@@ -39,6 +39,7 @@ class Dropdown : public Widget {
 
 		bool opened;
 		Image* bitmap_normal;
+		Image* bitmap_open;
 		Image* bitmap_mouseover;
 		Image* bitmap_selected;
 
