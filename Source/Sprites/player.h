@@ -38,6 +38,9 @@ class Player : public Ship , public Component {
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
+		// Escort-related functions (needed for XML saving/loading)
+		void AddHiredEscort(string type, int pay, int spriteID);
+
 		friend class Players;
 
 	protected:
@@ -54,13 +57,42 @@ class Player : public Ship , public Component {
 		Color GetRadarColor( void ) { return GOLD; }
 
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
-
 	private:
 		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
 		list<Mission*> missions;
 		string luaControlFunc;
+
+		// This list of hired escorts is only needed for XML saving/loading and doesn't control the game itself.
+		// Escorts from missions should not be listed here.
+		class HiredEscort {
+			public:
+				HiredEscort(string _type, int _pay, int _spriteID){
+					type = _type;
+					pay = _pay;
+					spriteID = _spriteID;
+				}
+				// This function which interacts with Lua may be seen as analogous to Mission::Accept()
+				void Lua_Initialize(int playerID, Coordinate playerPos){
+					char *command = (char*)malloc(256);
+					// Need to specify player ID and position because the
+					// player object can't be examined from Lua yet.
+					snprintf(command, 256, "initHiredEscort(%d, %f, %f, '%s', %d)", playerID, playerPos.GetX(), playerPos.GetY(), this->type.c_str(), this->pay);
+					int returns = Lua::Run(command, true);
+					free(command);
+					lua_State *L = Lua::CurrentState();
+					if(returns > 0){
+						this->spriteID = luaL_checkint(L, -1);
+						lua_pop(L, returns);
+					}
+				}
+				string type;	// ship type
+				int pay;	// cost per day (zero is acceptable)
+				int spriteID;	// this number is not saved but is used to check the status of the sprite when saving
+		};
+		list<HiredEscort*> hiredEscorts;
+				
 };
 
 class Players : public Components {

@@ -284,7 +284,7 @@ Fleets = {
 --
 
 -- this function is currently for testing purposes only
-function givePlayerEscorts()
+function givePlayerEscort()
 	local X, Y
 	if HUD.getTarget() < 0 then
 		X, Y = PLAYER:GetPosition()
@@ -292,9 +292,10 @@ function givePlayerEscorts()
 		X, Y = Epiar.getSprite( HUD.getTarget() ):GetPosition()
 	end
 	local esc1 = Ship.new("escort 1",X - 150, Y, "Fleet Guard", "Ion Engines","Escort","Independent")
-	local esc2 = Ship.new("escort 2",X + 150, Y, "Fleet Guard", "Ion Engines","Escort","Independent")
+	--local esc2 = Ship.new("escort 2",X + 150, Y, "Fleet Guard", "Ion Engines","Escort","Independent")
 	Fleets:join(PLAYER:GetID(), esc1:GetID())
-	Fleets:join(PLAYER:GetID(), esc2:GetID())
+	--Fleets:join(PLAYER:GetID(), esc2:GetID())
+	PLAYER:AddHiredEscort(esc1:GetModelName(), 0, esc1:GetID())
 end
 
 function playerFleetHunt()

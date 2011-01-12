@@ -96,6 +96,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeapons", &AI_Lua::ShipGetWeapons},
 		{"GetOutfits", &AI_Lua::ShipGetOutfits},
 		{"GetState", &AI_Lua::ShipGetState},
+		{"SetStateMachine", &AI_Lua::ShipSetStateMachine},
 		{"GetCredits", &AI_Lua::ShipGetCredits},
 		{"GetCargo", &AI_Lua::ShipGetCargo},
 		{"GetTotalCost", &AI_Lua::ShipGetTotalCost},
@@ -115,6 +116,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetWeaponSlotFG", &AI_Lua::ShipGetWeaponSlotFG},
 		{"SetWeaponSlotFG", &AI_Lua::ShipSetWeaponSlotFG},
 		{"SetTarget", &AI_Lua::SetTarget},
+		{"AddHiredEscort", &AI_Lua::PlayerAddHiredEscort},
 		{NULL, NULL}
 	};
 
@@ -1115,6 +1117,30 @@ int AI_Lua::ShipGetState(lua_State* L) {
 	return 2;
 }
 
+/**\brief Lua callable function to set the state machine of an AI.
+ */
+int AI_Lua::ShipSetStateMachine(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL){
+			luaL_error(L, "Can't set the state machine of a null sprite.");
+		}
+		else if(ai->GetDrawOrder() & DRAW_ORDER_PLAYER){
+			luaL_error(L, "Can't set the state machine of a player.");
+		}
+		else {
+			string sm = luaL_checkstring (L, 2);
+			(ai)->SetStateMachine( sm );
+		}
+		
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, statemachine)", n);
+	}
+	return 0;
+}
+
+
 /**\brief Lua callable function to get the current credits.
  * \sa AI::GetStateMachine
  */
@@ -1567,5 +1593,23 @@ int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
 		luaL_error(L, "Got %d arguments expected 2 (ship, controlFunc)", n);
 	}
 	return 0;
+}
+
+/** \brief Add an escort to the list to be put into the XML saved game file
+ *  \details Keeps track of a bare minimum of information, but not details like hull integrity or non-standard outfits.
+ */
+int AI_Lua::PlayerAddHiredEscort(lua_State* L){
+        int n = lua_gettop(L);  // Number of arguments
+        if (n == 4) {
+                Player* p = (Player*)AI_Lua::checkShip(L,1);
+                if(p==NULL) return 0;
+                string type = luaL_checkstring (L, 2);
+                int pay = luaL_checkint (L, 3);
+                int spriteID = luaL_checkint (L, 4);
+                (p)->AddHiredEscort(type, pay, spriteID);
+        } else {
+                luaL_error(L, "Got %d arguments expected 4 (player, type, pay, spriteID)", n);
+        }
+        return 0;
 }
 

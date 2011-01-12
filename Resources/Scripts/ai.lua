@@ -406,6 +406,13 @@ Escort = {
 		end
 		AIData[id].target = -1
 
+		local cur_ship = Epiar.getSprite(id)
+
+		if AIData[id].initFor ~= nil then
+			-- -1 in the pay field means "don't check / don't alter"
+			Epiar.getSprite(AIData[id].initFor):AddHiredEscort(cur_ship:GetModelName(), -1, id)
+		end
+
 		-- Create some variation in how escort pilots behave
 		local mass = Epiar.getSprite(id):GetMass()
 		AIData[id].farThreshold = 225 * mass + math.random(50)
