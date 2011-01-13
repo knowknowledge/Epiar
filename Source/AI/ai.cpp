@@ -159,8 +159,7 @@ int AI::ChooseTarget(){
 	list<Sprite*>::iterator it;
 	list<enemy>::iterator enemyIt=enemies.begin();
 	//printf("printing list of enemies\n");
-	int enemySize=enemies.size();
-	//printf("the size of enemies = %d\n", enemySize);
+	//printf("the size of enemies = %d\n", enemies.size() );
 	for(enemyIt=enemies.begin(); enemyIt!=enemies.end();){
 		if(sprites->GetSpriteByID( enemyIt->id)==NULL){
 			enemyIt=enemies.erase(enemyIt);
