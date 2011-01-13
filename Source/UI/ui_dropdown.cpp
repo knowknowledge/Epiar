@@ -27,7 +27,7 @@ Dropdown::Dropdown( int x, int y, int w, int _baseheight )
 	// TODO The Dropdowns really need their own Art.
 	bitmap_normal = Image::Get( "Resources/Skin/ui_button.png" );
 	bitmap_open = Image::Get( "Resources/Skin/ui_dropdown_open.png" );
-	bitmap_mouseover = Image::Get( "Resources/Skin/ui_button_mouseover.png" );
+	bitmap_mouseover = Image::Get( "Resources/Skin/ui_dropdown_mouseover.png" );
 	bitmap_selected = Image::Get( "Resources/Skin/ui_button_pressed.png" );
 
 	this->x = x;
