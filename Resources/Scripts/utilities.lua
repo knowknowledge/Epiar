@@ -13,17 +13,42 @@ function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+
 -- Wrap lines of text to a specified maximum width or 72 characters by default.
 function linewrap(text, chars_per_line, do_justify)
-	-- Note: this justify function only works properly for fixed-width fonts,
-	-- but it does still offer a slight improvement for other fonts.
+
+	-- These are the widths for FreeSans (See Resources/Blueprints/glyph-widths.sh if they need to be regenerated)
+	local glyphWidths = {
+		[' '] = 277, ['!'] = 277, ['('] = 333, [')'] = 333, [','] = 277, ['-'] = 333, ['.'] = 277, ['0'] = 555, ['1'] = 555, 
+		['2'] = 555, ['3'] = 555, ['4'] = 555, ['5'] = 555, ['6'] = 555, ['7'] = 555, ['8'] = 555, ['9'] = 555, ['A'] = 666, 
+		['B'] = 666, ['C'] = 722, ['D'] = 722, ['E'] = 666, ['F'] = 611, ['G'] = 777, ['H'] = 722, ['I'] = 277, ['J'] = 500, 
+		['K'] = 666, ['L'] = 555, ['M'] = 833, ['N'] = 722, ['O'] = 777, ['P'] = 666, ['Q'] = 777, ['R'] = 722, ['S'] = 666, 
+		['T'] = 611, ['U'] = 722, ['V'] = 666, ['W'] = 944, ['X'] = 666, ['Y'] = 666, ['Z'] = 611, ['a'] = 555, ['b'] = 277, 
+		['c'] = 500, ['d'] = 555, ['e'] = 555, ['f'] = 277, ['g'] = 555, ['h'] = 555, ['i'] = 222, ['j'] = 333, ['k'] = 500, 
+		['l'] = 222, ['m'] = 833, ['n'] = 555, ['o'] = 555, ['p'] = 555, ['q'] = 333, ['r'] = 333, ['s'] = 500, ['t'] = 277, 
+		['u'] = 555, ['v'] = 333, ['w'] = 722, ['x'] = 500, ['y'] = 500, ['z'] = 333,
+		['default'] = 500
+	}
+
+	local width_sum = function(text)
+		local sum = 0
+		string.gsub(text, "(.)", function(ch)
+			local w = glyphWidths[ch]
+			if w == nil then w = glyphWidths['default'] end
+			sum = sum + w
+		end)
+		return sum
+	end
+
+	-- This justify function attempts to do the best job it can using the above width information,
+	-- but it would probably be better if this kind of thing were handled at the widget level.
 	local justify = function(the_line)
 		local puffed = 0
 		local done = false
 		local new_line = the_line
 		while done == false do
 			local newer_line = string.gsub(new_line, "([a-z]) ", function(c)
-				if string.len(the_line) + puffed < chars_per_line then
+				if ( width_sum(the_line) + glyphWidths[' ']*puffed ) / glyphWidths['default'] < chars_per_line then
 					puffed = puffed + 1
 					return (c .. "  ")
 				end
@@ -45,7 +70,8 @@ function linewrap(text, chars_per_line, do_justify)
 	   function(w)
 	      local joined = string.format("%s %s", line, w)
               if line == "" then joined = w end
-	      if string.len( joined ) <= chars_per_line and w ~= "__HARDWRAP__" then
+	      --if string.len( joined ) <= chars_per_line and w ~= "__HARDWRAP__" then
+	      if width_sum(joined) / glyphWidths['default'] <= chars_per_line and w ~= "__HARDWRAP__" then
 		 line = joined
 	      else
 		 if(do_justify) then line = justify(line) end
@@ -134,4 +160,3 @@ function table.shuffle(t)
  
   return t
 end
-
