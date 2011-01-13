@@ -581,8 +581,6 @@ function EditWeaponSlots(name, title)
 		["firingGroup"]	= { 75, 'dropdown', {0, 1} }
 	}
 
-	fieldTable = infoTable( tab, editWeaponSlotsWin, variables, fieldDesc )
-
 	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, tab["desiredLength"], tab["fields"]) ) ) )
 
 	local imageName = infoWindows[name].texts["Image"]:GetText()
@@ -598,6 +596,9 @@ function EditWeaponSlots(name, title)
 	SlotEditor["calcYLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"]+15, "Y: ")
 	image:setLuaClickCallback('calculateSlotOffset')
 	editWeaponSlotsWin:add(image, SlotEditor["calcXLabel"], SlotEditor["calcYLabel"])
+
+	-- Do this last so that dropdowns are not obscured by other widgets in the same window
+	fieldTable = infoTable( tab, editWeaponSlotsWin, variables, fieldDesc )
 end
 
 function calculateSlotOffset(x, y)

@@ -17,6 +17,9 @@
  * @{
  */
 
+#define DROPDOWN_OPENED_DX 6
+#define DROPDOWN_OPENED_DY 4
+
 /**\class Dropdown
  * \brief Dropdown handling. */
 
@@ -26,7 +29,8 @@ Dropdown::Dropdown( int x, int y, int w, int _baseheight )
 {
 	// TODO The Dropdowns really need their own Art.
 	bitmap_normal = Image::Get( "Resources/Skin/ui_button.png" );
-	bitmap_mouseover = Image::Get( "Resources/Skin/ui_button_mouseover.png" );
+	bitmap_open = Image::Get( "Resources/Skin/ui_dropdown_open.png" );
+	bitmap_mouseover = Image::Get( "Resources/Skin/ui_dropdown_mouseover.png" );
 	bitmap_selected = Image::Get( "Resources/Skin/ui_button_pressed.png" );
 
 	this->x = x;
@@ -77,7 +81,7 @@ void Dropdown::Draw( int relx, int rely ) {
 				bitmap_selected->DrawStretch( x, y, w, baseheight);
 			}
 			else {
-				bitmap_normal->DrawStretch( x, y, w, baseheight);
+				bitmap_open->DrawStretch( x, y, w, baseheight);
 			}
 			UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[i], Font::CENTER,Font::MIDDLE );
 			y += baseheight;
@@ -124,12 +128,18 @@ bool Dropdown::MouseMotion( int xi, int yi ){
 }
 
 void Dropdown::open() {
+	assert( !opened );
 	h = baseheight * options.size();
+	x += DROPDOWN_OPENED_DX;
+	y += DROPDOWN_OPENED_DY;
 	opened = true;
 }
 
 void Dropdown::close() {
+	assert( opened );
 	h = baseheight;
+	x -= DROPDOWN_OPENED_DX;
+	y -= DROPDOWN_OPENED_DY;
 	opened = false;
 }
 

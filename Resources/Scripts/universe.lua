@@ -845,7 +845,7 @@ function weaponConfigDialog()
 	local slotCount = PLAYER:GetWeaponSlotCount()
 
 	local height = 60 + (40*slotCount)
-	if height < 275 then height = 275 end -- accommodate the instruction text
+	if height < 300 then height = 300 end -- accommodate the instruction text
 
 	local width = 500
 
