@@ -199,7 +199,6 @@ int Simulation_Lua::ispaused(lua_State *L){
  *  \note The Player's data will only be saved once at the end of a Run loop.  This is not immediate.
  */
 int Simulation_Lua::savePlayer(lua_State *L){
-	Simulation *sim = GetSimulation(L);
 	GetSimulation(L)->GetPlayers()->Save();
 	return 0;
 }
