@@ -17,6 +17,9 @@
  * @{
  */
 
+#define DROPDOWN_OPENED_DX 6
+#define DROPDOWN_OPENED_DY 4
+
 /**\class Dropdown
  * \brief Dropdown handling. */
 
@@ -71,8 +74,6 @@ void Dropdown::Draw( int relx, int rely ) {
 		}
 	} else {
 		unsigned int i;
-		x += 6;
-		y += 4;
 		for( i = 0; i < options.size(); ++i ) {
 			if( i == hovered ) {
 				bitmap_mouseover->DrawStretch( x, y, w, baseheight);
@@ -127,12 +128,18 @@ bool Dropdown::MouseMotion( int xi, int yi ){
 }
 
 void Dropdown::open() {
+	assert( !opened );
 	h = baseheight * options.size();
+	x += DROPDOWN_OPENED_DX;
+	y += DROPDOWN_OPENED_DY;
 	opened = true;
 }
 
 void Dropdown::close() {
+	assert( opened );
 	h = baseheight;
+	x -= DROPDOWN_OPENED_DX;
+	y -= DROPDOWN_OPENED_DY;
 	opened = false;
 }
 
