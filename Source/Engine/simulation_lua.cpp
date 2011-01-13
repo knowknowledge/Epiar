@@ -200,7 +200,7 @@ int Simulation_Lua::ispaused(lua_State *L){
  */
 int Simulation_Lua::savePlayer(lua_State *L){
 	Simulation *sim = GetSimulation(L);
-	sim->save();
+	GetSimulation(L)->GetPlayers()->Save();
 	return 0;
 }
 
@@ -1341,15 +1341,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 /** \brief Save All Game Component files
  */
 int Simulation_Lua::saveComponents(lua_State *L) {
-	GetSimulation(L)->GetAlliances()->Save();
-	GetSimulation(L)->GetCommodities()->Save();
-	GetSimulation(L)->GetGates()->Save();
-	GetSimulation(L)->GetModels()->Save();
-	GetSimulation(L)->GetWeapons()->Save();
-	GetSimulation(L)->GetEngines()->Save();
-	GetSimulation(L)->GetPlanets()->Save();
-	GetSimulation(L)->GetOutfits()->Save();
-	GetSimulation(L)->GetTechnologies()->Save();
+	GetSimulation(L)->Save();
 	return 0;
 }
 
