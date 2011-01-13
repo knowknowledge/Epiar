@@ -39,7 +39,7 @@ class Simulation : public XMLFile {
 
 		bool HandleInput();
 
-		void save();
+		void Save();
 		void pause();
 		void unpause();
 		bool isPaused() {return paused;}
