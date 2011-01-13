@@ -500,7 +500,7 @@ function showAPConfigDialog()
 	local APConfigCompute = UI.newButton(15,60, 200, 30, "Compute gate route", "Autopilot:compute( Autopilot.ConfigDest:GetText() )" )
 	-- This instruction text may seem superfluous, but it does serve the purpose
 	-- of occupying the extra space needed to accommodate the dropdown.
-	local instructionsLabel = UI.newLabel(30,160, linewrap(
+	local instructionsLabel = UI.newLabel(20,160, linewrap(
 [[Select a destination from the menu, compute the gate route (takes several seconds), then
 hit Left Alt to engage or disengage the autopilot. The route will be shared with any escorts,
 who will continue to accompany you.
