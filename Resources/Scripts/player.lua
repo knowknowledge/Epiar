@@ -570,6 +570,12 @@ function endBoarding()
 	if boardingDialog ~= nil then
 		boardingDialog:close()
 	end
+	local successDialog = UI.search("/'Success!'/")
+	if successDialog ~= nil then
+		successDialog:close()
+	end
+	asOwn = nil
+	asEscort = nil
 end
 
 function doCapture(succ_max, destruct_max)
@@ -587,33 +593,57 @@ function doCapture(succ_max, destruct_max)
 	elseif r_succ == 1 then -- success!
 		HUD.newAlert(string.format("It's your %s now!", targettedShip:GetModelName() ) )
 
-		local oldPlayerModel = PLAYER:GetModelName() 
-		local oldPlayerHD = PLAYER:GetHullDamage() 
-		local oldPlayerSD = PLAYER:GetShieldDamage() 
-
-		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-			PLAYER:RemoveFromWeaponList(weap)
-			HUD.closeStatus(weap..":");
+		local partiallyRepair = function(sprite)
+			--while sprite:IsDisabled() do
+			--while sprite:GetShipHull() < 0.25 do -- 0.15 or lower is disabled
+			--	sprite:Repair(40)
+			--end
+			sprite:Repair(200)
 		end
 
-		PLAYER:SetModel( targettedShip:GetModelName() )
-		PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
-		PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
-		PLAYER:Repair( 10 )
+		asOwn = function()
+			local oldPlayerModel = PLAYER:GetModelName() 
+			local oldPlayerHD = PLAYER:GetHullDamage() 
+			local oldPlayerSD = PLAYER:GetShieldDamage() 
 
-		targettedShip:SetModel( oldPlayerModel ) 
-		targettedShip:SetHullDamage( oldPlayerHD ) 
-		targettedShip:SetShieldDamage( oldPlayerSD ) 
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+				PLAYER:RemoveFromWeaponList(weap)
+				HUD.closeStatus(weap..":");
+			end
 
-		-- SetModel() has already determined the slot contents for us, so use them
-		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-			PLAYER:AddToWeaponList(weap)
-			HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+			PLAYER:SetModel( targettedShip:GetModelName() )
+			PLAYER:SetHullDamage( targettedShip:GetHullDamage() )
+			PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
+			partiallyRepair(PLAYER)
+
+			targettedShip:SetModel( oldPlayerModel ) 
+			targettedShip:SetHullDamage( oldPlayerHD ) 
+			targettedShip:SetShieldDamage( oldPlayerSD ) 
+
+			-- SetModel() has already determined the slot contents for us, so use them
+			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
+				PLAYER:AddToWeaponList(weap)
+				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+			end
+
+			PLAYER:ChangeWeapon()
+			endBoarding()
 		end
 
-		PLAYER:ChangeWeapon()
+		asEscort = function()
+			AIData[ targettedShip:GetID() ].target = -1
+			AIData[ targettedShip:GetID() ].hostile = 0
+			Fleets:join( PLAYER:GetID(), targettedShip:GetID() )
+			targettedShip:SetStateMachine("Escort")
+			partiallyRepair(targettedShip)
+			PLAYER:AddHiredEscort( targettedShip:GetModelName(), 0, targettedShip:GetID() ) -- this is needed for XML saving
+			endBoarding()
+		end
 
-		endBoarding()
+		local successDialog = UI.newWindow(100, 100, 450, 190, "Success!")
+		successDialog:add( UI.newLabel(50, 30,  string.format("You have successfully captured this vessel." ) ) )
+		successDialog:add( UI.newButton(50, 150, 100, 30, "Use as own ship", "asOwn()") )
+		successDialog:add( UI.newButton(150, 150, 150, 30, "Use as escort", "asEscort()") )
 
 	else
 		HUD.newAlert(string.format("You were not able to gain control of the %s.", targettedShip:GetModelName() ) )
@@ -950,5 +980,19 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
 	--currentDescription:close()
 	descriptionWindow:add( descriptionLable, rejectButton )
+end
+
+-- This function is called from player.cpp to load escorts from XML.
+-- Don't use the PLAYER object in here, as it doesn't exist yet.
+function initHiredEscort(playerID, playerX, playerY, escortType, escortPay)
+	local name = ("escort " .. escortType)
+	local escort = Ship.new(name, playerX - 75 + math.random(150), playerY - 150 + math.random(75), escortType, "Ion Engines", "Escort", "Independent")
+	local eid = escort:GetID()
+	AIData[eid] = {
+		accompany = playerID,
+		pay = escortPay,
+	}
+	Fleets:join(playerID, eid)
+	return escort:GetID()
 end
 

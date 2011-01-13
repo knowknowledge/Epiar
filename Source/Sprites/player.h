@@ -38,6 +38,9 @@ class Player : public Ship , public Component {
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
+		// Escort-related functions (needed for XML saving/loading)
+		void AddHiredEscort(string type, int pay, int spriteID);
+
 		friend class Players;
 
 	protected:
@@ -54,13 +57,27 @@ class Player : public Ship , public Component {
 		Color GetRadarColor( void ) { return GOLD; }
 
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
-
 	private:
 		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
 		list<Mission*> missions;
 		string luaControlFunc;
+
+		// This list of hired escorts is only needed for XML saving/loading and doesn't control the game itself.
+		// Escorts from missions should not be listed here.
+		class HiredEscort {
+			public:
+				string type;	// ship type
+				int pay;	// cost per day (zero is acceptable)
+				int spriteID;	// this number is not saved but is used to check the status of the sprite when saving
+				
+				HiredEscort(string _type, int _pay, int _spriteID);
+				void Lua_Initialize(int playerID, Coordinate playerPos);
+
+		};
+		list<HiredEscort*> hiredEscorts;
+				
 };
 
 class Players : public Components {

@@ -196,6 +196,17 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		}
 	}
 
+	for( attr = FirstChildNamed(node,"hiredEscort"); attr!=NULL; attr = NextSiblingNamed(attr,"hiredEscort") ){
+		xmlNodePtr typePtr = FirstChildNamed(attr, "type");
+		xmlNodePtr payPtr = FirstChildNamed(attr, "pay");
+		assert(typePtr && payPtr);
+		if(!typePtr || !payPtr) return false;
+		string type = NodeToString(doc, typePtr);
+		int pay = atoi( NodeToString(doc, payPtr).c_str() );
+		// Adding it with sprite ID -1 means it's up to player.lua to go ahead and create the correct sprite.
+		this->AddHiredEscort(type, pay, -1);
+	}
+
 	if(this->ConfigureWeaponSlots(doc, node)){
 		// great - it worked
 		LogMsg( INFO, "Successfully loaded weapon slots");
@@ -355,6 +366,26 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		xmlAddChild( section,  (*iter_mission)->ToXMLNode() );
 	}
 
+	// Hired escorts
+	ntos = (char*)malloc(128);
+	for(list<HiredEscort*>::iterator iter_escort = hiredEscorts.begin(); iter_escort != hiredEscorts.end(); iter_escort++){
+		// Check that the sprite hasn't already been destroyed. (If it has, leave it out.)
+		if(
+		   (*iter_escort)->spriteID != -1 &&
+		   SpriteManager::Instance()->GetSpriteByID(
+		      (*iter_escort)->spriteID
+		   ) != NULL
+		){
+			xmlNodePtr hePtr = xmlNewNode(NULL, BAD_CAST "hiredEscort");
+			xmlNewChild(hePtr, NULL, BAD_CAST "type", BAD_CAST (*iter_escort)->type.c_str() );
+			snprintf(ntos, 128, "%d", (*iter_escort)->pay);
+			xmlNewChild(hePtr, NULL, BAD_CAST "pay", BAD_CAST ntos );
+			xmlAddChild(section, hePtr);
+			// Don't include spriteID in the XML file, for obvious reasons.
+		}
+	}
+	free(ntos);
+
 	// Last Load Time
 	snprintf(buff, sizeof(buff), "%d", (int)lastLoadTime );
 	xmlNewChild(section, NULL, BAD_CAST "lastLoadTime", BAD_CAST buff );
@@ -368,6 +399,24 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	return section;
 }
 
+void Player::AddHiredEscort(string type, int pay, int spriteID){
+
+	for(
+	   list<HiredEscort*>::iterator it = hiredEscorts.begin();
+	   it != hiredEscorts.end() && spriteID != -1; // if specified ID is -1, skip this loop
+	   it++
+	){
+		// already have it listed after loading from XML; just update the sprite ID now that it has been created
+		if( (*it)->type == type and (*it)->spriteID == -1 ){
+			(*it)->spriteID = spriteID;
+			return;
+		}
+	}
+
+	// don't have it yet; add a new entry
+	this->hiredEscorts.push_back( new HiredEscort(type, (pay > 0 ? pay : 0), spriteID) );
+	//LogMsg(WARN, "Could not find the escort to update");
+}
 
 /**\class Players
  * \brief Collection of Player objects
@@ -476,6 +525,11 @@ Player* Players::LoadPlayer(string playerName) {
 		(*iter_m)->Accept(); ///< TODO: This should be a distinct function.  Mission::Load perhaps?
 	}
 
+	// Tell Lua to initialize these escorts.
+	for(list<Player::HiredEscort*>::iterator iter_escort = newPlayer->hiredEscorts.begin(); iter_escort != newPlayer->hiredEscorts.end(); iter_escort++){
+		(*iter_escort)->Lua_Initialize( newPlayer->GetID(), newPlayer->GetWorldPosition() );
+	}
+
 	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
 	SpriteManager::Instance()->Add( newPlayer );
@@ -511,3 +565,22 @@ void Players::SetDefaults(
 	defaultLocation = _defaultLocation;
 }
 
+Player::HiredEscort::HiredEscort(string _type, int _pay, int _spriteID){
+	type = _type;
+	pay = _pay;
+	spriteID = _spriteID;
+}
+// This function which interacts with Lua may be seen as analogous to Mission::Accept()
+void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
+	char *command = (char*)malloc(256);
+	// Need to specify player ID and position because the
+	// player object can't be examined from Lua yet.
+	snprintf(command, 256, "initHiredEscort(%d, %f, %f, '%s', %d)", playerID, playerPos.GetX(), playerPos.GetY(), this->type.c_str(), this->pay);
+	int returns = Lua::Run(command, true);
+	free(command);
+	lua_State *L = Lua::CurrentState();
+	if(returns > 0){
+		this->spriteID = luaL_checkint(L, -1);
+		lua_pop(L, returns);
+	}
+}

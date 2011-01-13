@@ -65,7 +65,9 @@ void Dropdown::Draw( int relx, int rely ) {
 
 	if( !opened ) {
 		bitmap_normal->DrawStretch( x, y, w, h);
-		UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[selected], Font::CENTER,Font::MIDDLE );
+		if( (options.size() >= 1) ) {
+			UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[selected], Font::CENTER,Font::MIDDLE );
+		}
 	} else {
 		unsigned int i;
 		for( i = 0; i < options.size(); ++i ) {
@@ -92,9 +94,13 @@ bool Dropdown::MouseLDown( int xi, int yi ) {
 bool Dropdown::MouseLUp( int xi, int yi ) {
 	if( opened ) {
 		selected = (yi - y) / baseheight;
+		assert( selected >= 0 );
+		assert( selected < options.size() );
 		close();
 	} else {
 		hovered = (yi - y) / baseheight;
+		assert( hovered >= 0 );
+		assert( hovered < options.size() );
 		open();
 	}
 	return true;
@@ -103,10 +109,10 @@ bool Dropdown::MouseLUp( int xi, int yi ) {
 /**\brief Event is triggered on mouse leave.
  */
 bool Dropdown::MouseLeave( void ){
-	hovered = -1;
-	if( opened ) {
-		close();
-	}
+	//hovered = -1;
+	//if( opened ) {
+	//	close();
+	//}
 	return true;
 }
 
@@ -129,7 +135,8 @@ void Dropdown::close() {
 
 
 void Dropdown::SetText(string text){
-	for(int i = 0; i < options.size(); i++){
+	unsigned int i;
+	for(i = 0; i < options.size(); i++){
 		if(options[i] == text){
 			selected = i;
 			break;

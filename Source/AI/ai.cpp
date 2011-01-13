@@ -159,8 +159,7 @@ int AI::ChooseTarget(){
 	list<Sprite*>::iterator it;
 	list<enemy>::iterator enemyIt=enemies.begin();
 	//printf("printing list of enemies\n");
-	int enemySize=enemies.size();
-	//printf("the size of enemies = %d\n", enemySize);
+	//printf("the size of enemies = %d\n", enemies.size() );
 	for(enemyIt=enemies.begin(); enemyIt!=enemies.end();){
 		if(sprites->GetSpriteByID( enemyIt->id)==NULL){
 			enemyIt=enemies.erase(enemyIt);
@@ -271,7 +270,12 @@ void AI::SetTarget(int t){
  */
 void AI::AddEnemy(int e, int damage){
 	//printf("Adding Enemy %d with damage %d\n",e,damage);
-	int drawOrder = SpriteManager::Instance()->GetSpriteByID(e)->GetDrawOrder();
+	Sprite *spr = SpriteManager::Instance()->GetSpriteByID(e);
+	if(!spr){
+		this->RemoveEnemy(e);
+		return;
+	}
+	int drawOrder = spr->GetDrawOrder();
 	if( !(drawOrder==DRAW_ORDER_SHIP || drawOrder == DRAW_ORDER_PLAYER) ){
 		//printf("Error %d is not a ship/player\n",e);
 		return;

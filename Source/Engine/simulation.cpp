@@ -119,9 +119,19 @@ void Simulation::pause(){
 	paused = true;
 }
 
-void Simulation::save(){
-	Players::Instance()->Save();
+void Simulation::Save(){
+	XMLFile::Save();
+	GetAlliances()->Save();
+	GetCommodities()->Save();
+	GetGates()->Save();
+	GetModels()->Save();
+	GetWeapons()->Save();
+	GetEngines()->Save();
+	GetPlanets()->Save();
+	GetOutfits()->Save();
+	GetTechnologies()->Save();
 }
+
 /**\brief Unpauses the simulation
  */
 void Simulation::unpause(){
