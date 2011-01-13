@@ -488,8 +488,27 @@ function showAPConfigDialog()
 
 	Epiar.pause()
 
-	Autopilot.ConfigDialog = UI.newWindow(400,250,300,150, "Configure autopilot")
-	Autopilot.ConfigDest = UI.newTextbox(30,30,200,1, "Ves")
-	local APConfigCompute = UI.newButton(30,60, 150, 30, "Compute gate route", "Autopilot:compute( Autopilot.ConfigDest:GetText() )" )
-	Autopilot.ConfigDialog:add(Autopilot.ConfigDest, APConfigCompute)
+	Autopilot.ConfigDialog = UI.newWindow(400,175,250,85 + (16*#Epiar.planetNames()), "Configure autopilot")
+	local frame = UI.newFrame(10,30,230,110)
+	local destLabel = UI.newLabel(15,10, "select destination:")
+	-- +10 and +30 to match offsets for the frame of which this is not actually a child
+	Autopilot.ConfigDest = UI.newDropdown(15+10,35+30,200,16)
+	for n,p in pairs( Epiar.planetNames() ) do
+		Autopilot.ConfigDest:addOption(p)
+	end
+	Autopilot.ConfigDest:setText( "Ves" )
+	local APConfigCompute = UI.newButton(15,60, 200, 30, "Compute gate route", "Autopilot:compute( Autopilot.ConfigDest:GetText() )" )
+	-- This instruction text may seem superfluous, but it does serve the purpose
+	-- of occupying the extra space needed to accommodate the dropdown.
+	local instructionsLabel = UI.newLabel(30,160, linewrap(
+[[Select a destination from the menu, compute the gate route (takes several seconds), then
+hit Left Alt to engage or disengage the autopilot. The route will be shared with any escorts,
+who will continue to accompany you.
+
+You should keep the autopilot engaged until you reach your destination. In the case of
+some malfunction (e.g. missing a gate), you may need to recompute your route.]],
+	35, true ) )
+	frame:add(destLabel, APConfigCompute)
+	-- note: add dropdown to the window but on top of the frame so it is not clipped
+	Autopilot.ConfigDialog:add(instructionsLabel, frame, Autopilot.ConfigDest)
 end
