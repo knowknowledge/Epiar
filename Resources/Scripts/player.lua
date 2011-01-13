@@ -976,10 +976,10 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	--displayedDescription = _missionDescription
 	
 	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
-	descriptionLable = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 50 ) .. " " )
+	descriptionLabel = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 45, true ) .. " " )
 	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
 	--currentDescription:close()
-	descriptionWindow:add( descriptionLable, rejectButton )
+	descriptionWindow:add( descriptionLabel, rejectButton )
 end
 
 -- This function is called from player.cpp to load escorts from XML.
