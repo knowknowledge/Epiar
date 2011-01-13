@@ -526,8 +526,6 @@ Player* Players::LoadPlayer(string playerName) {
 	}
 
 	// Tell Lua to initialize these escorts.
-	// Note: Won't be able to use PLAYER or Fleet/Fleets yet, so instead give
-	// them instructions on what to do at the first state machine tick.
 	for(list<Player::HiredEscort*>::iterator iter_escort = newPlayer->hiredEscorts.begin(); iter_escort != newPlayer->hiredEscorts.end(); iter_escort++){
 		(*iter_escort)->Lua_Initialize( newPlayer->GetID(), newPlayer->GetWorldPosition() );
 	}
@@ -567,3 +565,22 @@ void Players::SetDefaults(
 	defaultLocation = _defaultLocation;
 }
 
+Player::HiredEscort::HiredEscort(string _type, int _pay, int _spriteID){
+	type = _type;
+	pay = _pay;
+	spriteID = _spriteID;
+}
+// This function which interacts with Lua may be seen as analogous to Mission::Accept()
+void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
+	char *command = (char*)malloc(256);
+	// Need to specify player ID and position because the
+	// player object can't be examined from Lua yet.
+	snprintf(command, 256, "initHiredEscort(%d, %f, %f, '%s', %d)", playerID, playerPos.GetX(), playerPos.GetY(), this->type.c_str(), this->pay);
+	int returns = Lua::Run(command, true);
+	free(command);
+	lua_State *L = Lua::CurrentState();
+	if(returns > 0){
+		this->spriteID = luaL_checkint(L, -1);
+		lua_pop(L, returns);
+	}
+}
