@@ -43,8 +43,8 @@ class Dropdown : public Widget {
 		Image* bitmap_selected;
 
 		vector<string> options;
-		int selected;
-		int hovered;
+		unsigned int selected;
+		unsigned int hovered;
 
 		int baseheight;
 };
