@@ -502,8 +502,13 @@ void Main_Menu( void ) {
 				UI::Add( new Button(button_x, 300, 100, 30, "Editor",  clickEditor  ) );
 				if( false == debug.isLoaded() )
 				{
-					 // This should be a dropdown of all the simulations in the Resources/Simulations/ directory.
-					UI::Add( new Textbox(button_x, 330, 100, 1, "default", "Old Name") );
+					Dropdown *sims = new Dropdown( button_x-120, 330, 100, 30 );
+					list<string> simulations = Filesystem::Enumerate("Resources/Simulation/");
+					list<string>::iterator iter;
+					for( iter = simulations.begin(); iter != simulations.end(); ++iter ) {
+						sims->AddOption( *iter );
+					}
+					UI::Add( sims );
 				}
 			}
 			if( availableMenus & Menu_NewSim ) {
@@ -583,8 +588,8 @@ void Main_Menu( void ) {
 				if( false == debug.isLoaded() )
 				{
 					if( clicked == Menu_Editor ) {
-						assert( NULL != UI::Search("/Textbox'Old Name'/") );
-						simName = "Resources/Simulation/" + ((Textbox*)UI::Search("/Textbox'Old Name'/"))->GetText();
+						assert( NULL != UI::Search("/Dropdown/") );
+						simName = "Resources/Simulation/" + ((Dropdown*)UI::Search("/Dropdown/"))->GetText();
 						if( !debug.Load( simName ) )
 						{
 							LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
