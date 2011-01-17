@@ -157,7 +157,7 @@ Widget *Container::DetermineMouseFocus( int relx, int rely ) {
 	for( i = children.rbegin(); i != children.rend(); ++i ) {
 		if ( ( (*i)->Contains(relx, rely) && ((*i)->GetType() == "Scrollbar") ) // Tabs
 		    || (*i)->Contains(relx, rely + yoffset) ) // Non-Tabs
-		{ 
+		{
 			return (*i);
 		}
 	}
@@ -236,7 +236,7 @@ bool Container::IsAttached( Widget* possible ) {
  * \todo The query validation needs to be improved.  /(Foobar,4)/ will attempt
  *       to convert the string "Foobar" to a string.
  *
- * \param[in] full_query A specially formatted string 
+ * \param[in] full_query A specially formatted string
  * \returns A pointer to the first matching Widget or NULL.
  */
 Widget *Container::Search( string full_query ) {
@@ -268,21 +268,36 @@ Widget *Container::Search( string full_query ) {
 	} Query;
 	Query query = {{0},0,0,"","",0};
 
+	#define ABSORB() do{\
+		++iter;\
+		if( iter == tokenized.end() ) {\
+			LogMsg(ERR, "Malformed Query %s Unexpected End", full_query.c_str());\
+			return NULL;\
+		}\
+	}while(0)
+
+	#define ABSORB_STR(X) do{\
+		if( *(iter) != X ) {\
+			LogMsg(ERR, "Malformed Query %s Expected \"" X "\"", full_query.c_str());\
+			return NULL;\
+		}\
+		ABSORB();\
+	}while(0)
+
 	// Tokenize the String
 	tokenized = TokenizedString( full_query, tokens );
 
 	// Check the Start of the Query
 	iter = tokenized.begin();
-	if( (tokenized.size() >= 2) && (tokenized[0] == "") && (tokenized[1] == "/") ) {
-		++iter; ++iter;
-		++section;
+	if( *iter == "" ) ABSORB_STR( "" );
+	if( *iter == "/" ) {
+		ABSORB_STR( "/" );
 	} else {
-		LogMsg(ERR, "Query '%s' does not start with '/'.", full_query.c_str() );
-		return NULL;
+		LogMsg(WARN, "Query '%s' did not begin with a '/'", full_query.c_str() );
 	}
 	
 	// Search all the tokens
-	LogMsg(INFO, "QUERY: '%s'", full_query.c_str() );
+	//LogMsg(INFO, "QUERY: '%s'", full_query.c_str() );
 	for(; iter != tokenized.end(); ++iter ) {
 		subquery = (*iter);
 		// LogMsg(INFO, "token: '%s'", subquery.c_str() );
@@ -300,7 +315,10 @@ Widget *Container::Search( string full_query ) {
 
 		// If this is not a token then it is Widget Type
 		if( subquery.find_first_of(tokens) != string::npos) {
-			assert( subquery.size() == 1 );
+			if( subquery.size() != 1 ) {
+				LogMsg(ERR, "Malformed Query %s Multi-character token", full_query.c_str());
+				return NULL;
+			}
 
 			switch( token ) {
 				// Boundary: Search the Children
@@ -308,7 +326,10 @@ Widget *Container::Search( string full_query ) {
 				{
 					bool found = false;
 					int ind = 0;
-					assert( (current->GetMask()) & WIDGET_CONTAINER );
+					if( 0 == (current->GetMask()) & WIDGET_CONTAINER ) {
+						LogMsg(ERR, "Malformed Query %s '/' token on non-container 0x%08X", full_query.c_str());
+						return NULL;
+					}
 					for( i = current->children.begin(); i != current->children.end(); ++i ) {
 						// LogMsg(DEBUG1, "Checking %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
 						if( query.FOUND_NAME && (query.name != (*i)->GetName()) ) {
@@ -323,7 +344,7 @@ Widget *Container::Search( string full_query ) {
 						if( query.FOUND_INDEX && (query.index != ind) ) {
 							ind++;
 							continue;
-						} 
+						}
 						// Found a match!
 						found = true;
 						current = (Container*)(*i);
@@ -345,36 +366,53 @@ Widget *Container::Search( string full_query ) {
 				case '[':
 				{
 					query.FOUND_INDEX = 1;
-					query.index = convertTo<int>( *(++iter) );
-					assert( *(++iter) == "]" );
+					ABSORB_STR("[");
+					// TODO Check that this is a number
+					query.index = convertTo<int>( *(iter) );
+					ABSORB();
+					ABSORB_STR("]");
 					break;
 				}
 
 				// Quoted String: Widget Name
 				case '\'':
+				{
+					query.FOUND_NAME = 1;
+					ABSORB_STR("\'");
+					query.name = *(iter);
+					ABSORB();
+					ABSORB_STR("\'");
+					break;
+				}
+
 				case '"':
 				{
 					query.FOUND_NAME = 1;
-					query.name = *(++iter);
-					++iter;
-					assert( (*(iter) == "\"") || (*(iter) == "'") );
+					ABSORB_STR("\"");
+					query.name = *(iter);
+					ABSORB();
+					ABSORB_STR("\"");
 					break;
 				}
 
 				// Paren Tuple: Widget's Relative coordinate
-				case '(': 
+				case '(':
 				{
 					query.FOUND_COORD = 1;
-					query.x = convertTo<int>( *(++iter) );
-					assert( *(++iter) == "," );
-					query.y = convertTo<int>( *(++iter) );
-					assert( *(++iter) == ")" );
+					ABSORB_STR("(");
+					// TODO Check that this is a number
+					query.x = convertTo<int>( *(iter) );
+					ABSORB();
+					ABSORB_STR(",");
+					// TODO Check that this is a number
+					query.y = convertTo<int>( *(iter) );
+					ABSORB();
+					ABSORB_STR(")");
 					break;
 				}
 
 				default:
 					LogMsg(ERR, "Unexpected token '%c' in query '%s'", token, full_query.c_str() );
-					assert(0);
 					return NULL;
 			}
 		}
@@ -390,8 +428,11 @@ Widget *Container::Search( string full_query ) {
 	}
 
 	if( query.flags != 0 ) {
-		LogMsg(ERR, "Query '%s' did not end with a '/'", full_query.c_str() );
+		LogMsg(WARN, "Query '%s' did not end with a '/'", full_query.c_str() );
 	}
+
+	#undef ABSORB
+	#undef ABSORB_STR
 
 	//LogMsg(DEBUG1, "Found %s %s (%d,%d) 0x%08X\n", (*i)->GetName().c_str(), (*i)->GetType().c_str(), (*i)->GetX(), (*i)->GetY(), (*i)->GetMask() );
 	return (Widget*)current;
