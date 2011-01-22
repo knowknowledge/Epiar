@@ -407,7 +407,7 @@ void Player::AddHiredEscort(string type, int pay, int spriteID){
 	   it++
 	){
 		// already have it listed after loading from XML; just update the sprite ID now that it has been created
-		if( (*it)->type == type and (*it)->spriteID == -1 ){
+		if( (*it)->type == type && (*it)->spriteID == -1 ){
 			(*it)->spriteID = spriteID;
 			return;
 		}
