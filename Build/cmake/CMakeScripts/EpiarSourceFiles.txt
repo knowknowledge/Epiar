@@ -101,6 +101,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_container.h
 	${Epiar_SRC_DIR}/UI/ui.cpp
 	${Epiar_SRC_DIR}/UI/ui.h
+	${Epiar_SRC_DIR}/UI/ui_dropdown.h
+	${Epiar_SRC_DIR}/UI/ui_dropdown.cpp
 	${Epiar_SRC_DIR}/UI/ui_frame.h
 	${Epiar_SRC_DIR}/UI/ui_frame.cpp
 	${Epiar_SRC_DIR}/UI/ui_label.cpp
