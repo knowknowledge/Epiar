@@ -418,6 +418,31 @@ void Player::AddHiredEscort(string type, int pay, int spriteID){
 	//LogMsg(WARN, "Could not find the escort to update");
 }
 
+/**\brief Constructor for HiredEscort
+ */
+Player::HiredEscort::HiredEscort(string _type, int _pay, int _spriteID){
+	type = _type;
+	pay = _pay;
+	spriteID = _spriteID;
+}
+
+/**\brief Initialize the Lua AI state of a Hired Escort
+ * This function which interacts with Lua may be seen as analogous to Mission::Accept()
+ */
+void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
+	char *command = (char*)malloc(256);
+	// Need to specify player ID and position because the
+	// player object can't be examined from Lua yet.
+	snprintf(command, 256, "initHiredEscort(%d, %f, %f, '%s', %d)", playerID, playerPos.GetX(), playerPos.GetY(), this->type.c_str(), this->pay);
+	int returns = Lua::Run(command, true);
+	free(command);
+	lua_State *L = Lua::CurrentState();
+	if(returns > 0){
+		this->spriteID = luaL_checkint(L, -1);
+		lua_pop(L, returns);
+	}
+}
+
 /**\class Players
  * \brief Collection of Player objects
  */
@@ -565,22 +590,3 @@ void Players::SetDefaults(
 	defaultLocation = _defaultLocation;
 }
 
-Player::HiredEscort::HiredEscort(string _type, int _pay, int _spriteID){
-	type = _type;
-	pay = _pay;
-	spriteID = _spriteID;
-}
-// This function which interacts with Lua may be seen as analogous to Mission::Accept()
-void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
-	char *command = (char*)malloc(256);
-	// Need to specify player ID and position because the
-	// player object can't be examined from Lua yet.
-	snprintf(command, 256, "initHiredEscort(%d, %f, %f, '%s', %d)", playerID, playerPos.GetX(), playerPos.GetY(), this->type.c_str(), this->pay);
-	int returns = Lua::Run(command, true);
-	free(command);
-	lua_State *L = Lua::CurrentState();
-	if(returns > 0){
-		this->spriteID = luaL_checkint(L, -1);
-		lua_pop(L, returns);
-	}
-}
