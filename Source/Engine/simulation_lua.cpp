@@ -295,8 +295,8 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 	}
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Loading Player: "<<playerName<<endl;
-	Player* newPlayer = GetSimulation(L)->GetPlayers()->GetPlayer( playerName );
-	if( newPlayer==NULL ) {
+	PlayerInfo* info = GetSimulation(L)->GetPlayers()->GetPlayerInfo( playerName );
+	if( info==NULL ) {
 		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
 	}
 	GetSimulation(L)->GetPlayers()->LoadPlayer(playerName);

@@ -172,8 +172,7 @@ void Player::Update( void ) {
 void Player::Save() {
 	char buff[256];
 	xmlDocPtr xmlPtr;
-	string filename = "Resources/Definitions/"+ GetName() +".xml";
-	LogMsg( INFO, "Creation of %s", filename.c_str() );
+	LogMsg( INFO, "Creation of %s", GetFileName().c_str() );
 
 	// Create new XML Document
 	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
@@ -189,7 +188,7 @@ void Player::Save() {
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
 	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
 
-	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
+	xmlSaveFormatFileEnc( GetFileName().c_str(), xmlPtr, "ISO-8859-1", 1);
 }
 
 /**\brief Parse one player out of an xml node
@@ -526,6 +525,97 @@ void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
 	}
 }
 
+/**\class PlayerInfo
+ * \brief Collection of Player objects
+ */
+
+/**\brief Returns or creates the Players instance.
+*/
+PlayerInfo::PlayerInfo()
+	:file("")
+	,lastLoadTime((time_t)0) // January 1, 1970
+{
+	avatar = new Image();
+}
+
+/**\brief Returns or creates the Players instance.
+*/
+PlayerInfo::PlayerInfo( Player* player )
+{
+	Update( player );
+}
+
+
+/**\brief Returns or creates the Players instance.
+*/
+void PlayerInfo::Update( Player* player ) {
+	name = player->GetName();
+	avatar = (player->GetModel() != NULL) ? player->GetModel()->GetImage() : NULL;
+	file = player->GetFileName();
+	lastLoadTime = player->GetLoadTime();
+}
+
+/**\brief Extract this PlayerInfo from an XML Node
+*/
+bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
+
+	if( (attr = FirstChildNamed(node,"file")) ) {
+		file = NodeToString(doc,attr);
+		if( File::Exists( file ) == false ) {
+			LogMsg(ERR, "Player %s is Corrupt. There is no file '%s'.", name.c_str(), file.c_str() );
+			return false;
+		}
+	} else {
+		printf("No 'file' child");
+		return false;
+	}
+
+	// A corrupt avatar isn't fatal, just don't try to draw it.
+	if( (attr = FirstChildNamed(node,"avatar")) ){
+		Image* avatar = Image::Get( NodeToString(doc,attr) );
+		if( avatar == NULL ) {
+			LogMsg(WARN, "Player %s has a corrupt avatar.  There is no image '%s' ", name.c_str(), NodeToString(doc,attr).c_str() );
+		}
+	}
+
+	// A corrupt lastLoadTime isn't fatal, just use January 1, 1970.
+	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
+		lastLoadTime = NodeToInt(doc,attr);
+	} else {
+		lastLoadTime = (time_t)0;
+	}
+
+	return true;
+}
+
+/**\brief Generate an XMLNode of this PlayerInfo
+*/
+xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
+	char buff[256];
+	char *timestamp;
+	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
+
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST name.c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "file", BAD_CAST file.c_str() );
+	if( avatar != NULL ) {
+		xmlNewChild(section, NULL, BAD_CAST "avatar", BAD_CAST avatar->GetPath().c_str() );
+	}
+
+	// Last Load Time
+	snprintf(buff, sizeof(buff), "%d", (int)lastLoadTime );
+	xmlNewChild(section, NULL, BAD_CAST "lastLoadTime", BAD_CAST buff );
+
+	// Save a Human readable comment to explain the Last Load time
+	strcpy( buff, "Last Load: " );
+	timestamp = ctime( &lastLoadTime );
+	timestamp[strlen(timestamp)-1] = '\0';
+	xmlAddChild( section, xmlNewComment( BAD_CAST timestamp));
+
+	return section;
+}
+
+
 /**\class Players
  * \brief Collection of Player objects
  */
@@ -541,6 +631,14 @@ Players *Players::Instance( void ) {
 		pInstance->componentName = "player";
 	}
 	return( pInstance );
+}
+
+bool Players::Save() {
+	Player* player = Player::Instance();
+	if( player ) {
+		GetPlayerInfo( player->GetName() )->Update( player );
+	}
+	return Components::Save();
 }
 
 /**\brief Create a new Player
@@ -569,7 +667,7 @@ Player* Players::CreateNew(string playerName) {
 
 	// Focus the camera on the sprite
 	Camera::Instance()->Focus( newPlayer );
-	Add((Component*)newPlayer);
+	Add( (Component*)(new PlayerInfo( newPlayer )) );
 	SpriteManager::Instance()->Add(newPlayer);
 	Player::pInstance = newPlayer;
 
@@ -580,19 +678,21 @@ Player* Players::CreateNew(string playerName) {
  */
 Player* Players::LoadLast() {
 	list<string>* names = GetNames();
-	list<string>::iterator i = names->begin();
-	Player* latest;
+	list<string>::iterator i;
+	PlayerInfo* latest = NULL;
 
 	if( names->empty() ){
 		return false;
 	}
 
-	latest = GetPlayer(*i);
-	i++;
-	for(; i != names->end(); ++i )
-	{
-		if( latest->lastLoadTime < GetPlayer(*i)->lastLoadTime )
-			latest = GetPlayer(*i);
+	for(i = names->begin(); i != names->end(); ++i ) {
+		if( (latest == NULL) || (latest->lastLoadTime < GetPlayerInfo(*i)->lastLoadTime ) ) {
+			latest = GetPlayerInfo(*i);
+		}
+	}
+
+	if( latest == NULL ) {
+		return false;
 	}
 	return LoadPlayer( latest->GetName() );
 }
@@ -600,59 +700,8 @@ Player* Players::LoadLast() {
 /**\brief Load a given Player
  */
 Player* Players::LoadPlayer(string playerName) {
-	Player* newPlayer = GetPlayer(playerName);
-	// If the player saved a bad Model or Engine, pick the default
-	if(newPlayer->GetModelName() == "") {
-		LogMsg(ERR, "The Player '%s' has been corrupted: Bad model.",newPlayer->GetName().c_str() );
-		newPlayer->SetModel( defaultModel );
-	}
-	if(newPlayer->GetEngineName() == "") {
-		LogMsg(ERR, "The Player '%s' has been corrupted: Bad engine.",newPlayer->GetName().c_str() );
-		newPlayer->SetEngine( defaultEngine );
-	}
-
-	// We check the planet location at loadtime in case the planet has moved or the lastPlanet has changed.
-	// This happens with the --random-universe option.
-	Planet* p = Planets::Instance()->GetPlanet( newPlayer->lastPlanet );
-	if( p != NULL ) {
-		newPlayer->SetWorldPosition( p->GetWorldPosition() );
-	} else {
-		newPlayer->SetWorldPosition( defaultLocation );
-	}
-
-	newPlayer->RemoveLuaControlFunc();
-
-	// We can't start the game with bad player Information
-	assert( newPlayer->GetModelName() != "" );
-	assert( newPlayer->GetEngineName() != "" );
-
-	// Restart the missions that were ongoing.
-	list<Mission*>::iterator iter_m;
-	list<Mission*>* missions = newPlayer->GetMissions();
-	for( iter_m = missions->begin(); iter_m != missions->end(); ++iter_m) {
-		(*iter_m)->Accept(); ///< TODO: This should be a distinct function.  Mission::Load perhaps?
-	}
-
-	// Tell Lua to initialize these escorts.
-	for(list<Player::HiredEscort*>::iterator iter_escort = newPlayer->hiredEscorts.begin(); iter_escort != newPlayer->hiredEscorts.end(); iter_escort++){
-		(*iter_escort)->Lua_Initialize( newPlayer->GetID(), newPlayer->GetWorldPosition() );
-	}
-
-	// Remember this Player
-	newPlayer->lastLoadTime = time(NULL);
-	SpriteManager::Instance()->Add( newPlayer );
-	Camera::Instance()->Focus( newPlayer );
-
-	Player::pInstance = newPlayer;
-
-	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
-	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
-		newPlayer->GetName().c_str(),
-		newPlayer->GetModel()->GetName().c_str(),
-		newPlayer->GetEngine()->GetName().c_str(),
-		newPlayer->GetCredits(),
-		newPlayer->GetWorldPosition().GetX(), newPlayer->GetWorldPosition().GetY()
-	);
+	PlayerInfo* info = GetPlayerInfo( playerName );
+	Player* newPlayer = Player::Load( info->file );
 	return newPlayer;
 }
 
