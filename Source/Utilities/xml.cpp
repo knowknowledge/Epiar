@@ -287,7 +287,11 @@ string NodeToString( xmlDocPtr doc, xmlNodePtr node )
 	string value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
-	value = (const char *)xmlString;
+	if( xmlString ) {
+		value = (const char *)xmlString;
+	} else {
+		value = "";
+	}
 	xmlFree( xmlString );
 	return value;
 }
@@ -304,7 +308,11 @@ int NodeToInt( xmlDocPtr doc, xmlNodePtr node )
 	int value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
-	value = atoi( (const char *)xmlString );
+	if( xmlString ) {
+		value = atoi( (const char *)xmlString );
+	} else {
+		value = 0;
+	}
 	xmlFree( xmlString );
 	return value;
 }
@@ -321,7 +329,11 @@ float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 	float value;
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
-	value = atof( (const char *)xmlString );
+	if( xmlString ) {
+		value = atoi( (const char *)xmlString );
+	} else {
+		value = 0.0f;
+	}
 	xmlFree( xmlString );
 	return value;
 }
