@@ -493,4 +493,13 @@ bool Simulation::HandleInput() {
 
 /**\fn Simulation::isPaused()
  * \brief Checks to see if Simulation is paused
+ * \fn Simulation::isLoaded()
+ * \brief Checks to see if Simulation is Loaded Successfully
  */
+
+/**\brief 
+ * \return true if the player wants to quit
+ */
+Player *Simulation::GetPlayer() {
+	return Player::Instance();
+}
