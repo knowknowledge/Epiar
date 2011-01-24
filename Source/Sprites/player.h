@@ -14,16 +14,25 @@
 #include "Sprites/ship.h"
 #include "Engine/mission.h"
 
-class Player : public Ship , public Component {
+class Player : public Ship {
 	public:
 		static Player *Instance();
-
 		static bool IsLoaded() { return pInstance!=NULL; }
+		static Player *Load( string filename );
+
+		// Saving and Loading this Player to XML
+		void Save();
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		xmlNodePtr ToXMLNode(string componentName);
+
+		void SetName( string _name ) { name = _name; }
 		void setLastPlanet( string planetName);
 
 		// Generic Getters
 		string GetLastPlanet() { return lastPlanet; }
 		string GetName() { return name; }
+		string GetFileName() { return "Resources/Definitions/"+ GetName() +".xml"; }
+		time_t GetLoadTime() { return lastLoadTime; }
 
 		// Autopilot Related Functions
 		void SetLuaControlFunc( string _luaControlFunc );
@@ -33,10 +42,6 @@ class Player : public Ship , public Component {
 		void AcceptMission( Mission *mission );
 		void RejectMission( string missionName );
 		list<Mission*>* GetMissions() { return &missions; }
-
-		// Saving and Loading this Player to XML
-		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
-		xmlNodePtr ToXMLNode(string componentName);
 
 		// Escort-related functions (needed for XML saving/loading)
 		void AddHiredEscort(string type, int pay, int spriteID);
@@ -58,6 +63,7 @@ class Player : public Ship , public Component {
 
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
 	private:
+		string name;
 		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
@@ -77,19 +83,39 @@ class Player : public Ship , public Component {
 
 		};
 		list<HiredEscort*> hiredEscorts;
-				
+};
+
+class PlayerInfo : public Component {
+	public:
+		PlayerInfo();
+		PlayerInfo( Player* player );
+		void Update( Player* player );
+
+		// Saving and Loading this Player to XML
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		xmlNodePtr ToXMLNode(string componentName);
+		xmlNodePtr ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node );
+
+		// name is implicit from Component
+		Image* avatar; ///< Image for this player (Usually the ship's model)
+		string file; ///< The xml file associated with this player.
+		time_t lastLoadTime; ///< The last time that this file was loaded.
+	private:
 };
 
 class Players : public Components {
 	public:
 		static Players *Instance();
-		Player* GetPlayer(string name) { return (Player*) this->Get(name); }
-		Component* newComponent() { return new Player(); }
+		PlayerInfo* GetPlayerInfo(string name) { return (PlayerInfo*)Components::Get( name ); }
+		Component* newComponent() { return new PlayerInfo(); }
+
+		bool Save();
 
 		Player* CreateNew(string playerName);
 		Player* LoadLast();
 		Player* LoadPlayer(string playerName);
 
+		// Default Player values
 		void SetDefaults(
 			Model *_defaultModel,
 			Engine *_defaultEngine,

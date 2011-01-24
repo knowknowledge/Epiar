@@ -24,7 +24,10 @@ class XMLFile {
 		bool Save( void );
 		bool Save( const string& filename );
 		bool Close();
+
 		void SetFileName( const string& _filename ) { filename = _filename; }
+		string GetFileName( ) { return filename; }
+
 		string Get( const string& path ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const string& value ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const float value ); // cast/convert this to whatever return value you need

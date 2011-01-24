@@ -162,12 +162,14 @@ bool Simulation::SetupToRun(){
 	} else {
 		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
 	}
+
 	players->SetDefaults(
 		models->GetModel( Get("defaultPlayer/model") ),
 		engines->GetEngine( Get("defaultPlayer/engine") ),
 		convertTo<int>( Get("defaultPlayer/credits")),
 		startPos
 	);
+	
 
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
@@ -493,4 +495,13 @@ bool Simulation::HandleInput() {
 
 /**\fn Simulation::isPaused()
  * \brief Checks to see if Simulation is paused
+ * \fn Simulation::isLoaded()
+ * \brief Checks to see if Simulation is Loaded Successfully
  */
+
+/**\brief 
+ * \return true if the player wants to quit
+ */
+Player *Simulation::GetPlayer() {
+	return Player::Instance();
+}
