@@ -170,7 +170,6 @@ void Player::Update( void ) {
  * \details The filename is by default the player's name.
  */
 void Player::Save() {
-	char buff[256];
 	xmlDocPtr xmlPtr;
 	LogMsg( INFO, "Creation of %s", GetFileName().c_str() );
 
@@ -178,15 +177,6 @@ void Player::Save() {
 	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
 	xmlNodePtr root_node = ToXMLNode("player");
 	xmlDocSetRootElement(xmlPtr, root_node);
-
-	// Add the version information
-	// TODO - This should move to the ToNode code
-	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
-	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST buff);
-	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
-	xmlNewChild(root_node, NULL, BAD_CAST "version-minor", BAD_CAST buff);
-	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
-	xmlNewChild(root_node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
 
 	xmlSaveFormatFileEnc( GetFileName().c_str(), xmlPtr, "ISO-8859-1", 1);
 }
@@ -374,6 +364,14 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	char *timestamp;
     xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
 
+	// Version information
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
+	xmlNewChild(section, NULL, BAD_CAST "version-major", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
+	xmlNewChild(section, NULL, BAD_CAST "version-minor", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
+	xmlNewChild(section, NULL, BAD_CAST "version-macro", BAD_CAST buff);
+
 	// Player Stats
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST GetName().c_str() );
 
@@ -535,7 +533,7 @@ PlayerInfo::PlayerInfo()
 	:file("")
 	,lastLoadTime((time_t)0) // January 1, 1970
 {
-	avatar = new Image();
+	avatar = NULL;
 }
 
 /**\brief Returns or creates the Players instance.
@@ -557,9 +555,18 @@ void PlayerInfo::Update( Player* player ) {
 
 /**\brief Extract this PlayerInfo from an XML Node
 */
-bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
-	xmlNodePtr  attr;
+bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr xnode ) {
+	xmlNodePtr  node, attr;
 
+	// If the node has a Model then it is using the old format.
+	// Create that player's XML File before continuing
+	if( (attr = FirstChildNamed(xnode,"model")) ) {
+		node = ConvertOldVersion( doc, xnode );
+	} else {
+		node = xnode;
+	}
+
+	// The file attribute is the saved game xml file.
 	if( (attr = FirstChildNamed(node,"file")) ) {
 		file = NodeToString(doc,attr);
 		if( File::Exists( file ) == false ) {
@@ -567,13 +574,13 @@ bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 			return false;
 		}
 	} else {
-		printf("No 'file' child");
+		LogMsg(ERR, "Player %s is Corrupt. There is no file attribute.", name.c_str() );
 		return false;
 	}
 
 	// A corrupt avatar isn't fatal, just don't try to draw it.
 	if( (attr = FirstChildNamed(node,"avatar")) ){
-		Image* avatar = Image::Get( NodeToString(doc,attr) );
+		avatar = Image::Get( NodeToString(doc,attr) );
 		if( avatar == NULL ) {
 			LogMsg(WARN, "Player %s has a corrupt avatar.  There is no image '%s' ", name.c_str(), NodeToString(doc,attr).c_str() );
 		}
@@ -598,7 +605,7 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST name.c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "file", BAD_CAST file.c_str() );
-	if( avatar != NULL ) {
+	if( (avatar != NULL) && (avatar->GetPath() != "") ) {
 		xmlNewChild(section, NULL, BAD_CAST "avatar", BAD_CAST avatar->GetPath().c_str() );
 	}
 
@@ -615,6 +622,37 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
 	return section;
 }
 
+xmlNodePtr PlayerInfo::ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node ) {
+	char buff[256];
+	xmlDocPtr xmlPtr;
+	xmlNodePtr  attr;
+	string filename = "Resources/Definitions/"+ name +".xml";
+
+	LogMsg(INFO, "Converting %s to an xml file: %s ", name.c_str(), filename.c_str() );
+
+	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
+	xmlDocSetRootElement(xmlPtr, node);
+
+	// Version information
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
+	xmlNewChild(node, NULL, BAD_CAST "version-major", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
+	xmlNewChild(node, NULL, BAD_CAST "version-minor", BAD_CAST buff);
+	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
+	xmlNewChild(node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
+
+	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
+
+    xmlNodePtr new_node = xmlNewNode(NULL, BAD_CAST "player");
+	xmlNewChild(new_node, NULL, BAD_CAST "name", BAD_CAST GetName().c_str() );
+	xmlNewChild(new_node, NULL, BAD_CAST "file", BAD_CAST filename.c_str() );
+
+	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
+		xmlNewChild(new_node, NULL, BAD_CAST "lastLoadTime", BAD_CAST NodeToString(doc,attr).c_str() );
+	}
+	
+	return new_node;
+}
 
 /**\class Players
  * \brief Collection of Player objects

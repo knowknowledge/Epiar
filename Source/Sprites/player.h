@@ -94,11 +94,12 @@ class PlayerInfo : public Component {
 		// Saving and Loading this Player to XML
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
+		xmlNodePtr ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node );
 
 		// name is implicit from Component
 		Image* avatar; ///< Image for this player (Usually the ship's model)
-		string file; ///< The xml file associated with this player
-		time_t lastLoadTime;
+		string file; ///< The xml file associated with this player.
+		time_t lastLoadTime; ///< The last time that this file was loaded.
 	private:
 };
 
