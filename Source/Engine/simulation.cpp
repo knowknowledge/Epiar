@@ -150,10 +150,12 @@ bool Simulation::SetupToRun(){
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 
+	/*
 	if( players->Load( Get("players"), true ) != true ) {
 		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
 		return false;
 	}
+	*/
 
 	Coordinate startPos(0,0);
 	string startPlanet = Get("defaultPlayer/start");
@@ -162,12 +164,19 @@ bool Simulation::SetupToRun(){
 	} else {
 		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
 	}
+
+	Player *player = Player::Load( "Resources/Definitions/Bar.xml" );
+	Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
+	Lua::Call("playerStart");
+	
+	/*
 	players->SetDefaults(
 		models->GetModel( Get("defaultPlayer/model") ),
 		engines->GetEngine( Get("defaultPlayer/engine") ),
 		convertTo<int>( Get("defaultPlayer/credits")),
 		startPos
 	);
+	
 
 	// Load the player
 	if( OPTION(int,"options/simulation/automatic-load") ) {
@@ -176,6 +185,7 @@ bool Simulation::SetupToRun(){
 			Lua::Call("playerStart");
 		}
 	}
+	*/
 
 	LogMsg(INFO, "Simulation Setup Complete");
 

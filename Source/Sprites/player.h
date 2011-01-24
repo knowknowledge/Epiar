@@ -17,8 +17,14 @@
 class Player : public Ship , public Component {
 	public:
 		static Player *Instance();
-
 		static bool IsLoaded() { return pInstance!=NULL; }
+		static Player *Load( string filename );
+
+		// Saving and Loading this Player to XML
+		void Save();
+		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
+		xmlNodePtr ToXMLNode(string componentName);
+
 		void setLastPlanet( string planetName);
 
 		// Generic Getters
@@ -34,9 +40,6 @@ class Player : public Ship , public Component {
 		void RejectMission( string missionName );
 		list<Mission*>* GetMissions() { return &missions; }
 
-		// Saving and Loading this Player to XML
-		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
-		xmlNodePtr ToXMLNode(string componentName);
 
 		// Escort-related functions (needed for XML saving/loading)
 		void AddHiredEscort(string type, int pay, int spriteID);

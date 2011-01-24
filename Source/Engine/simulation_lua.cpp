@@ -200,6 +200,7 @@ int Simulation_Lua::ispaused(lua_State *L){
  */
 int Simulation_Lua::savePlayer(lua_State *L){
 	GetSimulation(L)->GetPlayers()->Save();
+	GetSimulation(L)->GetPlayer()->Save();
 	return 0;
 }
 
