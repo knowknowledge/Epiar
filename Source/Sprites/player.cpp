@@ -550,6 +550,8 @@ void PlayerInfo::Update( Player* player ) {
 	name = player->GetName();
 	avatar = (player->GetModel() != NULL) ? player->GetModel()->GetImage() : NULL;
 	file = player->GetFileName();
+	simulation = OPTION(int, "options/simulation/random-universe") ? "random" : "default" ;
+	seed = OPTION(int, "options/simulation/random-seed");
 	lastLoadTime = player->GetLoadTime();
 }
 
@@ -586,6 +588,18 @@ bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr xnode ) {
 		}
 	}
 
+	if( (attr = FirstChildNamed(node,"simulation")) ){
+		simulation = NodeToString(doc,attr);
+	} else {
+		simulation = "default";
+	}
+
+	if( (attr = FirstChildNamed(node,"seed")) ){
+		seed = NodeToInt(doc,attr);
+	} else {
+		seed = 0;
+	}
+
 	// A corrupt lastLoadTime isn't fatal, just use January 1, 1970.
 	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
 		lastLoadTime = NodeToInt(doc,attr);
@@ -608,6 +622,10 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
 	if( (avatar != NULL) && (avatar->GetPath() != "") ) {
 		xmlNewChild(section, NULL, BAD_CAST "avatar", BAD_CAST avatar->GetPath().c_str() );
 	}
+
+	xmlNewChild(section, NULL, BAD_CAST "simulation", BAD_CAST simulation.c_str() );
+	snprintf(buff, sizeof(buff), "%d", seed );
+	xmlNewChild(section, NULL, BAD_CAST "seed", BAD_CAST buff );
 
 	// Last Load Time
 	snprintf(buff, sizeof(buff), "%d", (int)lastLoadTime );

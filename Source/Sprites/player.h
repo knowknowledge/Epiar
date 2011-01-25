@@ -99,6 +99,8 @@ class PlayerInfo : public Component {
 		// name is implicit from Component
 		Image* avatar; ///< Image for this player (Usually the ship's model)
 		string file; ///< The xml file associated with this player.
+		string simulation; ///< The Simulation that this Player is playing.
+		int seed; ///< The Seed for this Simulation.
 		time_t lastLoadTime; ///< The last time that this file was loaded.
 	private:
 };
