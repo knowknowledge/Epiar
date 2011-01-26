@@ -5,7 +5,9 @@
 -- General commands belong in the defaultCommands table.
 playerCommands = {
 	-- Each command should be a table
-	-- { KEY, TITLE, SCRIPT }
+	-- { KEY, TITLE, SCRIPT, KEYMETHOD }
+	-- KEYPRESSED triggers every update loop so long as that key is held down
+	-- KEYTYPED triggers once every time the key is typed
 	{'up', "Accelerate", "PLAYER:Accelerate()",KEYPRESSED},
 	{'left', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
 	{'right', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
@@ -74,26 +76,10 @@ end
 
 ---Target closest ship
 function targetClosestShip()
-	local x,y = PLAYER:GetPosition()
-	local nearby = Epiar.ships(x,y,4096)
-	if #nearby<=1 then return end
-	local shipx, shipy = nearby[1]:GetPosition()
-	---print("#nearby=" .. #nearby .. '\n')
-	local closest =  { index = 1 , dist = math.sqrt( ( shipx - x) ^ 2 + ( shipy - y) ^ 2) }
-
-	---print( "\nclosest.index= " .. closest.index .. " closest.dist= " .. closest.dist .. '\n')
-	for i=2,#nearby do
-		shipx, shipy = nearby[i]:GetPosition()
-		newDist = math.sqrt (( shipx - x) ^ 2 + ( shipy - y) ^ 2)
-		---print("i=" ..i.. " newdist= " .. newDist .. "closest.dist= " .. closest.dist .. '\n')
-		if closest.dist > newDist then
-			closest.dist = newDist
-			closest.index=i
-		end		
-	end
-	nextTarget = closest.index
-	HUD.newAlert("Targeting "..nearby[nextTarget]:GetModelName().." #"..nearby[nextTarget]:GetID())
-	HUD.setTarget(nearby[nextTarget]:GetID()) -- First ID in the list
+	local nextTarget = Epiar.nearestShip( PLAYER, 4096 )
+	if not nextTarget then return end
+	HUD.newAlert("Targeting "..nextTarget:GetModelName().." "..nextTarget:GetName())
+	HUD.setTarget(nextTarget:GetID())
 end
 
 powerSlider, shieldSlider, engineSlider = 0, 0, 0

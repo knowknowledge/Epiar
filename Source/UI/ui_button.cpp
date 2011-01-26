@@ -49,13 +49,15 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	this->sound_hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 
 	this->clickCallBack = NULL;
+	this->callBackValue = NULL;
 	this->lua_callback = "";
 }
 
 /**\brief Constructs a button with a C++ callback.*/
-Button::Button( int x, int y, int w, int h, string label, void (*function)(void)) {
+Button::Button( int x, int y, int w, int h, string label, void (*function)(void*), void* value) {
 	Initialize( x, y, w, h, label );
 	this->clickCallBack = function;
+	this->callBackValue = value;
 }
 
 /**\brief Constructs a button with a Lua callback.*/
@@ -100,7 +102,7 @@ void Button::Draw( int relx, int rely ) {
 void Button::Activate() {
 	if( clickCallBack ){
 		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack();
+		clickCallBack( callBackValue );
 	} else if("" != lua_callback){
 		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
 		Lua::Run(lua_callback);

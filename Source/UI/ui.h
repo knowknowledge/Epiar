@@ -65,4 +65,6 @@ class UI {
 		static Container master;
 };
 
+void UI_Test();
+
 #endif // __H_UI__

@@ -200,6 +200,7 @@ int Simulation_Lua::ispaused(lua_State *L){
  */
 int Simulation_Lua::savePlayer(lua_State *L){
 	GetSimulation(L)->GetPlayers()->Save();
+	GetSimulation(L)->GetPlayer()->Save();
 	return 0;
 }
 
@@ -294,8 +295,8 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 	}
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Loading Player: "<<playerName<<endl;
-	Player* newPlayer = GetSimulation(L)->GetPlayers()->GetPlayer( playerName );
-	if( newPlayer==NULL ) {
+	PlayerInfo* info = GetSimulation(L)->GetPlayers()->GetPlayerInfo( playerName );
+	if( info==NULL ) {
 		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
 	}
 	GetSimulation(L)->GetPlayers()->LoadPlayer(playerName);
@@ -317,7 +318,7 @@ int Simulation_Lua::newPlayer(lua_State *L) {
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Creating Player: "<<playerName<<endl;
 
-	GetSimulation(L)->GetPlayers()->CreateNew(playerName);
+	GetSimulation(L)->CreateDefaultPlayer(playerName);
 
 	return 0;
 }

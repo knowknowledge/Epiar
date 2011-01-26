@@ -194,33 +194,6 @@ bool Simulation::SetupToRun(){
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 
-	if( players->Load( Get("players"), true ) != true ) {
-		LogMsg(WARN, "There was an error loading the players from '%s'.", Get("players").c_str() );
-		return false;
-	}
-
-	Coordinate startPos(0,0);
-	string startPlanet = Get("defaultPlayer/start");
-	if( planets->GetPlanet( startPlanet ) ) {
-		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
-	} else {
-		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
-	}
-	players->SetDefaults(
-		models->GetModel( Get("defaultPlayer/model") ),
-		engines->GetEngine( Get("defaultPlayer/engine") ),
-		convertTo<int>( Get("defaultPlayer/credits")),
-		startPos
-	);
-
-	// Load the player
-	if( OPTION(int,"options/simulation/automatic-load") ) {
-		if( players->LoadLast()!=NULL ) {
-			Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
-			Lua::Call("playerStart");
-		}
-	}
-
 	LogMsg(INFO, "Simulation Setup Complete");
 
 	return true;
@@ -241,7 +214,8 @@ bool Simulation::Run() {
 	if( !Player::IsLoaded() ) {
 		Lua::Call("loadingWindow");
 	} else {
-		printf("The player has already been loadeded.\n");
+		Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
+		Lua::Call("playerStart");
 	}
 
 	Hud::Init();
@@ -537,4 +511,48 @@ bool Simulation::HandleInput() {
 
 /**\fn Simulation::isPaused()
  * \brief Checks to see if Simulation is paused
+ * \fn Simulation::isLoaded()
+ * \brief Checks to see if Simulation is Loaded Successfully
  */
+
+/**\brief Create and Remember a new Player
+ * \note This does not run the player related Lua code.
+ * \warn Don't calling this more than once.
+ * \param[in] name The player's name.
+ */
+void Simulation::CreateDefaultPlayer(string name) {
+	Coordinate startPos(0,0);
+	string startPlanet = Get("defaultPlayer/start");
+	if( planets->GetPlanet( startPlanet ) ) {
+		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
+	}
+
+	Player* player = players->CreateNew(
+		name,
+		models->GetModel( Get("defaultPlayer/model") ),
+		engines->GetEngine( Get("defaultPlayer/engine") ),
+		convertTo<int>( Get("defaultPlayer/credits")),
+		startPos
+	);
+
+	sprites->Add( player );
+	camera->Focus( player );
+}
+
+/**\brief Load Create and Remember a new Player
+ * \note This does not run any of the Lua code.
+ * \warn Don't calling this more than once.
+ * \param[in] name The player's name.
+ */
+void Simulation::LoadPlayer(string name) {
+	Player* player = players->LoadPlayer( name );
+	sprites->Add( player );
+	camera->Focus( player );
+}
+
+/**\brief 
+ * \return true if the player wants to quit
+ */
+Player *Simulation::GetPlayer() {
+	return Player::Instance();
+}

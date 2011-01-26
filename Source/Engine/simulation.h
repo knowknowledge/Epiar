@@ -35,6 +35,10 @@ class Simulation : public XMLFile {
 
 		bool Run();
 		bool Edit();
+
+		void CreateDefaultPlayer(string name);
+		void LoadPlayer(string name);
+
 		void LuaRegisters(lua_State *L);
 
 		bool HandleInput();
@@ -58,6 +62,7 @@ class Simulation : public XMLFile {
 		Players *GetPlayers() { return players; }
 		Camera *GetCamera() { return camera; }
 		Input* GetInput() { return &inputs; }
+		Player *GetPlayer();
 
 	private:
 		bool Parse( void );
