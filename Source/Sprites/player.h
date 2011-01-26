@@ -74,9 +74,9 @@ class Player : public Ship {
 		// Escorts from missions should not be listed here.
 		class HiredEscort {
 			public:
-				string type;	// ship type
-				int pay;	// cost per day (zero is acceptable)
-				int spriteID;	// this number is not saved but is used to check the status of the sprite when saving
+				string type; ///< The ship Model
+				int pay; ///< The cost per day (zero is acceptable)
+				int spriteID;	///< This number is not saved but is used to check the status of the sprite when saving
 				
 				HiredEscort(string _type, int _pay, int _spriteID);
 				void Lua_Initialize(int playerID, Coordinate playerPos);

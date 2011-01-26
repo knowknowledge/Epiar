@@ -15,7 +15,8 @@
 #include "Utilities/components.h"
 
 /**\class Player
- * \brief Main player-specific functions and handle. */
+ * \brief Main player-specific functions and handle.
+ */
 
 Player *Player::pInstance = 0;
 
@@ -30,6 +31,10 @@ Player *Player::Instance( void ) {
 	return( pInstance );
 }
 
+/**\brief Load a player from a file.
+ * \param[in] filename of a player's xml saved game.
+ * \returns pointer to new Player instance.
+ */
 Player* Player::Load( string filename ) {
 	xmlDocPtr doc;
 	xmlNodePtr cur;
@@ -479,6 +484,15 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	return section;
 }
 
+/**\brief Record that a Hired Escort
+ * \details The Record does not get added if the Escort is already attached.
+ * \param[in] type The Model name of the Escort.
+ * \param[in] pay The Cost per day.
+ *            0 Is acceptable.
+ *            -1 means "don't check / don't alter".
+ * \param[in] spriteID The ID of the Escort.
+ *            spriteID should be -1 if the Escort has not been created yet.
+ */
 void Player::AddHiredEscort(string type, int pay, int spriteID){
 
 	for(
@@ -498,7 +512,18 @@ void Player::AddHiredEscort(string type, int pay, int spriteID){
 	//LogMsg(WARN, "Could not find the escort to update");
 }
 
+/**\class Player::HiredEscort
+ * \brief A record of an escort attached to this player.
+ * \details The majority of the escort code is on the Lua side,
+ *          but this is used to save and restore Escorts across
+ *          saved games.
+ */
+
 /**\brief Constructor for HiredEscort
+ * \param[in] type The Model name of the Escort.
+ * \param[in] pay Unused? -1 means "don't check / don't alter".
+ * \param[in] spriteID The ID of the Escort.
+ *            spriteID should be -1 if the Escort has not been created yet.
  */
 Player::HiredEscort::HiredEscort(string _type, int _pay, int _spriteID){
 	type = _type;
@@ -527,8 +552,8 @@ void Player::HiredEscort::Lua_Initialize(int playerID, Coordinate playerPos){
  * \brief Collection of Player objects
  */
 
-/**\brief Returns or creates the Players instance.
-*/
+/**\brief Construct a blank PlayerInfo
+ */
 PlayerInfo::PlayerInfo()
 	:file("")
 	,lastLoadTime((time_t)0) // January 1, 1970
@@ -536,16 +561,18 @@ PlayerInfo::PlayerInfo()
 	avatar = NULL;
 }
 
-/**\brief Returns or creates the Players instance.
-*/
+/**\brief Construct the PlayerInfo from a Player
+ * \param[in] player The player instance that this PlayerInfo will represent.
+ */
 PlayerInfo::PlayerInfo( Player* player )
 {
 	Update( player );
 }
 
 
-/**\brief Returns or creates the Players instance.
-*/
+/**\brief Update the Player Information based on a Player
+ * \param[in] player The player instance that this PlayerInfo will represent.
+ */
 void PlayerInfo::Update( Player* player ) {
 	name = player->GetName();
 	avatar = (player->GetModel() != NULL) ? player->GetModel()->GetImage() : NULL;
@@ -556,6 +583,9 @@ void PlayerInfo::Update( Player* player ) {
 }
 
 /**\brief Extract this PlayerInfo from an XML Node
+ * \param[in] doc The XML document.
+ * \param[in] xnode The XML Node.
+ * \returns true if the PlayerInfo was loaded correctly.
 */
 bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr xnode ) {
 	xmlNodePtr  node, attr;
@@ -611,7 +641,9 @@ bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr xnode ) {
 }
 
 /**\brief Generate an XMLNode of this PlayerInfo
-*/
+ * \param[in] componentName This should always be "player".
+ * \return A new XML node that represents the PlayerInfo.
+ */
 xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
 	char buff[256];
 	char *timestamp;
@@ -640,6 +672,16 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
 	return section;
 }
 
+/**\brief Convert an XML node from the old saved-games.xml format to the new format.
+ * \details
+ *   The old saved-games.xml format put all of the Player information in one file.
+ *   The new saved-games.xml format only stores some Player information, but
+ *   nothing that relies on loading the Simulation.  Everything in the old
+ *   style format is by itself in a standalone xml file named after the player.
+ * \param[in] doc The XML document.
+ * \param[in] xnode The XML Node.
+ * \return A new XML node that represents the PlayerInfo for the Player.
+ */
 xmlNodePtr PlayerInfo::ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node ) {
 	char buff[256];
 	xmlDocPtr xmlPtr;
