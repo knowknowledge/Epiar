@@ -318,7 +318,7 @@ int Simulation_Lua::newPlayer(lua_State *L) {
 	string playerName = (string) luaL_checkstring(L,1);
 	cout<<"Creating Player: "<<playerName<<endl;
 
-	GetSimulation(L)->GetPlayers()->CreateNew(playerName);
+	GetSimulation(L)->CreateDefaultPlayer(playerName);
 
 	return 0;
 }

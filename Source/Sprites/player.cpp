@@ -700,23 +700,28 @@ bool Players::Save() {
 /**\brief Create a new Player
  * This is used instead of a normal class constructor
  */
-Player* Players::CreateNew(string playerName) {
+Player* Players::CreateNew(string playerName,
+			Model *model,
+			Engine *engine,
+			int credits,
+			Coordinate location)
+{
 	Player* newPlayer = new Player;
 
 	LogMsg(INFO, "Creating New Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
 		playerName.c_str(),
-		defaultModel->GetName().c_str(),
-		defaultEngine->GetName().c_str(),
-		defaultCredits,
-		defaultLocation.GetX(), defaultLocation.GetY()
+		model->GetName().c_str(),
+		engine->GetName().c_str(),
+		credits,
+		location.GetX(), location.GetY()
 	);
 
 	newPlayer->name = playerName;
 
-	newPlayer->SetModel( defaultModel );
-	newPlayer->SetEngine( defaultEngine );
-	newPlayer->SetCredits( defaultCredits );
-	newPlayer->SetWorldPosition( defaultLocation );
+	newPlayer->SetModel( model );
+	newPlayer->SetEngine( engine );
+	newPlayer->SetCredits( credits );
+	newPlayer->SetWorldPosition( location );
 	newPlayer->RemoveLuaControlFunc();
 
 	newPlayer->lastLoadTime = time(NULL);
@@ -724,7 +729,6 @@ Player* Players::CreateNew(string playerName) {
 	// Focus the camera on the sprite
 	Camera::Instance()->Focus( newPlayer );
 	Add( (Component*)(new PlayerInfo( newPlayer )) );
-	SpriteManager::Instance()->Add(newPlayer);
 	Player::pInstance = newPlayer;
 
 	return newPlayer;
@@ -759,22 +763,5 @@ Player* Players::LoadPlayer(string playerName) {
 	PlayerInfo* info = GetPlayerInfo( playerName );
 	Player* newPlayer = Player::Load( info->file );
 	return newPlayer;
-}
-
-/**\brief Set Default values for new Players
- */
-void Players::SetDefaults(
-	Model *_defaultModel,
-	Engine *_defaultEngine,
-	int _defaultCredits,
-	Coordinate _defaultLocation)
-{
-	assert(_defaultModel);
-	assert(_defaultEngine);
-	assert(_defaultCredits > 0);
-	defaultModel = _defaultModel;
-	defaultEngine = _defaultEngine;
-	defaultCredits = _defaultCredits;
-	defaultLocation = _defaultLocation;
 }
 

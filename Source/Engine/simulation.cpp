@@ -163,12 +163,6 @@ bool Simulation::SetupToRun(){
 		LogMsg(WARN, "Invalid default player: no planet named '%s'.", startPlanet.c_str() );
 	}
 
-	players->SetDefaults(
-		models->GetModel( Get("defaultPlayer/model") ),
-		engines->GetEngine( Get("defaultPlayer/engine") ),
-		convertTo<int>( Get("defaultPlayer/credits")),
-		startPos
-	);
 	
 
 	// Load the player
@@ -499,6 +493,23 @@ bool Simulation::HandleInput() {
  * \brief Checks to see if Simulation is Loaded Successfully
  */
 
+void Simulation::CreateDefaultPlayer(string name) {
+	Coordinate startPos(0,0);
+	string startPlanet = Get("defaultPlayer/start");
+	if( planets->GetPlanet( startPlanet ) ) {
+		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
+	}
+
+	Player* player = players->CreateNew(
+		name,
+		models->GetModel( Get("defaultPlayer/model") ),
+		engines->GetEngine( Get("defaultPlayer/engine") ),
+		convertTo<int>( Get("defaultPlayer/credits")),
+		startPos
+	);
+
+	sprites->Add( player );
+}
 /**\brief 
  * \return true if the player wants to quit
  */

@@ -113,20 +113,13 @@ class Players : public Components {
 
 		bool Save();
 
-		Player* CreateNew(string playerName);
+		Player* CreateNew(string playerName,
+			Model *model,
+			Engine *engine,
+			int credits,
+			Coordinate location);
 		Player* LoadLast();
 		Player* LoadPlayer(string playerName);
-
-		// Default Player values
-		void SetDefaults(
-			Model *_defaultModel,
-			Engine *_defaultEngine,
-			int _defaultCredits,
-			Coordinate _defaultLocation);
-		Model* GetDefaultModel() { return defaultModel; }
-		Engine* GetDefaultEngine() { return defaultEngine; }
-		int GetDefaultCredits() { return defaultCredits; }
-		Coordinate GetDefaultLocation() { return defaultLocation; }
 
 	protected:
 		Players() {};
@@ -135,10 +128,6 @@ class Players : public Components {
 
 	private:
 		static Players *pInstance;
-		Model *defaultModel;
-		Engine *defaultEngine;
-		int defaultCredits;
-		Coordinate defaultLocation;
 };
 
 #endif // __H_PLAYER__
