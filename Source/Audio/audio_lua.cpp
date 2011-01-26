@@ -10,6 +10,7 @@
 #include "common.h"
 #include "audio_lua.h"
 #include "audio.h"
+#include "sound.h"
 
 /**\class Audio_Lua
  * \brief Lua bridge fro UI. */
@@ -25,6 +26,7 @@ void Audio_Lua::RegisterAudio(lua_State *L){
 		{"setMusicVolume", &Audio_Lua::setMusicVolume},
 		{"getSoundVolume", &Audio_Lua::getSoundVolume},
 		{"getMusicVolume", &Audio_Lua::getMusicVolume},
+		{"playSound", &Audio_Lua::playSound},
 		{NULL, NULL}
 	};
 
@@ -71,4 +73,13 @@ int Audio_Lua::getSoundVolume(lua_State *L){
 int Audio_Lua::getMusicVolume(lua_State *L){
 	lua_pushnumber(L, Audio::Instance().GetMusicVol() );
 	return 1;
+}
+
+int Audio_Lua::playSound(lua_State *L){
+	string soundname = luaL_checkstring(L, 1);
+	Sound* sound = Sound::Get( soundname );
+	if( sound != NULL ) {
+		sound->Play();
+	}
+	return 0;
 }
