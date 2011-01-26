@@ -108,6 +108,8 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 
 		// File System Functions
 		{"listImages", &Simulation_Lua::listImages},
+		{"listAnimations", &Simulation_Lua::listAnimations},
+		{"listSounds", &Simulation_Lua::listSounds},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EngineFunctions);
@@ -1349,7 +1351,25 @@ int Simulation_Lua::saveComponents(lua_State *L) {
  */
 int Simulation_Lua::listImages(lua_State *L) {
 	list<string> pics = Filesystem::Enumerate("Resources/Graphics/",".png");
-	Lua::pushStringList(L,&pics);
+	Lua::pushStringList(L, &pics);
+	return 1;
+}
+
+/** \brief List all .ani files in the Animations directory
+ */
+int Simulation_Lua::listAnimations(lua_State *L) {
+	list<string> anis = Filesystem::Enumerate("Resources/Animations/",".ani");
+	Lua::pushStringList(L, &anis);
+	return 1;
+}
+
+/** \brief List all .ogg files in an Audio directory
+ *  \param[in] subfolder within the Audio directory
+ */
+int Simulation_Lua::listSounds(lua_State *L) {
+	string subfolder = luaL_checkstring(L,1);
+	list<string> oggs = Filesystem::Enumerate("Resources/Audio/"+subfolder ,".ogg");
+	Lua::pushStringList(L, &oggs);
 	return 1;
 }
 
