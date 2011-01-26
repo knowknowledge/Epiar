@@ -192,8 +192,8 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 	{
 		while (NULL != (ep = readdir (dp))) {
 			fname = string(ep->d_name);
-			if( fname == "." ) continue;
-			if( fname == ".." ) continue;
+			// Skip hidden files
+			if( fname[0] == '.' ) continue;
 			// Check if the suffix matches
 			if(fname.size() > suffix.size()) {
 				if( std::equal(fname.begin() + fname.size() - suffix.size(), fname.end(), suffix.begin()) ) {
