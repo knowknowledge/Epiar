@@ -330,7 +330,7 @@ float NodeToFloat( xmlDocPtr doc, xmlNodePtr node )
 	xmlChar *xmlString;
 	xmlString = xmlNodeGetContent( node->xmlChildrenNode );
 	if( xmlString ) {
-		value = atoi( (const char *)xmlString );
+		value = atof( (const char *)xmlString );
 	} else {
 		value = 0.0f;
 	}
