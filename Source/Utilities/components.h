@@ -30,6 +30,7 @@ class Components {
 		void AddOrReplace(Component* component);
 		Component* Get(string name);
 		list<string>* GetNames();
+		int Size() { return (int)names.size(); }
 
 		bool Load(string filename, bool optional=false);
 		bool Save();

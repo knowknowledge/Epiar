@@ -366,21 +366,27 @@ void Main_Log_Environment( void ) {
 }
 
 typedef enum {
-	Menu_DoNothing  = 0x0,
-	Menu_Play       = 0x1,
-	Menu_Options    = 0x2,
-	Menu_Editor     = 0x4,
-	Menu_Quit       = 0x8,
-	Menu_ALL        = 0xF,
+	Menu_DoNothing      = 1<<0,
+	Menu_New            = 1<<1,
+	Menu_Load           = 1<<2,
+	Menu_Continue       = 1<<3,
+	Menu_Options        = 1<<4,
+	Menu_Editor         = 1<<5,
+	Menu_Quit           = 1<<6,
+	Menu_Confirm_New    = 1<<7,
+	Menu_Confirm_Load   = 1<<8,
+	Menu_ALL            = 0xFFFF,
 } menuOption;
 
+PlayerInfo* playerToLoad = NULL;
 menuOption clicked = Menu_DoNothing;
 
 // Currently Static functions are the only way I could think of to have C only 
-void clickPlay() { clicked = Menu_Play; } ///< Signal the Main Menu to Play Simulation.
-void clickOptions() { clicked = Menu_Options; } ///< Signal the Main Menu to Open the Options.
-void clickEditor() { clicked = Menu_Editor; } ///< Signal the Main Menu to Run the Editor.
-void clickQuit() { clicked = Menu_Quit; } ///< Signal the Main Menu to Quit.
+void setMenuOption( void* value ) { clicked = *((menuOption*)value); }
+void LoadPlayer( void* value ) {
+	clicked = Menu_Confirm_Load;
+	playerToLoad = (PlayerInfo*)value;
+}
 
 /** Epiar's Main Menu
  *
@@ -394,9 +400,18 @@ void Main_Menu( void ) {
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
-	menuOption availableMenus = (menuOption)(Menu_Play | Menu_Editor | Menu_Quit);
+	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_Editor | Menu_Quit);
 	int screenNum;
 	int button_x = OPTION( int, "options/video/w" ) - 200;
+
+	// These are instances of the menuOptions so that they can be passed to the Buttons as values
+	menuOption menu_New            = Menu_New;
+	menuOption menu_Load           = Menu_Load;
+	menuOption menu_Confirm_New    = Menu_Confirm_New;
+	menuOption menu_Continue       = Menu_Continue;
+	menuOption menu_Options        = Menu_Options;
+	menuOption menu_Editor         = Menu_Editor;
+	menuOption menu_Quit           = Menu_Quit;
 
 	string splashScreens[] = {
 		"Resources/Art/menu1.png",
@@ -409,8 +424,12 @@ void Main_Menu( void ) {
 	screenNum = rand() % (sizeof(splashScreens) / sizeof(splashScreens[0]));
 	Image* splash = Image::Get( splashScreens[screenNum] );
 
+	string playerName;
 	string simName = "Resources/Simulation/default";
 	Simulation debug;
+
+	Players *players = Players::Instance();
+	players->Load( "Resources/Definitions/saved-games.xml", true );
 
 	// Input Loop
 	do {
@@ -418,14 +437,18 @@ void Main_Menu( void ) {
 			UI::Close();
 
 			// Create UI
-			if( availableMenus & Menu_Play )
-				UI::Add( new Button(button_x, 200, 100, 30, "Play",    clickPlay    ) );
+			if( availableMenus & Menu_New )
+				UI::Add( new Button(button_x, 200, 100, 30, "New", setMenuOption, &menu_New) );
+			if( (availableMenus & Menu_Load) && (players->Size() > 0) )
+				UI::Add( new Button(button_x, 250, 100, 30, "Load", setMenuOption, &menu_Load) );
+			if( availableMenus & Menu_Continue )
+				UI::Add( new Button(button_x, 200, 100, 30, "Continue", setMenuOption, &menu_Continue) );
 			if( availableMenus & Menu_Editor )
-				UI::Add( new Button(button_x, 300, 100, 30, "Editor",  clickEditor  ) );
+				UI::Add( new Button(button_x, 300, 100, 30, "Editor", setMenuOption, &menu_Editor) );
 			if( availableMenus & Menu_Options )
-				UI::Add( new Button(button_x, 400, 100, 30, "Options", clickOptions ) );
+				UI::Add( new Button(button_x, 400, 100, 30, "Options", setMenuOption, &menu_Options) );
 			if( availableMenus & Menu_Quit )
-				UI::Add( new Button(button_x, 500, 100, 30, "Quit",    clickQuit    ) );
+				UI::Add( new Button(button_x, 500, 100, 30, "Quit", setMenuOption, &menu_Quit) );
 
 			if( argparser->HaveLong("ui-demo") ) {
 				UI_Test();
@@ -449,47 +472,122 @@ void Main_Menu( void ) {
 		UI::Draw();
 		Video::Update();
 
-
 		switch(clicked){
-			case Menu_Play:
-				UI::Close();
-				screenNeedsReset = true;
-				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
-				availableMenus = (menuOption)(availableMenus | Menu_Options);
+			case Menu_New:
+			{
+				UI::Add(
+					(new Window(200, 200, 250, 300, "Create New Player"))
+					->AddChild( (new Label(30, 30, "Player Name:")) )
+					->AddChild( (new Textbox(130, 30, 100, 1, "", "Player Name:")) )
+					->AddChild( (new Frame( 30, 90, 200, 70 ))
+						->AddChild( (new Checkbox(15, 15, 0, "Random Universe")) )
+						->AddChild( (new Label(15, 30, "Seed:")) )
+						->AddChild( (new Textbox(50, 30, 80, 1, "0", "Random Universe Seed")) )
+					)
+					->AddChild( (new Button(10, 250, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) )
+				);
+				break;
+			}
 
+			case Menu_Load:
+			{
+				Window* win = new Window(250, 50, 500, 700, "Load A Player");
+				UI::Add( win );
+				// Create a new Frame for each Player
+				int p = 0;
+				list<string>::iterator iter;
+				list<string> *names = players->GetNames();
+				for( iter = names->begin(); iter != names->end(); ++iter, ++p ) {
+					PlayerInfo *info = players->GetPlayerInfo( *iter );
+					win->AddChild( (new Frame( 50, 150*p + 30, 400, 120 ))
+						->AddChild( (new Picture(10, 10, 80, 80, info->avatar )) )
+						->AddChild( (new Label(100, 30, "Player Name:" )) ) ->AddChild( (new Label(200, 30, info->GetName() )) )
+						->AddChild( (new Label(100, 60, "Simulation:" )) ) ->AddChild( (new Label(200, 60, info->simulation )) )
+						->AddChild( (new Button(280, 80, 100, 30, "Load", LoadPlayer, info )) )
+					);
+				}
+				break;
+			}
+
+			case Menu_Confirm_New:
+			case Menu_Confirm_Load:
+			{
+				screenNeedsReset = true;
+				availableMenus = (menuOption)(availableMenus & ~Menu_New);
+				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
+				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
+				availableMenus = (menuOption)(availableMenus | Menu_Continue);
+				availableMenus = (menuOption)(availableMenus | Menu_Options);
+				
+				// Gather Player Information
+				if( Menu_Confirm_New == clicked )
+				{
+					int israndom = ((Checkbox*)UI::Search("/Window'Create New Player'/Frame/Checkbox'Random Universe'/"))->IsChecked();
+					int seed = atoi( ((Textbox*)UI::Search("/Window'Create New Player'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+					SETOPTION( "options/simulation/random-universe", israndom );
+					SETOPTION( "options/simulation/random-seed", seed );
+					playerName = ((Textbox*)UI::Search("/Window'Create New Player'/Textbox'Player Name:'/"))->GetText();
+				}
+				else if( Menu_Confirm_Load == clicked )
+				{
+					int israndom = (playerToLoad->simulation == "random") ? 1 : 0;
+					SETOPTION( "options/simulation/random-universe", israndom );
+					SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
+					playerName = playerToLoad->GetName();
+				}
+				
+				// Clear the screen and redraw the splash page
+				UI::Close();
 				Video::Erase();
 				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
 				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 				Video::Update();
-
-				if( false == debug.isLoaded() )
+				
+				// Load the Simulation
+				if(	!debug.Load( simName ) )
 				{
-					if(	!debug.Load( simName ) )
-					{
-						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
-						break;
-					}
-					debug.SetupToRun();
+					LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+					break;
 				}
+				debug.SetupToRun();
+				
+				// Create or Load the Player
+				if( Menu_Confirm_New == clicked ) {
+					debug.CreateDefaultPlayer( playerName );
+					Lua::Call("intro");
+				} else if( Menu_Confirm_Load == clicked ) {
+					debug.LoadPlayer( playerName );
+				}
+				
+				// Run the Simulation
+				debug.Run();
+				break;
+			}
 
+			case Menu_Continue:
+			{
 				// Only attempt to Run if the Simulation has loaded
 				assert( debug.isLoaded() );
-
+				UI::Close();
 				debug.Run();
-
 				break;
+			}
 
 			case Menu_Options:
+			{
 				assert( Lua::CurrentState() != NULL );
 				Lua::Call("options");
 				break;
+			}
 
 			case Menu_Editor:
+			{
 				UI::Close();
 				screenNeedsReset = true;
-				availableMenus = (menuOption)(availableMenus & ~Menu_Play);
+				availableMenus = (menuOption)(availableMenus & ~Menu_New);
+				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
-
+				
 				if( false == debug.isLoaded() )
 				{
 					if(	!debug.Load( simName ) )
@@ -502,10 +600,11 @@ void Main_Menu( void ) {
 
 				// Only attempt to Edit if the Simulation has loaded
 				assert( debug.isLoaded() );
-
+				
 				debug.Edit();
-
+				
 				break;
+			}
 
 			case Menu_Quit:
 				quitSignal = true;

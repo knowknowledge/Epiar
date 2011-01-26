@@ -9,9 +9,8 @@
 #include "includes.h"
 #include "common.h"
 #include "Sprites/player.h"
-#include "Utilities/camera.h"
-#include "Sprites/spritemanager.h"
 #include "Sprites/planets.h"
+#include "Sprites/spritemanager.h"
 #include "Utilities/components.h"
 
 /**\class Player
@@ -51,7 +50,11 @@ Player* Player::Load( string filename ) {
 	// We check the planet location at loadtime in case the planet has moved or the lastPlanet has changed.
 	// This happens with the --random-universe option.
 	Planet* p = Planets::Instance()->GetPlanet( newPlayer->lastPlanet );
-	newPlayer->SetWorldPosition( p->GetWorldPosition() );
+	if( p != NULL ) {
+		newPlayer->SetWorldPosition( p->GetWorldPosition() );
+	} else {
+		LogMsg(INFO, "There is no planet named: '%s'.", newPlayer->lastPlanet.c_str() );
+	}
 
 	newPlayer->RemoveLuaControlFunc();
 
@@ -73,8 +76,6 @@ Player* Player::Load( string filename ) {
 
 	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
-	SpriteManager::Instance()->Add( newPlayer );
-	Camera::Instance()->Focus( newPlayer );
 
 	Player::pInstance = newPlayer;
 
@@ -456,6 +457,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	// Hired escorts
 	for(list<HiredEscort*>::iterator iter_escort = hiredEscorts.begin(); iter_escort != hiredEscorts.end(); iter_escort++){
 		// Check that the sprite hasn't already been destroyed. (If it has, leave it out.)
+		///\todo We should remove the SpriteManager reference here to remove a dependency on global variables.
 		if(
 		   (*iter_escort)->spriteID != -1 &&
 		   SpriteManager::Instance()->GetSpriteByID(
@@ -768,8 +770,6 @@ Player* Players::CreateNew(string playerName,
 
 	newPlayer->lastLoadTime = time(NULL);
 
-	// Focus the camera on the sprite
-	Camera::Instance()->Focus( newPlayer );
 	Add( (Component*)(new PlayerInfo( newPlayer )) );
 	Player::pInstance = newPlayer;
 

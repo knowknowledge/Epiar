@@ -37,6 +37,7 @@ class Simulation : public XMLFile {
 		bool Edit();
 
 		void CreateDefaultPlayer(string name);
+		void LoadPlayer(string name);
 
 		void LuaRegisters(lua_State *L);
 
