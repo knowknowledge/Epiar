@@ -131,6 +131,8 @@ Alliances *Alliances::Instance( void ) {
 		pInstance = new Alliances; // create the sold instance
 		pInstance->rootName = "alliances";
 		pInstance->componentName = "alliance";
+		// The Independent Alliance is a reasonable used by players.
+		pInstance->Add( new Alliance( "Independent", 0, 0, "Credits", GREY ) );
 	}
 	return( pInstance );
 }
