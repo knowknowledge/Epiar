@@ -16,7 +16,7 @@
 class Button : public Widget {
 	public:
 		Button( int x, int y, int w, int h, string label, string lua_code="");
-		Button( int x, int y, int w, int h, string label, void (*clickCallBack)());
+		Button( int x, int y, int w, int h, string label, void (*clickCallBack)(void*), void *callBackValue = NULL);
 		~Button();
 		
 		void Draw( int relx = 0, int rely = 0 );
@@ -40,7 +40,8 @@ class Button : public Widget {
 		Sound *sound_click, *sound_hover;
 
 		string lua_callback;
-		void (*clickCallBack)();
+		void (*clickCallBack)(void*);
+		void *callBackValue;
 };
 
 #endif // __H_BUTTON__
