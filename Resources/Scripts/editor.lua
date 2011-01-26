@@ -25,7 +25,7 @@ AllianceEditorLayout = {
 	{"Name", "String"},
 	{"Aggressiveness", "Number"},
 	{"AttackSize", "Integer"},
-	{"Color", "String"},
+	{"Color", "String"}, -- TODO Should be Color Picker?
 	--{"Illegal", "List"},
 	}
 
@@ -40,8 +40,8 @@ EngineEditorLayout = {
 	{"MSRP", "Integer"},
 	{"Force", "Integer"},
 	{"Fold Drive", "Integer"},
-	{"Sound", "String"}, -- TODO: Should be Sound Picker
-	{"Animation", "String"}, -- TODO: Should be Animation Picker
+	{"Sound", "Sound", "Engines"}, -- Sound Dropdown - Engines subgroup
+	{"Animation", "Animation"}, -- Animation Dropdown
 	}
 
 ModelEditorLayout = {
@@ -55,7 +55,7 @@ ModelEditorLayout = {
 	{"MaxShield", "Integer"},
 	{"MaxSpeed", "Integer"},
 	{"Cargo", "Integer"},
-	--{"Engine", "Engine"}, -- Engine Picker (Dropdown of available Engines)
+	{"Engine", "Component", Epiar.engines},
 	{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
 	}
 
@@ -64,14 +64,15 @@ PlanetEditorLayout = {
 	{"X", "Integer"},
 	{"Y", "Integer"},
 	{"Image", "Picture"}, -- Picture Picker
-	{"Alliance", "String"}, -- TODO: Should be Alliance Picker (Dropdown of available Alliances)
-	{"Landable", "Integer"},
+	{"Alliance", "Component", Epiar.alliances}, -- TODO: Should be Alliance Picker (Dropdown of available Alliances)
+	{"Landable", "Integer"}, -- TODO Should be Checkbox
 	{"Traffic", "Integer"},
 	{"Militia", "Integer"},
 	{"Influence", "Integer"},
 	{"Technologies", "Technologies"},
 	}
 
+-- TODO Gates should be created two at a time.
 GateEditorLayout = {
 	{"Name", "String"},
 	{"X", "Integer"},
@@ -88,11 +89,11 @@ WeaponEditorLayout = {
 	{"Velocity", "Integer"},
 	{"Lifetime", "Integer"},
 	{"FireDelay", "Integer"},
-	{"Type", "Integer"},
+	{"Type", "Integer"}, -- TODO Is this the same as Ammo Type?  It should be removed.
 	{"Tracking", "Number"},
-	{"Ammo Type", "Integer"},
+	{"Ammo Type", "Integer"}, -- TODO Should be a dropdown of Ammo Types
 	{"Ammo Consumption", "Integer"},
-	{"Sound", "String"}, -- TODO: Should be Sound Picker
+	{"Sound", "Sound", "Weapons"}, -- Sound Dropdown - Weapons subgroup
 	}
 
 OutfitEditorLayout = {
@@ -136,7 +137,7 @@ EditorGetters = {
 function componentViewer(kind, listFunc)
 	if UI.search( string.format("/Window%q/", kind) ) ~= nil then return end
 	list = listFunc()
-	componentWins[kind] = UI.newWindow(10,100,140,(#list)*30+90,kind)
+	componentWins[kind] = UI.newWindow(10,40,140,(#list)*30+90,kind)
 	for i = 1,#list do
 		s = list[i]
 		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
@@ -152,7 +153,7 @@ function showComponent(kind, name)
 	local height=700
 	local width=250
 	local theInfo = EditorGetters[ kind ]( name )
-	local theWin = UI.newWindow(150, 50, width, height, windowName )
+	local theWin = UI.newWindow(150, 40, width, height, windowName )
 
     if kind=="Planet" and name~="" then
         planet = Planet.Get(name)
@@ -199,6 +200,46 @@ function showComponent(kind, name)
 			yoff = yoff+20
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Select Image", string.format("ImagePicker(%q,%q)",name,title)))
 			yoff = yoff+20+5
+		elseif fieldType == "Animation" then
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
+			field = UI.newDropdown( 90, yoff, 100, 20, Epiar.listAnimations() )
+			if value ~= "" then 
+				-- Chop off the path part
+				value = value:sub(string.len("Resources/Animations/") +1)
+				field:setText( value )
+			end
+			-- TODO: Draw the Animation?
+			theWin:add(field)
+			yoff = yoff+20
+		elseif fieldType == "Sound" then
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
+			subgroup = layout[3]
+			field = UI.newDropdown( 90, yoff, 100, 20, Epiar.listSounds(subgroup) )
+			if value ~= "" then 
+				-- Chop off the path part
+				value = value:sub(string.len("Resources/Audio/"..subgroup.."/") +1)
+				field:setText( value )
+			end
+			local thisDropdown = string.format("/Window%q/Dropdown(100,%d)/", windowName, yoff+5)
+			function previewSound( subgroup, searchPath )
+				local dropdown = UI.search( searchPath )
+				if dropdown then
+					local sound = string.format("Resources/Audio/%s/%s", subgroup, dropdown:GetText() )
+					Audio.playSound( sound )
+				end
+			end
+			theWin:add( UI.newButton( 190, yoff, 20,20, "(((", string.format("previewSound( %q, %q )", subgroup, thisDropdown) ) )
+			theWin:add(field)
+			yoff = yoff+20
+		elseif fieldType == "Component" then
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
+			componentsFunc = layout[3]
+			field = UI.newDropdown( 90, yoff, 100, 20, componentsFunc() )
+			if value ~= "" then 
+				field:setText( value )
+			end
+			theWin:add(field)
+			yoff = yoff+20
 		elseif fieldType == "Technologies" then
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
@@ -293,6 +334,8 @@ function saveInfo(name)
 			or fieldType == "Number"
 			or fieldType == "Picture" then
 				info[title] = texts[title]:GetText()
+			elseif fieldType == "Animations" then
+				info[title] = "Resources/Animations/" .. texts[title]:GetText()
 			elseif fieldType == "Technologies" then
 				local techs = {}
 				for tech, box in pairs(texts[title]) do
@@ -443,7 +486,7 @@ end
 
 function ImagePicker(name,title)
 	if UI.search( "/Window'Image Picker'/" ) ~= nil then return end
-	local imagePickerWin = UI.newWindow(700,150,250,700, "Image Picker")
+	local imagePickerWin = UI.newWindow(700,40,250,700, "Image Picker")
 	--TODO: Preserve the textbox assosciated with this window.
 	--      When imagePick is called, set the textbox value to the image path
 
