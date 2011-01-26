@@ -497,18 +497,18 @@ void Main_Menu( void ) {
 					->AddChild( (new Textbox(130, 30, 100, 1, "", "Player Name:")) );
 
 				// Simulation Picker
-				Dropdown *sims = new Dropdown( 15, 15, 100, 30 );
+				Dropdown *sims = new Dropdown( 80, 15, 100, 30 );
 				list<string> simulations = Filesystem::Enumerate("Resources/Simulation/");
 				list<string>::iterator iter;
 				for( iter = simulations.begin(); iter != simulations.end(); ++iter ) {
 					sims->AddOption( *iter );
 				}
-				win->AddChild( (new Frame( 30, 180, 200, 70 ))
-						->AddChild( (new Label(15, 15, "Seed:")) )
+				win->AddChild( (new Frame( 30, 60, 200, 120 ))
+						->AddChild( (new Label(15, 15, "Simulation:")) )
 						->AddChild( sims )
-						->AddChild( (new Checkbox(15, 30, 0, "Random Universe")) )
-						->AddChild( (new Label(15, 45, "Seed:")) )
-						->AddChild( (new Textbox(50, 45, 80, 1, "0", "Random Universe Seed")) )
+						->AddChild( (new Checkbox(15, 60, 0, "Random Universe")) )
+						->AddChild( (new Label(15, 80, "Seed:")) )
+						->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
 					);
 				win->AddChild( (new Button(10, 250, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
 				break;
