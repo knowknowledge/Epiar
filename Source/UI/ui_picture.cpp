@@ -43,7 +43,9 @@ void Picture::Default( int x, int y, int w, int h ){
 Picture::Picture( int x, int y, int w, int h, Image* pic ){
 	Default(x,y,w,h);
 	bitmap = pic;
-	name = bitmap->GetPath();
+	if( bitmap ) {
+		name = bitmap->GetPath();
+	}
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
