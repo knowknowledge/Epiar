@@ -26,6 +26,7 @@
  */
 
 Container *UI::currentScreen = NULL;
+map<string,Container*> UI::screens;
 
 /**\brief This is the default UI Font.
  */
@@ -42,14 +43,9 @@ UI::~UI() {
 /**\brief Initializes the User Interface.
  * \details This Initializes the screen container as the full screen and the loads the default UI font.
  */
-bool UI::Initialize() {
-	currentScreen = new Container("Screen", false);
-	// The currentScreen Container contains all other Widgets
-	currentScreen->SetX( 0 );
-	currentScreen->SetY( 0 );
-	currentScreen->SetW( Video::GetWidth() );
-	currentScreen->SetH( Video::GetHeight() );
-	currentScreen->ResetInput();
+bool UI::Initialize( string screenName ) {
+	assert( currentScreen == NULL ); ///< This function can only be called once
+	currentScreen = NewScreen( screenName );
 
 	// This is the Default UI Font
 	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
@@ -139,6 +135,35 @@ void UI::Save( void ) {
 	xmlFreeDoc( doc );
 }
 
+/**\brief Swap in a different UI Screen
+ * \details If there is no screen matching the newname, a new screen is
+ *          created. Otherwise, the old screen is reloaded.  Either way, the
+ *          current screen is saved for later.
+ * \param[in] newname The name of the screen to be loaded.
+ */
+void UI::SwapScreens( string newname ) {
+	Container *oldScreen;
+	Container *newScreen;
+
+	// Save the old Screen
+	oldScreen = currentScreen;
+	screens[ oldScreen->GetName() ] = oldScreen;
+
+	// Load or Create a new Screen
+	map<string,Container*>::iterator val = screens.find( newname );
+	if( val != screens.end() ){
+		newScreen = val->second;
+	} else {
+		newScreen = NewScreen( newname );
+	}
+	screens[ newScreen->GetName() ] = oldScreen;
+
+	// TODO: Animate one screen sliding into another
+
+	// Swap in the new Screen
+	currentScreen = newScreen;
+}
+
 /**\brief Handles Input Events from the event queue.
  * \details
  * List of events is passed from main input handler.
@@ -177,6 +202,17 @@ void UI::HandleInput( list<InputEvent> & events ) {
 			UI::Close( topContainer );
 		}
 	}
+}
+
+Container* UI::NewScreen( string name ) {
+	Container* screen = new Container(name, false);
+	// The currentScreen Container contains all other Widgets
+	screen->SetX( 0 );
+	screen->SetY( 0 );
+	screen->SetW( Video::GetWidth() );
+	screen->SetH( Video::GetHeight() );
+	screen->ResetInput();
+	return screen;
 }
 
 /**\brief Handles UI keyboard events.*/

@@ -226,7 +226,7 @@ void Main_Init_Singletons() {
 
 	Timer::Initialize();
 	Video::Initialize();
-	UI::Initialize();
+	UI::Initialize("Main Screen");
 
 	srand ( time(NULL) );
 }
@@ -537,14 +537,13 @@ void Main_Menu( void ) {
 				}
 				
 				// Clear the screen and redraw the splash page
-				UI::Close();
 				Video::Erase();
 				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
 				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 				Video::Update();
 				
 				// Load the Simulation
-				if(	!debug.Load( simName ) )
+				if( !debug.Load( simName ) )
 				{
 					LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 					break;
@@ -560,7 +559,9 @@ void Main_Menu( void ) {
 				}
 				
 				// Run the Simulation
+				UI::SwapScreens( "In Game" );
 				debug.Run();
+				UI::SwapScreens( "Main Screen" );
 				break;
 			}
 
@@ -568,8 +569,9 @@ void Main_Menu( void ) {
 			{
 				// Only attempt to Run if the Simulation has loaded
 				assert( debug.isLoaded() );
-				UI::Close();
+				UI::SwapScreens( "Editor" );
 				debug.Run();
+				UI::SwapScreens( "Main Screen" );
 				break;
 			}
 
@@ -582,7 +584,6 @@ void Main_Menu( void ) {
 
 			case Menu_Editor:
 			{
-				UI::Close();
 				screenNeedsReset = true;
 				availableMenus = (menuOption)(availableMenus & ~Menu_New);
 				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
@@ -590,7 +591,7 @@ void Main_Menu( void ) {
 				
 				if( false == debug.isLoaded() )
 				{
-					if(	!debug.Load( simName ) )
+					if( !debug.Load( simName ) )
 					{
 						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 						break;
@@ -601,7 +602,9 @@ void Main_Menu( void ) {
 				// Only attempt to Edit if the Simulation has loaded
 				assert( debug.isLoaded() );
 				
+				UI::SwapScreens( "Editor" );
 				debug.Edit();
+				UI::SwapScreens( "Main Screen" );
 				
 				break;
 			}
@@ -620,7 +623,7 @@ void Main_Menu( void ) {
 
 		// Wait until the next click
 		Timer::Delay(50);
-	}while(!quitSignal);
+	} while(!quitSignal);
 
 	LogMsg(INFO, "Epiar shutting down." );
 }
