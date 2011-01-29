@@ -60,9 +60,9 @@ class UI {
 		static bool HandleKeyboard( InputEvent i );
 		static bool HandleMouse( InputEvent i );
 
-		// Use a master widget to handle events,
+		// Use a currentScreen widget to handle events,
 		// so we don't need to duplicate code.
-		static Container master;
+		static Container *currentScreen;
 };
 
 void UI_Test();

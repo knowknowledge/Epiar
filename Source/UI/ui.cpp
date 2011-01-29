@@ -24,7 +24,8 @@
 
 /**\brief This container is contains everything on the screen.
  */
-Container UI::master("Master", false);
+
+Container *UI::currentScreen = NULL;
 
 /**\brief This is the default UI Font.
  */
@@ -39,15 +40,16 @@ UI::~UI() {
 }
 
 /**\brief Initializes the User Interface.
- * \details This Initializes the master container as the full screen and the loads the default UI font.
+ * \details This Initializes the screen container as the full screen and the loads the default UI font.
  */
 bool UI::Initialize() {
-	// The master Container contains all other Widgets
-	master.SetX( 0 );
-	master.SetY( 0 );
-	master.SetW( Video::GetWidth() );
-	master.SetH( Video::GetHeight() );
-	master.ResetInput();
+	currentScreen = new Container("Screen", false);
+	// The currentScreen Container contains all other Widgets
+	currentScreen->SetX( 0 );
+	currentScreen->SetY( 0 );
+	currentScreen->SetW( Video::GetWidth() );
+	currentScreen->SetH( Video::GetHeight() );
+	currentScreen->ResetInput();
 
 	// This is the Default UI Font
 	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
@@ -58,9 +60,9 @@ bool UI::Initialize() {
 }
 
 /**\brief Checks to see if there are UI elements.
- */
+*/
 bool UI::Active( void ) {
-	if( UI::master.IsEmpty() ) return false;
+	if( currentScreen->IsEmpty() ) return false;
 	return true;
 }
 
@@ -74,14 +76,14 @@ Widget *UI::Add( Widget *widget ) {
 		return (Widget*)NULL;
 	}
 	
-	return UI::master.AddChild( widget );
+	return UI::currentScreen->AddChild( widget );
 }
 
 /**\brief This removes all widgets from the base.
  */
 void UI::Close( void ) {
 	LogMsg(INFO, "Closing all Widgets." );
-	UI::master.Empty();
+	UI::currentScreen->Empty();
 }
 
 /**\brief This removes a single widget.
@@ -90,13 +92,13 @@ void UI::Close( void ) {
  */
 void UI::Close( Widget *widget ) {
 	LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
-	UI::master.DelChild( widget );
+	UI::currentScreen->DelChild( widget );
 }
 
 /**\brief Drawing function.
  */
 void UI::Draw( void ) {
-	UI::master.Draw( );
+	UI::currentScreen->Draw( );
 }
 
 /**\brief Search the UI for a Widget
@@ -104,7 +106,7 @@ void UI::Draw( void ) {
  * \see Container::Search
  */
 Widget* UI::Search( string query ) {
-	return UI::master.Search( query );
+	return UI::currentScreen->Search( query );
 }
 
 /**\brief Check if a Widget attached to the the current UI
@@ -117,7 +119,7 @@ Widget* UI::Search( string query ) {
  * \see Container::IsAttached
  */
 bool UI::IsAttached( Widget* possible ) {
-	return UI::master.IsAttached( possible );
+	return UI::currentScreen->IsAttached( possible );
 }
 
 /**\brief Export The UI as an XML document.
@@ -131,7 +133,7 @@ void UI::Save( void ) {
     root_node = xmlNewNode(NULL, BAD_CAST "UI" );
     xmlDocSetRootElement(doc, root_node);
 
-	xmlAddChild( root_node, UI::master.ToNode() );
+	xmlAddChild( root_node, UI::currentScreen->ToNode() );
 
 	xmlSaveFormatFileEnc( "Master_UI.xml" , doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
@@ -169,7 +171,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	}
 
 	// On Escape, close the top Widget
-	Widget* topContainer = UI::master.ChildFromTop(0, WIDGET_CONTAINER);
+	Widget* topContainer = UI::currentScreen->ChildFromTop(0, WIDGET_CONTAINER);
 	if( topContainer != NULL ) {
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			UI::Close( topContainer );
@@ -181,7 +183,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 bool UI::HandleKeyboard( InputEvent i ) {
 	switch(i.kstate) {
 		case KEYTYPED:
-			return UI::master.KeyPress( i.key );
+			return UI::currentScreen->KeyPress( i.key );
 		default:
 			return false;
 	}
@@ -198,23 +200,23 @@ bool UI::HandleMouse( InputEvent i ) {
 	
 	switch(i.mstate) {
 		case MOUSEMOTION:		// Movement of the mouse
-			return UI::master.MouseMotion( x, y );
+			return UI::currentScreen->MouseMotion( x, y );
 		case MOUSELUP:			// Left button up
-			return UI::master.MouseLUp( x, y );
+			return UI::currentScreen->MouseLUp( x, y );
 		case MOUSELDOWN:		// Left button down
-			return UI::master.MouseLDown( x, y );
+			return UI::currentScreen->MouseLDown( x, y );
 		case MOUSEMUP:			// Middle button up
-			return UI::master.MouseMUp( x, y );
+			return UI::currentScreen->MouseMUp( x, y );
 		case MOUSEMDOWN:		// Middle button down
-			return UI::master.MouseMDown( x, y );
+			return UI::currentScreen->MouseMDown( x, y );
 		case MOUSERUP:			// Right button up
-			return UI::master.MouseRUp( x, y );
+			return UI::currentScreen->MouseRUp( x, y );
 		case MOUSERDOWN:		// Right button down
-			return UI::master.MouseRDown( x, y );
+			return UI::currentScreen->MouseRDown( x, y );
 		case MOUSEWUP:			// Scroll wheel up
-			return UI::master.MouseWUp( x, y );
+			return UI::currentScreen->MouseWUp( x, y );
 		case MOUSEWDOWN:		// Scroll wheel down
-			return UI::master.MouseWDown( x, y );
+			return UI::currentScreen->MouseWDown( x, y );
 		default:
 			LogMsg(WARN, "Unhandled UI mouse input detected.");
 		}
