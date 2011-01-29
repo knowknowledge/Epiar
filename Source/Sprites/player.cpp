@@ -678,6 +678,7 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
  *   The new saved-games.xml format only stores some Player information, but
  *   nothing that relies on loading the Simulation.  Everything in the old
  *   style format is by itself in a standalone xml file named after the player.
+ * \todo This could save a copy of the old saved-games.xml to a backup location.
  * \param[in] doc The XML document.
  * \param[in] xnode The XML Node.
  * \return A new XML node that represents the PlayerInfo for the Player.
