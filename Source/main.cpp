@@ -429,7 +429,7 @@ void Main_Menu( void ) {
 	Simulation debug;
 
 	Players *players = Players::Instance();
-	players->Load( "Resources/Definitions/saved-games.xml", true );
+	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
 	// Input Loop
 	do {
