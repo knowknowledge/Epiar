@@ -68,7 +68,7 @@ class Simulation : public XMLFile {
 		bool Parse( void );
 
 		// Pointers to Singletons
-		// TODO: These should all be rewritten to not be singletons
+		///< TODO: These should all be rewritten to not be singletons
 		SpriteManager *sprites;
 
 		Commodities *commodities;

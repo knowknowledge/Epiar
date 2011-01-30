@@ -589,15 +589,13 @@ void PlayerInfo::Update( Player* player ) {
  * \param[in] xnode The XML Node.
  * \returns true if the PlayerInfo was loaded correctly.
 */
-bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr xnode ) {
-	xmlNodePtr  node, attr;
+bool PlayerInfo::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
+	xmlNodePtr  attr;
 
 	// If the node has a Model then it is using the old format.
 	// Create that player's XML File before continuing
-	if( (attr = FirstChildNamed(xnode,"model")) ) {
-		node = ConvertOldVersion( doc, xnode );
-	} else {
-		node = xnode;
+	if( (attr = FirstChildNamed(node,"model")) ) {
+		node = ConvertOldVersion( doc, node );
 	}
 
 	// The file attribute is the saved game xml file.
@@ -680,6 +678,7 @@ xmlNodePtr PlayerInfo::ToXMLNode(string componentName) {
  *   The new saved-games.xml format only stores some Player information, but
  *   nothing that relies on loading the Simulation.  Everything in the old
  *   style format is by itself in a standalone xml file named after the player.
+ * \todo This could save a copy of the old saved-games.xml to a backup location.
  * \param[in] doc The XML document.
  * \param[in] xnode The XML Node.
  * \return A new XML node that represents the PlayerInfo for the Player.
@@ -688,20 +687,21 @@ xmlNodePtr PlayerInfo::ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node ) {
 	char buff[256];
 	xmlDocPtr xmlPtr;
 	xmlNodePtr  attr;
+	xmlNodePtr  copy = xmlCopyNode( node, 1);
 	string filename = "Resources/Definitions/"+ name +".xml";
 
 	LogMsg(INFO, "Converting %s to an xml file: %s ", name.c_str(), filename.c_str() );
 
 	xmlPtr = xmlNewDoc( BAD_CAST "1.0" );
-	xmlDocSetRootElement(xmlPtr, node);
+	xmlDocSetRootElement(xmlPtr, copy);
 
 	// Version information
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
-	xmlNewChild(node, NULL, BAD_CAST "version-major", BAD_CAST buff);
+	xmlNewChild(copy, NULL, BAD_CAST "version-major", BAD_CAST buff);
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MINOR);
-	xmlNewChild(node, NULL, BAD_CAST "version-minor", BAD_CAST buff);
+	xmlNewChild(copy, NULL, BAD_CAST "version-minor", BAD_CAST buff);
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MICRO);
-	xmlNewChild(node, NULL, BAD_CAST "version-macro", BAD_CAST buff);
+	xmlNewChild(copy, NULL, BAD_CAST "version-macro", BAD_CAST buff);
 
 	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
 
@@ -709,7 +709,7 @@ xmlNodePtr PlayerInfo::ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node ) {
 	xmlNewChild(new_node, NULL, BAD_CAST "name", BAD_CAST GetName().c_str() );
 	xmlNewChild(new_node, NULL, BAD_CAST "file", BAD_CAST filename.c_str() );
 
-	if( (attr = FirstChildNamed(node,"lastLoadTime")) ){
+	if( (attr = FirstChildNamed(copy, "lastLoadTime")) ){
 		xmlNewChild(new_node, NULL, BAD_CAST "lastLoadTime", BAD_CAST NodeToString(doc,attr).c_str() );
 	}
 	

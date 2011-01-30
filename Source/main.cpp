@@ -151,6 +151,7 @@ void Main_Load_Settings() {
 		SETOPTION( "options/simulation/random-seed", 0 );
 
 		// Timing
+		SETOPTION( "options/timing/screen-swap", 250 );
 		SETOPTION( "options/timing/mouse-fade", 500 );
 		SETOPTION( "options/timing/target-zoom", 500 );
 		SETOPTION( "options/timing/alert-drop", 3500 );
@@ -226,7 +227,7 @@ void Main_Init_Singletons() {
 
 	Timer::Initialize();
 	Video::Initialize();
-	UI::Initialize();
+	UI::Initialize("Main Screen");
 
 	srand ( time(NULL) );
 }
@@ -402,7 +403,7 @@ void Main_Menu( void ) {
 	Input inputs;
 	list<InputEvent> events;
 	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_NewSim | Menu_Editor | Menu_Quit);
-	int screenNum;
+	int screenNum, numScreens;
 	int button_x = OPTION( int, "options/video/w" ) - 200;
 
 	// These are instances of the menuOptions so that they can be passed to the Buttons as values
@@ -422,16 +423,21 @@ void Main_Menu( void ) {
 		"Resources/Art/menu4.png",
 		"Resources/Art/menu5.png",
 	};
-
-	screenNum = rand() % (sizeof(splashScreens) / sizeof(splashScreens[0]));
-	Image* splash = Image::Get( splashScreens[screenNum] );
+	numScreens = (sizeof(splashScreens) / sizeof(splashScreens[0]));
+	
+	screenNum = rand() % numScreens;
+	Image* menuSplash = Image::Get( splashScreens[screenNum] );
+	screenNum = (screenNum+1) % numScreens;
+	Image* gameSplash = Image::Get( splashScreens[screenNum] );
+	screenNum = (screenNum+1) % numScreens;
+	Image* editSplash = Image::Get( splashScreens[screenNum] );
 
 	string playerName;
 	string simName = "Resources/Simulation/default";
 	Simulation debug;
 
 	Players *players = Players::Instance();
-	players->Load( "Resources/Definitions/saved-games.xml", true );
+	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
 	// Input Loop
 	do {
@@ -480,7 +486,7 @@ void Main_Menu( void ) {
 
 		// Draw Things
 		Video::Erase();
-		splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
+		menuSplash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
 		// Draw the "logo"
 		Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 		UI::Draw();
@@ -562,15 +568,8 @@ void Main_Menu( void ) {
 					playerName = playerToLoad->GetName();
 				}
 				
-				// Clear the screen and redraw the splash page
-				UI::Close();
-				Video::Erase();
-				splash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-				Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
-				Video::Update();
-				
 				// Load the Simulation
-				if(	!debug.Load( simName ) )
+				if( !debug.Load( simName ) )
 				{
 					LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 					break;
@@ -586,7 +585,9 @@ void Main_Menu( void ) {
 				}
 				
 				// Run the Simulation
+				UI::SwapScreens( "In Game", menuSplash, gameSplash );
 				debug.Run();
+				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 				break;
 			}
 
@@ -594,8 +595,9 @@ void Main_Menu( void ) {
 			{
 				// Only attempt to Run if the Simulation has loaded
 				assert( debug.isLoaded() );
-				UI::Close();
+				UI::SwapScreens( "In Game", menuSplash, gameSplash );
 				debug.Run();
+				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 				break;
 			}
 
@@ -634,8 +636,13 @@ void Main_Menu( void ) {
 					debug.SetupToEdit();
 				}
 
-				UI::Close();
+				// Only attempt to Edit if the Simulation has loaded
+				assert( debug.isLoaded() );
+				
+				UI::SwapScreens( "Editor", menuSplash, editSplash );
 				debug.Edit();
+				UI::SwapScreens( "Main Screen", editSplash, menuSplash );
+				
 				break;
 			}
 
@@ -653,7 +660,7 @@ void Main_Menu( void ) {
 
 		// Wait until the next click
 		Timer::Delay(50);
-	}while(!quitSignal);
+	} while(!quitSignal);
 
 	LogMsg(INFO, "Epiar shutting down." );
 }

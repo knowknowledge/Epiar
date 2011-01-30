@@ -139,7 +139,7 @@ bool Components::ParseXMLNode( xmlDocPtr doc, xmlNodePtr node )
  * \arg filename The XML file that should be parsed.
  * \arg optional  If this is true, an error is not returned if the file doesn't exist.
  */
-bool Components::Load(string filename, bool optional) {
+bool Components::Load(string filename, bool fileoptional, bool skipcorrupt) {
 	xmlDocPtr doc;
 	xmlNodePtr cur, ver;
 	int versionMajor = 0, versionMinor = 0, versionMacro = 0;
@@ -157,7 +157,7 @@ bool Components::Load(string filename, bool optional) {
 
 	if( doc == NULL ) {
 		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
-		return optional;
+		return fileoptional;
 	}
 
 	LogMsg(INFO, "Loading '%s' for parsing.", filename.c_str() );
@@ -199,12 +199,12 @@ bool Components::Load(string filename, bool optional) {
 	
 	// Get the components
 	cur = cur->xmlChildrenNode;
-	while( success && cur != NULL ) {
+	while( (success || skipcorrupt) && cur != NULL ) {
 		// Parse for the version information and any children nodes
 		if( ( !xmlStrcmp( cur->name, BAD_CAST componentName.c_str() ) ) ) {
 			// Parse a Component
 			success = ParseXMLNode( doc, cur );
-			assert(success || optional);
+			assert(success || skipcorrupt);
 			if(success) numObjs++;
 		}
 		

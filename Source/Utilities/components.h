@@ -32,7 +32,7 @@ class Components {
 		list<string>* GetNames();
 		int Size() { return (int)names.size(); }
 
-		bool Load(string filename, bool optional=false);
+		bool Load(string filename, bool fileoptional=false, bool skipcorrupt=false);
 		bool Save();
 
 		void SetFileName( const string& _filepath ) { filepath = _filepath; }

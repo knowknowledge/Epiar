@@ -12,6 +12,7 @@
 #include "Utilities/log.h"
 #include "UI/ui.h"
 #include "Input/input.h"
+#include "Utilities/timer.h"
 
 /** \defgroup UI
  * @{
@@ -24,7 +25,9 @@
 
 /**\brief This container is contains everything on the screen.
  */
-Container UI::master("Master", false);
+
+Container *UI::currentScreen = NULL;
+map<string,Container*> UI::screens;
 
 /**\brief This is the default UI Font.
  */
@@ -39,15 +42,11 @@ UI::~UI() {
 }
 
 /**\brief Initializes the User Interface.
- * \details This Initializes the master container as the full screen and the loads the default UI font.
+ * \details This Initializes the screen container as the full screen and the loads the default UI font.
  */
-bool UI::Initialize() {
-	// The master Container contains all other Widgets
-	master.SetX( 0 );
-	master.SetY( 0 );
-	master.SetW( Video::GetWidth() );
-	master.SetH( Video::GetHeight() );
-	master.ResetInput();
+bool UI::Initialize( string screenName ) {
+	assert( currentScreen == NULL ); ///< This function can only be called once
+	currentScreen = NewScreen( screenName );
 
 	// This is the Default UI Font
 	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
@@ -58,9 +57,9 @@ bool UI::Initialize() {
 }
 
 /**\brief Checks to see if there are UI elements.
- */
+*/
 bool UI::Active( void ) {
-	if( UI::master.IsEmpty() ) return false;
+	if( currentScreen->IsEmpty() ) return false;
 	return true;
 }
 
@@ -74,14 +73,14 @@ Widget *UI::Add( Widget *widget ) {
 		return (Widget*)NULL;
 	}
 	
-	return UI::master.AddChild( widget );
+	return UI::currentScreen->AddChild( widget );
 }
 
 /**\brief This removes all widgets from the base.
  */
 void UI::Close( void ) {
 	LogMsg(INFO, "Closing all Widgets." );
-	UI::master.Empty();
+	UI::currentScreen->Empty();
 }
 
 /**\brief This removes a single widget.
@@ -90,13 +89,13 @@ void UI::Close( void ) {
  */
 void UI::Close( Widget *widget ) {
 	LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
-	UI::master.DelChild( widget );
+	UI::currentScreen->DelChild( widget );
 }
 
 /**\brief Drawing function.
  */
 void UI::Draw( void ) {
-	UI::master.Draw( );
+	UI::currentScreen->Draw( );
 }
 
 /**\brief Search the UI for a Widget
@@ -104,7 +103,7 @@ void UI::Draw( void ) {
  * \see Container::Search
  */
 Widget* UI::Search( string query ) {
-	return UI::master.Search( query );
+	return UI::currentScreen->Search( query );
 }
 
 /**\brief Check if a Widget attached to the the current UI
@@ -117,7 +116,7 @@ Widget* UI::Search( string query ) {
  * \see Container::IsAttached
  */
 bool UI::IsAttached( Widget* possible ) {
-	return UI::master.IsAttached( possible );
+	return UI::currentScreen->IsAttached( possible );
 }
 
 /**\brief Export The UI as an XML document.
@@ -131,10 +130,81 @@ void UI::Save( void ) {
     root_node = xmlNewNode(NULL, BAD_CAST "UI" );
     xmlDocSetRootElement(doc, root_node);
 
-	xmlAddChild( root_node, UI::master.ToNode() );
+	xmlAddChild( root_node, UI::currentScreen->ToNode() );
 
 	xmlSaveFormatFileEnc( "Master_UI.xml" , doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
+}
+
+/**\brief Swap in a different UI Screen
+ * \details If there is no screen matching the newname, a new screen is
+ *          created. Otherwise, the old screen is reloaded.  Either way, the
+ *          current screen is saved for later.
+ * \param[in] newname The name of the screen to be loaded.
+ * \todo The Background images should be built into the Screens themselves.
+ */
+void UI::SwapScreens(string newname, Image* oldBackground, Image* newBackground ) {
+	Container *oldScreen;
+	Container *newScreen;
+
+	// Save the old Screen
+	oldScreen = currentScreen;
+	screens[ oldScreen->GetName() ] = oldScreen;
+
+	// Load or Create a new Screen
+	map<string,Container*>::iterator val = screens.find( newname );
+	if( val != screens.end() ){
+		newScreen = val->second;
+	} else {
+		newScreen = NewScreen( newname );
+	}
+	screens[ newScreen->GetName() ] = oldScreen;
+
+	// Swap in the new Screen
+	currentScreen = newScreen;
+
+	// Animate one screen sliding over another
+	// Since anything less than 10ms is unreliable from the timer perspective, 
+	// There is a 10ms delay between frames.
+	// Since "options/timing/screen-swap" is in ms use screen-swap / 10.
+	// Only do this animation if it will finish in a finite time, so skip if time=0 or dx=0
+	if ( (0 < OPTION(int, "options/timing/screen-swap") / 10)
+	  && (0 < Video::GetWidth() / (OPTION(int, "options/timing/screen-swap")/10)) )
+	{
+		int dx = Video::GetWidth() / (OPTION(int, "options/timing/screen-swap")/10);
+		int oldX = 0;
+		int newX = Video::GetWidth();
+		Timer::Update();
+		while( newX > 0 ) {
+			oldX -= dx;
+			newX -= dx;
+
+			// Prevent the screen from going to far and then 'bouncing' back
+			if( newX < 0 ) {
+				oldX -= newX;
+				newX = 0;
+			}
+
+			Video::Erase();
+			//printf("Ticks: %d old %d new %d total %d\n", SDL_GetTicks(), oldX, newX, newX+oldX);
+
+			oldBackground->DrawStretch( oldX, 0, OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"));
+			Image::Get("Resources/Art/logo.png")->Draw(newX + Video::GetWidth() - 240, Video::GetHeight() - 120 );
+			oldScreen->SetX( oldX );
+			oldScreen->Draw( );
+
+			newBackground->DrawStretch( newX, 0, OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"));
+			Image::Get("Resources/Art/logo.png")->Draw(newX + Video::GetWidth() - 240, Video::GetHeight() - 120 );
+			newScreen->SetX( newX );
+			newScreen->Draw( );
+			
+			Video::Update();
+			Timer::Delay(10);
+			Timer::Update();
+		}
+		oldScreen->SetX( 0 );
+		newScreen->SetX( 0 );
+	}
 }
 
 /**\brief Handles Input Events from the event queue.
@@ -169,7 +239,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	}
 
 	// On Escape, close the top Widget
-	Widget* topContainer = UI::master.ChildFromTop(0, WIDGET_CONTAINER);
+	Widget* topContainer = UI::currentScreen->ChildFromTop(0, WIDGET_CONTAINER);
 	if( topContainer != NULL ) {
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			UI::Close( topContainer );
@@ -177,11 +247,22 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	}
 }
 
+Container* UI::NewScreen( string name ) {
+	Container* screen = new Container(name, false);
+	// The currentScreen Container contains all other Widgets
+	screen->SetX( 0 );
+	screen->SetY( 0 );
+	screen->SetW( Video::GetWidth() );
+	screen->SetH( Video::GetHeight() );
+	screen->ResetInput();
+	return screen;
+}
+
 /**\brief Handles UI keyboard events.*/
 bool UI::HandleKeyboard( InputEvent i ) {
 	switch(i.kstate) {
 		case KEYTYPED:
-			return UI::master.KeyPress( i.key );
+			return UI::currentScreen->KeyPress( i.key );
 		default:
 			return false;
 	}
@@ -198,23 +279,23 @@ bool UI::HandleMouse( InputEvent i ) {
 	
 	switch(i.mstate) {
 		case MOUSEMOTION:		// Movement of the mouse
-			return UI::master.MouseMotion( x, y );
+			return UI::currentScreen->MouseMotion( x, y );
 		case MOUSELUP:			// Left button up
-			return UI::master.MouseLUp( x, y );
+			return UI::currentScreen->MouseLUp( x, y );
 		case MOUSELDOWN:		// Left button down
-			return UI::master.MouseLDown( x, y );
+			return UI::currentScreen->MouseLDown( x, y );
 		case MOUSEMUP:			// Middle button up
-			return UI::master.MouseMUp( x, y );
+			return UI::currentScreen->MouseMUp( x, y );
 		case MOUSEMDOWN:		// Middle button down
-			return UI::master.MouseMDown( x, y );
+			return UI::currentScreen->MouseMDown( x, y );
 		case MOUSERUP:			// Right button up
-			return UI::master.MouseRUp( x, y );
+			return UI::currentScreen->MouseRUp( x, y );
 		case MOUSERDOWN:		// Right button down
-			return UI::master.MouseRDown( x, y );
+			return UI::currentScreen->MouseRDown( x, y );
 		case MOUSEWUP:			// Scroll wheel up
-			return UI::master.MouseWUp( x, y );
+			return UI::currentScreen->MouseWUp( x, y );
 		case MOUSEWDOWN:		// Scroll wheel down
-			return UI::master.MouseWDown( x, y );
+			return UI::currentScreen->MouseWDown( x, y );
 		default:
 			LogMsg(WARN, "Unhandled UI mouse input detected.");
 		}

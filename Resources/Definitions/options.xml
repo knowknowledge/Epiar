@@ -33,6 +33,7 @@
     <random-seed>0</random-seed>
   </simulation>
   <timing>
+    <screen-swap>250</screen-swap>
     <mouse-fade>500</mouse-fade>
     <target-zoom>500</target-zoom>
     <alert-drop>3500</alert-drop>

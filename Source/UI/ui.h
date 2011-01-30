@@ -36,7 +36,7 @@ class UI {
 		UI() {}
 		~UI();
 
-		static bool Initialize( void );
+		static bool Initialize( string screenName );
 		
 		static Widget *Add( Widget *widget );
 		static void Draw( void );
@@ -54,15 +54,19 @@ class UI {
 
 		static void Save( void );
 
+		static void SwapScreens(string newname, Image* oldBackground, Image* newBackground );
+
 		static Font* font;
 		
 	private:
+		static Container* NewScreen( string name );
 		static bool HandleKeyboard( InputEvent i );
 		static bool HandleMouse( InputEvent i );
 
-		// Use a master widget to handle events,
+		// Use a currentScreen widget to handle events,
 		// so we don't need to duplicate code.
-		static Container master;
+		static Container *currentScreen;
+		static map<string,Container*> screens;
 };
 
 void UI_Test();
