@@ -186,7 +186,7 @@ void UI::SwapScreens(string newname, Image* oldBackground, Image* newBackground 
 			}
 
 			Video::Erase();
-			printf("Ticks: %d old %d new %d total %d\n", SDL_GetTicks(), oldX, newX, newX+oldX);
+			//printf("Ticks: %d old %d new %d total %d\n", SDL_GetTicks(), oldX, newX, newX+oldX);
 
 			oldBackground->DrawStretch( oldX, 0, OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"));
 			Image::Get("Resources/Art/logo.png")->Draw(newX + Video::GetWidth() - 240, Video::GetHeight() - 120 );
