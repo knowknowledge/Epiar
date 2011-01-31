@@ -678,7 +678,7 @@ end
 --- Land on a planet
 function landingDialog(id)
 	-- Create the Planet Landing Screen
-	if UI.search("/Window/Tabs'Store'/") ~= nil then return end
+	if UI.search( string.format("/Window'%s'/Tabs'Store'/", planet:GetName())) ~= nil then return end
 
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
@@ -709,11 +709,12 @@ function landingDialog(id)
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
-	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)",  "/Window/Tabs'Store'/'ShipYard'/" )
+	local shipyardPath = string.format("/Window'%s'/Tabs'Store'/'ShipYard'/", planet:GetName() )
+	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)", shipyardPath )
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
-	storeView( "/Window/Tabs'Store'/'ShipYard'/" , 'ship',models[1])
+	storeView( shipyardPath, 'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
@@ -723,16 +724,17 @@ function landingDialog(id)
 	local weapons = planet:GetWeapons()
 	local engines = planet:GetEngines()
 	local outfits = planet:GetOutfits()
-	yoff = addToStoreList( outfitList, weapons, yoff, "storeView(%q, 'weapon', %q)", "/Window/Tabs'Store'/'Outfitting'/")
-	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", "/Window/Tabs'Store'/'Outfitting'/")
-	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", "/Window/Tabs'Store'/'Outfitting'/")
+	local outfitPath = string.format( "/Window'%s'/Tabs'Store'/'Outfitting'/", planet:GetName() )
+	yoff = addToStoreList( outfitList, weapons, yoff, "storeView(%q, 'weapon', %q)", outfitPath)
+	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", outfitPath)
+	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", outfitPath)
 	storeframe:add(outfitting)
 	outfitting:add( UI.newButton( width-250,340,100,30,"Sell","sellOutfit()" ))
 	outfitting:add( UI.newButton( width-150,340,100,30,"Buy","buyOutfit()" ))
 
-	if #weapons > 0 then     storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'weapon', weapons[1])
-	elseif #engines > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'engine', engines[1])
-	elseif #outfits > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'outfit', outfits[1])
+	if #weapons > 0 then     storeView( outfitPath, 'weapon', weapons[1])
+	elseif #engines > 0 then storeView( outfitPath, 'engine', engines[1])
+	elseif #outfits > 0 then storeView( outfitPath, 'outfit', outfits[1])
 	end
 
 	-- Trade
@@ -765,8 +767,12 @@ function landingDialog(id)
 	local numMissions = math.random(2,7)
 	function accept( missionType, i )
 		PLAYER:AcceptMission(missionType, availableMissions[i])
-		path = string.format("/Window/Tabs/Tab'Employment'/Frame[%d]/Button/", i-1)
-		UI.search( path ):close()
+
+		local path = string.format("/Window'%s'/Tabs/Tab'Employment'/Frame[%d]/Button/", planet:GetName(), i-1)
+		local acceptButton = UI.search( path )
+		if acceptButton ~= nil then
+			acceptButton:close()
+		end
 	end
 	for i = 1,numMissions do
 		local missionType
