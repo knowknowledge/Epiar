@@ -481,6 +481,8 @@ void Main_Menu( void ) {
 		switch(clicked){
 			case Menu_New:
 			{
+				char seed[20];
+				snprintf(seed, sizeof(seed), "%d", rand() );
 				UI::Add(
 					(new Window(200, 200, 250, 300, "Create New Player"))
 					->AddChild( (new Label(30, 30, "Player Name:")) )
@@ -488,7 +490,7 @@ void Main_Menu( void ) {
 					->AddChild( (new Frame( 30, 90, 200, 70 ))
 						->AddChild( (new Checkbox(15, 15, 0, "Random Universe")) )
 						->AddChild( (new Label(15, 30, "Seed:")) )
-						->AddChild( (new Textbox(50, 30, 80, 1, "0", "Random Universe Seed")) )
+						->AddChild( (new Textbox(50, 30, 80, 1, seed, "Random Universe Seed")) )
 					)
 					->AddChild( (new Button(10, 250, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) )
 				);
