@@ -805,68 +805,6 @@ function HudTargetShield()
 	return 0
 end
 
-function loadingWindow()
-	if UI.search("/'Load a Player'/") ~= nil then return end -- Abort if the loading window is already visible
-	Epiar.pause()
-	local width=300
-	local height=300
-	local players = Epiar.players()
-	local videoWidth = Video.getWidth()
-	local videoHeight = Video.getHeight()
-
-	local loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
-
-	--- Load an old Player
-	yoff = 30
-	if #players > 0 then
-		loadingWin:add( UI.newLabel( 30, yoff, "Load one of your old saved games:" ) )
-		yoff = yoff + 30
-		for i=1,#players do
-			local player = players[i]
-			-- TODO: show a preview of the player (curret ship, location, equipment)
-			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(%q)",player)))
-			yoff = yoff + 40
-		end
-		yoff = yoff + 30
-	end
-
-	--- Create a new Player
-	loadingWin:add( UI.newLabel( 30, yoff, "Create a new Player:" ) )
-	yoff = yoff + 30
-	loadingWin:add(UI.newLabel( 50, yoff, "Name:"))
-	playerNameField = UI.newTextbox( 100, yoff, 100, 1, "")
-	loadingWin:add(playerNameField)
-	yoff = yoff + 30
-	loadingWin:add( UI.newButton( width/2-50,yoff,100,30,"Create", "createNewPlayer()"))
-end
-
-function loadPlayer(playerName)
-	Epiar.loadPlayer(playerName)
-	local loadingWin = UI.search("/'Load a Player'/")
-	if loadingWin ~= nil then
-		loadingWin:close()
-	end
-	playerStart()
-	Epiar.unpause()
-end
-
-function createNewPlayer()
-	if FailureWindow ~= nil then return end
-	local name = trim( playerNameField:GetText() )
-	if name == "" then
-		NewFailureWindow("Bad Player Name", "You can't use an empty string for a player name.")
-		return
-	end
-	Epiar.newPlayer(name)
-
-	local loadingWin = UI.search("/'Load a Player'/")
-	if loadingWin ~= nil then
-		loadingWin:close()
-	end
-	playerStart()
-	intro()
-end
-
 function playerInformation()
 	local infoWin = UI.search("/'Player Info'/")
 	if infoWin~=nil then
