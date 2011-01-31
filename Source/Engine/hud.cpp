@@ -646,6 +646,11 @@ void Hud::SetMapDisplay( HudMap _newMapDisplay ) {
  */
 void Hud::RegisterHud(lua_State *L) {
 
+	Lua::RegisterGlobal("UPPER_LEFT", UPPER_LEFT);
+	Lua::RegisterGlobal("UPPER_RIGHT", UPPER_RIGHT);
+	Lua::RegisterGlobal("LOWER_LEFT", LOWER_LEFT);
+	Lua::RegisterGlobal("LOWER_RIGHT", LOWER_RIGHT);
+
 	static const luaL_Reg hudFunctions[] = {
 		{"setVisibity", &Hud::setVisibity},
 		{"newStatus", &Hud::newStatus},

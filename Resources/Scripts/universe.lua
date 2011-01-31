@@ -435,7 +435,7 @@ function buyShip(model)
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 
 				PLAYER:ChangeWeapon()
 			end
@@ -502,7 +502,7 @@ function buyOutfit(outfit)
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
-		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo(%q)",outfit))
+		HUD.newStatus(outfit..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)

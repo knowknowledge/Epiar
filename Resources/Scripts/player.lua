@@ -607,7 +607,7 @@ function doCapture(succ_max, destruct_max)
 			-- SetModel() has already determined the slot contents for us, so use them
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 			end
 
 			PLAYER:ChangeWeapon()
@@ -714,30 +714,30 @@ radarZoomKeys()
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars
-	HUD.newStatus("Coordinate:", 130, 1, "string.format('(%d,%d)',PLAYER:GetPosition())")
-	HUD.newStatus("Quadrant:", 130, 1, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
-	HUD.newStatus("Credits:", 130, 1, "string.format('$%d',PLAYER:GetCredits())")
+	HUD.newStatus("Coordinate:", 130, UPPER_RIGHT, "string.format('(%d,%d)',PLAYER:GetPosition())")
+	HUD.newStatus("Quadrant:", 130, UPPER_RIGHT, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
+	HUD.newStatus("Credits:", 130, UPPER_RIGHT, "string.format('$%d',PLAYER:GetCredits())")
 
 	-- Weapon and Armor Status Bars
-	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
-	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
+	HUD.newStatus("HULL:", 100, UPPER_LEFT, "PLAYER:GetHull()")
+	HUD.newStatus("Shield:", 100, UPPER_LEFT, "PLAYER:GetShield()")
 	myweapons = {}
 	--local weaponsAndAmmo = PLAYER:GetWeapons()
 	local weapSlotContents = PLAYER:GetWeaponSlotContents()
 	--for weapon,ammo in pairs(weaponsAndAmmo) do
 	for name,weap in pairs(weapSlotContents) do
-		HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+		HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 	end
 
 	-- Power Level
-	HUD.newStatus("Power Shield:",130,1, "(PLAYER:GetShieldBooster() or 0)/3")
-	HUD.newStatus("Power Damage:",130,1, "(PLAYER:GetDamageBooster() or 0)/3")
-	HUD.newStatus("Power Engine:",130,1, "(PLAYER:GetEngineBooster() or 0)/3")
+	HUD.newStatus("Power Shield:", 130, UPPER_RIGHT, "(PLAYER:GetShieldBooster() or 0)/3")
+	HUD.newStatus("Power Damage:", 130, UPPER_RIGHT, "(PLAYER:GetDamageBooster() or 0)/3")
+	HUD.newStatus("Power Engine:", 130, UPPER_RIGHT, "(PLAYER:GetEngineBooster() or 0)/3")
 
 	-- Target Bars
-	HUD.newStatus("Target (N):",130,1, "HudTargetName()")
-	HUD.newStatus("Target (H):",130,1, "HudTargetHull()")
-	HUD.newStatus("Target (S):",130,1, "HudTargetShield()")
+	HUD.newStatus("Target (N):", 130, UPPER_RIGHT, "HudTargetName()")
+	HUD.newStatus("Target (H):", 130, UPPER_RIGHT, "HudTargetHull()")
+	HUD.newStatus("Target (S):", 130, UPPER_RIGHT, "HudTargetShield()")
 
 end
 
