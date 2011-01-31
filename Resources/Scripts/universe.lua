@@ -763,6 +763,11 @@ function landingDialog(id)
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	local numMissions = math.random(2,7)
+	function accept( missionType, i )
+		PLAYER:AcceptMission(missionType, availableMissions[i])
+		path = string.format("/Window/Tabs/Tab'Employment'/Frame[%d]/Button/", i-1)
+		UI.search( path ):close()
+	end
 	for i = 1,numMissions do
 		local missionType
 		if math.random(50) == 1 then
@@ -775,7 +780,7 @@ function landingDialog(id)
 			UI.newFrame( 10, yoff, width -70, 150,
 				UI.newLabel( 10, 10, availableMissions[i].Name ),
 				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
-				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
+				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
 			)
 		)
 		yoff = yoff + 170
