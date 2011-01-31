@@ -103,6 +103,7 @@ bool Simulation::SetupToRun(){
 
 	Timer::Update(); // Start the Timer
 
+
 	// Start the Lua Universe
 	// Register these functions to their own lua namespaces
 	Lua::Init();
@@ -166,15 +167,12 @@ bool Simulation::Run() {
 	fpsTS = Timer::GetTicks();
 
 	LogMsg(INFO, "Simulation Started");
-
-	if( !Player::IsLoaded() ) {
-		Lua::Call("loadingWindow");
-	} else {
-		Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
-		Lua::Call("playerStart");
-	}
-
 	Hud::Init();
+
+	assert( Player::IsLoaded() );
+	Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
+	Lua::Call("playerStart");
+
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
 
