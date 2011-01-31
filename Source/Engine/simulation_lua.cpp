@@ -44,6 +44,15 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 	Lua::RegisterGlobal("WIDTH", Video::GetWidth() );
 	Lua::RegisterGlobal("HEIGHT", Video::GetHeight() );
 
+	// Sprite Types
+	Lua::RegisterGlobal("SPRITE_PLANET",      DRAW_ORDER_PLANET     );
+	Lua::RegisterGlobal("SPRITE_GATE_BOTTOM", DRAW_ORDER_GATE_BOTTOM);
+	Lua::RegisterGlobal("SPRITE_WEAPON",      DRAW_ORDER_WEAPON     );
+	Lua::RegisterGlobal("SPRITE_SHIP",        DRAW_ORDER_SHIP       );
+	Lua::RegisterGlobal("SPRITE_PLAYER",      DRAW_ORDER_PLAYER     );
+	Lua::RegisterGlobal("SPRITE_GATE_TOP",    DRAW_ORDER_GATE_TOP   );
+	Lua::RegisterGlobal("SPRITE_EFFECT",      DRAW_ORDER_EFFECT     );
+
 	static const luaL_Reg EngineFunctions[] = {
 		//{"echo", &Simulation_Lua::console_echo},
 		{"pause", &Simulation_Lua::pause},

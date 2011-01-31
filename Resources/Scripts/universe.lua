@@ -391,7 +391,7 @@ end
 
 function createRandomShipForPlanet(id)
 	planet = Epiar.getSprite(id)
-	if (planet ~= nil) and (planet:GetType() == 0x01) then
+	if (planet ~= nil) and (planet:GetType() == SPRITE_PLANET) then
 		x,y = planet:GetPosition()
 		influence = planet:Influence()
 		models = planet:GetModels()
