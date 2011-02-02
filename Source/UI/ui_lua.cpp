@@ -137,7 +137,6 @@ int UI_Lua::newWindow(lua_State *L){
 		arg = 7;
 	}
 
-	// Add this Window
 	UI::Add(*win);
 
 	// Collect 'extra' widgets and Add them as children
@@ -169,6 +168,8 @@ int UI_Lua::newFrame(lua_State *L){
 	luaL_getmetatable(L, EPIAR_UI);
 	lua_setmetatable(L, -2);
 	*frame = new Frame(x, y, w, h);
+
+	UI::Add(*frame);
 
 	// Collect 'extra' widgets and Add them as children
 	for(arg=5; arg <= n;arg++){
@@ -228,9 +229,7 @@ int UI_Lua::newButton(lua_State *L){
     lua_setmetatable(L, -2);
 	*button = new Button(x,y,w,h,caption,code);
 
-	// Note: We're not putting this button anywhere!
-	//       Lua will have to do that for us.
-	//       This may be a bad idea (memory leaks from bad lua scripts)
+	UI::Add(*button);
 
 	return 1;
 }
@@ -273,6 +272,8 @@ int UI_Lua::newSlider(lua_State *L){
 	} else {
 		*slider = new Slider(x,y,w,h,label);
 	}
+
+	UI::Add(*slider);
 	
 	return 1;
 }
@@ -297,6 +298,7 @@ int UI_Lua::newTabCont(lua_State *L){
 	lua_setmetatable(L, -2);
 
 	*tabs = new Tabs(x,y,w,h,name);
+	UI::Add(*tabs);
 
 	return 1;
 }
@@ -318,6 +320,7 @@ int UI_Lua::newTab(lua_State *L){
 	lua_setmetatable(L, -2);
 
 	*tab = new Tab(name);
+	UI::Add(*tab);
 
 	return 1;
 }
@@ -346,6 +349,8 @@ int UI_Lua::newTextbox(lua_State *L){
     lua_setmetatable(L, -2);
 	*textbox = new Textbox(x, y, w, h, text, name);
 
+	UI::Add(*textbox);
+
 	return 1;
 }
 
@@ -372,6 +377,8 @@ int UI_Lua::newLabel(lua_State *L){
 		bool centered = luaL_checknumber (L, 4) != 0.;
 		*label = new Label(x,y,caption,centered);
 	}
+
+	UI::Add(*label);
 
 	return 1;
 }
@@ -417,6 +424,8 @@ int UI_Lua::newPicture(lua_State *L){
 		*pic = new Picture(x,y, picname );
 	(*pic)->SetColor(red,blue,green,alpha);
 
+	UI::Add(*pic);
+
 	return 1;
 }
 
@@ -436,10 +445,12 @@ int UI_Lua::newCheckbox(lua_State *L) {
 		luaL_getmetatable(L, EPIAR_UI);
 		lua_setmetatable(L, -2);
 		*checkbox = new Checkbox(x, y, checked, labeltext);
+
+		UI::Add(*checkbox);
 	} else {
 		return luaL_error(L, "Got %d arguments expected 4 (x, y, chekced, labeltext)", n);
 	}
-	
+
 	return 1;
 }
 
@@ -476,10 +487,12 @@ int UI_Lua::newDropdown(lua_State *L) {
 				(*dropdown)->AddOption( option );
 			}
 		}
+
+		UI::Add(*dropdown);
 	} else {
 		return luaL_error(L, "Got %d arguments expected at least 4 (x, y, w, h, [options ...])", n);
 	}
-	
+
 	return 1;
 }
 
