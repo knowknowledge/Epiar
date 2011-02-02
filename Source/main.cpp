@@ -551,6 +551,8 @@ void Main_Menu( void ) {
 					break;
 				}
 				debug.SetupToRun();
+
+				UI::SwapScreens( "In Game", menuSplash, gameSplash );
 				
 				// Create or Load the Player
 				if( Menu_Confirm_New == clicked ) {
@@ -561,7 +563,6 @@ void Main_Menu( void ) {
 				}
 				
 				// Run the Simulation
-				UI::SwapScreens( "In Game", menuSplash, gameSplash );
 				debug.Run();
 				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 				break;
