@@ -1,15 +1,7 @@
---- This script defines the available Missions
-
--- Examples of Missions include:
--- Go to Planet
--- Destroy Ship X
--- Rescue Ship X
--- TraderProtection
-
-
+-- This script defines the available Missions
 --[[
 
---- The Bare Minimum information of a Mission definition.
+The Bare Minimum information of a Mission definition.
 
 MissionType = {
 	UID = 0, --- TODO: Use this for Mission Dependencies.
@@ -32,7 +24,7 @@ MissionType = {
 	Failure = function( missionTable ) end, --- Call this if the Mission is a failure.
 }
 
-]]
+--]]
 
 --- These are the bare minimum values that need to be in the each Mission Table
 function defaultMissionTable( Name, Description)
