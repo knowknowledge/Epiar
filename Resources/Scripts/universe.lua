@@ -157,11 +157,13 @@ function options()
 	local tabwidth=width-20
 	local tabheight=height-100
 	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
-	UI.newWindow( 30,100,width,height,"Options",
+	local optionWin = UI.newWindow( 30,100,width,height,"Options",
 		optionTabs,
-		UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
 		UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" )
 	)
+	local savebutton = UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" )
+	optionWin:add( savebutton )
+	optionWin:setFormButton( savebutton )
 
 	-- General Game Options
 	-- ( No developer stuff here. )
