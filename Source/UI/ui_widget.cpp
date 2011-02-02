@@ -35,9 +35,9 @@ Widget::Widget( void ):
 	keyactivated( false ),
 	x( 0 ), y( 0 ),
 	w( 0 ), h( 0 ),
-	dragX( 0 ), dragY( 0 )
+	dragX( 0 ), dragY( 0 ),
+	parent( NULL )
 {
-
 }
 
 void Widget::Draw( int relx, int rely ) {
