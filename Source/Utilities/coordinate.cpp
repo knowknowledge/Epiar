@@ -62,14 +62,6 @@ SDL_Rect  Coordinate::getRectWithDim ( int w, int h ) {
 	return ( rect );
 }
 
-void VelocityAdjCoordinate(Coordinate& cor,Vector v, double t){
-	Vector delta;
-	delta = v*t;
-	
-	cor.m_x += delta.ipart();
-	cor.m_y += delta.jpart();
-}
-
 int Coordinate::GetScreenX() {
 	Camera *camera = Camera::Instance();
 	Coordinate screen;

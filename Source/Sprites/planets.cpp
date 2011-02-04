@@ -9,7 +9,6 @@
 #include "includes.h"
 #include "Sprites/planets.h"
 #include "Utilities/log.h"
-#include "Utilities/parser.h"
 #include "Utilities/components.h"
 #include "Utilities/lua.h"
 #include "Utilities/timer.h"

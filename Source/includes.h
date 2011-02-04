@@ -21,6 +21,9 @@
 
 #endif // _WIN32
 
+// Does this conflict with Log?
+#include <math.h>
+
 // System includes
 #include <iostream>
 #include <iomanip>

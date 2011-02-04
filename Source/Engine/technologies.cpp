@@ -11,7 +11,6 @@
 #include "Engine/models.h"
 #include "Engine/engines.h"
 #include "Engine/weapons.h"
-#include "Utilities/parser.h"
 #include "Utilities/components.h"
 
 /**\class Technology

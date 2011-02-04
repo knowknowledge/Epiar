@@ -12,6 +12,7 @@
 #include "Sprites/planets.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/components.h"
+#include "Utilities/file.h"
 
 /**\class Player
  * \brief Main player-specific functions and handle.
