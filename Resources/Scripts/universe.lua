@@ -157,11 +157,13 @@ function options()
 	local tabwidth=width-20
 	local tabheight=height-100
 	optionTabs = UI.newTabCont( 10, 30, tabwidth, tabheight,"Options Tabs")
-	UI.newWindow( 30,100,width,height,"Options",
+	local optionWin = UI.newWindow( 30,100,width,height,"Options",
 		optionTabs,
-		UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" ),
 		UI.newButton( 160, height-50, 60, 30, "Cancel", "closeOptions()" )
 	)
+	local savebutton = UI.newButton( 60, height-50, 60, 30, "Save", "saveOptions(); closeOptions()" )
+	optionWin:add( savebutton )
+	optionWin:setFormButton( savebutton )
 
 	-- General Game Options
 	-- ( No developer stuff here. )
@@ -391,7 +393,7 @@ end
 
 function createRandomShipForPlanet(id)
 	planet = Epiar.getSprite(id)
-	if (planet ~= nil) and (planet:GetType() == 0x01) then
+	if (planet ~= nil) and (planet:GetType() == SPRITE_PLANET) then
 		x,y = planet:GetPosition()
 		influence = planet:Influence()
 		models = planet:GetModels()
@@ -435,7 +437,7 @@ function buyShip(model)
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 
 				PLAYER:ChangeWeapon()
 			end
@@ -502,7 +504,7 @@ function buyOutfit(outfit)
 
 		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
-		HUD.newStatus(outfit..":",130,0, string.format("playerAmmo(%q)",outfit))
+		HUD.newStatus(outfit..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		print("Engine...")
 		PLAYER:SetEngine(outfit)
@@ -678,7 +680,7 @@ end
 --- Land on a planet
 function landingDialog(id)
 	-- Create the Planet Landing Screen
-	if UI.search("/Window/Tabs'Store'/") ~= nil then return end
+	if UI.search( string.format("/Window'%s'/Tabs'Store'/", planet:GetName())) ~= nil then return end
 
 	Epiar.pause()
 	planet = Epiar.getSprite(id)
@@ -709,11 +711,12 @@ function landingDialog(id)
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
-	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)",  "/Window/Tabs'Store'/'ShipYard'/" )
+	local shipyardPath = string.format("/Window'%s'/Tabs'Store'/'ShipYard'/", planet:GetName() )
+	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)", shipyardPath )
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
-	storeView( "/Window/Tabs'Store'/'ShipYard'/" , 'ship',models[1])
+	storeView( shipyardPath, 'ship',models[1])
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
@@ -723,16 +726,17 @@ function landingDialog(id)
 	local weapons = planet:GetWeapons()
 	local engines = planet:GetEngines()
 	local outfits = planet:GetOutfits()
-	yoff = addToStoreList( outfitList, weapons, yoff, "storeView(%q, 'weapon', %q)", "/Window/Tabs'Store'/'Outfitting'/")
-	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", "/Window/Tabs'Store'/'Outfitting'/")
-	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", "/Window/Tabs'Store'/'Outfitting'/")
+	local outfitPath = string.format( "/Window'%s'/Tabs'Store'/'Outfitting'/", planet:GetName() )
+	yoff = addToStoreList( outfitList, weapons, yoff, "storeView(%q, 'weapon', %q)", outfitPath)
+	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", outfitPath)
+	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", outfitPath)
 	storeframe:add(outfitting)
 	outfitting:add( UI.newButton( width-250,340,100,30,"Sell","sellOutfit()" ))
 	outfitting:add( UI.newButton( width-150,340,100,30,"Buy","buyOutfit()" ))
 
-	if #weapons > 0 then     storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'weapon', weapons[1])
-	elseif #engines > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'engine', engines[1])
-	elseif #outfits > 0 then storeView( "/Window/Tabs'Store'/'Outfitting'/" , 'outfit', outfits[1])
+	if #weapons > 0 then     storeView( outfitPath, 'weapon', weapons[1])
+	elseif #engines > 0 then storeView( outfitPath, 'engine', engines[1])
+	elseif #outfits > 0 then storeView( outfitPath, 'outfit', outfits[1])
 	end
 
 	-- Trade
@@ -763,6 +767,15 @@ function landingDialog(id)
 	availableMissions = {} -- This is a global variable
 	yoff = 5
 	local numMissions = math.random(2,7)
+	function accept( missionType, i )
+		PLAYER:AcceptMission(missionType, availableMissions[i])
+
+		local path = string.format("/Window'%s'/Tabs/Tab'Employment'/Frame[%d]/Button/", planet:GetName(), i-1)
+		local acceptButton = UI.search( path )
+		if acceptButton ~= nil then
+			acceptButton:close()
+		end
+	end
 	for i = 1,numMissions do
 		local missionType
 		if math.random(50) == 1 then
@@ -775,7 +788,7 @@ function landingDialog(id)
 			UI.newFrame( 10, yoff, width -70, 150,
 				UI.newLabel( 10, 10, availableMissions[i].Name ),
 				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
-				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("PLAYER:AcceptMission(%q, availableMissions[%d])", missionType, i) )
+				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
 			)
 		)
 		yoff = yoff + 170

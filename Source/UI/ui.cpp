@@ -28,6 +28,8 @@
 
 Container *UI::currentScreen = NULL;
 map<string,Container*> UI::screens;
+int UI::zlayer;
+list<UI::draw_location> UI::deferred;
 
 /**\brief This is the default UI Font.
  */
@@ -92,10 +94,35 @@ void UI::Close( Widget *widget ) {
 	UI::currentScreen->DelChild( widget );
 }
 
+/**\brief Called when a Widget should be drawn later
+ * \details Some Widgets should not be drawn "within" their container Widgets,
+ * but should instead be drawn above them.
+ */
+void UI::Defer( Widget* widget, int x, int y ) {
+	draw_location location = {widget,x,y};
+	deferred.push_back( location );
+}
+
 /**\brief Drawing function.
  */
 void UI::Draw( void ) {
+	zlayer = 0;
 	UI::currentScreen->Draw( );
+
+	// Draw the Deferred Widgets
+	list<draw_location>::iterator iter = deferred.begin();
+	while( deferred.empty() == false ) {
+		++zlayer;
+		draw_location now_draw = deferred.front();
+		deferred.pop_front();
+
+		now_draw.widget->Draw( now_draw.x, now_draw.y );
+
+		// Some widget is broken and refuses to be Drawn.
+		// TODO: This could detect and print a warning instead of asserting.
+		assert( zlayer < 1000 );
+	}
+	zlayer = 0;
 }
 
 /**\brief Search the UI for a Widget
@@ -380,7 +407,7 @@ void UI_Test() {
 
 	// Check that Bad Inputs find nothing
 	assert( NULL == UI::Search("/[-1]/") );
-	assert( NULL == UI::Search("/[asdf]/") );
+	assert( NULL == UI::Search("/[fdsa]/") );
 	assert( NULL == UI::Search("/(foo,bar)/") );
 	assert( NULL == UI::Search("/WindowWindow/") );
 	assert( NULL == UI::Search("/'foobar'/") );

@@ -8,7 +8,6 @@
 
 #include "includes.h"
 #include "Engine/engines.h"
-#include "Utilities/parser.h"
 #include "Utilities/components.h"
 
 /**\class Engine

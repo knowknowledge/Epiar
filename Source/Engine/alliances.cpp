@@ -9,7 +9,6 @@
 #include "includes.h"
 #include "Engine/alliances.h"
 #include "Utilities/log.h"
-#include "Utilities/parser.h"
 
 /**\class Alliance
  * \brief Government/Faction.

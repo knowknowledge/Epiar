@@ -1,4 +1,4 @@
---- The functions in this file are helper functions.
+-- The functions in this file are helper functions.
 
 --- Convert a list of strings/numbers into an table with those values as keys
 -- Code from: http://www.lua.org/pil/11.5.html

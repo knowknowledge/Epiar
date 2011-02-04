@@ -51,9 +51,13 @@ class Widget {
 		virtual void SetY( int _y ){ y = _y; }
 		virtual void SetW( int _w ){ w = _w; }
 		virtual void SetH( int _h ){ h = _h; }
+
+		virtual int GetAbsX( void );
+		virtual int GetAbsY( void );
 		
 		virtual string GetType( void ) { return string("GenericWidget"); }
 		virtual int GetMask( void ) { return WIDGET_NONE; }
+		virtual Widget* GetParent( void ) { return parent; }
 		string GetName( void ) { return this->name; }
 		bool IsActive( void ){return this->keyactivated;}
 
@@ -93,7 +97,8 @@ class Widget {
 		bool keyactivated;		///< Is this widget has keyboard activation.
 		int x, y;               ///< The Location of this widget.
 		int w, h;               ///< The Width and Height of this widget.
-		int dragX, dragY;		///< if dragging, this is the offset from (x,y) to the point of click for the drag
+		int dragX, dragY;		///< If dragging, this is the offset from (x,y) to the point of click for the drag
+		Widget* parent;         ///< This widget's parent.
 };
 
 #endif // __H_UI_WIDGET__

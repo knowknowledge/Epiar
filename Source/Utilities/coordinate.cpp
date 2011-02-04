@@ -7,7 +7,7 @@
  */
 
 #include "includes.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Utilities/coordinate.h"
 #include "Utilities/trig.h"
 
@@ -60,14 +60,6 @@ SDL_Rect  Coordinate::getRectWithDim ( int w, int h ) {
 	rect.w = w;
 	rect.h = h;
 	return ( rect );
-}
-
-void VelocityAdjCoordinate(Coordinate& cor,Vector v, double t){
-	Vector delta;
-	delta = v*t;
-	
-	cor.m_x += delta.ipart();
-	cor.m_y += delta.jpart();
 }
 
 int Coordinate::GetScreenX() {

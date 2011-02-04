@@ -56,11 +56,16 @@ Container::~Container( void ) {
 Container *Container::AddChild( Widget *widget ) {
 	assert( widget != NULL );
 	if( widget != NULL ) {
+		if( widget->parent ) {
+			assert( widget->parent != this );
+			((Container*)(widget->parent))->Detach( widget );
+		}
 		children.push_back( widget );
+		widget->parent = this;
+		LogMsg(INFO, "Adding %s %s %p to %s", widget->GetType().c_str(), widget->GetName().c_str(), widget, GetName().c_str() );
+		// Check to see if widget is past the bounds.
+		ResetScrollBars();
 	}
-	LogMsg(INFO, "Adding %s %s %p to %s", widget->GetType().c_str(), widget->GetName().c_str(), widget, GetName().c_str() );
-	// Check to see if widget is past the bounds.
-	ResetScrollBars();
 	return this;
 }
 
@@ -104,6 +109,19 @@ bool Container::DelChild( Widget *widget ){
 		}
 	}
 
+	return false;
+}
+
+/**\brief Detach a child without deleting it.
+ */
+bool Container::Detach( Widget *widget ) {
+	list<Widget *>::iterator i;
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i) == widget ) {
+			i = children.erase( i );
+			return true;
+		}
+	}
 	return false;
 }
 

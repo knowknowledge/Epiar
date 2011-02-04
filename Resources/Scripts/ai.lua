@@ -1,8 +1,8 @@
---
--- Basic AI
+-- This script defines the AI State Machines
 --[[
 
 An AI StateMachine must have the form:
+
 StateMachine = {
 	State = function(id,x,y,angle,speed,vector) ... end,
 	...

@@ -12,14 +12,12 @@ playerCommands = {
 	{'left', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
 	{'right', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
 	{'down', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
-	{'c', "Center", "PLAYER:Rotate(PLAYER:directionTowards(0,0))",KEYPRESSED},
 	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
 	{'tab', "Target Ship", "targetShip()", KEYTYPED},
 	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
 	{'i', "Player Info", "playerInformation()", KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()", KEYTYPED},
-	{'L', "Land on Planet", "attemptLanding()", KEYTYPED},
 	{'w', "Focus on the Target", "Epiar.focusCamera(HUD.getTarget())", KEYTYPED},
 	{'q', "Focus on the Player", "Epiar.focusCamera(PLAYER:GetID())", KEYTYPED},
 	{'space', "Fire", "playerFire()", KEYPRESSED},
@@ -65,7 +63,7 @@ function targetShip()
 	local currentTarget = HUD.getTarget()
 	local lastdist = 0
 
-	for s =1,#nearby-1 do
+	for s = 1,#nearby-1 do
 		if nearby[s]:GetID() == currentTarget then
 			nextTarget = s+1
 		end
@@ -85,24 +83,24 @@ end
 powerSlider, shieldSlider, engineSlider = 0, 0, 0
 
 function powerManagement()
-	if powerManagementWindow ~=nil then
+	if powerManagementWindow ~= nil then
 		powerManagementWindow:close()
-		powerManagementWindow=nil
+		powerManagementWindow = nil
 		return
 	end
-	local width= 200
-	local height= 120
-	powerManagementWindow = UI.newWindow(WIDTH/2 - width/2 ,HEIGHT - height, width, height, "Power Management")
+	local width = 200
+	local height = 120
+	powerManagementWindow = UI.newWindow(WIDTH/2 - width/2, HEIGHT - height, width, height, "Power Management")
 	
-	powerSlider= UI.newSlider(20, 40, 80, 16, "Attack Power", PLAYER:GetDamageBooster()/3.0, "powerShift")
-	powerLabel=UI.newLabel(105, 35,"Attack Power",0)
-	engineSlider =UI.newSlider(20, 65, 80, 16, "Engine", PLAYER:GetEngineBooster()/3.0, "engineShift")
-	engineLabel=UI.newLabel(105, 60,"Engine Power",0)
-	shieldSlider = UI.newSlider(20, 85, 80, 16, "Shields", PLAYER:GetShieldBooster()/3.0, "shieldShift")		
-	shieldLabel=UI.newLabel(105, 80,"Shield Strength",0)
+	powerSlider = UI.newSlider(20, 40, 80, 16, "Attack Power", PLAYER:GetDamageBooster()/3.0, "powerShift")
+	powerLabel = UI.newLabel(105, 35,"Attack Power",0)
+	engineSlider = UI.newSlider(20, 65, 80, 16, "Engine", PLAYER:GetEngineBooster()/3.0, "engineShift")
+	engineLabel = UI.newLabel(105, 60,"Engine Power",0)
+	shieldSlider = UI.newSlider(20, 85, 80, 16, "Shields", PLAYER:GetShieldBooster()/3.0, "shieldShift")
+	shieldLabel = UI.newLabel(105, 80,"Shield Strength",0)
 	
 	powerManagementWindow:add(powerSlider, powerLabel, engineSlider, engineLabel, shieldSlider, shieldLabel)
-									
+	
 end
 
 function equlizePowerManagement()
@@ -115,49 +113,47 @@ end
 function powerShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetDamageBooster())/3.0) * 100
-	local compensate =(-change)/2  
+	local compensate = (-change)/2
 	--print("power shift value=" .. value)
-	changePower(compensate, change ,compensate)
+	changePower(compensate, change, compensate)
 end
 function shieldShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetShieldBooster())/3.0) * 100
-	local compensate =(-change)/2  
+	local compensate = (-change)/2
 	--print("shield shift value=" .. value)
-	changePower(change, compensate ,compensate)
+	changePower(change, compensate, compensate)
 end
 function engineShift(value)
 	value = value*3.0
 	local change = ((value - PLAYER:GetEngineBooster())/3.0) * 100
-	local compensate =(-change)/2  
+	local compensate = (-change)/2
 	--print("power engine value=" .. value)
-	changePower(compensate, compensate ,change)
+	changePower(compensate, compensate, change)
 end
  	
 ---Change Power Distribution
 --- variables given by the desired increase in percentage
-function changePower( shield ,damage ,engine)
-	shield = shield*0.03
-	damage = damage*0.03
-	engine = engine*0.03
+function changePower( shield, damage, engine)
+	shield = shield * 0.03
+	damage = damage * 0.03
+	engine = engine * 0.03
 	local s = PLAYER:GetShieldBooster()
 	--print("PLAYER:GetShieldBooster()=" .. s ..'\n')
 	local newshield = shield + PLAYER:GetShieldBooster()
 	local newdamage = damage + PLAYER:GetDamageBooster()
 	local newengine = engine + PLAYER:GetEngineBooster()
 	
-	
-	
 	--check boundaries
-	newshield ,newdamage , newengine = lowerBoundCheck(shield , damage ,engine ,newshield ,newdamage , newengine)
-	newdamage ,newshield , newengine=lowerBoundCheck(damage , shield ,engine ,newdamage ,newshield , newengine)
-	newengine ,newdamage , newshield=lowerBoundCheck(engine , damage ,shield ,newengine ,newdamage , newshield)
+	newshield, newdamage, newengine = lowerBoundCheck(shield, damage, engine, newshield, newdamage, newengine)
+	newdamage, newshield, newengine = lowerBoundCheck(damage, shield, engine, newdamage, newshield, newengine)
+	newengine, newdamage, newshield = lowerBoundCheck(engine, damage, shield, newengine, newdamage, newshield)
 	if (math.floor( (newshield*33.333) + 0.5 )>99) then
-		HUD.newAlert("shields at maximum capacity can not raise them any higher")
+		HUD.newAlert("Shields at maximum capacity can not raise them any higher")
 		return
 	end
 	if(math.floor( (newdamage*33.333) + 0.5 )>99) then
-		HUD.newAlert("power at maximum capacity can not raise them any higher")
+		HUD.newAlert("Power at maximum capacity can not raise them any higher")
 		return
 	end
 	if(math.floor( (newengine*33.333) + 0.5 )>99) then
@@ -184,7 +180,7 @@ function changePower( shield ,damage ,engine)
 	--HUD.newAlert("Power Distribution: shields " .. (newshield) .. "%% power " .. (newdamage) .. "%% engine " .. (newengine) .. "%%")
 end
 
-function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for power management function
+function lowerBoundCheck(a, b, c, newa, newb, newc) --lower bound check for power management function
 	if(newa<0) then
 		newa= newa- a
 		if not ((a<b) and (a<c)) then
@@ -194,8 +190,8 @@ function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for po
 					newb = newb + a
 				else
 					a = a + newa
-					newa=0
-					newb =newb +a
+					newa = 0
+					newb = newb +a
 
 				end
 			else
@@ -203,15 +199,15 @@ function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for po
 					newc = newc + a
 				else
 					a = a + newa
-					newa=0
-					newc =newc +a
+					newa = 0
+					newc = newc +a
 					
 				end
 			end
 		else	
 			
-			newc= newc + (newa/2) -c
-			newb = newb +(newa/2) -b
+			newc = newc + (newa/2) -c
+			newb = newb + (newa/2) -b
 			newa = 0
 			HUD.newAlert("can not go any lower")
 		end
@@ -220,7 +216,7 @@ function lowerBoundCheck(a , b ,c ,newa ,newb , newc) --lower bound check for po
 end
 
 function playerFire()
-	if Epiar.ispaused()==1 then return end
+	if Epiar.ispaused() == 1 then return end
 
 	local result = PLAYER:Fire( HUD.getTarget() )
 
@@ -289,9 +285,9 @@ function hailSprite()
 	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
 	local spritetype = targettedSprite:GetType()
 
-	if spritetype == 0x01 then
+	if spritetype == SPRITE_PLANET then
 		hailPlanet()
-	elseif spritetype == 0x08 then
+	elseif spritetype == SPRITE_SHIP then
 		hailShip()
 	else
 		HUD.newAlert("No reply.")
@@ -457,13 +453,13 @@ function doHailGreet()
 	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
 	local spritetype = targettedSprite:GetType()
 
-	if spritetype == 0x01 then
+	if spritetype == SPRITE_PLANET then
 		if targettedSprite:GetForbidden() == 1 then
 			hailReplyLabel.setText(hailReplyLabel, string.format("You are not welcome on %s.", targettedSprite:GetName() ) )
 		else
 			hailReplyLabel.setText(hailReplyLabel, string.format("Greetings from %s.", targettedSprite:GetName() ) )
 		end
-	elseif spritetype == 0x08 then
+	elseif spritetype == SPRITE_SHIP then
 		hailReplyLabel.setText(hailReplyLabel,"Hello there.")
 	else
 		-- should not happen
@@ -492,7 +488,9 @@ function doHailInsult()
 		hailReplyLabel.setText(hailReplyLabel,"We are saddened by your insults.")
 	end
 end
-	
+
+-- Beg For Mercy
+-- WHERE SHOULD THIS BE USED?
 function doHailBFM()
 	if hailDialog == nil then return end
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
@@ -609,7 +607,7 @@ function doCapture(succ_max, destruct_max)
 			-- SetModel() has already determined the slot contents for us, so use them
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
-				HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 			end
 
 			PLAYER:ChangeWeapon()
@@ -685,7 +683,7 @@ end
 
 ---Adds to the player's credits
 function addcredits( credits )
-	playerCredits=PLAYER:GetCredits( )
+	playerCredits = PLAYER:GetCredits( )
 	PLAYER:SetCredits( credits + playerCredits )
 end
 
@@ -705,9 +703,9 @@ end
 
 --- Register the player functions
 function radarZoomKeys()
-	for k =1,9 do
+	for k = 1,9 do
 		kn = string.byte(k)
-		ks = string.format("%d",1000*math.pow(2,k-1))
+		ks = string.format("%d", 1000*math.pow(2,k-1))
 		Epiar.RegisterKey(kn, KEYTYPED, "HUD.setVisibity("..ks..")")
 	end
 end
@@ -716,30 +714,30 @@ radarZoomKeys()
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars
-	HUD.newStatus("Coordinate:",130,1, "string.format('(%d,%d)',PLAYER:GetPosition())")
-	HUD.newStatus("Quadrant:",130,1, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
-	HUD.newStatus("Credits:",130,1, "string.format('$%d',PLAYER:GetCredits())")
+	HUD.newStatus("Coordinate:", 130, UPPER_RIGHT, "string.format('(%d,%d)',PLAYER:GetPosition())")
+	HUD.newStatus("Quadrant:", 130, UPPER_RIGHT, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
+	HUD.newStatus("Credits:", 130, UPPER_RIGHT, "string.format('$%d',PLAYER:GetCredits())")
 
 	-- Weapon and Armor Status Bars
-	HUD.newStatus("HULL:",100,0, "PLAYER:GetHull()")
-	HUD.newStatus("Shield:",100,0, "PLAYER:GetShield()")
+	HUD.newStatus("HULL:", 100, UPPER_LEFT, "PLAYER:GetHull()")
+	HUD.newStatus("Shield:", 100, UPPER_LEFT, "PLAYER:GetShield()")
 	myweapons = {}
 	--local weaponsAndAmmo = PLAYER:GetWeapons()
 	local weapSlotContents = PLAYER:GetWeaponSlotContents()
 	--for weapon,ammo in pairs(weaponsAndAmmo) do
 	for name,weap in pairs(weapSlotContents) do
-		HUD.newStatus(weap..":",130,0, string.format("playerAmmo(%q)",weap))
+		HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 	end
 
 	-- Power Level
-	HUD.newStatus("Power Shield:",130,1, "(PLAYER:GetShieldBooster() or 0)/3")
-	HUD.newStatus("Power Damage:",130,1, "(PLAYER:GetDamageBooster() or 0)/3")
-	HUD.newStatus("Power Engine:",130,1, "(PLAYER:GetEngineBooster() or 0)/3")
+	HUD.newStatus("Power Shield:", 130, UPPER_RIGHT, "(PLAYER:GetShieldBooster() or 0)/3")
+	HUD.newStatus("Power Damage:", 130, UPPER_RIGHT, "(PLAYER:GetDamageBooster() or 0)/3")
+	HUD.newStatus("Power Engine:", 130, UPPER_RIGHT, "(PLAYER:GetEngineBooster() or 0)/3")
 
 	-- Target Bars
-	HUD.newStatus("Target (N):",130,1, "HudTargetName()")
-	HUD.newStatus("Target (H):",130,1, "HudTargetHull()")
-	HUD.newStatus("Target (S):",130,1, "HudTargetShield()")
+	HUD.newStatus("Target (N):", 130, UPPER_RIGHT, "HudTargetName()")
+	HUD.newStatus("Target (H):", 130, UPPER_RIGHT, "HudTargetHull()")
+	HUD.newStatus("Target (S):", 130, UPPER_RIGHT, "HudTargetShield()")
 
 end
 
@@ -764,18 +762,18 @@ function HudTargetName()
 	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
 	if targettedSprite ~= nil then
 		local spritetype = targettedSprite:GetType()
-		if spritetype == 0x01 then -- Planet
+		if spritetype == SPRITE_PLANET then -- Planet
 			return targettedSprite:GetName()
-		elseif spritetype == 0x02 then -- Gate Bottom
+		elseif spritetype == SPRITE_GATE_BOTTOM then -- Gate Bottom
 			return "Jump Gate"
-		elseif spritetype == 0x04 then -- Projectile
-		elseif spritetype == 0x08 then -- Ship
+		elseif spritetype == SPRITE_WEAPON then -- Projectile
+		elseif spritetype == SPRITE_SHIP then -- Ship
 			return targettedSprite:GetModelName()
-		elseif spritetype == 0x10 then -- Player
+		elseif spritetype == SPRITE_PLAYER then -- Player
 			return "You"
-		elseif spritetype == 0x20 then -- Gate Top
+		elseif spritetype == SPRITE_GATE_TOP then -- Gate Top
 			return "Jump Gate"
-		elseif spritetype == 0x40 then -- Effect
+		elseif spritetype == SPRITE_EFFECT then -- Effect
 		else -- Nothing?
 		end
 	else -- The Sprite doesn't exist
@@ -784,10 +782,10 @@ function HudTargetName()
 end
 
 function HudTargetHull()
-	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- Acquire target
 	if targettedSprite ~= nil then
 		local spritetype = targettedSprite:GetType()
-		if (spritetype == 0x08) or (spritetype == 0x10) then -- Ship or Player
+		if (spritetype == SPRITE_SHIP) or (spritetype == SPRITE_PLAYER) then -- Ship or Player
 			return targettedSprite:GetHull()
 		end
 	end
@@ -795,76 +793,14 @@ function HudTargetHull()
 end
 
 function HudTargetShield()
-	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- acquire target
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- Acquire target
 	if targettedSprite ~= nil then
 		local spritetype = targettedSprite:GetType()
-		if (spritetype == 0x08) or (spritetype == 0x10) then -- Ship or Player
+		if (spritetype == SPRITE_SHIP) or (spritetype == SPRITE_PLAYER) then -- Ship or Player
 			return targettedSprite:GetShield()
 		end
 	end
 	return 0
-end
-
-function loadingWindow()
-	if UI.search("/'Load a Player'/") ~= nil then return end -- Abort if the loading window is already visible
-	Epiar.pause()
-	local width=300
-	local height=300
-	local players = Epiar.players()
-	local videoWidth = Video.getWidth()
-	local videoHeight = Video.getHeight()
-
-	local loadingWin = UI.newWindow( (videoWidth / 2) - (width / 2), (videoHeight / 2) - (height / 2), width, height,"Load a Player" )
-
-	--- Load an old Player
-	yoff = 30
-	if #players > 0 then
-		loadingWin:add( UI.newLabel( 30, yoff, "Load one of your old saved games:" ) )
-		yoff = yoff + 30
-		for i=1,#players do
-			local player = players[i]
-			-- TODO: show a preview of the player (curret ship, location, equipment)
-			loadingWin:add( UI.newButton(width/2-50,yoff,100,30,player,string.format("loadPlayer(%q)",player)))
-			yoff = yoff + 40
-		end
-		yoff = yoff + 30
-	end
-
-	--- Create a new Player
-	loadingWin:add( UI.newLabel( 30, yoff, "Create a new Player:" ) )
-	yoff = yoff + 30
-	loadingWin:add(UI.newLabel( 50, yoff, "Name:"))
-	playerNameField = UI.newTextbox( 100, yoff, 100, 1, "")
-	loadingWin:add(playerNameField)
-	yoff = yoff + 30
-	loadingWin:add( UI.newButton( width/2-50,yoff,100,30,"Create", "createNewPlayer()"))
-end
-
-function loadPlayer(playerName)
-	Epiar.loadPlayer(playerName)
-	local loadingWin = UI.search("/'Load a Player'/")
-	if loadingWin ~= nil then
-		loadingWin:close()
-	end
-	playerStart()
-	Epiar.unpause()
-end
-
-function createNewPlayer()
-	if FailureWindow ~= nil then return end
-	local name = trim( playerNameField:GetText() )
-	if name == "" then
-		NewFailureWindow("Bad Player Name", "You can't use an empty string for a player name.")
-		return
-	end
-	Epiar.newPlayer(name)
-
-	local loadingWin = UI.search("/'Load a Player'/")
-	if loadingWin ~= nil then
-		loadingWin:close()
-	end
-	playerStart()
-	intro()
 end
 
 function playerInformation()
@@ -884,17 +820,19 @@ function playerInformation()
 	infoWin = UI.newWindow( 500,200, width,height, "Player Info")
 	local y = 30
 
-
+	local name = PLAYER:GetName()
 	local model = PLAYER:GetModelName()
 	local engine = PLAYER:GetEngine()
 	local credits = PLAYER:GetCredits()
+	infoWin:add( UI.newLabel(20, y, "Name:     ".. name) )
+	local y = y+20
 	infoWin:add( UI.newLabel(20, y, "Model:    ".. model) )
 	local y = y+20
 	infoWin:add( UI.newLabel(20, y, "Engine:   ".. engine) )
 	local y = y+20
-	infoWin:add( UI.newLabel(20, y, "Credits:   ".. credits) )
+	infoWin:add( UI.newLabel(20, y, "Credits:  ".. credits) )
 	local y = y+20
-	infoWin:add( UI.newPicture( 20, y, width-40,100, model ,0,0,0,1) )
+	infoWin:add( UI.newPicture( 20, y, width-40,100, model, 0,0,0,1) )
 	local y = y+110
 
 	local infoTabs = UI.newTabCont( 15, y, width-30, height-y-30, "Info Tabs" )
@@ -910,21 +848,25 @@ function playerInformation()
 		outfitTab:add( UI.newLabel(230, y, ammo) )
 	end
 
-	y = y+40
-	outfitTab:add( UI.newLabel(20, y, "Outfit:") )
 	local outfits = PLAYER:GetOutfits()
-	for i,outfit in pairs(outfits) do
-		y = y+20
-		outfitTab:add( UI.newLabel(30, y, outfit) )
+	if #outfits > 0 then
+		y = y+40
+		outfitTab:add( UI.newLabel(20, y, "Outfit:") )
+		for i,outfit in pairs(outfits) do
+			y = y+20
+			outfitTab:add( UI.newLabel(30, y, outfit) )
+		end
 	end
 
-	y = y+40
-	outfitTab:add( UI.newLabel(20, y, "Cargo:") )
 	local cargo = PLAYER:GetCargo()
-	for cargoName,cargoAmount in pairs(cargo) do
-		y = y+20
-		outfitTab:add( UI.newLabel(30, y, cargoName) )
-		outfitTab:add( UI.newLabel(230, y, cargoAmount) )
+	if #cargo > 0 then
+		y = y+40
+		outfitTab:add( UI.newLabel(20, y, "Cargo:") )
+		for cargoName,cargoAmount in pairs(cargo) do
+			y = y+20
+			outfitTab:add( UI.newLabel(30, y, cargoName) )
+			outfitTab:add( UI.newLabel(230, y, cargoAmount) )
+		end
 	end
 
 	-- The Missions Tab
@@ -953,18 +895,12 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	if descriptionWindow ~= nil then
 		descriptionWindow:close()
 		descriptionWindow = nil
-		--Epiar.unpause()
 		return
 	end
 
-	--Epiar.pause()
-
-	--displayedDescription = _missionDescription
-	
 	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
 	descriptionLabel = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 45, true ) .. " " )
 	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
-	--currentDescription:close()
 	descriptionWindow:add( descriptionLabel, rejectButton )
 end
 

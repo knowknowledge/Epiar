@@ -6,7 +6,7 @@
  * \details
  */
 
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 
 #ifndef __h_starfield__
 #define __h_starfield__

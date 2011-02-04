@@ -35,9 +35,9 @@ Widget::Widget( void ):
 	keyactivated( false ),
 	x( 0 ), y( 0 ),
 	w( 0 ), h( 0 ),
-	dragX( 0 ), dragY( 0 )
+	dragX( 0 ), dragY( 0 ),
+	parent( NULL )
 {
-
 }
 
 void Widget::Draw( int relx, int rely ) {
@@ -60,6 +60,32 @@ void Widget::Draw( int relx, int rely ) {
 		Video::DrawRect(x, rely+this->y/2, 30, SansSerif->LineHeight(), 0,0,0,1);
 		SansSerif->RenderTight( x, rely + this->y/2, ybuff );
 	}
+}
+
+/**\brief Tests if point is within a rectangle.
+ */
+int Widget::GetAbsX( void ) {
+	int absx = GetX();
+	Widget* theParent = parent;
+	while( theParent != NULL ) {
+		assert( theParent->GetMask() & WIDGET_CONTAINER );
+		absx += theParent->GetX();
+		theParent = theParent->parent;
+	}
+	return absx;
+}
+
+/**\brief Tests if point is within a rectangle.
+ */
+int Widget::GetAbsY( void ) {
+	int absy = GetY();
+	Widget* theParent = parent;
+	while( theParent != NULL ) {
+		assert( theParent->GetMask() & WIDGET_CONTAINER );
+		absy += theParent->GetY();
+		theParent = theParent->parent;
+	}
+	return absy;
 }
 
 /**\brief Tests if point is within a rectangle.
@@ -95,7 +121,6 @@ bool Widget::MouseLeave( void ){
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
-
 
 /**\brief Generic mouse up function.
  */

@@ -19,7 +19,7 @@
 #include "Engine/technologies.h"
 #include "Sprites/player.h"
 #include "Audio/music.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Input/input.h"
 #include "Engine/console.h"
 

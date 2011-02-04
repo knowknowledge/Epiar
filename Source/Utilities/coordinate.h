@@ -11,7 +11,6 @@
 #define __h_coordinate__
 
 #include "includes.h"
-#include "vector.h"
 
 class Coordinate {
 	public:
@@ -98,26 +97,6 @@ class Coordinate {
 			return Coordinate(m_x+a.m_x,m_y+a.m_y);
 		}
 	
-		Coordinate operator+=(Vector b) {
-			m_x+=b.ipart();
-			m_y+=b.jpart();
-			return *this;
-		}
-	
-		Coordinate operator+(Vector b){
-			return Coordinate(m_x+b.ipart(),m_y+b.jpart());
-		}
-		
-		Coordinate operator-=(Vector b) {
-			m_x-=b.ipart();
-			m_y-=b.jpart();
-			return *this;
-		}
-	
-		Coordinate operator-(Vector b){
-			return Coordinate(m_x-b.ipart(),m_y-b.jpart());
-		}//end operator- (Vector conversion)
-
 		Coordinate operator*(double r){
 			return Coordinate(m_x*r,m_y*r);
 		}
@@ -131,19 +110,6 @@ class Coordinate {
 	
 	//// end math operators
 	
-	//// friend functions
-	
-		// VelocityAdjCoordinate(&cCoordiante,Vector, double)
-	        // Will adjust the cCoodiante, for a given velocity (cVecotr) over some
-	        // length of time (double).
-		// (this code was moved out of the vector.cpp)
-		// inputs:
-		//	cCoordiante	The cCoordiante object to be adjusted
-		//	Vector		The velocity vector
-		//	double		The time the object has past
-		//			since the last position update.
-	
-		friend void VelocityAdjCoordinate(Coordinate&,Vector, double);
 	private:
 	 
 		double  m_x;

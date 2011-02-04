@@ -12,12 +12,12 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Engine/alliances.cpp \
                 Source/Engine/commodities.cpp \
                 Source/Engine/console.cpp \
+                Source/Engine/camera.cpp \
                 Source/Engine/engines.cpp \
                 Source/Engine/hud.cpp \
                 Source/Engine/models.cpp \
                 Source/Engine/mission.cpp \
                 Source/Engine/outfit.cpp \
-                Source/Engine/quadrant.cpp \
                 Source/Engine/simulation.cpp \
                 Source/Engine/simulation_lua.cpp \
                 Source/Engine/starfield.cpp \
@@ -53,21 +53,16 @@ epiar_SOURCES = Source/main.cpp \
                 Source/UI/ui_window.cpp \
                 Source/UI/ui_frame.cpp \
                 Source/Utilities/argparser.cpp \
-                Source/Utilities/camera.cpp \
-                Source/Utilities/cmath.cpp \
                 Source/Utilities/components.cpp \
                 Source/Utilities/coordinate.cpp \
-                Source/Utilities/debug.cpp \
                 Source/Utilities/file.cpp \
                 Source/Utilities/filesystem.cpp \
-                Source/Utilities/hashtbl.cpp \
                 Source/Utilities/log.cpp \
                 Source/Utilities/lua.cpp \
                 Source/Utilities/quadtree.cpp \
                 Source/Utilities/resource.cpp \
                 Source/Utilities/timer.cpp \
                 Source/Utilities/trig.cpp \
-                Source/Utilities/vector.cpp \
                 Source/Utilities/xml.cpp
 
 epiar_LDADD = Source/Lua/src/liblua.a

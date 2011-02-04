@@ -49,6 +49,7 @@ class Container : public Widget {
 		friend class UI;
 
 	protected:
+		virtual bool Detach( Widget *child );
 		// Input events
 		virtual bool MouseMotion( int xi, int yi );
 		virtual bool MouseLUp( int xi, int yi );

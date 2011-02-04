@@ -29,7 +29,7 @@
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Input/input.h"
 #include "Utilities/file.h"
 #include "Utilities/filesystem.h"
@@ -43,6 +43,15 @@
 void Simulation_Lua::RegisterSimulation(lua_State *L) {
 	Lua::RegisterGlobal("WIDTH", Video::GetWidth() );
 	Lua::RegisterGlobal("HEIGHT", Video::GetHeight() );
+
+	// Sprite Types
+	Lua::RegisterGlobal("SPRITE_PLANET",      DRAW_ORDER_PLANET     );
+	Lua::RegisterGlobal("SPRITE_GATE_BOTTOM", DRAW_ORDER_GATE_BOTTOM);
+	Lua::RegisterGlobal("SPRITE_WEAPON",      DRAW_ORDER_WEAPON     );
+	Lua::RegisterGlobal("SPRITE_SHIP",        DRAW_ORDER_SHIP       );
+	Lua::RegisterGlobal("SPRITE_PLAYER",      DRAW_ORDER_PLAYER     );
+	Lua::RegisterGlobal("SPRITE_GATE_TOP",    DRAW_ORDER_GATE_TOP   );
+	Lua::RegisterGlobal("SPRITE_EFFECT",      DRAW_ORDER_EFFECT     );
 
 	static const luaL_Reg EngineFunctions[] = {
 		//{"echo", &Simulation_Lua::console_echo},

@@ -16,7 +16,7 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
@@ -645,6 +645,11 @@ void Hud::SetMapDisplay( HudMap _newMapDisplay ) {
 /**\brief Register Lua functions for HUD related updates.
  */
 void Hud::RegisterHud(lua_State *L) {
+
+	Lua::RegisterGlobal("UPPER_LEFT", UPPER_LEFT);
+	Lua::RegisterGlobal("UPPER_RIGHT", UPPER_RIGHT);
+	Lua::RegisterGlobal("LOWER_LEFT", LOWER_LEFT);
+	Lua::RegisterGlobal("LOWER_RIGHT", LOWER_RIGHT);
 
 	static const luaL_Reg hudFunctions[] = {
 		{"setVisibity", &Hud::setVisibity},
