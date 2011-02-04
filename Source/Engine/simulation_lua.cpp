@@ -29,7 +29,7 @@
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Input/input.h"
 #include "Utilities/file.h"
 #include "Utilities/filesystem.h"

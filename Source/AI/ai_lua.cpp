@@ -13,7 +13,7 @@
 #include "Sprites/player.h"
 #include "AI/ai_lua.h"
 #include "Audio/sound.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Utilities/trig.h"
 #include "Engine/commodities.h"
 #include "Engine/simulation_lua.h"

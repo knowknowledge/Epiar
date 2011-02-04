@@ -12,6 +12,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Engine/alliances.cpp \
                 Source/Engine/commodities.cpp \
                 Source/Engine/console.cpp \
+                Source/Engine/camera.cpp \
                 Source/Engine/engines.cpp \
                 Source/Engine/hud.cpp \
                 Source/Engine/models.cpp \
@@ -53,7 +54,6 @@ epiar_SOURCES = Source/main.cpp \
                 Source/UI/ui_window.cpp \
                 Source/UI/ui_frame.cpp \
                 Source/Utilities/argparser.cpp \
-                Source/Utilities/camera.cpp \
                 Source/Utilities/cmath.cpp \
                 Source/Utilities/components.cpp \
                 Source/Utilities/coordinate.cpp \

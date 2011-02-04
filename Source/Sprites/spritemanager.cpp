@@ -9,7 +9,7 @@
 #include "common.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/quadtree.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 
 
 /**\class SpriteManager

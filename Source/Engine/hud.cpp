@@ -16,7 +16,7 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 
 /* Length of the hull integrity bar (pixels) + 6px (the left+right side imgs) */
 #define HULL_INTEGRITY_BAR  65
