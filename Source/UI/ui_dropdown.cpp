@@ -58,6 +58,14 @@ Dropdown* Dropdown::AddOption( string option ) {
 	return this;
 }
 
+Dropdown* Dropdown::AddOptions( list<string> options ) {
+	list<string>::iterator iter;
+	for( iter = options.begin(); iter != options.end(); ++iter ) {
+		AddOption( *iter );
+	}
+	return this;
+}
+
 /**\brief Draws the current dropdown.
  */
 void Dropdown::Draw( int relx, int rely ) {

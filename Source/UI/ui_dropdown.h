@@ -19,6 +19,7 @@ class Dropdown : public Widget {
 		~Dropdown();
 
 		Dropdown* AddOption( string option );
+		Dropdown* AddOptions( list<string> options );
 
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
