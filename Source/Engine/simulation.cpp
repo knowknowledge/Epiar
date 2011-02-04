@@ -364,6 +364,9 @@ bool Simulation::SetupToEdit() {
 		return false;
 	}
 
+	// Since the Random Universe Editor is currently broken, disable this feature here.
+	SETOPTION( "options/simulation/random-universe", 0 );
+
 	if( OPTION(int, "options/simulation/random-universe") ) {
 		Lua::Call("createSystems");
 	} else {

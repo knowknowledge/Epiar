@@ -376,7 +376,7 @@ typedef enum {
 	Menu_Exit           = 1<<6,
 	Menu_Confirm_New    = 1<<7,
 	Menu_Confirm_Load   = 1<<8,
-	Menu_NewSim         = 1<<9,
+	Menu_Confirm_Editor = 1<<9,
 	Menu_ALL            = 0xFFFF,
 } menuOption;
 
@@ -402,7 +402,7 @@ void Main_Menu( void ) {
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
-	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_NewSim | Menu_Editor | Menu_Exit);
+	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_Editor | Menu_Exit);
 	int screenNum, numScreens;
 	int button_x = OPTION( int, "options/video/w" ) - 300;
 
@@ -413,7 +413,7 @@ void Main_Menu( void ) {
 	menuOption menu_Continue       = Menu_Continue;
 	menuOption menu_Options        = Menu_Options;
 	menuOption menu_Editor         = Menu_Editor;
-	menuOption menu_NewSim         = Menu_NewSim;
+	menuOption menu_Confirm_Editor = Menu_Confirm_Editor;
 	menuOption menu_Exit           = Menu_Exit;
 
 	string splashScreens[] = {
@@ -451,20 +451,8 @@ void Main_Menu( void ) {
 				UI::Add( new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png", setMenuOption, &menu_Load) );
 			if( availableMenus & Menu_Continue )
 				UI::Add( new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png", setMenuOption, &menu_Continue) );
-			if( availableMenus & Menu_Editor ) {
+			if( availableMenus & Menu_Editor )
 				UI::Add( new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png", setMenuOption, &menu_Editor) );
-				Dropdown *sims = new Dropdown( button_x, 330, 100, 30 );
-				list<string> simulations = Filesystem::Enumerate("Resources/Simulation/");
-				list<string>::iterator iter;
-				for( iter = simulations.begin(); iter != simulations.end(); ++iter ) {
-					sims->AddOption( *iter );
-				}
-				UI::Add( sims );
-			}
-			if( availableMenus & Menu_NewSim ) {
-				UI::Add( new Button(button_x, 380, 100, 30, "New Simulation", setMenuOption, &menu_NewSim) );
-				UI::Add( new Textbox(button_x, 410, 100, 1, "", "New Name") );
-			}
 			if( availableMenus & Menu_Options )
 				UI::Add( new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png", setMenuOption, &menu_Options) );
 			if( availableMenus & Menu_Exit )
@@ -495,42 +483,35 @@ void Main_Menu( void ) {
 		switch(clicked){
 			case Menu_New:
 			{
-				Window* win = new Window(200, 200, 250, 300, "Create New Player");
+				if( UI::Search("/Window'Create New Player'/") != NULL ) break;
+
+				Window* win = new Window(300, 150, 250, 370, "Create New Player");
 				UI::Add( win );
 
 				// Player Name
 				win->AddChild( (new Label(30, 30, "Player Name:")) )
 					->AddChild( (new Textbox(130, 30, 100, 1, "", "Player Name:")) );
 
+				// Simulation Picker
 				char seed[20];
 				snprintf(seed, sizeof(seed), "%d", rand() );
-				win->AddChild( (new Frame( 30, 90, 200, 70 ))
-					->AddChild( (new Checkbox(15, 15, 0, "Random Universe")) )
-					->AddChild( (new Label(15, 30, "Seed:")) )
-					->AddChild( (new Textbox(50, 30, 80, 1, seed, "Random Universe Seed")) )
-				);
-
-				// Simulation Picker
-				Dropdown *sims = new Dropdown( 80, 15, 100, 30 );
-				list<string> simulations = Filesystem::Enumerate("Resources/Simulation/");
-				list<string>::iterator iter;
-				for( iter = simulations.begin(); iter != simulations.end(); ++iter ) {
-					sims->AddOption( *iter );
-				}
-				win->AddChild( (new Frame( 30, 200, 200, 120 ))
+				win->AddChild( (new Frame( 30, 90, 200, 120 ))
 					->AddChild( (new Label(15, 15, "Simulation:")) )
-					->AddChild( sims )
+					->AddChild( (new Dropdown( 80, 15, 100, 30 ))
+						->AddOptions( Filesystem::Enumerate("Resources/Simulation/") ) )
 					->AddChild( (new Checkbox(15, 60, 0, "Random Universe")) )
 					->AddChild( (new Label(15, 80, "Seed:")) )
-					->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
+					->AddChild( (new Textbox(50, 80, 80, 1, seed, "Random Universe Seed")) )
 				);
-				win->AddChild( (new Button(10, 250, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
+				win->AddChild( (new Button(10, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
 
 				break;
 			}
 
 			case Menu_Load:
 			{
+				if( UI::Search("/Window'Load A Player'/") != NULL ) break;
+
 				Window* win = new Window(250, 50, 500, 700, "Load A Player");
 				UI::Add( win );
 				// Create a new Frame for each Player
@@ -556,7 +537,6 @@ void Main_Menu( void ) {
 				availableMenus = (menuOption)(availableMenus & ~Menu_New);
 				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
 				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
-				availableMenus = (menuOption)(availableMenus & ~Menu_NewSim);
 				availableMenus = (menuOption)(availableMenus | Menu_Continue);
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
 				
@@ -618,33 +598,79 @@ void Main_Menu( void ) {
 				break;
 			}
 
-			case Menu_NewSim:
 			case Menu_Editor:
 			{
+				// Return to Editor if it has alread been loaded
+				if( debug.isLoaded() ) {
+					UI::SwapScreens( "Editor", menuSplash, editSplash );
+					debug.Edit();
+					UI::SwapScreens( "Main Screen", editSplash, menuSplash );
+					break;
+				}
+
+				// Don't create a Window if it already exists
+				if( UI::Search("/Window'Editor'/") != NULL ) {
+					break;
+				}
+
+				char seed[20];
+				snprintf(seed, sizeof(seed), "%d", rand() );
+
+				UI::Add( (new Window(200, 200, 250, 300, "Editor"))
+					->AddChild( (new Tabs( 10, 40, 230, 210, "EDIT TABS"))
+						->AddChild( (new Tab( "Edit" ))
+							->AddChild( (new Label(15, 15, "Pick the Simulation to Edit:")) )
+							->AddChild( (new Dropdown( 45, 45, 100, 30 ))
+								->AddOptions( Filesystem::Enumerate("Resources/Simulation/") ) )
+						)
+						->AddChild( (new Tab( "Create" ))
+							->AddChild( (new Label(15, 10, "Simulation Name:")) )
+							->AddChild( (new Textbox(40, 40, 80, 1, "", "Simulation Name")) )
+							->AddChild( (new Checkbox(15, 90, 0, "Start With Random Universe")) )
+							->AddChild( (new Label(15, 120, "Seed:")) )
+							->AddChild( (new Textbox(50, 120, 80, 1, seed, "Random Universe Seed")) )
+						)
+					)
+					->AddChild( (new Button(140, 260, 100, 30, "Edit", setMenuOption, &menu_Confirm_Editor )) )
+				);
+				
+				break;
+			}
+
+			case Menu_Confirm_Editor:
+			{
+				assert( UI::Search("/Window'Editor'/Tabs/Tab/") != NULL );
+				assert( false == debug.isLoaded() );
 				screenNeedsReset = true;
 				availableMenus = (menuOption)(availableMenus & ~Menu_New);
 				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
-				availableMenus = (menuOption)(availableMenus & ~Menu_NewSim);
 				availableMenus = (menuOption)(availableMenus | Menu_Options);
-				
-				if( false == debug.isLoaded() )
-				{
-					if( clicked == Menu_Editor ) {
-						assert( NULL != UI::Search("/Dropdown/") );
-						simName = "Resources/Simulation/" + ((Dropdown*)UI::Search("/Dropdown/"))->GetText();
-						if( !debug.Load( simName ) )
-						{
-							LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
-							break;
-						}
-					} else {
-						assert( NULL != UI::Search("/Textbox'New Name'/") );
-						simName = "Resources/Simulation/" + ((Textbox*)UI::Search("/Textbox'New Name'/"))->GetText();
-						debug.New( simName );
-					}
 
-					debug.SetupToEdit();
+				// Since the Random Universe Editor is currently broken, disable this feature here.
+				SETOPTION( "options/simulation/random-universe", 0 );
+
+				Tab* activeTab = ((Tabs*)UI::Search("/Window'Editor'/Tabs/"))->GetActiveTab();
+				printf( "Active Tab: %s\n", activeTab->GetName().c_str() );
+				if( activeTab->GetName() == "Edit" ) {
+					simName = "Resources/Simulation/" + ((Dropdown*)activeTab->Search("/Dropdown/"))->GetText();
+					if( !debug.Load( simName ) )
+					{
+						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+						break;
+					}
+				} else { // Create
+					simName = "Resources/Simulation/" + ((Textbox*)activeTab->Search("/Textbox'Simulation Name'/"))->GetText();
+
+					// Random Universe options
+					int israndom = ((Checkbox*)activeTab->Search("/Checkbox'Start With Random Universe'/"))->IsChecked();
+					int seed = atoi( ((Textbox*)activeTab->Search("/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+					SETOPTION( "options/simulation/random-universe", israndom );
+					SETOPTION( "options/simulation/random-seed", seed );
+
+					debug.New( simName );
 				}
+
+				debug.SetupToEdit();
 
 				// Only attempt to Edit if the Simulation has loaded
 				assert( debug.isLoaded() );
