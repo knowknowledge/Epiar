@@ -64,6 +64,32 @@ void Widget::Draw( int relx, int rely ) {
 
 /**\brief Tests if point is within a rectangle.
  */
+int Widget::GetAbsX( void ) {
+	int absx = GetX();
+	Widget* theParent = parent;
+	while( theParent != NULL ) {
+		assert( theParent->GetMask() & WIDGET_CONTAINER );
+		absx += theParent->GetX();
+		theParent = theParent->parent;
+	}
+	return absx;
+}
+
+/**\brief Tests if point is within a rectangle.
+ */
+int Widget::GetAbsY( void ) {
+	int absy = GetY();
+	Widget* theParent = parent;
+	while( theParent != NULL ) {
+		assert( theParent->GetMask() & WIDGET_CONTAINER );
+		absy += theParent->GetY();
+		theParent = theParent->parent;
+	}
+	return absy;
+}
+
+/**\brief Tests if point is within a rectangle.
+ */
 bool Widget::Contains(int relx, int rely) {
 	return WITHIN_BOUNDS(relx, rely, this->x, this->y, this->w, this->h);
 }
@@ -95,7 +121,6 @@ bool Widget::MouseLeave( void ){
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
-
 
 /**\brief Generic mouse up function.
  */
