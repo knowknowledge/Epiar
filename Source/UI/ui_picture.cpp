@@ -70,6 +70,17 @@ Picture::Picture( int x, int y, string filename ){
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
+Picture::Picture( int x, int y, string filename, void (*function)(void*), void* value ) {
+	Default(x,y,0,0);
+	bitmap = Image::Get(filename);
+	this->w = bitmap->GetWidth();
+	this->h = bitmap->GetHeight();
+	name = filename;
+	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+	this->clickCallBack = function;
+	this->callBackValue = value;
+}
+
 /**\brief Rotate the Image in this picture to a specific angle.
  */
 void Picture::Rotate(double angle){
@@ -134,7 +145,11 @@ void Picture::SetLuaClickCallback( string luaFunctionName ){
  * \details If this picture has a callback, send it the position of the click.
  * \sa Picture::SetLuaClickCallback 
  */
-bool Picture::MouseLUp( int x, int y ){
+bool Picture::MouseLUp( int x, int y ) {
+	if( clickCallBack ){
+		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
+		clickCallBack( callBackValue );
+	} else
 	if(luaClickCallback != ""){
 		char *lua_call = (char*)malloc(128);
 		snprintf(lua_call, 128, "%s(%d,%d)", luaClickCallback.c_str(), x, y);

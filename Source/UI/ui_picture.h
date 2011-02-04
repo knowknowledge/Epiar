@@ -19,6 +19,7 @@ class Picture: public Widget {
 		Picture( int x, int y, int w, int h, string filename );
 		Picture( int x, int y, int w, int h, Image *pic );
 		Picture( int w, int h, string filename );
+		Picture( int x, int y, string filename, void (*function)(void*), void* value );
 		void Draw( int relx, int rely );
 		void Rotate( double angle );
 		void Set( Image *img );
@@ -41,6 +42,9 @@ class Picture: public Widget {
 		Color color;
 		float alpha;
 		string luaClickCallback;
+
+		void (*clickCallBack)(void*);
+		void *callBackValue;
 };
 
 #endif // __H_UI_IMAGE 
