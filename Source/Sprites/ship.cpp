@@ -9,7 +9,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Sprites/ship.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"

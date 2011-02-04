@@ -9,7 +9,7 @@
 #include "includes.h"
 #include "Engine/starfield.h"
 #include "Graphics/video.h"
-#include "Utilities/camera.h"
+#include "Engine/camera.h"
 
 /**\class Starfield
  * \brief Controls the starfield. */
