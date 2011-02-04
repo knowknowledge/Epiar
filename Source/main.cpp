@@ -373,7 +373,7 @@ typedef enum {
 	Menu_Continue       = 1<<3,
 	Menu_Options        = 1<<4,
 	Menu_Editor         = 1<<5,
-	Menu_Quit           = 1<<6,
+	Menu_Exit           = 1<<6,
 	Menu_Confirm_New    = 1<<7,
 	Menu_Confirm_Load   = 1<<8,
 	Menu_ALL            = 0xFFFF,
@@ -401,9 +401,9 @@ void Main_Menu( void ) {
 	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
-	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_Editor | Menu_Quit);
+	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_Editor | Menu_Exit);
 	int screenNum, numScreens;
-	int button_x = OPTION( int, "options/video/w" ) - 200;
+	int button_x = OPTION( int, "options/video/w" ) - 300;
 
 	// These are instances of the menuOptions so that they can be passed to the Buttons as values
 	menuOption menu_New            = Menu_New;
@@ -412,7 +412,7 @@ void Main_Menu( void ) {
 	menuOption menu_Continue       = Menu_Continue;
 	menuOption menu_Options        = Menu_Options;
 	menuOption menu_Editor         = Menu_Editor;
-	menuOption menu_Quit           = Menu_Quit;
+	menuOption menu_Exit           = Menu_Exit;
 
 	string splashScreens[] = {
 		"Resources/Art/menu1.png",
@@ -444,17 +444,17 @@ void Main_Menu( void ) {
 
 			// Create UI
 			if( availableMenus & Menu_New )
-				UI::Add( new Button(button_x, 200, 100, 30, "New", setMenuOption, &menu_New) );
+				UI::Add( new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png", setMenuOption, &menu_New ) );
 			if( (availableMenus & Menu_Load) && (players->Size() > 0) )
-				UI::Add( new Button(button_x, 250, 100, 30, "Load", setMenuOption, &menu_Load) );
+				UI::Add( new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png", setMenuOption, &menu_Load) );
 			if( availableMenus & Menu_Continue )
-				UI::Add( new Button(button_x, 200, 100, 30, "Continue", setMenuOption, &menu_Continue) );
+				UI::Add( new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png", setMenuOption, &menu_Continue) );
 			if( availableMenus & Menu_Editor )
-				UI::Add( new Button(button_x, 300, 100, 30, "Editor", setMenuOption, &menu_Editor) );
+				UI::Add( new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png", setMenuOption, &menu_Editor) );
 			if( availableMenus & Menu_Options )
-				UI::Add( new Button(button_x, 400, 100, 30, "Options", setMenuOption, &menu_Options) );
-			if( availableMenus & Menu_Quit )
-				UI::Add( new Button(button_x, 500, 100, 30, "Quit", setMenuOption, &menu_Quit) );
+				UI::Add( new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png", setMenuOption, &menu_Options) );
+			if( availableMenus & Menu_Exit )
+				UI::Add( new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png", setMenuOption, &menu_Exit) );
 
 			if( argparser->HaveLong("ui-demo") ) {
 				UI_Test();
@@ -612,7 +612,7 @@ void Main_Menu( void ) {
 				break;
 			}
 
-			case Menu_Quit:
+			case Menu_Exit:
 				quitSignal = true;
 				break;
 
