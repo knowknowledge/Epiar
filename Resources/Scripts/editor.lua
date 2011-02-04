@@ -330,9 +330,13 @@ function saveInfo(name)
 			if fieldType == "String"
 			or fieldType == "Integer"
 			or fieldType == "Number"
+			or fieldType == "Component"
 			or fieldType == "Picture" then
 				info[title] = texts[title]:GetText()
-			elseif fieldType == "Animations" then
+			elseif fieldType == "Sound" then
+				local subgroup = layout[3]
+				info[title] = "Resources/Audio/"..subgroup.."/" .. texts[title]:GetText()
+			elseif fieldType == "Animation" then
 				info[title] = "Resources/Animations/" .. texts[title]:GetText()
 			elseif fieldType == "Technologies" then
 				local techs = {}
