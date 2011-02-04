@@ -51,6 +51,9 @@ class Widget {
 		virtual void SetY( int _y ){ y = _y; }
 		virtual void SetW( int _w ){ w = _w; }
 		virtual void SetH( int _h ){ h = _h; }
+
+		virtual int GetAbsX( void );
+		virtual int GetAbsY( void );
 		
 		virtual string GetType( void ) { return string("GenericWidget"); }
 		virtual int GetMask( void ) { return WIDGET_NONE; }

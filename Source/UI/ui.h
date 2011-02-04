@@ -57,6 +57,9 @@ class UI {
 		static void SwapScreens(string newname, Image* oldBackground, Image* newBackground );
 
 		static Font* font;
+
+		static void Defer( Widget*, int x, int y );
+		static int GetZLayer() { return zlayer; }
 		
 	private:
 		static Container* NewScreen( string name );
@@ -67,6 +70,15 @@ class UI {
 		// so we don't need to duplicate code.
 		static Container *currentScreen;
 		static map<string,Container*> screens;
+
+		static int zlayer;
+		typedef struct {
+			Widget* widget;
+			int x;
+			int y;
+		} draw_location;
+
+		static list<draw_location> deferred;
 };
 
 void UI_Test();

@@ -4,18 +4,16 @@ componentWins = {}
 
 --- View components
 function componentDebugger()
-	UI.add(
-		UI.newButton(  0,0,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" ),
-		UI.newButton(100,0,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" ),
-		UI.newButton(200,0,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" ),
-		UI.newButton(300,0,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" ),
-		UI.newButton(400,0,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" ),
-		UI.newButton(500,0,100,30,"Gate","componentViewer('Gate',Epiar.gateNames,'Epiar.getGateInfo')" ),
-		UI.newButton(600,0,100,30,"Technology","technologyViewer()"),
-		UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" ),
-		UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" ),
-    	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
-	)
+	UI.newButton(  0,0,100,30,"Alliance","componentViewer('Alliance',Epiar.alliances,'Epiar.getAllianceInfo')" )
+	UI.newButton(100,0,100,30,"Commodity","componentViewer('Commodity',Epiar.commodities,'Epiar.getCommodityInfo')" )
+	UI.newButton(200,0,100,30,"Engine","componentViewer('Engine',Epiar.engines,'Epiar.getEngineInfo')" )
+	UI.newButton(300,0,100,30,"Model","componentViewer('Model',Epiar.models,'Epiar.getModelInfo')" )
+	UI.newButton(400,0,100,30,"Planet","componentViewer('Planet',Epiar.planetNames,'Epiar.getPlanetInfo')" )
+	UI.newButton(500,0,100,30,"Gate","componentViewer('Gate',Epiar.gateNames,'Epiar.getGateInfo')" )
+	UI.newButton(600,0,100,30,"Technology","technologyViewer()")
+	UI.newButton(700,0,100,30,"Weapon","componentViewer('Weapon',Epiar.weapons,'Epiar.getWeaponInfo')" )
+	UI.newButton(800,0,100,30,"Outfit","componentViewer('Outfit',Epiar.outfits,'Epiar.getOutfitInfo')" )
+	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 end
 
 --- The EditorLayouts describe the ordering and type of the component attributes
