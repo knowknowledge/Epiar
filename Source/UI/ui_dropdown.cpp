@@ -80,7 +80,7 @@ void Dropdown::Draw( int relx, int rely ) {
 			UI::font->RenderTight( x + (w / 2), y + (baseheight / 2), options[selected], Font::CENTER,Font::MIDDLE );
 		}
 	} else if( UI::GetZLayer() == 0 ) {
-		UI::Defer( this, GetAbsX() - GetX(), GetAbsY() - GetY() );
+		UI::Defer( this, relx, rely );
 	} else {
 		unsigned int i;
 		for( i = 0; i < options.size(); ++i ) {
