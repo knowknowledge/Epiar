@@ -36,6 +36,7 @@ void Picture::Default( int x, int y, int w, int h ){
 	alpha = 0.0f;
 
 	this->luaClickCallback = "";
+	this->clickCallBack = NULL;
 }
 
 /**\brief Initialize from an Image pointer.
