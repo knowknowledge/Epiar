@@ -56,18 +56,20 @@ Simulation::Simulation( void ) {
 }
 
 bool Simulation::New( string _folderpath ) {
-#ifdef _WIN32
-	LogMsg(INFO, "Cannot create folders in Windows yet.");
-	return false;
-#endif
 	LogMsg(INFO, "New Simulation: '%s'.", _folderpath.c_str() );
 
 	folderpath = _folderpath + "/";
 
+#ifndef _WIN32
 	if( mkdir( folderpath.c_str(), 0777) != 0) {
 		LogMsg(INFO, "Cannot create folder '%s'.", _folderpath.c_str() );
 		// TODO: ensure that the folder exists
 	}
+#else
+	#error WIN32 Filesystem ot written yet.
+	LogMsg(INFO, "Cannot create folders in Windows yet.");
+	return false;
+#endif
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
 

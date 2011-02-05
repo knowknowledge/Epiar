@@ -206,7 +206,7 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 	else
 		perror ("Couldn't open the directory");
 #else
-#error WIN32 Filesystem not written yet.
+#error WIN32 Filesystem not written yet. Use the PhysFS build.
 #endif
 	return files;
 }
