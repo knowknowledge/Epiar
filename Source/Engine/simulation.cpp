@@ -70,7 +70,7 @@ bool Simulation::New( string _folderpath ) {
 	}
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
-	
+
 	// Set the File Names
 	commodities->SetFileName( folderpath + "commodities.xml" );
 	engines->SetFileName( folderpath + "engines.xml" );
@@ -81,19 +81,18 @@ bool Simulation::New( string _folderpath ) {
 	alliances->SetFileName( folderpath + "alliances.xml" );
 	technologies->SetFileName( folderpath + "technologies.xml" );
 	outfits->SetFileName( folderpath + "outfits.xml" );
-	players->SetFileName( folderpath + "players.xml" );
 
-	Set("simulation/commodities", commodities->GetFileName() );
-	Set("simulation/commodities", commodities->GetFileName() );
-	Set("simulation/engines", engines->GetFileName() );
-	Set("simulation/planets", planets->GetFileName() );
-	Set("simulation/gates", gates->GetFileName() );
-	Set("simulation/models", models->GetFileName() );
-	Set("simulation/weapons", weapons->GetFileName() );
-	Set("simulation/alliances", alliances->GetFileName() );
-	Set("simulation/technologies", technologies->GetFileName() );
-	Set("simulation/outfits", outfits->GetFileName() );
-	Set("simulation/players", players->GetFileName() );
+	Set("simulation/commodities", "commodities.xml" );
+	Set("simulation/engines", "engines.xml" );
+	Set("simulation/planets", "planets.xml" );
+	Set("simulation/gates", "gates.xml" );
+	Set("simulation/models", "models.xml" );
+	Set("simulation/weapons", "weapons.xml" );
+	Set("simulation/alliances", "alliances.xml" );
+	Set("simulation/technologies", "technologies.xml" );
+	Set("simulation/outfits", "outfits.xml" );
+
+	Set("simulation/players", "Resources/Definitions/saved-games.xml" );
 
 	loaded = true;
 	return true;
