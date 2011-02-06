@@ -19,7 +19,7 @@ class Effect : public Sprite {
 	public:
 		Effect(Coordinate pos, string filename, float loopPercent);
 		~Effect();
-		void Update(void);
+		void Update( lua_State *L );
 		void Draw(void);
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_EFFECT);

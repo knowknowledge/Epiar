@@ -75,6 +75,7 @@ class Simulation : public XMLFile {
 
 		// Pointers to Singletons
 		///< TODO: These should all be rewritten to not be singletons
+		lua_State *L;
 		SpriteManager *sprites;
 
 		Commodities *commodities;

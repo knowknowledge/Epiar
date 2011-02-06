@@ -31,7 +31,7 @@ class Ship : public Sprite {
 		string GetModelName();
 		string GetEngineName();
 		
-		void Update( void );
+		void Update( lua_State *L );
 		void Rotate( float direction );
 		void Accelerate( void );
 		void Damage( short int damage );

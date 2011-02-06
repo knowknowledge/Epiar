@@ -39,7 +39,8 @@ class Planet : public Sprite, public Component {
 		Planet& operator=(const Planet& other);
 		Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
 		
-		void Update();
+		void Update( lua_State *L );
+		void GenerateTraffic( lua_State *L );
 
 		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLANET ); }
 		
@@ -62,8 +63,6 @@ class Planet : public Sprite, public Component {
 		bool GetForbidden() {return forbidden;}
 		void SetForbidden(bool f) {forbidden = f;}
 
-		void GenerateTraffic();
-		
 	private:
 		Alliance* alliance;
 		bool landable;

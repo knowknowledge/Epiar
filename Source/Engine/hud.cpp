@@ -164,9 +164,8 @@ void StatusBar::Draw(int x, int y) {
 	}
 }
 
-void StatusBar::Update() {
+void StatusBar::Update( lua_State* L ) {
 	int returnvals, retpos = -1;
-	lua_State* L = Lua::CurrentState();
 
 	// Run the StatusBar Updater
 	returnvals = Lua::Run( lua_updater, true );
@@ -254,7 +253,7 @@ void Hud::Close( void ) {
 
 /**\brief Updates the HUD
  */
-void Hud::Update( void ) {
+void Hud::Update( lua_State *L ) {
 	int j;
 	list<AlertMessage> toDelete;
 	list<AlertMessage>::iterator i;
@@ -267,7 +266,7 @@ void Hud::Update( void ) {
 	}
 	for( j = 0; j< MAX_STATUS_BARS; j++){
 		if( Bars[j] != NULL ) {
-			Bars[j]->Update();
+			Bars[j]->Update( L );
 		}
 	}
 }

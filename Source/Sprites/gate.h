@@ -10,10 +10,11 @@
 #ifndef __H_GATE__
 #define __H_GATE__
 
-#include "Graphics/animation.h"
+#include "includes.h"
 #include "Sprites/sprite.h"
 #include "Graphics/image.h"
-#include "includes.h"
+#include "Graphics/animation.h"
+#include "Utilities/components.h"
 
 #define GATE_RADIUS 20000
 
@@ -39,7 +40,7 @@ class Gate : public Sprite, public Component {
 		Gate* GetTop();
 		Sprite* GetExit();
 
-		void Update();
+		void Update( lua_State *L );
 	private:
 		bool top; ///< True if this Sprite is on Top.
 		int partnerID; ///< The partner is the top/bottom of this gate

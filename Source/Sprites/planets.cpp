@@ -163,14 +163,14 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	return true;
 }
 
-void Planet::Update() {
+void Planet::Update( lua_State *L ) {
 	if( lastTrafficTime + 120 < Timer::GetLogicalFrameCount() ) {
-		GenerateTraffic();
+		GenerateTraffic( L );
 	}
-	Sprite::Update();
+	Sprite::Update( L );
 }
 
-void Planet::GenerateTraffic() {
+void Planet::GenerateTraffic( lua_State *L ) {
 	list<Sprite*> *nearbySprites = SpriteManager::Instance()->GetSpritesNear(GetWorldPosition(), TO_FLOAT(sphereOfInfluence), DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER);
 
 	if( nearbySprites->size() < traffic ) {

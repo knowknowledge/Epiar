@@ -50,7 +50,7 @@ class StatusBar {
 	public:
 		StatusBar(string _title, int _width, QuadPosition _pos, string _updater);
 		StatusBar& operator=( StatusBar& object );
-		void Update();
+		void Update( lua_State *L );
 		void Draw(int x, int y);
 
 		void SetName( string n );
@@ -77,7 +77,7 @@ class Hud {
 		static void Init( void );
 		static void Close( void );
 
-		static void Update( void );
+		static void Update( lua_State *L );
 		static void Draw( int flags, float fps );
 
 		static void HandleInput( list<InputEvent> & events );

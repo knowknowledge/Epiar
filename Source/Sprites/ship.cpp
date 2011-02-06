@@ -278,8 +278,8 @@ void Ship::Repair(short int damage) {
 
 /**\brief Update function on every frame.
  */
-void Ship::Update( void ) {
-	Sprite::Update(); // update momentum and other generic sprite attributes
+void Ship::Update( lua_State *L ) {
+	Sprite::Update( L ); // update momentum and other generic sprite attributes
 	
 	if( status.isAccelerating == false 
 		&& status.isRotatingLeft == false

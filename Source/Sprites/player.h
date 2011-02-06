@@ -54,7 +54,7 @@ class Player : public Ship {
 		Player& operator= (const Player&);
 		~Player();
 
-		void Update( void );
+		void Update( lua_State *L );
 
 		virtual int GetDrawOrder( void ) {
 			return( DRAW_ORDER_PLAYER );

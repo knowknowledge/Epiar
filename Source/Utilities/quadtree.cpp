@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "Utilities/log.h"
 #include "Utilities/quadtree.h"
 #include "Graphics/video.h"
 
@@ -346,18 +347,18 @@ list<Sprite*> *QuadTree::FixOutOfBounds(){
 /** \brief Update all Sprites in this QuadTree
  */
 
-void QuadTree::Update(){
+void QuadTree::Update( lua_State *L ){
 	list<Sprite*>::iterator i;
 	// Update all internal sprites
 	if(!isLeaf){ // Node
 		for(int t=0;t<4;t++){
 			if(NULL != (subtrees[t])){
-				subtrees[t]->Update();
+				subtrees[t]->Update( L );
 			}
 		}
 	} else { // Leaf
 		for( i = objects->begin(); i != objects->end(); ++i ) {
-			(*i)->Update();
+			(*i)->Update( L );
 		}
 	}
 }

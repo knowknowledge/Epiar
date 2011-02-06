@@ -33,10 +33,9 @@ AI::AI(string _name, string machine) :
 /** \brief Run the Lua Statemachine to act and possibly change state.
  */
 
-void AI::Decide() {
+void AI::Decide( lua_State *L ) {
 	string newstate;
 	// Decide
-	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
 	// Get the current state machine
@@ -107,22 +106,22 @@ void AI::Decide() {
 /**\brief Updates the AI controlled ship by first calling the Lua function
  * and then calling Ship::Update()
  */
-void AI::Update() {
+void AI::Update( lua_State *L ) {
 	//Update enemies
 	int t;
 	if(enemies.size()>0){
-		t=ChooseTarget();
+		t=ChooseTarget( L );
 		if(t!=-1){
 			target=t;
-			RegisterTarget(t);
+			RegisterTarget( L, t );
 		}
 	}
 	if( !this->IsDisabled() ) {
-		this->Decide();
+		this->Decide( L );
 	}
 
 	// Now act like a normal ship
-	this->Ship::Update();
+	this->Ship::Update( L );
 }
 
 /**\brief Draw the AI Ship, and possibly debugging information.
@@ -149,7 +148,7 @@ bool EnemyComp(enemy a, enemy b){return(a.id<b.id);}
  */
 
 
-int AI::ChooseTarget(){
+int AI::ChooseTarget( lua_State *L ){
 	//printf("choosing target\n");
 	SpriteManager *sprites=SpriteManager::Instance();
 	list<Sprite*> *nearbySprites = sprites->GetSpritesNear(this->GetWorldPosition(), COMBAT_RANGE, DRAW_ORDER_SHIP);
@@ -318,9 +317,8 @@ void AI::RemoveEnemy(int e){
 /**\brief sets the AI to hunt the current target using the lua function setHuntHostile
 *
 */
-void AI::RegisterTarget(int t){
+void AI::RegisterTarget( lua_State *L, int t ){
 	//printf("Registering target %d\n",t);
-	lua_State *L = Lua::CurrentState();
 	lua_getglobal(L, "setHuntHostile" );
 	lua_pushnumber(L, this->GetID());
 	lua_pushnumber(L, t);

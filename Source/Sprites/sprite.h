@@ -11,7 +11,7 @@
 
 #include "Graphics/image.h"
 #include "Graphics/video.h"
-#include "Engine/models.h"
+#include "Utilities/lua.h"
 #include "Utilities/coordinate.h"
 
 // With the draw order, higher numbers are drawn later (on top)
@@ -33,7 +33,7 @@ class Sprite {
 		Coordinate GetWorldPosition( void ) const;
 		void SetWorldPosition( Coordinate coord );
 		
-		virtual void Update( void );
+		virtual void Update( lua_State *L );
 		virtual void Draw( void );
 		
 		int GetID( void ) { return id; }

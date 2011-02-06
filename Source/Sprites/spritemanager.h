@@ -21,7 +21,7 @@ class SpriteManager {
 		void Add( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
-		void Update(bool lowFps);
+		void Update( lua_State *L, bool lowFps);
 		void Draw();
 		void DrawQuadrantMap();
 

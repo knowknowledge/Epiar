@@ -13,6 +13,7 @@
 #include "Sprites/sprite.h"
 #include "Sprites/gate.h"
 #include "Utilities/trig.h"
+#include "Utilities/log.h"
 
 /**\class Gate
  * \brief A Gate is a dual-sprite; it has a Top and a Bottom.
@@ -167,7 +168,7 @@ Gate* Gate::GetPartner() {
  * \todo Non-Player ships should just disappear
  */
 
-void Gate::Update() {
+void Gate::Update( lua_State *L ) {
 	// The Bottom Gate doesn't do anything
 	if(!top) return;
 
@@ -183,6 +184,8 @@ void Gate::Update() {
 			SendRandomDistance(ship);
 		}
 	}
+
+	Sprite::Update( L );
 }
 
 /**\brief Teleport any ship that enters the gate to a random location

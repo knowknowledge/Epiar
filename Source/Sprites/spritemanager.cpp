@@ -116,7 +116,7 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 /**\brief SpriteManager update function.
  * \param lowFps If true, forces the wave-update method to be used rather than the full-update
  */
-void SpriteManager::Update(bool lowFps) {
+void SpriteManager::Update( lua_State *L, bool lowFps) {
 	// Update the sprites inside each quadrant
 	list<QuadTree*> quadList;		//this will contain every quadrant that we will potentially want to update
 	
@@ -160,7 +160,7 @@ void SpriteManager::Update(bool lowFps) {
 
 	list<QuadTree*>::iterator iter;
 	for ( iter = quadList.begin(); iter != quadList.end(); ++iter ) {
-		(*iter)->Update();
+		(*iter)->Update(L);
 		list<Sprite *>* oob = (*iter)->FixOutOfBounds();
 		all_oob.splice(all_oob.end(), *oob );
 		delete oob;

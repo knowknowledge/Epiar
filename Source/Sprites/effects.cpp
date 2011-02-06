@@ -33,8 +33,8 @@ Effect::~Effect() {
 
 /**\brief Updates the Effect
  */
-void Effect::Update( void ) {
-	Sprite::Update();
+void Effect::Update( lua_State *L ) {
+	Sprite::Update( L );
 	if( visual->Update() == true ) {
 		SpriteManager::Instance()->Delete( (Sprite*)this );
 	}

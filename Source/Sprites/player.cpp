@@ -154,7 +154,7 @@ Player::~Player() {
 
 /**\brief Run the Player Update
  */
-void Player::Update( void ) {
+void Player::Update( lua_State *L ) {
 	bool missionOver;
 	list<Mission*>::iterator i;
 	for( i = missions.begin(); i != missions.end(); ++i ) {
@@ -170,7 +170,7 @@ void Player::Update( void ) {
 		Lua::Run(luaControlFunc);
 	}
 
-	Ship::Update();
+	Ship::Update( L );
 }
 
 /**\brief Save an XML file for this player

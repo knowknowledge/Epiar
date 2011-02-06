@@ -32,9 +32,9 @@ typedef struct{
 class AI : public Ship {
 	public:
 		AI(string name, string machine);
-		void Update();
+		void Update( lua_State *L );
 		void Draw();
-		void Decide();
+		void Decide( lua_State *L );
 		void SetTarget(int t);
 		int GetTarget(){return target;}
 		void SetStateMachine(string _machine) { stateMachine = _machine; }
@@ -50,8 +50,8 @@ class AI : public Ship {
 
 	private:
 		int CalcCost(int threat, int damage);
-		int ChooseTarget();
-		void RegisterTarget(int t);
+		int ChooseTarget( lua_State *L );
+		void RegisterTarget( lua_State *L, int t );
 		list<enemy> enemies;
 		int target;
 		string name;

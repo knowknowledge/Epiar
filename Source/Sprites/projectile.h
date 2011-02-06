@@ -19,7 +19,7 @@ class Projectile :
 public:
 	Projectile(float damageBooster, float angleToFire, Coordinate worldPosition, Coordinate firedMomentum, Weapon* weapon);
 	~Projectile(void);
-	void Update( void );
+	void Update( lua_State *L );
 	void SetOwnerID(int id) { ownerID = id; }
 	void SetTargetID(int id) { targetID = id; }
 	int GetDrawOrder( void ) {

@@ -15,6 +15,7 @@
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
 #include "AI/ai.h"
+#include "Engine/simulation_lua.h"
 
 /**\class Projectile
  * \brief Projectiles are the missiles, bullets and lasers as they are flying through space.
@@ -76,9 +77,9 @@ Projectile::~Projectile(void)
  * Projectiles have the ability to track down a specific target.  This only
  * means that they will turn slightly to head towards their target.
  */
-void Projectile::Update( void ) {
-	Sprite::Update(); // update momentum and other generic sprite attributes
-	SpriteManager *sprites = SpriteManager::Instance();
+void Projectile::Update( lua_State *L ) {
+	Sprite::Update( L ); // update momentum and other generic sprite attributes
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
 
 	// Check for projectile collisions
 	Sprite* impact = sprites->GetNearestSprite( (Sprite*)this, 100,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );

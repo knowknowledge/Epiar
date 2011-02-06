@@ -36,6 +36,12 @@
 /**\brief Loads an empty Simulation.
  */
 Simulation::Simulation( void ) {
+	// Start the Lua Universe
+	// Register these functions to their own lua namespaces
+	Lua::Init();
+	L = Lua::CurrentState();
+	Simulation_Lua::StoreSimulation(L,this);
+
 	sprites = SpriteManager::Instance();
 	commodities = Commodities::Instance();
 	engines = Engines::Instance();
@@ -148,19 +154,10 @@ void Simulation::unpause(){
 
 bool Simulation::SetupToRun(){
 	bool luaLoad = true;
-	lua_State *L;
 
 	LogMsg(INFO, "Simulation Setup Started");
 
 	Timer::Update(); // Start the Timer
-
-
-	// Start the Lua Universe
-	// Register these functions to their own lua namespaces
-	Lua::Init();
-	L = Lua::CurrentState();
-
-	Simulation_Lua::StoreSimulation(L, this);
 
 	// Load default Lua registers
 	LuaRegisters(L);
@@ -250,7 +247,7 @@ bool Simulation::Run() {
 					lowFpsFrameCount --;
 				Timer::IncrementFrameCount();
 				// Update cycle
-				sprites->Update( lowFps );
+				sprites->Update( L, lowFps );
 			}
 		}
 
@@ -258,7 +255,7 @@ bool Simulation::Run() {
 		if( anyUpdate ) {
 			starfield.Update( camera );
 			camera->Update( sprites );
-			Hud::Update();
+			Hud::Update( L );
 		}
 
 		// Erase cycle
@@ -345,16 +342,10 @@ bool Simulation::Run() {
 
 bool Simulation::SetupToEdit() {
 	bool luaLoad = true;
-	lua_State *L;
 
 	LogMsg(INFO, "Simulation Edit Setup Starting");
 
-	// Start the Lua Universe
-	// Register these functions to their own lua namespaces
-	Lua::Init();
-	L = Lua::CurrentState();
 
-	Simulation_Lua::StoreSimulation(L,this);
 
 	// Load main Lua registers
 	LuaRegisters(L);
@@ -408,7 +399,7 @@ bool Simulation::Edit() {
 		Timer::Update();
 		starfield.Update( camera );
 		camera->Update( sprites );
-		Hud::Update();
+		Hud::Update( L );
 
 		// Erase cycle
 		Video::Erase();

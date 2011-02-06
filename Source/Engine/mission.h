@@ -14,10 +14,10 @@
 
 class Mission{
 	public:
-		Mission(string _type, int _tableReference);
+		Mission( lua_State *L, string _type, int _tableReference);
 		~Mission();
 
-		static bool ValidateMission(  string type, int tableReference, int expectedVersion );
+		static bool ValidateMission( lua_State *L, string type, int tableReference, int expectedVersion );
 
 		bool Accept();
 		bool Reject();
@@ -33,12 +33,13 @@ class Mission{
 		xmlNodePtr ToXMLNode();
 		
 	private:
+		lua_State *L; ///< Lua Pointer
 		string type; ///< The Mission Type
 		int tableReference; ///< A Lua table to hold
 
 		bool RunFunction(string functionName, bool clearStack);
 		string GetStringAttribute(string attribute);
-		static int GetMissionType( string type );
+		static int GetMissionType( lua_State *L, string type );
 };
 
 #endif //__H_MISSION__

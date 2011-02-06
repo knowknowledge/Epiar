@@ -11,6 +11,7 @@
 #define __h_quadtree__
 
 #include "includes.h"
+#include "common.h"
 #include "Sprites/sprite.h"
 
 #define MIN_QUAD_SIZE 10.0f
@@ -39,7 +40,7 @@ class QuadTree {
 		Sprite* GetNearestSprite(Sprite* obj, float distance, int type = DRAW_ORDER_ALL);
 		list<Sprite*> *FixOutOfBounds();
 
-		void Update();
+		void Update( lua_State *L );
 		void Draw(Coordinate root);
 		void ReBallance();
 

@@ -72,7 +72,7 @@ void Sprite::SetWorldPosition( Coordinate coord ) {
 /**\brief Move this Sprite in the direction of their current momentum.
  * \details Since this is a space simulation, there is no Friction; momentum does not decrease over time.
  */
-void Sprite::Update( void ) {
+void Sprite::Update( lua_State *L ) {
 	Uint32 currentFrame = Timer::GetLogicalFrameCount();
 
 	Uint32 framesSinceUpdate = (currentFrame > lastUpdateFrame) 

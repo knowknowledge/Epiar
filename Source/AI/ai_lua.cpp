@@ -709,8 +709,8 @@ int AI_Lua::ShipAcceptMission(lua_State *L){
 	// Get and Validate the Mission Information
 	string missionType = (string) luaL_checkstring(L,2);
 	int missionTable = luaL_ref(L, LUA_REGISTRYINDEX); // Gets and pops the top of the stack, which should have the the missionTable.
-	if( Mission::ValidateMission( missionType, missionTable, 0 ) ) {
-		Mission *mission = new Mission( missionType, missionTable );
+	if( Mission::ValidateMission( L, missionType, missionTable, 0 ) ) {
+		Mission *mission = new Mission( L, missionType, missionTable );
 		player->AcceptMission( mission );
 	} else {
 		luaL_unref(L, LUA_REGISTRYINDEX, missionTable);

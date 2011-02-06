@@ -14,8 +14,9 @@
 
 /**\brief Mission Constructor
  */
-Mission::Mission(string _type, int _tableReference)
-	:type(_type)
+Mission::Mission( lua_State *_L, string _type, int _tableReference)
+	:L(_L)
+	,type(_type)
 	,tableReference(_tableReference)
 {
 }
@@ -24,12 +25,11 @@ Mission::Mission(string _type, int _tableReference)
  */
 Mission::~Mission()
 {
-	lua_State *L = Lua::CurrentState();
 	luaL_unref(L, LUA_REGISTRYINDEX, tableReference);
 }
 
 
-bool Mission::ValidateMission( string type, int tableReference, int expectedVersion ){
+bool Mission::ValidateMission( lua_State *L, string type, int tableReference, int expectedVersion ){
 	int i;
 	int currentVersion;
 	
@@ -51,11 +51,10 @@ bool Mission::ValidateMission( string type, int tableReference, int expectedVers
 	};
 	const int NUM_INFORMATION = sizeof(requiredInformation) / sizeof(requiredInformation[0]);
 
-	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
 	// Check that this mission Type exists
-	if( Mission::GetMissionType(type) != 1 ) {
+	if( Mission::GetMissionType(L, type) != 1 ) {
 		lua_settop(L, initialStackTop );
 		return false;
 	}
@@ -154,7 +153,6 @@ bool Mission::Accept()
  */
 bool Mission::Update()
 {
-	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
 	if(! RunFunction( "Update", false ) )
@@ -188,7 +186,6 @@ bool Mission::Update()
 
 void Mission::PushMissionTable()
 {
-	lua_State *L = Lua::CurrentState();
 	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
 }
 
@@ -196,11 +193,10 @@ void Mission::PushMissionTable()
 int Mission::GetVersion()
 {
 	int version;
-	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
 	// Get the Mission Type Table
-	if( Mission::GetMissionType(type) != 1 ) {
+	if( Mission::GetMissionType(L, type) != 1 ) {
 		LogMsg(ERR, "The Mission '%s' is missing.", type.c_str() );
 		lua_settop(L, initialStackTop );
 		return 0;
@@ -230,10 +226,9 @@ int Mission::GetVersion()
  */
 bool Mission::RunFunction(string functionName, bool clearStack)
 {
-	lua_State *L = Lua::CurrentState();
 	const int initialStackTop = lua_gettop(L);
 
-	if( Mission::GetMissionType(type) != 1 ) {
+	if( Mission::GetMissionType(L, type) != 1 ) {
 		LogMsg(ERR, "Something bad happened?"); // TODO
 		lua_settop(L, initialStackTop );
 		return false;
@@ -270,7 +265,6 @@ string Mission::GetStringAttribute( string attribute )
 {
 	int MissionTableIndex;
 	string value = "";
-	lua_State *L = Lua::CurrentState();
 
 	PushMissionTable();
 	MissionTableIndex = lua_gettop(L);
@@ -296,12 +290,13 @@ Mission* Mission::FromXMLNode( xmlDocPtr doc, xmlNodePtr node )
 	xmlNodePtr typeNode = FirstChildNamed(node,"type");
 	xmlNodePtr versionNode = FirstChildNamed(node,"version");
 	xmlNodePtr missionNode = FirstChildNamed(node,"value");
-	lua_State* L = Lua::CurrentState();
 
 	type = NodeToString(doc, typeNode);
 	if( versionNode != NULL ) {
 		version = NodeToInt(doc, versionNode);
 	}
+
+	lua_State *L = Lua::CurrentState();
 
 	// Turn the XML data into a Table
 	Lua::ConvertFromXML(L, doc, missionNode);
@@ -314,12 +309,12 @@ Mission* Mission::FromXMLNode( xmlDocPtr doc, xmlNodePtr node )
 	lua_pop(L,1); // Pop the Name
 
 	// Validate this Mission
-	if( !Mission::ValidateMission(type, missionTable, version) ) {
+	if( !Mission::ValidateMission(L, type, missionTable, version) ) {
 		LogMsg(ERR, "Something important!");
 		return NULL;
 	}
 
-	return new Mission( type, missionTable);
+	return new Mission(L, type, missionTable);
 }
 
 xmlNodePtr Mission::ToXMLNode()
@@ -345,9 +340,8 @@ xmlNodePtr Mission::ToXMLNode()
 	return section;
 }
 
-int Mission::GetMissionType( string type )
+int Mission::GetMissionType( lua_State *L, string type )
 {
-	lua_State *L = Lua::CurrentState();
 	lua_getglobal(L, type.c_str() );
 	if( ! lua_istable(L, lua_gettop(L)) )
 	{
