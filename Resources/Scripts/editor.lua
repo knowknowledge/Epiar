@@ -140,7 +140,7 @@ function componentViewer(kind, listFunc)
 		s = list[i]
 		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
 	end
-    componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
+	componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
 	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins[%q]:close();componentWins[%q]=nil",kind,kind)))
 end
 
@@ -153,12 +153,12 @@ function showComponent(kind, name)
 	local theInfo = EditorGetters[ kind ]( name )
 	local theWin = UI.newWindow(150, 40, width, height, windowName )
 
-    if kind=="Planet" and name~="" then
-        planet = Planet.Get(name)
-        Epiar.focusCamera(planet:GetID())
-    elseif kind=="Gate" and name~="" then
-        Epiar.focusCamera(theInfo.X, theInfo.Y)
-    end
+	if kind=="Planet" and name~="" then
+		planet = Planet.Get(name)
+		Epiar.focusCamera(planet:GetID())
+	elseif kind=="Gate" and name~="" then
+		Epiar.focusCamera(theInfo.X, theInfo.Y)
+	end
 	
 	local theFields = {}
 	local thePics = {}
@@ -305,10 +305,10 @@ end
 --- Show Info for the current Target
 function showInfo()
 	currentTarget = HUD.getTarget()
-    sprite = Epiar.getSprite(currentTarget)
+	sprite = Epiar.getSprite(currentTarget)
 	spritetype = sprite:GetType()
 	if spritetype == 1 then -- planet
-        showComponent("Planet",sprite:GetName(),Epiar.getPlanetInfo)
+		showComponent("Planet",sprite:GetName(),Epiar.getPlanetInfo)
 	elseif (spritetype == 4) or (spritetype == 8) then -- Ship or Player
 		showShipInfo(sprite)
 	else
@@ -370,7 +370,7 @@ function technologyViewer()
 		name = technologies[i]
 		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo(%q)",name)))
 	end
-    technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
+	technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
 	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
 end
 
@@ -491,7 +491,7 @@ function ImagePicker(name,title)
 	if UI.search( "/Window'Image Picker'/" ) ~= nil then return end
 	local imagePickerWin = UI.newWindow(700,40,250,700, "Image Picker")
 	--TODO: Preserve the textbox assosciated with this window.
-	--      When imagePick is called, set the textbox value to the image path
+	--	  When imagePick is called, set the textbox value to the image path
 
 	function imagePick(name,title,path)
 		if UI.search( "/Window'Image Picker'/" ) ==nil then return end
@@ -610,7 +610,7 @@ function EditWeaponSlots(name, title)
 	-- Clean it up if a better built-in solution can be found.
 
 	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y",
-		      ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
+			  ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
 
 	local contentOptions = Epiar.weapons()
 	table.insert(contentOptions, 1, "(empty)")
@@ -677,7 +677,6 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	uiElements = nil
 	SlotEditor = nil
 end
-	
 
 function goto(x,y)
 	Epiar.focusCamera(x,y)
@@ -685,7 +684,7 @@ end
 
 function gotoButton()
 	goto( UI.search("/'Go to Location'/Textbox[0]/"):GetText(),
-          UI.search("/'Go to Location'/Textbox[1]/"):GetText() )
+		  UI.search("/'Go to Location'/Textbox[1]/"):GetText() )
 	UI.search("/'Go to Location'/"):close()
 end
 
@@ -716,13 +715,13 @@ registerCommands(debugCommands)
 
 -- Zoom keys
 function debugZoomKeys()
-    for k =1,9 do
-        local keyval = string.byte(k)
-        local vis = 1000*math.pow(2,k-1)
-        local delta = 10*math.pow(2,k-1)
-        local cmd = string.format("DX,DY=%f,%f;HUD.setVisibity(%d)",delta,delta,vis)
-        Epiar.RegisterKey(keyval, KEYTYPED, cmd)
-    end
+	for k =1,9 do
+		local keyval = string.byte(k)
+		local vis = 1000*math.pow(2,k-1)
+		local delta = 10*math.pow(2,k-1)
+		local cmd = string.format("DX,DY=%f,%f;HUD.setVisibity(%d)",delta,delta,vis)
+		Epiar.RegisterKey(keyval, KEYTYPED, cmd)
+	end
 end
 debugZoomKeys()
 
