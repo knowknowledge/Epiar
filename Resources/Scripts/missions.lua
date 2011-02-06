@@ -189,7 +189,7 @@ CollectArtifacts = {
 			table.insert( missionTable.Objects, objects[i] )
 			table.insert( missionTable.Collected, false )
 			local sentence = "  The %s can be found on %s."
-			sentence = sentence:format( objects[i], planetNames[i] )
+			sentence = sentence:format( objects[i], planetNames[i % #planetNames] )
 			missionTable.Description = missionTable.Description .. sentence
 		end
 

@@ -679,11 +679,11 @@ end
 
 --- Land on a planet
 function landingDialog(id)
+	local planet = Epiar.getSprite(id)
 	-- Create the Planet Landing Screen
 	if UI.search( string.format("/Window'%s'/Tabs'Store'/", planet:GetName())) ~= nil then return end
 
 	Epiar.pause()
-	planet = Epiar.getSprite(id)
 	
 	local height = 500
 	local width = 600
@@ -716,7 +716,9 @@ function landingDialog(id)
 	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
 	storeframe:add(shipyard)
 
-	storeView( shipyardPath, 'ship',models[1])
+	if #models > 0 then
+		storeView( shipyardPath, 'ship',models[1])
+	end
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")

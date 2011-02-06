@@ -226,6 +226,7 @@ function showComponent(kind, name)
 					Audio.playSound( sound )
 				end
 			end
+			-- TODO: This should be a Picture of a Speaker rather than (((
 			theWin:add( UI.newButton( 190, yoff, 20,20, "(((", string.format("previewSound( %q, %q )", subgroup, thisDropdown) ) )
 			theWin:add(field)
 			yoff = yoff+20
@@ -377,7 +378,7 @@ end
 function saveTech(name)
 	local windowName = "Technology: "..name
 	if name == "" then windowName = "New Technology" end
-	if UI.search( string.format("/Window%q/", name) ) == nil then return end
+	if UI.search( string.format("/Window%q/", windowName) ) == nil then return end
 	local win = infoWindows[name].win
 	local boxes = infoWindows[name].boxes
 	local nameField = infoWindows[name].name
