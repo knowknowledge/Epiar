@@ -84,10 +84,9 @@ bool Ani::Load( string& filename ) {
 	const char *cName = filename.c_str();
 	File file = File( cName );
 
-	//LogMsg(INFO, "Loading animation '%s' ...\n", cName );
+	LogMsg(INFO, "Loading animation '%s'", cName );
 
 	file.Read( 1, &byte );
-	//cout << "\tVersion: " << (int)byte << endl;
 	if( byte != ANI_VERSION ) {
 		LogMsg(ERR, "Incorrect ani version" );
 		return( false );
@@ -99,7 +98,6 @@ bool Ani::Load( string& filename ) {
 		return( false );
 	}
 	numFrames = byte;
-	//cout << "\tNum Frames: " << numFrames << endl;
 	// Allocate space for frames
 	frames = new Image[byte];
 
@@ -111,7 +109,6 @@ bool Ani::Load( string& filename ) {
 		return( false );
 	}
 	delay = byte;
-	//cout << "\tDelay: " << delay << endl;
 
 	for( int i = 0; i < numFrames; i++ ) {
 		long pos;

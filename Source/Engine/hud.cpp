@@ -613,7 +613,7 @@ void Hud::DeleteStatusIfExists( string deleteTitle ) {
 	{
 		if( (Bars[i]!=NULL) && (Bars[i]->GetTitle()==deleteTitle) )
 		{
-			cout << Bars[i]->GetTitle() << " matches " << deleteTitle.c_str() << endl;
+			LogMsg(INFO, "Deleting StatusBar '%s'", deleteTitle.c_str() );
 			delete Bars[i];
 			Bars[i] = NULL;
 			return;

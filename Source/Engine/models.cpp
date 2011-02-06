@@ -325,11 +325,11 @@ int Model::GetWeaponSlotCount(){
 }
 
 void Model::WSDebug(ws_t slot){
-	LogMsg(INFO, "WSD      name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+	LogMsg(DEBUG, "WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
 void Model::WSDebug(vector<ws_t>& slots){
-	//cout << "WSD  Ship model: " << this->GetName() << endl;
+	LogMsg(DEBUG, "WeaponSlots for Model: %s", GetName().c_str() );
 	for(unsigned int i = 0; i < slots.size(); i++){
 		WSDebug(slots[i]);
 	}

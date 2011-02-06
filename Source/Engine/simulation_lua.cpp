@@ -305,7 +305,7 @@ int Simulation_Lua::loadPlayer(lua_State *L) {
 		return luaL_error(L, "Loading a Player expects a name");
 	}
 	string playerName = (string) luaL_checkstring(L,1);
-	cout<<"Loading Player: "<<playerName<<endl;
+	LogMsg(INFO,"Loading Player: %s",playerName.c_str());
 	PlayerInfo* info = GetSimulation(L)->GetPlayers()->GetPlayerInfo( playerName );
 	if( info==NULL ) {
 		return luaL_error(L, "There is no Player by the name '%s'",playerName.c_str());
@@ -327,7 +327,7 @@ int Simulation_Lua::newPlayer(lua_State *L) {
 	}
 
 	string playerName = (string) luaL_checkstring(L,1);
-	cout<<"Creating Player: "<<playerName<<endl;
+	LogMsg(INFO, "Creating Player: %s", playerName.c_str());
 
 	GetSimulation(L)->CreateDefaultPlayer(playerName);
 
@@ -1165,7 +1165,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 			return 0;
 		}
 
-		cout << "Simulation_Lua: About to try fetching the slot table..." << endl;
+		LogMsg(INFO, "Simulation_Lua: About to try fetching the slot table...");
 
 		int wsTable;
 		lua_pushstring(L, "weaponSlots");
