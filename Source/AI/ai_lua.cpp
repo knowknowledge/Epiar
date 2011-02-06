@@ -144,7 +144,7 @@ AI* AI_Lua::checkShip(lua_State *L, int index){
 	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_SHIP);
 	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_SHIP' expected");
 	Sprite* s;
-	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	s = Simulation_Lua::GetSimulation(L)->GetSpriteManager()->GetSpriteByID(*idptr);
 	/*
 	if ((s) == NULL) luaL_typerror(L, index, EPIAR_SHIP);
 	if (0==((s)->GetDrawOrder() & DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER)){
@@ -160,7 +160,7 @@ Outfit* AI_Lua::checkOutfit(lua_State *L, int index){
 	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_OUTFIT);
 	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_OUTFIT' expected");
 	Sprite* s;
-	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	s = Simulation_Lua::GetSimulation(L)->GetSpriteManager()->GetSpriteByID(*idptr);
 	return (Outfit*)s;
 }
 
@@ -185,13 +185,13 @@ int AI_Lua::newShip(lua_State *L){
 	AI* s;
 	s = new AI(name,statemachine);
 	s->SetWorldPosition( Coordinate(x, y) );
-	s->SetModel( Models::Instance()->GetModel(modelname) );
-	s->SetEngine( Engines::Instance()->GetEngine(enginename) );
-	s->SetAlliance( Alliances::Instance()->GetAlliance(alliancename) );
-	Simulation_Lua::pushSprite(L,s);
+	s->SetModel( Simulation_Lua::GetSimulation(L)->GetModels()->GetModel(modelname) );
+	s->SetEngine( Simulation_Lua::GetSimulation(L)->GetEngines()->GetEngine(enginename) );
+	s->SetAlliance( Simulation_Lua::GetSimulation(L)->GetAlliances()->GetAlliance(alliancename) );
+	Simulation_Lua::PushSprite(L,s);
 
 	// Add this ship to the SpriteManager
-	SpriteManager::Instance()->Add((Sprite*)(s));
+	Simulation_Lua::GetSimulation(L)->GetSpriteManager()->Add((Sprite*)(s));
 
 	return 1;
 }
@@ -319,10 +319,10 @@ int AI_Lua::ShipExplode(lua_State* L){
 		Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
 		if(OPTION(int, "options/sound/explosions"))
 			explodesnd->Play(
-				(ai)->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
-		SpriteManager::Instance()->Add(
+				(ai)->GetWorldPosition() - Simulation_Lua::GetSimulation(L)->GetCamera()->GetFocusCoordinate());
+		Simulation_Lua::GetSimulation(L)->GetSpriteManager()->Add(
 			new Effect((ai)->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
-		SpriteManager::Instance()->Delete((Sprite*)(ai));
+		Simulation_Lua::GetSimulation(L)->GetSpriteManager()->Delete((Sprite*)(ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
@@ -338,7 +338,7 @@ int AI_Lua::ShipRemove(lua_State* L){
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		SpriteManager::Instance()->Delete((Sprite*)(ai));
+		Simulation_Lua::GetSimulation(L)->GetSpriteManager()->Delete((Sprite*)(ai));
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
 	}
@@ -537,7 +537,7 @@ int AI_Lua::ShipAddAmmo(lua_State* L){
 		string weaponName = luaL_checkstring (L, 2);
 		int qty = (int) luaL_checknumber (L, 3);
 
-		Weapon* weapon = Weapons::Instance()->GetWeapon(weaponName);
+		Weapon* weapon = Simulation_Lua::GetSimulation(L)->GetWeapons()->GetWeapon(weaponName);
 		if(weapon==NULL){
 			return luaL_error(L, "There is no such weapon as a '%s'", weaponName.c_str());
 		}
@@ -557,7 +557,7 @@ int AI_Lua::ShipSetModel(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string modelName = luaL_checkstring (L, 2);
-		Model* model = Simulation_Lua::GetSimulation(L)->GetModels()->GetModel( modelName );
+		Model* model = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetModels()->GetModel( modelName );
 		luaL_argcheck(L, model != NULL, 2, string("There is no Model named `" + modelName + "'").c_str());
 		(ai)->SetModel( model );
 	} else {
@@ -576,7 +576,7 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string engineName = luaL_checkstring (L, 2);
-		Engine* engine = Simulation_Lua::GetSimulation(L)->GetEngines()->GetEngine( engineName );
+		Engine* engine = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetEngines()->GetEngine( engineName );
 		luaL_argcheck(L, engine != NULL, 2, string("There is no Engine named `" + engineName + "'").c_str());
 		(ai)->SetEngine( engine );
 	} else {
@@ -594,7 +594,7 @@ int AI_Lua::ShipAddOutfit(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
-		Outfit* outfit = Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
+		Outfit* outfit = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
 		luaL_argcheck(L, outfit != NULL, 2, string("There is no Outfit named `" + outfitName + "'").c_str());
 		(ai)->AddOutfit( outfit );
 	} else {
@@ -612,7 +612,7 @@ int AI_Lua::ShipRemoveOutfit(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
-		Outfit* outfit = Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
+		Outfit* outfit = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
 		luaL_argcheck(L, outfit != NULL, 2, string("There is no Outfit named `" + outfitName + "'").c_str());
 		// TODO: luaL_argcheck that ai has this outfit already.
 		(ai)->RemoveOutfit( outfit );
@@ -657,7 +657,7 @@ int AI_Lua::ShipStoreCommodities(lua_State* L){
 
 	// Check Inputs
 	if(ai==NULL) { return 0; }
-	Commodity *commodity = Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
+	Commodity *commodity = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
 	luaL_argcheck(L, commodity != NULL, 2, string("There is no Commodity named `" + commodityName + "'").c_str());
 
 	// Store the Commodity
@@ -684,7 +684,7 @@ int AI_Lua::ShipDiscardCommodities(lua_State* L){
 
 	// Check Inputs
 	if(ai==NULL) { return 0; }
-	Commodity *commodity = Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
+	Commodity *commodity = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
 	luaL_argcheck(L, commodity != NULL, 2, string("There is no Commodity named `" + commodityName + "'").c_str());
 
 	// Discard the Commodity
@@ -1197,7 +1197,7 @@ int AI_Lua::ShipGetCargo(lua_State* L){
 
 	// Push Cargo statistics
 	lua_pushinteger(L, (ai)->GetCargoSpaceUsed() ); // Total Tons Stored
-	lua_pushinteger(L, Models::Instance()->GetModel((ai)->GetModelName())->GetCargoSpace() ); // Maximum Tons Storable
+	lua_pushinteger(L, Simulation_Lua::GetSimulation(L)->GetModels()->GetModel((ai)->GetModelName())->GetCargoSpace() ); // Maximum Tons Storable
 		
 	return 3;
 }

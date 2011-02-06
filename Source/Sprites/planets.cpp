@@ -355,20 +355,20 @@ int Planets_Lua::Get(lua_State* L){
     Planet* p = NULL;
     if(lua_isstring(L,1)) {
         string name = (string)luaL_checkstring(L,1);
-        p = (Planet*)Planets::Instance()->GetPlanet(name);
+        p = (Planet*)Simulation_Lua::GetSimulation(L)->GetPlanets()->GetPlanet(name);
         if (p==NULL){
             return luaL_error(L, "There is no planet by the name of '%s'", name.c_str());
         }
     } else if(lua_isnumber(L,1)) {
         int id = (int)luaL_checkinteger(L,1);
-        p = (Planet*)SpriteManager::Instance()->GetSpriteByID(id);
+        p = (Planet*)Simulation_Lua::GetSimulation(L)->GetSpriteManager()->GetSpriteByID(id);
         if (p==NULL || p->GetDrawOrder() != DRAW_ORDER_PLANET){
             return luaL_error(L, "There is no planet with ID %d", id);
         }
     } else {
         return luaL_error(L, "Cannot get planet with these arguments.  Expected id or name.");
     }
-    Simulation_Lua::pushSprite(L,p);
+    Simulation_Lua::PushSprite(L,p);
     return 1;
 }
 
@@ -446,7 +446,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	Image::Store(_name,_image);
 	SpriteManager::Instance()->Add((Sprite*)p);
 	Planets::Instance()->AddOrReplace((Component*)p);
-    Simulation_Lua::pushSprite(L,p);
+    Simulation_Lua::PushSprite(L,p);
 	return 1;
 }
 
@@ -468,7 +468,7 @@ Planet *Planets_Lua::checkPlanet(lua_State *L, int index){
 	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_PLANET' expected");
 
 	Sprite* s;
-	s = SpriteManager::Instance()->GetSpriteByID(*idptr);
+	s = Simulation_Lua::GetSimulation(L)->GetSpriteManager()->GetSpriteByID(*idptr);
 	if ((s) == NULL) luaL_typerror(L, index, EPIAR_PLANET);
 	if (0==((s)->GetDrawOrder() & DRAW_ORDER_PLANET)){
 		luaL_typerror(L, index, EPIAR_PLANET);

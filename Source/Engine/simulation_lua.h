@@ -22,76 +22,76 @@ class Simulation_Lua{
 		static void StoreSimulation(lua_State *L, Simulation *sim);
 		static Simulation* GetSimulation(lua_State *L);
 
-		static int console_echo(lua_State *L);
-		static int pause(lua_State *L);
+		static int Console_echo(lua_State *L);
+		static int Pause(lua_State *L);
 
 		// Options Interfaces
-		static int getoption(lua_State *L);
-		static int setoption(lua_State *L);
+		static int Getoption(lua_State *L);
+		static int Setoption(lua_State *L);
 
 		// Input Interfaces
 		static int RegisterKey(lua_State *L);
 		static int UnRegisterKey(lua_State *L);
 
 		// Simulation Interfaces
-		static int unpause(lua_State *L);
-		static int ispaused(lua_State *L);
-		static int getCamera(lua_State *L);
-		static int moveCamera(lua_State *L);
-		static int focusCamera(lua_State *L);
-		static int shakeCamera(lua_State *L);
-		static int getPlayerNames(lua_State *L);
-		static int setLastPlanet(lua_State *L);
-		static int loadPlayer(lua_State *L);
-		static int savePlayer(lua_State *L);
-		static int newPlayer(lua_State *L);
+		static int Unpause(lua_State *L);
+		static int Ispaused(lua_State *L);
+		static int GetCamera(lua_State *L);
+		static int MoveCamera(lua_State *L);
+		static int FocusCamera(lua_State *L);
+		static int ShakeCamera(lua_State *L);
+		static int GetPlayerNames(lua_State *L);
+		static int SetLastPlanet(lua_State *L);
+		static int LoadPlayer(lua_State *L);
+		static int SavePlayer(lua_State *L);
+		static int NewPlayer(lua_State *L);
 
 		static int NewGatePair(lua_State *L);
 
 		// Sprite Fetchers
-		static int getPlayer(lua_State *L);
-		static int getSpriteByID(lua_State *L);
-		static int getSprites(lua_State *L, int type);
-		static int getNearestSprite(lua_State *L, int type=DRAW_ORDER_ALL);
-		static int getNearestShip(lua_State *L);
-		static int getNearestPlanet(lua_State *L);
-		static int getShips(lua_State *L);
-		static int getPlanets(lua_State *L);
-		static int getGates(lua_State *L);
+		static int GetPlayer(lua_State *L);
+		static int GetSpriteByID(lua_State *L);
+		static int GetSprites(lua_State *L, int type);
+		static int GetNearestSprite(lua_State *L, int type=DRAW_ORDER_ALL);
+		static int GetNearestShip(lua_State *L);
+		static int GetNearestPlanet(lua_State *L);
+		static int GetShips(lua_State *L);
+		static int GetPlanets(lua_State *L);
+		static int GetGates(lua_State *L);
 
 		// Game Components
-		static int getCommodityNames(lua_State *L);
-		static int getAllianceNames(lua_State *L);
-		static int getEngineNames(lua_State *L);
-		static int getModelNames(lua_State *L);
-		static int getWeaponNames(lua_State *L);
-		static int getOutfitNames(lua_State *L);
-		static int getTechnologyNames(lua_State *L);
-		static int getPlanetNames(lua_State *L);
-		static int getGateNames(lua_State *L);
+		static int GetCommodityNames(lua_State *L);
+		static int GetAllianceNames(lua_State *L);
+		static int GetEngineNames(lua_State *L);
+		static int GetModelNames(lua_State *L);
+		static int GetWeaponNames(lua_State *L);
+		static int GetOutfitNames(lua_State *L);
+		static int GetTechnologyNames(lua_State *L);
+		static int GetPlanetNames(lua_State *L);
+		static int GetGateNames(lua_State *L);
 
 		// Information about Components
-		static int getMSRP(lua_State *L);
-		static int getSimulationInfo(lua_State *L);
-		static int getCommodityInfo(lua_State *L);
-		static int getAllianceInfo(lua_State *L);
-		static int getModelInfo(lua_State *L);
-		static int getPlanetInfo(lua_State *L);
-		static int getGateInfo(lua_State *L);
-		static int getWeaponInfo(lua_State *L);
-		static int getEngineInfo(lua_State *L);
-		static int getOutfitInfo(lua_State *L);
-		static int getTechnologyInfo(lua_State *L);
+		static int GetMSRP(lua_State *L);
+		static int GetSimulationInfo(lua_State *L);
+		static int GetCommodityInfo(lua_State *L);
+		static int GetAllianceInfo(lua_State *L);
+		static int GetModelInfo(lua_State *L);
+		static int GetPlanetInfo(lua_State *L);
+		static int GetGateInfo(lua_State *L);
+		static int GetWeaponInfo(lua_State *L);
+		static int GetEngineInfo(lua_State *L);
+		static int GetOutfitInfo(lua_State *L);
+		static int GetTechnologyInfo(lua_State *L);
 
 		// Editor Commands
-		static int setInfo(lua_State *L);
-		static int saveComponents(lua_State *L);
-		static int listImages(lua_State *L);
-		static int listAnimations(lua_State *L);
-		static int listSounds(lua_State *L);
+		static int SetInfo(lua_State *L);
+		static int SaveComponents(lua_State *L);
+		static int ListImages(lua_State *L);
+		static int ListAnimations(lua_State *L);
+		static int ListSounds(lua_State *L);
 
-		static void pushSprite(lua_State *L,Sprite* sprite);
-		static void pushComponents(lua_State *L, list<Component*> *components);
+		static void PushSprite(lua_State *L,Sprite* sprite);
+		static void PushComponents(lua_State *L, list<Component*> *components);
 	private:
 };
 
