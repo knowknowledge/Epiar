@@ -258,6 +258,7 @@ function showComponent(kind, name)
 	end
 	
 	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo(%q)",name )) )
+	theWin:add( UI.newButton(width-25,5,15,15,"X", string.format("UI.search('/Window%q/'):close()",windowName)))
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics, weapontables=theWeaponTables}
 end
 
