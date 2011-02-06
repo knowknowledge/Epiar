@@ -40,6 +40,7 @@ Model::Model()
 Model& Model::operator=(const Model& other) {
 	name = other.name;
 	image = other.image;
+	defaultEngine = other.defaultEngine;
 	mass = other.mass;
 	thrustOffset = other.thrustOffset;
 	rotPerSecond = other.rotPerSecond;
@@ -65,10 +66,20 @@ Model& Model::operator=(const Model& other) {
  */
 
 
-Model::Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond,
-		float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace,
+Model::Model( string _name,
+		Image* _image,
+		Engine* _defaultEngine,
+		float _mass,
+		short int _thrustOffset,
+		float _rotPerSecond,
+		float _maxSpeed,
+		int _hullStrength,
+		int _shieldStrength,
+		int _msrp,
+		int _cargoSpace,
 		vector<ws_t>& _weaponSlots) :
 	image(_image),
+	defaultEngine(_defaultEngine),
 	thrustOffset(_thrustOffset)
 {
 	SetName(_name);
@@ -93,6 +104,10 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		image = Image::Get( NodeToString(doc,attr) );
 		Image::Store(name, image);
 		SetPicture(image);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"engine")) ){
+		defaultEngine = Engines::Instance()->GetEngine( NodeToString(doc,attr) );
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"mass")) ){
@@ -139,25 +154,12 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		// pass the weaponSlots XML node into a handler function
 		ConfigureWeaponSlots( doc, attr );
 	} else {
-		cout << "Model::FromXMLNode(): Did not find weapon slot configuration - assuming defaults." << endl;
+		LogMsg( ERR, "Did not find weapon slot configuration - assuming defaults.");
 		// with no parameters, it sets default values
 		ConfigureWeaponSlots();
 	}
 
 	return true;
-}
-
-/**\brief Prints debugging information.
- */
-void Model::_dbg_PrintInfo( void ) {
-	if( mass <= 0.001 ){
-		// Having an incorrect Mass can cause the Model to have NAN position which will cause it to disappear unexpectedly.
-		LogMsg(ERR,"Model %s does not have a valid Mass value (%f).",name.c_str(),mass);
-	}
-	if(image!=NULL && name!=""){ 
-		cout<<"Storing Image for "<<name<<endl;
-		Image::Store(name,(Resource*)image);
-	} else { assert(0); }
 }
 
 /**\brief Converts the Model to an XML node.
@@ -168,6 +170,7 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetDefaultEngine()->GetName().c_str() );
 	snprintf(buff, sizeof(buff), "%1.2f", this->GetMass() );
 	xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%1.2f", this->GetRotationsPerSecond() );
@@ -325,11 +328,11 @@ int Model::GetWeaponSlotCount(){
 }
 
 void Model::WSDebug(ws_t slot){
-	LogMsg(DEBUG, "WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+	LogMsg(DEBUG1, "WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
 void Model::WSDebug(vector<ws_t>& slots){
-	LogMsg(DEBUG, "WeaponSlots for Model: %s", GetName().c_str() );
+	LogMsg(DEBUG1, "WeaponSlots for Model: %s", GetName().c_str() );
 	for(unsigned int i = 0; i < slots.size(); i++){
 		WSDebug(slots[i]);
 	}

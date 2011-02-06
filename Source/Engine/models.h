@@ -33,13 +33,15 @@ class Model : public Outfit {
 		Model();
 		Model& operator= (const Model&);
 
-		Model( string _name, Image* _image, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<ws_t>& _weaponSlots);
+		Model( string _name, Image* _image, Engine* _defaultEngine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<ws_t>& _weaponSlots);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 		void _dbg_PrintInfo( void );
 		
 		Image *GetImage( void ) { return image; }
+
+		Engine* GetDefaultEngine() { return defaultEngine; }
 		int GetThrustOffset( void ) { return thrustOffset; }
 
 		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
@@ -50,6 +52,7 @@ class Model : public Outfit {
 
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.
+		Engine* defaultEngine; ///< The default Engine for this model
 		short int thrustOffset; ///< The number of pixels engine flare animation offset
 		vector<ws_t> weaponSlots; ///< Slots for Weapons
 		// Debug

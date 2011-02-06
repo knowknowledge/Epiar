@@ -6,6 +6,7 @@
   <model>
     <name>Escape Pod</name>
     <image>Resources/Graphics/podv.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.10</mass>
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>10</thrustOffset>
@@ -19,6 +20,7 @@
   <model>
     <name>Fleet Guard</name>
     <image>Resources/Graphics/patrol.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.20</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
@@ -57,6 +59,7 @@
   <model>
     <name>Gate Enforcer</name>
     <image>Resources/Graphics/gate_patrol.png</image>
+    <engine>Ion Engines</engine>
     <mass>2.00</mass>
     <rotationsPerSecond>0.70</rotationsPerSecond>
     <thrustOffset>35</thrustOffset>
@@ -95,6 +98,7 @@
   <model>
     <name>Golden Uber</name>
     <image>Resources/Graphics/golden_uber.png</image>
+    <engine>Ion Engines</engine>
     <mass>10.00</mass>
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>90</thrustOffset>
@@ -133,6 +137,7 @@
   <model>
     <name>Hammer Freighter</name>
     <image>Resources/Graphics/hammerhead.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>2.00</mass>
     <rotationsPerSecond>0.15</rotationsPerSecond>
     <thrustOffset>44</thrustOffset>
@@ -159,6 +164,7 @@
   <model>
     <name>Kartanal</name>
     <image>Resources/Graphics/kartanal.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.50</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>31</thrustOffset>
@@ -197,6 +203,7 @@
   <model>
     <name>Large Vesper</name>
     <image>Resources/Graphics/trans2.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.80</mass>
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>25</thrustOffset>
@@ -247,6 +254,7 @@
   <model>
     <name>Mid Vesper</name>
     <image>Resources/Graphics/trans.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.70</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>20</thrustOffset>
@@ -285,6 +293,7 @@
   <model>
     <name>Patitu</name>
     <image>Resources/Graphics/palitu01.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.60</mass>
     <rotationsPerSecond>0.55</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
@@ -323,6 +332,7 @@
   <model>
     <name>Raven</name>
     <image>Resources/Graphics/raven.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.60</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
@@ -361,6 +371,7 @@
   <model>
     <name>Shuttle</name>
     <image>Resources/Graphics/shuttle.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>15</thrustOffset>
@@ -387,6 +398,7 @@
   <model>
     <name>Solaran Battle Cruiser</name>
     <image>Resources/Graphics/btlcruiser.png</image>
+    <engine>Ion Engines</engine>
     <mass>2.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>70</thrustOffset>
@@ -461,6 +473,7 @@
   <model>
     <name>Terran Assist</name>
     <image>Resources/Graphics/tugship.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>2.20</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>40</thrustOffset>
@@ -499,6 +512,7 @@
   <model>
     <name>Terran Corvert Mark I</name>
     <image>Resources/Graphics/corvet.png</image>
+    <engine>Ion Engines</engine>
     <mass>1.70</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>34</thrustOffset>
@@ -537,6 +551,7 @@
   <model>
     <name>Terran Corvert Mark II</name>
     <image>Resources/Graphics/corvet2.png</image>
+    <engine>Ion Engines</engine>
     <mass>1.80</mass>
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>50</thrustOffset>
@@ -611,6 +626,7 @@
   <model>
     <name>Terran Explorer</name>
     <image>Resources/Graphics/scivessel.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>40</thrustOffset>
@@ -649,6 +665,7 @@
   <model>
     <name>Terran FV-5 Frigate</name>
     <image>Resources/Graphics/terran-frigate.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
@@ -687,6 +704,7 @@
   <model>
     <name>Terran Miner</name>
     <image>Resources/Graphics/cargoclaw.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.30</mass>
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
@@ -725,6 +743,7 @@
   <model>
     <name>Terran XV</name>
     <image>Resources/Graphics/xv-1.png</image>
+    <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
     <rotationsPerSecond>0.20</rotationsPerSecond>
     <thrustOffset>27</thrustOffset>
@@ -763,6 +782,7 @@
   <model>
     <name>Uber</name>
     <image>Resources/Graphics/uber.png</image>
+    <engine>Ion Engines</engine>
     <mass>10.00</mass>
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>90</thrustOffset>
@@ -873,6 +893,7 @@
   <model>
     <name>Vespan Carrier</name>
     <image>Resources/Graphics/Fighter.png</image>
+    <engine>Ion Engines</engine>
     <mass>3.00</mass>
     <rotationsPerSecond>0.25</rotationsPerSecond>
     <thrustOffset>35</thrustOffset>

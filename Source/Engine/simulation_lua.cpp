@@ -822,6 +822,9 @@ int Simulation_Lua::getModelInfo(lua_State *L) {
 	Lua::setField("MaxShield", model->GetShieldStrength());
 	Lua::setField("MSRP", model->GetMSRP());
 	Lua::setField("Cargo", model->GetCargoSpace());
+	Lua::setField("Engine", (model->GetDefaultEngine() != NULL)
+	                      ? (model->GetDefaultEngine()->GetName().c_str() )
+	                      : "");
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
 	/* May want to move this to a helper function (but in which file?) */
@@ -1149,6 +1152,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 	} else if(kind == "Model"){
 		string name = Lua::getStringField(2,"Name");
 		string imageName = Lua::getStringField(2,"Image");
+		string engineName = Lua::getStringField(2,"Engine");
 		float mass = Lua::getNumField(2,"Mass");
 		int thrust = Lua::getIntField(2,"Thrust");
 		float rot = Lua::getNumField(2,"Rotation");
@@ -1159,9 +1163,16 @@ int Simulation_Lua::setInfo(lua_State *L) {
 		int cargo = Lua::getIntField(2,"Cargo");
 
 		Image *image = Image::Get(imageName);
-		if(image==NULL)
+		if(image == NULL)
 		{
-			LogMsg(NOTICE, "Could not create engine: there is no image file '%s'.",imageName.c_str());
+			LogMsg(NOTICE, "Could not create model: there is no image file '%s'.",imageName.c_str());
+			return 0;
+		}
+
+		Engine *engine = Engines::Instance()->GetEngine( engineName );
+		if(engine == NULL)
+		{
+			LogMsg(NOTICE, "Could not create model: there is no engine named '%s'.",imageName.c_str());
 			return 0;
 		}
 
@@ -1210,7 +1221,7 @@ int Simulation_Lua::setInfo(lua_State *L) {
 
 		lua_pop(L,1);
 
-		Model* thisModel = new Model(name,Image::Get(imageName),mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
+		Model* thisModel = new Model(name,image,engine,mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
 
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
