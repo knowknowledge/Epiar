@@ -88,6 +88,8 @@ class Simulation : public XMLFile {
 		Input inputs;
 		Console console;
 
+		string name;
+		string description;
 		string folderpath;
 		float currentFPS;
 		bool paused;

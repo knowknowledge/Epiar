@@ -433,7 +433,7 @@ void Main_Menu( void ) {
 	Image* editSplash = Image::Get( splashScreens[screenNum] );
 
 	string playerName;
-	string simName = "Resources/Simulation/default";
+	string simName = "default";
 	Simulation debug;
 
 	Players *players = Players::Instance();
@@ -545,9 +545,11 @@ void Main_Menu( void ) {
 				{
 					int israndom = ((Checkbox*)UI::Search("/Window'Create New Player'/Frame/Checkbox'Random Universe'/"))->IsChecked();
 					int seed = atoi( ((Textbox*)UI::Search("/Window'Create New Player'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
-					SETOPTION( "options/simulation/random-universe", israndom );
+					SETOPTION( "options/simulation/random-universe", israndom);
 					SETOPTION( "options/simulation/random-seed", seed );
 					playerName = ((Textbox*)UI::Search("/Window'Create New Player'/Textbox'Player Name:'/"))->GetText();
+					simName = ((Dropdown*)UI::Search("/Window'Create New Player'/Frame/Dropdown/"))->GetText();
+					simName = simName;
 				}
 				else if( Menu_Confirm_Load == clicked )
 				{
@@ -652,14 +654,14 @@ void Main_Menu( void ) {
 				Tab* activeTab = ((Tabs*)UI::Search("/Window'Editor'/Tabs/"))->GetActiveTab();
 				printf( "Active Tab: %s\n", activeTab->GetName().c_str() );
 				if( activeTab->GetName() == "Edit" ) {
-					simName = "Resources/Simulation/" + ((Dropdown*)activeTab->Search("/Dropdown/"))->GetText();
+					simName = ((Dropdown*)activeTab->Search("/Dropdown/"))->GetText();
 					if( !debug.Load( simName ) )
 					{
 						LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 						break;
 					}
 				} else { // Create
-					simName = "Resources/Simulation/" + ((Textbox*)activeTab->Search("/Textbox'Simulation Name'/"))->GetText();
+					simName = ((Textbox*)activeTab->Search("/Textbox'Simulation Name'/"))->GetText();
 
 					// Random Universe options
 					int israndom = ((Checkbox*)activeTab->Search("/Checkbox'Start With Random Universe'/"))->IsChecked();

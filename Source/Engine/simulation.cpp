@@ -49,20 +49,23 @@ Simulation::Simulation( void ) {
 	players = Players::Instance();
 	camera = Camera::Instance();
 
+	name = "";
+	description = "";
 	folderpath = "";
 	currentFPS = 0.;
 	paused = false;
 	loaded = false;
 }
 
-bool Simulation::New( string _folderpath ) {
-	LogMsg(INFO, "New Simulation: '%s'.", _folderpath.c_str() );
+bool Simulation::New( string newname ) {
+	LogMsg(INFO, "New Simulation: '%s'.", newname.c_str() );
 
-	folderpath = _folderpath + "/";
+	name = newname;
+	folderpath = "Resources/Simulation/" + name + "/";
 
 #ifndef _WIN32
 	if( mkdir( folderpath.c_str(), 0777) != 0) {
-		LogMsg(INFO, "Cannot create folder '%s'.", _folderpath.c_str() );
+		LogMsg(INFO, "Cannot create folder '%s'.", folderpath.c_str() );
 		// TODO: ensure that the folder exists
 	}
 #else
@@ -72,6 +75,9 @@ bool Simulation::New( string _folderpath ) {
 #endif
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
+
+	Set("simulation/name", name );
+	Set("simulation/description", description );
 
 	// Set the File Names
 	commodities->SetFileName( folderpath + "commodities.xml" );
@@ -104,8 +110,8 @@ bool Simulation::New( string _folderpath ) {
  * \param filename Name of the file
  * \return true if success
  */
-bool Simulation::Load( string _folderpath ) {
-	folderpath = _folderpath + string("/");
+bool Simulation::Load( string simName ) {
+	folderpath = "Resources/Simulation/" + simName + "/";
 	if( !Open( folderpath + string("simulation.xml") ) ) {
 		return false;
 	}
@@ -442,6 +448,10 @@ void Simulation::LuaRegisters(lua_State *L) {
 bool Simulation::Parse( void ) {
 	LogMsg(INFO, "Simulation version %s.%s.%s.", Get("version-major").c_str(), Get("version-minor").c_str(),  Get("version-macro").c_str());
 
+	// Get the Name and Description
+	name = Get("name");
+	description = Get("description");
+
 	// Now load the various subsystems
 	if( commodities->Load( (folderpath + Get("commodities")) ) != true ) {
 		LogMsg(ERR, "There was an error loading the commodities from '%s'.", (folderpath + Get("commodities")).c_str() );
@@ -486,8 +496,6 @@ bool Simulation::Parse( void ) {
 	if( bgmusic == NULL ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
 	}
-
-
 
 	return true;
 }
