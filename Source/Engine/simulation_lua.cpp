@@ -105,6 +105,7 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 
 		// Game Component Information
 		{"getMSRP", &Simulation_Lua::getMSRP},
+		{"getSimulationInfo", &Simulation_Lua::getSimulationInfo},
 		{"getCommodityInfo", &Simulation_Lua::getCommodityInfo},
 		{"getAllianceInfo", &Simulation_Lua::getAllianceInfo},
 		{"getModelInfo", &Simulation_Lua::getModelInfo},
@@ -741,6 +742,17 @@ int Simulation_Lua::getNearestShip(lua_State *L) {
  */
 int Simulation_Lua::getNearestPlanet(lua_State *L) {
 	return Simulation_Lua::getNearestSprite(L,DRAW_ORDER_PLANET);
+}
+
+/** \brief Get Information about the Simulation
+ *  \returns Lua table of Information
+ */
+int Simulation_Lua::getSimulationInfo(lua_State *L) {
+	lua_newtable(L);
+	Lua::setField("Name", GetSimulation(L)->GetName().c_str() );
+	Lua::setField("Description", GetSimulation(L)->GetDescription().c_str() );
+
+	return 1;
 }
 
 /** \brief Get Information about a Commodity

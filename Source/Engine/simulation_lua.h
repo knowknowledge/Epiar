@@ -72,6 +72,7 @@ class Simulation_Lua{
 
 		// Information about Components
 		static int getMSRP(lua_State *L);
+		static int getSimulationInfo(lua_State *L);
 		static int getCommodityInfo(lua_State *L);
 		static int getAllianceInfo(lua_State *L);
 		static int getModelInfo(lua_State *L);

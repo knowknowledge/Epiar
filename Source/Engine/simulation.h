@@ -61,8 +61,14 @@ class Simulation : public XMLFile {
 		Outfits *GetOutfits() { return outfits; }
 		Players *GetPlayers() { return players; }
 		Camera *GetCamera() { return camera; }
-		Input* GetInput() { return &inputs; }
+		Input *GetInput() { return &inputs; }
 		Player *GetPlayer();
+
+		string GetName() { return name; }
+		string GetDescription() { return description; }
+
+		void SetName( string _name ) { name = _name; }
+		void SetDescription( string _desc ) { description = _desc; }
 
 	private:
 		bool Parse( void );
