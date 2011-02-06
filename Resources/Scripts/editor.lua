@@ -19,104 +19,86 @@ end
 --- The EditorLayouts describe the ordering and type of the component attributes
 --- This could be hardcoded into the c++ engine
 
-AllianceEditorLayout = {
-	{"Name", "String"},
-	{"Aggressiveness", "Number"},
-	{"AttackSize", "Integer"},
-	{"Color", "String"}, -- TODO Should be Color Picker?
-	--{"Illegal", "List"},
-	}
-
-CommodityEditorLayout = {
-	{"Name", "String"},
-	{"MSRP", "Number"},
-	}
-
-EngineEditorLayout = {
-	{"Name", "String"},
-	{"Picture", "Picture"}, -- Picture Picker
-	{"MSRP", "Integer"},
-	{"Force", "Integer"},
-	{"Fold Drive", "Integer"},
-	{"Sound", "Sound", "Engines"}, -- Sound Dropdown - Engines subgroup
-	{"Animation", "Animation"}, -- Animation Dropdown
-	}
-
-ModelEditorLayout = {
-	{"Name", "String"},
-	{"Image", "Picture"}, -- Picture Picker
-	{"Rotation", "Number"},
-	{"MSRP", "Integer"},
-	{"Thrust", "Integer"},
-	{"Mass", "Number"},
-	{"MaxHull", "Integer"},
-	{"MaxShield", "Integer"},
-	{"MaxSpeed", "Integer"},
-	{"Cargo", "Integer"},
-	{"Engine", "Component", Epiar.engines},
-	{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
-	}
-
-PlanetEditorLayout = {
-	{"Name", "String"},
-	{"X", "Integer"},
-	{"Y", "Integer"},
-	{"Image", "Picture"}, -- Picture Picker
-	{"Alliance", "Component", Epiar.alliances},
-	{"Landable", "Integer"}, -- TODO Should be Checkbox
-	{"Traffic", "Integer"},
-	{"Militia", "Integer"},
-	{"Influence", "Integer"},
-	{"Technologies", "Technologies"},
-	}
-
--- TODO Gates should be created two at a time.
-GateEditorLayout = {
-	{"Name", "String"},
-	{"X", "Integer"},
-	{"Y", "Integer"},
-	{"Exit", "String"},
-	}
-
-WeaponEditorLayout = {
-	{"Name", "String"},
-	{"Picture", "Picture"}, -- Picture Picker
-	{"Image", "Picture"}, -- Picture Picker
-	{"MSRP", "Integer"},
-	{"Payload", "Integer"},
-	{"Velocity", "Integer"},
-	{"Lifetime", "Integer"},
-	{"FireDelay", "Integer"},
-	{"Type", "Integer"}, -- TODO Is this the same as Ammo Type?  It should be removed.
-	{"Tracking", "Number"},
-	{"Ammo Type", "Integer"}, -- TODO Should be a dropdown of Ammo Types
-	{"Ammo Consumption", "Integer"},
-	{"Sound", "Sound", "Weapons"}, -- Sound Dropdown - Weapons subgroup
-	}
-
-OutfitEditorLayout = {
-	{"Name", "String"},
-	{"Picture", "Picture"}, -- Picture Picker
-	{"MSRP", "Integer"},
-	{"MaxSpeed", "Number"},
-	{"Force", "Number"},
-	{"Rotation", "Number"},
-	{"MaxHull", "Integer"},
-	{"MaxShield", "Integer"},
-	{"Cargo", "Integer"},
-	{"SurfaceArea", "Integer"},
-	{"Mass", "Number"},
-	}
-
 EditorLayouts = {
-	Alliance = AllianceEditorLayout,
-	Commodity = CommodityEditorLayout,
-	Engine = EngineEditorLayout,
-	Model = ModelEditorLayout,
-	Planet = PlanetEditorLayout,
-	Gate = GateEditorLayout,
-	Weapon = WeaponEditorLayout,
-	Outfit = OutfitEditorLayout,
+	Alliance = {
+		{"Name", "String"},
+		{"Aggressiveness", "Number"},
+		{"AttackSize", "Integer"},
+		{"Color", "String"}, -- TODO Should be Color Picker?
+	},
+	Commodity = {
+		{"Name", "String"},
+		{"MSRP", "Number"},
+	},
+	Engine = {
+		{"Name", "String"},
+		{"Picture", "Picture"}, -- Picture Picker
+		{"MSRP", "Integer"},
+		{"Force", "Integer"},
+		{"Fold Drive", "Integer"},
+		{"Sound", "Sound", "Engines"}, -- Sound Dropdown - Engines subgroup
+		{"Animation", "Animation"}, -- Animation Dropdown
+	},
+	Model = {
+		{"Name", "String"},
+		{"Image", "Picture"}, -- Picture Picker
+		{"Rotation", "Number"},
+		{"MSRP", "Integer"},
+		{"Thrust", "Integer"},
+		{"Mass", "Number"},
+		{"MaxHull", "Integer"},
+		{"MaxShield", "Integer"},
+		{"MaxSpeed", "Integer"},
+		{"Cargo", "Integer"},
+		{"Engine", "Component", Epiar.engines},
+		{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
+	},
+	Planet = {
+		{"Name", "String"},
+		{"X", "Integer"},
+		{"Y", "Integer"},
+		{"Image", "Picture"}, -- Picture Picker
+		{"Alliance", "Component", Epiar.alliances},
+		{"Landable", "Integer"}, -- TODO Should be Checkbox
+		{"Traffic", "Integer"},
+		{"Militia", "Integer"},
+		{"Influence", "Integer"},
+		{"Technologies", "Technologies"},
+	},
+	Gate = {
+		{"Name", "String"},
+		{"X", "Integer"},
+		{"Y", "Integer"},
+		{"Exit", "String"},
+	},
+	Weapon = {
+		{"Name", "String"},
+		{"Picture", "Picture"}, -- Picture Picker
+		{"Image", "Picture"}, -- Picture Picker
+		{"MSRP", "Integer"},
+		{"Payload", "Integer"},
+		{"Velocity", "Integer"},
+		{"Lifetime", "Integer"},
+		{"FireDelay", "Integer"},
+		{"Type", "Integer"}, -- TODO Is this the same as Ammo Type?  It should be removed.
+		{"Tracking", "Number"},
+		{"Ammo Type", "Integer"}, -- TODO Should be a dropdown of Ammo Types
+		{"Ammo Consumption", "Integer"},
+		{"Sound", "Sound", "Weapons"}, -- Sound Dropdown - Weapons subgroup
+	},
+	Outfit = {
+		{"Name", "String"},
+		{"Picture", "Picture"}, -- Picture Picker
+		{"MSRP", "Integer"},
+		{"MaxSpeed", "Number"},
+		{"Force", "Number"},
+		{"Rotation", "Number"},
+		{"MaxHull", "Integer"},
+		{"MaxShield", "Integer"},
+		{"Cargo", "Integer"},
+		{"SurfaceArea", "Integer"},
+		{"Mass", "Number"},
+	},
 }
 
 EditorGetters = {
