@@ -556,17 +556,6 @@ void Simulation_Lua::pushSprite(lua_State *L,Sprite* s){
 	}
 }
 
-/*
-Sprite* Simulation_Lua::checkSprite(lua_State *L,int id ){
-	int* idptr = (int*)luaL_checkudata(L, index, EPIAR_SHIP);
-	cout<<"Checking ID "<<(*idptr)<<endl;
-	luaL_argcheck(L, idptr != NULL, index, "`EPIAR_SHIP' expected");
-	Sprite* s;
-	s = GetSimulation(L)->GetSpriteManager()->GetSpriteByID(*idptr);
-	return s;
-}
-*/
-
 /** \brief Push a list of names for a component list.
  */
 void Simulation_Lua::pushComponents(lua_State *L, list<Component*> *components){

@@ -142,7 +142,7 @@ void AI::Draw(){
 	}
 }
 
-bool EnemyComp(enemy a, enemy b){return(a.id<b.id);}	
+bool EnemyComp(enemy a, enemy b){return(a.id<b.id);}
 
 /**\brief chooses who the AI should target given the list of the AI's enemies
  *
@@ -222,15 +222,15 @@ int AI::ChooseTarget(){
 		}
 			
 	}
-//	printf("finished sprite iteration\n");
+	//	printf("finished sprite iteration\n");
 
-//	cout<<"enemies.size()="<<enemies.size()<<'\n';	
+	//	cout<<"enemies.size()="<<enemies.size()<<'\n';
 	while (enemyIt!=enemies.end()) {
 		//printf("starting enemyIt iteration mark2\n");
 		if ( !InRange( sprites->GetSpriteByID(enemyIt->id)->GetWorldPosition() , this->GetWorldPosition() ) ) {
 			enemyIt=enemies.erase(enemyIt);
 			threat=0;
-			continue;			
+			continue;
 		}
 		//printf("finished In range check\n");
 		//printf("calculate cost\n");

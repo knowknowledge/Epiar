@@ -62,7 +62,7 @@ PlanetEditorLayout = {
 	{"X", "Integer"},
 	{"Y", "Integer"},
 	{"Image", "Picture"}, -- Picture Picker
-	{"Alliance", "Component", Epiar.alliances}, -- TODO: Should be Alliance Picker (Dropdown of available Alliances)
+	{"Alliance", "Component", Epiar.alliances},
 	{"Landable", "Integer"}, -- TODO Should be Checkbox
 	{"Traffic", "Integer"},
 	{"Militia", "Integer"},
