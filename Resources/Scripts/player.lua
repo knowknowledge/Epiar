@@ -658,8 +658,7 @@ function attemptLanding()
 			HUD.newAlert(string.format("%s: %s! You are forbidden from landing here.", planet:GetName(), PLAYER:GetName() ) )
 			return
 		end
-		-- TODO make this distance check based off of the planet size.
-		if distance > 200 then
+		if distance > planet:GetSize() then
 			if message ~= "" then
 				message = message.."Begin your approach."
 			else

@@ -320,6 +320,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetID", &Planets_Lua::GetID},
 		{"GetType", &Planets_Lua::GetType},
 		{"GetPosition", &Planets_Lua::GetPosition},
+		{"GetSize", &Planets_Lua::GetSize},
 		{"GetAlliance", &Planets_Lua::GetAlliance},
 		{"Traffic", &Planets_Lua::GetTraffic},
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
@@ -527,6 +528,19 @@ int Planets_Lua::GetPosition(lua_State* L){
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
 	return 2;
+}
+
+/**\brief Get the Size of this planet
+ */
+int Planets_Lua::GetSize(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		lua_pushnumber(L, planet->GetRadarSize() );
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
 }
 
 /**\brief Get the Alliance of this planet

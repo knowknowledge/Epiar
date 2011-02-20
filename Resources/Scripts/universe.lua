@@ -949,5 +949,7 @@ function weaponConfigFinish()
 	-- the slot editing itself took place while the dialog was open, so nothing more needs to be done at this point
 	local wcDialog = UI.search("/Window'Weapon Configuration'/")
 	-- this should cover all widget cleanup
-	wcDialog:close()
+	if wcDialog ~= nil then
+		wcDialog:close()
+	end
 end

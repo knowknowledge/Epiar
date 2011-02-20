@@ -103,6 +103,7 @@ class Planets_Lua {
 		static int GetType(lua_State* L);
 		static int GetID(lua_State* L);
 		static int GetPosition(lua_State* L);
+		static int GetSize(lua_State* L);
 		static int GetAlliance(lua_State* L);
 		static int GetTraffic(lua_State* L);
 		static int GetMilitiaSize(lua_State* L);
