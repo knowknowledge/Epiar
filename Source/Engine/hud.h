@@ -11,6 +11,7 @@
 
 #include "includes.h"
 #include "Graphics/image.h"
+#include "Graphics/font.h"
 #include "Utilities/lua.h"
 #include "Utilities/quadtree.h"
 #include "Input/input.h"
@@ -70,6 +71,8 @@ class StatusBar {
 		char name[100]; // TODO: the name 'name' is bad
 		float ratio;
 		string lua_updater;
+	private:
+		static Font *font;
 };
 
 class Hud {

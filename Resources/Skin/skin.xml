@@ -30,5 +30,10 @@
       <Color>0xFFFFFF</Color>
       <Size>12</Size>
     </Alert>
+    <StatusBar>
+      <Font>Resources/Fonts/visitor1.ttf</Font>
+      <Color>0xAAAAAA</Color>
+      <Size>12</Size>
+    </StatusBar>
   </HUD>
 </Skin>

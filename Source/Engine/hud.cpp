@@ -11,6 +11,7 @@
 #include "Engine/hud.h"
 #include "Engine/simulation.h"
 #include "Graphics/video.h"
+#include "Graphics/font.h"
 #include "Sprites/player.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
@@ -39,10 +40,13 @@ list<AlertMessage> Hud::AlertMessages;
 StatusBar* Hud::Bars[MAX_STATUS_BARS] = {};
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
-int Radar::visibility = 4096;
 HudMap Hud::mapDisplay = NoMap;
 Font *Hud::AlertFont = NULL;
 Color Hud::AlertColor = WHITE;
+
+int Radar::visibility = 4096;
+
+Font *StatusBar::font = NULL;
 
 /**\class AlertMessage
  * \brief Alert/Info messages
@@ -94,6 +98,12 @@ StatusBar::StatusBar(string _title, int _width, QuadPosition _pos, string _updat
 	LogMsg (DEBUG4, "Creating a new StatusBar '%s' : Name(%s) / Ratio( %f)\n",title, name, ratio);
 	assert(pos>=0);
 	assert(pos<=4);
+
+	if( font == NULL ) {
+		font = Font::Get( SKIN("Skin/HUD/StatusBar/Font") );
+		font->SetSize( convertTo<int>(SKIN("Skin/HUD/StatusBar/Size")) );
+		font->SetColor( SKIN("Skin/HUD/StatusBar/Color") );
+	}
 }
 
 /**\brief Assignment operator for class StatusBar.
@@ -137,15 +147,14 @@ void StatusBar::Draw(int x, int y) {
 	BackgroundMiddle->DrawTiled(x, y, width, BackgroundMiddle->GetHeight());
 	BackgroundRight->Draw(x + width, y);
 
-	BitType->SetColor( WHITE );
 
 	// Draw the Title
-	int wTitle = BitType->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
+	int wTitle = font->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), title, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wTitle;
 	x += wTitle + 5;
 
 	// Draw Name
-	int wName = BitType->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), name, Font::LEFT, Font::MIDDLE );
+	int wName = font->RenderTight( x, y + BackgroundMiddle->GetHalfHeight(), name, Font::LEFT, Font::MIDDLE );
 	widthRemaining -= wName;
 	x += wName;
 
