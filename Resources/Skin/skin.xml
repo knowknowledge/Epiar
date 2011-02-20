@@ -35,5 +35,11 @@
       <Color>0xAAAAAA</Color>
       <Size>12</Size>
     </StatusBar>
+    <Map>
+      <GatePath>0x00FF00</GatePath>
+      <Font>Resources/Fonts/usuziv2.ttf</Font>
+      <Color>0xCCCCCC</Color>
+      <Size>10</Size>
+    </Map>
   </HUD>
 </Skin>

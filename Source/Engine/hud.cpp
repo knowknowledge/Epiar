@@ -42,6 +42,7 @@ int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
 HudMap Hud::mapDisplay = NoMap;
 Font *Hud::AlertFont = NULL;
+Font *Hud::MapFont = NULL;
 Color Hud::AlertColor = WHITE;
 
 int Radar::visibility = 4096;
@@ -254,6 +255,10 @@ void Hud::Init( void ) {
 	AlertFont = new Font( SKIN("Skin/HUD/Alert/Font") );
 	AlertColor = Color( SKIN("Skin/HUD/Alert/Color") );
 	AlertFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Alert/Size") ) );
+
+	MapFont = new Font( SKIN("Skin/HUD/Map/Font") );
+	MapFont->SetColor( Color( SKIN("Skin/HUD/Map/Color") ) );
+	MapFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Map/Size") ) );
 }
 
 void Hud::Close( void ) {
@@ -365,7 +370,6 @@ void Hud::DrawStatusBars() {
 		Coordinate(0,barHeight), Coordinate(0,barHeight),
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
 
-	BitType->SetColor(1.f,1.f,1.f,1.f);
 	int i;
 	StatusBar* bar;
 	for( i= 0; i < MAX_STATUS_BARS; ++i ){
@@ -440,6 +444,7 @@ void Hud::DrawUniverseMap( void ) {
 	Coordinate pos, pos2;
 	Color col;
 	Color field;
+	Color gatePath;
 	int i;
 	float alpha;
 	float n,s,e,w, edge;
@@ -450,6 +455,7 @@ void Hud::DrawUniverseMap( void ) {
 	startx = Video::GetHalfWidth()-halfsize;
 	starty = Video::GetHalfHeight()-halfsize;
 	alpha = .7;
+	gatePath = Color( SKIN("Skin/HUD/Map/GatePath") );
 
 	// Strech the Map so that it covers all QuadTrees
 	SpriteManager::Instance()->GetBoundaries(&n,&s,&e,&w);
@@ -464,8 +470,10 @@ void Hud::DrawUniverseMap( void ) {
 						 DRAW_ORDER_PLANET	|
 						 DRAW_ORDER_GATE_TOP );
 	
-	if( OPTION(int,"options/development/ships-worldmap") )
-		retrieveSprites= retrieveSprites | DRAW_ORDER_SHIP;
+	// Show sprites only if this option is set.
+	if( OPTION(int,"options/development/ships-worldmap") ) {
+		retrieveSprites = retrieveSprites | DRAW_ORDER_SHIP;
+	}
 	
 	sprites = SpriteManager::Instance()->GetSprites( retrieveSprites );
 
@@ -512,7 +520,7 @@ void Hud::DrawUniverseMap( void ) {
 					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
 					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
 					pos2 = Coordinate( posx2, posy2 );
-					Video::DrawLine( pos, pos2, GREEN, alpha*.5f );
+					Video::DrawLine( pos, pos2, gatePath, alpha*.5f );
 				}
 				break;
 			default:
@@ -527,8 +535,7 @@ void Hud::DrawUniverseMap( void ) {
 		{
 			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
 			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
-			SansSerif->SetColor( WHITE );
-			SansSerif->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
+			MapFont->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
 	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;
