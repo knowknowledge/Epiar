@@ -42,23 +42,23 @@ Widget::Widget( void ):
 
 void Widget::Draw( int relx, int rely ) {
 	if( hovering && OPTION(int,"options/development/debug-ui") ) {
-		int x, y;
+		int absx, absy;
 		char xbuff[6];
 		char ybuff[6];
-		x = this->x + relx;
-		y = this->y + rely;
-		Video::DrawBox(x,y,w,h,0,1,0,1);
-		Video::DrawLine(relx,y,x,y,1,0,0,1);
-		Video::DrawLine(x,rely,x,y,1,0,0,1);
+		absx = x + relx;
+		absy = y + rely;
+		Video::DrawBox( absx, absy, w, h, GREEN, 1 );
+		Video::DrawLine( relx, absy, absx, absy, RED, 1 );
+		Video::DrawLine( absx, rely, absx, absy, RED, 1 );
 
-		snprintf( xbuff, sizeof(xbuff), "%d", this->x );
-		snprintf( ybuff, sizeof(xbuff), "%d", this->y );
+		snprintf( xbuff, sizeof(xbuff), "%d", x );
+		snprintf( ybuff, sizeof(xbuff), "%d", y );
 
-		Video::DrawRect(relx+this->x/2, y, 30, SansSerif->LineHeight(), 0,0,0,1);
-		SansSerif->RenderTight( relx + this->x/2, y, xbuff );
+		Video::DrawRect( relx + x/2, y, UI::font->TextWidth(xbuff), UI::font->LineHeight(), BLACK, 1 );
+		UI::font->RenderTight( relx + x/2, y, xbuff );
 
-		Video::DrawRect(x, rely+this->y/2, 30, SansSerif->LineHeight(), 0,0,0,1);
-		SansSerif->RenderTight( x, rely + this->y/2, ybuff );
+		Video::DrawRect( absx, rely + y/2, UI::font->TextWidth(ybuff), UI::font->LineHeight(), BLACK, 1 );
+		UI::font->RenderTight( absx, rely + y/2, ybuff );
 	}
 }
 
