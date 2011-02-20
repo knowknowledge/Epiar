@@ -91,7 +91,7 @@ int Widget::GetAbsY( void ) {
 /**\brief Tests if point is within a rectangle.
  */
 bool Widget::Contains(int relx, int rely) {
-	return WITHIN_BOUNDS(relx, rely, this->x, this->y, this->w, this->h);
+	return WITHIN_BOUNDS(relx, rely, x, y, w, h);
 }
 
 /**\brief Widget is currently being dragged.
@@ -226,16 +226,16 @@ xmlNodePtr Widget::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
 
-	thisNode = xmlNewNode(NULL, BAD_CAST this->GetType().c_str() );
+	thisNode = xmlNewNode(NULL, BAD_CAST GetType().c_str() );
 
-	xmlSetProp( thisNode, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
-	snprintf(buff, sizeof(buff), "%d", this->GetX() );
+	xmlSetProp( thisNode, BAD_CAST "name", BAD_CAST GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", GetX() );
 	xmlSetProp( thisNode, BAD_CAST "x", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->GetY() );
+	snprintf(buff, sizeof(buff), "%d", GetY() );
 	xmlSetProp( thisNode, BAD_CAST "y", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->GetW() );
+	snprintf(buff, sizeof(buff), "%d", GetW() );
 	xmlSetProp( thisNode, BAD_CAST "w", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->GetH() );
+	snprintf(buff, sizeof(buff), "%d", GetH() );
 	xmlSetProp( thisNode, BAD_CAST "h", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%p", this );
 	xmlSetProp( thisNode, BAD_CAST "address", BAD_CAST buff );

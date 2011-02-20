@@ -16,9 +16,6 @@
  * @{
  */
 
-#define DROPDOWN_OPENED_DX 6
-#define DROPDOWN_OPENED_DY 4
-
 /**\class Dropdown
  * \brief Dropdown handling. */
 
@@ -36,7 +33,10 @@ Dropdown::Dropdown( int x, int y, int w, int _baseheight )
 	this->y = y;
 	this->w = w;
 	this->h = _baseheight;
+
 	baseheight = _baseheight;
+	xoffset = convertTo<int>( SKIN("Skin/UI/Dropdown/XOffset"));
+	yoffset = convertTo<int>( SKIN("Skin/UI/Dropdown/YOffset"));
 
 	opened = false;
 
@@ -44,10 +44,16 @@ Dropdown::Dropdown( int x, int y, int w, int _baseheight )
 	selected = -1;
 }
 
+/**\brief Dropdown Desctructor
+ */
 Dropdown::~Dropdown() {
 
 }
 
+/**\brief Add a single option
+ *  If there were no options before, this option is the new default.
+ *  \param[in] option The new option.
+ */
 Dropdown* Dropdown::AddOption( string option ) {
 	if( option != "" ) {
 		options.push_back( option );
@@ -58,6 +64,10 @@ Dropdown* Dropdown::AddOption( string option ) {
 	return this;
 }
 
+/**\brief Add multiple options
+ *  If there were no options before, the first option is the new default.
+ *  \param[in] options The list of new options.
+ */
 Dropdown* Dropdown::AddOptions( list<string> options ) {
 	list<string>::iterator iter;
 	for( iter = options.begin(); iter != options.end(); ++iter ) {
@@ -73,7 +83,7 @@ void Dropdown::Draw( int relx, int rely ) {
 	
 	x = this->x + relx;
 	y = this->y + rely;
-
+	
 	if( !opened ) {
 		bitmap_normal->DrawStretch( x, y, w, h);
 		if( (options.size() >= 1) ) {
@@ -96,14 +106,18 @@ void Dropdown::Draw( int relx, int rely ) {
 			y += baseheight;
 		}
 	}
-
+	
 	Widget::Draw(relx,rely);
 }
 
+/**\brief Accept Left mouse clicks
+ */
 bool Dropdown::MouseLDown( int xi, int yi ) {
 	return true;
 }
 
+/**\brief Toggle between open and closed.
+ */
 bool Dropdown::MouseLUp( int xi, int yi ) {
 	if( opened ) {
 		selected = (yi - y) / baseheight;
@@ -129,6 +143,8 @@ bool Dropdown::MouseLeave( void ){
 	return true;
 }
 
+/**\brief When opened, pick a new hovered option
+ */
 bool Dropdown::MouseMotion( int xi, int yi ){
 	if( opened ) {
 		hovered = (yi - y) / baseheight;
@@ -136,32 +152,38 @@ bool Dropdown::MouseMotion( int xi, int yi ){
 	return true;
 }
 
+/**\brief Open the Dropdown to display the available options
+ */
 void Dropdown::open() {
 	assert( !opened );
 	h = baseheight * options.size();
-	x += DROPDOWN_OPENED_DX;
-	y += DROPDOWN_OPENED_DY;
+	x += xoffset;
+	y += yoffset;
 	opened = true;
 }
 
+/**\brief Close the Dropdown to display the selected option
+ */
 void Dropdown::close() {
 	assert( opened );
 	h = baseheight;
-	x -= DROPDOWN_OPENED_DX;
-	y -= DROPDOWN_OPENED_DY;
+	x -= xoffset;
+	y -= yoffset;
 	opened = false;
 }
 
-
-void Dropdown::SetText(string text){
+/**\brief Close the Dropdown to display the selected option
+ */
+bool Dropdown::SetText(string text){
 	unsigned int i;
 	for(i = 0; i < options.size(); i++){
 		if(options[i] == text){
 			selected = i;
-			break;
+			return true;
 		}
 	}
 	LogMsg(WARN, "Tried to set selected dropdown option: '%s', but that option doesn't exist.", text.c_str() );
+	return false;
 }
 
 

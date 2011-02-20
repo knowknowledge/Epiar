@@ -32,23 +32,25 @@ class Dropdown : public Widget {
 		virtual int GetMask( void ) { return WIDGET_DROPDOWN; }
 
 		string GetText() { return options[selected]; }
-		void SetText(string text);
+		bool SetText(string text);
 
 	private:
 		void open();
 		void close();
 
-		bool opened;
-		Image* bitmap_normal;
-		Image* bitmap_open;
-		Image* bitmap_mouseover;
-		Image* bitmap_selected;
+		bool opened; ///< Is the Dropdown currently Dropped down?
+		Image* bitmap_normal; ///< The closed form.
+		Image* bitmap_open; ///< The form of default options when open.
+		Image* bitmap_mouseover; ///< The currently hovered option.
+		Image* bitmap_selected; ///< The last selected option.
 
-		vector<string> options;
-		unsigned int selected;
-		unsigned int hovered;
+		vector<string> options; ///< The selectable Options.
+		unsigned int selected; ///< The option that is currently selected.
+		unsigned int hovered; ///< The option that is currently being hovered over.
 
-		int baseheight;
+		int baseheight; ///< The height of each selectable option.
+		int xoffset; ///< X-offset to clearly mark open from closed Dropdowns
+		int yoffset; ///< Y-offset to clearly mark open from closed Dropdowns
 };
 
 #endif // __H_DROPDOWN__

@@ -692,6 +692,7 @@ int UI_Lua::setText(lua_State *L){
 	Widget *widget = checkWidget(L,1);
 	string text = luaL_checkstring(L, 2);
 
+	bool success;
 	int mask = widget->GetMask();
 	mask &= ~WIDGET_CONTAINER; // Turn off the Container flag.
 	switch( mask ) {
@@ -702,12 +703,14 @@ int UI_Lua::setText(lua_State *L){
 		case WIDGET_TEXTBOX:
 			((Textbox*)(widget))->SetText( text );
 			break;
-
 		case WIDGET_BUTTON:
 			((Button*)(widget))->SetText( text );
 			break;
 		case WIDGET_DROPDOWN:
-			((Dropdown*)(widget))->SetText( text );
+			success = ((Dropdown*)(widget))->SetText( text );
+			if( !success ) {
+				return luaL_error(L, "This Dropdown does not have an option '%s'.", text.c_str() );
+			}
 			break;
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:

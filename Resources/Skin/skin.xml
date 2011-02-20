@@ -23,6 +23,10 @@
         <Edge>0x262626</Edge>
       </Color>
     </Tab>
+    <Dropdown>
+      <XOffset>6</XOffset>
+      <YOffset>4</YOffset>
+    </Dropdown>
   </UI>
   <HUD>
     <Alert>
