@@ -1338,8 +1338,30 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		if(sound==NULL)
 			return luaL_error(L, "Could not create weapon: there is no sound file '%s'.",soundName.c_str());
 
-		Weapon* thisWeaon = new Weapon(name,image,picture,type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,sound,tracking,msrp);
-		GetSimulation(L)->GetWeapons()->AddOrReplace( thisWeaon );
+		Weapon* thisWeapon = new Weapon(name,image,picture,type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,sound,tracking,msrp);
+		GetSimulation(L)->GetWeapons()->AddOrReplace( thisWeapon );
+
+	} else if(kind == "Outfit"){
+		string name = Lua::getStringField(2,"Name");
+		string pictureName = Lua::getStringField(2,"Picture");
+		float force = Lua::getNumField(2,"Force");
+		float mass = Lua::getNumField(2,"Mass");
+		float rot = Lua::getNumField(2,"Rotation");
+		float speed = Lua::getNumField(2,"MaxSpeed");
+		int hull = Lua::getIntField(2,"MaxHull");
+		int shield = Lua::getIntField(2,"MaxShield");
+		int msrp = Lua::getIntField(2,"MSRP");
+		int cargo = Lua::getIntField(2,"Cargo");
+		int area = Lua::getIntField(2,"SurfaceArea");
+
+		Image *picture = Image::Get(pictureName);
+		if(picture==NULL)
+			return luaL_error(L, "Could not create weapon: there is no image file '%s'.",pictureName.c_str());
+
+		Outfit* thisOutfit = new Outfit( msrp, picture, rot, speed, force, mass, cargo, area, hull, shield );
+		thisOutfit->SetName( name );
+
+		GetSimulation(L)->GetOutfits()->AddOrReplace( thisOutfit );
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());

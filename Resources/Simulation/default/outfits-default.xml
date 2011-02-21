@@ -16,24 +16,24 @@
   </outfit>
   <outfit>
     <name>Carbon Plating</name>
-    <msrp>500</msrp>
+    <msrp>25000</msrp>
     <picName>Resources/Graphics/hp_carbon.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
-    <hull>0</hull>
+    <hull>200</hull>
     <shield>0</shield>
   </outfit>
   <outfit>
     <name>Copper Plating</name>
-    <msrp>100</msrp>
+    <msrp>10000</msrp>
     <picName>Resources/Graphics/hp_copper.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
-    <hull>0</hull>
+    <hull>100</hull>
     <shield>0</shield>
   </outfit>
   <outfit>
@@ -42,14 +42,14 @@
     <picName>Resources/Graphics/status_sensor.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>1.000000</maxSpeed>
-    <force>0.000000</force>
+    <force>1.000000</force>
     <mass>0.000000</mass>
     <hull>0</hull>
     <shield>0</shield>
   </outfit>
   <outfit>
     <name>Mass Shipping License</name>
-    <msrp>2000</msrp>
+    <msrp>5000</msrp>
     <picName>Resources/Graphics/sector_map.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
@@ -71,25 +71,25 @@
   </outfit>
   <outfit>
     <name>Organic Plating</name>
-    <msrp>500</msrp>
+    <msrp>35000</msrp>
     <picName>Resources/Graphics/hp_organic.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
-    <hull>0</hull>
-    <shield>0</shield>
+    <hull>250</hull>
+    <shield>50</shield>
   </outfit>
   <outfit>
     <name>Shield Generator</name>
-    <msrp>3000</msrp>
+    <msrp>40000</msrp>
     <picName>Resources/Graphics/cloaking_device.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
     <hull>0</hull>
-    <shield>0</shield>
+    <shield>300</shield>
   </outfit>
   <outfit>
     <name>Shipping License</name>
@@ -104,24 +104,24 @@
   </outfit>
   <outfit>
     <name>Steel Plating</name>
-    <msrp>5000</msrp>
+    <msrp>25000</msrp>
     <picName>Resources/Graphics/hp_electron.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.200000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
-    <hull>0</hull>
+    <hull>300</hull>
     <shield>0</shield>
   </outfit>
   <outfit>
     <name>Titanium Plating</name>
-    <msrp>50000</msrp>
+    <msrp>100000</msrp>
     <picName>Resources/Graphics/hp_titanium.png</picName>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>-0.200000</maxSpeed>
     <force>0.000000</force>
     <mass>0.000000</mass>
-    <hull>0</hull>
+    <hull>1000</hull>
     <shield>0</shield>
   </outfit>
 </outfits>

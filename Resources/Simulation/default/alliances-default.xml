@@ -11,6 +11,13 @@
     <color>0x7E336F</color>
   </alliance>
   <alliance>
+    <name>Independent</name>
+    <aggressiveness>0.0</aggressiveness>
+    <attackSize>0</attackSize>
+    <currency>Credits</currency>
+    <color>0x808080</color>
+  </alliance>
+  <alliance>
     <name>Inter-Terran Conjunctive</name>
     <aggressiveness>5.0</aggressiveness>
     <attackSize>3</attackSize>
