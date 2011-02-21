@@ -132,7 +132,7 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetPicture(pic);
 	} else return false;
 
-	if( (attr = FirstChildNamed(node,"rotationsPerSecond")) ){
+	if( (attr = FirstChildNamed(node,"rotsPerSecond")) ){
 		value = NodeToString(doc,attr);
 		SetRotationsPerSecond( static_cast<float>(atof( value.c_str() )));
 	}
@@ -142,7 +142,7 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetMaxSpeed( static_cast<float>(atof( value.c_str() )));
 	}
 
-	if( (attr = FirstChildNamed(node,"forceOutput")) ){
+	if( (attr = FirstChildNamed(node,"force")) ){
 		value = NodeToString(doc,attr);
 		SetForceOutput( static_cast<float> (atof( value.c_str() )));
 	}
@@ -150,11 +150,6 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	if( (attr = FirstChildNamed(node,"mass")) ){
 		value = NodeToString(doc,attr);
 		SetMass( static_cast<float> (atof( value.c_str() )));
-	}
-
-	if( (attr = FirstChildNamed(node,"cargoSpace")) ){
-		value = NodeToString(doc,attr);
-		SetCargoSpace( atoi( value.c_str() ));
 	}
 
 	if( (attr = FirstChildNamed(node,"surfaceArea")) ){
@@ -167,12 +162,12 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetCargoSpace( atoi( value.c_str() ));
 	}
 
-	if( (attr = FirstChildNamed(node,"hullStrength")) ){
+	if( (attr = FirstChildNamed(node,"hull")) ){
 		value = NodeToString(doc,attr);
 		SetHullStrength( atoi( value.c_str() ));
 	}
 
-	if( (attr = FirstChildNamed(node,"shieldStrength")) ){
+	if( (attr = FirstChildNamed(node,"shield")) ){
 		value = NodeToString(doc,attr);
 		SetShieldStrength( (short)atoi( value.c_str() ));
 	}
@@ -204,6 +199,12 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 
 	snprintf(buff, sizeof(buff), "%f", this->GetMass() );
 	xmlNewChild(section, NULL, BAD_CAST "mass", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetSurfaceArea() );
+	xmlNewChild(section, NULL, BAD_CAST "surfaceArea", BAD_CAST buff );
+
+	snprintf(buff, sizeof(buff), "%d", this->GetCargoSpace() );
+	xmlNewChild(section, NULL, BAD_CAST "cargoSpace", BAD_CAST buff );
 
 	snprintf(buff, sizeof(buff), "%d", this->GetHullStrength() );
 	xmlNewChild(section, NULL, BAD_CAST "hull", BAD_CAST buff );
