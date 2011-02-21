@@ -671,9 +671,7 @@ function attemptLanding()
 				HUD.newAlert(message.."Please slow your approach.")
 			else
 				HUD.newAlert(string.format("Welcome to %s.",planet:GetName()))
-				landingDialog( planet:GetID() )
-				Epiar.setLastPlanet( planet:GetName() )
-				Epiar.savePlayer()
+				PLAYER:Land( planet )
 			end
 		end
 	end

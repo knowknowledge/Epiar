@@ -423,6 +423,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 		_technologies.push_back( tech );
 	}
 
+	// Check that all pointers are non-NULL.
 	if(_image==NULL) {
 		return luaL_error(L, "No image '%s'", imageName.c_str());
 	}
@@ -430,6 +431,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 		return luaL_error(L, "No alliance '%s'", _allianceName.c_str());
 	}
 
+	// Create the Planet
 	p = new Planet(
 		_name,
 		_x,

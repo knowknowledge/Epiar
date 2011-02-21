@@ -69,7 +69,6 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 		{"newPlayer", &Simulation_Lua::NewPlayer},
 		{"players", &Simulation_Lua::GetPlayerNames},
 		{"player", &Simulation_Lua::GetPlayer},
-		{"setLastPlanet", &Simulation_Lua::SetLastPlanet},
 
 		// Sprite Creation Functions
 		{"NewGatePair", &Simulation_Lua::NewGatePair},
@@ -341,19 +340,6 @@ int Simulation_Lua::NewPlayer(lua_State *L) {
 int Simulation_Lua::GetPlayer(lua_State *L){
 	Simulation_Lua::PushSprite(L,GetSimulation(L)->GetPlayer() );
 	return 1;
-}
-
-/** \brief Record the last planet that a player landed on.
- *  \details The player will be loaded at this planet next time.
- */
-int Simulation_Lua::SetLastPlanet(lua_State *L){
-	int n=lua_gettop(L);
-	if(n!=1){
-		return luaL_error(L, "%d arguments expected 1 argument the planet's name");
-	}
-	string planetName=(string) luaL_checkstring(L,1);
-	GetSimulation(L)->GetPlayer()->setLastPlanet(planetName);
-	return 0;
 }
 
 /** \brief Create Two Gates that are linked to each other

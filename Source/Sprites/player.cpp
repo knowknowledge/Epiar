@@ -135,8 +135,21 @@ void Player::RejectMission( string missionName ) {
 
 /**\brief set name of last planet visited
  */
-void Player::setLastPlanet( string planetName){
-	lastPlanet = planetName;
+void Player::Land( lua_State *L, Planet* planet ){
+	assert( planet );
+
+	if( planet->GetLandable() == false
+	 || planet->GetForbidden() == true ) {
+		return;
+	}
+
+	Lua::Call( "landingDialog", "i", planet->GetID() );
+
+	//TODO: Run Land function for each Mission
+
+	lastPlanet = planet->GetName();
+
+	Save();
 }
 
 /**\brief Constructor

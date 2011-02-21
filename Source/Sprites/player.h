@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "Sprites/ship.h"
+#include "Sprites/planets.h"
 #include "Engine/mission.h"
 
 class Player : public Ship {
@@ -26,13 +27,17 @@ class Player : public Ship {
 		xmlNodePtr ToXMLNode(string componentName);
 
 		void SetName( string _name ) { name = _name; }
-		void setLastPlanet( string planetName);
+
+		void Update( lua_State *L );
+		void Land( lua_State *L, Planet * );
 
 		// Generic Getters
 		string GetLastPlanet() { return lastPlanet; }
 		string GetName() { return name; }
 		string GetFileName() { return "Resources/Definitions/"+ GetName() +".xml"; }
 		time_t GetLoadTime() { return lastLoadTime; }
+		virtual int GetDrawOrder( void ) { return( DRAW_ORDER_PLAYER ); }
+		Color GetRadarColor( void ) { return GOLD; }
 
 		// Autopilot Related Functions
 		void SetLuaControlFunc( string _luaControlFunc );
@@ -54,12 +59,6 @@ class Player : public Ship {
 		Player& operator= (const Player&);
 		~Player();
 
-		void Update( lua_State *L );
-
-		virtual int GetDrawOrder( void ) {
-			return( DRAW_ORDER_PLAYER );
-		}
-		Color GetRadarColor( void ) { return GOLD; }
 
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
 	private:

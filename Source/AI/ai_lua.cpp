@@ -11,6 +11,7 @@
 #include "Utilities/lua.h"
 #include "Sprites/effects.h"
 #include "Sprites/player.h"
+#include "Sprites/planets.h"
 #include "AI/ai_lua.h"
 #include "Audio/sound.h"
 #include "Engine/camera.h"
@@ -47,6 +48,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Explode", &AI_Lua::ShipExplode},
 		{"Remove", &AI_Lua::ShipRemove},
 		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
+		{"Land", &AI_Lua::ShipLand},
 		{"SetLuaControlFunc", &AI_Lua::ShipSetLuaControlFunc},
 		
 		//Power Distribution
@@ -1594,9 +1596,35 @@ int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
 		Player *p = (Player *)checkShip(L,1);
-		if(p==NULL) return 0;
+		if( p == NULL ) return 0;
+		if( p->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+			return luaL_error(L, "Only Players may accept Missions");
+		}
 		string controlFunc = luaL_checkstring (L, 2);
 		(p)->SetLuaControlFunc( controlFunc );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, controlFunc)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to set the player's Lua control function
+ */
+int AI_Lua::ShipLand(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		// Get the Player
+		Player *player = (Player *)checkShip(L,1);
+		if( player == NULL ) return 0;
+		if( player->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+			return luaL_error(L, "Only Players may accept Missions");
+		}
+
+		// Get the Planet
+		Planet *planet = Planets_Lua::checkPlanet(L,2);
+		if( planet == NULL ) return 0;
+		
+		player->Land( L, planet );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, controlFunc)", n);
 	}
