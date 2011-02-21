@@ -145,10 +145,19 @@ void Player::Land( lua_State *L, Planet* planet ){
 
 	Lua::Call( "landingDialog", "i", planet->GetID() );
 
-	//TODO: Run Land function for each Mission
+	//Run Land function for each Mission
+	bool missionOver;
+	list<Mission*>::iterator i;
+	for( i = missions.begin(); i != missions.end(); ++i ) {
+		missionOver = (*i)->Land();
+		if( missionOver ) {
+			LogMsg(INFO, "Completed the Mission %s", (*i)->GetName().c_str() );
+			// Remove this completed mission from the list
+			i = missions.erase( i );
+		}
+	}
 
 	lastPlanet = planet->GetName();
-
 	Save();
 }
 

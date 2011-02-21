@@ -39,6 +39,7 @@ bool Mission::ValidateMission( lua_State *L, string type, int tableReference, in
 		"Accept",
 		"Reject",
 		"Update",
+		"Land",
 		"Success",
 		"Failure",
 	};
@@ -134,18 +135,21 @@ bool Mission::ValidateMission( lua_State *L, string type, int tableReference, in
 }
 
 /**\brief 
- * \returns True on Error
+ * \returns True if there is an error and the Mission should be deleted.
  */
 bool Mission::Reject()
 {
 	LogMsg(INFO, "Rejecting Mission '%s'", GetName().c_str());
-	return (false == RunFunction( "Reject", true ) );
+	return RunFunction( "Reject", false );
 }
 
+/**\brief 
+ * \returns True if there is an error and the Mission should be deleted.
+ */
 bool Mission::Accept()
 {
 	LogMsg(INFO, "Accepting Mission '%s'", GetName().c_str());
-	return (false == RunFunction( "Accept", true ) );
+	return RunFunction( "Accept", false );
 }
 
 /**\brief 
@@ -153,35 +157,15 @@ bool Mission::Accept()
  */
 bool Mission::Update()
 {
-	const int initialStackTop = lua_gettop(L);
+	return RunFunction( "Update", true );
+}
 
-	if(! RunFunction( "Update", false ) )
-	{
-		lua_settop(L,initialStackTop);
-		return true; // The Update failed, delete this Mission
-	}
-
-	// A return value is optional
-	if( lua_isboolean(L, lua_gettop(L)) )
-	{
-		int success = lua_toboolean(L, lua_gettop(L));
-		const char* completionFunctions[] = {
-			"Failure",
-			"Success",
-		};
-
-		LogMsg(INFO, "The Mission '%s' is a %s", GetName().c_str(), completionFunctions[ success ] );
-
-		if( ! RunFunction( completionFunctions[ success ], true ) )
-		{
-			LogMsg(ERR,"Failed to run %s.%s: %s\n", type.c_str(), completionFunctions[success], lua_tostring(L, -1));
-		}
-		lua_settop(L,initialStackTop);
-		return true;
-	}
-
-	lua_settop(L,initialStackTop);
-	return false;
+/**\brief 
+ * \returns True if the Mission is over (success, failure, or error) and should be deleted.
+ */
+bool Mission::Land( )
+{
+	return RunFunction( "Land", true );
 }
 
 void Mission::PushMissionTable()
@@ -222,9 +206,9 @@ int Mission::GetVersion()
 }
 
 /**\brief
- * \returns Success Boolean if the function was successfully called
+ * \returns true when this Mission is complete
  */
-bool Mission::RunFunction(string functionName, bool clearStack)
+bool Mission::RunFunction(string functionName, bool checkCompletion)
 {
 	const int initialStackTop = lua_gettop(L);
 
@@ -240,7 +224,7 @@ bool Mission::RunFunction(string functionName, bool clearStack)
 	if( ! lua_isfunction(L,lua_gettop(L)) )
 	{
 		LogMsg(ERR, "The Mission Type named '%s' cannot %s!", type.c_str(), functionName.c_str() );
-		if( clearStack ) lua_settop(L,initialStackTop);
+		lua_settop(L,initialStackTop);
 		return false; // Invalid Mission, Delete it
 	}
 
@@ -250,13 +234,30 @@ bool Mission::RunFunction(string functionName, bool clearStack)
 	if( lua_pcall(L, 1, LUA_MULTRET, 0) != 0)
 	{
 		LogMsg(ERR,"Failed to run %s.%s: %s\n", type.c_str(), functionName.c_str(), lua_tostring(L, -1));
-		if( clearStack ) lua_settop(L,initialStackTop);
+		lua_settop(L,initialStackTop);
 		return false; // Invalid Mission, Delete it
 	}
 
+	// When this flag is set, check if the function returned a true or false value.
+	// If the return value is nil, then the Mission is not complete.
+	if( checkCompletion && lua_isboolean(L, lua_gettop(L)) )
+	{
+		if( lua_toboolean(L, lua_gettop(L)) )
+		{
+			LogMsg(INFO, "The Mission '%s' is a Success", GetName().c_str() );
+			RunFunction( "Success", false);
+		}
+		else
+		{
+			LogMsg(INFO, "The Mission '%s' is a Failure", GetName().c_str() );
+			RunFunction( "Failure", false);
+		}
 
-	if( clearStack ) lua_settop(L,initialStackTop);
-	return true;
+		return true;
+	}
+
+	lua_settop(L, initialStackTop);
+	return false;
 }
 
 /**\brief Lookup String Attributes from the Mission Table

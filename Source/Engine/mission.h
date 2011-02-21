@@ -22,6 +22,7 @@ class Mission{
 		bool Accept();
 		bool Reject();
 		bool Update();
+		bool Land();
 
 		int GetVersion();
 		string GetName() { return GetStringAttribute("Name"); }
@@ -37,7 +38,7 @@ class Mission{
 		string type; ///< The Mission Type
 		int tableReference; ///< A Lua table to hold
 
-		bool RunFunction(string functionName, bool clearStack);
+		bool RunFunction(string functionName, bool checkCompletion);
 		string GetStringAttribute(string attribute);
 		static int GetMissionType( lua_State *L, string type );
 };

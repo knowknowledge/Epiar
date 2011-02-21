@@ -20,6 +20,11 @@ MissionType = {
 		return true --- Return true when the mission has succeded.
 		return false --- Return false when the mission has failed.
 	end,
+	Land = function( missionTable ) --- Call this each time that player lands
+		return nil --- Return nil when the mission isn't over yet.
+		return true --- Return true when the mission has succeded.
+		return false --- Return false when the mission has failed.
+	end,
 	Success = function( missionTable ) end, --- Call this if the Mission is a Success.
 	Failure = function( missionTable ) end, --- Call this if the Mission is a failure.
 }
@@ -37,7 +42,7 @@ end
 
 ReturnAmbassador = {
 	UID = 1,
-	Version = 1,
+	Version = 2,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -65,10 +70,12 @@ ReturnAmbassador = {
 		HUD.newAlert( string.format("Thanks for the help, just drop me off at your next landing" ) )
 	end,
 	Update = function( missionTable )
+	end,
+	Land = function( missionTable )
 		local x,y = PLAYER:GetPosition()
 		local p = Planet.Get( missionTable.planet )
 		local px,py = p:GetPosition()
-		if distfrom(px,py,x,y) < 50 then
+		if distfrom(px,py,x,y) < p:GetSize() then
 			return true
 		end
 	end,
@@ -133,6 +140,8 @@ DestroyPirate = {
 			end
 		end
 	end,
+	Land = function(missionTable)
+	end,
 	Success = function( missionTable )
 		HUD.newAlert(string.format("Thank you for destroying %s!", missionTable.piratename) )
 		addcredits(  missionTable.reward )
@@ -145,7 +154,7 @@ DestroyPirate = {
 
 CollectArtifacts = {
 	UID = 3,
-	Version = 1,
+	Version = 2,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -210,13 +219,15 @@ CollectArtifacts = {
 		HUD.newAlert( acceptMessage  )
 	end,
 	Update = function( missionTable )
+	end,
+	Land = function( missionTable )
 		local totalFound = 0
 		local x,y = PLAYER:GetPosition()
 		for i=1, missionTable.NumArtifacts do
 			if missionTable.Collected[i] == false then
 				local p = Planet.Get( missionTable.PlanetsWithArtifacts[i] )
 				local px,py = p:GetPosition()
-				if distfrom(px,py,x,y) < 50 then
+				if distfrom(px,py,x,y) < p:GetSize() then
 					-- This artifact has been recovered
 					-- Record this in the Description
 					local desc = "** You have recovered the %s **"
@@ -253,7 +264,7 @@ CollectArtifacts = {
 
 ShippingRoutes = {
 	UID = 5,
-	Version = 1,
+	Version = 2,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -294,12 +305,13 @@ ShippingRoutes = {
 		if currentCargo[ missionTable.Commodity ] < missionTable.Tonnage then
 			return false
 		end
-
+	end,
+	Land = function( missionTable )
 		-- Check if the player has landed at the destination
 		local x,y = PLAYER:GetPosition()
 		local p = Planet.Get( missionTable.Planet )
 		local px,py = p:GetPosition()
-		if distfrom(px,py,x,y) < 50 then
+		if distfrom(px,py,x,y) < p:GetSize() then
 			return true
 		end
 	end,
@@ -367,6 +379,8 @@ DestroyGaryTheGold = {
 			-- do nothing
 		end
 	end,
+	Land = function( missionTable )
+	end,
 	Success = function( missionTable )
 		HUD.newAlert("Thank you for destroying Gary the Gold!")
 		addcredits(missionTable.reward)
@@ -378,17 +392,14 @@ DestroyGaryTheGold = {
 
 ProtectFreighter = {
 	UID = 5,
-	Version = 1,
+	Version = 2,
 	Author = "Rikus Goodell",
 	Difficulty = "MEDIUM",
 	Create = function()
-		
-
 		local reward = 10000 + math.random(100)*200
 		local planets = Epiar.planets()
 		local p = planets[math.random(#planets)]
 		local planetName = p:GetName()
-
 
 		local pronoun
 		local maleNames = { "Manfred", "Johnny", "Otis", "Gus", "Gilbert" }
@@ -451,6 +462,13 @@ ProtectFreighter = {
 	end,
 	Update = function( missionTable )
 		local freighter = Epiar.getSprite( missionTable.freighter )
+		-- Check that the Freighter is still alive
+		if freighter ~= nil then
+			return false
+		end
+	end,
+	Land = function( missionTable )
+		local freighter = Epiar.getSprite( missionTable.freighter )
 		local p = Planet.Get( missionTable.planet )
 
 		if missionTable.joined == false then
@@ -462,7 +480,7 @@ ProtectFreighter = {
 		if freighter ~= nil and p ~= nil then
 			local fX, fY = freighter:GetPosition()
 			local pX, pY = p:GetPosition()
-			if distfrom( fX, fY, pX, pY ) < 350 then
+			if distfrom( fX, fY, pX, pY ) < p:GetSize() then
 				return true
 			end
 			missionTable.fX = fX
