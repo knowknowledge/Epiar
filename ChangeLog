@@ -1,3 +1,7 @@
+Tuesday, April 26, 2011
+	Christopher Thielen:
+		* Factored out menu code from main.cpp into new menu.cpp
+
 Friday, January 29, 2010
 	Matt Zweig:
 		* Adds Camera Focus on Non-player Sprites.
