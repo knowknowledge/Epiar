@@ -3,6 +3,7 @@ AM_CXXFLAGS = -I$(top_srcdir)/Source/ -I$(top_srcdir)/Source/Lua/src
 bin_PROGRAMS = epiar
 
 epiar_SOURCES = Source/main.cpp \
+		Source/menu.cpp \
                 Source/AI/ai.cpp \
                 Source/AI/ai_lua.cpp \
                 Source/Audio/audio.cpp \
