@@ -1,6 +1,8 @@
 Tuesday, April 26, 2011
 	Christopher Thielen:
 		* Factored out menu code from main.cpp into new menu.cpp
+		* Added ability for SpriteManager to recognize the player's
+		sprite specifically (for when they die, etc.)
 
 Friday, January 29, 2010
 	Matt Zweig:

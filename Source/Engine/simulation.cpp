@@ -536,7 +536,7 @@ void Simulation::CreateDefaultPlayer(string name) {
 		startPos
 	);
 
-	sprites->Add( player );
+	sprites->AddPlayer( player );
 	camera->Focus( player );
 }
 

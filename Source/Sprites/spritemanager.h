@@ -5,13 +5,11 @@
  * \details
  */
 
-
 #ifndef __H_SPRITEMANAGER__
 #define __H_SPRITEMANAGER__
 
 #include "Sprites/sprite.h"
 #include "Utilities/quadtree.h"
-
 
 class SpriteManager {
 	public:
@@ -19,6 +17,7 @@ class SpriteManager {
 		SpriteManager& operator=( SpriteManager& object );
 		
 		void Add( Sprite *sprite );
+		void AddPlayer( Sprite *sprite );
 		bool Delete( Sprite *sprite );
 		
 		void Update( lua_State *L, bool lowFps);
@@ -46,6 +45,8 @@ class SpriteManager {
 		list<Sprite*> *spritelist;
 		// Use the map when referring to sprites by their unique ID.
 		map<int,Sprite*> *spritelookup;
+
+		Sprite *player;
 		
 		list<Sprite *> spritesToDelete;
 		static SpriteManager *pInstance;

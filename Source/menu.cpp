@@ -339,7 +339,7 @@ void Main_Menu( void ) {
 		}
 
 		// Wait until the next click
-		Timer::Delay(50);
+		Timer::Delay(75);
 	} while(!quitSignal);
 }
 

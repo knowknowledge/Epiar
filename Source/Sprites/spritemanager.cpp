@@ -11,13 +11,12 @@
 #include "Utilities/quadtree.h"
 #include "Engine/camera.h"
 
-
 /**\class SpriteManager
  * \brief Mangers sprites. */
 
 /**\brief Constructs a new sprite manager.
  */
-			//initialise the tick stuff - these should probably be set by an option somewhere, hardcode for now
+//initialise the tick stuff - these should probably be set by an option somewhere, hardcode for now
 SpriteManager::SpriteManager() :
 	 tickCount (0)
 	 , semiRegularPeriod (15)		//every 16 ticks we want to have updated the semi-regular distance quadrants
@@ -25,11 +24,12 @@ SpriteManager::SpriteManager() :
 	 , numRegularBands (2)			//the regular (per-tick) updates are on this number of bands
 	 , numSemiRegularBands (5)		//the semi-regular updates are on this number of bands - this SHOULD be easily divisible into semiRegularPeriod
 {
+	player = NULL;
+
 	spritelist = new list<Sprite*>();
 	spritelookup = new map<int,Sprite*>();
 
-
-			//fill in the ticksToBandNum map based on the semiRegularPeriod and numSemiRegularBands
+	//fill in the ticksToBandNum map based on the semiRegularPeriod and numSemiRegularBands
 	int updateGap = semiRegularPeriod / numSemiRegularBands;
 
 	for (int i = 0; i < numSemiRegularBands; i ++) {
@@ -84,6 +84,14 @@ void SpriteManager::Add( Sprite *sprite ) {
 	spritelist->push_back(sprite);
 	spritelookup->insert(make_pair(sprite->GetID(),sprite));
 	GetQuadrant( sprite->GetWorldPosition() )->Insert( sprite );
+}
+
+/**\brief Adds player sprite to the manager.
+ * \param sprite Pointer to the player sprite
+ */
+void SpriteManager::AddPlayer( Sprite *sprite ) {
+	player = sprite;
+	Add( sprite );
 }
 
 /**\brief Deletes a sprite from the manager (Internal use).
