@@ -192,7 +192,7 @@ int UI_Lua::close(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 0) {
-		UI::Close();
+		UI::CloseAll();
 	}
 	else if(n == 1) {
 		Widget* widget = checkWidget(L,1);

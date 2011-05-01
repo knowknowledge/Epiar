@@ -38,7 +38,7 @@ Font *UI::font = NULL;
 /**\brief Destroys the UI interface and all UI elements.
  */
 UI::~UI() {
-	UI::Close();
+	UI::CloseAll();
 
 	delete font;
 }
@@ -80,7 +80,7 @@ Widget *UI::Add( Widget *widget ) {
 
 /**\brief This removes all widgets from the base.
  */
-void UI::Close( void ) {
+void UI::CloseAll( void ) {
 	LogMsg(INFO, "Closing all Widgets." );
 	UI::currentScreen->Empty();
 }

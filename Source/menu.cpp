@@ -96,7 +96,7 @@ void Main_Menu( void ) {
 	// Input Loop
 	do {
 		if (screenNeedsReset) {
-			UI::Close();
+			UI::CloseAll();
 
 			// Create UI
 			if( availableMenus & Menu_New )
