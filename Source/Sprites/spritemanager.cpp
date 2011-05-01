@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Sprites/spritemanager.h"
+#include "Utilities/log.h"
 #include "Utilities/quadtree.h"
 #include "Engine/camera.h"
 
@@ -100,6 +101,8 @@ void SpriteManager::AddPlayer( Sprite *sprite ) {
  * This performs the actual deletion.
  */
 bool SpriteManager::DeleteSprite( Sprite *sprite ) {
+	if(sprite == player) Log::LogMsg(ALERT, "Deleting player sprite. Should we be doing this?");
+
 	spritelist->remove(sprite);
 	spritelookup->erase( sprite->GetID() );
 	GetQuadrant( sprite->GetWorldPosition() )->Delete( sprite );
