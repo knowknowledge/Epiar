@@ -19,14 +19,12 @@ class Picture: public Widget {
 		Picture( int x, int y, int w, int h, string filename );
 		Picture( int x, int y, int w, int h, Image *pic );
 		Picture( int w, int h, string filename );
-		Picture( int x, int y, string filename, void (*function)(void*), void* value );
 		void Draw( int relx, int rely );
 		void Rotate( double angle );
 		void Set( Image *img );
 		void Set( string filename );
 		void SetColor( float r, float g, float b, float a );
-		void SetLuaClickCallback( string );
-		bool MouseLUp( int, int );
+		void SetLuaClickCallback( string foo ) { printf("SetLuaClickCallback is deprecated\n"); }
 
 		Color GetColor( void ) { return color; }
 		float GetAlpha( void ) { return alpha; }
@@ -41,10 +39,6 @@ class Picture: public Widget {
 		Image *bitmap;
 		Color color;
 		float alpha;
-		string luaClickCallback;
-
-		void (*clickCallBack)(void*);
-		void *callBackValue;
 };
 
 #endif // __H_UI_IMAGE 

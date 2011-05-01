@@ -34,9 +34,6 @@ void Picture::Default( int x, int y, int w, int h ){
 
 	color = BLACK;
 	alpha = 0.0f;
-
-	this->luaClickCallback = "";
-	this->clickCallBack = NULL;
 }
 
 /**\brief Initialize from an Image pointer.
@@ -69,17 +66,6 @@ Picture::Picture( int x, int y, string filename ){
 	this->h = bitmap->GetHeight();
 	name = filename;
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
-}
-
-Picture::Picture( int x, int y, string filename, void (*function)(void*), void* value ) {
-	Default(x,y,0,0);
-	bitmap = Image::Get(filename);
-	this->w = bitmap->GetWidth();
-	this->h = bitmap->GetHeight();
-	name = filename;
-	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
-	this->clickCallBack = function;
-	this->callBackValue = value;
 }
 
 /**\brief Rotate the Image in this picture to a specific angle.
@@ -135,30 +121,5 @@ void Picture::SetColor( float r, float g, float b, float a) {
 	color = Color(r,g,b);
 	alpha = a;
 }
-
-/**\brief Set the Click Callback
- */
-void Picture::SetLuaClickCallback( string luaFunctionName ){
-	this->luaClickCallback = luaFunctionName;
-}
-
-/**\brief Click UP on a Picture.
- * \details If this picture has a callback, send it the position of the click.
- * \sa Picture::SetLuaClickCallback 
- */
-bool Picture::MouseLUp( int x, int y ) {
-	if( clickCallBack ){
-		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack( callBackValue );
-	} else
-	if(luaClickCallback != ""){
-		char *lua_call = (char*)malloc(128);
-		snprintf(lua_call, 128, "%s(%d,%d)", luaClickCallback.c_str(), x, y);
-		Lua::Run(lua_call);
-		free(lua_call);
-		return true;
-	}
-	return false;
-} 
 
 /** @} */

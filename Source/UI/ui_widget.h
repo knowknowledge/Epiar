@@ -90,7 +90,7 @@ class Widget {
 			Action_Last // Always the last action type
 		}; ///< Actions that can be registered.
 
-		virtual void RegisterAction( action_type type, Action* action );
+		virtual Widget* RegisterAction( action_type type, Action* action );
 		virtual bool Activate( action_type type );
 
 		// Only allow Container to send events

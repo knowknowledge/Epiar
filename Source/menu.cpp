@@ -92,17 +92,17 @@ void Main_Menu( void ) {
 
 			// Create UI
 			if( availableMenus & Menu_New )
-				UI::Add( new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png", setMenuOption, &menu_New ) );
+				UI::Add( (new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) ) );
 			if( (availableMenus & Menu_Load) && (players->Size() > 0) )
-				UI::Add( new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png", setMenuOption, &menu_Load) );
+				UI::Add( (new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load) ) );
 			if( availableMenus & Menu_Continue )
-				UI::Add( new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png", setMenuOption, &menu_Continue) );
+				UI::Add( (new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue) ) );
 			if( availableMenus & Menu_Editor )
-				UI::Add( new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png", setMenuOption, &menu_Editor) );
+				UI::Add( (new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor) ) );
 			if( availableMenus & Menu_Options )
-				UI::Add( new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png", setMenuOption, &menu_Options) );
+				UI::Add( (new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options) ) );
 			if( availableMenus & Menu_Exit )
-				UI::Add( new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png", setMenuOption, &menu_Exit) );
+				UI::Add( (new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit) ) );
 
 			screenNeedsReset = false;
 		}

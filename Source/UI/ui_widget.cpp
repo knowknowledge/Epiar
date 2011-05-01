@@ -109,7 +109,7 @@ bool Widget::Contains(int relx, int rely) {
 
 /**\brief Register an Action to an action_type
  */
-void Widget::RegisterAction( action_type type, Action* action )
+Widget* Widget::RegisterAction( action_type type, Action* action )
 {
 	assert(action != NULL);
 	assert( type < Action_Last );
@@ -117,6 +117,8 @@ void Widget::RegisterAction( action_type type, Action* action )
 		delete actions[type];
 	}
 	actions[type] = action;
+	
+	return this;
 }
 
 /**\brief Activate an Action that has been registered to this Widget
