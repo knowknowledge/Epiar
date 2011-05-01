@@ -39,6 +39,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Sprites/sprite.cpp \
                 Source/Sprites/spritemanager.cpp \
                 Source/UI/ui.cpp \
+                Source/UI/ui_action.cpp \
                 Source/UI/ui_button.cpp \
                 Source/UI/ui_checkbox.cpp \
                 Source/UI/ui_container.cpp \
