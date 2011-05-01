@@ -35,12 +35,20 @@ void LoadPlayer( void* value ) {
 	clicked = Menu_Confirm_Load;
 	playerToLoad = (PlayerInfo*)value;
 }
+void CloseNewGameUI( void* value ) {
+	Widget *newGameWnd = UI::Search("/Window'New Game'/");
+	UI::Close( newGameWnd );
+}
+void CloseLoadGameUI( void* value ) {
+	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
+	UI::Close( newGameWnd );
+}
 
 /** Epiar's Main Menu
  *
  *  This runs a while(1) loop collecting user input and drawing the screen.
  *  While similar to the Run Loop in the Simulation, this should be simpler
- *  since there is no HUD, Consol or Sprites.
+ *  since there is no HUD, Console or Sprites.
  *
  */
 void Main_Menu( void ) {
@@ -125,9 +133,9 @@ void Main_Menu( void ) {
 		switch(clicked){
 			case Menu_New:
 			{
-				if( UI::Search("/Window'Create New Player'/") != NULL ) break;
+				if( UI::Search("/Window'New Game'/") != NULL ) break;
 
-				Window* win = new Window(300, 150, 250, 370, "Create New Player");
+				Window* win = new Window(300, 150, 250, 370, "New Game");
 				UI::Add( win );
 
 				// Player Name
@@ -145,16 +153,17 @@ void Main_Menu( void ) {
 					->AddChild( (new Label(15, 80, "Seed:")) )
 					->AddChild( (new Textbox(50, 80, 80, 1, seed, "Random Universe Seed")) )
 				);
-				win->AddChild( (new Button(10, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
+				win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
+				win->AddChild( (new Button(140, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
 
 				break;
 			}
 
 			case Menu_Load:
 			{
-				if( UI::Search("/Window'Load A Player'/") != NULL ) break;
+				if( UI::Search("/Window'Load Game'/") != NULL ) break;
 
-				Window* win = new Window(250, 50, 500, 700, "Load A Player");
+				Window* win = new Window(250, 50, 500, 700, "Load Game");
 				UI::Add( win );
 				// Create a new Frame for each Player
 				int p = 0;
@@ -169,6 +178,7 @@ void Main_Menu( void ) {
 						->AddChild( (new Button(280, 80, 100, 30, "Load", LoadPlayer, info )) )
 					);
 				}
+				win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
 				break;
 			}
 
@@ -185,12 +195,12 @@ void Main_Menu( void ) {
 				// Gather Player Information
 				if( Menu_Confirm_New == clicked )
 				{
-					int israndom = ((Checkbox*)UI::Search("/Window'Create New Player'/Frame/Checkbox'Random Universe'/"))->IsChecked();
-					int seed = atoi( ((Textbox*)UI::Search("/Window'Create New Player'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+					int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
+					int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
 					SETOPTION( "options/simulation/random-universe", israndom);
 					SETOPTION( "options/simulation/random-seed", seed );
-					playerName = ((Textbox*)UI::Search("/Window'Create New Player'/Textbox'Player Name:'/"))->GetText();
-					simName = ((Dropdown*)UI::Search("/Window'Create New Player'/Frame/Dropdown/"))->GetText();
+					playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
+					simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
 					simName = simName;
 				}
 				else if( Menu_Confirm_Load == clicked )
