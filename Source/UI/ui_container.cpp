@@ -931,7 +931,7 @@ bool Container::KeyPress( SDLKey key ) {
 
 	// If the key is an ENTER then activate the form button when it has been assigned
 	if( (key == '\n') && (formbutton != NULL) ) {
-		formbutton->Activate();
+		formbutton->Activate(Widget::Action_MouseLUp);
 	}
 
 	//LogMsg(INFO,"Key press detect in %s.",this->name.c_str());

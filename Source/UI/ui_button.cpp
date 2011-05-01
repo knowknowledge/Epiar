@@ -46,23 +46,18 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 	// Load sounds
 	this->sound_click = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
 	this->sound_hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
-
-	this->clickCallBack = NULL;
-	this->callBackValue = NULL;
-	this->lua_callback = "";
 }
 
 /**\brief Constructs a button with a C++ callback.*/
 Button::Button( int x, int y, int w, int h, string label, void (*function)(void*), void* value) {
 	Initialize( x, y, w, h, label );
-	this->clickCallBack = function;
-	this->callBackValue = value;
+	RegisterAction( Action_MouseLUp, new ObjectAction(function, value) );
 }
 
 /**\brief Constructs a button with a Lua callback.*/
 Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	Initialize( x, y, w, h, label );
-	this->lua_callback = lua_code;
+	RegisterAction( Action_MouseLUp, new LuaAction(lua_code) );
 }
 
 Button::~Button() {
@@ -98,18 +93,6 @@ void Button::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
-void Button::Activate() {
-	if( clickCallBack ){
-		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack( callBackValue );
-	} else if("" != lua_callback){
-		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
-		Lua::Run(lua_callback);
-	} else {
-		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", this->name.c_str() );
-	}
-}
-
 /**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
 	if(OPTION(int, "options/sound/buttons")) this->sound_click->Play();
@@ -122,7 +105,7 @@ bool Button::MouseLDown( int xi, int yi ) {
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
 	bitmap_current = bitmap_mouseover;
-	Activate();
+	Activate(Action_MouseLUp);
 	return true;
 }
 

@@ -21,8 +21,6 @@ class Button : public Widget {
 		
 		void Draw( int relx = 0, int rely = 0 );
 
-		void Activate();
-
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
 		bool MouseLRelease( void );
@@ -38,10 +36,6 @@ class Button : public Widget {
 		void Initialize( int x, int y, int w, int h, string label);
 		Image *bitmap_current, *bitmap_normal, *bitmap_mouseover, *bitmap_pressed;
 		Sound *sound_click, *sound_hover;
-
-		string lua_callback;
-		void (*clickCallBack)(void*);
-		void *callBackValue;
 };
 
 #endif // __H_BUTTON__
