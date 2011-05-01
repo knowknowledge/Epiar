@@ -101,7 +101,10 @@ void Button::Draw( int relx, int rely ) {
 void Button::Activate() {
 	if( clickCallBack ){
 		LogMsg(INFO, "Clicked on: '%s'.", this->name.c_str() );
-		clickCallBack( callBackValue );
+		if( callBackValue )
+			clickCallBack( callBackValue );
+		else
+			clickCallBack();
 	} else if("" != lua_callback){
 		LogMsg(INFO,"Clicked on '%s'. Running '%s'", this->name.c_str(), (char *)lua_callback.c_str() );
 		Lua::Run(lua_callback);
