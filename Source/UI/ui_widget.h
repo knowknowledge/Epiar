@@ -11,6 +11,7 @@
 #define __H_UI_WIDGET__
 
 #include "includes.h"
+#include "UI/ui_action.h"
 
 /** \addtogroup UI
  * @{
@@ -39,7 +40,7 @@
 class Widget {
 	public:
 		Widget( void );
-		virtual ~Widget( void ) { };
+		virtual ~Widget( void );
 		
 		// Function to retrieve dimensions
 		virtual int GetX( void ){ return this->x; }
@@ -66,10 +67,37 @@ class Widget {
 
 		virtual xmlNodePtr ToNode();
 
+		enum action_type{
+			Action_MouseDrag,
+			Action_MouseMotion,
+			Action_MouseEnter,
+			Action_MouseLeave,
+			Action_MouseLUp,
+			Action_MouseLDown,
+			Action_MouseLRelease,
+			Action_MouseMUp,
+			Action_MouseMDown,
+			Action_MouseMRelease,
+			Action_MouseRUp,
+			Action_MouseRDown,
+			Action_MouseRRelease,
+			Action_MouseWUp,
+			Action_MouseWDown,
+			Action_KeyboardEnter,
+			Action_KeyboardLeave,
+			//Action_KeyPress
+			
+			Action_Last // Always the last action type
+		}; ///< Actions that can be registered.
+
+		virtual void RegisterAction( action_type type, Action* action );
+		virtual bool Activate( action_type type );
+
 		// Only allow Container to send events
 		friend class Container;
 
 	protected:
+
 		// Input events
 		virtual bool MouseDrag( int xi,int yi );
 		virtual bool MouseMotion( int xi, int yi );
@@ -99,6 +127,7 @@ class Widget {
 		int w, h;               ///< The Width and Height of this widget.
 		int dragX, dragY;		///< If dragging, this is the offset from (x,y) to the point of click for the drag
 		Widget* parent;         ///< This widget's parent.
+		Action *(actions[Action_Last]); ///< Array of potential Actions
 };
 
 #endif // __H_UI_WIDGET__

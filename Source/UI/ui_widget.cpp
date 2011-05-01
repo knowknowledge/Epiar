@@ -38,6 +38,19 @@ Widget::Widget( void ):
 	dragX( 0 ), dragY( 0 ),
 	parent( NULL )
 {
+	for( int i = 0; i < (int)Action_Last; i++ ){
+		actions[i] = NULL;
+	}
+}
+
+Widget::~Widget( void )
+{
+	// Delete all alocated Actions
+	for( int i = 0; i < (int)Action_Last; i++ ){
+		if( actions[i] == NULL ) {
+			delete actions[i];
+		}
+	}
 }
 
 void Widget::Draw( int relx, int rely ) {
@@ -94,15 +107,43 @@ bool Widget::Contains(int relx, int rely) {
 	return WITHIN_BOUNDS(relx, rely, x, y, w, h);
 }
 
+/**\brief Register an Action to an action_type
+ */
+void Widget::RegisterAction( action_type type, Action* action )
+{
+	assert(action != NULL);
+	assert( type < Action_Last );
+	if( actions[type] != NULL ) {
+		delete actions[type];
+	}
+	actions[type] = action;
+}
+
+/**\brief Activate an Action that has been registered to this Widget
+ */
+bool Widget::Activate( action_type type ) {
+	assert( type < Action_Last );
+	if( actions[type] != NULL ) {
+		// There is a registered Action of this type, so call it
+		(actions[type])->Activate();
+		return true;
+	}
+
+	// There is no registered Action of this type
+	return false;
+}
+
 /**\brief Widget is currently being dragged.
  */
 bool Widget::MouseDrag( int xi,int yi ){
+	Activate(Action_MouseDrag);
 	return true;
 }
 
 /**\brief Mouse is currently moving over the widget, without button down.
  */
 bool Widget::MouseMotion( int xi, int yi ){
+	Activate(Action_MouseMotion);
 	return true;
 }
 
@@ -110,6 +151,7 @@ bool Widget::MouseMotion( int xi, int yi ){
  */
 bool Widget::MouseEnter( int xi, int yi ){
 	hovering = true;
+	Activate(Action_MouseEnter);
 	LogMsg(INFO,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -118,6 +160,7 @@ bool Widget::MouseEnter( int xi, int yi ){
  */
 bool Widget::MouseLeave( void ){
 	hovering = false;
+	Activate(Action_MouseLeave);
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -125,6 +168,7 @@ bool Widget::MouseLeave( void ){
 /**\brief Generic mouse up function.
  */
 bool Widget::MouseLUp( int xi, int yi ){
+	Activate(Action_MouseLUp);
 	LogMsg(INFO,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -132,12 +176,14 @@ bool Widget::MouseLUp( int xi, int yi ){
 /**\brief Generic mouse down function.
  */
 bool Widget::MouseLDown( int xi, int yi ) {
+	Activate(Action_MouseLDown);
 	return true;
 }
 
 /**\brief Generic mouse release function.
  */
 bool Widget::MouseLRelease( void ){
+	Activate(Action_MouseLRelease);
 	LogMsg(INFO,"Left Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -145,6 +191,7 @@ bool Widget::MouseLRelease( void ){
 /**\brief Generic middle mouse up function.
  */
 bool Widget::MouseMUp( int xi, int yi ){
+	Activate(Action_MouseMUp);
 	LogMsg(INFO,"Mouse Middle up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -152,6 +199,7 @@ bool Widget::MouseMUp( int xi, int yi ){
 /**\brief Generic middle mouse down function.
  */
 bool Widget::MouseMDown( int xi, int yi ){
+	Activate(Action_MouseMDown);
 	LogMsg(INFO,"Mouse Middle down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -159,6 +207,7 @@ bool Widget::MouseMDown( int xi, int yi ){
 /**\brief Generic middle mouse release function.
  */
 bool Widget::MouseMRelease( void ){
+	Activate(Action_MouseMRelease);
 	LogMsg(INFO,"Middle Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -166,6 +215,7 @@ bool Widget::MouseMRelease( void ){
 /**\brief Generic right mouse up function.
  */
 bool Widget::MouseRUp( int xi, int yi ){
+	Activate(Action_MouseRUp);
 	LogMsg(INFO,"Mouse Right up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -173,6 +223,7 @@ bool Widget::MouseRUp( int xi, int yi ){
 /**\brief Generic right mouse down function.
  */
 bool Widget::MouseRDown( int xi, int yi ){
+	Activate(Action_MouseRDown);
 	LogMsg(INFO,"Mouse Right down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -180,6 +231,7 @@ bool Widget::MouseRDown( int xi, int yi ){
 /**\brief Generic right mouse release function.
  */
 bool Widget::MouseRRelease( void ){
+	Activate(Action_MouseRRelease);
 	LogMsg(INFO,"Right Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
@@ -187,6 +239,7 @@ bool Widget::MouseRRelease( void ){
 /**\brief Generic mouse wheel up function.
  */
 bool Widget::MouseWUp( int xi, int yi ){
+	Activate(Action_MouseWUp);
 	LogMsg(INFO,"Mouse Wheel up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return false;
 }
@@ -194,6 +247,7 @@ bool Widget::MouseWUp( int xi, int yi ){
 /**\brief Generic mouse wheel down function.
  */
 bool Widget::MouseWDown( int xi, int yi ){
+	Activate(Action_MouseWDown);
 	LogMsg(INFO,"Mouse Wheel down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return false;
 }
@@ -201,6 +255,7 @@ bool Widget::MouseWDown( int xi, int yi ){
 /**\brief Generic keyboard focus function.
  */
 bool Widget::KeyboardEnter( void ){
+	Activate(Action_KeyboardEnter);
 	LogMsg(INFO,"Keyboard enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	keyactivated = true;
 	return true;
@@ -209,6 +264,7 @@ bool Widget::KeyboardEnter( void ){
 /**\brief Generic keyboard unfocus function.
  */
 bool Widget::KeyboardLeave( void ){
+	Activate(Action_KeyboardLeave);
 	LogMsg(INFO,"Keyboard leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	keyactivated = false;
 	return true;
