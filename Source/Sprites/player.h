@@ -48,6 +48,10 @@ class Player : public Ship {
 		void RejectMission( string missionName );
 		list<Mission*>* GetMissions() { return &missions; }
 
+		// Favor Related Functions
+		int GetFavor( Alliance* alliance );
+		void UpdateFavor( string allianceName, int deltaFavor );
+
 		// Escort-related functions (needed for XML saving/loading)
 		void AddHiredEscort(string type, int pay, int spriteID);
 
@@ -59,7 +63,6 @@ class Player : public Ship {
 		Player& operator= (const Player&);
 		~Player();
 
-
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
 	private:
 		string name;
@@ -67,6 +70,7 @@ class Player : public Ship {
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
 		list<Mission*> missions;
+		map<Alliance*,int> favor;
 		string luaControlFunc;
 
 		// This list of hired escorts is only needed for XML saving/loading and doesn't control the game itself.

@@ -133,6 +133,37 @@ void Player::RejectMission( string missionName ) {
 	LogMsg(ERR, "Failed to find the Mission named %s.", missionName.c_str() );
 }
 
+/**\brief Get an Alliance's favor for a player
+ */
+int Player::GetFavor(Alliance* alliance ) {
+	map<Alliance*,int>::iterator finder = favor.find( alliance );
+	if( finder == favor.end() ) {
+		return 0;
+	}
+
+	return favor[alliance];
+}
+
+/**\brief Change an Alliance's favor for a player
+ * \param[in] allianceName The name of the Alliance
+ * \param[in] deltaFavor The change in favor.  This can be positive or negative.
+ */
+void Player::UpdateFavor( string allianceName, int deltaFavor ) {
+	Alliance *alliance = Alliances::Instance()->GetAlliance( allianceName );
+
+	if( NULL == alliance ) {
+		LogMsg(ERR, "Failed to find the Alliance named %s.", allianceName.c_str() );
+		return;
+	}
+
+	map<Alliance*,int>::iterator finder = favor.find( alliance );
+	if( finder == favor.end() ) {
+		// Initialize favor for this alliance
+		favor[alliance] = 0;
+	}
+	favor[alliance] += deltaFavor;
+}
+
 /**\brief set name of last planet visited
  */
 void Player::Land( lua_State *L, Planet* planet ){
@@ -297,6 +328,17 @@ bool Player::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 			missions.push_back( mission );
 		} else {
 			LogMsg(INFO, "Aborted loading mission of player '%s'", this->GetName().c_str() );
+		}
+	}
+
+	for( attr = FirstChildNamed(node,"favor"); attr!=NULL; attr = NextSiblingNamed(attr,"favor") ){
+		xmlNodePtr alliance = FirstChildNamed(attr,"alliance");
+		xmlNodePtr value = FirstChildNamed(attr,"value");
+		if(!alliance || !value)
+			return false;
+		if( NodeToInt(doc,value) > 0 )
+		{
+			UpdateFavor( NodeToString(doc,alliance), NodeToInt(doc,value) );
 		}
 	}
 
@@ -475,6 +517,20 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	list<Mission*>::iterator iter_mission;
 	for(iter_mission = missions.begin(); iter_mission != missions.end(); ++iter_mission){
 		xmlAddChild( section,  (*iter_mission)->ToXMLNode() );
+	}
+
+	// Favor
+	map<Alliance*,int>::iterator iter_favor;
+	for(iter_favor = favor.begin(); iter_favor!=favor.end(); ++iter_favor) {
+		if( !(*iter_favor).second )
+		{
+			continue; // Don't Save empty favor Nodes
+		}
+		snprintf(buff, sizeof(buff), "%d", (*iter_favor).second );
+		xmlNodePtr ammo = xmlNewNode(NULL, BAD_CAST "favor");
+		xmlNewChild(ammo, NULL, BAD_CAST "alliance", BAD_CAST ((*iter_favor).first)->GetName().c_str() );
+		xmlNewChild(ammo, NULL, BAD_CAST "value", BAD_CAST buff );
+		xmlAddChild(section, ammo);
 	}
 
 	// Hired escorts
