@@ -40,3 +40,17 @@ void ObjectAction::Activate()
 {
 	clickCallBack(object);
 }
+
+MessageAction::MessageAction(  void (*function)(void*,void*), void* obj, void* msg )
+{
+	clickCallBack = function;
+	object = obj;
+	message = msg;
+	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
+}
+
+void MessageAction::Activate()
+{
+	clickCallBack(object, message);
+	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
+}

@@ -42,5 +42,15 @@ class ObjectAction : public Action {
 		void *object;
 };
 
+class MessageAction : public Action {
+	public:
+		MessageAction( void (*function)(void*,void*), void* obj, void* msg );
+		void Activate();
+	private:
+		void (*clickCallBack)(void*,void*);
+		void *object;
+		void *message;
+};
+
 #endif // __H_ACTION__
 
