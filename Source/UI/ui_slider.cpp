@@ -90,6 +90,7 @@ void Slider::Draw( int relx, int rely ){
 /**\brief Slider mouse drag call back.
  */
 bool Slider::MouseDrag( int xi, int yi ){
+	Widget::MouseDrag( xi, yi );
 	this->SetVal(this->PixelToVal(xi - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call
@@ -104,8 +105,9 @@ bool Slider::MouseDrag( int xi, int yi ){
 
 /**\brief Slider mouse down call back.
  */
-bool Slider::MouseLDown( int wx, int wy ){
-	this->SetVal(this->PixelToVal(wx - GetX()));
+bool Slider::MouseLDown( int xi, int yi ){
+	Widget::MouseLDown( xi, yi );
+	this->SetVal(this->PixelToVal(xi - GetX()));
 	if( "" != this->lua_callback){
 		/// \todo This will be replaced with Lua::Call
 		std::ostringstream fullcmd;

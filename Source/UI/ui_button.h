@@ -21,17 +21,19 @@ class Button : public Widget {
 		
 		void Draw( int relx = 0, int rely = 0 );
 
+		void SetText(string text) { this->name = text; }
+		string GetText() { return this->name; }
+
+		virtual string GetType( void ) {return string("Button");}
+		virtual int GetMask( void ) { return WIDGET_BUTTON; }
+
+	protected:
 		bool MouseLDown( int xi, int yi );
 		bool MouseLUp( int xi, int yi );
 		bool MouseLRelease( void );
 		bool MouseEnter( int xi, int yi );
 		bool MouseLeave( void );
 
-		void SetText(string text) { this->name = text; }
-		string GetText() { return this->name; }
-
-		virtual string GetType( void ) {return string("Button");}
-		virtual int GetMask( void ) { return WIDGET_BUTTON; }
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
 		Image *bitmap_current, *bitmap_normal, *bitmap_mouseover, *bitmap_pressed;

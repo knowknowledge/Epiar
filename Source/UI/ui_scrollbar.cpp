@@ -97,6 +97,7 @@ void Scrollbar::Draw( int relx, int rely ){
 /**\brief Scroll to position on mouse down.
  */
 bool Scrollbar::MouseLDown( int x, int y ){
+	Widget::MouseLDown( x, y );
 	// Relative coordinate - to current widget
 	int xr = x - GetX();
 	int yr = y - GetY();
@@ -121,6 +122,7 @@ bool Scrollbar::MouseLDown( int x, int y ){
 /**\brief Scroll to position on mouse motion.
  */
 bool Scrollbar::MouseDrag( int xi, int yi ){
+	Widget::MouseDrag( xi, yi );
 	// Relative coordinate - to current widget
 	int xr = xi - GetX();
 	int yr = yi - GetY();

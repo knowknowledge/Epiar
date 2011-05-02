@@ -95,21 +95,21 @@ void Button::Draw( int relx, int rely ) {
 
 /**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
+	Widget::MouseLDown( xi, yi );
 	if(OPTION(int, "options/sound/buttons")) this->sound_click->Play();
-
 	bitmap_current = bitmap_pressed;
-
 	return true;
 }
 
 /**\brief When left mouse is back up on the button.*/
 bool Button::MouseLUp( int xi, int yi ) {
+	Widget::MouseLUp( xi, yi );
 	bitmap_current = bitmap_mouseover;
-	Activate(Action_MouseLUp);
 	return true;
 }
 
 bool Button::MouseLRelease( void ){
+	Widget::MouseLRelease();
 	bitmap_current = bitmap_normal;
 	return true;
 }
@@ -117,6 +117,7 @@ bool Button::MouseLRelease( void ){
 /**\brief Event is triggered on mouse enter.
  */
 bool Button::MouseEnter( int xi, int yi ){
+	Widget::MouseEnter( xi, yi );
 	bitmap_current = bitmap_mouseover;
 	hovering = true;
 	LogMsg(INFO,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
@@ -126,6 +127,7 @@ bool Button::MouseEnter( int xi, int yi ){
 /**\brief Event is triggered on mouse leave.
  */
 bool Button::MouseLeave( void ){
+	Widget::MouseLeave();
 	bitmap_current = bitmap_normal;
 	hovering = false;
 	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );

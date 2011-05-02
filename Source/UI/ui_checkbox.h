@@ -21,9 +21,12 @@ class Checkbox : public Widget {
 		bool IsChecked() {return checked;}
 		void Set(bool val) {checked = val;}
 	
-		bool MouseLUp( int xi, int yi );
 		string GetType( void ) { return string("Checkbox"); }
 		virtual int GetMask( void ) { return WIDGET_CHECKBOX; }
+
+	protected:
+		bool MouseLUp( int xi, int yi );
+
 	private:
 		string label;
 		bool checked;

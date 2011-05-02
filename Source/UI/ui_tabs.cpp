@@ -190,6 +190,7 @@ bool Tabs::MouseLDown( int x, int y ) {
 
 	if ( yr < TAB_HEADER ){
 		activetab = this->CheckTabClicked( xr, yr );
+		Widget::MouseLDown( x, y );
 		return true;
 	}
 	return Container::MouseLDown( x, y );

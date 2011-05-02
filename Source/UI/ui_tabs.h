@@ -42,12 +42,15 @@ class Tabs : public Container {
 		Widget *DetermineMouseFocus( int relx, int rely );
 
 		void Draw( int relx = 0, int rely = 0 );
-		bool MouseLDown( int xi, int yi );
 		string GetType( void ) { return string("Tabs"); }
 		virtual int GetMask( void ) { return WIDGET_TABS | WIDGET_CONTAINER; }
 
 		void TabNext( void );
 		Tab* GetActiveTab() { return activetab; }
+
+	protected:
+		bool MouseLDown( int xi, int yi );
+
 	private:
 		Tab* CheckTabClicked( int xr, int yr );
 		Tab* activetab;

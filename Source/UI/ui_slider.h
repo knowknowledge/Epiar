@@ -16,20 +16,20 @@ class Slider : public Widget {
 			float value = 0.5f,
 			const string& callback= "");
 
-
 		float GetVal( void ){ return this->val;};
 		float GetMin( void ){ return this->minval;};
 		float GetMax( void ){ return this->maxval;};
 
 		void Draw( int relx=0, int rely = 0 );
 
-		bool MouseDrag( int xi, int yi );
-		bool MouseLDown( int xi, int yi );
-
 		string GetType( void ) {return string("Slider"); }
 		virtual int GetMask( void ) { return WIDGET_SLIDER; }
 
 		void SetVal( float value );
+
+	protected:
+		bool MouseDrag( int xi, int yi );
+		bool MouseLDown( int xi, int yi );
 
 	private:
 		// Utility functions to convert between pixel and values

@@ -54,5 +54,6 @@ void Checkbox::Draw( int relx, int rely ) {
 bool Checkbox::MouseLUp( int xi, int yi ) {
 	if(checked) checked = false;
 	else checked = true;
+	Widget::MouseLUp( xi, yi );
 	return true;
 }
