@@ -807,7 +807,7 @@ Player* Players::LoadLast() {
 	PlayerInfo* latest = NULL;
 
 	if( names->empty() ){
-		return false;
+		return NULL;
 	}
 
 	for(i = names->begin(); i != names->end(); ++i ) {
@@ -817,7 +817,7 @@ Player* Players::LoadLast() {
 	}
 
 	if( latest == NULL ) {
-		return false;
+		return NULL;
 	}
 	return LoadPlayer( latest->GetName() );
 }
