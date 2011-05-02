@@ -43,6 +43,14 @@ void CloseLoadGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
 	UI::Close( newGameWnd );
 }
+void ChangePicture( void* picture, void* image) {
+	((Picture*)picture)->Set( (Image*)image );
+}
+void SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
+	Picture* pic = ((Picture*)picture);
+	pic->RegisterAction( Widget::Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
+	pic->RegisterAction( Widget::Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
+}
 
 /** Epiar's Main Menu
  *
@@ -100,17 +108,53 @@ void Main_Menu( void ) {
 
 			// Create UI
 			if( availableMenus & Menu_New )
-				UI::Add( (new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) ) );
+			{
+				Picture *pic = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
+				UI::Add( pic );
+			}
 			if( (availableMenus & Menu_Load) && (players->Size() > 0) )
-				UI::Add( (new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load) ) );
+			{
+				Picture *pic = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
+				UI::Add( pic );
+			}
 			if( availableMenus & Menu_Continue )
-				UI::Add( (new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue) ) );
+			{
+				Picture *pic = new Picture(button_x, 200, "Resources/Graphics/txt_continue_game_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_continue_game_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_continue_game_inactive.png") );
+				UI::Add( pic );
+			}
 			if( availableMenus & Menu_Editor )
-				UI::Add( (new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor) ) );
+			{
+				Picture *pic = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_editor_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
+				UI::Add( pic );
+			}
 			if( availableMenus & Menu_Options )
-				UI::Add( (new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options) ) );
+			{
+				Picture *pic = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_options_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_options_inactive.png") );
+				UI::Add( pic );
+			}
 			if( availableMenus & Menu_Exit )
-				UI::Add( (new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png")) ->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit) ) );
+			{
+				Picture *pic = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
+				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit ) );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_exit_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
+				UI::Add( pic );
+			}
 
 			screenNeedsReset = false;
 		}
