@@ -43,6 +43,10 @@ void CloseLoadGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
 	UI::Close( newGameWnd );
 }
+void CloseEditorUI( void* value ) {
+	Widget *editorWnd = UI::Search("/Window'Editor'/");
+	UI::Close( editorWnd );
+}
 void ChangePicture( void* picture, void* image) {
 	((Picture*)picture)->Set( (Image*)image );
 }
@@ -316,7 +320,8 @@ void Main_Menu( void ) {
 				char seed[20];
 				snprintf(seed, sizeof(seed), "%d", rand() );
 
-				UI::Add( (new Window(200, 200, 250, 300, "Editor"))
+				Window *editorWnd = NULL;
+				UI::Add( editorWnd = (new Window(200, 200, 250, 300, "Editor"))
 					->AddChild( (new Tabs( 10, 40, 230, 210, "EDIT TABS"))
 						->AddChild( (new Tab( "Edit" ))
 							->AddChild( (new Label(15, 15, "Pick the Simulation to Edit:")) )
@@ -331,8 +336,9 @@ void Main_Menu( void ) {
 							->AddChild( (new Textbox(50, 120, 80, 1, seed, "Random Universe Seed")) )
 						)
 					)
-					->AddChild( (new Button(140, 260, 100, 30, "Edit", setMenuOption, &menu_Confirm_Editor )) )
 				);
+				editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", setMenuOption, &menu_Confirm_Editor ) );
+				editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &CloseEditorUI, NULL ) );
 				
 				break;
 			}
