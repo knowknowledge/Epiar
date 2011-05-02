@@ -511,4 +511,5 @@ some malfunction (e.g. missing a gate), you may need to recompute your route.]],
 	frame:add(destLabel, APConfigCompute)
 	-- note: add dropdown to the window but on top of the frame so it is not clipped
 	Autopilot.ConfigDialog:add(instructionsLabel, frame, Autopilot.ConfigDest)
+	Autopilot.ConfigDialog:addCloseButton()
 end

@@ -41,6 +41,8 @@ Window::Window( int x, int y, int w, int h, string caption ):
 	bitmaps[6] = Image::Get( "Resources/Skin/ui_wnd_low.png" );
 	bitmaps[7] = Image::Get( "Resources/Skin/ui_wnd_low_right.png" );
 	bitmaps[8] = Image::Get( "Resources/Skin/ui_wnd_back.png" );
+
+	closeButton = NULL;
 }
 
 Window::~Window() {
@@ -53,6 +55,7 @@ Window::~Window() {
 	bitmaps[6] = NULL;
 	bitmaps[7] = NULL;
 	bitmaps[8] = NULL;
+	closeButton = NULL; // Let the Container Destructor delete the button
 }
 
 /**\brief Adds a widget to the current Window.
@@ -114,6 +117,16 @@ bool Window::MouseDrag( int x, int y ){
 bool Window::SetDragability( bool _draggable ){
 	draggable = _draggable;
 	return true;
+}
+
+void Window::CloseWindow( void* win)
+{
+	UI::Close((Window*)win);
+}
+
+void Window::AddCloseButton() {
+	closeButton = new Button( this->GetW() - 40, 5, 20, 20, "X", Window::CloseWindow, this );
+	AddChild( closeButton );
 }
 
 /** @} */

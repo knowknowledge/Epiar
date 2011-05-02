@@ -155,6 +155,7 @@ void Main_Menu( void ) {
 				);
 				win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
 				win->AddChild( (new Button(140, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
+				win->AddCloseButton();
 
 				break;
 			}
@@ -179,6 +180,7 @@ void Main_Menu( void ) {
 					);
 				}
 				win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
+				win->AddCloseButton();
 				break;
 			}
 

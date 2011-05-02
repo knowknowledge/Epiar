@@ -123,7 +123,7 @@ function componentViewer(kind, listFunc)
 		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
 	end
 	componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
-	componentWins[kind]:add( UI.newButton(115,5,15,15,"X", string.format("componentWins[%q]:close();componentWins[%q]=nil",kind,kind)))
+	componentWins[kind]:addCloseButton()
 end
 
 function showComponent(kind, name)
@@ -258,7 +258,7 @@ function showComponent(kind, name)
 	end
 	
 	theWin:add( UI.newButton( 80,yoff+20,100,30,"Save", string.format("saveInfo(%q)",name )) )
-	theWin:add( UI.newButton(width-25,5,15,15,"X", string.format("UI.search('/Window%q/'):close()",windowName)))
+	theWin:addCloseButton()
 	infoWindows[name] = {kind=kind,win=theWin, info=theInfo, texts=theFields,pics=thePics, weapontables=theWeaponTables}
 end
 
@@ -354,7 +354,7 @@ function technologyViewer()
 		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo(%q)",name)))
 	end
 	technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
-	technologiesWindow:add( UI.newButton(115,5,15,15,"X","technologiesWindow:close();technologiesWindow=nil"))
+	technologiesWindow:addCloseButton()
 end
 
 --- Save technology
@@ -428,7 +428,7 @@ function showTechInfo(name)
 	showTable("Engines",allengines)
 	showTable("Outfits",alloutfits)
 	infoWindows[name] = {kind='Technology',win=theWin,name=nameField,boxes=checkedTechs}
-	theWin:add( UI.newButton(width-25,5,15,15,"X",string.format("infoWindows[%q].win:close();infoWindows[%q]=nil",name,name)))
+	theWin:addCloseButton()
 	theWin:add(UI.newButton(width-120,height-40,100,30,"Save", string.format("saveTech(%q)",name) ))
 end
 
@@ -580,7 +580,7 @@ function EditWeaponSlots(name, title)
 	SlotEditor = {}
 	if UI.search( "/Window'Edit Weapon Slots'/" ) ~= nil then return end
 	editWeaponSlotsWin = UI.newWindow(200,200,800,500, "Edit Weapon Slots")
-	editWeaponSlotsWin:add( UI.newButton(5,5,15,15,"X","editWeaponSlotsWin:close();editWeaponSlotsWin=nil"))
+	editWeaponSlotsWin:addCloseButton()
 
 	-- Grab the table
 	local tab = infoWindows[name].weapontables[title]

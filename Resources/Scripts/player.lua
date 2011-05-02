@@ -100,7 +100,7 @@ function powerManagement()
 	shieldLabel = UI.newLabel(105, 80,"Shield Strength",0)
 	
 	powerManagementWindow:add(powerSlider, powerLabel, engineSlider, engineLabel, shieldSlider, shieldLabel)
-	
+	powerManagementWindow:addCloseButton()
 end
 
 function equlizePowerManagement()
@@ -874,7 +874,7 @@ function playerInformation()
 	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
-			missionTab:add( UI.newButton( 6, y, width-40, 30, "["..key.."] "..mission.Name, string.format("ShowMissionDescription(%q,%q)", mission.Name, mission.Description ) ) )
+			missionTab:add( UI.newButton( 6, y, width-40, 30, mission.Name, string.format("ShowMissionDescription(%q,%q)", mission.Name, mission.Description ) ) )
 			y = y + 30
 		end
 	else
@@ -882,6 +882,7 @@ function playerInformation()
 	end
 
 	infoWin:add( infoTabs )
+	infoWin:addCloseButton()
 	infoTabs:add( outfitTab, missionTab )
 
 end
@@ -899,6 +900,7 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	descriptionLabel = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 45, true ) .. " " )
 	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
 	descriptionWindow:add( descriptionLabel, rejectButton )
+	descriptionWindow:addCloseButton()
 end
 
 -- This function is called from player.cpp to load escorts from XML.

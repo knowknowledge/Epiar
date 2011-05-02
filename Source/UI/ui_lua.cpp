@@ -65,6 +65,9 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"add", &UI_Lua::add},
 		{"setFormButton", &UI_Lua::setFormButton},
 
+		// Window Modification
+		{"addCloseButton", &UI_Lua::AddCloseButton},
+
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
@@ -878,5 +881,16 @@ int UI_Lua::AddOption(lua_State *L){
 	}
 
 	return 0;
+}
+
+int UI_Lua::AddCloseButton(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected at least 1 (self Window)", n);
+
+	Widget *widget = checkWidget(L, 1);
+	luaL_argcheck(L, widget->GetMask() & WIDGET_WINDOW, 1, "`Window' expected.");
+	Window *window = (Window*)widget;
+	window->AddCloseButton();
 }
 

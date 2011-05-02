@@ -21,14 +21,18 @@ class Window : public Container {
 	
 		bool MouseDrag( int x, int y );
 		bool SetDragability( bool _draggable );
+		void AddCloseButton();
+		bool HasCloseButton() { return closeButton != NULL; }
 
 		string GetType( void ) { return string("Window"); }
 		virtual int GetMask( void ) { return WIDGET_WINDOW | WIDGET_CONTAINER; }
 
 	private:
 		bool draggable;
+		static void CloseWindow( void* win);
 
 		Image *bitmaps[9];
+		Button *closeButton;
 };
 
 #endif // __H_WINDOW__

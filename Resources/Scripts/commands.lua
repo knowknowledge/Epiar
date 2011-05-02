@@ -74,4 +74,5 @@ function keyhelp()
 		off_y = off_y + 20
 		keyhelpwin:add( UI.newLabel(off_x,off_y,"- "..k) )
 	end
+	keyhelpwin:addCloseButton()
 end
