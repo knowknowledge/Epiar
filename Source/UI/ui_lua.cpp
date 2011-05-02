@@ -892,5 +892,7 @@ int UI_Lua::AddCloseButton(lua_State *L) {
 	luaL_argcheck(L, widget->GetMask() & WIDGET_WINDOW, 1, "`Window' expected.");
 	Window *window = (Window*)widget;
 	window->AddCloseButton();
+
+	return 0;
 }
 
