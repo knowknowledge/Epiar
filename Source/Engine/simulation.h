@@ -70,6 +70,8 @@ class Simulation : public XMLFile {
 		void SetName( string _name ) { name = _name; }
 		void SetDescription( string _desc ) { description = _desc; }
 
+		void SetQuit( bool val ) { quit = val; }
+
 	private:
 		bool Parse( void );
 
@@ -101,6 +103,7 @@ class Simulation : public XMLFile {
 		float currentFPS;
 		bool paused;
 		bool loaded;
+		bool quit;
 };
 
 #endif // __H_SIMULATION__

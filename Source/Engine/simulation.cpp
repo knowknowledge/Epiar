@@ -61,6 +61,7 @@ Simulation::Simulation( void ) {
 	currentFPS = 0.;
 	paused = false;
 	loaded = false;
+	quit = false;
 }
 
 bool Simulation::New( string newname ) {
@@ -204,15 +205,23 @@ bool Simulation::SetupToRun(){
 	return true;
 }
 
+/**\brief Callback for Death dialog UI
+ * \return void
+ */
+void uiConfirmDeath(void *simulationInstance) {
+	((Simulation *)simulationInstance)->SetQuit(true);
+}
+
 /**\brief Main game loop
  * \return true
  */
 bool Simulation::Run() {
-	bool quit = false;
 	int fpsCount = 0; // for FPS calculations
 	int fpsTotal= 0; // for FPS calculations
 	Uint32 fpsTS = 0; // timestamp of last FPS printing
 	fpsTS = Timer::GetTicks();
+
+	quit = false;
 
 	LogMsg(INFO, "Simulation Started");
 	Hud::Init();
@@ -235,7 +244,8 @@ bool Simulation::Run() {
 	bool lowFps = false;
 	int lowFpsFrameCount = 0;
 	while( !quit ) {
-		quit = HandleInput();
+		if(HandleInput()) quit = true; // do not say quit = quit || HandleInput() -- ui cb is _in_ HandleInput()
+
 //_ASSERTE(_CrtCheckMemory());
 		//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
 		//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
@@ -295,12 +305,11 @@ bool Simulation::Run() {
 				quit = true;
 			}
 
-
-				/**************************
-				 * Low FPS calculation
-				 *  - if fps goes below 15, set lowFps to true for 600 logical frames
-				 *  - after 600 frames, either turn it off or leave it on for another 600
-				 **************************/
+			/**************************
+			 * Low FPS calculation
+			 *  - if fps goes below 15, set lowFps to true for 600 logical frames
+			 *  - after 600 frames, either turn it off or leave it on for another 600
+			 **************************/
 			if (lowFps)
 			{
 				if (lowFpsFrameCount <= 0)
@@ -328,6 +337,18 @@ bool Simulation::Run() {
 			if( OPTION(int, "options/log/sprites") )
 			{
 				sprites->Save();
+			}
+
+			// Check to see if the player is dead
+			if( Player::Instance()->GetHullIntegrityPct() <= 0 ) {
+				if( UI::Search("/Window'Death'/") == NULL ) {
+					Window* win = new Window(300, 250, 250, 140, "Death");
+					UI::Add( win );
+
+					// Player Name
+					win->AddChild( (new Label(80, 30, "You have died.")) )
+						->AddChild( (new Button(70, 85, 100, 30, "Drat!", &uiConfirmDeath, this)) );
+				}
 			}
 		}
 	}
@@ -385,7 +406,8 @@ bool Simulation::SetupToEdit() {
 }
 
 bool Simulation::Edit() {
-	bool quit = false;
+	quit = false;
+
 	// Generate a starfield
 	Starfield starfield( OPTION(int, "options/simulation/starfield-density") );
 
@@ -394,7 +416,7 @@ bool Simulation::Edit() {
 	Lua::Call("componentDebugger");
 
 	while( !quit ) {
-		quit = HandleInput();
+		if(HandleInput()) quit = true;
 
 		Timer::Update();
 		starfield.Update( camera );
