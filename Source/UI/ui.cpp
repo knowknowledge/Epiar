@@ -116,7 +116,9 @@ void UI::Draw( void ) {
 		draw_location now_draw = deferred.front();
 		deferred.pop_front();
 
-		now_draw.widget->Draw( now_draw.x, now_draw.y );
+		// FIXME: Do we need the 'if'? Why is the widget being freed?
+		if( IsAttached(now_draw.widget) )
+			now_draw.widget->Draw( now_draw.x, now_draw.y );
 
 		// Some widget is broken and refuses to be Drawn.
 		// TODO: This could detect and print a warning instead of asserting.
