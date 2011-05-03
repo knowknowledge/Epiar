@@ -28,7 +28,7 @@
 
 Container *UI::currentScreen = NULL;
 map<string,Container*> UI::screens;
-int UI::zlayer;
+int UI::zlayer = 0;
 list<UI::draw_location> UI::deferred;
 
 /**\brief This is the default UI Font.
@@ -83,6 +83,7 @@ Widget *UI::Add( Widget *widget ) {
 void UI::CloseAll( void ) {
 	LogMsg(INFO, "Closing all Widgets." );
 	UI::currentScreen->Empty();
+	UI::deferred.clear();
 }
 
 /**\brief This removes a single widget.
@@ -103,11 +104,15 @@ void UI::Defer( Widget* widget, int x, int y ) {
 	deferred.push_back( location );
 }
 
-/**\brief Drawing function.
+/**\brief Called to flush the Deferred drawwing list
+ * \details Some Widgets should not be drawn "within" their container Widgets,
+ * but should instead be drawn above them.
+ * \warn This is code is not reentrant.
  */
-void UI::Draw( void ) {
+void UI::DrawDeferred( void ) {
+	// Ensure that the zlayer has been correctly reset
+	assert(zlayer == 0);
 	zlayer = 0;
-	UI::currentScreen->Draw( );
 
 	// Draw the Deferred Widgets
 	list<draw_location>::iterator iter = deferred.begin();
@@ -116,13 +121,26 @@ void UI::Draw( void ) {
 		draw_location now_draw = deferred.front();
 		deferred.pop_front();
 
-		now_draw.widget->Draw( now_draw.x, now_draw.y );
+		if( IsAttached(now_draw.widget) ) {
+			now_draw.widget->Draw( now_draw.x, now_draw.y );
+		}
 
 		// Some widget is broken and refuses to be Drawn.
 		// TODO: This could detect and print a warning instead of asserting.
 		assert( zlayer < 1000 );
 	}
+
 	zlayer = 0;
+	assert( deferred.empty() );
+}
+
+/**\brief Drawing function.
+ * 
+ */
+void UI::Draw( void ) {
+	assert( deferred.empty() );
+	UI::currentScreen->Draw();
+	UI::DrawDeferred();
 }
 
 /**\brief Search the UI for a Widget
@@ -219,11 +237,13 @@ void UI::SwapScreens(string newname, Image* oldBackground, Image* newBackground 
 			Image::Get("Resources/Art/logo.png")->Draw(newX + Video::GetWidth() - 240, Video::GetHeight() - 120 );
 			oldScreen->SetX( oldX );
 			oldScreen->Draw( );
+			DrawDeferred();
 
 			newBackground->DrawStretch( newX, 0, OPTION( int, "options/video/w" ), OPTION( int, "options/video/h"));
 			Image::Get("Resources/Art/logo.png")->Draw(newX + Video::GetWidth() - 240, Video::GetHeight() - 120 );
 			newScreen->SetX( newX );
 			newScreen->Draw( );
+			DrawDeferred();
 			
 			Video::Update();
 			Timer::Delay(10);

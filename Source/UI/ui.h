@@ -59,6 +59,7 @@ class UI {
 		static Font* font;
 
 		static void Defer( Widget*, int x, int y );
+		static void DrawDeferred( void );
 		static int GetZLayer() { return zlayer; }
 		
 	private:
