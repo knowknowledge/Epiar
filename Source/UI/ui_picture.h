@@ -19,8 +19,12 @@ class Picture: public Widget {
 		Picture( int x, int y, int w, int h, string filename );
 		Picture( int x, int y, int w, int h, Image *pic );
 		Picture( int w, int h, string filename );
+		Picture( int x, int y, Image *pic );
+
 		void Draw( int relx, int rely );
+
 		void Rotate( double angle );
+
 		void Set( Image *img );
 		void Set( string filename );
 		void SetColor( float r, float g, float b, float a );

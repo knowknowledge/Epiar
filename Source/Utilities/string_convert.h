@@ -21,7 +21,7 @@ template<typename T> inline std::string stringify( const T& x ) {
 
 	if (!(o << x)) {
 		std::cout << std::string("stringify(") << typeid(x).name() << ")";
-		return;
+		return "";
 	}
 		
 	return o.str();
@@ -33,7 +33,6 @@ template<typename T> inline void convert(const std::string& s, T& x, bool failIf
 
 	if( !( i >> x ) || ( failIfLeftoverChars && i.get( c ) ) ) {
 		std::cout << "ERROR Could not convert the value:" << s << std::endl;
-		return;
 	}
 }
 

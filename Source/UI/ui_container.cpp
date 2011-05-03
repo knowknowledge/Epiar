@@ -344,7 +344,7 @@ Widget *Container::Search( string full_query ) {
 				{
 					bool found = false;
 					int ind = 0;
-					if( 0 == (current->GetMask()) & WIDGET_CONTAINER ) {
+					if( 0 == (current->GetMask() & WIDGET_CONTAINER) ) {
 						LogMsg(ERR, "Malformed Query %s '/' token on non-container 0x%08X", full_query.c_str());
 						return NULL;
 					}
@@ -614,6 +614,8 @@ bool Container::MouseMotion( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
+	Widget::MouseMotion(xi,yi);
+
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if ( this->lmouseDown ){
@@ -658,6 +660,8 @@ bool Container::MouseLUp( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
+	Widget::MouseLUp(xi,yi);
+
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
 	if( this->lmouseDown ){
@@ -684,6 +688,8 @@ bool Container::MouseLDown( int xi, int yi ) {
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
+
+	Widget::MouseLDown( xi, yi );
 
 	// update drag coordinates in case this is draggable
 	dragX = xr;
@@ -727,6 +733,8 @@ bool Container::MouseLDown( int xi, int yi ) {
  * the mouse on a different widget.
  */
 bool Container::MouseLRelease( void ){
+	Widget::MouseLRelease();
+
 	// Pass event onto children if needed
 	if( this->lmouseDown )
 		return this->lmouseDown->MouseLRelease();
@@ -741,6 +749,8 @@ bool Container::MouseMUp( int xi, int yi ){
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
+
+	Widget::MouseMUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
@@ -766,6 +776,8 @@ bool Container::MouseMDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
+	Widget::MouseMDown( xi, yi );
+
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->mmouseDown=event_on;
@@ -780,6 +792,8 @@ bool Container::MouseMDown( int xi, int yi ){
  * the mouse on a different widget.
  */
 bool Container::MouseMRelease( void ){
+	Widget::MouseMRelease();
+
 	// Pass event onto children if needed
 	if( this->mmouseDown )
 		return this->mmouseDown->MouseMRelease();
@@ -794,6 +808,8 @@ bool Container::MouseRUp( int xi, int yi ){
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
+
+	Widget::MouseRUp( xi, yi);
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
@@ -819,6 +835,8 @@ bool Container::MouseRDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
+	Widget::MouseRDown( xi, yi );
+
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
 		this->rmouseDown=event_on;
@@ -833,6 +851,8 @@ bool Container::MouseRDown( int xi, int yi ){
  * the mouse on a different widget.
  */
 bool Container::MouseRRelease( void ){
+	Widget::MouseRRelease();
+
 	// Pass event onto children if needed
 	if( this->rmouseDown )
 		return this->rmouseDown->MouseRRelease();
@@ -847,6 +867,8 @@ bool Container::MouseWUp( int xi, int yi ){
 	int xr = xi - this->x;
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
+
+	Widget::MouseWUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWUp( xr,yr + yoffset ) ) {
@@ -868,6 +890,8 @@ bool Container::MouseWDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
+	Widget::MouseWDown( xi, yi );
+
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWDown( xr,yr + yoffset ) ) {
 		return true;
@@ -883,6 +907,7 @@ bool Container::MouseWDown( int xi, int yi ){
 /**\brief Generic keyboard focus function.
  */
 bool Container::KeyboardEnter( void ){
+	Widget::KeyboardEnter();
 	this->keyactivated=true;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardEnter();
@@ -893,6 +918,7 @@ bool Container::KeyboardEnter( void ){
 /**\brief Generic keyboard unfocus function.
  */
 bool Container::KeyboardLeave( void ){
+	Widget::KeyboardLeave();
 	this->keyactivated=false;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardLeave();

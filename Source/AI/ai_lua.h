@@ -90,6 +90,8 @@ class AI_Lua{
 		static int ShipSetHullDamage(lua_State* L);
 		static int SetTarget(lua_State* L);
 		static int PlayerAddHiredEscort(lua_State *L);
+		static int ShipUpdateFavor(lua_State* L);
+		static int ShipGetFavor(lua_State* L);
 	
 		// Weapon slot related functions
 		static int ShipGetWeaponSlotCount(lua_State* L);

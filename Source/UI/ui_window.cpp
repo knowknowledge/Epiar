@@ -98,18 +98,16 @@ void Window::Draw( int relx, int rely ) {
 	Container::Draw(relx,rely);
 }
 
-bool Window::MouseDrag( int x, int y ){
-	
-		int dx=this->dragX;
-		int dy=this->dragY;
-		// Only drag by titlebar
-		if ( dy < bitmaps[1]->GetHeight() && draggable == true ) {
-			this->x= x - dx;
-			this->y=y - dy;
-		} else {
+bool Window::MouseDrag( int xi, int yi ){
+	// Only drag by titlebar
+	if ( dragY < bitmaps[1]->GetHeight() && draggable == true ) {
+		Widget::MouseDrag( xi, yi );
+		x = xi - dragX;
+		y = yi - dragY;
+	} else {
 		// Pass the event onto widget if not handling it.
-			Container::MouseDrag( x, y );
-		}
+		Container::MouseDrag( x, y );
+	}
 	
 	return true;
 }

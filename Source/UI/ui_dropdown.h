@@ -21,11 +21,6 @@ class Dropdown : public Widget {
 		Dropdown* AddOption( string option );
 		Dropdown* AddOptions( list<string> options );
 
-		bool MouseLDown( int xi, int yi );
-		bool MouseLUp( int xi, int yi );
-		bool MouseLeave( void );
-		bool MouseMotion( int xi, int yi );
-
 		void Draw( int relx = 0, int rely = 0 );
 	
 		virtual string GetType( void ) { return string("Dropdown"); }
@@ -33,6 +28,12 @@ class Dropdown : public Widget {
 
 		string GetText() { return options[selected]; }
 		bool SetText(string text);
+
+	protected:
+		bool MouseMotion( int xi, int yi );
+		bool MouseLUp( int xi, int yi );
+		bool MouseLDown( int xi, int yi );
+		bool MouseLeave( void );
 
 	private:
 		void open();

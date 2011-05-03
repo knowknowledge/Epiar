@@ -90,6 +90,10 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetFriendly", &AI_Lua::ShipSetFriendly},
 		{"GetFriendly", &AI_Lua::ShipGetFriendly},
 
+		// Favor State
+		{"GetFavor", &AI_Lua::ShipGetFavor},
+		{"UpdateFavor", &AI_Lua::ShipUpdateFavor},
+
 		// General State
 		{"GetModelName", &AI_Lua::ShipGetModelName},
 		{"GetEngine", &AI_Lua::ShipGetEngine},
@@ -1608,6 +1612,7 @@ int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
 	return 0;
 }
 
+
 /**\brief Lua callable function to set the player's Lua control function
  */
 int AI_Lua::ShipLand(lua_State* L){
@@ -1649,3 +1654,71 @@ int AI_Lua::PlayerAddHiredEscort(lua_State* L){
         return 0;
 }
 
+/**\brief Lua callable function to Store a number of Commodities on this ship
+ * \sa Player::UpdateFavor()
+ */
+int AI_Lua::ShipUpdateFavor(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 3) {
+		return luaL_error(L, "Got %d arguments expected 2 (ship, allianceName, value)", n);
+	}
+
+	// Get the Inputs
+	Player* player = (Player*)AI_Lua::checkShip(L,1);
+	if( player == NULL ) return 0;
+	if( player->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+		return luaL_error(L, "Only Players may update their favor");
+	}
+	string allianceName = luaL_checkstring (L, 2);
+	int value = luaL_checkint (L, 3);
+
+	LogMsg(INFO, "Updating %s Favor by %d.", allianceName.c_str());
+
+	// Check Inputs
+	if(player==NULL) { return 0; }
+	Alliance *alliance = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetAlliances()->GetAlliance( allianceName );
+	luaL_argcheck(L, alliance != NULL, 2, string("There is no alliance named `" + allianceName + "'").c_str());
+
+	// Update the favor
+	player->UpdateFavor( allianceName, value );
+	return 0;
+}
+
+/**\brief Lua callable function to get the player's favor
+ * \sa Ship::getCargo()
+ */
+int AI_Lua::ShipGetFavor(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+
+	if ((n < 1) || (n>2))
+		luaL_error(L, "Got %d arguments expected 1 (player) or 2 (player, allianceName)", n);
+
+	// Get the Inputs
+	Player* player = (Player*)AI_Lua::checkShip(L,1);
+	if( player == NULL ) return 0;
+	if( player->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
+		return luaL_error(L, "Only Players have favor");
+	}
+
+	if( n == 2 ) {
+		// Return the Favor of this Alliance
+		string allianceName = luaL_checkstring (L, 2);
+		Alliance *alliance = Simulation_Lua::GetSimulation(L)->GetAlliances()->GetAlliance( allianceName );
+		luaL_argcheck(L, alliance != NULL, 2, string("There is no alliance named `" + allianceName + "'").c_str());
+
+		lua_pushinteger(L, player->GetFavor(alliance) ); // Value
+		return 1;
+	} else {
+		// Return table of favor values keyed by alliance name.
+		Alliances *alliances = Simulation_Lua::GetSimulation(L)->GetAlliances();
+		list<string>* allianceNames = alliances->GetNames();
+
+		lua_newtable(L);
+		for( list<string>::iterator aName = allianceNames->begin(); aName != allianceNames->end(); ++aName){
+			int favor = player->GetFavor( alliances->GetAlliance(*aName) );
+			Lua::setField( (*aName).c_str(), favor );
+		}
+
+		return 1;
+	}
+}

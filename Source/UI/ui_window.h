@@ -19,13 +19,15 @@ class Window : public Container {
 		Window *AddChild( Widget *widget );
 		void Draw( int relx = 0, int rely = 0 );
 	
-		bool MouseDrag( int x, int y );
 		bool SetDragability( bool _draggable );
 		void AddCloseButton();
 		bool HasCloseButton() { return closeButton != NULL; }
 
 		string GetType( void ) { return string("Window"); }
 		virtual int GetMask( void ) { return WIDGET_WINDOW | WIDGET_CONTAINER; }
+
+	protected:
+		bool MouseDrag( int x, int y );
 
 	private:
 		bool draggable;

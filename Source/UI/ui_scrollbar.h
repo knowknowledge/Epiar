@@ -25,8 +25,6 @@ class Scrollbar : public Widget {
 		void SetPosition(int x, int y) { this->x = x; this->y = y; }
 		void SetSize(int length);
 
-		bool MouseLDown( int xi, int yi );
-		bool MouseDrag( int xi, int yi );
 
 		string GetType( void ) { return string("Scrollbar");}
 		virtual int GetMask( void ) { return WIDGET_SCROLLBAR; }
@@ -35,6 +33,10 @@ class Scrollbar : public Widget {
 		void ScrollDown( int pix = SCROLLBAR_SCROLL );
 
 		int GetPos() { return pos; }
+
+	protected:
+		bool MouseLDown( int xi, int yi );
+		bool MouseDrag( int xi, int yi );
 
 	private:
 		int GetMarkerSize( void );

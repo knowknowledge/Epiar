@@ -113,12 +113,14 @@ void Dropdown::Draw( int relx, int rely ) {
 /**\brief Accept Left mouse clicks
  */
 bool Dropdown::MouseLDown( int xi, int yi ) {
+	Widget::MouseLDown( xi, yi );
 	return true;
 }
 
 /**\brief Toggle between open and closed.
  */
 bool Dropdown::MouseLUp( int xi, int yi ) {
+	Widget::MouseLUp( xi, yi );
 	if( opened ) {
 		selected = (yi - y) / baseheight;
 		assert( selected >= 0 );
@@ -136,6 +138,7 @@ bool Dropdown::MouseLUp( int xi, int yi ) {
 /**\brief Event is triggered on mouse leave.
  */
 bool Dropdown::MouseLeave( void ){
+	Widget::MouseLeave();
 	//hovered = -1;
 	//if( opened ) {
 	//	close();
@@ -146,6 +149,7 @@ bool Dropdown::MouseLeave( void ){
 /**\brief When opened, pick a new hovered option
  */
 bool Dropdown::MouseMotion( int xi, int yi ){
+	Widget::MouseMotion( xi, yi );
 	if( opened ) {
 		hovered = (yi - y) / baseheight;
 	}
