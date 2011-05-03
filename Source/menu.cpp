@@ -129,10 +129,10 @@ void Main_Menu( void ) {
 			}
 			if( availableMenus & Menu_Continue )
 			{
-				Picture *pic = new Picture(button_x, 200, "Resources/Graphics/txt_continue_game_inactive.png");
+				Picture *pic = new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png");
 				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_continue_game_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_continue_game_inactive.png") );
+				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_continue_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
 				UI::Add( pic );
 			}
 			if( availableMenus & Menu_Editor )
