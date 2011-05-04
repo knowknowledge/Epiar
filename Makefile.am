@@ -70,3 +70,17 @@ epiar_SOURCES = Source/main.cpp \
 epiar_LDADD = Source/Lua/src/liblua.a
 
 SUBDIRS=Source/Lua
+
+include Resources/Animations/Makefile.am
+include Resources/Audio/Makefile.am
+include Resources/Definitions/Makefile.am
+include Resources/Graphics/Makefile.am
+include Resources/Scripts/Makefile.am
+include Resources/Skin/Makefile.am
+include Resources/Art/Makefile.am
+include Resources/Fonts/Makefile.am
+include Resources/Icons/Makefile.am
+include Resources/Simulation/Makefile.am
+
+AM_CFLAGS = -DDATADIR=\"$(datadir)\"
+

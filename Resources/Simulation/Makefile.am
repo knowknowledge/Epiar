@@ -1,0 +1,3 @@
+epiar_resources_simulationdir = $(datadir)/epiar/Resources/Simulation/default/
+epiar_resources_simulation_DATA = Resources/Simulation/default/alliances-default.xml    Resources/Simulation/default/gates-default.xml    Resources/Simulation/default/planets-default.xml       Resources/Simulation/default/weapons-default.xml Resources/Simulation/default/commodities-default.xml  Resources/Simulation/default/models-default.xml   Resources/Simulation/default/simulation.xml Resources/Simulation/default/engines-default.xml      Resources/Simulation/default/outfits-default.xml  Resources/Simulation/default/technologies-default.xml
+

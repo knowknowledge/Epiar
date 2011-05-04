@@ -1,0 +1,39 @@
+epiar_resources_graphicsdir = $(datadir)/epiar/Resources/Graphics/
+epiar_resources_graphics_DATA = Resources/Graphics/booster.png            Resources/Graphics/marker_off.png        Resources/Graphics/scivessel_pretty.png \
+ Resources/Graphics/btlcruiser.png         Resources/Graphics/marker_red.png        Resources/Graphics/sector_map.png \
+ Resources/Graphics/btlcruiser_pretty.png  Resources/Graphics/missile_launcher.png  Resources/Graphics/shuttle.png \
+ Resources/Graphics/cargoclaw.png          Resources/Graphics/missile_pack.png      Resources/Graphics/shuttle_pretty.png \
+ Resources/Graphics/cargoclaw_pretty2.png  Resources/Graphics/missile.png           Resources/Graphics/solcatian_laser.png \
+ Resources/Graphics/cargoclaw_pretty.png   Resources/Graphics/missiles.png          Resources/Graphics/SpaceBomb.png \
+ Resources/Graphics/cloaking_device.png    Resources/Graphics/nav_device.png        Resources/Graphics/station1.png \
+ Resources/Graphics/corvet2.png            Resources/Graphics/palitu01.png          Resources/Graphics/status_sensor.png \
+ Resources/Graphics/corvet2_pretty.png     Resources/Graphics/patrol.png            Resources/Graphics/sublight_laser.png \
+ Resources/Graphics/corvet.png             Resources/Graphics/patrol_pretty.png     Resources/Graphics/terran-frigate.png \
+ Resources/Graphics/engine_upgrade.png     Resources/Graphics/pirate.png            Resources/Graphics/thruster.png \
+ Resources/Graphics/Epiar_Icon2.png        Resources/Graphics/pirate_pretty.png     Resources/Graphics/torpedo1.png \
+ Resources/Graphics/Epiar_Icon.png         Resources/Graphics/planet10.png          Resources/Graphics/torpedo_launcher.png \
+ Resources/Graphics/escape_pod.png         Resources/Graphics/planet11.png          Resources/Graphics/torpedo.png \
+ Resources/Graphics/Fighter.png            Resources/Graphics/planet12.png          Resources/Graphics/trans2.png \
+ Resources/Graphics/gate1_bottom.png       Resources/Graphics/planet13.png          Resources/Graphics/trans.png \
+ Resources/Graphics/gate1_top.png          Resources/Graphics/planet14.png          Resources/Graphics/tugship.png \
+ Resources/Graphics/gate_gun.png           Resources/Graphics/planet15.png          Resources/Graphics/tugship_pretty2.png \
+ Resources/Graphics/gate_patrol.png        Resources/Graphics/planet16.png          Resources/Graphics/tugship_pretty.png \
+ Resources/Graphics/goldbeam2.png          Resources/Graphics/planet17.png          Resources/Graphics/turret.png \
+ Resources/Graphics/goldbeam.png           Resources/Graphics/planet18.png          Resources/Graphics/txt_continue_active.png \
+ Resources/Graphics/golden_uber.png        Resources/Graphics/planet19.png          Resources/Graphics/txt_continue_inactive.png \
+ Resources/Graphics/hammerhead.png         Resources/Graphics/planet1.png           Resources/Graphics/txt_editor_active.png \
+ Resources/Graphics/hammerhead_pretty.png  Resources/Graphics/planet20.png          Resources/Graphics/txt_editor_inactive.png \
+ Resources/Graphics/hp_carbon.png          Resources/Graphics/planet21.png          Resources/Graphics/txt_exit_active.png \
+ Resources/Graphics/hp_copper.png          Resources/Graphics/planet2.png           Resources/Graphics/txt_exit_inactive.png \
+ Resources/Graphics/hp_electron.png        Resources/Graphics/planet3.png           Resources/Graphics/txt_load_game_active.png \
+ Resources/Graphics/hp_organic.png         Resources/Graphics/planet4.png           Resources/Graphics/txt_load_game_inactive.png \
+ Resources/Graphics/hp_titanium.png        Resources/Graphics/planet5.png           Resources/Graphics/txt_new_game_active.png \
+ Resources/Graphics/kartanal.png           Resources/Graphics/planet6.png           Resources/Graphics/txt_new_game_inactive.png \
+ Resources/Graphics/laser_blue.png         Resources/Graphics/planet7.png           Resources/Graphics/txt_options_active.png \
+ Resources/Graphics/laser_green.png        Resources/Graphics/planet8.png           Resources/Graphics/txt_options_inactive.png \
+ Resources/Graphics/laser_grey.png         Resources/Graphics/planet9.png           Resources/Graphics/uber.png \
+ Resources/Graphics/podv.png              Resources/Graphics/uber_pretty.png \
+ Resources/Graphics/mark2_laser.png        Resources/Graphics/raven.png             Resources/Graphics/xv-1.png \
+ Resources/Graphics/mark3_laser.png        Resources/Graphics/raven_pretty.png      Resources/Graphics/xv-1_pretty.png \
+ Resources/Graphics/marker_blue.png        Resources/Graphics/scivessel.png
+
