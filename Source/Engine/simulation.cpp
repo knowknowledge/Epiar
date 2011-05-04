@@ -70,16 +70,10 @@ bool Simulation::New( string newname ) {
 	name = newname;
 	folderpath = "Resources/Simulation/" + name + "/";
 
-#ifndef _WIN32
-	if( mkdir( folderpath.c_str(), 0777) != 0) {
+	if( PHYSFS_mkdir( folderpath.c_str() ) == 0) {
 		LogMsg(INFO, "Cannot create folder '%s'.", folderpath.c_str() );
 		// TODO: ensure that the folder exists
 	}
-#else
-	#error WIN32 Filesystem ot written yet.
-	LogMsg(INFO, "Cannot create folders in Windows yet.");
-	return false;
-#endif
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
 

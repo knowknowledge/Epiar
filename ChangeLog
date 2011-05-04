@@ -1,3 +1,8 @@
+Tuesday, May 3, 2011
+	Christopher Thielen:
+		* Re-enabled and now require PhysFS. Minor code tweaks and bug
+		fixes to accomodate for this change.
+
 Tuesday, April 26, 2011
 	Christopher Thielen:
 		* Factored out menu code from main.cpp into new menu.cpp

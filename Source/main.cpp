@@ -18,6 +18,7 @@
 #include "menu.h"
 #include "UI/ui.h"
 #include "Utilities/argparser.h"
+#include "Utilities/filesystem.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 #include "Utilities/xml.h"
@@ -107,6 +108,7 @@ void Main_OS( int argc, char **argv ) {
 	#endif//_MSC_VER
 #endif //_WIN32
 
+	Filesystem::Init( argv[0] );
 }
 
 /** \brief Load the options files

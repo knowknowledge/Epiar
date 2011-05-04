@@ -106,6 +106,7 @@ string XMLFile::Get( const string& path ) {
 	if( cur ) { // Found the path
 		return NodeToString(xmlPtr,cur);;
 	} else {
+		LogMsg(WARN, "Could not find XML path '%s'.", path.c_str() );
 		return "";
 	}
 }

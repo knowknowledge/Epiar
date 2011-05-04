@@ -66,6 +66,7 @@ bool File::OpenRead( const string& filename ) {
 	contentSize = fileStatus.st_size;
 #endif
 	validName.assign( filename );
+
 	return true ;
 }
 

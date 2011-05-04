@@ -33,5 +33,5 @@ class Filesystem {
 		static list<string> paths;
 };
 
-
 #endif // __H_FILESYSTEM__
+

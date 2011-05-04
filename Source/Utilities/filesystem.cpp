@@ -25,6 +25,11 @@ int Filesystem::Init( const char* argv0 ) {
 	int retval;
 	if ( (retval = PHYSFS_init(argv0)) == 0 )
 		LogMsg(ERR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+
+	// Automatically add the working directory as a possible path
+	if ( (retval = PHYSFS_addToSearchPath(".", 1)) == 0 )
+		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
+	
 	return retval;
 }
 
@@ -69,14 +74,14 @@ int Filesystem::PrependPath( const string& archivename ) {
 
 /**Enumerates all files available in a path.
  * \param path String pointing to the path
- * \return Nonzero on success */
+ * \return Nonzero on success (not necessarily true?) */
 list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 {
 	list<string> files;
-	char **rc;
+	char **rc = NULL;
 
 	rc = PHYSFS_enumerateFiles(path.c_str());
-	if (rc == NULL){
+	if (rc == NULL) {
 		LogMsg(ERR,"Failure to enumerate %s. reason: %s.\n",
 				path.c_str(),PHYSFS_getLastError());
 	}
@@ -91,7 +96,7 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 
 		LogMsg(INFO,"\n total (%d) files.\n", file_count);
 		PHYSFS_freeList(rc);
-		return 1;
+		//return 1;
 	}
 	return files;
 }

@@ -43,6 +43,19 @@ dnl case "$target" in *-apple-darwin*)
 dnl	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
 dnl esac
 
+dnl Check for PhysicsFS (physfs)
+LIBS="$LIBS -lphysfs"
+CFLAGS="$CFLAGS -DUSE_PHYSICSFS"
+case "$target" in *-*-linux*)
+	CFLAGS="$CFLAGS -I/usr/include/"
+esac
+case "$target" in *-*-freebsd*)
+	CFLAGS="$CFLAGS -I/usr/local/include/"
+esac
+case "$target" in *-apple-darwin*)
+	CFLAGS="$CFLAGS -I/opt/local/include/ -L/opt/local/lib"
+esac
+
 dnl Include FTGL
 case "$target" in
 	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
