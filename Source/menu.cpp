@@ -30,7 +30,10 @@ PlayerInfo* playerToLoad = NULL;
 menuOption clicked = Menu_DoNothing;
 
 // Currently Static functions are the only way I could think of to have C only 
-void setMenuOption( void* value ) { clicked = *((menuOption*)value); }
+void setMenuOption( void* value ) {
+	clicked = *((menuOption*)value);
+	Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
+}
 void LoadPlayer( void* value ) {
 	clicked = Menu_Confirm_Load;
 	playerToLoad = (PlayerInfo*)value;
