@@ -10,6 +10,7 @@
 #define __H_SOUND__
 
 #include "Utilities/coordinate.h"
+#include "Utilities/file.h"
 #include "Utilities/resource.h"
 
 class Sound : public Resource {
@@ -22,11 +23,11 @@ class Sound : public Resource {
 		bool PlayNoRestart( Coordinate offset );
 		bool SetVolume( float volume );
 		void SetFactors( double fade, float pan );
-		string GetPath( void ) { return pathName; }
+		string GetPath( void ) { return pathName.GetAbsolutePath(); }
 
 	private:
 		Mix_Chunk *sound;
-		string pathName;
+		File pathName;
 		int channel;		/* Last channel the sound is playing on. */
 		double fadefactor;	// Scale factor to fade by as distance drops off
 		float panfactor;	// Scale factor to pan by, higher = more sensitive

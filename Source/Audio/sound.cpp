@@ -43,13 +43,15 @@ Sound *Sound::Get( const string& filename ){
  */
 Sound::Sound( const string& filename ):
 	sound( NULL ),
-	pathName(filename),
 	channel( -1 ),
 	fadefactor( 0.03 ),
 	panfactor( 0.1f ),
 	volume( 128 )
 {
-	this->sound = Mix_LoadWAV( filename.c_str() );
+	if( pathName.OpenRead( filename ) == false )
+		LogMsg(ERR, "Could not load sound file: '%s'", filename.c_str() );
+
+	this->sound = Mix_LoadWAV( pathName.GetAbsolutePath().c_str() );
 	if( this->sound == NULL )
 		LogMsg(ERR, "Could not load sound file: '%s', Mixer error: %s",
 				filename.c_str(), Mix_GetError() );
