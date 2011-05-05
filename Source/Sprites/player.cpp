@@ -81,7 +81,7 @@ Player* Player::Load( string filename ) {
 	Player::pInstance = newPlayer;
 
 	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
-	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%.0f,%.0f).",
 		newPlayer->GetName().c_str(),
 		newPlayer->GetModel()->GetName().c_str(),
 		newPlayer->GetEngine()->GetName().c_str(),
@@ -831,7 +831,7 @@ Player* Players::CreateNew(string playerName,
 {
 	Player* newPlayer = new Player;
 
-	LogMsg(INFO, "Creating New Player '%s' with Model='%s' Engine='%s' Credits = %d at (%d,%d).",
+	LogMsg(INFO, "Creating New Player '%s' with Model='%s' Engine='%s' Credits = %d at (%.0f,%.0f).",
 		playerName.c_str(),
 		model->GetName().c_str(),
 		engine->GetName().c_str(),

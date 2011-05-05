@@ -203,7 +203,7 @@ bool File::Seek( long pos ){
 	retval = PHYSFS_seek( fp,
 		static_cast<PHYSFS_uint64>( pos ));
 	if ( retval == 0 ){
-		LogMsg(ERR,"%s: Error using file seek [%d]. %s",
+		LogMsg(ERR,"%s: Error using file seek [%ld]. %s",
 		                validName.c_str(), pos, PHYSFS_getLastError());
 		return false;
 	}

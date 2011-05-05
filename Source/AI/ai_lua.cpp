@@ -1672,7 +1672,7 @@ int AI_Lua::ShipUpdateFavor(lua_State* L){
 	string allianceName = luaL_checkstring (L, 2);
 	int value = luaL_checkint (L, 3);
 
-	LogMsg(INFO, "Updating %s Favor by %d.", allianceName.c_str());
+	LogMsg(INFO, "Updating %s Favor by %d.", allianceName.c_str(), value);
 
 	// Check Inputs
 	if(player==NULL) { return 0; }

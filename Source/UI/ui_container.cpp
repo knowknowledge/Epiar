@@ -345,7 +345,7 @@ Widget *Container::Search( string full_query ) {
 					bool found = false;
 					int ind = 0;
 					if( 0 == (current->GetMask() & WIDGET_CONTAINER) ) {
-						LogMsg(ERR, "Malformed Query %s '/' token on non-container 0x%08X", full_query.c_str());
+						LogMsg(ERR, "Malformed Query %s '/' token on non-container 0x%08X", full_query.c_str(), current->GetMask());
 						return NULL;
 					}
 					for( i = current->children.begin(); i != current->children.end(); ++i ) {

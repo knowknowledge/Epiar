@@ -22,8 +22,12 @@
 
 // We use macros to define logging facilities so that we can
 // compile out Logging facilities if needed for performance
-#ifdef DISABLE_LOGGING
+//#define DISABLE_LOGGING // Do not log anything
+//#define DISABLE_LOGGER // Print logs to stdout
+#if defined( DISABLE_LOGGING )
 	#define LogMsg(LVL,...)
+#elif defined( DISABLE_LOGGER )
+	#define LogMsg(LVL,...) printf( __VA_ARGS__ )
 #else
 	#define LogMsg(LVL,...) Log::Instance().realLog(Log::LVL,__PRETTY_FUNCTION__,__VA_ARGS__)
 #endif//ENABLE_LOGGING
