@@ -24,16 +24,16 @@ list<string> Filesystem::paths;
 int Filesystem::Init( const char* argv0 ) {
 	int retval;
 	if ( (retval = PHYSFS_init(argv0)) == 0 )
-		LogMsg(ERR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+		LogMsg(ERR,"Error initializing PhysicsFS. Reason: %s\n",PHYSFS_getLastError());
 
 	// Automatically add the working directory as a possible path
 	if ( (retval = PHYSFS_addToSearchPath(".", 1)) == 0 )
-		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
+		LogMsg(ERR,"Error on adding working directory to search path. Reason: %s\n", PHYSFS_getLastError());
 
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
 	if ( (retval = PHYSFS_addToSearchPath(DATADIR, 1)) == 0 )
-		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
+		LogMsg(INFO,"Not using DATADIR directory due to error, probably 'make install' not run yet. Reason: %s\n", PHYSFS_getLastError());
 #endif /* DATADIR */
 	
 	return retval;
