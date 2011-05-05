@@ -29,6 +29,12 @@ int Filesystem::Init( const char* argv0 ) {
 	// Automatically add the working directory as a possible path
 	if ( (retval = PHYSFS_addToSearchPath(".", 1)) == 0 )
 		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
+
+#ifdef DATADIR
+	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
+	if ( (retval = PHYSFS_addToSearchPath("DATADIR", 1)) == 0 )
+		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
+#endif /* DATADIR */
 	
 	return retval;
 }

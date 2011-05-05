@@ -82,5 +82,5 @@ include Resources/Fonts/Makefile.am
 include Resources/Icons/Makefile.am
 include Resources/Simulation/Makefile.am
 
-AM_CFLAGS = -DDATADIR=\"$(datadir)\"
+AM_CPPFLAGS = -DDATADIR="$(datadir)/epiar"
 
