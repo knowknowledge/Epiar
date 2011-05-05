@@ -93,6 +93,16 @@ bool File::OpenWrite( const string& filename ) {
 	return true;
 }
 
+/**Returns the full path to the file
+ * \return path successful, NULL otherwise.*/
+string File::GetAbsolutePath(){
+	string abs = PHYSFS_getRealDir( validName.c_str() );
+
+	abs += PHYSFS_getDirSeparator() + validName;
+
+	return abs;
+}
+
 /**Reads a specified number of bytes.
  * \param numBytes Number of bytes to read.
  * \param buffer Buffer to read bytes into.

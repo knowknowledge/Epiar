@@ -37,6 +37,8 @@ class File {
 		static bool Exists( const string& filename );
 		static bool IsDir( const string& filename );
 
+		string GetAbsolutePath();
+
 	private:
 #ifdef USE_PHYSICSFS
 		PHYSFS_file *fp;		/** File pointer.  */

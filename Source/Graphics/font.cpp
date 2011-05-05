@@ -98,7 +98,7 @@ bool Font::Load( string filename ) {
 		delete this->font;
 	}
 
-	fontname = filename;
+	fontname = fontFile.GetAbsolutePath();
 	this->font = new FTTextureFont( fontname.c_str() );
 
 	if( font == NULL ) {
