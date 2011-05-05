@@ -120,30 +120,34 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
 	// Print the message:
-	if( OPTION(int, "options/log/out") == 1 ) {
-		printf("%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
-	}
-
-	if( OPTION(int, "options/log/alert") == 1 ) {
-		Hud::Alert("%s - %s", lvlStrings[lvl].c_str(), logBuffer);
-	}
-	
-	// Save the message to a file
-	if( OPTION(int, "options/log/xml") == 1 ) {
-
-		if( fp==NULL ){
-			Log::Open();
+	if( optionsfile != NULL ) {
+		if( OPTION(int, "options/log/out") == 1 ) {
+			printf("%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
 		}
 
-		fprintf(fp, "<log>\n");
-		fprintf(fp, "\t<function>%s</function>\n", func.c_str() );
-		fprintf(fp, "\t<type>%s</type>\n", lvlStrings[lvl].c_str() );
-		fprintf(fp, "\t<time>%s</time>\n", timestamp );
-		fprintf(fp, "\t<message>%s</message>\n", logBuffer );
-		fprintf(fp, "</log>\n" );
-		fflush( fp );
-	}
+		if( OPTION(int, "options/log/alert") == 1 ) {
+			Hud::Alert("%s - %s", lvlStrings[lvl].c_str(), logBuffer);
+		}
+		
+		// Save the message to a file
+		if( OPTION(int, "options/log/xml") == 1 ) {
 
+			if( fp==NULL ){
+				Log::Open();
+			}
+
+			fprintf(fp, "<log>\n");
+			fprintf(fp, "\t<function>%s</function>\n", func.c_str() );
+			fprintf(fp, "\t<type>%s</type>\n", lvlStrings[lvl].c_str() );
+			fprintf(fp, "\t<time>%s</time>\n", timestamp );
+			fprintf(fp, "\t<message>%s</message>\n", logBuffer );
+			fprintf(fp, "</log>\n" );
+			fflush( fp );
+		}
+	} else {
+		// Errors before the options are available
+		fprintf(stderr, "%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+	}
 }
 
 /**\brief Constructor, used to initialize variables.*/
