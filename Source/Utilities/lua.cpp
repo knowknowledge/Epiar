@@ -10,6 +10,7 @@
 #include "includes.h"
 #include "common.h"
 
+#include "Utilities/file.h"
 #include "Utilities/lua.h"
 #include "Utilities/log.h"
 
@@ -21,6 +22,8 @@ bool Lua::luaInitialized = false;
 lua_State *Lua::L = NULL;
 
 bool Lua::Load( const string& filename ) {
+	File pathTranslator; // use this to determine the physfs-resolved path, e.g. absolute/full path
+
 	if( ! luaInitialized ) {
 		if( Init() == false ) {
 			LogMsg(WARN, "Could not load Lua script. Unable to initialize Lua." );
@@ -28,9 +31,14 @@ bool Lua::Load( const string& filename ) {
 		}
 	}
 
+	if( pathTranslator.OpenRead( filename ) == false ) {
+		LogMsg(ERR,"Error loading '%s' from filesystem", filename.c_str());
+		return false;
+	}
+
 	// Load the lua script
-	if( 0 != luaL_loadfile(L, filename.c_str()) ) {
-		LogMsg(ERR,"Error loading '%s': %s", filename.c_str(), lua_tostring(L, -1));
+	if( 0 != luaL_loadfile(L, pathTranslator.GetAbsolutePath().c_str()) ) {
+		LogMsg(ERR,"Error loading '%s': %s", pathTranslator.GetAbsolutePath().c_str(), lua_tostring(L, -1));
 		return false;
 	}
 
