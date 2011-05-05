@@ -32,7 +32,7 @@ int Filesystem::Init( const char* argv0 ) {
 
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
-	if ( (retval = PHYSFS_addToSearchPath("DATADIR", 1)) == 0 )
+	if ( (retval = PHYSFS_addToSearchPath(DATADIR, 1)) == 0 )
 		LogMsg(ERR,"Error on adding working directory to search path.\n%s", PHYSFS_getLastError());
 #endif /* DATADIR */
 	
@@ -97,7 +97,8 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 		char **i;
 		for (i = rc, file_count = 0; *i != NULL; i++, file_count++)
 		{
-			files.push_back( string(*i) );
+			if( string(*i) != "Makefile.am")
+				files.push_back( string(*i) );
 		}
 
 		LogMsg(INFO,"\n total (%d) files.\n", file_count);
