@@ -312,7 +312,6 @@ void Main_Parse_Args( int argc, char **argv ) {
 
 	// Following are cumulative options (I.E. you can have multiple of them)
 	if ( argparser->HaveOpt("no-audio") ) {
-			cout<<"turning off sound"<<endl;
 			SETOPTION("options/sound/background",0);
 			SETOPTION("options/sound/weapons",0);
 			SETOPTION("options/sound/engines",0);
