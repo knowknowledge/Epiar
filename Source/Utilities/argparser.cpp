@@ -213,11 +213,11 @@ void ArgParser::Parse( int argc, char **argv ){
 				break;
 			case SHORTOPT:
 				this->opts[currarg.substr(1)] = true;
-				cout<<"Found short option: "<<currarg.substr(1)<<endl;
+				//cout<<"Found short option: "<<currarg.substr(1)<<endl;
 				break;
 			case LONGOPT:
 				this->longopts[currarg.substr(2)] = true;
-				cout<<"Found long option: "<<currarg.substr(2)<<endl;
+				//cout<<"Found long option: "<<currarg.substr(2)<<endl;
 				break;
 			case VALUEOPT:{
 				size_t splitpos = currarg.find( '=' );
@@ -228,12 +228,12 @@ void ArgParser::Parse( int argc, char **argv ){
 				if( valueval.empty() )
 					valueval = "NONE";
 				this->valueopts[valuearg] = valueval;
-				cout<<"Found value option: "<<valuearg<<" value:"<<valueval<<endl;
+				//cout<<"Found value option: "<<valuearg<<" value:"<<valueval<<endl;
 				break;
 			}
 			case ARG:
 				this->args[currarg] = true;
-				cout<<"Found argument: "<<currarg<<endl;
+				//cout<<"Found argument: "<<currarg<<endl;
 				break;
 			default:
 				// Throw an error
