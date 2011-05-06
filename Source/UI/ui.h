@@ -64,6 +64,9 @@ class UI {
 		static void Defer( Widget*, int x, int y );
 		static void DrawDeferred( void );
 		static int GetZLayer() { return zlayer; }
+
+		static void ModalDialog( Container *widget );
+		static void ReleaseModality();
 		
 	private:
 		static Container* NewScreen( string name );
@@ -83,8 +86,12 @@ class UI {
 		} draw_location;
 
 		static list<draw_location> deferred;
+
+		static Container *backgroundScreen;
+		static bool modalEnabled;
 };
 
 void UI_Test();
+void ModalityTest();
 
 #endif // __H_UI__

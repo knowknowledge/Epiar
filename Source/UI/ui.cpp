@@ -30,6 +30,8 @@ Container *UI::currentScreen = NULL;
 map<string,Container*> UI::screens;
 int UI::zlayer = 0;
 list<UI::draw_location> UI::deferred;
+Container *UI::backgroundScreen = NULL;
+bool UI::modalEnabled = false;
 
 /**\brief This is the default UI Font.
  */
@@ -139,6 +141,13 @@ void UI::DrawDeferred( void ) {
  */
 void UI::Draw( void ) {
 	assert( deferred.empty() );
+	if( UI::modalEnabled ) {
+		UI::backgroundScreen->Draw();
+		UI::DrawDeferred();
+		// Draw a transparent grey rectangle over the background screen
+		// Temporarily GREEN, should be BLACK
+		Video::DrawRect( 0,0, Video::GetWidth(), Video::GetHeight(), GREEN, 0.1 );
+	}
 	UI::currentScreen->Draw();
 	UI::DrawDeferred();
 }
@@ -350,6 +359,46 @@ bool UI::HandleMouse( InputEvent i ) {
 	return false;
 }
 
+void UI::ModalDialog( Container *widget ) {
+	Input inputs;
+	list<InputEvent> events;
+
+	assert( modalEnabled == false );
+	assert( backgroundScreen == NULL );
+	modalEnabled = true;
+
+	// Setup
+	backgroundScreen = currentScreen;
+	currentScreen = NewScreen("Foreground");
+	currentScreen->AddChild( widget );
+
+	// UI Input
+	while( modalEnabled )
+	{
+		// Draw Things
+		Video::Erase();
+		UI::Draw();
+		Video::Update();
+
+		// Wait for some input
+		Timer::Delay(75);
+
+		// Collect user input events
+		events = inputs.Update();
+		UI::HandleInput( events );
+	}
+
+	// Cleanup
+	Close( currentScreen );
+	delete currentScreen;
+	currentScreen = backgroundScreen;
+	backgroundScreen = NULL;
+}
+
+void UI::ReleaseModality() {
+	UI::modalEnabled = false;
+}
+
 void UI_Test() {
 	// Example of Nestable UI Creation
 	UI::Add(
@@ -456,6 +505,16 @@ void UI_Test() {
 	((Tab*)( UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/"))) ->SetFormButton(
 		(Button*) UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/Button'Dummy'/")
 	);
+}
+
+void tempCallback(  void * ) {
+	UI::ReleaseModality();
+}
+
+void ModalityTest() {
+	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
+	window->AddChild( (new Button(100, 135, 100, 30, "Release", tempCallback )) );
+	UI::ModalDialog( window );
 }
 
 /** @} */
