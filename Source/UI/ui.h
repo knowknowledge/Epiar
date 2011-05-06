@@ -28,6 +28,9 @@
 #include "ui_slider.h"
 #include "ui_dropdown.h"
 
+// Include UI helpers
+#include "ui_dialogs.h"
+
 // Macro to check if xi, yi point is inside a rectangle x,y,w,h
 #define WITHIN_BOUNDS(xi,yi,x,y,w,h) ( (xi > x) && (yi > y) && (xi < (x+w) ) && (yi < (y+h)) )
 

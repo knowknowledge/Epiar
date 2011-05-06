@@ -38,6 +38,9 @@ void LoadPlayer( void* value ) {
 	clicked = Menu_Confirm_Load;
 	playerToLoad = (PlayerInfo*)value;
 }
+void ErasePlayer( void *value ) {
+	Dialogs::Confirm("Are you sure you want erase this player?");
+}
 void CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
 	UI::Close( newGameWnd );
@@ -223,11 +226,12 @@ void Main_Menu( void ) {
 				list<string> *names = players->GetNames();
 				for( iter = names->begin(); iter != names->end(); ++iter, ++p ) {
 					PlayerInfo *info = players->GetPlayerInfo( *iter );
-					win->AddChild( (new Frame( 50, 150*p + 30, 400, 120 ))
-						->AddChild( (new Picture(10, 10, 80, 80, info->avatar )) )
-						->AddChild( (new Label(100, 30, "Player Name:" )) ) ->AddChild( (new Label(200, 30, info->GetName() )) )
-						->AddChild( (new Label(100, 60, "Simulation:" )) ) ->AddChild( (new Label(200, 60, info->simulation )) )
-						->AddChild( (new Button(280, 80, 100, 30, "Load", LoadPlayer, info )) )
+					win->AddChild( (new Frame( 50, 155*p + 30, 400, 130 ))
+						->AddChild( (new Picture(20, 25, 80, 80, info->avatar )) )
+						->AddChild( (new Label(120, 25, "Player Name:" )) ) ->AddChild( (new Label(210, 25, info->GetName() )) )
+						->AddChild( (new Label(120, 50, "Simulation:" )) ) ->AddChild( (new Label(210, 50, info->simulation )) )
+						->AddChild( (new Button(280, 87, 100, 30, "Play", LoadPlayer, info )) )
+						->AddChild( (new Button(170, 87, 100, 30, "Erase", ErasePlayer, NULL ) ) )
 					);
 				}
 				win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
