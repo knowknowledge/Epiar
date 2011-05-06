@@ -38,6 +38,16 @@ Image::Image( const string& filename ) {
 	Load(filename);
 }
 
+/**\brief Create instance from existing OpenGL texture
+ */
+Image::Image( GLuint texture, int w, int h ) {
+	this->w = real_w = w;
+	this->h = real_h = h;
+	scale_w = scale_h = 1.;
+
+	image = texture;
+}
+
 /**\brief Deallocate allocations
  */
 Image::~Image() {

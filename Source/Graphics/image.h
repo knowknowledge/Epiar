@@ -27,6 +27,8 @@ class Image : public Resource {
 		Image();
 		// Create instance by loading image from file
 		Image( const string& filename );
+		// Create instance by using an existing OpenGL texture
+		Image( GLuint texture, int w, int h );
 		~Image();
 
 		static Image* Get(string filename);

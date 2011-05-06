@@ -144,6 +144,7 @@ int Video::h = 0;
 int Video::w2 = 0;
 int Video::h2 = 0;
 stack<Rect> Video::cropRects;
+SDL_Surface *Video::screen = NULL;
 
 /**\brief Initializes the Video display.
  */
@@ -201,7 +202,6 @@ bool Video::Shutdown( void ) {
 bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	const SDL_VideoInfo *videoInfo; // handle to SDL video information
 	Uint32 videoFlags = 0; // bitmask to pass to SDL_SetVideoMode()
-	SDL_Surface *screen = NULL; // pointer to main video surface
 	int ret = 0;
 
 	// get information about the video card (namely, does it support
@@ -586,3 +586,46 @@ void Video::UnsetCropRect( void ) {
 		glScissor( TO_INT(prevrect.x), Video::h - (TO_INT(prevrect.y) + TO_INT(prevrect.h)), TO_INT(prevrect.w), TO_INT(prevrect.h) );
 	}
 }
+
+/**\brief Takes a screenshot of the game and saves it to an Image.
+ */
+Image *Video::CaptureScreen( void ) {
+	GLuint screenCapture;
+
+	glGenTextures( 1, &screenCapture );
+
+	glBindTexture(GL_TEXTURE_2D, screenCapture);
+
+	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 0, 0, w, h, 0);
+
+	Image *screenshot = new Image( screenCapture, w, h );
+
+	return( screenshot );
+}
+
+/**\brief Takes a screenshot of the game and saves it to a file.
+ */
+void Video::SaveScreenshot( const char *filename ) {
+	unsigned int size = w * h * 4;
+	int *pixelData, *pixelDataOrig;
+
+	pixelData = (int *)malloc( size );
+	pixelDataOrig = (int *)malloc( size );
+	memset( pixelData, 0, size );
+	memset( pixelDataOrig, 0, size );
+
+	glPixelStorei( GL_PACK_ROW_LENGTH, 0 ) ;
+	glPixelStorei( GL_PACK_ALIGNMENT, 1 ) ;
+	glReadPixels( 0, 0, w, h, GL_BGRA, GL_UNSIGNED_BYTE, pixelDataOrig ) ;
+
+	// image if flipped vertically - fix this
+	for(int x = 1; x < w; x++) {
+		for(int y = 1; y < h; y++) {
+			pixelData[x + (y * w)] = pixelDataOrig[x + ((h-y) * w)];
+		}
+	}
+
+	SDL_Surface *s = SDL_CreateRGBSurfaceFrom( pixelData, w, h, screen->format->BitsPerPixel, screen->pitch, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+	SDL_SaveBMP( s, filename );
+}
+

@@ -10,6 +10,7 @@
 #ifndef __H_VIDEO__
 #define __H_VIDEO__
 
+#include "Graphics/image.h"
 #include "includes.h"
 #include "Utilities/coordinate.h"
 #include "Utilities/lua.h"
@@ -95,6 +96,9 @@ class Video {
 		
 		static void Blur( void );
 
+		static Image *CaptureScreen( void );
+		static void SaveScreenshot( const char *filename );
+
 		// Lua functions
 		static int lua_getWidth(lua_State *L);
 		static int lua_getHeight(lua_State *L);
@@ -103,6 +107,7 @@ class Video {
   		static int w, h; // width/height of screen
 		static int w2, h2; // width/height divided by 2
 		static stack<Rect> cropRects;
+		static SDL_Surface *screen; // pointer to main video surface
 };
 
 #endif // __H_VIDEO__

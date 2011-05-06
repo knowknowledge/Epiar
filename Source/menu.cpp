@@ -39,12 +39,19 @@ void LoadPlayer( void* value ) {
 	playerToLoad = (PlayerInfo*)value;
 }
 void ErasePlayer( void *value ) {
-	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
+	//bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
 
-	if(choice)
-		Dialogs::Alert("TODO: Delete the player");
-	else
-		Dialogs::Alert("TODO: Don't delete the player");
+	//if(choice)
+		//Dialogs::Alert("TODO: Delete the player");
+	//else
+		//Dialogs::Alert("TODO: Don't delete the player");
+
+	Image *capture = Video::CaptureScreen();
+	assert( capture );
+	capture->Draw( 200, 0 );
+	Video::Update();
+
+	SDL_Delay( 5000 );
 }
 void CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
