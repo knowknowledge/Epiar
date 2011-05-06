@@ -76,12 +76,17 @@ void SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
  */
 void Main_Menu( void ) {
 	bool quitSignal = false;
-	bool screenNeedsReset = true;
 	Input inputs;
 	list<InputEvent> events;
-	menuOption availableMenus = (menuOption)(Menu_New | Menu_Load | Menu_Editor | Menu_Exit);
 	int screenNum, numScreens;
 	int button_x = OPTION( int, "options/video/w" ) - 300;
+
+	Picture *play = NULL;
+	Picture *load = NULL;
+	Picture *continueButton = NULL;
+	Picture *edit = NULL;
+	Picture *options = NULL;
+	Picture *exit = NULL;
 
 	// These are instances of the menuOptions so that they can be passed to the Buttons as values
 	menuOption menu_New            = Menu_New;
@@ -116,64 +121,52 @@ void Main_Menu( void ) {
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
+	// Add the splash screen
+	UI::Add( new Picture( 0,0, Video::GetWidth(), Video::GetHeight(), menuSplash) );
+
+	// Add the logo
+	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
+
+	// New Button
+	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
+	play->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) );
+	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
+						  Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
+	UI::Add( play );
+
+	// Load Button
+	if( (players->Size() > 0) )
+	{
+		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
+		load->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load ) );
+		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
+							  Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
+		UI::Add( load );
+	}
+
+	// Editor Button
+	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
+	edit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor ) );
+	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
+						  Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
+	UI::Add( edit );
+
+	// Options Button
+	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
+	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options ) );
+	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
+						  Image::Get( "Resources/Graphics/txt_options_inactive.png") );
+	UI::Add( options );
+
+	// Exit Button
+	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
+	exit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit ) );
+	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
+						  Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
+	UI::Add( exit );
 
 	// Input Loop
 	do {
-		if (screenNeedsReset) {
-			UI::CloseAll();
-
-			// Create UI
-			if( availableMenus & Menu_New )
-			{
-				Picture *pic = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
-				UI::Add( pic );
-			}
-			if( (availableMenus & Menu_Load) && (players->Size() > 0) )
-			{
-				Picture *pic = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
-				UI::Add( pic );
-			}
-			if( availableMenus & Menu_Continue )
-			{
-				Picture *pic = new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_continue_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
-				UI::Add( pic );
-			}
-			if( availableMenus & Menu_Editor )
-			{
-				Picture *pic = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_editor_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
-				UI::Add( pic );
-			}
-			if( availableMenus & Menu_Options )
-			{
-				Picture *pic = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_options_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_options_inactive.png") );
-				UI::Add( pic );
-			}
-			if( availableMenus & Menu_Exit )
-			{
-				Picture *pic = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
-				pic->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit ) );
-				SetPictureHover( pic, Image::Get( "Resources/Graphics/txt_exit_active.png"),
-				                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
-				UI::Add( pic );
-			}
-
-			screenNeedsReset = false;
-		}
 
 		//static int once = 1;
 		//if( once ){
@@ -191,9 +184,6 @@ void Main_Menu( void ) {
 
 		// Draw Things
 		Video::Erase();
-		menuSplash->DrawStretch(0,0,OPTION( int, "options/video/w" ),OPTION( int, "options/video/h"));
-		// Draw the "logo"
-		Image::Get("Resources/Art/logo.png")->Draw(Video::GetWidth() - 240, Video::GetHeight() - 120 );
 		UI::Draw();
 		Video::Update();
 
@@ -255,12 +245,17 @@ void Main_Menu( void ) {
 			case Menu_Confirm_New:
 			case Menu_Confirm_Load:
 			{
-				screenNeedsReset = true;
-				availableMenus = (menuOption)(availableMenus & ~Menu_New);
-				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
-				availableMenus = (menuOption)(availableMenus & ~Menu_Editor);
-				availableMenus = (menuOption)(availableMenus | Menu_Continue);
-				availableMenus = (menuOption)(availableMenus | Menu_Options);
+				UI::Close( play );
+				UI::Close( load );
+				play = NULL;
+				load = NULL;
+
+				// Continue Button
+				continueButton = new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png");
+				continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue ) );
+				SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
+				                      Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
+				UI::Add( continueButton );
 				
 				// Gather Player Information
 				if( Menu_Confirm_New == clicked )
@@ -271,7 +266,7 @@ void Main_Menu( void ) {
 					SETOPTION( "options/simulation/random-seed", seed );
 					playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
 					simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
-					simName = simName;
+					UI::Close( UI::Search("/Window'New Game'/") );
 				}
 				else if( Menu_Confirm_Load == clicked )
 				{
@@ -279,6 +274,7 @@ void Main_Menu( void ) {
 					SETOPTION( "options/simulation/random-universe", israndom );
 					SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
 					playerName = playerToLoad->GetName();
+					UI::Close( UI::Search("/Window'Load Game'/") );
 				}
 				
 				// Load the Simulation
@@ -317,8 +313,10 @@ void Main_Menu( void ) {
 
 			case Menu_Options:
 			{
-				assert( Lua::CurrentState() != NULL );
-				Lua::Call("options");
+				if( Lua::CurrentState() != NULL )
+				{
+					Lua::Call("options");
+				}
 				break;
 			}
 
@@ -367,10 +365,11 @@ void Main_Menu( void ) {
 			{
 				assert( UI::Search("/Window'Editor'/Tabs/Tab/") != NULL );
 				assert( false == debug.isLoaded() );
-				screenNeedsReset = true;
-				availableMenus = (menuOption)(availableMenus & ~Menu_New);
-				availableMenus = (menuOption)(availableMenus & ~Menu_Load);
-				availableMenus = (menuOption)(availableMenus | Menu_Options);
+
+				UI::Close( play );
+				UI::Close( load );
+				play = NULL;
+				load = NULL;
 
 				// Since the Random Universe Editor is currently broken, disable this feature here.
 				SETOPTION( "options/simulation/random-universe", 0 );
