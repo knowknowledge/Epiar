@@ -108,6 +108,7 @@ void Main_Menu( void ) {
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
+
 	// Input Loop
 	do {
 		if (screenNeedsReset) {
@@ -164,6 +165,13 @@ void Main_Menu( void ) {
 			}
 
 			screenNeedsReset = false;
+		}
+
+		static int once = 1;
+		if( once ){
+			UI_Test();
+			ModalityTest();
+			once = 0;
 		}
 
 		// Forget about the last click
