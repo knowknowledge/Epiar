@@ -39,7 +39,12 @@ void LoadPlayer( void* value ) {
 	playerToLoad = (PlayerInfo*)value;
 }
 void ErasePlayer( void *value ) {
-	Dialogs::Confirm("Are you sure you want erase this player?");
+	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
+
+	if(choice)
+		Dialogs::Alert("TODO: Delete the player");
+	else
+		Dialogs::Alert("TODO: Don't delete the player");
 }
 void CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
@@ -170,12 +175,12 @@ void Main_Menu( void ) {
 			screenNeedsReset = false;
 		}
 
-		static int once = 1;
-		if( once ){
-			UI_Test();
-			ModalityTest();
-			once = 0;
-		}
+		//static int once = 1;
+		//if( once ){
+			//UI_Test();
+			//ModalityTest();
+			//once = 0;
+		//}
 
 		// Forget about the last click
 		clicked = Menu_DoNothing;

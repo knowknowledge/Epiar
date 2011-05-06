@@ -19,11 +19,16 @@
 /**\class Dialogs
  * \brief Common UI dialogs, e.g. "Yes/No", "Ok". */
 
-void CloseConfirmDialog( void* value ) {
-	int whichBtn = (int)value;
-
-	// modal close will delete the window, don't close it here
-	
+void CancelConfirmDialog( void* value ) {
+	*(int *)value = 0;
+	UI::ReleaseModality();
+}
+void OKConfirmDialog( void* value ) {
+	*(int *)value = 1;
+	UI::ReleaseModality();
+}
+void OKAlertDialog( void* value ) {
+	UI::ReleaseModality();
 }
 
 /**\brief Presents a question with "Ok/Cancel" buttons.
@@ -32,11 +37,15 @@ void CloseConfirmDialog( void* value ) {
 bool Dialogs::Confirm( const char *message )
 {
 	Window* win = new Window(325, 265, 325, 130, "Confirm");
-	UI::Add( win );
+	static int value = 0;
 
 	win->AddChild( ( new Label( 45, 35, message ) ) )
-	->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CloseConfirmDialog, (void *)0 ) ) )
-	->AddChild( (new Button( 190, 90, 80, 30, "OK", CloseConfirmDialog, (void *)1 ) ) );
+	->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) )
+	->AddChild( (new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value ) ) );
+
+	UI::ModalDialog( win );
+
+	return value;
 }
 
 /**\brief Presents a message with a single "Ok" button.
@@ -44,10 +53,11 @@ bool Dialogs::Confirm( const char *message )
 void Dialogs::Alert( const char *message )
 {
 	Window* win = new Window(325, 265, 325, 130, "Alert");
-	UI::Add( win );
 
 	win->AddChild( ( new Label( 45, 35, message ) ) )
-	->AddChild( (new Button( 130, 90, 80, 30, "OK" ) ) );
+	->AddChild( (new Button( 130, 90, 80, 30, "OK", OKAlertDialog, NULL ) ) );
+
+	UI::ModalDialog( win );
 }
 
 /** @} */

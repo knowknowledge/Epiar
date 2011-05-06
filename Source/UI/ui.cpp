@@ -145,8 +145,7 @@ void UI::Draw( void ) {
 		UI::backgroundScreen->Draw();
 		UI::DrawDeferred();
 		// Draw a transparent grey rectangle over the background screen
-		// Temporarily GREEN, should be BLACK
-		Video::DrawRect( 0,0, Video::GetWidth(), Video::GetHeight(), GREEN, 0.1 );
+		Video::DrawRect( 0,0, Video::GetWidth(), Video::GetHeight(), BLACK, 0.1 );
 	}
 	UI::currentScreen->Draw();
 	UI::DrawDeferred();
