@@ -3,7 +3,7 @@
 	<version-major>0</version-major>
 	<version-minor>4</version-minor>
 	<version-macro>0</version-macro>
-	<name>The Default Simulation</name>
+	<name>default</name>
 	<description>The default simulation.</description>
 	<commodities>commodities-default.xml</commodities>
 	<planets>planets-default.xml</planets>
