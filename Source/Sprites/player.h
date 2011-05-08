@@ -17,8 +17,6 @@
 
 class Player : public Ship {
 	public:
-		static Player *Instance();
-		static bool IsLoaded() { return pInstance!=NULL; }
 		static Player *Load( string filename );
 
 		// Saving and Loading this Player to XML
@@ -66,7 +64,6 @@ class Player : public Ship {
 		bool ConfigureWeaponSlots(xmlDocPtr, xmlNodePtr);
 	private:
 		string name;
-		static Player *pInstance;
 		time_t lastLoadTime; // TODO This may need to be renamed
 		string lastPlanet;
 		list<Mission*> missions;
@@ -113,8 +110,6 @@ class Players : public Components {
 		static Players *Instance();
 		PlayerInfo* GetPlayerInfo(string name) { return (PlayerInfo*)Components::Get( name ); }
 		Component* newComponent() { return new PlayerInfo(); }
-
-		bool Save();
 
 		Player* CreateNew(string playerName,
 			Model *model,

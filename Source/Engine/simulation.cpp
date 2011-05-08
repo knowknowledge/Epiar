@@ -53,6 +53,7 @@ Simulation::Simulation( void ) {
 	technologies = Technologies::Instance();
 	outfits = Outfits::Instance();
 	players = Players::Instance();
+	player = NULL;
 	camera = Camera::Instance();
 
 	name = "";
@@ -217,12 +218,20 @@ bool Simulation::Run() {
 
 	quit = false;
 
+
 	LogMsg(INFO, "Simulation Started");
 	Hud::Init();
 
-	assert( Player::IsLoaded() );
-	Hud::Alert("Loading %s.", Player::Instance()->GetName().c_str() );
-	Lua::Call("playerStart");
+	if( player != NULL )
+	{
+		Hud::Alert("Loading %s.", player->GetName().c_str() );
+		Lua::Call("playerStart");
+	}
+	else
+	{
+		LogMsg(WARN, "No Player has been loaded!");
+		assert( player != NULL );
+	}
 
 	// Message appear in reverse order, so this is upside down
 	Hud::Alert("Epiar is currently under development. Please report all bugs to epiar.net");
@@ -334,7 +343,7 @@ bool Simulation::Run() {
 			}
 
 			// Check to see if the player is dead
-			if( Player::Instance()->GetHullIntegrityPct() <= 0 ) {
+			if( player->GetHullIntegrityPct() <= 0 ) {
 				if( UI::Search("/Window'Death'/") == NULL ) {
 					Window* win = new Window(300, 250, 250, 140, "Death");
 					UI::Add( win );
@@ -544,7 +553,8 @@ void Simulation::CreateDefaultPlayer(string name) {
 		startPos = planets->GetPlanet( startPlanet )->GetWorldPosition();
 	}
 
-	Player* player = players->CreateNew(
+	assert( player == NULL );
+	player = players->CreateNew(
 		name,
 		models->GetModel( Get("defaultPlayer/model") ),
 		engines->GetEngine( Get("defaultPlayer/engine") ),
@@ -562,7 +572,8 @@ void Simulation::CreateDefaultPlayer(string name) {
  * \param[in] name The player's name.
  */
 void Simulation::LoadPlayer(string name) {
-	Player* player = players->LoadPlayer( name );
+	assert( player == NULL );
+	player = players->LoadPlayer( name );
 	sprites->Add( player );
 	camera->Focus( player );
 }
@@ -571,5 +582,7 @@ void Simulation::LoadPlayer(string name) {
  * \return true if the player wants to quit
  */
 Player *Simulation::GetPlayer() {
-	return Player::Instance();
+	LogMsg(WARN, "No Player has been loaded!");
+	assert( player != NULL );
+	return player;
 }

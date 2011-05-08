@@ -90,6 +90,7 @@ class Simulation : public XMLFile {
 		Technologies *technologies;
 		Outfits *outfits;
 		Players *players;
+		Player *player;
 		Camera *camera;
 
 		// Simulation specific variables

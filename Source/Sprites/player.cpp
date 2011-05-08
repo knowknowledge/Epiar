@@ -18,19 +18,6 @@
  * \brief Main player-specific functions and handle.
  */
 
-Player *Player::pInstance = 0;
-
-/**\brief Fetch the current player Instance
- */
-Player *Player::Instance( void ) {
-	if( pInstance == NULL ) {
-		LogMsg(ERR, "Attempting to use Player information when no player is loaded!");
-		assert(0);
-	}
-
-	return( pInstance );
-}
-
 /**\brief Load a player from a file.
  * \param[in] filename of a player's xml saved game.
  * \returns pointer to new Player instance.
@@ -77,8 +64,6 @@ Player* Player::Load( string filename ) {
 
 	// Remember this Player
 	newPlayer->lastLoadTime = time(NULL);
-
-	Player::pInstance = newPlayer;
 
 	LogMsg(INFO, "Successfully loaded the player: '%s'.",newPlayer->GetName().c_str() );
 	LogMsg(INFO, "Loaded Player '%s' with Model='%s' Engine='%s' Credits = %d at (%.0f,%.0f).",
@@ -201,7 +186,6 @@ Player::Player() {
 /**\brief Destructor
  */
 Player::~Player() {
-	pInstance = NULL;
 	LogMsg(INFO, "You have been destroyed..." );
 }
 
@@ -239,6 +223,10 @@ void Player::Save() {
 	xmlDocSetRootElement(xmlPtr, root_node);
 
 	xmlSaveFormatFileEnc( GetFileName().c_str(), xmlPtr, "ISO-8859-1", 1);
+
+	// Update and Save this player's info in the master players list.
+	Players::Instance()->GetPlayerInfo( GetName() )->Update( this );
+	Players::Instance()->Save();
 }
 
 /**\brief Parse one player out of an xml node
@@ -812,14 +800,6 @@ Players *Players::Instance( void ) {
 	return( pInstance );
 }
 
-bool Players::Save() {
-	Player* player = Player::Instance();
-	if( player ) {
-		GetPlayerInfo( player->GetName() )->Update( player );
-	}
-	return Components::Save();
-}
-
 /**\brief Create a new Player
  * This is used instead of a normal class constructor
  */
@@ -850,7 +830,6 @@ Player* Players::CreateNew(string playerName,
 	newPlayer->lastLoadTime = time(NULL);
 
 	Add( (Component*)(new PlayerInfo( newPlayer )) );
-	Player::pInstance = newPlayer;
 
 	return newPlayer;
 }
