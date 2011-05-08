@@ -58,6 +58,16 @@ void CloseEditorUI( void* value ) {
 	Widget *editorWnd = UI::Search("/Window'Editor'/");
 	UI::Close( editorWnd );
 }
+void RandomizeSeed( void* value ) {
+	char seed[20];
+	snprintf(seed, sizeof(seed), "%d", rand() );
+	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
+	if( widget->GetMask() == WIDGET_TEXTBOX )
+	{
+		Textbox* seedBox = (Textbox*)widget;
+		seedBox->SetText( seed );
+	}
+}
 void ChangePicture( void* picture, void* image) {
 	((Picture*)picture)->Set( (Image*)image );
 }
@@ -200,15 +210,14 @@ void Main_Menu( void ) {
 					->AddChild( (new Textbox(130, 30, 100, 1, "", "Player Name:")) );
 
 				// Simulation Picker
-				char seed[20];
-				snprintf(seed, sizeof(seed), "%d", rand() );
-				win->AddChild( (new Frame( 30, 90, 200, 120 ))
+				win->AddChild( (new Frame( 30, 90, 200, 150 ))
 					->AddChild( (new Label(15, 15, "Simulation:")) )
 					->AddChild( (new Dropdown( 80, 15, 100, 30 ))
 						->AddOptions( Filesystem::Enumerate("Resources/Simulation/") ) )
 					->AddChild( (new Checkbox(15, 60, 0, "Random Universe")) )
 					->AddChild( (new Label(15, 80, "Seed:")) )
-					->AddChild( (new Textbox(50, 80, 80, 1, seed, "Random Universe Seed")) )
+					->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
+					->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed, NULL )) )
 				);
 				win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
 				win->AddChild( (new Button(140, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
