@@ -181,6 +181,7 @@ Log::Log()
 string Log::GetTimestamp( void ) {
 	time_t rawtime;
 	string timestamp_str;
+	char *timestamp;
 
 	time( &rawtime );
 	timestamp = ctime( &rawtime );

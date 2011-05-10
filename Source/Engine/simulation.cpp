@@ -534,7 +534,7 @@ bool Simulation::HandleInput() {
 
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
 	{
-		Video::SaveScreenshot( "Screenshot.bmp" );
+		Video::SaveScreenshot();
 	}
 	
 	return Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
