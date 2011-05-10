@@ -12,33 +12,33 @@
 #include "Utilities/filesystem.h"
 #include "Utilities/timer.h"
 
-typedef enum {
-	Menu_DoNothing      = 1<<0,
-	Menu_New            = 1<<1,
-	Menu_Load           = 1<<2,
-	Menu_Continue       = 1<<3,
-	Menu_Options        = 1<<4,
-	Menu_Editor         = 1<<5,
-	Menu_Exit           = 1<<6,
-	Menu_Confirm_New    = 1<<7,
-	Menu_Confirm_Load   = 1<<8,
-	Menu_Confirm_Editor = 1<<9,
-	Menu_ALL            = 0xFFFF,
-} menuOption;
 
 PlayerInfo* playerToLoad = NULL;
-menuOption clicked = Menu_DoNothing;
+Menu::menuOption Menu::clicked = Menu_DoNothing;
+
+Menu::menuOption Menu::menu_New            = Menu_New;
+Menu::menuOption Menu::menu_Load           = Menu_Load;
+Menu::menuOption Menu::menu_Confirm_New    = Menu_Confirm_New;
+Menu::menuOption Menu::menu_Continue       = Menu_Continue;
+Menu::menuOption Menu::menu_Options        = Menu_Options;
+Menu::menuOption Menu::menu_Editor         = Menu_Editor;
+Menu::menuOption Menu::menu_Confirm_Editor = Menu_Confirm_Editor;
+Menu::menuOption Menu::menu_Exit           = Menu_Exit;
+
+Image* Menu::menuSplash = NULL;
+Image* Menu::gameSplash = NULL;
+Image* Menu::editSplash = NULL;
 
 // Currently Static functions are the only way I could think of to have C only 
-void setMenuOption( void* value ) {
+void Menu::SetMenuOption( void* value ) {
 	clicked = *((menuOption*)value);
 	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 }
-void LoadPlayer( void* value ) {
+void Menu::LoadPlayer( void* value ) {
 	clicked = Menu_Confirm_Load;
 	playerToLoad = (PlayerInfo*)value;
 }
-void ErasePlayer( void *value ) {
+void Menu::ErasePlayer( void* value ) {
 	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
 
 	if(choice)
@@ -46,19 +46,19 @@ void ErasePlayer( void *value ) {
 	else
 		Dialogs::Alert("TODO: Don't delete the player");
 }
-void CloseNewGameUI( void* value ) {
+void Menu::CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
 	UI::Close( newGameWnd );
 }
-void CloseLoadGameUI( void* value ) {
+void Menu::CloseLoadGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
 	UI::Close( newGameWnd );
 }
-void CloseEditorUI( void* value ) {
+void Menu::CloseEditorUI( void* value ) {
 	Widget *editorWnd = UI::Search("/Window'Editor'/");
 	UI::Close( editorWnd );
 }
-void RandomizeSeed( void* value ) {
+void Menu::RandomizeSeed( void* value ) {
 	char seed[20];
 	snprintf(seed, sizeof(seed), "%d", rand() );
 	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
@@ -68,10 +68,10 @@ void RandomizeSeed( void* value ) {
 		seedBox->SetText( seed );
 	}
 }
-void ChangePicture( void* picture, void* image) {
+void Menu::ChangePicture( void* picture, void* image) {
 	((Picture*)picture)->Set( (Image*)image );
 }
-void SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
+void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
 	Picture* pic = ((Picture*)picture);
 	pic->RegisterAction( Widget::Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
 	pic->RegisterAction( Widget::Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
@@ -84,45 +84,10 @@ void SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
  *  since there is no HUD, Console or Sprites.
  *
  */
-void Main_Menu( void ) {
+void Menu::Main_Menu( void ) {
 	bool quitSignal = false;
 	Input inputs;
 	list<InputEvent> events;
-	int screenNum, numScreens;
-	int button_x = OPTION( int, "options/video/w" ) - 300;
-
-	Picture *play = NULL;
-	Picture *load = NULL;
-	Picture *continueButton = NULL;
-	Picture *edit = NULL;
-	Picture *options = NULL;
-	Picture *exit = NULL;
-
-	// These are instances of the menuOptions so that they can be passed to the Buttons as values
-	menuOption menu_New            = Menu_New;
-	menuOption menu_Load           = Menu_Load;
-	menuOption menu_Confirm_New    = Menu_Confirm_New;
-	menuOption menu_Continue       = Menu_Continue;
-	menuOption menu_Options        = Menu_Options;
-	menuOption menu_Editor         = Menu_Editor;
-	menuOption menu_Confirm_Editor = Menu_Confirm_Editor;
-	menuOption menu_Exit           = Menu_Exit;
-
-	string splashScreens[] = {
-		"Resources/Art/menu1.png",
-		"Resources/Art/menu2.png",
-		"Resources/Art/menu3.png",
-		"Resources/Art/menu4.png",
-		"Resources/Art/menu5.png",
-	};
-	numScreens = (sizeof(splashScreens) / sizeof(splashScreens[0]));
-	
-	screenNum = rand() % numScreens;
-	Image* menuSplash = Image::Get( splashScreens[screenNum] );
-	screenNum = (screenNum+1) % numScreens;
-	Image* gameSplash = Image::Get( splashScreens[screenNum] );
-	screenNum = (screenNum+1) % numScreens;
-	Image* editSplash = Image::Get( splashScreens[screenNum] );
 
 	string playerName;
 	string simName = "default";
@@ -131,59 +96,10 @@ void Main_Menu( void ) {
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
-	// Add the splash screen
-	UI::Add( new Picture( 0,0, Video::GetWidth(), Video::GetHeight(), menuSplash) );
-
-	// Add the logo
-	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
-
-	// New Button
-	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
-	play->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_New ) );
-	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
-						  Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
-	UI::Add( play );
-
-	// Load Button
-	if( (players->Size() > 0) )
-	{
-		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
-		load->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Load ) );
-		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
-							  Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
-		UI::Add( load );
-	}
-
-	// Editor Button
-	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
-	edit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Editor ) );
-	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
-						  Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
-	UI::Add( edit );
-
-	// Options Button
-	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Options ) );
-	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
-						  Image::Get( "Resources/Graphics/txt_options_inactive.png") );
-	UI::Add( options );
-
-	// Exit Button
-	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
-	exit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Exit ) );
-	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
-						  Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
-	UI::Add( exit );
+	SetupGUI();
 
 	// Input Loop
 	do {
-
-		//static int once = 1;
-		//if( once ){
-			//UI_Test();
-			//ModalityTest();
-			//once = 0;
-		//}
 
 		// Forget about the last click
 		clicked = Menu_DoNothing;
@@ -220,7 +136,7 @@ void Main_Menu( void ) {
 					->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed, NULL )) )
 				);
 				win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
-				win->AddChild( (new Button(140, 330, 100, 30, "Create", setMenuOption, &menu_Confirm_New)) );
+				win->AddChild( (new Button(140, 330, 100, 30, "Create", SetMenuOption, &menu_Confirm_New)) );
 				win->AddCloseButton();
 
 				break;
@@ -254,14 +170,15 @@ void Main_Menu( void ) {
 			case Menu_Confirm_New:
 			case Menu_Confirm_Load:
 			{
-				UI::Close( play );
-				UI::Close( load );
-				play = NULL;
-				load = NULL;
+				UI::Close( UI::Search("/Picture[0]/") ); // Play
+				UI::Close( UI::Search("/Picture[0]/") ); // Load
+				//play = NULL;
+				//load = NULL;
 
 				// Continue Button
-				continueButton = new Picture(button_x, 200, "Resources/Graphics/txt_continue_inactive.png");
-				continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( setMenuOption, &menu_Continue ) );
+				Picture *continueButton = NULL;
+				continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
+				continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
 				SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
 				                      Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
 				UI::Add( continueButton );
@@ -364,7 +281,7 @@ void Main_Menu( void ) {
 						)
 					)
 				);
-				editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", setMenuOption, &menu_Confirm_Editor ) );
+				editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", SetMenuOption, &menu_Confirm_Editor ) );
 				editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &CloseEditorUI, NULL ) );
 				
 				break;
@@ -375,10 +292,10 @@ void Main_Menu( void ) {
 				assert( UI::Search("/Window'Editor'/Tabs/Tab/") != NULL );
 				assert( false == debug.isLoaded() );
 
-				UI::Close( play );
-				UI::Close( load );
-				play = NULL;
-				load = NULL;
+				UI::Close( UI::Search("/Picture[0]/") ); // Play
+				UI::Close( UI::Search("/Picture[0]/") ); // Load
+				//play = NULL;
+				//load = NULL;
 
 				// Since the Random Universe Editor is currently broken, disable this feature here.
 				SETOPTION( "options/simulation/random-universe", 0 );
@@ -424,6 +341,11 @@ void Main_Menu( void ) {
 				break;
 		}
 
+		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+		{
+			Video::SaveScreenshot( "Screenshot.bmp" );
+		}
+
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;
 		}
@@ -431,5 +353,74 @@ void Main_Menu( void ) {
 		// Wait until the next click
 		Timer::Delay(75);
 	} while(!quitSignal);
+}
+
+void Menu::SetupGUI()
+{
+	Picture *play = NULL;
+	Picture *load = NULL;
+	Picture *edit = NULL;
+	Picture *options = NULL;
+	Picture *exit = NULL;
+
+	int button_x = Video::GetWidth() - 300;
+
+	string splashScreens[] = {
+		"Resources/Art/menu1.png",
+		"Resources/Art/menu2.png",
+		"Resources/Art/menu3.png",
+		"Resources/Art/menu4.png",
+		"Resources/Art/menu5.png",
+	};
+
+	int numScreens = (sizeof(splashScreens) / sizeof(splashScreens[0]));
+	int screenNum = rand();
+	menuSplash = Image::Get( splashScreens[(screenNum+0) % numScreens] );
+	gameSplash = Image::Get( splashScreens[(screenNum+1) % numScreens] );
+	editSplash = Image::Get( splashScreens[(screenNum+2) % numScreens] );
+
+	// Add the splash screen
+	UI::Add( new Picture( 0,0, Video::GetWidth(), Video::GetHeight(), menuSplash) );
+
+	// Add the logo
+	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
+
+	// New Button
+	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
+	play->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_New ) );
+	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
+	                       Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
+	UI::Add( play );
+
+	// Load Button
+	if( (Players::Instance()->Size() > 0) )
+	{
+		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
+		load->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Load ) );
+		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
+		                       Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
+		UI::Add( load );
+	}
+
+	// Editor Button
+	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
+	edit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Editor ) );
+	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
+	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
+	UI::Add( edit );
+
+	// Options Button
+	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
+	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
+	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
+	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
+	UI::Add( options );
+
+	// Exit Button
+	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
+	exit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Exit ) );
+	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
+	                       Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
+	UI::Add( exit );
 }
 

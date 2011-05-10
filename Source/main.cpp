@@ -62,7 +62,7 @@ int main( int argc, char **argv ) {
 
 	// THE GAME
 	Main_Init_Singletons();
-	Main_Menu();
+	Menu::Main_Menu();
 
 	LogMsg(INFO, "Epiar shutting down." );
 
