@@ -83,6 +83,7 @@ void Log::Close( void ) {
 		fprintf(fp, "</debugSession>\n");
 		fclose( fp );
 	}
+	fp = NULL;
 }
 
 /**\brief The real log function.*/
