@@ -140,10 +140,12 @@ void Filesystem::OutputArchivers( void ){
 
 /**Unloads the physfs library
   * \return Nonzero on success */
-int Filesystem::DeInit() {
+int Filesystem::Close() {
 	int retval;
+
 	if ( (retval = PHYSFS_deinit()) == 0 )
 		LogMsg(ERR,"Error de-initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+
 	return retval;
 }
 

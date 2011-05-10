@@ -254,6 +254,7 @@ void Main_Close_Singletons( void ) {
 	delete optionsfile;
 	delete skinfile;
 
+	Filesystem::Close();
 	Log::Instance().Close();
 }
 

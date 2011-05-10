@@ -28,7 +28,7 @@ class Filesystem {
 		static list<string> Enumerate( const string &path, const string &suffix="");
 		static void Version( void );
 		static void OutputArchivers( void );
-		static int DeInit( void );
+		static int Close( void );
 	private:
 		static list<string> paths;
 };
