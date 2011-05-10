@@ -108,6 +108,11 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 	return files;
 }
 
+/**Returns the userdir, e.g. ~/.epiar or c:\documents and settings\application data\epiar, etc. */
+const char* Filesystem::GetUserDir( void ) {
+	return PHYSFS_getUserDir();
+}
+
 #if defined(_DEBUG) || defined(DEBUG)
 /**Prints the current version of PhysFS.*/
 void Filesystem::Version( void ){

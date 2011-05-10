@@ -29,6 +29,7 @@ class Filesystem {
 		static void Version( void );
 		static void OutputArchivers( void );
 		static int Close( void );
+		static const char* GetUserDir( void );
 	private:
 		static list<string> paths;
 };
