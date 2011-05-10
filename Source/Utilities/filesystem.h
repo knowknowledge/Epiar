@@ -22,13 +22,12 @@
 class Filesystem {
 	public:
 		static int Init( const char* argv0 );
-		static int Init( const char* argv0, const string &extension );
 		static int AppendPath( const string &archivename );
 		static int PrependPath( const string &archivename );
 		static list<string> Enumerate( const string &path, const string &suffix="");
 		static void Version( void );
 		static void OutputArchivers( void );
-		static int DeInit( void );
+		static int Close( void );
 	private:
 		static list<string> paths;
 };

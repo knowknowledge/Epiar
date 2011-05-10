@@ -77,6 +77,9 @@ XMLFile::~XMLFile() {
 }
 
 bool XMLFile::Save() {
+	// FIXME: use xmlDocDumpFormatMemory and save/load via File class.
+	//        see http://www.xmlsoft.org/examples/io2.c
+
 	LogMsg(INFO, "Saving XML File '%s'.",filename.c_str() );
 	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
 	return true;

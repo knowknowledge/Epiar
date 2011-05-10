@@ -26,9 +26,8 @@ int Filesystem::Init( const char* argv0 ) {
 	if ( (retval = PHYSFS_init(argv0)) == 0 )
 		LogMsg(ERR,"Error initializing PhysicsFS. Reason: %s\n",PHYSFS_getLastError());
 
-	// Automatically add the working directory as a possible path
-	if ( (retval = PHYSFS_addToSearchPath(".", 1)) == 0 )
-		LogMsg(ERR,"Error on adding working directory to search path. Reason: %s\n", PHYSFS_getLastError());
+	if ( (retval = PHYSFS_setSaneConfig("games", "epiar", NULL, 0, 0 ) ) == 0 )
+		LogMsg(ERR,"Could not set sane paths for PhysFS: %s\n", PHYSFS_getLastError());
 
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
@@ -36,23 +35,6 @@ int Filesystem::Init( const char* argv0 ) {
 		LogMsg(INFO,"Not using DATADIR directory due to error, probably 'make install' not run yet. Reason: %s\n", PHYSFS_getLastError());
 #endif /* DATADIR */
 	
-	return retval;
-}
-
-/**Initialize the PhysFS system with some default configuration.
- * The write directory is set to $HOME/.Games/Epiar
- * The search path is set to
- *  - The write directory
- *  - The directory of the current executeable
- *  - Any archives found in the path (must pass in the extension)
- * \return Nonzero on success. */
-int Filesystem::Init( const char* argv0, const string &extension ) {
-	int retval;
-	if ( (retval = PHYSFS_init(argv0)) == 0 )
-		LogMsg(ERR,"Error initializing PhysicsFS.\n%s",PHYSFS_getLastError());
-	if ( (retval = PHYSFS_setSaneConfig("Games","Epiar",
-				extension.c_str(),0,1) == 0) )
-		LogMsg(ERR,"Error initializing PhysicsFS configuration.\n%s",PHYSFS_getLastError());
 	return retval;
 }
 
@@ -140,10 +122,12 @@ void Filesystem::OutputArchivers( void ){
 
 /**Unloads the physfs library
   * \return Nonzero on success */
-int Filesystem::DeInit() {
+int Filesystem::Close() {
 	int retval;
+
 	if ( (retval = PHYSFS_deinit()) == 0 )
 		LogMsg(ERR,"Error de-initializing PhysicsFS.\n%s",PHYSFS_getLastError());
+
 	return retval;
 }
 

@@ -222,12 +222,12 @@ bool Components::Load(string filename, bool fileoptional, bool skipcorrupt) {
  */
 bool Components::Save() {
 	char buff[10];
-    xmlDocPtr doc = NULL;       /* document pointer */
-    xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
+	xmlDocPtr doc = NULL;       /* document pointer */
+	xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
 
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root_node = xmlNewNode(NULL, BAD_CAST rootName.c_str() );
-    xmlDocSetRootElement(doc, root_node);
+	doc = xmlNewDoc(BAD_CAST "1.0");
+	root_node = xmlNewNode(NULL, BAD_CAST rootName.c_str() );
+	xmlDocSetRootElement(doc, root_node);
 
 	snprintf(buff, sizeof(buff), "%d", EPIAR_VERSION_MAJOR);
 	xmlNewChild(root_node, NULL, BAD_CAST "version-major", BAD_CAST buff);
@@ -244,5 +244,7 @@ bool Components::Save() {
 	LogMsg(INFO, "Saving %s file '%s'", rootName.c_str(), filepath.c_str());
 	xmlSaveFormatFileEnc( filepath.c_str(), doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
+
 	return true;
 }
+
