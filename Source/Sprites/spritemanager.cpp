@@ -513,12 +513,12 @@ void SpriteManager::AdjustBoundaries()
 
 void SpriteManager::Save() {
 	map<Coordinate,QuadTree*>::iterator iter;
-    xmlDocPtr doc = NULL;       /* document pointer */
-    xmlNodePtr root_node = NULL;/* node pointers */
+	xmlDocPtr doc = NULL;       /* document pointer */
+	xmlNodePtr root_node = NULL;/* node pointers */
 
-    doc = xmlNewDoc(BAD_CAST "1.0");
-    root_node = xmlNewNode(NULL, BAD_CAST "Sprites" );
-    xmlDocSetRootElement(doc, root_node);
+	doc = xmlNewDoc(BAD_CAST "1.0");
+	root_node = xmlNewNode(NULL, BAD_CAST "Sprites" );
+	xmlDocSetRootElement(doc, root_node);
 
 	for ( iter = trees.begin(); iter != trees.end(); ++iter ) { 
 		xmlAddChild( root_node, iter->second->ToNode() );
