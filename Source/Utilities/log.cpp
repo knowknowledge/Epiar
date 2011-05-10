@@ -155,8 +155,6 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 Log::Log()
 	:loglvldefault(ALL)
 {
-	time_t rawtime;
-
 	lvlStrings[NONE]="None";
 	lvlStrings[FATAL]="Fatal";
 	lvlStrings[CRITICAL]="Critical";
@@ -173,6 +171,17 @@ Log::Log()
 	lvlStrings[DEBUG3]="Debug3";
 	lvlStrings[DEBUG4]="Debug4";
 
+	// generate the log's filename based on the time
+	logFilename = string("Epiar-Log-") + GetTimestamp() + string(".xml");
+	printf("Logging to: '%s'\n",logFilename.c_str());
+
+	fp = NULL;
+}
+
+string Log::GetTimestamp( void ) {
+	time_t rawtime;
+	string timestamp_str;
+
 	time( &rawtime );
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
@@ -182,10 +191,9 @@ Log::Log()
 	timestamp[ 16 ] ='_';
 
 	// generate the log's filename based on the time
-	logFilename = string("Epiar-Log-") + string(timestamp) + string(".xml");
-	printf("Logging to: '%s'\n",logFilename.c_str());
+	timestamp_str = string(timestamp);
 
-	fp = NULL;
+	return timestamp_str;
 }
 
 /**\brief Does a reverse lookup of the log level based on a string.*/
