@@ -9,11 +9,24 @@
  * \details
  */
 
+#include "Engine/simulation.h"
+#include "Graphics/image.h"
+#include "UI/ui.h"
+
 class Menu {
 	public:
 	static void Main_Menu( void ); // Run the Main Menu
 
 	private:
+	// The Simulation
+	static Simulation debug;
+	static PlayerInfo* playerToLoad;
+
+	// GUI Functions
+	static void SetupGUI();
+    static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
+    static void SetMenuOption( void* value );
+
 	// Menu Action Flags
 	typedef enum {
 		Menu_DoNothing      = 1<<0,
@@ -36,17 +49,27 @@ class Menu {
 	static menuOption menu_Editor;
 	static menuOption menu_Confirm_Editor;
 	static menuOption menu_Exit;
-	static menuOption clicked;
+
+	static menuOption clicked; ///< The Current menuOption
 
 	// Images
 	static Image* menuSplash;
 	static Image* gameSplash;
 	static Image* editSplash;
 
-	// GUI Functions
-	static void SetupGUI();
-    static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
-    static void SetMenuOption( void* value );
+	// Menu Buttons
+	static Picture *play;
+	static Picture *load;
+	static Picture *edit;
+	static Picture *options;
+	static Picture *exit;
+
+	// Menu Actions
+	static void CreateNewWindow();
+	static void CreateLoadWindow();
+	static void StartGame();
+	static void CreateEditWindow();
+	static void StartEditor();
 
 	// GUI Callbacks
     static void ChangePicture( void* picture, void* image);
