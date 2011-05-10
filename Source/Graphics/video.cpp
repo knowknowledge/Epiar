@@ -605,7 +605,7 @@ Image *Video::CaptureScreen( void ) {
 
 /**\brief Takes a screenshot of the game and saves it to a file.
  */
-void Video::SaveScreenshot( const char *filename ) {
+void Video::SaveScreenshot( const string filename ) {
 	unsigned int size = w * h * 4;
 	int *pixelData, *pixelDataOrig;
 
@@ -626,6 +626,6 @@ void Video::SaveScreenshot( const char *filename ) {
 	}
 
 	SDL_Surface *s = SDL_CreateRGBSurfaceFrom( pixelData, w, h, screen->format->BitsPerPixel, screen->pitch, screen->format->Rmask, screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
-	SDL_SaveBMP( s, filename );
+	SDL_SaveBMP( s, filename.c_str() );
 }
 

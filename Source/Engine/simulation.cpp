@@ -531,6 +531,11 @@ bool Simulation::HandleInput() {
 	Hud::HandleInput( events );
 
 	inputs.HandleLuaCallBacks( events );
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+	{
+		Video::SaveScreenshot( "Screenshot.bmp" );
+	}
 	
 	return Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
 }
