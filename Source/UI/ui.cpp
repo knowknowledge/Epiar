@@ -93,8 +93,10 @@ void UI::CloseAll( void ) {
  *          breadth-first search to find the specified widget.
  */
 void UI::Close( Widget *widget ) {
-	LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
-	UI::currentScreen->DelChild( widget );
+	if( widget) {
+		LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
+		UI::currentScreen->DelChild( widget );
+	}
 }
 
 /**\brief Called when a Widget should be drawn later
