@@ -71,6 +71,7 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 {
 	list<string> files;
 	char **rc = NULL;
+    string fname;
 
 	rc = PHYSFS_enumerateFiles(path.c_str());
 	if (rc == NULL) {
@@ -83,8 +84,18 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 		char **i;
 		for (i = rc, file_count = 0; *i != NULL; i++, file_count++)
 		{
-			if( string(*i) != "Makefile.am")
-				files.push_back( string(*i) );
+            fname = string(*i);
+            // Skip Makefiles
+			if( fname == "Makefile.am") continue;
+			// Skip hidden files
+			if( fname[0] == '.' ) continue;
+			// Check if the suffix matches
+			if(fname.size() > suffix.size())
+            {
+				if( std::equal(fname.begin() + fname.size() - suffix.size(), fname.end(), suffix.begin()) ) {
+					files.push_back( fname );
+				}
+			}
 		}
 
 		LogMsg(INFO,"\n total (%d) files.\n", file_count);
