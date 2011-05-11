@@ -13,7 +13,7 @@
 #include "Utilities/timer.h"
 
 
-Simulation Menu::debug;
+Simulation Menu::simulation;
 PlayerInfo* Menu::playerToLoad = NULL;
 
 Menu::menuOption Menu::clicked = Menu_DoNothing;
@@ -140,9 +140,9 @@ void Menu::Main_Menu( void ) {
 			case Menu_Continue:
 			{
 				// Only attempt to Run if the Simulation has loaded
-				assert( debug.isLoaded() );
+				assert( simulation.isLoaded() );
 				UI::SwapScreens( "In Game", menuSplash, gameSplash );
-				debug.Run();
+				simulation.Run();
 				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 				break;
 			}
@@ -335,25 +335,25 @@ void Menu::StartGame()
 	}
 	
 	// Load the Simulation
-	if( !debug.Load( simName ) )
+	if( !simulation.Load( simName ) )
 	{
 		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 		return;
 	}
-	debug.SetupToRun();
+	simulation.SetupToRun();
 
 	UI::SwapScreens( "In Game", menuSplash, gameSplash );
 	
 	// Create or Load the Player
 	if( Menu_Confirm_New == clicked ) {
-		debug.CreateDefaultPlayer( playerName );
+		simulation.CreateDefaultPlayer( playerName );
 		Lua::Call("intro");
 	} else if( Menu_Confirm_Load == clicked ) {
-		debug.LoadPlayer( playerName );
+		simulation.LoadPlayer( playerName );
 	}
 	
 	// Run the Simulation
-	debug.Run();
+	simulation.Run();
 	UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 
 	// Continue Button
@@ -368,9 +368,9 @@ void Menu::StartGame()
 void Menu::CreateEditWindow()
 {
 	// Return to Editor if it has alread been loaded
-	if( debug.isLoaded() ) {
+	if( simulation.isLoaded() ) {
 		UI::SwapScreens( "Editor", menuSplash, editSplash );
-		debug.Edit();
+		simulation.Edit();
 		UI::SwapScreens( "Main Screen", editSplash, menuSplash );
 		return;
 	}
@@ -408,7 +408,7 @@ void Menu::StartEditor()
 {
 	string simName = "default";
 	assert( UI::Search("/Window'Editor'/Tabs/Tab/") != NULL );
-	assert( false == debug.isLoaded() );
+	assert( false == simulation.isLoaded() );
 
 	UI::Close( play ); // Play
 	UI::Close( load ); // Load
@@ -422,7 +422,7 @@ void Menu::StartEditor()
 	printf( "Active Tab: %s\n", activeTab->GetName().c_str() );
 	if( activeTab->GetName() == "Edit" ) {
 		simName = ((Dropdown*)activeTab->Search("/Dropdown/"))->GetText();
-		if( !debug.Load( simName ) )
+		if( !simulation.Load( simName ) )
 		{
 			LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
 			return;
@@ -436,15 +436,15 @@ void Menu::StartEditor()
 		SETOPTION( "options/simulation/random-universe", israndom );
 		SETOPTION( "options/simulation/random-seed", seed );
 
-		debug.New( simName );
+		simulation.New( simName );
 	}
 
-	debug.SetupToEdit();
+	simulation.SetupToEdit();
 
 	// Only attempt to Edit if the Simulation has loaded
-	assert( debug.isLoaded() );
+	assert( simulation.isLoaded() );
 	
 	UI::SwapScreens( "Editor", menuSplash, editSplash );
-	debug.Edit();
+	simulation.Edit();
 	UI::SwapScreens( "Main Screen", editSplash, menuSplash );
 }

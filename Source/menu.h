@@ -19,13 +19,13 @@ class Menu {
 
 	private:
 	// The Simulation
-	static Simulation debug;
+	static Simulation simulation;
 	static PlayerInfo* playerToLoad;
 
 	// GUI Functions
 	static void SetupGUI();
-    static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
-    static void SetMenuOption( void* value );
+	static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
+	static void SetMenuOption( void* value );
 
 	// Menu Action Flags
 	typedef enum {
