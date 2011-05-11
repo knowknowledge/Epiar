@@ -77,17 +77,34 @@ XMLFile::~XMLFile() {
 }
 
 bool XMLFile::Save() {
-	// FIXME: use xmlDocDumpFormatMemory and save/load via File class.
-	//        see http://www.xmlsoft.org/examples/io2.c
-
 	LogMsg(INFO, "Saving XML File '%s'.",filename.c_str() );
-	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
+
+	xmlChar *xmlbuff;
+	int buffersize;
+	xmlDocDumpFormatMemory( xmlPtr, &xmlbuff, &buffersize, 1 );
+	File saved = File( filename.c_str(), true );
+	if(saved.Write( (char *)xmlbuff, buffersize ) != true) {
+		LogMsg(ERR, "Could not save XML\n");
+	}
+	xmlFree(xmlbuff);
+
+	//xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
 	return true;
 }
 
 bool XMLFile::Save( const string& filename ) {
 	LogMsg(INFO, "Saving XML File '%s'.",filename.c_str() );
-	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
+
+	xmlChar *xmlbuff;
+	int buffersize;
+	xmlDocDumpFormatMemory( xmlPtr, &xmlbuff, &buffersize, 1 );
+	File saved = File( filename.c_str(), true );
+	if(saved.Write( (char *)xmlbuff, buffersize ) != true) {
+		LogMsg(ERR, "Could not save XML\n");
+	}
+	xmlFree(xmlbuff);
+
+	//xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
 	return true;
 }
 
@@ -109,7 +126,8 @@ string XMLFile::Get( const string& path ) {
 	if( cur ) { // Found the path
 		return NodeToString(xmlPtr,cur);;
 	} else {
-		LogMsg(WARN, "Could not find XML path '%s'.", path.c_str() );
+		// FIXME: when optionsfile is being created, this line causes a race condition
+		//LogMsg(WARN, "Could not find XML path '%s'.", path.c_str() );
 		return "";
 	}
 }
