@@ -167,7 +167,7 @@ bool File::Write( char *buffer, const long bufsize ){
 	if ( fp == NULL )
 		return false;
 #ifdef USE_PHYSICSFS
-	PHYSFS_sint64 bytesWritten = PHYSFS_write(this->fp, buffer, bufsize, 1);
+	PHYSFS_sint64 bytesWritten = PHYSFS_write(this->fp, buffer, sizeof(char), bufsize);
 #else
 	long bytesWritten = fwrite(buffer,1,bufsize,fp);
 #endif
