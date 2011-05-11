@@ -153,7 +153,7 @@ bool Components::Load(string filename, bool fileoptional, bool skipcorrupt) {
 	delete [] buffer;
 
 	// This path will be used when saving the file later.
-	filepath = filename;
+	this->filename = filename;
 
 	if( doc == NULL ) {
 		LogMsg(ERR, "Could not load '%s' for parsing.", filename.c_str() );
@@ -212,7 +212,6 @@ bool Components::Load(string filename, bool fileoptional, bool skipcorrupt) {
 	}
 	
 	xmlFreeDoc( doc );
-
 	
 	LogMsg(INFO, "Parsing of file '%s' done, found %d objects. File is version %d.%d.%d.", filename.c_str(), numObjs, versionMajor, versionMinor, versionMacro );
 	return success;
@@ -221,7 +220,7 @@ bool Components::Load(string filename, bool fileoptional, bool skipcorrupt) {
 /**\brief Save all Components to an XML file
  */
 bool Components::Save() {
-	char buff[10];
+	char buff[10] = {0};
 	xmlDocPtr doc = NULL;       /* document pointer */
 	xmlNodePtr root_node = NULL, section = NULL;/* node pointers */
 
@@ -241,8 +240,15 @@ bool Components::Save() {
 		xmlAddChild(root_node, section);
 	}
 
-	LogMsg(INFO, "Saving %s file '%s'", rootName.c_str(), filepath.c_str());
-	xmlSaveFormatFileEnc( filepath.c_str(), doc, "ISO-8859-1", 1);
+	LogMsg(INFO, "Saving component (%s) to file '%s'", rootName.c_str(), filename.c_str());
+	xmlChar *xmlbuff;
+	int buffersize;
+	xmlDocDumpFormatMemory( doc, &xmlbuff, &buffersize, 1 );
+	File saved = File( filename.c_str(), true );
+	if(saved.Write( (char *)xmlbuff, buffersize ) != true) {
+		LogMsg(ERR, "Could not save component\n");
+	}
+	//xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
 
 	return true;

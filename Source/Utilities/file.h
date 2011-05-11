@@ -20,7 +20,7 @@
 class File {
 	public:
 		File( void );
-		File( const string& filename );
+		File( const string& filename, bool writable = false );
 		~File();
 		bool Read( long numBytes, char *buffer );
 		long GetLength( void );

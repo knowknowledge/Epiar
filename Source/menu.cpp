@@ -97,7 +97,6 @@ void Menu::Main_Menu( void ) {
 	Input inputs;
 	list<InputEvent> events;
 
-
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
