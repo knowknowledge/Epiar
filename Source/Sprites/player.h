@@ -118,6 +118,7 @@ class Players : public Components {
 			Coordinate location);
 		Player* LoadLast();
 		Player* LoadPlayer(string playerName);
+		bool    DeletePlayer(string playerName);
 
 	protected:
 		Players() {};

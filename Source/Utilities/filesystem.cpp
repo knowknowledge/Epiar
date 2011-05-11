@@ -64,6 +64,20 @@ int Filesystem::PrependPath( const string& archivename ) {
 	return retval;
 }
 
+/**Deletes a file from the filesystem
+ * \param filename Filename relative to PHYSFS writedir to delete
+ * \return True on success */
+bool Filesystem::DeleteFile( const string &filename ) {
+	int retval;
+
+	if( (retval = PHYSFS_delete( filename.c_str() ) ) != 0 ) {
+		LogMsg(ERR, "Could not delete file (%s): %s\n", filename.c_str(), PHYSFS_getLastError());
+		return false;
+	}
+
+	return true;
+}
+
 /**Enumerates all files available in a path.
  * \param path String pointing to the path
  * \return Nonzero on success (not necessarily true?) */

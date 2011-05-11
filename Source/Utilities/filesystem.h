@@ -28,6 +28,7 @@ class Filesystem {
 		static void Version( void );
 		static void OutputArchivers( void );
 		static int Close( void );
+		static bool DeleteFile( const string &filename );
 	private:
 		static list<string> paths;
 };

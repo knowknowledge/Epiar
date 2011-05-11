@@ -13,6 +13,7 @@
 #include "Sprites/spritemanager.h"
 #include "Utilities/components.h"
 #include "Utilities/file.h"
+#include "Utilities/filesystem.h"
 
 /**\class Player
  * \brief Main player-specific functions and handle.
@@ -772,7 +773,7 @@ xmlNodePtr PlayerInfo::ConvertOldVersion( xmlDocPtr doc, xmlNodePtr node ) {
 
 	xmlSaveFormatFileEnc( filename.c_str(), xmlPtr, "ISO-8859-1", 1);
 
-    xmlNodePtr new_node = xmlNewNode(NULL, BAD_CAST "player");
+	xmlNodePtr new_node = xmlNewNode(NULL, BAD_CAST "player");
 	xmlNewChild(new_node, NULL, BAD_CAST "name", BAD_CAST GetName().c_str() );
 	xmlNewChild(new_node, NULL, BAD_CAST "file", BAD_CAST filename.c_str() );
 
@@ -832,6 +833,34 @@ Player* Players::CreateNew(string playerName,
 	Add( (Component*)(new PlayerInfo( newPlayer )) );
 
 	return newPlayer;
+}
+
+/**\brief Deletes a player
+ */
+bool Players::DeletePlayer(string playerName) {
+	bool ret;
+
+	// remove player from Players list
+	PlayerInfo* info = GetPlayerInfo( playerName );
+	if( (ret = Remove( (Component*)info ) ) == false) {
+		LogMsg(ERR, "Could not remove player!\n");
+		return false;
+	}
+
+	// save players compoent
+	if( Save() == false) {
+		LogMsg(ERR, "Removed player from list but could not save list.\n");
+		return false;
+	}
+	
+	// delete the separate player xml
+	string filename = "Resources/Definitions/" + playerName + ".xml";
+	if( Filesystem::DeleteFile( filename ) != true ) {
+		LogMsg(ERR, "Could not remove player XML file.\n");
+		return false;
+	}
+
+	return true;
 }
 
 /**\brief Create a new Player

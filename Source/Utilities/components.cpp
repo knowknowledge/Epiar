@@ -80,6 +80,26 @@ void Components::Add(Component* component) {
 	components[name] = component;
 }
 
+/**\brief Remove a Component from this collection
+ */
+bool Components::Remove(Component* component) {
+	map<string,Component*>::iterator c;
+	list<string>::iterator n;
+
+	assert( component );
+
+	// Remove from names
+	n = find(names.begin( ), names.end( ), component->GetName());
+	n = names.erase(n);
+
+	// Remove from components
+	string name = component->GetName();
+	c = components.find(name);
+	components.erase(c);
+
+	return true;
+}
+
 /**\brief Add a Component to this collection
  */
 void Components::AddOrReplace(Component* component) {

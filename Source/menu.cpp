@@ -12,7 +12,6 @@
 #include "Utilities/filesystem.h"
 #include "Utilities/timer.h"
 
-
 Simulation Menu::simulation;
 PlayerInfo* Menu::playerToLoad = NULL;
 
@@ -49,10 +48,17 @@ void Menu::LoadPlayer( void* value ) {
 void Menu::ErasePlayer( void* value ) {
 	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
 
-	if(choice)
-		Dialogs::Alert("TODO: Delete the player");
-	else
-		Dialogs::Alert("TODO: Don't delete the player");
+	if(choice) {
+		string playerName = ((PlayerInfo*)value)->GetName();
+		Players *players = Players::Instance();
+
+		if(players->DeletePlayer(playerName))
+			Dialogs::Alert("Player deleted successfully.");
+		else
+			Dialogs::Alert("A problem occurred while deleting the player.");
+
+		CloseLoadGameUI( NULL );
+	}
 }
 void Menu::CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
@@ -296,7 +302,7 @@ void Menu::CreateLoadWindow()
 			->AddChild( (new Label(120, 25, "Player Name:" )) ) ->AddChild( (new Label(210, 25, info->GetName() )) )
 			->AddChild( (new Label(120, 50, "Simulation:" )) ) ->AddChild( (new Label(210, 50, info->simulation )) )
 			->AddChild( (new Button(280, 87, 100, 30, "Play", LoadPlayer, info )) )
-			->AddChild( (new Button(170, 87, 100, 30, "Erase", ErasePlayer, NULL ) ) )
+			->AddChild( (new Button(170, 87, 100, 30, "Erase", ErasePlayer, info ) ) )
 		);
 	}
 	win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
