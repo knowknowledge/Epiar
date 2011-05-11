@@ -20,12 +20,15 @@
 
 /**Creates empty file instance.*/
 File::File( void ):
-fp(NULL), contentSize(0),validName("") {
+	fp(NULL), contentSize(0),validName("")
+{
+	
 }
 
 /**Creates file instance linked to filename. \sa Open.*/
 File::File( const string& filename, bool writable ):
-fp(NULL), contentSize(0), validName("") {
+	fp(NULL), contentSize(0), validName("")
+{
 	if( writable )
 		OpenWrite( filename );
 	else
@@ -154,7 +157,7 @@ char *File::Read( void ){
 	} else {
 		delete [] fBuffer;
 		LogMsg(ERR,"%s: Unable to read file into memory. %s",
-			validName.c_str(), PHYSFS_getLastError());
+			validName.c_str(), LastErrorMessage().c_str() );
 		return NULL;
 	}
 }
@@ -171,9 +174,11 @@ bool File::Write( char *buffer, const long bufsize ){
 #else
 	long bytesWritten = fwrite(buffer,1,bufsize,fp);
 #endif
-	if ( bytesWritten != bufsize){
-		LogMsg(ERR,"%s: Unable to write to file. %s",this->validName.c_str(),
-			PHYSFS_getLastError());
+	if ( bytesWritten != bufsize ){
+		LogMsg(ERR,"Unable to write to file '%s'. (%d/%d bytes written) %s",
+			this->validName.c_str(),
+			bytesWritten, bufsize,
+			LastErrorMessage().c_str() );
 		return false;
 	}
 	return true;
@@ -201,22 +206,21 @@ long File::Tell( void ){
  * \param pos Position in bytes form the beginning of the file.
  * \return true if successful, false otherwise.*/
 bool File::Seek( long pos ){
+	int retval;
 	if ( fp == NULL )
 		return false;
 #ifdef USE_PHYSICSFS
-	int retval;
-	retval = PHYSFS_seek( fp,
-		static_cast<PHYSFS_uint64>( pos ));
-	if ( retval == 0 ){
-		LogMsg(ERR,"%s: Error using file seek [%ld]. %s",
-		                validName.c_str(), pos, PHYSFS_getLastError());
-		return false;
-	}
+	retval = PHYSFS_seek( fp, static_cast<PHYSFS_uint64>( pos ));
 #else
 	const char *cName;
 	cName = validName.c_str();
-	fseek(fp, pos, SEEK_SET);
+      retval = fseek(fp, pos, SEEK_SET);
 #endif
+	if ( retval == 0 ){
+		LogMsg(ERR,"%s: Error using file seek [%ld]. %s",
+		                validName.c_str(), pos, LastErrorMessage().c_str() );
+		return false;
+	}
 	return true;
 }
 
@@ -232,7 +236,7 @@ int File::SetBuffer( int bufSize ){
 #ifdef USE_PHYSICSFS
 	if ( PHYSFS_setBuffer( fp, bufSize ) == 0 ){
 		LogMsg(ERR,"Could not create internal buffer for file: %s.\n%s",
-				validName.c_str(),PHYSFS_getLastError());
+				validName.c_str(), PHYSFS_getLastError());
 		PHYSFS_close( fp );
 		return 0;
 	}
@@ -277,20 +281,14 @@ bool File::Exists( const string& filename ) {
 	cName = filename.c_str();
 #ifdef USE_PHYSICSFS
 	if ( !PHYSFS_exists( cName ) ){
-		LogMsg(ERR,"File does not exist: %s.", cName);
+		LogMsg(ERR,"%s: %s.", LastErrorMessage().c_str(), cName);
 		return false;
 	}
 #else
 	struct stat fileStatus;
 	int stat_ret = stat(cName, &fileStatus );
 	if ( stat_ret != 0 ) {
-		//LogMsg(INFO, "Stat for %s: [%d]\n",cName,stat_ret);
-		switch( stat_ret ) {
-			case EACCES:        LogMsg(ERR,"Epiar cannot access:%s.", cName); break;
-			case EFAULT:        LogMsg(ERR,"Invalid address: %s.", cName); break;
-			case EIO:           LogMsg(ERR,"An I/O Error Occured: %s.", cName); break;
-			default:			LogMsg(ERR,"Unknown error occurred: %s.", cName);
-		}
+        LogMsg(ERR,"%s: %s.", LastErrorMessage().c_str(), cName); break;
 		return false;
 	}
 #endif
@@ -310,3 +308,54 @@ bool IsBigEndian() {
 	return (test_array[0] == '\0');
 }
 
+
+string File::LastErrorMessage( void )
+{
+#ifdef USE_PHYSICSFS
+    return PHYSFS_getLastError();
+#else
+    switch( errno )
+    {
+        case EPERM: return "Operation not permitted" ;
+        case ENOENT: return "No such file or directory" ;
+        case ESRCH: return "No such process" ;
+        case EINTR: return "Interrupted system call" ;
+        case EIO: return "I/O error" ;
+        case ENXIO: return "No such device or address" ;
+        case E2BIG: return "Argument list too long" ;
+        case ENOEXEC: return "Exec format error" ;
+        case EBADF: return "Bad file number" ;
+        case ECHILD: return "No child processes" ;
+        case EAGAIN: return "Try again" ;
+        case ENOMEM: return "Out of memory" ;
+        case EACCES: return "Permission denied" ;
+        case EFAULT: return "Bad address" ;
+        case ENOTBLK: return "Block device required" ;
+        case EBUSY: return "Device or resource busy" ;
+        case EEXIST: return "File exists" ;
+        case EXDEV: return "Cross-device link" ;
+        case ENODEV: return "No such device" ;
+        case ENOTDIR: return "Not a directory" ;
+        case EISDIR: return "Is a directory" ;
+        case EINVAL: return "Invalid argument" ;
+        case ENFILE: return "File table overflow" ;
+        case EMFILE: return "Too many open files" ;
+        case ENOTTY: return "Not a typewriter" ;
+        case ETXTBSY: return "Text file busy" ;
+        case EFBIG: return "File too large" ;
+        case ENOSPC: return "No space left on device" ;
+        case ESPIPE: return "Illegal seek" ;
+        case EROFS: return "Read-only file system" ;
+        case EMLINK: return "Too many links" ;
+        case EPIPE: return "Broken pipe" ;
+        case EDOM: return "Math argument out of domain of func" ;
+        case ERANGE: return "Math result not representable";
+        default:
+        {
+            char errormsg[30];
+            snprintf( errormsg, sizeof(errormsg), "Unknown Error %d.", errno );
+            return errormsg;
+        }
+    }
+#endif
+}

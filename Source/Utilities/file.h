@@ -45,6 +45,8 @@ class File {
 #else
 		FILE *fp;
 #endif
+        static string LastErrorMessage( void );
+
 		long contentSize;		/** Number of bytes in the file. */
 		string validName;		/** Name of the file referenced (exists).*/
 };
