@@ -176,10 +176,10 @@ void Menu::Main_Menu( void ) {
 				break;
 		}
 
-		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
-		{
-			Video::SaveScreenshot();
-		}
+		//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+		//{
+			//Video::SaveScreenshot();
+		//}
 
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;
