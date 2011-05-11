@@ -61,6 +61,7 @@ class Log {
 		void SetFunFilter( const string& _funfilter );
 		void SetMsgFilter( const string& msgfilter );
 		void Close( void );
+		static string GetTimestamp( void );
 
 		void realLog( Level lvl, const string& func, const char *message, ... );
 

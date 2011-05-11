@@ -97,7 +97,6 @@ void Menu::Main_Menu( void ) {
 	Input inputs;
 	list<InputEvent> events;
 
-
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
@@ -177,10 +176,10 @@ void Menu::Main_Menu( void ) {
 				break;
 		}
 
-		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
-		{
-			Video::SaveScreenshot( "Screenshot.bmp" );
-		}
+		//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+		//{
+			//Video::SaveScreenshot();
+		//}
 
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;

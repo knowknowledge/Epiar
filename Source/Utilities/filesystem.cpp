@@ -29,6 +29,10 @@ int Filesystem::Init( const char* argv0 ) {
 	if ( (retval = PHYSFS_setSaneConfig("games", "epiar", NULL, 0, 0 ) ) == 0 )
 		LogMsg(ERR,"Could not set sane paths for PhysFS: %s\n", PHYSFS_getLastError());
 
+	// Set up userDir
+	if ( (retval = PHYSFS_mkdir("Resources/Definitions/") ) == 0 )
+		LogMsg(ERR,"Could not set up the user dir: %s\n", PHYSFS_getLastError());
+
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
 	if ( (retval = PHYSFS_addToSearchPath(DATADIR, 1)) == 0 )

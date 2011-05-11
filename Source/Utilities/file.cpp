@@ -24,9 +24,12 @@ fp(NULL), contentSize(0),validName("") {
 }
 
 /**Creates file instance linked to filename. \sa Open.*/
-File::File( const string& filename):
+File::File( const string& filename, bool writable ):
 fp(NULL), contentSize(0), validName("") {
-	OpenRead( filename );
+	if( writable )
+		OpenWrite( filename );
+	else
+		OpenRead( filename );
 }
 
 /**Opens a file for reading
@@ -42,6 +45,7 @@ bool File::OpenRead( const string& filename ) {
 
 	// Check for file existence
 	if( !File::Exists(filename) ){
+		LogMsg(WARN,"Could not open file for reading. File does not exist.\n");
 		return false;
 	}
 
@@ -85,11 +89,12 @@ bool File::OpenWrite( const string& filename ) {
 	this->fp = fopen( cName, "wb");
 #endif
 	if( fp == NULL ){
-		LogMsg(ERR,"Could not open file for writing: %s.\n%s",cName,
+		LogMsg(ERR,"Could not open file (%s) for writing: %s\n",cName,
 				PHYSFS_getLastError());
 		return false;
 	}
 	validName.assign( filename );
+
 	return true;
 }
 

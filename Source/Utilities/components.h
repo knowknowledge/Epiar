@@ -35,8 +35,8 @@ class Components {
 		bool Load(string filename, bool fileoptional=false, bool skipcorrupt=false);
 		bool Save();
 
-		void SetFileName( const string& _filepath ) { filepath = _filepath; }
-		string GetFileName( ) { return filepath; }
+		void SetFileName( const string& filename ) { this->filename = filename; }
+		string GetFileName( ) { return filename; }
 	protected:
 
 		Components() {};  ///< Protected default constuctor
@@ -45,7 +45,7 @@ class Components {
 
 		virtual Component* newComponent() = 0;
 		bool ParseXMLNode( xmlDocPtr doc, xmlNodePtr node );
-		string filepath;
+		string filename;
 		string rootName;
 		string componentName;
 		map<string,Component*> components;

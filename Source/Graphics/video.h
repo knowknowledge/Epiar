@@ -97,7 +97,7 @@ class Video {
 		static void Blur( void );
 
 		static Image *CaptureScreen( void );
-		static void SaveScreenshot( const string filename );
+		static void SaveScreenshot( string filename = "" );
 
 		// Lua functions
 		static int lua_getWidth(lua_State *L);
