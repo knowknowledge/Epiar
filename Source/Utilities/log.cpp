@@ -106,7 +106,7 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 
 	va_list args;
 	time_t rawtime;
-	static char logBuffer[4096];
+	static char logBuffer[4096] = {0};
 
 	time( &rawtime );
 
