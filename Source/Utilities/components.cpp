@@ -249,6 +249,7 @@ bool Components::Save() {
 		LogMsg(ERR, "Could not save component\n");
 	}
 	//xmlSaveFormatFileEnc( filename.c_str(), doc, "ISO-8859-1", 1);
+	xmlFree(xmlbuff);
 	xmlFreeDoc( doc );
 
 	return true;
