@@ -314,7 +314,8 @@ void Menu::CreateLoadWindow()
 			->AddChild( (new Button(170, 87, 100, 30, "Erase", ErasePlayer, info ) ) )
 		);
 	}
-	win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
+	win->AddCloseButton();
+	//win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
 	return;
 }
 
