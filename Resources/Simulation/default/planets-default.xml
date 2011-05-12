@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <planets>
   <version-major>0</version-major>
-  <version-minor>4</version-minor>
-  <version-macro>2</version-macro>
+  <version-minor>5</version-minor>
+  <version-macro>0</version-macro>
   <planet>
     <name>Alexandria</name>
     <alliance>Inter-Terran Conjunctive</alliance>

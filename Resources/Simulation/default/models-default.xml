@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <models>
   <version-major>0</version-major>
-  <version-minor>4</version-minor>
-  <version-macro>2</version-macro>
+  <version-minor>5</version-minor>
+  <version-macro>0</version-macro>
   <model>
     <name>Escape Pod</name>
     <image>Resources/Graphics/podv.png</image>
