@@ -72,6 +72,10 @@ void Menu::CreateNewGameCB( void* value ) {
 		Dialogs::Alert("A player with that name exists.");
 		return;
 	}
+	if(Filesystem::FilenameIsSafe(playerName) == false) {
+		Dialogs::Alert("The following cannot be used: <>:\"/\\|?*");
+		return;
+	}
 
 	clicked = Menu_Confirm_New;
 	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();

@@ -78,6 +78,35 @@ bool Filesystem::DeleteFile( const string &filename ) {
 	return true;
 }
 
+/**Ensures no characters are in 'filename' that might cause issues
+ * \param filename The filename/string to check
+ * \return True if no dangerous characters are found, false if otherwise */
+bool Filesystem::FilenameIsSafe( const string &filename ) {
+	size_t found;
+
+	// check to ensure the following are not found: <>:"/\|?*
+	found = filename.find(string("<"));
+	if( found != string::npos ) return false;
+	found = filename.find(">");
+	if( found != string::npos ) return false;
+	found = filename.find(":");
+	if( found != string::npos ) return false;
+	found = filename.find("\"");
+	if( found != string::npos ) return false;
+	found = filename.find("/");
+	if( found != string::npos ) return false;
+	found = filename.find("\\");
+	if( found != string::npos ) return false;
+	found = filename.find("|");
+	if( found != string::npos ) return false;
+	found = filename.find("?");
+	if( found != string::npos ) return false;
+	found = filename.find("*");
+	if( found != string::npos ) return false;
+	
+	return true;
+}
+
 /**Enumerates all files available in a path.
  * \param path String pointing to the path
  * \return Nonzero on success (not necessarily true?) */

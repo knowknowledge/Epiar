@@ -29,6 +29,7 @@ class Filesystem {
 		static void OutputArchivers( void );
 		static int Close( void );
 		static bool DeleteFile( const string &filename );
+		static bool FilenameIsSafe( const string &filename );
 	private:
 		static list<string> paths;
 };
