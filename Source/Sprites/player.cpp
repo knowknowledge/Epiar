@@ -863,6 +863,21 @@ bool Players::DeletePlayer(string playerName) {
 	return true;
 }
 
+/**\brief Returns true if a player already exists
+ */
+bool Players::PlayerExists(string playerName) {
+	list<string>* names = GetNames();
+	list<string>::iterator i;
+
+	if( names->empty() ) return false;
+
+	for(i = names->begin(); i != names->end(); ++i ) {
+		if(*i == playerName) return true;
+	}
+
+	return false;
+}
+
 /**\brief Create a new Player
  */
 Player* Players::LoadLast() {

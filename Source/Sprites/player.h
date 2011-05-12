@@ -119,6 +119,7 @@ class Players : public Components {
 		Player* LoadLast();
 		Player* LoadPlayer(string playerName);
 		bool    DeletePlayer(string playerName);
+		bool	PlayerExists(string playerName);
 
 	protected:
 		Players() {};

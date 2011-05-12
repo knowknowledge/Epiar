@@ -64,6 +64,18 @@ void Menu::CloseNewGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
 	UI::Close( newGameWnd );
 }
+void Menu::CreateNewGameCB( void* value ) {
+	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
+	Players *players = Players::Instance();
+
+	if(players->PlayerExists(playerName)) {
+		Dialogs::Alert("A player with that name exists.");
+		return;
+	}
+
+	clicked = Menu_Confirm_New;
+	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
+}
 void Menu::CloseLoadGameUI( void* value ) {
 	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
 	UI::Close( newGameWnd );
@@ -281,7 +293,7 @@ void Menu::CreateNewWindow()
 		->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed, NULL )) )
 	);
 	win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
-	win->AddChild( (new Button(140, 330, 100, 30, "Create", SetMenuOption, &menu_Confirm_New)) );
+	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewGameCB, NULL)) );
 }
 
 void Menu::CreateLoadWindow()

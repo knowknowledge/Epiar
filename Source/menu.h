@@ -72,13 +72,14 @@ class Menu {
 	static void StartEditor();
 
 	// GUI Callbacks
-    static void ChangePicture( void* picture, void* image);
-    static void CloseEditorUI( void* value );
-    static void CloseLoadGameUI( void* value );
-    static void CloseNewGameUI( void* value );
-    static void ErasePlayer( void *value );
-    static void LoadPlayer( void* value );
-    static void RandomizeSeed( void* value );
+	static void ChangePicture( void* picture, void* image);
+	static void CloseEditorUI( void* value );
+	static void CloseLoadGameUI( void* value );
+	static void CloseNewGameUI( void* value );
+	static void CreateNewGameCB( void* value );
+	static void ErasePlayer( void *value );
+	static void LoadPlayer( void* value );
+	static void RandomizeSeed( void* value );
 
 };
 
