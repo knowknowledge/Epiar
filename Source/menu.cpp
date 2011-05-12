@@ -298,12 +298,13 @@ void Menu::CreateLoadWindow()
 {
 	if( UI::Search("/Window'Load Game'/") != NULL ) return;
 
-	Window* win = new Window(250, 50, 500, 700, "Load Game");
+	list<string> *names = Players::Instance()->GetNames();
+
+	Window* win = new Window(250, 50, 500, 50 + (names->size() * 150), "Load Game");
 	UI::Add( win );
 	// Create a new Frame for each Player
 	int p = 0;
 	list<string>::iterator iter;
-	list<string> *names = Players::Instance()->GetNames();
 	for( iter = names->begin(); iter != names->end(); ++iter, ++p ) {
 		PlayerInfo *info = Players::Instance()->GetPlayerInfo( *iter );
 		win->AddChild( (new Frame( 50, 155*p + 30, 400, 130 ))
