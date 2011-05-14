@@ -5,7 +5,7 @@ BUILD="Release"
 DOXYGEN="OFF"
 TESTS="OFF"
 INTERNAL_LUA="OFF"
-LUAJIT="ON"
+LUAJIT="OFF"
 
 # Intermedia directory
 IDIR="`pwd`/buildRelease"

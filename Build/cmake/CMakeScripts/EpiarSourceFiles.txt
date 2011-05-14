@@ -1,6 +1,8 @@
 # Sets the source files to use
 set (Epiar_src
 	${Epiar_SRC_DIR}/main.cpp
+	${Epiar_SRC_DIR}/menu.cpp
+	${Epiar_SRC_DIR}/menu.h
 	${Epiar_SRC_DIR}/common.h
 	${Epiar_SRC_DIR}/defines.h
 	${Epiar_SRC_DIR}/includes.h
@@ -24,6 +26,7 @@ set (Epiar_src ${Epiar_src}
 	)
 set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/alliances.h
+	${Epiar_SRC_DIR}/Engine/camera.h
 	${Epiar_SRC_DIR}/Engine/console.h
 	${Epiar_SRC_DIR}/Engine/commodities.h
 	${Epiar_SRC_DIR}/Engine/engines.h
@@ -31,7 +34,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/mission.h
 	${Epiar_SRC_DIR}/Engine/models.h
 	${Epiar_SRC_DIR}/Engine/outfit.h
-	${Epiar_SRC_DIR}/Engine/quadrant.h
 	${Epiar_SRC_DIR}/Engine/simulation.h
 	${Epiar_SRC_DIR}/Engine/simulation_lua.h
 	${Epiar_SRC_DIR}/Engine/starfield.h
@@ -39,6 +41,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/weapon.h
 	${Epiar_SRC_DIR}/Engine/weapons.h
 	${Epiar_SRC_DIR}/Engine/alliances.cpp
+	${Epiar_SRC_DIR}/Engine/camera.cpp
 	${Epiar_SRC_DIR}/Engine/console.cpp
 	${Epiar_SRC_DIR}/Engine/commodities.cpp
 	${Epiar_SRC_DIR}/Engine/engines.cpp
@@ -46,7 +49,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/mission.cpp
 	${Epiar_SRC_DIR}/Engine/models.cpp
 	${Epiar_SRC_DIR}/Engine/outfit.cpp
-	${Epiar_SRC_DIR}/Engine/quadrant.cpp
 	${Epiar_SRC_DIR}/Engine/simulation.cpp
 	${Epiar_SRC_DIR}/Engine/simulation_lua.cpp
 	${Epiar_SRC_DIR}/Engine/starfield.cpp
@@ -68,13 +70,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Input/input.cpp
 	)
 set (Epiar_src ${Epiar_src}
-	${Epiar_SRC_DIR}/Menu/menu.h
-	)
-set (Epiar_src ${Epiar_src}
-	${Epiar_SRC_DIR}/Server/client.h
-	${Epiar_SRC_DIR}/Server/queue_lockfree.h
-	)
-set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Sprites/effects.h
 	${Epiar_SRC_DIR}/Sprites/gate.h
 	${Epiar_SRC_DIR}/Sprites/planets.h
@@ -93,12 +88,16 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Sprites/spritemanager.cpp
 	)
 set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/UI/ui_action.cpp
+	${Epiar_SRC_DIR}/UI/ui_action.h
 	${Epiar_SRC_DIR}/UI/ui_button.cpp
 	${Epiar_SRC_DIR}/UI/ui_button.h
 	${Epiar_SRC_DIR}/UI/ui_checkbox.cpp
 	${Epiar_SRC_DIR}/UI/ui_checkbox.h
 	${Epiar_SRC_DIR}/UI/ui_container.cpp
 	${Epiar_SRC_DIR}/UI/ui_container.h
+    ${Epiar_SRC_DIR}/UI/ui_dialogs.cpp
+    ${Epiar_SRC_DIR}/UI/ui_dialogs.h
 	${Epiar_SRC_DIR}/UI/ui.cpp
 	${Epiar_SRC_DIR}/UI/ui.h
 	${Epiar_SRC_DIR}/UI/ui_dropdown.h
@@ -127,30 +126,21 @@ set (Epiar_src ${Epiar_src}
 set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/argparser.h
 	${Epiar_SRC_DIR}/Utilities/argparser.cpp
-	${Epiar_SRC_DIR}/Utilities/camera.h
-	${Epiar_SRC_DIR}/Utilities/cmath.h
 	${Epiar_SRC_DIR}/Utilities/coordinate.h
 	${Epiar_SRC_DIR}/Utilities/components.h
-	${Epiar_SRC_DIR}/Utilities/debug.h
 	${Epiar_SRC_DIR}/Utilities/file.h
 	${Epiar_SRC_DIR}/Utilities/filesystem.h
 	${Epiar_SRC_DIR}/Utilities/hashtbl.h
 	${Epiar_SRC_DIR}/Utilities/log.h
 	${Epiar_SRC_DIR}/Utilities/lua.h
-	${Epiar_SRC_DIR}/Utilities/parser.h
 	${Epiar_SRC_DIR}/Utilities/quadtree.h
 	${Epiar_SRC_DIR}/Utilities/resource.h
 	${Epiar_SRC_DIR}/Utilities/string_convert.h
 	${Epiar_SRC_DIR}/Utilities/timer.h
 	${Epiar_SRC_DIR}/Utilities/trig.h
-	${Epiar_SRC_DIR}/Utilities/vector.h
-	${Epiar_SRC_DIR}/Utilities/vfl.h
 	${Epiar_SRC_DIR}/Utilities/xml.h
-	${Epiar_SRC_DIR}/Utilities/camera.cpp
-	${Epiar_SRC_DIR}/Utilities/cmath.cpp
 	${Epiar_SRC_DIR}/Utilities/coordinate.cpp
 	${Epiar_SRC_DIR}/Utilities/components.cpp
-	${Epiar_SRC_DIR}/Utilities/debug.cpp
 	${Epiar_SRC_DIR}/Utilities/file.cpp
 	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
 	${Epiar_SRC_DIR}/Utilities/hashtbl.cpp
@@ -160,7 +150,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/resource.cpp
 	${Epiar_SRC_DIR}/Utilities/timer.cpp
 	${Epiar_SRC_DIR}/Utilities/trig.cpp
-	${Epiar_SRC_DIR}/Utilities/vector.cpp
 	${Epiar_SRC_DIR}/Utilities/xml.cpp
 	)
 if (WIN32)
