@@ -345,6 +345,7 @@ void Ship::Draw( void ) {
 		
 		status.isAccelerating = false;
 	}
+#if defined(ROTATE_ENGINE)
 	//TODO: draw flare tilted in the coresponding direction
 	if( status.isRotatingLeft || status.isRotatingRight ) {
 		float direction = GetAngle();
@@ -361,6 +362,7 @@ void Ship::Draw( void ) {
 		status.isRotatingLeft = false;
 		status.isRotatingRight = false;
 	}
+#endif
 }
 
 /**\brief Fire's ship current weapon.
