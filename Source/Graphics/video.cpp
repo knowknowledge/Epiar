@@ -247,6 +247,11 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 		LogMsg(INFO, "Video mode %dx%dx%d supported.", w, h, bpp );
 	}
 
+	SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,   16);
+	SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,  16);
+	SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
+
 	// finally, set the video mode (creating a window)
 	if( ( screen = SDL_SetVideoMode( w, h, bpp, videoFlags ) ) == NULL ) {
 		LogMsg(ERR, "Could not set video mode: %s", SDL_GetError() );
@@ -324,6 +329,7 @@ int Video::lua_getHeight(lua_State *L) {
 void Video::Update( void ) {
 	glFlush();
 	SDL_GL_SwapBuffers();
+	//glAccum(GL_ACCUM, 0.8f);
 	glFinish();
 }
 
