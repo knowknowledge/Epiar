@@ -12,7 +12,7 @@
 #include "Sprites/effects.h"
 #include "Sprites/player.h"
 #include "Sprites/planets.h"
-#include "AI/ai_lua.h"
+#include "Sprites/ai_lua.h"
 #include "Audio/sound.h"
 #include "Engine/camera.h"
 #include "Utilities/trig.h"

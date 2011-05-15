@@ -19,6 +19,8 @@
 #include "Engine/starfield.h"
 #include "Engine/console.h"
 #include "Graphics/video.h"
+#include "Sprites/ai.h"
+#include "Sprites/ai_lua.h"
 #include "Sprites/player.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
@@ -27,8 +29,6 @@
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 #include "Utilities/lua.h"
-#include "AI/ai.h"
-#include "AI/ai_lua.h"
 
 /**\class Simulation
  * \brief Handles main game loop. */

@@ -4,8 +4,6 @@ bin_PROGRAMS = epiar
 
 epiar_SOURCES = Source/main.cpp \
 		Source/menu.cpp \
-                Source/AI/ai.cpp \
-                Source/AI/ai_lua.cpp \
                 Source/Audio/audio.cpp \
                 Source/Audio/audio_lua.cpp \
                 Source/Audio/music.cpp \
@@ -30,6 +28,8 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Graphics/image.cpp \
                 Source/Graphics/video.cpp \
                 Source/Input/input.cpp \
+                Source/Sprites/ai.cpp \
+                Source/Sprites/ai_lua.cpp \
                 Source/Sprites/effects.cpp \
                 Source/Sprites/gate.cpp \
                 Source/Sprites/planets.cpp \

@@ -17,7 +17,6 @@
 #include "Sprites/effects.h"
 #include "Audio/sound.h"
 #include "Engine/hud.h"
-#include "AI/ai.h"
 
 #define NON_PLAYER_SOUND_RATIO 0.4f ///< Ratio used to quiet NON-PLAYER Ship Sounds.
 

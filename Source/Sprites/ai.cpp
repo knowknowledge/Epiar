@@ -8,7 +8,7 @@
 
 #include "includes.h"
 #include "common.h"
-#include "AI/ai.h"
+#include "Sprites/ai.h"
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/lua.h"

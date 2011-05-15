@@ -9,7 +9,7 @@
 #ifndef __H_AI_LUA_
 #define __H_AI_LUA_
 
-#include "AI/ai.h"
+#include "Sprites/ai.h"
 #include "Utilities/lua.h"
 
 #define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship

@@ -9,10 +9,6 @@ set (Epiar_src
 	${Epiar_SRC_DIR}/version.h
 	)
 set (Epiar_src ${Epiar_src}
-	${Epiar_SRC_DIR}/AI/ai.h
-	${Epiar_SRC_DIR}/AI/ai_lua.h
-	${Epiar_SRC_DIR}/AI/ai.cpp
-	${Epiar_SRC_DIR}/AI/ai_lua.cpp
 	)
 set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Audio/audio.cpp
@@ -70,6 +66,10 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Input/input.cpp
 	)
 set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Sprites/ai.h
+	${Epiar_SRC_DIR}/Sprites/ai_lua.h
+	${Epiar_SRC_DIR}/Sprites/ai.cpp
+	${Epiar_SRC_DIR}/Sprites/ai_lua.cpp
 	${Epiar_SRC_DIR}/Sprites/effects.h
 	${Epiar_SRC_DIR}/Sprites/gate.h
 	${Epiar_SRC_DIR}/Sprites/planets.h
