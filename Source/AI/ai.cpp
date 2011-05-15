@@ -27,7 +27,8 @@ AI::AI(string _name, string machine) :
 	state("default"),
 	allegiance(NULL)
 {
-	target=0;
+	target = 0;
+	merciful = 0;
 }
 
 /** \brief Run the Lua Statemachine to act and possibly change state.
@@ -280,6 +281,11 @@ void AI::AddEnemy(int e, int damage){
 		return;
 	}
 //	printf("Adding Enemy %d with damage %d\n",e,damage);
+	// Don't forgive player's that attack
+	if( drawOrder == DRAW_ORDER_PLAYER )
+	{
+		merciful = 0;
+	}
 	enemy newE;
 	newE.id=e;
 	newE.damage=damage;

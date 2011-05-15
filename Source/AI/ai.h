@@ -25,28 +25,34 @@ typedef struct{
 	int id; 
 }enemy;
 
-
-
-
-
 class AI : public Ship {
 	public:
 		AI(string name, string machine);
 		void Update( lua_State *L );
 		void Draw();
+
 		void Decide( lua_State *L );
+
 		void SetTarget(int t);
 		int GetTarget(){return target;}
+
 		void SetStateMachine(string _machine) { stateMachine = _machine; }
 		void SetState(string _state)  { state = _state; }
+
 		void SetAlliance(Alliance* alliance) { allegiance = alliance; }
 		string GetName() { return name; }
 		void SetName(string newName) { name = newName; }
+
 		string GetStateMachine() { return stateMachine; }
 		string GetState() { return state; }
+
 		Alliance* GetAlliance() { return allegiance; }
+
 		void AddEnemy(int e, int damage);
 		void RemoveEnemy(int e);
+
+		void SetMerciful(int f) { merciful = (f == 1); }
+		int GetMerciful() { return (merciful ? 1 : 0 ); }
 
 	private:
 		int CalcCost(int threat, int damage);
@@ -58,7 +64,8 @@ class AI : public Ship {
 		string stateMachine;
 		string state;
 		Alliance* allegiance;
-		
+
+		bool merciful; ///< Is this ship merciful to the player?
 };
 
 bool CompAI(Sprite* a, Sprite* b);

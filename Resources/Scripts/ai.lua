@@ -33,7 +33,7 @@ end
 
 function okayTarget(cur_ship, ship)
 	-- if friendly (merciful) mode is on and the nearest target is the player, forbid this target
-	if cur_ship:GetFriendly() == 1 and PLAYER ~= nil and PLAYER:GetID() == ship:GetID() then
+	if cur_ship:GetMerciful() == 1 and PLAYER ~= nil and PLAYER:GetID() == ship:GetID() then
 		return false
 	end
 

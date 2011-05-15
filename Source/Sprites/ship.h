@@ -105,9 +105,6 @@ class Ship : public Sprite {
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 
-		void SetFriendly(int f) { friendly = (f == 1); }
-		int GetFriendly() { return (friendly ? 1 : 0 ); }
-
 	protected:
 		typedef struct ws ws_t;
 
@@ -139,8 +136,6 @@ class Ship : public Sprite {
 			bool isRotatingRight;  ///< Cleared by update, set by turning right (so it's always updated twice a loop)
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
-
-		bool friendly; ///< Is this ship friendly to the player?
 
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship

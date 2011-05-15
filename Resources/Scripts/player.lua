@@ -505,8 +505,8 @@ function doHailBFM()
 	if ( r == 1 ) then
 		hailReplyLabel.setText(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
-		-- 'friendly' means will never arbitrary select player as a target unless provoked
-		targettedShip:SetFriendly(1)
+		-- 'merciful' means will never arbitrary select player as a target unless provoked
+		targettedShip:SetMerciful(1)
 	else
 		hailReplyLabel.setText(hailReplyLabel, "I don't think so.")
 		didBFM = 1
