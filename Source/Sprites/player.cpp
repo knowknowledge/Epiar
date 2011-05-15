@@ -375,7 +375,7 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 	this->weaponSlots = this->GetModel()->GetWeaponSlots();
 
 	for( slotPtr = FirstChildNamed(node,"weapSlot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"weapSlot") ){
-		ws_t *existingSlot = NULL;
+		WeaponSlot *existingSlot = NULL;
 
 		xmlNodePtr attr;
 
@@ -410,7 +410,7 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 	}
 
-	// no need to push any ws_t back into the player's weaponSlots; slots were edited in place
+	// no need to push any WeaponSlot back into the player's weaponSlots; slots were edited in place
 
 	return true;
 }
@@ -470,7 +470,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 	// Weapon Slots
 	// save info about whichever items players are able to change in their slot configuration (content and firing group)
 	for(unsigned int w=0; w < weaponSlots.size(); w++){
-		ws_t *slot = &weaponSlots[w];
+		WeaponSlot *slot = &weaponSlots[w];
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "weapSlot");
 
 		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );

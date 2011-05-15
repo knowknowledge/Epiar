@@ -543,7 +543,7 @@ void Ship::AddToShipWeaponList(string weaponName){
  */
 int Ship::AddShipWeapon(Weapon *w){
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
-		ws_t *slot = &weaponSlots[s];
+		WeaponSlot *slot = &weaponSlots[s];
 		if(slot->content == ""){
 			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			AddToShipWeaponList(w);
@@ -621,7 +621,7 @@ void Ship::RemoveShipWeapon(Weapon *w){
 		}
 	}
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
-		ws_t *slot = &weaponSlots[s];
+		WeaponSlot *slot = &weaponSlots[s];
 		if(slot->content == w->GetName()){
 			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			return;
@@ -872,13 +872,13 @@ int Ship::GetWeaponSlotCount() {
 /**\brief The name of weapon slot i
  */
 string Ship::GetWeaponSlotName(int i) {
-	return ((ws_t)(this->weaponSlots[i])).name;
+	return ((WeaponSlot)(this->weaponSlots[i])).name;
 }
 
 /**\brief The status of weapon slot i. By the way, the "status" naming of this function has nothing to do with statusbars.
  */
 string Ship::GetWeaponSlotStatus(int i) {
-	return ((ws_t)(this->weaponSlots[i])).content;
+	return ((WeaponSlot)(this->weaponSlots[i])).content;
 }
 
 /**\brief Set the status of weapon slot i
@@ -890,7 +890,7 @@ void Ship::SetWeaponSlotStatus(int i, string s) {
 /**\brief The firing group of weapon slot i
  */
 short int Ship::GetWeaponSlotFG(int i) {
-	return ((ws_t)(this->weaponSlots[i])).firingGroup;
+	return ((WeaponSlot)(this->weaponSlots[i])).firingGroup;
 }
 
 /**\brief Set the firing group of weapon slot i

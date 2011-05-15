@@ -814,7 +814,7 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
 	/* May want to move this to a helper function (but in which file?) */
-	vector<ws_t> slots = model->GetWeaponSlots();
+	vector<WeaponSlot> slots = model->GetWeaponSlots();
 	lua_pushstring(L, "weaponSlots");
 	lua_newtable(L);
 
@@ -828,7 +828,7 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 	char *rowKey = (char*)malloc(6);
 
 	for(unsigned int i = 0; i < slots.size(); i++){
-		ws_t s = slots[i];
+		WeaponSlot s = slots[i];
 
 		snprintf(rowKey, 6, "%d", i);
 		lua_pushstring(L, rowKey);
@@ -1173,7 +1173,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		// don't pop this table yet!
 
 		int wsDesiredLength = Lua::getIntField(wsTable,"desiredLength");
-		vector<ws_t> weaponSlots;
+		vector<WeaponSlot> weaponSlots;
 		char *rowKey = (char*)malloc(6);
 		for(short int i = 0; i < wsDesiredLength; i++){
 			snprintf(rowKey, 6, "%d", i);
@@ -1187,7 +1187,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			// don't pop this table yet either!
 
 			if( lua_istable(L, row) ){
-				ws_t s;
+				WeaponSlot s;
 				s.name = Lua::getStringField(row, "name");
 				s.mode = Lua::getStringField(row, "mode");
 				s.x = Lua::getNumField(row, "x");

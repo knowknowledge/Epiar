@@ -16,7 +16,7 @@
 #include "Utilities/components.h"
 
 
-struct ws {
+typedef struct WeaponSlot {
 	string name;            ///< name of the slot
 	string mode;            ///< coord mode: "auto" or "manual"
 	double x,y;             ///< only matters if mode is manual
@@ -25,7 +25,6 @@ struct ws {
 	string content;         ///< name of the weapon it contains (or "" for empty)
 	short int firingGroup;  ///< which firing group this slot belongs to
 };
-typedef struct ws ws_t;
 
 // Abstraction of a single ship model
 class Model : public Outfit {
@@ -33,7 +32,7 @@ class Model : public Outfit {
 		Model();
 		Model& operator= (const Model&);
 
-		Model( string _name, Image* _image, Engine* _defaultEngine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<ws_t>& _weaponSlots);
+		Model( string _name, Image* _image, Engine* _defaultEngine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<WeaponSlot>& _weaponSlots);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
@@ -44,20 +43,20 @@ class Model : public Outfit {
 		Engine* GetDefaultEngine() { return defaultEngine; }
 		int GetThrustOffset( void ) { return thrustOffset; }
 
-		vector<ws_t> GetWeaponSlots(){ return this->weaponSlots; }
+		vector<WeaponSlot> GetWeaponSlots(){ return this->weaponSlots; }
 		int GetWeaponSlotCount();
 		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
-		bool ConfigureWeaponSlots( vector<ws_t>& slots );
+		bool ConfigureWeaponSlots( vector<WeaponSlot>& slots );
 		bool ConfigureWeaponSlots();
 
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.
 		Engine* defaultEngine; ///< The default Engine for this model
 		short int thrustOffset; ///< The number of pixels engine flare animation offset
-		vector<ws_t> weaponSlots; ///< Slots for Weapons
+		vector<WeaponSlot> weaponSlots; ///< Slots for Weapons
 		// Debug
-		void WSDebug(vector<ws_t>&);
-		void WSDebug(ws_t);
+		void WSDebug(vector<WeaponSlot>&);
+		void WSDebug(WeaponSlot);
 };
 
 // Class that holds list of all models; manages them

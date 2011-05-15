@@ -106,9 +106,7 @@ class Ship : public Sprite {
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 
 	protected:
-		typedef struct ws ws_t;
-
-		vector<ws_t> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
+		vector<WeaponSlot> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
 	
 	private:
 		Model *model;
