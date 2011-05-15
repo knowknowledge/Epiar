@@ -12,64 +12,75 @@
 #include "Sprites/ship.h"
 #include "Engine/alliances.h"
 #include "includes.h"
-#define COMBAT_RANGE 1000 //radius of ships involved in any specific battle
-#define COMBAT_RANGE_SQUARED 1000000
 
-// Sprites have an AI object which is used to manipulate their attributes
-// to run an AI simulation
-
-
-//relevant enemy information
-typedef struct{
-	int damage;
-	int id; 
-}enemy;
+#define COMBAT_RANGE 1000 ///< Radius of ships involved in any specific battle
+#define COMBAT_RANGE_SQUARED (COMBAT_RANGE*COMBAT_RANGE) ///< Used for fast range checking.
 
 class AI : public Ship {
 	public:
 		AI(string name, string machine);
+
+		// Overloaded Sprite Mechanics:
 		void Update( lua_State *L );
 		void Draw();
 
-		void Decide( lua_State *L );
+		// Flavor Mechanics:
+
+		string GetName() { return name; }
+		void SetName(string newName) { name = newName; }
+
+		Alliance* GetAlliance() { return allegiance; }
+		void SetAlliance(Alliance* alliance) { allegiance = alliance; }
+
+		// State Machine Mechanics:
+
+		string GetStateMachine() { return stateMachine; }
+		void SetStateMachine(string _machine) { stateMachine = _machine; }
+
+		string GetState() { return state; }
+		void SetState(string _state)  { state = _state; }
+
+		// Combat Mechanics:
 
 		void SetTarget(int t);
 		int GetTarget(){return target;}
 
-		void SetStateMachine(string _machine) { stateMachine = _machine; }
-		void SetState(string _state)  { state = _state; }
-
-		void SetAlliance(Alliance* alliance) { allegiance = alliance; }
-		string GetName() { return name; }
-		void SetName(string newName) { name = newName; }
-
-		string GetStateMachine() { return stateMachine; }
-		string GetState() { return state; }
-
-		Alliance* GetAlliance() { return allegiance; }
-
-		void AddEnemy(int e, int damage);
-		void RemoveEnemy(int e);
+		void AddEnemy(int spriteID, int damage);
+		void RemoveEnemy(int spriteID);
 
 		void SetMerciful(int f) { merciful = (f == 1); }
 		int GetMerciful() { return (merciful ? 1 : 0 ); }
 
 	private:
+		string name; ///< The AI's name.  This should be the name of the ship's pilot.
+		Alliance* allegiance; ///< Which Alliance this ship hails to.
+
+		// The AI is controlled by a Lua state Machine
+		// The state machine is essentially a flow chart
+		string stateMachine; ///< The name of the State Machine.
+		string state; ///< The current state of the state machine.
+		void Decide( lua_State *L );
+
+		// AI Combat Mechanics:
+
+		typedef struct{
+			int damage; ///< Damage received by this ship
+			int id; ///< The enemy ship's unique id
+		}enemy; ///< Simple tracker for how much damage has been taken from other ships
+
+		int target; ///< The enemy that this AI is currently fighting
+		bool merciful; ///< Is this ship merciful to the player?
+		list<enemy> enemies; ///< A list of combatants.  The AI should keep fighting until everything on this list is dead.
+
 		int CalcCost(int threat, int damage);
 		int ChooseTarget( lua_State *L );
 		void RegisterTarget( lua_State *L, int t );
-		list<enemy> enemies;
-		int target;
-		string name;
-		string stateMachine;
-		string state;
-		Alliance* allegiance;
 
-		bool merciful; ///< Is this ship merciful to the player?
+		static bool EnemyComp(AI::enemy a, AI::enemy b){return(a.id<b.id);}
+		static bool CompareAI(Sprite* a, Sprite* b);
+		static bool InRange(Coordinate a, Coordinate b);
 };
 
-bool CompAI(Sprite* a, Sprite* b);
 
-bool InRange(Coordinate a, Coordinate b);
 
 #endif /*AI_H_*/

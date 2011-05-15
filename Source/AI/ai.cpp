@@ -23,9 +23,9 @@
 
 AI::AI(string _name, string machine) :
 	name(_name),
+	allegiance(NULL),
 	stateMachine(machine),
-	state("default"),
-	allegiance(NULL)
+	state("default")
 {
 	target = 0;
 	merciful = 0;
@@ -142,20 +142,16 @@ void AI::Draw(){
 	}
 }
 
-bool EnemyComp(enemy a, enemy b){return(a.id<b.id);}
 
 /**\brief chooses who the AI should target given the list of the AI's enemies
  *
  */
-
-
 int AI::ChooseTarget( lua_State *L ){
 	//printf("choosing target\n");
 	SpriteManager *sprites=SpriteManager::Instance();
 	list<Sprite*> *nearbySprites = sprites->GetSpritesNear(this->GetWorldPosition(), COMBAT_RANGE, DRAW_ORDER_SHIP);
 	
-	
-	nearbySprites->sort(CompAI);
+	nearbySprites->sort(CompareAI);
 	list<Sprite*>::iterator it;
 	list<enemy>::iterator enemyIt=enemies.begin();
 	//printf("printing list of enemies\n");
@@ -167,7 +163,6 @@ int AI::ChooseTarget( lua_State *L ){
 		else {
 			enemyIt++;
 		}
-
 	}
 	
 	//printf("printing list of nearby it->GetTarget()\n");
@@ -220,11 +215,11 @@ int AI::ChooseTarget( lua_State *L ){
 		else{
 			LogMsg( ERR, "Error Sprite %d is not an AI\n", (*it)->GetID() );
 		}
-			
+	
 	}
-	//	printf("finished sprite iteration\n");
+	// printf("finished sprite iteration\n");
 
-	//	cout<<"enemies.size()="<<enemies.size()<<'\n';
+	// cout<<"enemies.size()="<<enemies.size()<<'\n';
 	while (enemyIt!=enemies.end()) {
 		//printf("starting enemyIt iteration mark2\n");
 		if ( !InRange( sprites->GetSpriteByID(enemyIt->id)->GetWorldPosition() , this->GetWorldPosition() ) ) {
@@ -268,56 +263,62 @@ void AI::SetTarget(int t){
 /**\brief Adds an enemy to the AI's list of enemies
  *
  */
-void AI::AddEnemy(int e, int damage){
-	//printf("Adding Enemy %d with damage %d\n",e,damage);
-	Sprite *spr = SpriteManager::Instance()->GetSpriteByID(e);
+void AI::AddEnemy(int spriteID, int damage){
+	//printf("Adding Enemy %d with damage %d\n",spriteID,damage);
+	Sprite *spr = SpriteManager::Instance()->GetSpriteByID(spriteID);
 	if(!spr){
-		this->RemoveEnemy(e);
+		this->RemoveEnemy(spriteID);
 		return;
 	}
 	int drawOrder = spr->GetDrawOrder();
 	if( !(drawOrder==DRAW_ORDER_SHIP || drawOrder == DRAW_ORDER_PLAYER) ){
-		//printf("Error %d is not a ship/player\n",e);
+		LogMsg(WARN, "Sprite ID %d is not a ship or player",spriteID);
 		return;
 	}
-//	printf("Adding Enemy %d with damage %d\n",e,damage);
-	// Don't forgive player's that attack
+
+	// Don't forgive players that attack
 	if( drawOrder == DRAW_ORDER_PLAYER )
 	{
 		merciful = 0;
 	}
+
+	// printf("Adding Enemy %d with damage %d\n",spriteID,damage);
 	enemy newE;
-	newE.id=e;
+	newE.id=spriteID;
 	newE.damage=damage;
-	list<enemy>::iterator it=lower_bound(enemies.begin() , enemies.end(), newE, EnemyComp);
-	if( (*it).id==e )
-		(*it).damage+=damage;
+
+	// Search the enemies list for this sprite, combine damage taken if found.
+	list<enemy>::iterator it = lower_bound(enemies.begin() , enemies.end(), newE, AI::EnemyComp);
+	if( (*it).id==spriteID )
+		(*it).damage += damage;
 	else
 		enemies.insert(it,newE);
+
 	//printf("list of enemies:\n");
 	bool success=false;
 	for(it=enemies.begin(); it!=enemies.end(); it++){
 		//printf("%d\n",it->id);
-		if(it->id ==e)
+		if(it->id ==spriteID)
 			success=true;
 	}
 	assert(success);
-	//printf("Successfully Added Enemy %d with damage %d\n",e,damage);
+	//printf("Successfully Added Enemy %d with damage %d\n",spriteID,damage);
 }
 
-//removes an enemy from the AI's list of enemies
-void AI::RemoveEnemy(int e){
-	//printf("removing enemy %d\n",e);
+/**\brief Remove an enemy from the AI's list of enemies
+ */
+void AI::RemoveEnemy(int spriteID){
+	//printf("removing enemy %d\n",spriteID);
 	enemy newE;
-	newE.id=e;
-	list<enemy>::iterator it=lower_bound(enemies.begin(),enemies.end(),newE,EnemyComp);
-	if( (*it).id == e)
+	newE.id=spriteID;
+	list<enemy>::iterator it=lower_bound(enemies.begin(),enemies.end(),newE,AI::EnemyComp);
+	if( (*it).id == spriteID)
 		enemies.erase(it);
 	for(it=enemies.begin(); it!=enemies.end(); it++){
 		//printf("%d\n",it->id);
-		assert(e!= it->id);
+		assert(spriteID!= it->id);
 	}
-	//printf("successfully removed %d\n",e);
+	//printf("successfully removed %d\n",spriteID);
 }
 
 /**\brief sets the AI to hunt the current target using the lua function setHuntHostile
@@ -338,13 +339,12 @@ void AI::RegisterTarget( lua_State *L, int t ){
 /**\brief checks if a potential target is within targeting range
  *
  */
-bool InRange(Coordinate a, Coordinate b){
+bool AI::InRange(Coordinate a, Coordinate b){
 	//printf("InRange check\n");
 	int x=a.GetX() - b.GetX();
 	int y=a.GetY() - b.GetY();
 	//printf("finished InRange check\n");
 	return(x*x + y*y <=COMBAT_RANGE_SQUARED);
-	
 }
 
 
@@ -352,7 +352,7 @@ bool InRange(Coordinate a, Coordinate b){
  *
  */
 
-bool CompAI(Sprite* a, Sprite* b){
+bool AI::CompareAI(Sprite* a, Sprite* b){
 	//printf("Start Comp AI\n");
 	if(a->GetDrawOrder()==DRAW_ORDER_SHIP && b->GetDrawOrder()==DRAW_ORDER_SHIP)
 		return(  ( (AI*)a )->GetTarget() < ( (AI*)b )->GetTarget() );
