@@ -136,7 +136,9 @@ void Menu::Main_Menu( void ) {
 
 		// Draw Things
 		Video::Erase();
+		Video::PreDraw();
 		UI::Draw();
+		Video::PostDraw();
 		Video::Update();
 
 		switch(clicked){
@@ -302,6 +304,7 @@ void Menu::CreateLoadWindow()
 
 	Window* win = new Window(250, 50, 500, 50 + (names->size() * 150), "Load Game");
 	UI::Add( win );
+
 	// Create a new Frame for each Player
 	int p = 0;
 	list<string>::iterator iter;

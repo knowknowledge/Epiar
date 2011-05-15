@@ -156,6 +156,8 @@ void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float a
 		return;
 	}
 
+	glPushMatrix();
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear The Background Color To Black
 	glClearDepth(1.0); // Enables Clearing Of The Depth Buffer
 	glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
@@ -194,7 +196,7 @@ void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float a
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture( GL_TEXTURE_2D, image );
 
-	glPushMatrix();
+	//glPushMatrix();
 	
 	// the deltas are the differences needed in width, e.g. a resize_ratio_w of 1.1 would produce a value
 	// equal to the original width of the image but adding 10%. 0.9 would then be 10% smaller, etc.
@@ -208,13 +210,15 @@ void Image::_Draw( int x, int y, float r, float g, float b, float alpha, float a
 	glTexCoord2f( 0., scale_h ); glVertex2f( ulx, uly + resize_h_delta );
 	glEnd();
 
-	glPopMatrix();
+	//glPopMatrix();
 
 	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
 	glDisable(GL_BLEND); // Disable Blending
 
 	glDisable(GL_TEXTURE_2D); // Disable 2D Texture Mapping
 	glBindTexture(GL_TEXTURE_2D,0); // Unbind The Blur Texture
+
+	glPopMatrix();
 }
 
 /**\brief Draw the image centered on (x,y)
@@ -349,6 +353,8 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 		return;
 	}
 
+	glPushMatrix();
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Clear The Background Color To Black
 	glClearDepth(1.0); // Enables Clearing Of The Depth Buffer
 	glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
@@ -363,7 +369,7 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture( GL_TEXTURE_2D, image );
 
-	glPushMatrix();
+	//glPushMatrix();
 
 	Video::SetCropRect(x, y, fill_w, fill_h); // don't need to invert y here
 
@@ -380,13 +386,15 @@ void Image::DrawTiled( int x, int y, int fill_w, int fill_h, float alpha ) {
 
 	Video::UnsetCropRect();
 
-	glPopMatrix();
+	//glPopMatrix();
 
 	glEnable(GL_DEPTH_TEST); // Enable Depth Testing
 	glDisable(GL_BLEND); // Disable Blending
 
 	glDisable(GL_TEXTURE_2D); // Disable 2D Texture Mapping
 	glBindTexture(GL_TEXTURE_2D,0); // Unbind The Blur Texture
+
+	glPopMatrix();
 }
 
 

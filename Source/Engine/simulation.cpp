@@ -275,11 +275,13 @@ bool Simulation::Run() {
 		Video::Erase();
 
 		// Draw cycle
+		Video::PreDraw();
 		starfield.Draw();
 		sprites->Draw();
 		Hud::Draw( HUD_ALL, currentFPS );
 		UI::Draw();
 		console.Draw();
+		Video::PostDraw();
 		Video::Update();
 
 		// Don't kill the CPU (play nice)

@@ -231,6 +231,8 @@ void UI::SwapScreens(string newname, Image* oldBackground, Image* newBackground 
 		int newX = Video::GetWidth();
 		Timer::Update();
 		while( newX > 0 ) {
+			Video::PreDraw();
+
 			oldX -= dx;
 			newX -= dx;
 
@@ -255,6 +257,7 @@ void UI::SwapScreens(string newname, Image* oldBackground, Image* newBackground 
 			newScreen->Draw( );
 			DrawDeferred();
 			
+			Video::PostDraw();
 			Video::Update();
 			Timer::Delay(10);
 			Timer::Update();
@@ -378,7 +381,9 @@ void UI::ModalDialog( Container *widget ) {
 	{
 		// Draw Things
 		Video::Erase();
+		Video::PreDraw();
 		UI::Draw();
+		Video::PostDraw();
 		Video::Update();
 
 		// Wait for some input

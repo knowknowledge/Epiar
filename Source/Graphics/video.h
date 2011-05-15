@@ -64,6 +64,9 @@ class Video {
   		static void Update( void );
   		static void Erase( void );
 
+  		static void PreDraw( void );
+  		static void PostDraw( void );
+
   		static void EnableMouse( void );
   		static void DisableMouse( void );
 

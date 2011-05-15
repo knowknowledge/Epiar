@@ -322,11 +322,32 @@ int Video::lua_getHeight(lua_State *L) {
 /**\brief Video updates.
  */
 void Video::Update( void ) {
-	//Blur();
-
 	glFlush();
 	SDL_GL_SwapBuffers();
 	glFinish();
+}
+
+/**\brief Pre-draw commands.
+ */
+void Video::PreDraw( void ) {
+	// Clear the draw and depth buffers
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ 
+	// Take the contents of the current accumulation buffer and copy it to the colour buffer with each pixel multiplied by a factor
+	// i.e. we clear the screen, draw the last frame again (which we saved in the accumulation buffer), then draw our stuff at its new location on top of that
+	//glAccum(GL_RETURN, 0.75f);
+ 
+	// Clear the accumulation buffer (don't worry, we re-grab the screen into the accumulation buffer after drawing our current frame!)
+	glClear(GL_ACCUM_BUFFER_BIT);
+ 
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+
+/**\brief Post-draw commands.
+ */
+void Video::PostDraw( void ) {
+
 }
 
 void Video::Blur( void ) {
@@ -340,8 +361,8 @@ void Video::Blur( void ) {
 /**\brief Clears screen.
  */
 void Video::Erase( void ) {
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ACCUM_BUFFER_BIT );
-	glLoadIdentity();
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	//glLoadIdentity();
 }
 
 /**\brief Returns the width of the screen.
@@ -630,5 +651,9 @@ void Video::SaveScreenshot( string filename ) {
 	if( filename == "" ) filename = string("Screenshot_") + Log::GetTimestamp() + string(".bmp");
 
 	SDL_SaveBMP( s, filename.c_str() );
+
+	SDL_FreeSurface( s );
+	free( pixelData );
+	free( pixelDataOrig );
 }
 
