@@ -13,7 +13,7 @@
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
 #include "Engine/commodities.h"
-#include "Engine/weapon.h"
+#include "Engine/weapons.h"
 #include "Sprites/projectile.h"
 #include <map>
 

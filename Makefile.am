@@ -21,7 +21,6 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Engine/simulation_lua.cpp \
                 Source/Engine/starfield.cpp \
                 Source/Engine/technologies.cpp \
-                Source/Engine/weapon.cpp \
                 Source/Engine/weapons.cpp \
                 Source/Graphics/animation.cpp \
                 Source/Graphics/font.cpp \

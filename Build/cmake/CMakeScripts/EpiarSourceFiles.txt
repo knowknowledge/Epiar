@@ -34,7 +34,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/simulation_lua.h
 	${Epiar_SRC_DIR}/Engine/starfield.h
 	${Epiar_SRC_DIR}/Engine/technologies.h
-	${Epiar_SRC_DIR}/Engine/weapon.h
 	${Epiar_SRC_DIR}/Engine/weapons.h
 	${Epiar_SRC_DIR}/Engine/alliances.cpp
 	${Epiar_SRC_DIR}/Engine/camera.cpp
@@ -49,7 +48,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/simulation_lua.cpp
 	${Epiar_SRC_DIR}/Engine/starfield.cpp
 	${Epiar_SRC_DIR}/Engine/technologies.cpp
-	${Epiar_SRC_DIR}/Engine/weapon.cpp
 	${Epiar_SRC_DIR}/Engine/weapons.cpp
 	)
 set (Epiar_src ${Epiar_src}
