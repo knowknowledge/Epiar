@@ -130,7 +130,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/components.h
 	${Epiar_SRC_DIR}/Utilities/file.h
 	${Epiar_SRC_DIR}/Utilities/filesystem.h
-	${Epiar_SRC_DIR}/Utilities/hashtbl.h
 	${Epiar_SRC_DIR}/Utilities/log.h
 	${Epiar_SRC_DIR}/Utilities/lua.h
 	${Epiar_SRC_DIR}/Utilities/quadtree.h
@@ -143,7 +142,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/components.cpp
 	${Epiar_SRC_DIR}/Utilities/file.cpp
 	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
-	${Epiar_SRC_DIR}/Utilities/hashtbl.cpp
 	${Epiar_SRC_DIR}/Utilities/log.cpp
 	${Epiar_SRC_DIR}/Utilities/lua.cpp
 	${Epiar_SRC_DIR}/Utilities/quadtree.cpp
