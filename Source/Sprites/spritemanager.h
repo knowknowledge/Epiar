@@ -21,8 +21,8 @@ class SpriteManager {
 		bool Delete( Sprite *sprite );
 		
 		void Update( lua_State *L, bool lowFps);
-		void Draw();
-		void DrawQuadrantMap();
+		void Draw( Coordinate focus );
+		void DrawQuadrantMap( Coordinate focus );
 
 		Sprite *GetSpriteByID(int id);
 		list<Sprite*> *GetSprites(int type = DRAW_ORDER_ALL);

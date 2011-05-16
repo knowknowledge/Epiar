@@ -278,7 +278,7 @@ bool Simulation::Run() {
 
 		// Draw cycle
 		starfield.Draw();
-		sprites->Draw();
+		sprites->Draw( camera->GetFocusCoordinate() );
 		Hud::Draw( HUD_ALL, currentFPS, camera, sprites );
 		UI::Draw();
 		console.Draw();
@@ -433,7 +433,7 @@ bool Simulation::Edit() {
 
 		// Draw cycle
 		starfield.Draw();
-		sprites->Draw();
+		sprites->Draw( camera->GetFocusCoordinate() );
 		UI::Draw();
 		Hud::Draw( HUD_Target | HUD_Map, 0.0f, camera, sprites );
 		console.Draw();

@@ -12,6 +12,7 @@
 #include "Sprites/player.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/lua.h"
+#include "Engine/simulation_lua.h"
 
 /**\class AI
  * \brief AI controls the non-player shipts.
@@ -148,7 +149,7 @@ void AI::Draw(){
  */
 int AI::ChooseTarget( lua_State *L ){
 	//printf("choosing target\n");
-	SpriteManager *sprites=SpriteManager::Instance();
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
 	list<Sprite*> *nearbySprites = sprites->GetSpritesNear(this->GetWorldPosition(), COMBAT_RANGE, DRAW_ORDER_SHIP);
 	
 	nearbySprites->sort(CompareAI);
@@ -261,7 +262,7 @@ void AI::SetTarget(int t){
 }
 
 /**\brief Adds an enemy to the AI's list of enemies
- *
+ * \todo Remove the SpriteManager Instance access.
  */
 void AI::AddEnemy(int spriteID, int damage){
 	//printf("Adding Enemy %d with damage %d\n",spriteID,damage);

@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Sprites/ship.h"
 #include "Engine/camera.h"
+#include "Engine/simulation_lua.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
@@ -295,18 +296,17 @@ void Ship::Update( lua_State *L ) {
 	// Ship has taken as much damage as possible...
 	// It Explodes!
 	if( status.hullDamage >=  (float)shipStats.GetHullStrength() ) {
-		SpriteManager *sprites = SpriteManager::Instance();
+		SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+		Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
 
 		// Play explode sound
 		if(OPTION(int, "options/sound/explosions")) {
 			Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
-			explodesnd->Play(
-				this->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+			explodesnd->Play( GetWorldPosition() - camera->GetFocusCoordinate());
 		}
 
 		// Create Explosion
-		sprites->Add(
-			new Effect(this->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
+		sprites->Add( new Effect( GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 
 		// Remove this Sprite from the SpriteManager
 		sprites->Delete( (Sprite*)this );

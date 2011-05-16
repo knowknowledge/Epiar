@@ -431,7 +431,7 @@ void Hud::DrawMap( Camera* camera, SpriteManager* sprites ) {
 
 	// The Quadrant map is a 
 	case QuadrantMap:
-		sprites->DrawQuadrantMap();
+		sprites->DrawQuadrantMap( camera->GetFocusCoordinate() );
 		break;
 	case NoMap:
 	default:

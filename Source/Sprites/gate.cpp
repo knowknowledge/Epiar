@@ -14,6 +14,7 @@
 #include "Sprites/gate.h"
 #include "Utilities/trig.h"
 #include "Utilities/log.h"
+#include "Engine/simulation_lua.h"
 
 /**\class Gate
  * \brief A Gate is a dual-sprite; it has a Top and a Bottom.
@@ -21,8 +22,8 @@
  * */
 
 /**\brief Creates a Top Gate as well as a Bottom Gate automatically
+ * \todo Remove the SpriteManager Instance access.
  */
-
 Gate::Gate(Coordinate pos) {
 	top = true;
 	SetImage( Image::Get("Resources/Graphics/gate1_top.png") );
@@ -40,7 +41,6 @@ Gate::Gate(Coordinate pos) {
 
 /**\brief Creates a Bottom Gate
  */
-
 Gate::Gate(int topID) {
 	top = false;
 	SetImage( Image::Get("Resources/Graphics/gate1_bottom.png") );
@@ -49,7 +49,6 @@ Gate::Gate(int topID) {
 
 /** \brief Load a Gate from XML
  */
-
 bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	xmlNodePtr  attr;
 	string value;
@@ -79,8 +78,8 @@ bool Gate::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 }
 
 /** \brief Save a Gate to an XML Node
+ * \todo Remove the SpriteManager Instance access.
  */
-
 xmlNodePtr Gate::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
@@ -135,7 +134,8 @@ void Gate::SetPair(Gate* one, Gate* two) {
 }
 
 /**\brief Get the Top Gate
- *        All Actions should go through the Top Gate to avoid confusion.
+ * \details All Actions should go through the Top Gate to avoid confusion.
+ * \todo Remove the SpriteManager Instance access.
  * \return Pointer to the Top Gate
  */
 
@@ -149,14 +149,18 @@ Gate* Gate::GetTop() {
 	}
 }
 
+/**\brief Get the Exit Gate paired with this gate
+ * \todo Remove the SpriteManager Instance access.
+ * \return Pointer to the Exit Gate
+ */
 Sprite* Gate::GetExit() {
 		return SpriteManager::Instance()->GetSpriteByID(exitID);
 }
 
 /**\brief Get the Partner Gate
+ * \todo Remove the SpriteManager Instance access.
  * \return Pointer to the Partner Gate
  */
-
 Gate* Gate::GetPartner() {
 	Sprite* partner = SpriteManager::Instance()->GetSpriteByID(partnerID);
 	assert(partner!=NULL);
@@ -172,7 +176,7 @@ void Gate::Update( lua_State *L ) {
 	// The Bottom Gate doesn't do anything
 	if(!top) return;
 
-	SpriteManager *sprites = SpriteManager::Instance();
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
 	Sprite* ship = sprites->GetNearestSprite( (Sprite*)this, 50,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 
 	if(ship!=NULL) {

@@ -12,6 +12,7 @@
 #include "Sprites/spritemanager.h"
 #include "Sprites/sprite.h"
 #include "Sprites/effects.h"
+#include "Engine/simulation_lua.h"
 
 /**\class Effect
  * \brief Various Animation effects.
@@ -36,7 +37,8 @@ Effect::~Effect() {
 void Effect::Update( lua_State *L ) {
 	Sprite::Update( L );
 	if( visual->Update() == true ) {
-		SpriteManager::Instance()->Delete( (Sprite*)this );
+		SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+		sprites->Delete( (Sprite*)this );
 	}
 }
 
