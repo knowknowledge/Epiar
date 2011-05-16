@@ -73,7 +73,7 @@ SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
  */
 SpriteManager *SpriteManager::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new SpriteManager; // create the sold instance
+		pInstance = new SpriteManager; // create the solid instance
 	}
 	return( pInstance );
 }

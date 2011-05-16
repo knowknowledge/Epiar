@@ -317,7 +317,7 @@ Weapons *Weapons::pInstance = 0; // initialize pointer
  */
 Weapons *Weapons::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Weapons; // create the sold instance
+		pInstance = new Weapons; // create the solid instance
 		pInstance->rootName = "weapons";
 		pInstance->componentName = "weapon";
 	}

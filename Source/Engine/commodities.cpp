@@ -77,7 +77,7 @@ Commodities *Commodities::pInstance = 0; // initialize pointer
  */
 Commodities *Commodities::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Commodities; // create the sold instance
+		pInstance = new Commodities; // create the solid instance
 		pInstance->rootName = "commodities";
 		pInstance->componentName = "commodity";
 	}

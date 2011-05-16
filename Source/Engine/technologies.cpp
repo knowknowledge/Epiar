@@ -154,7 +154,7 @@ Technologies *Technologies::pInstance = 0;
  */
 Technologies *Technologies::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Technologies; // create the sold instance
+		pInstance = new Technologies; // create the solid instance
 		pInstance->rootName = "technologies";
 		pInstance->componentName = "technology";
 	}

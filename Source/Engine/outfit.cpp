@@ -300,7 +300,7 @@ Outfits *Outfits::pInstance = 0; // initialize pointer
  */
 Outfits *Outfits::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Outfits; // create the sold instance
+		pInstance = new Outfits; // create the solid instance
 		pInstance->rootName = "outfits";
 		pInstance->componentName = "outfit";
 	}

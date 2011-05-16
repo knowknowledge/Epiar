@@ -38,7 +38,7 @@ Camera *Camera::pInstance = 0; // initialize pointer
  */
 Camera *Camera::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Camera; // create the sold instance
+		pInstance = new Camera; // create the solid instance
 	}
 	return( pInstance );
 }

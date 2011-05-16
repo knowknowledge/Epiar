@@ -355,7 +355,7 @@ Models *Models::pInstance = 0; // initialize pointer
  */
 Models *Models::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Models; // create the sold instance
+		pInstance = new Models; // create the solid instance
 		pInstance->rootName = "models";
 		pInstance->componentName = "model";
 	}

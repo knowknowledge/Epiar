@@ -794,7 +794,7 @@ Players *Players::pInstance = 0; // initialize pointer
  */
 Players *Players::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Players; // create the sold instance
+		pInstance = new Players; // create the solid instance
 		pInstance->rootName = "players";
 		pInstance->componentName = "player";
 	}

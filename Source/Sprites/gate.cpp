@@ -238,7 +238,7 @@ Gates *Gates::pInstance = 0; // initialize pointer
  */
 Gates *Gates::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Gates; // create the sold instance
+		pInstance = new Gates; // create the solid instance
 		pInstance->rootName = "gates";
 		pInstance->componentName = "gate";
 	}

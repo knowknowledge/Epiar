@@ -290,7 +290,7 @@ Planets *Planets::pInstance = 0; // initialize pointer
  */
 Planets *Planets::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Planets; // create the sold instance
+		pInstance = new Planets; // create the solid instance
 		pInstance->rootName = "planets";
 		pInstance->componentName = "planet";
 	}
