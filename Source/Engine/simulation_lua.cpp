@@ -402,8 +402,8 @@ int Simulation_Lua::MoveCamera(lua_State *L){
  */
 int Simulation_Lua::ShakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
-		Camera *pInstance = GetSimulation(L)->GetCamera();
-		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
+		Camera *camera = GetSimulation(L)->GetCamera();
+		camera->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
 						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
 	return 0;
