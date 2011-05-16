@@ -231,6 +231,7 @@ bool Simulation::Run() {
 	{
 		LogMsg(WARN, "No Player has been loaded!");
 		assert( player != NULL );
+		quit = true;
 	}
 
 	// Message appear in reverse order, so this is upside down
@@ -247,9 +248,10 @@ bool Simulation::Run() {
 	bool lowFps = false;
 	int lowFpsFrameCount = 0;
 	while( !quit ) {
-		if(HandleInput()) quit = true; // do not say quit = quit || HandleInput() -- ui cb is _in_ HandleInput()
+		HandleInput();
 
-//_ASSERTE(_CrtCheckMemory());
+		//_ASSERTE(_CrtCheckMemory());
+
 		//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
 		//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
@@ -419,7 +421,7 @@ bool Simulation::Edit() {
 	Lua::Call("componentDebugger");
 
 	while( !quit ) {
-		if(HandleInput()) quit = true;
+		HandleInput();
 
 		Timer::Update();
 		starfield.Update( camera );
@@ -517,9 +519,8 @@ bool Simulation::Parse( void ) {
 }
 
 /**\brief Handle User Input
- * \return true if the player wants to quit
  */
-bool Simulation::HandleInput() {
+void Simulation::HandleInput() {
 	list<InputEvent> events;
 
 	// Collect user input events
@@ -537,7 +538,8 @@ bool Simulation::HandleInput() {
 		//Video::SaveScreenshot();
 	//}
 	
-	return Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) )
+		quit = true;
 }
 
 /**\fn Simulation::isPaused()
