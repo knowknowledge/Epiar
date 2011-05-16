@@ -15,6 +15,8 @@
 #include "Utilities/lua.h"
 #include "Utilities/quadtree.h"
 #include "Input/input.h"
+#include "Engine/camera.h"
+#include "Sprites/spritemanager.h"
 
 #define EPIAR_HUD_TABLE "Epiar.HUD"
 #define EPIAR_HUD "HUD"
@@ -81,9 +83,9 @@ class Hud {
 		static void Close( void );
 
 		static void Update( lua_State *L );
-		static void Draw( int flags, float fps );
+		static void Draw( int flags, float fps, Camera* camera, SpriteManager* sprites );
 
-		static void HandleInput( list<InputEvent> & events );
+		static void HandleInput( list<InputEvent> & events, Camera* camera, SpriteManager* sprites );
 		
 		static void Alert( const char *, ... );
 		static void Target(int id);
@@ -112,13 +114,13 @@ class Hud {
 
 	private:
 		static void DrawShieldIntegrity();
-		static void DrawRadarNav( void );
+		static void DrawRadarNav( Camera* camera, SpriteManager* sprites );
 		static void DrawMessages();
-		static void DrawFPS( float fps );
+		static void DrawFPS( float fps, SpriteManager* sprites );
 		static void DrawStatusBars();
-		static void DrawTarget();
-		static void DrawMap( void );
-		static void DrawUniverseMap( void );
+		static void DrawTarget(SpriteManager* sprites);
+		static void DrawMap( Camera* camera, SpriteManager* sprites );
+		static void DrawUniverseMap( Camera* camera, SpriteManager* sprites );
 	
 		static list<AlertMessage> AlertMessages;
 
@@ -134,12 +136,12 @@ class Hud {
 class Radar {
 	public:
 		Radar( void );
-		static void Draw( void );
+		static void Draw( Camera* camera, SpriteManager* sprites );
 		static void SetVisibility( int visibility );
 		static int GetVisibility() { return visibility;}
 	
 	private:
-		static void WorldToBlip( Coordinate &w, Coordinate &b );
+		static void WorldToBlip( Coordinate focus, Coordinate &w, Coordinate &b );
 	
 		static int visibility;
 };

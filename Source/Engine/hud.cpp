@@ -287,29 +287,29 @@ void Hud::Update( lua_State *L ) {
 
 /**\brief Draws the Hud
  */
-void Hud::Draw( int flags, float fps ) {
-	if(flags & HUD_Target)     Hud::DrawTarget();
+void Hud::Draw( int flags, float fps, Camera* camera, SpriteManager* sprites ) {
+	if(flags & HUD_Target)     Hud::DrawTarget( sprites );
 	if(flags & HUD_Shield)     Hud::DrawShieldIntegrity();
-	if(flags & HUD_Radar)      Hud::DrawRadarNav();
+	if(flags & HUD_Radar)      Hud::DrawRadarNav( camera, sprites );
 	if(flags & HUD_Messages)   Hud::DrawMessages();
-	if(flags & HUD_FPS)        Hud::DrawFPS(fps) ;
+	if(flags & HUD_FPS)        Hud::DrawFPS(fps, sprites);
 	if(flags & HUD_StatusBars) Hud::DrawStatusBars();
-	if(flags & HUD_Map)        Hud::DrawMap();
+	if(flags & HUD_Map)        Hud::DrawMap( camera, sprites );
 }
 
 
 /**\brief Handles Hud related User Input
  * \param events User entered Keyboard and mouse clicks
  */
-void Hud::HandleInput( list<InputEvent> & events ) {
+void Hud::HandleInput( list<InputEvent> & events, Camera* camera, SpriteManager* sprites ) {
 	list<InputEvent>::iterator i;
 	for(i= events.begin(); i != events.end() ; ++i ) {
 		// Mouse Clicks
 		if( i->type == MOUSE && i->mstate==MOUSELDOWN) {
 			Coordinate screenPos(i->mx, i->my), worldPos;
-			Camera::Instance()->TranslateScreenToWorld( screenPos, worldPos );
+			camera->TranslateScreenToWorld( screenPos, worldPos );
 			// Target any clicked Sprite
-			list<Sprite*> *impacts = SpriteManager::Instance()->GetSpritesNear( worldPos, 5 );
+			list<Sprite*> *impacts = sprites->GetSpritesNear( worldPos, 5 );
 			if( impacts->size() > 0) {
 				Target( (*(impacts->begin()))->GetID());
 			}
@@ -343,16 +343,16 @@ void Hud::DrawMessages() {
 
 /**\brief Draw the current framerate (calculated in simulation.cpp).
  */
-void Hud::DrawFPS( float fps ) {
+void Hud::DrawFPS( float fps, SpriteManager* sprites ) {
 	char frameRate[16];
 	BitType->SetColor( WHITE );
 	snprintf(frameRate, sizeof(frameRate), "%f fps", fps );
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 15, frameRate );
 
-	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", SpriteManager::Instance()->GetNumQuadrants());
+	snprintf(frameRate, sizeof(frameRate), "%d Quadrants", sprites->GetNumQuadrants());
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 30, frameRate );
 
-	snprintf(frameRate, sizeof(frameRate), "%d Sprites", SpriteManager::Instance()->GetNumSprites());
+	snprintf(frameRate, sizeof(frameRate), "%d Sprites", sprites->GetNumSprites());
 	BitType->Render( Video::GetWidth()-100, Video::GetHeight() - 45, frameRate );
 }
 
@@ -393,17 +393,17 @@ void Hud::DrawShieldIntegrity() {
 
 /**\brief Draw the radar.
  */
-void Hud::DrawRadarNav( void ) {
+void Hud::DrawRadarNav( Camera* camera, SpriteManager* sprites ) {
 	Image::Get( "Resources/Skin/hud_radarnav.png" )->Draw( Video::GetWidth() - 129, 5 );
 	Video::SetCropRect( Video::GetWidth() - 125, 9, RADAR_WIDTH-8, RADAR_HEIGHT-8 );
-	Radar::Draw();
+	Radar::Draw( camera, sprites );
 	Video::UnsetCropRect();
 }
 
 /**\brief Draws the target.
  */
-void Hud::DrawTarget( void ) {
-	Sprite* target = SpriteManager::Instance()->GetSpriteByID( targetID );
+void Hud::DrawTarget( SpriteManager* sprites ) {
+	Sprite* target = sprites->GetSpriteByID( targetID );
 	if(target != NULL) {
 		int x = target->GetWorldPosition().GetScreenX();
 		int y = target->GetWorldPosition().GetScreenY();
@@ -418,13 +418,20 @@ void Hud::DrawTarget( void ) {
 	}
 }
 
-void Hud::DrawMap( void ) {
+/**\brief Draw a Map overlaid on the Game objects.
+ * \details The style of the map depends on the the mapDisplay variable.
+ * \todo These Maps were meant to be developer aides rather than polished products.
+ *       They should be cleaned up.
+ */
+void Hud::DrawMap( Camera* camera, SpriteManager* sprites ) {
 	switch( mapDisplay ) {
 	case UniverseMap:
-		Hud::DrawUniverseMap();
+		Hud::DrawUniverseMap( camera, sprites );
 		break;
+
+	// The Quadrant map is a 
 	case QuadrantMap:
-		SpriteManager::Instance()->DrawQuadrantMap();
+		sprites->DrawQuadrantMap();
 		break;
 	case NoMap:
 	default:
@@ -432,11 +439,11 @@ void Hud::DrawMap( void ) {
 	}
 }
 
-void Hud::DrawUniverseMap( void ) {
+void Hud::DrawUniverseMap( Camera* camera, SpriteManager* sprites ) {
 	//Video::GetHeight()
 	float size, halfsize;
 	float scale;
-	list<Sprite*> *sprites;
+	list<Sprite*> *spriteList;
 	list<Sprite*>::iterator iter;
 	int startx, starty;
 	int posx, posy;
@@ -458,7 +465,7 @@ void Hud::DrawUniverseMap( void ) {
 	gatePath = Color( SKIN("Skin/HUD/Map/GatePath") );
 
 	// Strech the Map so that it covers all QuadTrees
-	SpriteManager::Instance()->GetBoundaries(&n,&s,&e,&w);
+	sprites->GetBoundaries(&n,&s,&e,&w);
 	// edge is the maximum distance from zero of n,s,e, and w
 	edge = (n>-s)?n:-s;
 	edge = (edge>-w)?edge:-w;
@@ -475,7 +482,7 @@ void Hud::DrawUniverseMap( void ) {
 		retrieveSprites = retrieveSprites | DRAW_ORDER_SHIP;
 	}
 	
-	sprites = SpriteManager::Instance()->GetSprites( retrieveSprites );
+	spriteList = sprites->GetSprites( retrieveSprites );
 
 	// The Backdrop
 	Video::DrawRect( startx,starty,size,size,  0,0,0,alpha);
@@ -494,7 +501,7 @@ void Hud::DrawUniverseMap( void ) {
 	}
 
 	// The Sprites
-	for( iter = sprites->begin(); iter != sprites->end(); ++iter )
+	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
 	{
 		col = (*iter)->GetRadarColor();
 		posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
@@ -529,7 +536,7 @@ void Hud::DrawUniverseMap( void ) {
 	}
 
 	// Do a second pass to draw planet Names on top
-	for( iter = sprites->begin(); iter != sprites->end(); ++iter )
+	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
 	{
 		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
 		{
@@ -538,12 +545,12 @@ void Hud::DrawUniverseMap( void ) {
 			MapFont->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
-	posx = startx + Camera::Instance()->GetFocusCoordinate().GetX() * scale + halfsize;
-	posy = starty + Camera::Instance()->GetFocusCoordinate().GetY() * scale + halfsize;
+	posx = startx + camera->GetFocusCoordinate().GetX() * scale + halfsize;
+	posy = starty + camera->GetFocusCoordinate().GetY() * scale + halfsize;
 	Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
 
-	delete sprites;
-	sprites = NULL;
+	delete spriteList;
+	spriteList = NULL;
 }
 
 /**\brief Adds a new AlertMessage.
@@ -846,12 +853,13 @@ void Radar::SetVisibility( int visibility ) {
 
 /**\brief Draws the radar.
  */
-void Radar::Draw( void ) {
+void Radar::Draw( Camera* camera, SpriteManager* sprites ) {
 	short int radar_mid_x = RADAR_MIDDLE_X + Video::GetWidth() - 129;
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
+	Coordinate focus = camera->GetFocusCoordinate();
 
-	list<Sprite*> *spriteList = SpriteManager::Instance()->GetSpritesNear(Camera::Instance()->GetFocusCoordinate(), (float)visibility);
+	list<Sprite*> *spriteList = sprites->GetSpritesNear(camera->GetFocusCoordinate(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
 	{
 		Coordinate blip;
@@ -861,7 +869,7 @@ void Radar::Draw( void ) {
 		
 		// Calculate the blip coordinate for this sprite
 		Coordinate wpos = sprite->GetWorldPosition();
-		WorldToBlip( wpos, blip );
+		WorldToBlip( focus, wpos, blip );
 		
 		// Use the OpenGL Crop Rectangle to ensure that the blip is on the radar
 		
@@ -890,8 +898,7 @@ void Radar::Draw( void ) {
  * \param w Pointer to world coordinate
  * \retval b Pointer to radar coordinate
  */
-void Radar::WorldToBlip( Coordinate &w, Coordinate &b ) {
-	Coordinate focus = Camera::Instance()->GetFocusCoordinate();
+void Radar::WorldToBlip( Coordinate focus, Coordinate &w, Coordinate &b ) {
 	
 	b.SetX( ( ( w.GetX() - focus.GetX() ) / float(visibility) ) * ( RADAR_WIDTH / 2.0 ) );
 	b.SetY( ( ( w.GetY() - focus.GetY() ) / float(visibility) ) * ( RADAR_HEIGHT / 2.0 ) );

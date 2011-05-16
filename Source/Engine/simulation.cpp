@@ -279,7 +279,7 @@ bool Simulation::Run() {
 		// Draw cycle
 		starfield.Draw();
 		sprites->Draw();
-		Hud::Draw( HUD_ALL, currentFPS );
+		Hud::Draw( HUD_ALL, currentFPS, camera, sprites );
 		UI::Draw();
 		console.Draw();
 		Video::Update();
@@ -435,7 +435,7 @@ bool Simulation::Edit() {
 		starfield.Draw();
 		sprites->Draw();
 		UI::Draw();
-		Hud::Draw( HUD_Target | HUD_Map, 0.0f );
+		Hud::Draw( HUD_Target | HUD_Map, 0.0f, camera, sprites );
 		console.Draw();
 		Video::Update();
 
@@ -529,7 +529,7 @@ void Simulation::HandleInput() {
 	// Pass the Events to the systems that handle them.
 	UI::HandleInput( events );
 	console.HandleInput( events );
-	Hud::HandleInput( events );
+	Hud::HandleInput( events, camera, sprites );
 
 	inputs.HandleLuaCallBacks( events );
 
