@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Name=Epiar
+Comment=Space trading/exploring sim with RPG elements
+Exec=epiar
+Icon=epiar
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Game;ActionGame;
+X-Desktop-File-Install-Version=0.18
