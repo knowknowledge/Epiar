@@ -11,6 +11,7 @@
 #include "Utilities/log.h"
 #include "Utilities/quadtree.h"
 #include "Engine/camera.h"
+#include "Engine/simulation_lua.h"
 
 /**\class SpriteManager
  * \brief Mangers sprites. */
@@ -73,7 +74,7 @@ SpriteManager *SpriteManager::pInstance = 0; // initialize pointer
  */
 SpriteManager *SpriteManager::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new SpriteManager; // create the sold instance
+		pInstance = new SpriteManager; // create the solid instance
 	}
 	return( pInstance );
 }
@@ -138,7 +139,8 @@ void SpriteManager::Update( lua_State *L, bool lowFps) {
 		GetAllQuadrants(&quadList);			//need to get all of the quadrants in our map
 	}
 	else {				//wave update mode with tickCount != 0 -- update some quadrants
-		Coordinate currentPoint (Camera::Instance()->GetFocusCoordinate());				//always update centered on where we're at
+		Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
+		Coordinate currentPoint (camera->GetFocusCoordinate());				//always update centered on where we're at
 
 		quadList.push_back (GetQuadrant (currentPoint));		//we ALWAYS update the current quadrant
 
@@ -230,11 +232,11 @@ void SpriteManager::DeleteEmptyQuadrants() {
 
 /**\brief Draws the current sprites
  */
-void SpriteManager::Draw() {
+void SpriteManager::Draw( Coordinate focus ) {
 	list<Sprite *>::iterator i;
 	list<Sprite*> *onscreen;
 	float r = (Video::GetHalfHeight() < Video::GetHalfWidth() ? Video::GetHalfWidth() : Video::GetHalfHeight()) *V_SQRT2;
-	onscreen = GetSpritesNear( Camera::Instance()->GetFocusCoordinate(), r, DRAW_ORDER_ALL);
+	onscreen = GetSpritesNear( focus, r, DRAW_ORDER_ALL);
 
 	onscreen->sort(compareSpritePtrs);
 
@@ -246,8 +248,8 @@ void SpriteManager::Draw() {
 
 /**\brief Draws the current sprites
  */
-void SpriteManager::DrawQuadrantMap() {
-	GetQuadrant( Camera::Instance()->GetFocusCoordinate() )->Draw( GetQuadrantCenter( Camera::Instance()->GetFocusCoordinate() ) );
+void SpriteManager::DrawQuadrantMap( Coordinate focus ) {
+	GetQuadrant( focus )->Draw( GetQuadrantCenter( focus ) );
 }
 
 /**\brief Retrieves a list of the current sprites.

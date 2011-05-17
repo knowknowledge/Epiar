@@ -127,7 +127,7 @@ Alliances *Alliances::pInstance = 0; // initialize pointer
  */
 Alliances *Alliances::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Alliances; // create the sold instance
+		pInstance = new Alliances; // create the solid instance
 		pInstance->rootName = "alliances";
 		pInstance->componentName = "alliance";
 		// The Independent Alliance is a reasonable used by players.

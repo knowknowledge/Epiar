@@ -18,13 +18,13 @@
 #include "Engine/alliances.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
-#include "AI/ai_lua.h"
 #include "UI/ui_lua.h"
 #include "UI/ui.h"
 #include "UI/ui_window.h"
 #include "UI/ui_label.h"
 #include "UI/ui_button.h"
 #include "Graphics/video.h"
+#include "Sprites/ai_lua.h"
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
@@ -402,8 +402,8 @@ int Simulation_Lua::MoveCamera(lua_State *L){
  */
 int Simulation_Lua::ShakeCamera(lua_State *L){
 	if (lua_gettop(L) == 4) {
-		Camera *pInstance = GetSimulation(L)->GetCamera();
-		pInstance->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
+		Camera *camera = GetSimulation(L)->GetCamera();
+		camera->Shake(int(luaL_checknumber(L, 1)), int(luaL_checknumber(L,
 						2)),  new Coordinate(luaL_checknumber(L, 3),luaL_checknumber(L, 2)));
 	}
 	return 0;
@@ -814,7 +814,7 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 	Lua::setField("SurfaceArea", model->GetSurfaceArea());
 
 	/* May want to move this to a helper function (but in which file?) */
-	vector<ws_t> slots = model->GetWeaponSlots();
+	vector<WeaponSlot> slots = model->GetWeaponSlots();
 	lua_pushstring(L, "weaponSlots");
 	lua_newtable(L);
 
@@ -828,7 +828,7 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 	char *rowKey = (char*)malloc(6);
 
 	for(unsigned int i = 0; i < slots.size(); i++){
-		ws_t s = slots[i];
+		WeaponSlot s = slots[i];
 
 		snprintf(rowKey, 6, "%d", i);
 		lua_pushstring(L, rowKey);
@@ -1173,7 +1173,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		// don't pop this table yet!
 
 		int wsDesiredLength = Lua::getIntField(wsTable,"desiredLength");
-		vector<ws_t> weaponSlots;
+		vector<WeaponSlot> weaponSlots;
 		char *rowKey = (char*)malloc(6);
 		for(short int i = 0; i < wsDesiredLength; i++){
 			snprintf(rowKey, 6, "%d", i);
@@ -1187,7 +1187,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			// don't pop this table yet either!
 
 			if( lua_istable(L, row) ){
-				ws_t s;
+				WeaponSlot s;
 				s.name = Lua::getStringField(row, "name");
 				s.mode = Lua::getStringField(row, "mode");
 				s.x = Lua::getNumField(row, "x");

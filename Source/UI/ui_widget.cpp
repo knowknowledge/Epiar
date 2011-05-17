@@ -277,7 +277,7 @@ bool Widget::KeyboardLeave( void ){
  */
 bool Widget::KeyPress( SDLKey key ) {
 	LogMsg(INFO,"Key press detect in %s named %s.", GetType().c_str(), GetName().c_str() );
-	return true;
+	return false;
 }
 
 

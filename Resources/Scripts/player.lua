@@ -476,7 +476,7 @@ function doHailInsult()
 	end
 
 	-- should make this query the planet data for an appropriate response / attitude toward the player
-	local r = getRand( os.time() + targettedPlanet:GetID(), 10 )
+	local r = math.random( 10 )
 
 	if r == 1 then
 		hailReplyLabel.setText(hailReplyLabel,string.format("Outrageous! You are now banned from %s.",targettedPlanet:GetName()) )
@@ -500,13 +500,13 @@ function doHailBFM()
 		doHailEnd()
 	end
 
-	local r = getRand( os.time() + targettedShip:GetID(), 8 )
+	local r = math.random( 8 )
 
 	if ( r == 1 ) then
 		hailReplyLabel.setText(hailReplyLabel,"Very well; I'm feeling gracious at the moment.")
 		AIData[targettedShip:GetID()].target = -1
-		-- 'friendly' means will never arbitrary select player as a target unless provoked
-		targettedShip:SetFriendly(1)
+		-- 'merciful' means will never arbitrary select player as a target unless provoked
+		targettedShip:SetMerciful(1)
 	else
 		hailReplyLabel.setText(hailReplyLabel, "I don't think so.")
 		didBFM = 1
@@ -520,21 +520,6 @@ function doHailEnd()
 	hailDialog:close()
 	hailDialog = nil
 end
-
-function getRand(seed, top)
-	math.randomseed( seed )
-
-	for s = 1,10 do
-		math.random()
-	end
-
-	local r = math.random(top)
-
-	return r
-end
-
-
-	
 
 --- Callback for the UI button in boarding ship dialog (see above)
 function doBoarding( reward )
@@ -565,8 +550,8 @@ end
 function doCapture(succ_max, destruct_max)
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
-	local r_succ = getRand( os.time() + targettedShip:GetID(), succ_max )
-	local r_selfdestruct = getRand( os.time() + targettedShip:GetID(), destruct_max )
+	local r_succ = math.random( succ_max )
+	local r_selfdestruct = math.random( destruct_max )
 
 	if r_selfdestruct == 1 then
 		HUD.newAlert(string.format("Your boarding party set off the %s's self-destruct mechanism.", targettedShip:GetModelName() ) )

@@ -56,6 +56,7 @@ class Camera {
 		int cameraShakeYOffset;
 		int cameraShakeXDec;
 		int cameraShakeYDec;
+
 		int focusID; // focused on sprite - always favored, use NULL to set camera to static locations
 		double x, y; // point where camera is looking
 		double dx, dy; // the difference in the current and last camera position
@@ -63,7 +64,6 @@ class Camera {
 		float zoom; // current zoom, zoom = 1. means no zooming
 		bool hasZoomed;
 		void UpdateShake();
-		Coordinate cameraLag;
 };
 
 #endif // __h_camera__

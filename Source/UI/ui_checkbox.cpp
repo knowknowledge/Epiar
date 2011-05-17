@@ -13,6 +13,10 @@
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 /**\class Checkbox
  * \brief UI checkbox. */
 
@@ -57,3 +61,5 @@ bool Checkbox::MouseLUp( int xi, int yi ) {
 	Widget::MouseLUp( xi, yi );
 	return true;
 }
+
+/** @} */

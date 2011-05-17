@@ -77,7 +77,7 @@ Model::Model( string _name,
 		int _shieldStrength,
 		int _msrp,
 		int _cargoSpace,
-		vector<ws_t>& _weaponSlots) :
+		vector<WeaponSlot>& _weaponSlots) :
 	image(_image),
 	defaultEngine(_defaultEngine),
 	thrustOffset(_thrustOffset)
@@ -191,7 +191,7 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 	char *ntos = (char*)malloc(256);
 	xmlNodePtr wsPtr = xmlNewNode(NULL, BAD_CAST "weaponSlots");
 	for(unsigned int w=0;w<weaponSlots.size();w++){
-		ws_t *slot = &weaponSlots[w];
+		WeaponSlot *slot = &weaponSlots[w];
 
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
 		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
@@ -226,7 +226,7 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 	//if( (slotPtr = FirstChildNamed(node,"slot")) ){
         for( slotPtr = FirstChildNamed(node,"slot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"slot") ){
-		ws_t newSlot;
+		WeaponSlot newSlot;
 
 		xmlNodePtr attr;
 
@@ -287,7 +287,7 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 /**\brief Configure the ship's weapon slots based on a list passed in (probably from the constructor)
  */
-bool Model::ConfigureWeaponSlots( vector<ws_t>& slots ) {
+bool Model::ConfigureWeaponSlots( vector<WeaponSlot>& slots ) {
         this->weaponSlots = slots;
         return true;
 }
@@ -295,8 +295,8 @@ bool Model::ConfigureWeaponSlots( vector<ws_t>& slots ) {
 /**\brief Configure the ship's weapon slots using default values.
  */
 bool Model::ConfigureWeaponSlots() {
-        ws_t wsFront1;
-        ws_t wsFront2;
+        WeaponSlot wsFront1;
+        WeaponSlot wsFront2;
 
         wsFront1.name = "front 1";
         wsFront1.x = -0.3;
@@ -313,7 +313,7 @@ bool Model::ConfigureWeaponSlots() {
         wsFront2.motionAngle = 0.0;
 	wsFront2.firingGroup = 1;
 
-	vector<ws_t> newSlots;
+	vector<WeaponSlot> newSlots;
         newSlots.push_back(wsFront1);
         newSlots.push_back(wsFront2);
 	this->weaponSlots = newSlots;
@@ -327,11 +327,11 @@ int Model::GetWeaponSlotCount(){
 	return this->weaponSlots.size();
 }
 
-void Model::WSDebug(ws_t slot){
+void Model::WSDebug(WeaponSlot slot){
 	LogMsg(DEBUG1, "WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
 }
 
-void Model::WSDebug(vector<ws_t>& slots){
+void Model::WSDebug(vector<WeaponSlot>& slots){
 	LogMsg(DEBUG1, "WeaponSlots for Model: %s", GetName().c_str() );
 	for(unsigned int i = 0; i < slots.size(); i++){
 		WSDebug(slots[i]);
@@ -355,7 +355,7 @@ Models *Models::pInstance = 0; // initialize pointer
  */
 Models *Models::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Models; // create the sold instance
+		pInstance = new Models; // create the solid instance
 		pInstance->rootName = "models";
 		pInstance->componentName = "model";
 	}

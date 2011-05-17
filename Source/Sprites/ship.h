@@ -13,7 +13,7 @@
 #include "Engine/models.h"
 #include "Sprites/sprite.h"
 #include "Engine/commodities.h"
-#include "Engine/weapon.h"
+#include "Engine/weapons.h"
 #include "Sprites/projectile.h"
 #include <map>
 
@@ -105,13 +105,8 @@ class Ship : public Sprite {
 		void SetEngineBoost(float engine) {engineBooster=engine;}
 		void SetDamageBoost(float damage) {damageBooster=damage;}
 
-		void SetFriendly(int f) { friendly = (f == 1); }
-		int GetFriendly() { return (friendly ? 1 : 0 ); }
-
 	protected:
-		typedef struct ws ws_t;
-
-		vector<ws_t> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
+		vector<WeaponSlot> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
 	
 	private:
 		Model *model;
@@ -139,8 +134,6 @@ class Ship : public Sprite {
 			bool isRotatingRight;  ///< Cleared by update, set by turning right (so it's always updated twice a loop)
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
 		} status;
-
-		bool friendly; ///< Is this ship friendly to the player?
 
 		// Weapon Systems
 		int ammo[max_ammo]; ///< Contains the quantity of each ammo type on the ship

@@ -141,7 +141,7 @@ Engines *Engines::pInstance = 0; // initialize pointer
  */
 Engines *Engines::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Engines; // create the sold instance
+		pInstance = new Engines; // create the solid instance
 		pInstance->rootName = "engines";
 		pInstance->componentName = "engine";
 	}

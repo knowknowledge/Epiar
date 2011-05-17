@@ -19,6 +19,8 @@
 #include "Engine/starfield.h"
 #include "Engine/console.h"
 #include "Graphics/video.h"
+#include "Sprites/ai.h"
+#include "Sprites/ai_lua.h"
 #include "Sprites/player.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
@@ -27,8 +29,6 @@
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 #include "Utilities/lua.h"
-#include "AI/ai.h"
-#include "AI/ai_lua.h"
 
 /**\class Simulation
  * \brief Handles main game loop. */
@@ -231,6 +231,7 @@ bool Simulation::Run() {
 	{
 		LogMsg(WARN, "No Player has been loaded!");
 		assert( player != NULL );
+		quit = true;
 	}
 
 	// Message appear in reverse order, so this is upside down
@@ -247,9 +248,10 @@ bool Simulation::Run() {
 	bool lowFps = false;
 	int lowFpsFrameCount = 0;
 	while( !quit ) {
-		if(HandleInput()) quit = true; // do not say quit = quit || HandleInput() -- ui cb is _in_ HandleInput()
+		HandleInput();
 
-//_ASSERTE(_CrtCheckMemory());
+		//_ASSERTE(_CrtCheckMemory());
+
 		//logicLoops is the number of times we need to run logical updates to get 50 logical updates per second
 		//if the draw fps is >50 then logicLoops will always be 1 (ie 1 logical update per draw)
 		int logicLoops = Timer::Update();
@@ -277,8 +279,8 @@ bool Simulation::Run() {
 		// Draw cycle
 		Video::PreDraw();
 		starfield.Draw();
-		sprites->Draw();
-		Hud::Draw( HUD_ALL, currentFPS );
+		sprites->Draw( camera->GetFocusCoordinate() );
+		Hud::Draw( HUD_ALL, currentFPS, camera, sprites );
 		UI::Draw();
 		console.Draw();
 		Video::PostDraw();
@@ -421,7 +423,7 @@ bool Simulation::Edit() {
 	Lua::Call("componentDebugger");
 
 	while( !quit ) {
-		if(HandleInput()) quit = true;
+		HandleInput();
 
 		Timer::Update();
 		starfield.Update( camera );
@@ -433,9 +435,9 @@ bool Simulation::Edit() {
 
 		// Draw cycle
 		starfield.Draw();
-		sprites->Draw();
+		sprites->Draw( camera->GetFocusCoordinate() );
 		UI::Draw();
-		Hud::Draw( HUD_Target | HUD_Map, 0.0f );
+		Hud::Draw( HUD_Target | HUD_Map, 0.0f, camera, sprites );
 		console.Draw();
 		Video::Update();
 
@@ -519,9 +521,8 @@ bool Simulation::Parse( void ) {
 }
 
 /**\brief Handle User Input
- * \return true if the player wants to quit
  */
-bool Simulation::HandleInput() {
+void Simulation::HandleInput() {
 	list<InputEvent> events;
 
 	// Collect user input events
@@ -530,7 +531,7 @@ bool Simulation::HandleInput() {
 	// Pass the Events to the systems that handle them.
 	UI::HandleInput( events );
 	console.HandleInput( events );
-	Hud::HandleInput( events );
+	Hud::HandleInput( events, camera, sprites );
 
 	inputs.HandleLuaCallBacks( events );
 
@@ -539,7 +540,8 @@ bool Simulation::HandleInput() {
 		//Video::SaveScreenshot();
 	//}
 	
-	return Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) );
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) )
+		quit = true;
 }
 
 /**\fn Simulation::isPaused()

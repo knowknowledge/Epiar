@@ -8,6 +8,10 @@
 
 #include "UI/ui_action.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
 LuaAction::LuaAction( string callback )
 {
 	lua_callback = callback;
@@ -54,3 +58,5 @@ void MessageAction::Activate()
 	clickCallBack(object, message);
 	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
 }
+
+/** @} */

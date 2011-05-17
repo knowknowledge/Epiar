@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Sprites/ship.h"
 #include "Engine/camera.h"
+#include "Engine/simulation_lua.h"
 #include "Utilities/timer.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
@@ -17,7 +18,6 @@
 #include "Sprites/effects.h"
 #include "Audio/sound.h"
 #include "Engine/hud.h"
-#include "AI/ai.h"
 
 #define NON_PLAYER_SOUND_RATIO 0.4f ///< Ratio used to quiet NON-PLAYER Ship Sounds.
 
@@ -296,18 +296,17 @@ void Ship::Update( lua_State *L ) {
 	// Ship has taken as much damage as possible...
 	// It Explodes!
 	if( status.hullDamage >=  (float)shipStats.GetHullStrength() ) {
-		SpriteManager *sprites = SpriteManager::Instance();
+		SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+		Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
 
 		// Play explode sound
 		if(OPTION(int, "options/sound/explosions")) {
 			Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
-			explodesnd->Play(
-				this->GetWorldPosition() - Camera::Instance()->GetFocusCoordinate());
+			explodesnd->Play( GetWorldPosition() - camera->GetFocusCoordinate());
 		}
 
 		// Create Explosion
-		sprites->Add(
-			new Effect(this->GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
+		sprites->Add( new Effect( GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
 
 		// Remove this Sprite from the SpriteManager
 		sprites->Delete( (Sprite*)this );
@@ -345,6 +344,7 @@ void Ship::Draw( void ) {
 		
 		status.isAccelerating = false;
 	}
+#if defined(ROTATE_ENGINE)
 	//TODO: draw flare tilted in the coresponding direction
 	if( status.isRotatingLeft || status.isRotatingRight ) {
 		float direction = GetAngle();
@@ -361,6 +361,7 @@ void Ship::Draw( void ) {
 		status.isRotatingLeft = false;
 		status.isRotatingRight = false;
 	}
+#endif
 }
 
 /**\brief Fire's ship current weapon.
@@ -542,7 +543,7 @@ void Ship::AddToShipWeaponList(string weaponName){
  */
 int Ship::AddShipWeapon(Weapon *w){
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
-		ws_t *slot = &weaponSlots[s];
+		WeaponSlot *slot = &weaponSlots[s];
 		if(slot->content == ""){
 			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			AddToShipWeaponList(w);
@@ -620,7 +621,7 @@ void Ship::RemoveShipWeapon(Weapon *w){
 		}
 	}
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
-		ws_t *slot = &weaponSlots[s];
+		WeaponSlot *slot = &weaponSlots[s];
 		if(slot->content == w->GetName()){
 			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			return;
@@ -871,13 +872,13 @@ int Ship::GetWeaponSlotCount() {
 /**\brief The name of weapon slot i
  */
 string Ship::GetWeaponSlotName(int i) {
-	return ((ws_t)(this->weaponSlots[i])).name;
+	return ((WeaponSlot)(this->weaponSlots[i])).name;
 }
 
 /**\brief The status of weapon slot i. By the way, the "status" naming of this function has nothing to do with statusbars.
  */
 string Ship::GetWeaponSlotStatus(int i) {
-	return ((ws_t)(this->weaponSlots[i])).content;
+	return ((WeaponSlot)(this->weaponSlots[i])).content;
 }
 
 /**\brief Set the status of weapon slot i
@@ -889,7 +890,7 @@ void Ship::SetWeaponSlotStatus(int i, string s) {
 /**\brief The firing group of weapon slot i
  */
 short int Ship::GetWeaponSlotFG(int i) {
-	return ((ws_t)(this->weaponSlots[i])).firingGroup;
+	return ((WeaponSlot)(this->weaponSlots[i])).firingGroup;
 }
 
 /**\brief Set the firing group of weapon slot i

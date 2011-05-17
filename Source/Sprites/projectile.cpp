@@ -10,11 +10,11 @@
 #include "Sprites/projectile.h"
 #include "Utilities/trig.h"
 #include "Sprites/spritemanager.h"
+#include "Sprites/ai.h"
 #include "Sprites/ship.h"
 #include "Sprites/effects.h"
 #include "Utilities/timer.h"
 #include "Engine/weapons.h"
-#include "AI/ai.h"
 #include "Engine/simulation_lua.h"
 
 /**\class Projectile

@@ -9,7 +9,7 @@
 #ifndef __H_AI_LUA_
 #define __H_AI_LUA_
 
-#include "AI/ai.h"
+#include "Sprites/ai.h"
 #include "Utilities/lua.h"
 
 #define EPIAR_SHIP_TABLE "Epiar.Ship" ///< The Lua tag used to identify the metatable for a Ship
@@ -110,8 +110,8 @@ class AI_Lua{
 		static int ShipGetMissions(lua_State* L);
 
 		// Situational Awareness
-		static int ShipGetFriendly(lua_State* L);
-		static int ShipSetFriendly(lua_State* L);
+		static int ShipGetMerciful(lua_State* L);
+		static int ShipSetMerciful(lua_State* L);
 	private:
 };
 

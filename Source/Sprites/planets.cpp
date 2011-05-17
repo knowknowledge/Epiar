@@ -171,7 +171,8 @@ void Planet::Update( lua_State *L ) {
 }
 
 void Planet::GenerateTraffic( lua_State *L ) {
-	list<Sprite*> *nearbySprites = SpriteManager::Instance()->GetSpritesNear(GetWorldPosition(), TO_FLOAT(sphereOfInfluence), DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER);
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+	list<Sprite*> *nearbySprites = sprites->GetSpritesNear( GetWorldPosition(), TO_FLOAT(sphereOfInfluence), DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER);
 
 	if( nearbySprites->size() < traffic ) {
 		Lua::Call( "createRandomShipForPlanet", "i", GetID() );
@@ -290,7 +291,7 @@ Planets *Planets::pInstance = 0; // initialize pointer
  */
 Planets *Planets::Instance( void ) {
 	if( pInstance == 0 ) { // is this the first call?
-		pInstance = new Planets; // create the sold instance
+		pInstance = new Planets; // create the solid instance
 		pInstance->rootName = "planets";
 		pInstance->componentName = "planet";
 	}

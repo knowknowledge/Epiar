@@ -9,10 +9,6 @@ set (Epiar_src
 	${Epiar_SRC_DIR}/version.h
 	)
 set (Epiar_src ${Epiar_src}
-	${Epiar_SRC_DIR}/AI/ai.h
-	${Epiar_SRC_DIR}/AI/ai_lua.h
-	${Epiar_SRC_DIR}/AI/ai.cpp
-	${Epiar_SRC_DIR}/AI/ai_lua.cpp
 	)
 set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Audio/audio.cpp
@@ -38,7 +34,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/simulation_lua.h
 	${Epiar_SRC_DIR}/Engine/starfield.h
 	${Epiar_SRC_DIR}/Engine/technologies.h
-	${Epiar_SRC_DIR}/Engine/weapon.h
 	${Epiar_SRC_DIR}/Engine/weapons.h
 	${Epiar_SRC_DIR}/Engine/alliances.cpp
 	${Epiar_SRC_DIR}/Engine/camera.cpp
@@ -53,7 +48,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Engine/simulation_lua.cpp
 	${Epiar_SRC_DIR}/Engine/starfield.cpp
 	${Epiar_SRC_DIR}/Engine/technologies.cpp
-	${Epiar_SRC_DIR}/Engine/weapon.cpp
 	${Epiar_SRC_DIR}/Engine/weapons.cpp
 	)
 set (Epiar_src ${Epiar_src}
@@ -70,6 +64,10 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Input/input.cpp
 	)
 set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/Sprites/ai.h
+	${Epiar_SRC_DIR}/Sprites/ai_lua.h
+	${Epiar_SRC_DIR}/Sprites/ai.cpp
+	${Epiar_SRC_DIR}/Sprites/ai_lua.cpp
 	${Epiar_SRC_DIR}/Sprites/effects.h
 	${Epiar_SRC_DIR}/Sprites/gate.h
 	${Epiar_SRC_DIR}/Sprites/planets.h
@@ -130,7 +128,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/components.h
 	${Epiar_SRC_DIR}/Utilities/file.h
 	${Epiar_SRC_DIR}/Utilities/filesystem.h
-	${Epiar_SRC_DIR}/Utilities/hashtbl.h
 	${Epiar_SRC_DIR}/Utilities/log.h
 	${Epiar_SRC_DIR}/Utilities/lua.h
 	${Epiar_SRC_DIR}/Utilities/quadtree.h
@@ -143,7 +140,6 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Utilities/components.cpp
 	${Epiar_SRC_DIR}/Utilities/file.cpp
 	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
-	${Epiar_SRC_DIR}/Utilities/hashtbl.cpp
 	${Epiar_SRC_DIR}/Utilities/log.cpp
 	${Epiar_SRC_DIR}/Utilities/lua.cpp
 	${Epiar_SRC_DIR}/Utilities/quadtree.cpp

@@ -12,7 +12,7 @@
 #include "Sprites/effects.h"
 #include "Sprites/player.h"
 #include "Sprites/planets.h"
-#include "AI/ai_lua.h"
+#include "Sprites/ai_lua.h"
 #include "Audio/sound.h"
 #include "Engine/camera.h"
 #include "Utilities/trig.h"
@@ -87,8 +87,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"GetMomentumAngle", &AI_Lua::ShipGetMomentumAngle},
 		{"GetMomentumSpeed", &AI_Lua::ShipGetMomentumSpeed},
 		{"directionTowards", &AI_Lua::ShipGetDirectionTowards},
-		{"SetFriendly", &AI_Lua::ShipSetFriendly},
-		{"GetFriendly", &AI_Lua::ShipGetFriendly},
+		{"SetMerciful", &AI_Lua::ShipSetMerciful},
+		{"GetMerciful", &AI_Lua::ShipGetMerciful},
 
 		// Favor State
 		{"GetFavor", &AI_Lua::ShipGetFavor},
@@ -1141,7 +1141,7 @@ int AI_Lua::ShipSetStateMachine(lua_State* L){
 			luaL_error(L, "Can't set the state machine of a null sprite.");
 		}
 		else if(ai->GetDrawOrder() & DRAW_ORDER_PLAYER){
-			luaL_error(L, "Can't set the state machine of a player.");
+			return luaL_error(L, "Can't set the state machine of a player.");
 		}
 		else {
 			string sm = luaL_checkstring (L, 2);
@@ -1286,6 +1286,7 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 
 	// Check that only players accept missions
 	Ship* ship = checkShip(L,1);
+	if(ship==NULL) return 0;
 	if( ship->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
 		return luaL_error(L, "Only Players may accept Missions");
 	}
@@ -1312,18 +1313,20 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 	return 1;
 }
 
-/**\brief Lua callable function to get friendly status of a ship
+/**\brief Lua callable function to get merciful status of a ship
  */
-int AI_Lua::ShipGetFriendly(lua_State* L){
+int AI_Lua::ShipGetMerciful(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 
 	if (n == 1) {
 		AI* ai = checkShip(L,1);
-		if(ai==NULL){
-			lua_pushnumber(L, 0 );
+		if(ai==NULL) return 0;
+		if( ai->GetDrawOrder() == DRAW_ORDER_PLAYER ) {
+			// Players are always merciful to themselves
+			lua_pushnumber(L, 1 );
 			return 1;
 		}
-		lua_pushnumber(L, (int) (ai)->GetFriendly() );
+		lua_pushnumber(L, (int) (ai)->GetMerciful() );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
@@ -1331,23 +1334,23 @@ int AI_Lua::ShipGetFriendly(lua_State* L){
 	return 1;
 }
 
-/**\brief Lua callable function to set the friendly status of a ship
+/**\brief Lua callable function to set the merciful status of a ship
  */
-int AI_Lua::ShipSetFriendly(lua_State* L){
+int AI_Lua::ShipSetMerciful(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 2) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		int friendly = luaL_checkint (L, 2);
-		(ai)->SetFriendly( friendly );
+		if( ai->GetDrawOrder() == DRAW_ORDER_PLAYER ) {
+			return luaL_error(L, "Cannot force Players to be merciful.");
+		}
+		int merciful = luaL_checkint (L, 2);
+		(ai)->SetMerciful( merciful );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, friendly)", n);
+		luaL_error(L, "Got %d arguments expected 2 (ship, merciful)", n);
 	}
 	return 0;
 }
-
-
-
 
 /**\brief Lua callable function to get Shield damage of a ship
  */
