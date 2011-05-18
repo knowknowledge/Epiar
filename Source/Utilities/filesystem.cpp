@@ -70,7 +70,7 @@ int Filesystem::PrependPath( const string& archivename ) {
 bool Filesystem::DeleteFile( const string &filename ) {
 	int retval;
 
-	if( (retval = PHYSFS_delete( filename.c_str() ) ) != 0 ) {
+	if( (retval = PHYSFS_delete( filename.c_str() ) ) == 0 ) {
 		LogMsg(ERR, "Could not delete file (%s): %s\n", filename.c_str(), PHYSFS_getLastError());
 		return false;
 	}
