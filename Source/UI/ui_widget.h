@@ -91,7 +91,7 @@ class Widget {
 		}; ///< Actions that can be registered.
 
 		virtual Widget* RegisterAction( action_type type, Action* action );
-		virtual bool Activate( action_type type );
+		virtual bool Activate( action_type type, int x, int y );
 
 		// Only allow Container to send events
 		friend class Container;

@@ -14,13 +14,13 @@
 
 class Action {
 	public:
-		virtual void Activate() = 0;
+		virtual void Activate( int x, int y ) = 0;
 };
 
 class LuaAction : public Action {
 	public:
 		LuaAction( string callback );
-		void Activate();
+		void Activate( int x, int y );
 	private:
 		string lua_callback;
 };
@@ -28,7 +28,7 @@ class LuaAction : public Action {
 class VoidAction : public Action {
 	public:
 		VoidAction( void (*callback)() );
-		void Activate();
+		void Activate( int x, int y );
 	private:
 		void (*c_callback)();
 };
@@ -36,7 +36,7 @@ class VoidAction : public Action {
 class ObjectAction : public Action {
 	public:
 		ObjectAction( void (*function)(void*), void* value );
-		void Activate();
+		void Activate( int x, int y );
 	private:
 		void (*clickCallBack)(void*);
 		void *object;
@@ -45,9 +45,19 @@ class ObjectAction : public Action {
 class MessageAction : public Action {
 	public:
 		MessageAction( void (*function)(void*,void*), void* obj, void* msg );
-		void Activate();
+		void Activate( int x, int y );
 	private:
 		void (*clickCallBack)(void*,void*);
+		void *object;
+		void *message;
+};
+
+class PositionalAction : public Action {
+	public:
+		PositionalAction ( void (*function)(void* obj, void*msg, int x, int y), void* obj, void* msg );
+		void Activate( int x, int y );
+	private:
+		void (*clickCallBack)(void*,void*,int,int);
 		void *object;
 		void *message;
 };
