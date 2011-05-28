@@ -53,6 +53,12 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 	Lua::RegisterGlobal("SPRITE_GATE_TOP",    DRAW_ORDER_GATE_TOP   );
 	Lua::RegisterGlobal("SPRITE_EFFECT",      DRAW_ORDER_EFFECT     );
 
+	// Input Key States
+	Lua::RegisterGlobal("KEYUP",              KEYUP      );
+	Lua::RegisterGlobal("KEYDOWN",            KEYDOWN    );
+	Lua::RegisterGlobal("KEYPRESSED",         KEYPRESSED );
+	Lua::RegisterGlobal("KEYTYPED",           KEYTYPED   );
+
 	static const luaL_Reg EngineFunctions[] = {
 		//{"echo", &Simulation_Lua::Console_echo},
 		{"pause", &Simulation_Lua::Pause},

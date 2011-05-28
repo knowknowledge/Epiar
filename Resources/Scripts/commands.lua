@@ -1,4 +1,3 @@
-KEYUP, KEYDOWN, KEYPRESSED, KEYTYPED = 0,1,2,3
 -- SDL Key Translations
 Key = {
 	backspace=8, tab=9, clear=12, pause=19, escape=27, space=32,
@@ -53,7 +52,7 @@ function chooseKeys()
 	keyinput = {}
 	labels = {}
 	--
-	if keyhelpwin ~=nil then return end
+	if UI.search("/'Possible Keys'/") ~=nil then return end
 	keywin:add(UI.newButton(w/2-120/2, h-38, 120, 30, "Save Changes", "processKeyWin(commands)"))
 	keywin:add(UI.newButton(10, h-38, 30, 30, "?", "keyhelp()"))
 end
@@ -63,13 +62,13 @@ end
 --- Help window
 function keyhelp()
 	Epiar.pause()
-	if keyhelpwin ~=nil then return end
+	if UI.search("/'Possible Keys'/") ~=nil then return end
 	off_x,off_y = 20,20
 	w,h = 130,50
 	-- This seems to be the only way to count keys in a dictionary.
 	for k,v in pairs(Key) do h=h+20 end
 	-- TODO: Make this a scrollable window
-	keyhelpwin = UI.newWindow( 100, 100, w, 300, "Possible Keys")
+	local keyhelpwin = UI.newWindow( 100, 100, w, 300, "Possible Keys")
 	for k,v in pairs(Key) do
 		off_y = off_y + 20
 		keyhelpwin:add( UI.newLabel(off_x,off_y,"- "..k) )
