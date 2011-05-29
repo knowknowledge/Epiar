@@ -27,6 +27,7 @@
 #include "ui_tabs.h"
 #include "ui_slider.h"
 #include "ui_dropdown.h"
+#include "ui_map.h"
 
 // Include UI helpers
 #include "ui_dialogs.h"

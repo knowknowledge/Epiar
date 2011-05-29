@@ -45,6 +45,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/UI/ui_dropdown.cpp \
                 Source/UI/ui_label.cpp \
                 Source/UI/ui_lua.cpp \
+                Source/UI/ui_map.cpp \
                 Source/UI/ui_picture.cpp \
                 Source/UI/ui_scrollbar.cpp \
                 Source/UI/ui_slider.cpp \

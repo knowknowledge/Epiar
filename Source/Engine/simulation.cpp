@@ -539,9 +539,35 @@ void Simulation::HandleInput() {
 	//{
 		//Video::SaveScreenshot();
 	//}
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'h') ) )
+	{
+		CreateNavMap();
+	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) )
 		quit = true;
+}
+
+void Simulation::CreateNavMap( void )
+{
+	Window* win = new Window(
+		TO_INT(Video::GetWidth() * 0.1),
+		TO_INT(Video::GetHeight() * 0.1),
+		TO_INT(Video::GetWidth() * 0.8),
+		TO_INT(Video::GetHeight() * 0.8),
+		"Navigation" );
+
+	win->AddChild( new Map( 30, 30,
+		TO_INT(win->GetW()) - 60,
+		TO_INT(win->GetH()) - 60,
+		camera->GetFocusCoordinate(),
+		sprites )
+	);
+
+	win->AddCloseButton();
+
+	UI::Add( win );
 }
 
 /**\fn Simulation::isPaused()

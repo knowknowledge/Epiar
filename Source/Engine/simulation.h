@@ -74,6 +74,7 @@ class Simulation : public XMLFile {
 
 	private:
 		bool Parse( void );
+		void CreateNavMap( void );
 
 		// Pointers to Singletons
 		///< TODO: These should all be rewritten to not be singletons
