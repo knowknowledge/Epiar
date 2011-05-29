@@ -22,8 +22,11 @@ class Map: public Widget {
 
 		void Draw( int relx = 0, int rely = 0 );
 
+		void Filter( int spriteFlags ) { spriteTypes = spriteFlags; }
+
 		Coordinate ClickToWorld( Coordinate click );
 		Coordinate WorldToClick( Coordinate world );
+		Coordinate WorldToScreen( Coordinate world );
 
 		string GetType( void ) { return string("Map"); }
 		virtual int GetMask( void ) { return WIDGET_MAP; }
@@ -35,10 +38,13 @@ class Map: public Widget {
 		virtual bool MouseDrag( int xi, int yi );
 
 	private:
+		int spriteTypes;
 		float alpha;
 		float scale;
 		Coordinate center;
+
 		SpriteManager* sprites;
+
 		static Font *MapFont;
 };
 

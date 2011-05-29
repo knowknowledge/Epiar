@@ -25,6 +25,15 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 	this->center = center;
 	this->sprites = sprites;
 
+	spriteTypes = ( DRAW_ORDER_PLAYER   |
+	                DRAW_ORDER_PLANET   |
+	                DRAW_ORDER_GATE_TOP );
+
+	// Show sprites only if this option is set.
+	if( OPTION(int,"options/development/ships-worldmap") ) {
+		spriteTypes |= DRAW_ORDER_SHIP;
+	}
+
 	alpha = .7;
 
 	float size = (h<w) ? h : w; // Max of Height and Width
@@ -48,44 +57,21 @@ Map::~Map()
 
 void Map::Draw( int relx, int rely )
 {
-	float halfheight, halfwidth;
 	list<Sprite*> *spriteList;
 	list<Sprite*>::iterator iter;
-	int startx, starty;
 
 	// These variables are used for almost every sprite symbol
 	Coordinate pos, pos2;
-	Color col;
-	Color field;
-	Color gatePath;
+	Color col, field, gatePath;
 
 	// Configurable Settings
-	halfheight = GetH()/2;
-	halfwidth = GetW()/2;
-	startx = relx + GetX();
-	starty = rely + GetY();
 	gatePath = Color( SKIN("Skin/HUD/Map/GatePath") );
 
-	Coordinate start(startx,starty);
-	Coordinate widgetCenter(halfwidth,halfheight);
-
-	int retrieveSprites=(
-						 DRAW_ORDER_PLAYER	|
-						 DRAW_ORDER_PLANET	|
-						 DRAW_ORDER_GATE_TOP );
-
-	// Show sprites only if this option is set.
-	if( OPTION(int,"options/development/ships-worldmap") ) {
-		retrieveSprites = retrieveSprites | DRAW_ORDER_SHIP;
-	}
-
-	spriteList = sprites->GetSprites( retrieveSprites );
-
 	// The Backdrop
-	Video::DrawRect( startx,starty,w,h,BLACK,alpha);
-	Video::DrawBox( startx,starty,w,h,WHITE,alpha);
+	Video::DrawRect( relx + GetX(), rely + GetY(), w, h, BLACK, alpha);
+	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
 
-	Video::SetCropRect( startx, starty, w, h );
+	Video::SetCropRect( relx + GetX(), rely + GetY(), w, h );
 
 	// TODO: Quadrant lines should be be drawn correctly.
 
@@ -99,37 +85,40 @@ void Map::Draw( int relx, int rely )
 	// }
 
 	// Draw the Sprites
+	spriteList = sprites->GetSprites( spriteTypes );
 	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
 	{
 		col = (*iter)->GetRadarColor();
-		pos = start
-			+ ((*iter)->GetWorldPosition() - center ) * scale
-			+ widgetCenter;
+		pos = WorldToScreen( (*iter)->GetWorldPosition() );
 
 		switch( (*iter)->GetDrawOrder() ) {
 			case DRAW_ORDER_PLAYER:
+			case DRAW_ORDER_SHIP:
+			case DRAW_ORDER_WEAPON:
+			case DRAW_ORDER_EFFECT:
 				Video::DrawFilledCircle( pos, 2, col, alpha );
 				break;
+
 			case DRAW_ORDER_PLANET:
 				field = ((Planet*)(*iter))->GetAlliance()->GetColor();
 				Video::DrawFilledCircle( pos, ((Planet*)(*iter))->GetInfluence()*scale, field, alpha*.5f );
 				Video::DrawCircle( pos, 3, 1, col, alpha );
 				break;
-			case DRAW_ORDER_SHIP:
-				Video::DrawFilledCircle( pos, 2, col, alpha );
-				break;
 
 			case DRAW_ORDER_GATE_TOP:
 				Video::DrawCircle( pos, 3, 1, col, alpha );
 				if( ((Gate*)(*iter))->GetExit() != NULL ) {
-					pos2 = start
-					     + (((Gate*)(*iter))->GetExit()->GetWorldPosition() - center ) * scale
-					     + widgetCenter;
+					pos2 = WorldToScreen( ((Gate*)(*iter))->GetExit()->GetWorldPosition() );
 					Video::DrawLine( pos, pos2, gatePath, alpha*.5f );
 				}
 				break;
+
+			case DRAW_ORDER_GATE_BOTTOM:
+				// Don't draw these ever, they are invisible.
+				break;
+
 			default:
-				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
+				LogMsg(WARN,"Unknown Sprite type (0x%04X) being drawn in the Map.", (*iter)->GetDrawOrder() );
 		}
 	}
 
@@ -138,9 +127,7 @@ void Map::Draw( int relx, int rely )
 	{
 		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
 		{
-			pos = start
-				+ ((*iter)->GetWorldPosition() - center ) * scale
-				+ widgetCenter;
+			pos = WorldToScreen( (*iter)->GetWorldPosition() );
 			MapFont->Render( pos.GetX()+5, pos.GetY(), ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
@@ -171,6 +158,16 @@ Coordinate Map::WorldToClick( Coordinate world )
 	click += Coordinate( w/2, h/2 ); // Offset by the center of this widget
 	click += Coordinate( GetX(), GetY() ); // Offset by this Widget's origin
 	return click;
+}
+
+Coordinate Map::WorldToScreen( Coordinate world )
+{
+	Coordinate screen = world;
+	screen -= center;
+	screen *= scale; // Descale the screen
+	screen += Coordinate( w/2, h/2 ); // Offset by the center of this widget
+	screen += Coordinate( GetAbsX(), GetAbsY() ); // Offset by the absolute screen coordinate
+	return screen;
 }
 
 bool Map::MouseLUp( int xi, int yi )
