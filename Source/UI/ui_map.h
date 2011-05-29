@@ -24,6 +24,10 @@ class Map: public Widget {
 
 		string GetType( void ) { return string("Map"); }
 		virtual int GetMask( void ) { return WIDGET_MAP; }
+	protected:
+		virtual bool MouseWUp( int xi, int yi );
+		virtual bool MouseWDown( int xi, int yi );
+
 	private:
 		float alpha;
 		float scale;

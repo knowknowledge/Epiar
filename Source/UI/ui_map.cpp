@@ -11,6 +11,8 @@
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
 
+#define MAP_ZOOM_RATIO 1.1f ///< The rate at which the Map Zooms in and out.
+
 Font *Map::MapFont = NULL;
 
 Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites )
@@ -149,4 +151,18 @@ void Map::Draw( int relx, int rely )
 
 	delete spriteList;
 	spriteList = NULL;
+}
+
+bool Map::MouseWUp( int xi, int yi )
+{
+	Widget::MouseWUp( xi-x, yi-y );
+	scale *= MAP_ZOOM_RATIO;
+	return true;
+}
+
+bool Map::MouseWDown( int xi, int yi )
+{
+	Widget::MouseWDown( xi-x, yi-y );
+	scale /= MAP_ZOOM_RATIO;
+	return true;
 }
