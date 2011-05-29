@@ -179,6 +179,9 @@ bool Widget::MouseLUp( int xi, int yi ){
  */
 bool Widget::MouseLDown( int xi, int yi ) {
 	LogMsg(INFO,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	// update drag coordinates in case this is draggable
+	dragX = xi-x;
+	dragY = yi-y;
 	Activate(Action_MouseLDown, xi, yi);
 	return true;
 }

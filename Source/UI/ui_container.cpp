@@ -689,10 +689,6 @@ bool Container::MouseLDown( int xi, int yi ) {
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-
-	// update drag coordinates in case this is draggable
-	dragX = xr;
-	dragY = yr;
 	Widget::MouseLDown( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
