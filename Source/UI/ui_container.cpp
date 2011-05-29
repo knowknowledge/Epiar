@@ -251,8 +251,10 @@ bool Container::IsAttached( Widget* possible ) {
  * \warn The name cannot contain any of the special-character tokens, or else it will not
  *       be properly captured.
  *
- * \todo The query validation needs to be improved.  /(Foobar,4)/ will attempt
- *       to convert the string "Foobar" to a string.
+ * \todo The query validation needs to be improved.
+ * \todo /(Foobar,4)/ will attempt to convert the string "Foobar" to a string.
+ * \todo /[]/ This should fail but doesn't. The empty string is converted to an Int.
+ * \todo /(,)/ This should fail but doesn't. The empty string is converted to an Int.
  *
  * \param[in] full_query A specially formatted string
  * \returns A pointer to the first matching Widget or NULL.

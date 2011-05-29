@@ -11,10 +11,23 @@
 #include "Sprites/gate.h"
 #include "Sprites/effects.h"
 
+/** \addtogroup UI
+ * @{
+ */
+
+/**\class Map
+ * \brief Widget for displaying Sprites
+ *
+ */
+
+
 #define MAP_ZOOM_RATIO 1.1f ///< The rate at which the Map Zooms in and out.
 
 Font *Map::MapFont = NULL;
 
+/** \brief Map Constructor
+ *
+ */
 Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites )
 {
 	this->x = x;
@@ -50,11 +63,17 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 	MapFont = new Font( SKIN("Skin/HUD/Map/Font") );
 }
 
+/** \brief Map Destructor
+ *
+ */
 Map::~Map()
 {
 	sprites = NULL;
 }
 
+/** \brief Draw Map
+ *
+ */
 void Map::Draw( int relx, int rely )
 {
 	list<Sprite*> *spriteList;
@@ -140,6 +159,8 @@ void Map::Draw( int relx, int rely )
 	spriteList = NULL;
 }
 
+/** \brief Convert click coordinates to World Coordinates
+ */
 Coordinate Map::ClickToWorld( Coordinate click )
 {
 	Coordinate world = click;
@@ -150,6 +171,8 @@ Coordinate Map::ClickToWorld( Coordinate click )
 	return world;
 }
 
+/** \brief Convert world coordinates to relative click Coordinates
+ */
 Coordinate Map::WorldToClick( Coordinate world )
 {
 	Coordinate click = world;
@@ -160,6 +183,8 @@ Coordinate Map::WorldToClick( Coordinate world )
 	return click;
 }
 
+/** \brief Convert world coordinates to screen Coordinates
+ */
 Coordinate Map::WorldToScreen( Coordinate world )
 {
 	Coordinate screen = world;
@@ -190,6 +215,8 @@ bool Map::MouseLDown( int xi, int yi )
 	return false;
 }
 
+/** \brief Pan the Map
+ */
 bool Map::MouseDrag( int xi, int yi )
 {
 	center -= Coordinate( (xi-x) - dragX , ((yi-y) - dragY) ) / scale;
@@ -199,6 +226,8 @@ bool Map::MouseDrag( int xi, int yi )
 	return true;
 }
 
+/** \brief Zoom the map in
+ */
 bool Map::MouseWUp( int xi, int yi )
 {
 	//cout << "MouseWUp" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
@@ -207,6 +236,8 @@ bool Map::MouseWUp( int xi, int yi )
 	return true;
 }
 
+/** \brief Zoom the map out
+ */
 bool Map::MouseWDown( int xi, int yi )
 {
 	//cout << "MouseWDown" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
@@ -214,3 +245,6 @@ bool Map::MouseWDown( int xi, int yi )
 	Widget::MouseWDown( xi, yi );
 	return true;
 }
+
+/** @} */
+

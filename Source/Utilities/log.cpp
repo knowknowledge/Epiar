@@ -86,7 +86,9 @@ void Log::Close( void ) {
 	fp = NULL;
 }
 
-/**\brief The real log function.*/
+/**\brief The real log function.
+ * \todo The filtering is broken and should be refactored.
+ */
 void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	// Check log level
 	if( lvl < this->loglvl )
