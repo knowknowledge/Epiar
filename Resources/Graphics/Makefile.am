@@ -35,5 +35,5 @@ epiar_resources_graphics_DATA = Resources/Graphics/booster.png            Resour
  Resources/Graphics/podv.png              Resources/Graphics/uber_pretty.png \
  Resources/Graphics/mark2_laser.png        Resources/Graphics/raven.png             Resources/Graphics/xv-1.png \
  Resources/Graphics/mark3_laser.png        Resources/Graphics/raven_pretty.png      Resources/Graphics/xv-1_pretty.png \
- Resources/Graphics/marker_blue.png        Resources/Graphics/scivessel.png
+ Resources/Graphics/marker_blue.png        Resources/Graphics/scivessel.png         Resources/Graphics/planet1s.png
 
