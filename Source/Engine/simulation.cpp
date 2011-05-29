@@ -368,7 +368,7 @@ bool Simulation::Run() {
 			}
 		}
 	}
-	optionsfile->Save();
+	Options::Save();
 	
 	Hud::Close();
 

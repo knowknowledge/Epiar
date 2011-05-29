@@ -62,6 +62,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Utilities/filesystem.cpp \
                 Source/Utilities/log.cpp \
                 Source/Utilities/lua.cpp \
+                Source/Utilities/options.cpp \
                 Source/Utilities/quadtree.cpp \
                 Source/Utilities/resource.cpp \
                 Source/Utilities/timer.cpp \

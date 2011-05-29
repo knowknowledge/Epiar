@@ -29,7 +29,6 @@
 #endif // EPIAR_COMPILE_TESTS
 
 // main configuration file, used through the tree (extern in common.h)
-XMLFile *optionsfile = NULL;
 XMLFile *skinfile = NULL;
 // main font used throughout the game
 Font *SansSerif = NULL, *BitType = NULL, *Serif = NULL, *Mono = NULL;
@@ -118,55 +117,49 @@ void Main_OS( int argc, char **argv ) {
  *  \todo If these files do not exist, reasonable defaults should be loaded instead.
  */
 void Main_Load_Settings() {
-	optionsfile = new XMLFile();
-	if( !optionsfile->Open("Resources/Definitions/options.xml") )
-	{
-		// Create the default Options file
-		optionsfile->New("Resources/Definitions/options.xml", "options");
+	Options::Initialize( "Resources/Definitions/options.xml" );
 
-		// Logging
-		SETOPTION( "options/log/xml", 0 );
-		SETOPTION( "options/log/out", 1 );
-		SETOPTION( "options/log/alert", 0 );
-		SETOPTION( "options/log/ui", 0 );
-		SETOPTION( "options/log/sprites", 0 );
+	// Logging
+	Options::AddDefault( "options/log/xml", 0 );
+	Options::AddDefault( "options/log/out", 1 );
+	Options::AddDefault( "options/log/alert", 0 );
+	Options::AddDefault( "options/log/ui", 0 );
+	Options::AddDefault( "options/log/sprites", 0 );
 
-		// Video
-		SETOPTION( "options/video/w", 1024 );
-		SETOPTION( "options/video/h", 768 );
-		SETOPTION( "options/video/bpp", 32 );
-		SETOPTION( "options/video/fullscreen", 0 );
-		SETOPTION( "options/video/fps", 60 );
+	// Video
+	Options::AddDefault( "options/video/w", 1024 );
+	Options::AddDefault( "options/video/h", 768 );
+	Options::AddDefault( "options/video/bpp", 32 );
+	Options::AddDefault( "options/video/fullscreen", 0 );
+	Options::AddDefault( "options/video/fps", 60 );
 
-		// Sound
-		SETOPTION( "options/sound/musicvolume", 0.5f );
-		SETOPTION( "options/sound/soundvolume", 0.5f );
-		SETOPTION( "options/sound/background", 1 );
-		SETOPTION( "options/sound/weapons", 1 );
-		SETOPTION( "options/sound/engines", 1 );
-		SETOPTION( "options/sound/explosions", 1 );
-		SETOPTION( "options/sound/buttons", 1 );
+	// Sound
+	Options::AddDefault( "options/sound/musicvolume", 0.5f );
+	Options::AddDefault( "options/sound/soundvolume", 0.5f );
+	Options::AddDefault( "options/sound/background", 1 );
+	Options::AddDefault( "options/sound/weapons", 1 );
+	Options::AddDefault( "options/sound/engines", 1 );
+	Options::AddDefault( "options/sound/explosions", 1 );
+	Options::AddDefault( "options/sound/buttons", 1 );
 
-		// Simultaion
-		SETOPTION( "options/simulation/starfield-density", 750 );
-		SETOPTION( "options/simulation/automatic-load", 0 );
-		SETOPTION( "options/simulation/random-universe", 0 );
-		SETOPTION( "options/simulation/random-seed", 0 );
+	// Simultaion
+	Options::AddDefault( "options/simulation/starfield-density", 750 );
+	Options::AddDefault( "options/simulation/automatic-load", 0 );
+	Options::AddDefault( "options/simulation/random-universe", 0 );
+	Options::AddDefault( "options/simulation/random-seed", 0 );
 
-		// Timing
-		SETOPTION( "options/timing/screen-swap", 250 );
-		SETOPTION( "options/timing/mouse-fade", 500 );
-		SETOPTION( "options/timing/target-zoom", 500 );
-		SETOPTION( "options/timing/alert-drop", 3500 );
-		SETOPTION( "options/timing/alert-fade", 2500 );
+	// Timing
+	Options::AddDefault( "options/timing/screen-swap", 250 );
+	Options::AddDefault( "options/timing/mouse-fade", 500 );
+	Options::AddDefault( "options/timing/target-zoom", 500 );
+	Options::AddDefault( "options/timing/alert-drop", 3500 );
+	Options::AddDefault( "options/timing/alert-fade", 2500 );
 
-		// Development
-		SETOPTION( "options/development/ships-worldmap", 0 );
-		SETOPTION( "options/development/debug-ai", 0 );
-		SETOPTION( "options/development/debug-ui", 0 );
+	// Development
+	Options::AddDefault( "options/development/ships-worldmap", 0 );
+	Options::AddDefault( "options/development/debug-ai", 0 );
+	Options::AddDefault( "options/development/debug-ui", 0 );
 
-		optionsfile->Save();
-	}
 
 	skinfile = new XMLFile();
 	if( !skinfile->Open("Resources/Skin/skin.xml") )
@@ -251,7 +244,6 @@ void Main_Close_Singletons( void ) {
 	delete Mono;
 
 	// free the configuration file data
-	delete optionsfile;
 	delete skinfile;
 
 	Filesystem::Close();
@@ -341,9 +333,6 @@ void Main_Parse_Args( int argc, char **argv ) {
 		cout << "\tUnknown options:\t" << (*it) << endl;
 	if ( !unused.empty() ) {
 		argparser->PrintUsage();
-
-		// free the configuration file data
-		delete optionsfile;
 
 		exit( 1 );
 	}

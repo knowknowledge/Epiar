@@ -1,6 +1,3 @@
-#ifndef H_MENU
-#define H_MENU
-
 /**\file		menu.h
  * \author		Christopher Thielen (chris@epiar.net)
  * \author		and others.
@@ -8,6 +5,9 @@
  * \brief		Export Main_Menu function.
  * \details
  */
+
+#ifndef __H_MENU
+#define __H_MENU
 
 #include "Engine/simulation.h"
 #include "Graphics/image.h"
@@ -84,5 +84,5 @@ class Menu {
 };
 
 
-#endif // H_MENU
+#endif // __H_MENU
 

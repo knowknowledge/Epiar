@@ -123,7 +123,7 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
 	// Print the message:
-	if( optionsfile != NULL ) {
+	if( Options::IsLoaded() ) {
 		if( OPTION(int, "options/log/out") == 1 ) {
 			printf("%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
 		}

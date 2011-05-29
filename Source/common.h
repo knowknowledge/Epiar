@@ -14,22 +14,18 @@
 
 #include "Graphics/font.h"
 #include "Utilities/xml.h"
+#include "Utilities/options.h"
 
 // FORPRODUCTION: switch this to 0
 #define DEBUG 1
 
 // defined in main.cpp. used through the codebase
-extern XMLFile *optionsfile;
 extern XMLFile *skinfile;
 
 extern Font *SansSerif;
 extern Font *BitType;
 extern Font *Serif;
 extern Font *Mono;
-
-// to simply accessing the options file
-#define OPTION(T, path) (convertTo<T>( optionsfile->Get(path) ))
-#define SETOPTION(path, value) (optionsfile->Set((path),(value)) )
 
 #define SKIN(path) (skinfile->Get(path) )
 

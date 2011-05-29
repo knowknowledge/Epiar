@@ -124,31 +124,33 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_window.h
 	)
 set (Epiar_src ${Epiar_src}
-	${Epiar_SRC_DIR}/Utilities/argparser.h
 	${Epiar_SRC_DIR}/Utilities/argparser.cpp
-	${Epiar_SRC_DIR}/Utilities/coordinate.h
+	${Epiar_SRC_DIR}/Utilities/argparser.h
+	${Epiar_SRC_DIR}/Utilities/components.cpp
 	${Epiar_SRC_DIR}/Utilities/components.h
+	${Epiar_SRC_DIR}/Utilities/coordinate.cpp
+	${Epiar_SRC_DIR}/Utilities/coordinate.h
+	${Epiar_SRC_DIR}/Utilities/file.cpp
 	${Epiar_SRC_DIR}/Utilities/file.h
+	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
 	${Epiar_SRC_DIR}/Utilities/filesystem.h
+	${Epiar_SRC_DIR}/Utilities/log.cpp
 	${Epiar_SRC_DIR}/Utilities/log.h
+	${Epiar_SRC_DIR}/Utilities/lua.cpp
 	${Epiar_SRC_DIR}/Utilities/lua.h
+	${Epiar_SRC_DIR}/Utilities/options.cpp
+	${Epiar_SRC_DIR}/Utilities/options.h
+	${Epiar_SRC_DIR}/Utilities/quadtree.cpp
 	${Epiar_SRC_DIR}/Utilities/quadtree.h
+	${Epiar_SRC_DIR}/Utilities/resource.cpp
 	${Epiar_SRC_DIR}/Utilities/resource.h
 	${Epiar_SRC_DIR}/Utilities/string_convert.h
-	${Epiar_SRC_DIR}/Utilities/timer.h
-	${Epiar_SRC_DIR}/Utilities/trig.h
-	${Epiar_SRC_DIR}/Utilities/xml.h
-	${Epiar_SRC_DIR}/Utilities/coordinate.cpp
-	${Epiar_SRC_DIR}/Utilities/components.cpp
-	${Epiar_SRC_DIR}/Utilities/file.cpp
-	${Epiar_SRC_DIR}/Utilities/filesystem.cpp
-	${Epiar_SRC_DIR}/Utilities/log.cpp
-	${Epiar_SRC_DIR}/Utilities/lua.cpp
-	${Epiar_SRC_DIR}/Utilities/quadtree.cpp
-	${Epiar_SRC_DIR}/Utilities/resource.cpp
 	${Epiar_SRC_DIR}/Utilities/timer.cpp
+	${Epiar_SRC_DIR}/Utilities/timer.h
 	${Epiar_SRC_DIR}/Utilities/trig.cpp
+	${Epiar_SRC_DIR}/Utilities/trig.h
 	${Epiar_SRC_DIR}/Utilities/xml.cpp
+	${Epiar_SRC_DIR}/Utilities/xml.h
 	)
 if (WIN32)
   if(MINGW)
