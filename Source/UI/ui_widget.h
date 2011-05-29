@@ -87,6 +87,7 @@ class Widget {
 			Action_KeyboardEnter,
 			Action_KeyboardLeave,
 			//Action_KeyPress
+			Action_Close,
 			
 			Action_Last // Always the last action type
 		}; ///< Actions that can be registered.

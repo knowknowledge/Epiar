@@ -45,6 +45,8 @@ Widget::Widget( void ):
 
 Widget::~Widget( void )
 {
+	Activate(Action_Close, 0, 0);
+
 	// Delete all alocated Actions
 	for( int i = 0; i < (int)Action_Last; i++ ){
 		if( actions[i] == NULL ) {
