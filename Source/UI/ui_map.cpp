@@ -9,6 +9,7 @@
 #include "UI/ui_map.h"
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
+#include "Sprites/effects.h"
 
 #define MAP_ZOOM_RATIO 1.1f ///< The rate at which the Map Zooms in and out.
 
@@ -180,6 +181,14 @@ bool Map::MouseLUp( int xi, int yi )
 
 bool Map::MouseLDown( int xi, int yi )
 {
+	Coordinate worldPos = ClickToWorld( Coordinate(xi,yi) );
+	// Use a dummy Sprite to use for searching the SpriteManager
+	Effect dummy( worldPos, "", 0);
+	Sprite *nearest = sprites->GetNearestSprite( &dummy, QUADRANTSIZE );
+	if( nearest )
+	{
+		printf("Clicked on Sprite %d\n", nearest->GetID() );
+	}
 	Widget::MouseLDown( xi, yi );
 	return false;
 }
@@ -195,7 +204,7 @@ bool Map::MouseDrag( int xi, int yi )
 
 bool Map::MouseWUp( int xi, int yi )
 {
-	cout << "MouseWUp" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
+	//cout << "MouseWUp" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
 	scale *= MAP_ZOOM_RATIO;
 	Widget::MouseWUp( xi, yi );
 	return true;
@@ -203,7 +212,7 @@ bool Map::MouseWUp( int xi, int yi )
 
 bool Map::MouseWDown( int xi, int yi )
 {
-	cout << "MouseWDown" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
+	//cout << "MouseWDown" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
 	scale /= MAP_ZOOM_RATIO;
 	Widget::MouseWDown( xi, yi );
 	return true;
