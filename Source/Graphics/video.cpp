@@ -344,7 +344,7 @@ void Video::PreDraw( void ) {
 	//glAccum(GL_RETURN, 0.75f);
  
 	// Clear the accumulation buffer (don't worry, we re-grab the screen into the accumulation buffer after drawing our current frame!)
-	glClear(GL_ACCUM_BUFFER_BIT);
+	//glClear(GL_ACCUM_BUFFER_BIT);
  
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
