@@ -111,7 +111,7 @@ bool Widget::Contains(int relx, int rely) {
  */
 Widget* Widget::RegisterAction( action_type type, Action* action )
 {
-	assert(action != NULL);
+	assert( action != NULL );
 	assert( type < Action_Last );
 	if( actions[type] != NULL ) {
 		delete actions[type];

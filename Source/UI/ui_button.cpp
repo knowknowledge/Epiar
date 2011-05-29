@@ -54,6 +54,12 @@ Button::Button( int x, int y, int w, int h, string label, void (*function)(void*
 	RegisterAction( Action_MouseLUp, new ObjectAction(function, value) );
 }
 
+/**\brief Constructs a button with a C++ callback.*/
+Button::Button( int x, int y, int w, int h, string label, void (*function)()) {
+	Initialize( x, y, w, h, label );
+	RegisterAction( Action_MouseLUp, new VoidAction(function) );
+}
+
 /**\brief Constructs a button with a Lua callback.*/
 Button::Button( int x, int y, int w, int h, string label, string lua_code) {
 	Initialize( x, y, w, h, label );

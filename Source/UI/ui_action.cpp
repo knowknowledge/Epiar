@@ -7,6 +7,7 @@
  */
 
 #include "UI/ui_action.h"
+#include "Utilities/log.h"
 
 /** \addtogroup UI
  * @{
@@ -24,12 +25,16 @@ void LuaAction::Activate( int x, int y )
 
 VoidAction::VoidAction( void (*callback)() )
 {
-	c_callback = callback;
+	clickCallBack = callback;
 }
 
 void VoidAction::Activate( int x, int y )
 {
-	c_callback();
+	if( clickCallBack ) {
+		clickCallBack();
+	} else {
+		LogMsg(WARN,"Attempting to activate a NULL Action." );
+	}
 }
 
 ObjectAction::ObjectAction(  void (*function)(void*), void* value )
@@ -40,7 +45,11 @@ ObjectAction::ObjectAction(  void (*function)(void*), void* value )
 
 void ObjectAction::Activate( int x, int y )
 {
-	clickCallBack(object);
+	if( clickCallBack ) {
+		clickCallBack(object);
+	} else {
+		LogMsg(WARN,"Attempting to activate a NULL Action." );
+	}
 }
 
 MessageAction::MessageAction(  void (*function)(void*,void*), void* obj, void* msg )
@@ -48,13 +57,16 @@ MessageAction::MessageAction(  void (*function)(void*,void*), void* obj, void* m
 	clickCallBack = function;
 	object = obj;
 	message = msg;
-	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
 }
 
 void MessageAction::Activate( int x, int y )
 {
-	clickCallBack(object, message);
-	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
+	if( clickCallBack ) {
+		clickCallBack(object, message);
+		//LogMsg(INFO,"function %p obj %p msg %p\n", clickCallBack, object, message);
+	} else {
+		LogMsg(WARN,"Attempting to activate a NULL Action." );
+	}
 }
 
 PositionalAction::PositionalAction( void (*function)(void* obj, void*msg, int x, int y), void* obj, void* msg )
@@ -62,13 +74,16 @@ PositionalAction::PositionalAction( void (*function)(void* obj, void*msg, int x,
 	clickCallBack = function;
 	object = obj;
 	message = msg;
-	//printf("function %p obj %p msg %p\n", clickCallBack, object, message);
 }
 
 void PositionalAction::Activate( int x, int y )
 {
-	clickCallBack(object, message, x, y);
-	//printf("function %p obj %p msg %p at (%d,%d)\n", clickCallBack, object, message, x, y);
+	if( clickCallBack ) {
+		clickCallBack(object, message, x, y);
+		//LogMsg(INFO,"function %p obj %p msg %p at (%d,%d)\n", clickCallBack, object, message, x, y);
+	} else {
+		LogMsg(WARN,"Attempting to activate a NULL Action." );
+	}
 }
 
 /** @} */

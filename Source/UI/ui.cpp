@@ -523,7 +523,7 @@ void UI_Test() {
 	);
 }
 
-void tempCallback(  void * ) {
+void tempCallback( ) {
 	UI::ReleaseModality();
 }
 

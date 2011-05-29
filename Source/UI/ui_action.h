@@ -30,7 +30,7 @@ class VoidAction : public Action {
 		VoidAction( void (*callback)() );
 		void Activate( int x, int y );
 	private:
-		void (*c_callback)();
+		void (*clickCallBack)();
 };
 
 class ObjectAction : public Action {
