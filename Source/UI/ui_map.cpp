@@ -52,8 +52,6 @@ void Map::Draw( int relx, int rely )
 	int startx, starty;
 
 	// These variables are used for almost every sprite symbol
-	int posx, posy;
-	int posx2, posy2;
 	Coordinate pos, pos2;
 	Color col;
 	Color field;
@@ -65,6 +63,9 @@ void Map::Draw( int relx, int rely )
 	startx = relx + GetX();
 	starty = rely + GetY();
 	gatePath = Color( SKIN("Skin/HUD/Map/GatePath") );
+
+	Coordinate start(startx,starty);
+	Coordinate widgetCenter(halfwidth,halfheight);
 
 	int retrieveSprites=(
 						 DRAW_ORDER_PLAYER	|
@@ -99,9 +100,9 @@ void Map::Draw( int relx, int rely )
 	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
 	{
 		col = (*iter)->GetRadarColor();
-		posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfwidth;
-		posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfheight;
-		pos = Coordinate( posx, posy );
+		pos = start
+			+ ((*iter)->GetWorldPosition() - center ) * scale
+			+ widgetCenter;
 
 		switch( (*iter)->GetDrawOrder() ) {
 			case DRAW_ORDER_PLAYER:
@@ -119,9 +120,9 @@ void Map::Draw( int relx, int rely )
 			case DRAW_ORDER_GATE_TOP:
 				Video::DrawCircle( pos, 3, 1, col, alpha );
 				if( ((Gate*)(*iter))->GetExit() != NULL ) {
-					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfwidth;
-					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfheight;
-					pos2 = Coordinate( posx2, posy2 );
+					pos2 = start
+					     + (((Gate*)(*iter))->GetExit()->GetWorldPosition() - center ) * scale
+					     + widgetCenter;
 					Video::DrawLine( pos, pos2, gatePath, alpha*.5f );
 				}
 				break;
@@ -135,14 +136,14 @@ void Map::Draw( int relx, int rely )
 	{
 		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
 		{
-			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfwidth;
-			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfheight;
-			MapFont->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
+			pos = start
+				+ ((*iter)->GetWorldPosition() - center ) * scale
+				+ widgetCenter;
+			MapFont->Render( pos.GetX()+5, pos.GetY(), ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
-	posx = startx + center.GetX() * scale + halfwidth;
-	posy = starty + center.GetY() * scale + halfheight;
-	//Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
+
+	// TODO: Draw Radar Visibility
 
 	Video::UnsetCropRect();
 
