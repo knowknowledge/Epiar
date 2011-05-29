@@ -203,8 +203,16 @@ bool Simulation::SetupToRun(){
 /**\brief Callback for Death dialog UI
  * \return void
  */
-void uiConfirmDeath(void *simulationInstance) {
+void ConfirmDeath(void *simulationInstance) {
 	((Simulation *)simulationInstance)->SetQuit(true);
+}
+
+void Pause(void *simulationInstance) {
+	((Simulation *)simulationInstance)->pause();
+}
+
+void Unpause(void *simulationInstance) {
+	((Simulation *)simulationInstance)->unpause();
 }
 
 /**\brief Main game loop
@@ -354,7 +362,7 @@ bool Simulation::Run() {
 
 					// Player Name
 					win->AddChild( (new Label(80, 30, "You have died.")) )
-						->AddChild( (new Button(70, 85, 100, 30, "Drat!", &uiConfirmDeath, this)) );
+						->AddChild( (new Button(70, 85, 100, 30, "Drat!", &ConfirmDeath, this)) );
 				}
 			}
 		}
@@ -551,6 +559,13 @@ void Simulation::HandleInput() {
 
 void Simulation::CreateNavMap( void )
 {
+	// Toggle NavMap off if it already exists
+	if( UI::Search("/Window'Navigation'/") )
+	{
+		UI::Close( UI::Search("/Window'Navigation'/") );
+		return;
+	}
+
 	Window* win = new Window(
 		TO_INT(Video::GetWidth() * 0.1),
 		TO_INT(Video::GetHeight() * 0.1),
@@ -558,16 +573,24 @@ void Simulation::CreateNavMap( void )
 		TO_INT(Video::GetHeight() * 0.8),
 		"Navigation" );
 
-	win->AddChild( new Map( 30, 30,
+	Map* map = new Map( 30, 30,
 		TO_INT(win->GetW()) - 60,
 		TO_INT(win->GetH()) - 60,
 		camera->GetFocusCoordinate(),
-		sprites )
-	);
+		sprites );
 
+	win->AddChild( map );
 	win->AddCloseButton();
 
+
+	// Pause now, but unpause when this window is closed.
+	pause();
+	win->RegisterAction(Widget::Action_Close, new ObjectAction(Unpause, this) );
 	UI::Add( win );
+
+	// Alternatively: make the Map a Modal Widget.  But this is not as nice.
+	//win->RegisterAction(Widget::Action_Close, new VoidAction(UI::ReleaseModality) );
+	//UI::ModalDialog( win );
 }
 
 /**\fn Simulation::isPaused()
