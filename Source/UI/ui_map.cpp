@@ -6,7 +6,6 @@
  * \details
  */
 
-#include "UI/ui.h"
 #include "UI/ui_map.h"
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
@@ -153,6 +152,38 @@ void Map::Draw( int relx, int rely )
 	spriteList = NULL;
 }
 
+Coordinate Map::ClickToWorld( Coordinate click )
+{
+	Coordinate world = click;
+	world -= Coordinate( GetX(), GetY() ); // Offset by this Widget's origin
+	world -= Coordinate( w/2, h/2 ); // Offset by the center of this widget
+	world /= scale; // Descale the click
+	world += center;
+	return world;
+}
+
+Coordinate Map::WorldToClick( Coordinate world )
+{
+	Coordinate click = world;
+	click -= center;
+	click *= scale; // Descale the click
+	click += Coordinate( w/2, h/2 ); // Offset by the center of this widget
+	click += Coordinate( GetX(), GetY() ); // Offset by this Widget's origin
+	return click;
+}
+
+bool Map::MouseLUp( int xi, int yi )
+{
+	Widget::MouseLUp( xi, yi );
+	return false;
+}
+
+bool Map::MouseLDown( int xi, int yi )
+{
+	Widget::MouseLDown( xi, yi );
+	return false;
+}
+
 bool Map::MouseDrag( int xi, int yi )
 {
 	center -= Coordinate( (xi-x) - dragX , ((yi-y) - dragY) ) / scale;
@@ -164,6 +195,7 @@ bool Map::MouseDrag( int xi, int yi )
 
 bool Map::MouseWUp( int xi, int yi )
 {
+	cout << "MouseWUp" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
 	scale *= MAP_ZOOM_RATIO;
 	Widget::MouseWUp( xi, yi );
 	return true;
@@ -171,6 +203,7 @@ bool Map::MouseWUp( int xi, int yi )
 
 bool Map::MouseWDown( int xi, int yi )
 {
+	cout << "MouseWDown" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
 	scale /= MAP_ZOOM_RATIO;
 	Widget::MouseWDown( xi, yi );
 	return true;

@@ -22,9 +22,14 @@ class Map: public Widget {
 
 		void Draw( int relx = 0, int rely = 0 );
 
+		Coordinate ClickToWorld( Coordinate click );
+		Coordinate WorldToClick( Coordinate world );
+
 		string GetType( void ) { return string("Map"); }
 		virtual int GetMask( void ) { return WIDGET_MAP; }
 	protected:
+		virtual bool MouseLUp( int xi, int yi );
+		virtual bool MouseLDown( int xi, int yi );
 		virtual bool MouseWUp( int xi, int yi );
 		virtual bool MouseWDown( int xi, int yi );
 		virtual bool MouseDrag( int xi, int yi );
