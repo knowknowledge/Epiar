@@ -33,6 +33,8 @@ class XMLFile {
 		void Set( const string& path, const float value ); // cast/convert this to whatever return value you need
 		void Set( const string& path, const int value ); // cast/convert this to whatever return value you need
 
+		bool Has( const string& path );
+
 	protected:
 		string filename;
 

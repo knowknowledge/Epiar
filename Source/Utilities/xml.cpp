@@ -140,6 +140,13 @@ void XMLFile::Set( const string& path, const string& value ) {
 	assert( value == Get(path));
 }
 
+/** \brief Check if a given path exists.
+ */
+bool XMLFile::Has( const string& path ) {
+	xmlNodePtr p =  FindNode(path,true);
+	return ( p != NULL );
+}
+
 void XMLFile::Set( const string& path, const float value ) {
 	// Convert the float to a string before saving it.
 	string stringvalue;
