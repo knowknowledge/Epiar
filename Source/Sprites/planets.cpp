@@ -34,6 +34,7 @@ Planet::Planet(){
 	Component::SetName("");
 	SetRadarColor(Color(48, 160, 255));
 	alliance = NULL;
+	surface = NULL;
 	landable = true;
 	forbidden = false;
 	traffic = 0;
@@ -56,6 +57,8 @@ Planet& Planet::operator=(const Planet& other) {
 	militiaSize = other.militiaSize;
 	sphereOfInfluence = other.sphereOfInfluence;
 	technologies = other.technologies;
+	surface = other.surface;
+	summary = other.summary;
 
 	// Set the Sprite Stuff
 	Coordinate pos;
@@ -76,7 +79,8 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, Alliance* _alli
 	traffic(_traffic),
 	militiaSize(_militiaSize),
 	sphereOfInfluence(_sphereOfInfluence),
-	technologies(_technologies)
+	technologies(_technologies),
+	surface(NULL)
 {
 	// Check the inputs
 	assert(_image);
@@ -97,7 +101,7 @@ Planet::Planet( string _name, float _x, float _y, Image* _image, Alliance* _alli
 Planet::~Planet() {
 }
 
-/**\brief Parse one player out of an xml node.
+/**\brief Parse one planet out of an xml node.
  */
 bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	xmlNodePtr  attr;
@@ -140,6 +144,15 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		Image* image = Image::Get( NodeToString(doc,attr) );
 		Image::Store(name, image);
 		SetImage(image);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"surface-image")) ){
+		Image* surface = Image::Get( NodeToString(doc,attr) );
+		Image::Store(name, surface);
+	} else return false;
+
+	if( (attr = FirstChildNamed(node,"summary")) ){
+		summary = NodeToString(doc,attr);
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"militia")) ){
@@ -255,21 +268,23 @@ xmlNodePtr Planet::ToXMLNode(string componentName) {
 	char buff[256];
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
 
-	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
-	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST this->GetAlliance()->GetName().c_str() );
-	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetX() );
+	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "alliance", BAD_CAST GetAlliance()->GetName().c_str() );
+	snprintf(buff, sizeof(buff), "%d", (int)GetWorldPosition().GetX() );
 	xmlNewChild(section, NULL, BAD_CAST "x", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", (int)this->GetWorldPosition().GetY() );
+	snprintf(buff, sizeof(buff), "%d", (int)GetWorldPosition().GetY() );
 	xmlNewChild(section, NULL, BAD_CAST "y", BAD_CAST buff );
-	xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST (this->GetLandable()?"1":"0") );
-	snprintf(buff, sizeof(buff), "%d", this->GetTraffic() );
+	xmlNewChild(section, NULL, BAD_CAST "landable", BAD_CAST (GetLandable()?"1":"0") );
+	snprintf(buff, sizeof(buff), "%d", GetTraffic() );
 	xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
-	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
-	snprintf(buff, sizeof(buff), "%d", this->GetMilitiaSize() );
+	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST GetImage()->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "surface-image", BAD_CAST surface->GetPath().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "summary", BAD_CAST summary.c_str() );
+	snprintf(buff, sizeof(buff), "%d", GetMilitiaSize() );
 	xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
-	snprintf(buff, sizeof(buff), "%d", this->GetInfluence() );
+	snprintf(buff, sizeof(buff), "%d", GetInfluence() );
 	xmlNewChild(section, NULL, BAD_CAST "sphereOfInfluence", BAD_CAST buff );
-	list<Technology*> techs = this->GetTechnologies();
+	list<Technology*> techs = GetTechnologies();
 	for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
 		xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
 	}

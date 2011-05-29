@@ -71,6 +71,8 @@ class Planet : public Sprite, public Component {
 		short unsigned int militiaSize;
 		int sphereOfInfluence;
 		list<Technology*> technologies;
+		Image* surface;
+		string summary;
 
 		Uint32 lastTrafficTime;
 };
