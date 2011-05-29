@@ -47,33 +47,6 @@ end
 --------------------------------------------------------------------------------
 -- Basic Utilities
 
---- Pause the game
-function togglePause()
-	if 1 == Epiar.ispaused() then
-		Epiar.unpause()
-	else
-		Epiar.pause()
-	end
-end
-
-function toggleQuadrantMap()
-	local currentMap = HUD.getMapDisplay()
-	if( currentMap=="QUADRANT") then
-		HUD.setMapDisplay("NONE")
-	else
-		HUD.setMapDisplay("QUADRANT")
-	end
-end
-
-function toggleUniverseMap()
-	local currentMap = HUD.getMapDisplay()
-	if( currentMap=="UNIVERSE") then
-		HUD.setMapDisplay("NONE")
-	else
-		HUD.setMapDisplay("UNIVERSE")
-	end
-end
-
 --- Creates a random ship
 function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	if models==nil then

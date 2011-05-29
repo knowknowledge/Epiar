@@ -60,7 +60,12 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 	edge = (edge>east)?edge:east;
 	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
 
-	MapFont = new Font( SKIN("Skin/HUD/Map/Font") );
+	if( MapFont == NULL )
+	{
+		MapFont = new Font( SKIN("Skin/HUD/Map/Font") );
+		MapFont->SetColor( Color( SKIN("Skin/HUD/Map/Color") ) );
+		MapFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Map/Size") ) );
+	}
 }
 
 /** \brief Map Destructor

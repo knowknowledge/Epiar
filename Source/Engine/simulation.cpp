@@ -548,9 +548,27 @@ void Simulation::HandleInput() {
 		//Video::SaveScreenshot();
 	//}
 
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'h') ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'm') ) )
 	{
 		CreateNavMap();
+	}
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'p') ) )
+	{
+		Window* win = new Window(
+			TO_INT(Video::GetWidth() * 0.4),
+			TO_INT(Video::GetHeight() * 0.4),
+			TO_INT(Video::GetWidth() * 0.2),
+			TO_INT(Video::GetHeight() * 0.2),
+			"Epiar is Paused" );
+		win->AddChild( new Button(
+			TO_INT(win->GetW()/2) -50,
+			TO_INT(win->GetW()/2) -15,
+			100,
+			30,
+			"Unpause", UI::ReleaseModality) );
+		win->RegisterAction(Widget::Action_Close, new VoidAction(UI::ReleaseModality) );
+		UI::ModalDialog( win );
 	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) )

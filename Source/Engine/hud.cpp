@@ -40,9 +40,7 @@ list<AlertMessage> Hud::AlertMessages;
 StatusBar* Hud::Bars[MAX_STATUS_BARS] = {};
 int Hud::targetID = -1;
 int Hud::timeTargeted = 0;
-HudMap Hud::mapDisplay = NoMap;
 Font *Hud::AlertFont = NULL;
-Font *Hud::MapFont = NULL;
 Color Hud::AlertColor = WHITE;
 
 int Radar::visibility = 4096;
@@ -250,10 +248,6 @@ void Hud::Init( void ) {
 	AlertFont = new Font( SKIN("Skin/HUD/Alert/Font") );
 	AlertColor = Color( SKIN("Skin/HUD/Alert/Color") );
 	AlertFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Alert/Size") ) );
-
-	MapFont = new Font( SKIN("Skin/HUD/Map/Font") );
-	MapFont->SetColor( Color( SKIN("Skin/HUD/Map/Color") ) );
-	MapFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Map/Size") ) );
 }
 
 void Hud::Close( void ) {
@@ -289,7 +283,6 @@ void Hud::Draw( int flags, float fps, Camera* camera, SpriteManager* sprites ) {
 	if(flags & HUD_Messages)   Hud::DrawMessages();
 	if(flags & HUD_FPS)        Hud::DrawFPS(fps, sprites);
 	if(flags & HUD_StatusBars) Hud::DrawStatusBars();
-	if(flags & HUD_Map)        Hud::DrawMap( camera, sprites );
 }
 
 
@@ -413,141 +406,6 @@ void Hud::DrawTarget( SpriteManager* sprites ) {
 	}
 }
 
-/**\brief Draw a Map overlaid on the Game objects.
- * \details The style of the map depends on the the mapDisplay variable.
- * \todo These Maps were meant to be developer aides rather than polished products.
- *       They should be cleaned up.
- */
-void Hud::DrawMap( Camera* camera, SpriteManager* sprites ) {
-	switch( mapDisplay ) {
-	case UniverseMap:
-		Hud::DrawUniverseMap( camera, sprites );
-		break;
-
-	// The Quadrant map is a 
-	case QuadrantMap:
-		sprites->DrawQuadrantMap( camera->GetFocusCoordinate() );
-		break;
-	case NoMap:
-	default:
-		break;
-	}
-}
-
-void Hud::DrawUniverseMap( Camera* camera, SpriteManager* sprites ) {
-	//Video::GetHeight()
-	float size, halfsize;
-	float scale;
-	list<Sprite*> *spriteList;
-	list<Sprite*>::iterator iter;
-	int startx, starty;
-	int posx, posy;
-	int posx2, posy2;
-	Coordinate pos, pos2;
-	Color col;
-	Color field;
-	Color gatePath;
-	int i;
-	float alpha;
-	float n,s,e,w, edge;
-
-	// Configurable Settings
-	size = 700.0f;
-	halfsize = size/2;
-	startx = Video::GetHalfWidth()-halfsize;
-	starty = Video::GetHalfHeight()-halfsize;
-	alpha = .7;
-	gatePath = Color( SKIN("Skin/HUD/Map/GatePath") );
-
-	// Strech the Map so that it covers all QuadTrees
-	sprites->GetBoundaries(&n,&s,&e,&w);
-	// edge is the maximum distance from zero of n,s,e, and w
-	edge = (n>-s)?n:-s;
-	edge = (edge>-w)?edge:-w;
-	edge = (edge>e)?edge:e;
-	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
-	
-	int retrieveSprites=(
-						 DRAW_ORDER_PLAYER	|
-						 DRAW_ORDER_PLANET	|
-						 DRAW_ORDER_GATE_TOP );
-	
-	// Show sprites only if this option is set.
-	if( OPTION(int,"options/development/ships-worldmap") ) {
-		retrieveSprites = retrieveSprites | DRAW_ORDER_SHIP;
-	}
-	
-	spriteList = sprites->GetSprites( retrieveSprites );
-
-	// The Backdrop
-	Video::DrawRect( startx,starty,size,size,  0,0,0,alpha);
-	Video::DrawLine( startx        , starty        , startx + size , starty        , .3f,.0f,.0f ,alpha ); // Top
-	Video::DrawLine( startx        , starty + size , startx + size , starty + size , .3f,.0f,.0f ,alpha );
-	Video::DrawLine( startx        , starty        , startx        , starty + size , .3f,.0f,.0f ,alpha );
-	Video::DrawLine( startx + size , starty + size , startx + size , starty        , .3f,.0f,.0f ,alpha );
-
-	// The Quadrant Lines
-	for( i=static_cast<int>(QUADRANTSIZE); i<=edge; i+= 2*static_cast<int>(QUADRANTSIZE) )
-	{
-		Video::DrawLine( startx                          , starty + int( i*scale+halfsize) , startx + (int)size              , starty + int( i*scale+halfsize) , .3f,.3f,.3f ,alpha );
-		Video::DrawLine( startx                          , starty + int(-i*scale+halfsize) , startx + (int)size              , starty + int(-i*scale+halfsize) , .3f,.3f,.3f ,alpha );
-		Video::DrawLine( startx + int( i*scale+halfsize) ,starty                           , startx + int( i*scale+halfsize) , starty + (int)size              , .3f,.3f,.3f ,alpha );
-		Video::DrawLine( startx + int(-i*scale+halfsize) ,starty                           , startx + int(-i*scale+halfsize) , starty + (int)size              , .3f,.3f,.3f ,alpha );
-	}
-
-	// The Sprites
-	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
-	{
-		col = (*iter)->GetRadarColor();
-		posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
-		posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
-		pos = Coordinate( posx, posy );
-
-		switch( (*iter)->GetDrawOrder() ) {
-			case DRAW_ORDER_PLAYER:
-				Video::DrawFilledCircle( pos, 2, col, alpha );
-				break;
-			case DRAW_ORDER_PLANET:
-				field = ((Planet*)(*iter))->GetAlliance()->GetColor();
-				Video::DrawFilledCircle( pos, ((Planet*)(*iter))->GetInfluence()*scale, field, alpha*.5f );
-				Video::DrawCircle( pos, 3, 1, col, alpha );
-				break;
-			case DRAW_ORDER_SHIP:
-				Video::DrawFilledCircle( pos, 2, col, alpha );
-				break;
-
-			case DRAW_ORDER_GATE_TOP:
-				Video::DrawCircle( pos, 3, 1, col, alpha );
-				if( ((Gate*)(*iter))->GetExit() != NULL ) {
-					posx2 = startx + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetX() * scale + halfsize;
-					posy2 = starty + ((Gate*)(*iter))->GetExit()->GetWorldPosition().GetY() * scale + halfsize;
-					pos2 = Coordinate( posx2, posy2 );
-					Video::DrawLine( pos, pos2, gatePath, alpha*.5f );
-				}
-				break;
-			default:
-				LogMsg(WARN,"Unknown Sprite type being drawn in the Map.");
-		}
-	}
-
-	// Do a second pass to draw planet Names on top
-	for( iter = spriteList->begin(); iter != spriteList->end(); ++iter )
-	{
-		if( (*iter)->GetDrawOrder() == DRAW_ORDER_PLANET )
-		{
-			posx = startx + (*iter)->GetWorldPosition().GetX() * scale + halfsize;
-			posy = starty + (*iter)->GetWorldPosition().GetY() * scale + halfsize;
-			MapFont->Render( posx+5, posy, ((Planet*)(*iter))->GetName().c_str() );
-		}
-	}
-	posx = startx + camera->GetFocusCoordinate().GetX() * scale + halfsize;
-	posy = starty + camera->GetFocusCoordinate().GetY() * scale + halfsize;
-	Video::DrawFilledCircle( posx, posy, Radar::GetVisibility()*scale, 0.9, 0.9, 0.9, alpha*.25 );
-
-	delete spriteList;
-	spriteList = NULL;
-}
-
 /**\brief Adds a new AlertMessage.
  * \param message C string of message.
  * \param ... Arguments that are formated into the message.
@@ -654,13 +512,6 @@ bool Hud::HasStatusMatching( string matchPattern ) {
 	return false;
 }
 
-
-/**\brief Select what kind of Map is displayed
- */
-void Hud::SetMapDisplay( HudMap _newMapDisplay ) {
-	mapDisplay = _newMapDisplay;
-}
-
 /**\brief Register Lua functions for HUD related updates.
  */
 void Hud::RegisterHud(lua_State *L) {
@@ -679,8 +530,6 @@ void Hud::RegisterHud(lua_State *L) {
 		{"newAlert", &Hud::newAlert},
 		{"getTarget", &Hud::getTarget},
 		{"setTarget", &Hud::setTarget},
-		{"setMapDisplay", &Hud::setMapDisplay},
-		{"getMapDisplay", &Hud::getMapDisplay},
 		{NULL, NULL}
 	};
 
@@ -788,49 +637,6 @@ int Hud::setTarget(lua_State *L) {
 		return luaL_error(L, "Got %d arguments expected 1 (ID)", n);
 	Target( luaL_checkint(L,1) );
 	return 0;
-}
-
-/**\brief Set the kind of Hud Display
- */
-int Hud::setMapDisplay(lua_State *L) {
-	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		return luaL_error(L, "setMapDisplay got %d arguments expected 1.   Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'.", n);
-	string maptype = (string)luaL_checkstring(L,1);
-
-	//printf( "Setting Map Display to '%s'\n", maptype.c_str() );
-
-	if( maptype == "NONE" ) {
-		SetMapDisplay( NoMap );
-	} else if( maptype == "QUADRANT" ) {
-		SetMapDisplay( QuadrantMap );
-	} else if( maptype == "UNIVERSE" ) {
-		SetMapDisplay( UniverseMap );
-	} else {
-		LogMsg( ERR, "The Hud does not understand the Map Type '%s'.  Please use one of these 'NONE', 'QUADRANT', or 'UNIVERSE'.", maptype.c_str() );
-		SetMapDisplay( NoMap );
-	}
-	return 0;
-}
-
-/**\brief Get the kind of Hud Display
- */
-int Hud::getMapDisplay(lua_State *L) {
-	switch( mapDisplay ) {
-	case UniverseMap:
-		lua_pushstring(L,"UNIVERSE");
-		break;
-	case QuadrantMap:
-		lua_pushstring(L,"QUADRANT");
-		break;
-	case NoMap:
-		lua_pushstring(L,"NONE");
-		break;
-	default:
-		assert(0); // This should never happen.
-		lua_pushstring(L,"NONE");
-	}
-	return 1;
 }
 
 /**\class Radar
