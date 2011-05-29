@@ -7,8 +7,8 @@
  */
 
 
-#ifndef __H_UI_IMAGE
-#define __H_UI_IMAGE
+#ifndef __H_UI_PICTURE
+#define __H_UI_PICTURE
 
 #include "Graphics/image.h"
 #include "Graphics/video.h"
@@ -45,4 +45,5 @@ class Picture: public Widget {
 		float alpha;
 };
 
-#endif // __H_UI_IMAGE 
+#endif // __H_UI_PICTURE
+

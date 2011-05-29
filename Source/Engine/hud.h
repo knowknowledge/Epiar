@@ -63,9 +63,7 @@ class StatusBar {
 		string GetName() { return string(name); }
 		float GetRatio() { return ratio; }
 		QuadPosition GetPosition(){ return pos; }
-
-		void print ();
-				
+		
 	protected:
 		char title[40];
 		const int width;
@@ -121,7 +119,7 @@ class Hud {
 		static void DrawTarget(SpriteManager* sprites);
 		static void DrawMap( Camera* camera, SpriteManager* sprites );
 		static void DrawUniverseMap( Camera* camera, SpriteManager* sprites );
-	
+
 		static list<AlertMessage> AlertMessages;
 
 		static StatusBar* Bars[MAX_STATUS_BARS];

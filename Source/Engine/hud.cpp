@@ -120,11 +120,6 @@ StatusBar& StatusBar::operator=( StatusBar& object ){
 	return * this;
 }
 
-void StatusBar::print ()
-{
-	//LogMsg (DEBUG4, "PRINTOUT OF STATUSBAR AT 0x%X\n\ttitle = %s\n\twidth=%d\n\tpos=%d\n\tname=%s\n\tratio=%f\n", this, title.c_str(), width, pos, GetName().c_str(), ratio);
-}
-
 /**\brief Draws the StatusBar
  * \param x x-coordinate
  * \param y y-coordinate
@@ -554,19 +549,21 @@ void Hud::DrawUniverseMap( Camera* camera, SpriteManager* sprites ) {
 }
 
 /**\brief Adds a new AlertMessage.
- * \param message C string to message
+ * \param message C string of message.
+ * \param ... Arguments that are formated into the message.
  */
 void Hud::Alert( const char *message, ... )
 {
 	va_list args;
 	char msgBuffer[ 4096 ] = {0};
 
+	// Format the Message
 	va_start( args, message );
-
 	vsnprintf( msgBuffer, 4095, message, args );
-
 	va_end( args );
 
+	// Store this Message as a new Alert.
+	// Use the current time so that it can fade away gracefully.
 	AlertMessages.push_back( AlertMessage( msgBuffer, Timer::GetTicks() ) );
 }
 

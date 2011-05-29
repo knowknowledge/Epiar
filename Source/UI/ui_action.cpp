@@ -22,8 +22,6 @@ void LuaAction::Activate( int x, int y )
 	Lua::Run( lua_callback );
 }
 
-//
-
 VoidAction::VoidAction( void (*callback)() )
 {
 	c_callback = callback;
