@@ -105,6 +105,14 @@ class Coordinate {
 			m_y*=r;
 			return *this;
 		}
+		Coordinate operator/(double r){
+			return Coordinate(m_x/r,m_y/r);
+		}
+		Coordinate operator/=(double r){
+			m_x/=r;
+			m_y/=r;
+			return *this;
+		}
 	
 		friend ostream& operator<<(ostream & out, const Coordinate &c );
 	

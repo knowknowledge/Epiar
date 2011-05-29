@@ -153,16 +153,25 @@ void Map::Draw( int relx, int rely )
 	spriteList = NULL;
 }
 
+bool Map::MouseDrag( int xi, int yi )
+{
+	center -= Coordinate( (xi-x) - dragX , ((yi-y) - dragY) ) / scale;
+	Widget::MouseDrag( xi, yi );
+	dragX = xi-x;
+	dragY = yi-y;
+	return true;
+}
+
 bool Map::MouseWUp( int xi, int yi )
 {
-	Widget::MouseWUp( xi-x, yi-y );
 	scale *= MAP_ZOOM_RATIO;
+	Widget::MouseWUp( xi, yi );
 	return true;
 }
 
 bool Map::MouseWDown( int xi, int yi )
 {
-	Widget::MouseWDown( xi-x, yi-y );
 	scale /= MAP_ZOOM_RATIO;
+	Widget::MouseWDown( xi, yi );
 	return true;
 }

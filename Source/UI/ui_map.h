@@ -27,6 +27,7 @@ class Map: public Widget {
 	protected:
 		virtual bool MouseWUp( int xi, int yi );
 		virtual bool MouseWDown( int xi, int yi );
+		virtual bool MouseDrag( int xi, int yi );
 
 	private:
 		float alpha;
