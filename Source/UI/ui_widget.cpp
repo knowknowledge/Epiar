@@ -123,11 +123,11 @@ Widget* Widget::RegisterAction( action_type type, Action* action )
 
 /**\brief Activate an Action that has been registered to this Widget
  */
-bool Widget::Activate( action_type type, int x, int y ) {
+bool Widget::Activate( action_type type, int xi, int yi ) {
 	assert( type < Action_Last );
 	if( actions[type] != NULL ) {
 		// There is a registered Action of this type, so call it
-		(actions[type])->Activate( x, y );
+		(actions[type])->Activate( xi-x, yi-y );
 		return true;
 	}
 

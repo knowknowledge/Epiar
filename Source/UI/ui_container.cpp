@@ -614,7 +614,7 @@ bool Container::MouseMotion( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseMotion(xr,yr);
+	Widget::MouseMotion(xi,yi);
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -660,7 +660,7 @@ bool Container::MouseLUp( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseLUp( xr, yr );
+	Widget::MouseLUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -689,11 +689,11 @@ bool Container::MouseLDown( int xi, int yi ) {
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseLDown( xr, yr );
 
 	// update drag coordinates in case this is draggable
 	dragX = xr;
 	dragY = yr;
+	Widget::MouseLDown( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 
@@ -750,7 +750,7 @@ bool Container::MouseMUp( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseMUp( xr, yr );
+	Widget::MouseMUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->mmouseDown ){
@@ -776,7 +776,7 @@ bool Container::MouseMDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseMDown( xr, yr );
+	Widget::MouseMDown( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
@@ -809,7 +809,7 @@ bool Container::MouseRUp( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseRUp( xr, yr );
+	Widget::MouseRUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( this->rmouseDown ){
@@ -835,7 +835,7 @@ bool Container::MouseRDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseRDown( xr, yr );
+	Widget::MouseRDown( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on ){
@@ -868,7 +868,7 @@ bool Container::MouseWUp( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseWUp( xr, yr );
+	Widget::MouseWUp( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWUp( xr,yr + yoffset ) ) {
@@ -890,7 +890,7 @@ bool Container::MouseWDown( int xi, int yi ){
 	int yr = yi - this->y;
 	int yoffset = this->vscrollbar ? this->vscrollbar->GetPos() : 0;
 
-	Widget::MouseWDown( xr, yr );
+	Widget::MouseWDown( xi, yi );
 
 	Widget *event_on = DetermineMouseFocus( xr, yr );
 	if( event_on && event_on->MouseWDown( xr,yr + yoffset ) ) {

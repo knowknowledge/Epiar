@@ -405,6 +405,12 @@ void UI::ReleaseModality() {
 	UI::modalEnabled = false;
 }
 
+void AddImage( void*widget, void*image, int x, int y )
+{
+	Container* container = ((Container*)widget);
+	container->AddChild( new Picture( x, y, (Image*)image ) );
+}
+
 void UI_Test() {
 	// Example of Nestable UI Creation
 	UI::Add(
@@ -454,6 +460,10 @@ void UI_Test() {
 			)
 		)
 	);
+
+	Tab* clickTestTab = new Tab("Click Test");
+	clickTestTab->RegisterAction( Widget::Action_MouseLUp, new PositionalAction( AddImage, clickTestTab, Image::Get("Resources/Graphics/shuttle.png") ) );
+	((Container*)UI::Search("/'A Window'/'TEST TABS'/"))->AddChild( clickTestTab );
 
 	// Check that the UI Searching is working
 	assert( NULL != UI::Search("/[0]/") );
