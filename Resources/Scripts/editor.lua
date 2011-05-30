@@ -402,7 +402,7 @@ function showTechInfo(name)
 	theWin:add(UI.newLabel( 15, 30, "Name:"))
 	local nameField= UI.newTextbox( 90, 30, 200, 1, name)
 	theWin:add(nameField)
-	local optionTabs = UI.newTabCont( 10, 65, width-30, height-120,"Options Tabs")
+	local optionTabs = UI.newTabContainer( 10, 65, width-30, height-120,"Options Tabs")
 	theWin:add(optionTabs)
 	local knownTechs = {}
 	checkedTechs = {}

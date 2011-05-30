@@ -162,6 +162,7 @@ bool Simulation::SetupToRun(){
 
 	luaLoad = Lua::Load("Resources/Scripts/utilities.lua")
 	       && Lua::Load("Resources/Scripts/universe.lua")
+	       && Lua::Load("Resources/Scripts/landing.lua")
 	       && Lua::Load("Resources/Scripts/commands.lua")
 	       && Lua::Load("Resources/Scripts/ai.lua")
 	       && Lua::Load("Resources/Scripts/missions.lua")

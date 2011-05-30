@@ -57,7 +57,9 @@ class Planet : public Sprite, public Component {
 		short unsigned int GetTraffic() const {return traffic;}
 		short unsigned int GetMilitiaSize() const {return militiaSize;}
 		bool GetLandable() const {return landable;}
+		string GetSummary() const {return summary;}
 		int GetInfluence() const {return sphereOfInfluence;}
+		Image* GetSurfaceImage() const {return surface;}
 		list<Technology*> GetTechnologies() const { return technologies;}
 
 		bool GetForbidden() {return forbidden;}
@@ -71,6 +73,8 @@ class Planet : public Sprite, public Component {
 		short unsigned int militiaSize;
 		int sphereOfInfluence;
 		list<Technology*> technologies;
+		Image* surface;
+		string summary;
 
 		Uint32 lastTrafficTime;
 };
@@ -104,6 +108,8 @@ class Planets_Lua {
 		static int GetID(lua_State* L);
 		static int GetPosition(lua_State* L);
 		static int GetSize(lua_State* L);
+		static int GetSummary(lua_State* L);
+		static int GetSurfaceImage(lua_State* L);
 		static int GetAlliance(lua_State* L);
 		static int GetTraffic(lua_State* L);
 		static int GetMilitiaSize(lua_State* L);
