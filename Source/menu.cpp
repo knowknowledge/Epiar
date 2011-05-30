@@ -200,12 +200,12 @@ void Menu::Main_Menu( void ) {
 				break;
 		}
 
-		//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+		//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_PERIOD ) ) )
 		//{
 			//Video::SaveScreenshot();
 		//}
 
-		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
+		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;
 		}
 
