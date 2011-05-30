@@ -27,6 +27,20 @@ function landingDialog(id)
 		return yoff
 	end
 
+	-- Summary
+	local summary = UI.newTab("Summary")
+	local summary_frame = UI.newFrame( 10, 10, width - 50, height - 120 )
+	local surface_str = planet:GetSurfaceImage()
+	local surface = UI.newPicture( (width / 2) - 215, 15, 375, 281, surface_str, 0, 0, 0, 1)
+	summary_frame:add( surface )
+
+	local summary_txt = planet:GetSummary()
+	summary_frame:add( UI.newLabel(10,330,summary_txt,0) )
+
+	summary:add( summary_frame )
+
+	landingTabs:add(summary)
+
 	-- Shipyard
 	local shipyard = UI.newTab("Shipyard")
 	local shipList = UI.newFrame( 10, 10, 160, 360 )

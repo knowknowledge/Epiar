@@ -147,8 +147,7 @@ bool Planet::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"surface-image")) ){
-		Image* surface = Image::Get( NodeToString(doc,attr) );
-		Image::Store(name, surface);
+		this->surface = Image::Get( NodeToString(doc,attr) );
 	} else return false;
 
 	if( (attr = FirstChildNamed(node,"summary")) ){
