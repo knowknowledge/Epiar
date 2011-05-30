@@ -311,11 +311,11 @@ void Menu::CreateLoadWindow()
 	for( iter = names->begin(); iter != names->end(); ++iter, ++p ) {
 		PlayerInfo *info = Players::Instance()->GetPlayerInfo( *iter );
 		win->AddChild( (new Frame( 50, 155*p + 30, 400, 130 ))
-			->AddChild( (new Picture(20, 25, 80, 80, info->avatar )) )
-			->AddChild( (new Label(120, 25, "Player Name:" )) ) ->AddChild( (new Label(210, 25, info->GetName() )) )
-			->AddChild( (new Label(120, 50, "Simulation:" )) ) ->AddChild( (new Label(210, 50, info->simulation )) )
-			->AddChild( (new Button(280, 87, 100, 30, "Play", LoadPlayer, info )) )
-			->AddChild( (new Button(170, 87, 100, 30, "Erase", ErasePlayer, info ) ) )
+			->AddChild( (new Picture(20, 20, 80, 80, info->avatar )) )
+			->AddChild( (new Label(120, 20, "Player Name:" )) ) ->AddChild( (new Label(210, 20, info->GetName() )) )
+			->AddChild( (new Label(120, 45, "Simulation:" )) ) ->AddChild( (new Label(210, 45, info->simulation )) )
+			->AddChild( (new Button(280, 80, 100, 30, "Play", LoadPlayer, info )) )
+			->AddChild( (new Button(170, 80, 100, 30, "Erase", ErasePlayer, info ) ) )
 		);
 	}
 	win->AddCloseButton();
