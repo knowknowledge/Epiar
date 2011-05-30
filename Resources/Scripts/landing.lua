@@ -35,7 +35,7 @@ function landingDialog(id)
 	summary_frame:add( surface )
 
 	local summary_txt = linewrap( planet:GetSummary() )
-	summary_frame:add( UI.newLabel(10,330,summary_txt,0) )
+	summary_frame:add( UI.newLabel(50,315,summary_txt,0) )
 
 	summary:add( summary_frame )
 
