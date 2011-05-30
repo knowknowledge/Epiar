@@ -39,7 +39,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTextbox", &UI_Lua::newTextbox},
 		{"newCheckbox", &UI_Lua::newCheckbox},
 		{"newSlider", &UI_Lua::newSlider},
-		{"newTabCont", &UI_Lua::newTabCont},
+		{"newTabContainer", &UI_Lua::newTabContainer},
 		{"newTab", &UI_Lua::newTab},
 		{"newDropdown", &UI_Lua::newDropdown},
 
@@ -285,7 +285,7 @@ int UI_Lua::newSlider(lua_State *L){
  *
  *  \returns Lua userdata containing pointer to Tabs Widget.
  */
-int UI_Lua::newTabCont(lua_State *L){
+int UI_Lua::newTabContainer(lua_State *L){
 	int n = lua_gettop(L);	// Number of arguments
 	if ( (n != 5 ) )
 		return luaL_error(L,

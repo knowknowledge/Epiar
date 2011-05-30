@@ -817,7 +817,7 @@ function playerInformation()
 	infoWin:add( UI.newPicture( 20, y, width-40,100, model, 0,0,0,1) )
 	local y = y+110
 
-	local infoTabs = UI.newTabCont( 15, y, width-30, height-y-30, "Info Tabs" )
+	local infoTabs = UI.newTabContainer( 15, y, width-30, height-y-30, "Info Tabs" )
 
 	-- The Outfit Tab
 	local outfitTab = UI.newTab( "Outfit" )

@@ -41,7 +41,7 @@ class UI_Lua {
 		static int newPicture(lua_State *L);
 		static int newCheckbox(lua_State *L);
 		static int newSlider(lua_State *L);
-		static int newTabCont(lua_State *L);
+		static int newTabContainer(lua_State *L);
 		static int newTab(lua_State *L);
 		static int newDropdown(lua_State *L);
 
