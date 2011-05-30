@@ -301,7 +301,7 @@ void UI::HandleInput( list<InputEvent> & events ) {
 	// On Escape, close the top Widget
 	Widget* topContainer = UI::currentScreen->ChildFromTop(0, WIDGET_CONTAINER);
 	if( topContainer != NULL ) {
-		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) ) {
+		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) ) {
 			UI::Close( topContainer );
 		}
 	}

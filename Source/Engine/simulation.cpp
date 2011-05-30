@@ -545,17 +545,17 @@ void Simulation::HandleInput() {
 
 	inputs.HandleLuaCallBacks( events );
 
-	//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_PERIOD ) ) )
+	//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_PERIOD ) ) )
 	//{
 		//Video::SaveScreenshot();
 	//}
 
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'm') ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'm') ) )
 	{
 		CreateNavMap();
 	}
 
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, 'p') ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'p') ) )
 	{
 		Window* win = new Window(
 			TO_INT(Video::GetWidth() * 0.4),
@@ -573,7 +573,7 @@ void Simulation::HandleInput() {
 		UI::ModalDialog( win );
 	}
 	
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYUP, SDLK_ESCAPE ) ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )
 		quit = true;
 }
 
