@@ -100,13 +100,30 @@ void Map::Draw( int relx, int rely )
 	// TODO: Quadrant lines should be be drawn correctly.
 
 	// The Quadrant Lines
-	// for( int i=static_cast<int>(QUADRANTSIZE); i<=edge; i+= 2*static_cast<int>(QUADRANTSIZE) )
-	// {
-	// 	Video::DrawLine( startx                           , starty + int( i*scale+halfheight) , startx + (int)size               , starty + int( i*scale+halfheight) , .3f,.3f,.3f ,alpha );
-	// 	Video::DrawLine( startx                           , starty + int(-i*scale+halfheight) , startx + (int)size               , starty + int(-i*scale+halfheight) , .3f,.3f,.3f ,alpha );
-	// 	Video::DrawLine( startx + int( i*scale+halfwidth) , starty                            , startx + int( i*scale+halfwidth) , starty + (int)size                , .3f,.3f,.3f ,alpha );
-	// 	Video::DrawLine( startx + int(-i*scale+halfwidth) , starty                            , startx + int(-i*scale+halfwidth) , starty + (int)size                , .3f,.3f,.3f ,alpha );
-	// }
+	Coordinate i, top, bottom;
+	bottom = ClickToWorld( Coordinate(GetX(),GetY()) );
+	bottom = Coordinate( TO_INT(bottom.GetX() / (2*QUADRANTSIZE)),
+	                     TO_INT(bottom.GetY() / (2*QUADRANTSIZE)) );
+	bottom *= 2*QUADRANTSIZE;
+	bottom -= Coordinate(QUADRANTSIZE, QUADRANTSIZE);
+
+	top = ClickToWorld( Coordinate(GetX()+w, GetY()+h) );
+	top = Coordinate( TO_INT(top.GetX() / (2*QUADRANTSIZE)),
+	                  TO_INT(top.GetY() / (2*QUADRANTSIZE)) );
+	top *= 2*QUADRANTSIZE;
+	top += Coordinate(QUADRANTSIZE, QUADRANTSIZE);
+
+	for( i = bottom;
+	     i.GetX() <= top.GetX() ||
+	     i.GetY() <= top.GetY() ;
+	     i += Coordinate(2*QUADRANTSIZE, 2*QUADRANTSIZE) )
+	{
+		Coordinate point = WorldToScreen( i );
+		Video::DrawLine( relx + GetX()     , point.GetY(),
+						 relx + GetX() + w , point.GetY(), DARKGREY , alpha );
+		Video::DrawLine( point.GetX(), rely + GetY()     , 
+						 point.GetX(), rely + GetY() + h , DARKGREY , alpha );
+	}
 
 	// Draw the Sprites
 	spriteList = sprites->GetSprites( spriteTypes );
