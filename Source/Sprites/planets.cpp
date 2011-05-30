@@ -342,6 +342,8 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"MilitiaSize", &Planets_Lua::GetMilitiaSize},
 		{"Influence", &Planets_Lua::GetInfluence},
 		{"Landable", &Planets_Lua::GetLandable},
+		{"GetSummary", &Planets_Lua::GetSummary},
+		{"GetSurfaceImage", &Planets_Lua::GetSurfaceImage},
 		{"GetModels", &Planets_Lua::GetModels},
 		{"GetEngines", &Planets_Lua::GetEngines},
 		{"GetWeapons", &Planets_Lua::GetWeapons},
@@ -515,6 +517,32 @@ int Planets_Lua::GetID(lua_State* L){
 	if (n == 1) {
 		Planet* planet= checkPlanet(L,1);
 		lua_pushinteger(L, planet->GetID());
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Get the Type of this planet
+ */
+int Planets_Lua::GetSummary(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetSummary().c_str());
+	} else {
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
+}
+
+/**\brief Get the Type of this planet
+ */
+int Planets_Lua::GetSurfaceImage(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 1) {
+		Planet* planet= checkPlanet(L,1);
+		lua_pushstring(L, planet->GetSurfaceImage()->GetPath().c_str());
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}
