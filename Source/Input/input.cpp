@@ -320,3 +320,14 @@ bool Input::HandleSpecificEvent( list<InputEvent> & events, InputEvent trigger )
 	}
 	return found;
 }
+
+void Input::PrintEvents( string title, list<InputEvent> & events ) {
+	list<InputEvent>::iterator i = events.begin();
+	if( events.size() == 0 ) return;
+	while( i != events.end() ) {
+		cout<<*i << " ";
+		++i;
+	}
+	cout << endl;
+}
+

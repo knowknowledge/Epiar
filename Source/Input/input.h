@@ -104,6 +104,7 @@ class Input {
 
 		static bool SearchSpecificEvent( list<InputEvent> & events, InputEvent key );
 		static bool HandleSpecificEvent( list<InputEvent> & events, InputEvent key );
+		static void PrintEvents( string title, list<InputEvent> & events );
 	
 	private:
 		mouseState _CheckMouseState( Uint8 button, bool up );
