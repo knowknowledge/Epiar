@@ -26,6 +26,7 @@ Container::Container( string _name, bool _mouseHandled ):
 	formbutton( NULL )
 {
 	name = _name;
+	InnerRect.left = InnerRect.top = InnerRect.right = InnerRect.bottom = 0;
 }
 
 /**\brief Destructor, destroys all children.
@@ -67,6 +68,13 @@ Container *Container::AddChild( Widget *widget ) {
 		ResetScrollBars();
 	}
 	return this;
+}
+
+void Container::SetInnerRect( int left, int top, int right, int bottom ) {
+	InnerRect.left = left;
+	InnerRect.top = top;
+	InnerRect.right = right;
+	InnerRect.bottom = bottom;
 }
 
 /**\brief Deletes a child from the current container.
@@ -580,11 +588,11 @@ Widget *Container::PrevChild( Widget* widget, int mask) {
 void Container::Draw( int relx, int rely ) {
 	int x, y;
 	
-	x = GetX() + relx;
-	y = GetY() + rely;
+	x = GetX() + relx + InnerRect.left;
+	y = GetY() + rely + InnerRect.top;
 
 	// Crop to prevent child widgets from spilling
-	Video::SetCropRect(x, y + 2, this->w, this->h);
+	Video::SetCropRect(x, y, this->w - InnerRect.right - InnerRect.left, this->h - InnerRect.bottom - InnerRect.top);
 	
 	// Draw any children
 	list<Widget *>::iterator i;
@@ -991,16 +999,16 @@ void Container::ResetScrollBars() {
 	for( i = children.begin(); i != children.end(); ++i ) {
 		widget = *i;
 		widget_width  = widget->GetX() + widget->GetW();
-		widget_height = widget->GetY() + widget->GetH();
+		widget_height = widget->GetY() + widget->GetH() + InnerRect.top + InnerRect.bottom;
 		if( widget_height > max_height) max_height = widget_height;
 		if( widget_width > max_width) max_width = widget_width;
 	}
 
 	// Add a Vertical ScrollBar if necessary
 	if ( max_height > GetH() ){
-		int v_x = this->w;
+		int v_x = this->w - InnerRect.right - InnerRect.left;
 		int v_y = 0;
-		int v_l = this->h;
+		int v_l = this->h - InnerRect.top - InnerRect.bottom;
 
 		// Don't Log extra messages when the ScrollBar is simply being replaced.
 		if( !has_vscrollbar ) {

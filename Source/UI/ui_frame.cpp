@@ -50,6 +50,8 @@ Frame::Frame( int x, int y, int w, int h )
 	assert( bitmaps[6] != NULL );
 	assert( bitmaps[7] != NULL );
 	assert( bitmaps[8] != NULL );
+
+	SetInnerRect( 8, 8, 8, 8 );
 }
 
 /**\brief Adds a widget to the current Frame.

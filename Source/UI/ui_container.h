@@ -22,6 +22,8 @@ class Container : public Widget {
 		virtual int GetMask( void ) { return WIDGET_CONTAINER; }
 		bool IsEmpty( void ){return this->children.empty();}
 
+		void SetInnerRect( int left, int top, int right, int bottom );
+
 		virtual Container *AddChild( Widget *widget );
 		virtual bool DelChild( Widget *widget );
 		virtual void Empty( void );
@@ -81,6 +83,10 @@ class Container : public Widget {
 
 		Scrollbar *vscrollbar; ///< The Vertical Scrollbar widget if it exists.
 		Button *formbutton; ///< This Button will is activated on keyboard events.
+
+		struct _InnerRect {
+			int left, top, right, bottom;
+		} InnerRect;
 };
 
 #endif//__H_UI_CONTAINER__
