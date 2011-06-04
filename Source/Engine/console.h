@@ -14,7 +14,7 @@
 
 class Console {
 	public:
-		Console();
+		Console( lua_State *L );
 
 		void HandleInput( list<InputEvent> & events );
 		void Draw();
@@ -28,6 +28,7 @@ class Console {
 		bool enabled;
 		string command;
 		unsigned int cursor;
+		lua_State *L;
 };
 
 #endif // __h_console__

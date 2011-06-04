@@ -22,11 +22,12 @@ const char* CURSOR = "_";
 
 /**\brief Initialize Console instance.
  */
-Console::Console() {
+Console::Console( lua_State *state ) {
 	Buffer.push_back("Console initialized.");
 	command = "";
 	enabled = false;
 	cursor = 0;
+	L = state;
 }
 
 /**\brief Handles a list of Input events.
@@ -129,7 +130,6 @@ void Console::Update() {
 void Console::RunCommand() {
 	int returnvals;
 	const char* returnval;
-	lua_State *L = Lua::CurrentState();
 
 	// Run the Command
 	returnvals = Lua::Run( command, true);

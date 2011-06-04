@@ -97,7 +97,7 @@ class Simulation : public XMLFile {
 		// Simulation specific variables
 		Song* bgmusic;
 		Input inputs;
-		Console console;
+		Console *console;
 
 		string name;
 		string description;

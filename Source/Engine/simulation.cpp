@@ -54,7 +54,9 @@ Simulation::Simulation( void ) {
 	outfits = Outfits::Instance();
 	players = Players::Instance();
 	player = NULL;
+
 	camera = Camera::Instance();
+	console = new Console( L );
 
 	name = "";
 	description = "";
@@ -291,7 +293,7 @@ bool Simulation::Run() {
 		sprites->Draw( camera->GetFocusCoordinate() );
 		Hud::Draw( HUD_ALL, currentFPS, camera, sprites );
 		UI::Draw();
-		console.Draw();
+		console->Draw();
 		Video::PostDraw();
 		Video::Update();
 
@@ -448,7 +450,7 @@ bool Simulation::Edit() {
 		sprites->Draw( camera->GetFocusCoordinate() );
 		UI::Draw();
 		Hud::Draw( HUD_Target | HUD_Map, 0.0f, camera, sprites );
-		console.Draw();
+		console->Draw();
 		Video::Update();
 
 		// Don't kill the CPU (play nice)
@@ -540,7 +542,7 @@ void Simulation::HandleInput() {
 
 	// Pass the Events to the systems that handle them.
 	UI::HandleInput( events );
-	console.HandleInput( events );
+	console->HandleInput( events );
 	Hud::HandleInput( events, camera, sprites );
 
 	inputs.HandleLuaCallBacks( events );
