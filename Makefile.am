@@ -32,6 +32,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Sprites/effects.cpp \
                 Source/Sprites/gate.cpp \
                 Source/Sprites/planets.cpp \
+                Source/Sprites/planets_lua.cpp \
                 Source/Sprites/player.cpp \
                 Source/Sprites/projectile.cpp \
                 Source/Sprites/ship.cpp \

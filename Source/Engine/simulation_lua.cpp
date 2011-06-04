@@ -28,6 +28,7 @@
 #include "Sprites/player.h"
 #include "Sprites/sprite.h"
 #include "Sprites/planets.h"
+#include "Sprites/planets_lua.h"
 #include "Sprites/gate.h"
 #include "Engine/camera.h"
 #include "Input/input.h"

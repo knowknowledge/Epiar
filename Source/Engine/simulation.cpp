@@ -22,6 +22,8 @@
 #include "Sprites/ai.h"
 #include "Sprites/ai_lua.h"
 #include "Sprites/player.h"
+#include "Sprites/planets.h"
+#include "Sprites/planets_lua.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
