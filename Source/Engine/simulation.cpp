@@ -576,6 +576,11 @@ void Simulation::HandleInput() {
 		win->RegisterAction(Widget::Action_Close, new VoidAction(UI::ReleaseModality) );
 		UI::ModalDialog( win );
 	}
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'o') ) )
+	{
+		Dialogs::Options();
+	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )
 		quit = true;

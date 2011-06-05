@@ -16,7 +16,7 @@ class Dialogs {
 	public:
 		static bool Confirm( const char *message );
 		static void Alert( const char *message );
-
+		static void Options();
 };
 
 #endif // __H_DIALOGS__
