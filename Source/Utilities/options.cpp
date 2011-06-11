@@ -33,7 +33,7 @@ bool Options::IsLoaded()
 bool Options::Save( const string& path )
 {
 	assert( optionsfile );
-	if( path != "" )
+	if( path == "" )
 	{
 		return optionsfile->Save();
 	}
