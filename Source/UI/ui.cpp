@@ -451,7 +451,7 @@ void UI_Test() {
 			->AddChild( (new Tab("Some Inputs"))
 				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
 				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
-				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f, "" )) )
+				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f )) )
 				->AddChild( (new Button(10, 300, 100, 30, "Dummy", NULL )) )
 				->AddChild( (new Dropdown(200, 200, 100, 30))
 					->AddOption("Lorem")
