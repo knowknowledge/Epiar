@@ -579,7 +579,7 @@ void Simulation::HandleInput() {
 
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'o') ) )
 	{
-		Dialogs::Options();
+		Dialogs::OptionsWindow();
 	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )

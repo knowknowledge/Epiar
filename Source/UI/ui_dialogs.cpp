@@ -11,6 +11,8 @@
 #include "Graphics/video.h"
 #include "UI/ui.h"
 #include "Utilities/log.h"
+#include "Audio/audio.h"
+#include "Audio/sound.h"
 
 /** \addtogroup UI
  * @{
@@ -60,9 +62,49 @@ void Dialogs::Alert( const char *message )
 	UI::ModalDialog( win );
 }
 
+void CheckOption( void* checkbox, void*option )
+{
+	Checkbox *box = (Checkbox *)checkbox;
+	SETOPTION( (char*)option, box->IsChecked() );
+}
+
+Checkbox* OptionBox( const char* option, string name, int x, int y )
+{
+	Checkbox *box = new Checkbox( x, y, OPTION(int, option), name);
+	box->RegisterAction( Widget::Action_MouseLUp, new MessageAction( CheckOption, box, (void*)option ) );
+	return box;
+}
+
+void SlideOption( void* slider, void*option )
+{
+	float ratio = ((Slider*)slider)->GetVal();
+	SETOPTION( (char*)option, ratio );
+}
+
+Slider* OptionSlider( const char* option, string name, int x, int y )
+{
+	Slider *slider = new Slider( x, y, 80, 16, name, OPTION(float, option) );
+	slider->RegisterAction( Widget::Action_MouseDrag, new MessageAction( SlideOption, slider, (void*)option ) );
+	return slider;
+}
+
+void SetSoundVolume( void* slider )
+{
+	Audio::Instance().SetSoundVol( ((Slider*)slider)->GetVal() );
+}
+
+void SetMusicVolume( void* slider )
+{
+	Audio::Instance().SetMusicVol( ((Slider*)slider)->GetVal() );
+}
+
+void CloseOptions() { UI::Close( UI::Search("/Window'Options'/") ); }
+
+void SaveOptions() { Options::Save(); CloseOptions(); }
+
 /**\brief Create a Presents a message with a single "Ok" button.
  */
-void Dialogs::Options()
+void Dialogs::OptionsWindow()
 {
 	int yoff;
 	int width = 300;
@@ -70,16 +112,17 @@ void Dialogs::Options()
 	int tabwidth = width - 20;
 	int tabheight = height - 100;
 
-	if( UI::Search("/Window'Options'/'") )
+	if( UI::Search("/Window'Options'/") )
 	{
 		LogMsg(INFO, "Options Window already open. Closing it.");
-		UI::Close( UI::Search("/Window'Options'/'") );
+		UI::Close( UI::Search("/Window'Options'/") );
+		return;
 	}
 
 	Window *window = new Window( 30, 100, width, height, "Options");
 	Tabs *optionTabs = new Tabs( 10, 30, tabwidth, tabheight, "Options Tabs" );
-	Button *accept = new Button( 60, height-50, 60, 30, "Save"); // TODO: Make it do something
-	Button *cancel = new Button( 160, height-50, 60, 30, "Cancel"); // TODO: Make it do something
+	Button *accept = new Button( 60, height-50, 60, 30, "Save", SaveOptions );
+	Button *cancel = new Button( 160, height-50, 60, 30, "Cancel", CloseOptions );
 
 	window->AddChild(optionTabs);
 	window->AddChild(accept);
@@ -88,48 +131,64 @@ void Dialogs::Options()
 	window->SetFormButton(accept);
 
 	// Game Options
+	{
 	yoff = 10;
-	optionTabs->AddChild( (new Tab("Game") )
-		->AddChild( new Label( 20, 5, "Game Options:", 0 ) )
-		->AddChild( new Checkbox( 20, (yoff+=20), OPTION(int, "options/video/fullscreen"), "Run as Full Screen" ) )
-		->AddChild( new Checkbox( 20, (yoff+=20), OPTION(int, "options/simulation/random-universe"), "Create a Random Universe" ) )
-		->AddChild( new Checkbox( 20, (yoff+=20), OPTION(int, "options/simulation/automatic-load"), "Automatically Load the last Player") )
-	);
+	Tab* tab =  new Tab("Game");
+	tab->AddChild( new Label( 20, 5, "Game Options:", 0 ) );
+	tab->AddChild( OptionBox( "options/video/fullscreen", "Run as Full Screen", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/simulation/random-universe", "Create a Random Universe", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/simulation/automatic-load", "Automatically Load the last Player", 20, (yoff+=20) ) );
+	optionTabs->AddChild( tab );
+	}
 
 	// Sound Options
-	yoff = 0;
-	optionTabs->AddChild( (new Tab("Sounds") )
-		->AddChild( new Label( 20, 5, "Sound Options:", 0 ) )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/sound/background"), "Background sounds") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/sound/weapons"), "Weapons sounds") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/sound/engines"), "Engines sounds") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/sound/explosions"), "Explosions sounds") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/sound/buttons"), "Buttons sounds") )
-		->AddChild( new Slider( 20, 40 + 20*(yoff), 80, 16, "Sound Volume") )
-		->AddChild( new Label( 105, 30 + 20*(yoff++), "Sound Volume", false) )
-		->AddChild( new Slider( 20, 40 + 20*(yoff), 80, 16, "Music Volume") )
-		->AddChild( new Label( 105, 30 + 20*(yoff++), "Music Volume", false) )
-	);
+	{
+	yoff = 10;
+	Tab* tab =  new Tab("Sound");
+	optionTabs->AddChild( tab );
+	tab->AddChild( new Label( 20, 5, "Sound Options:", 0 ) );
+	tab->AddChild( OptionBox( "options/sound/background", "Background sounds", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/sound/weapons", "Weapons sounds", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/sound/engines", "Engines sounds", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/sound/explosions", "Explosions sounds", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/sound/buttons", "Buttons sounds", 20, (yoff+=20) ) );
+
+	Slider *sound = OptionSlider( "options/sound/soundvolume", "Sound Volume", 20, (yoff+=30));
+	sound->RegisterAction( Widget::Action_MouseLUp, new ObjectAction(SetSoundVolume, sound) );
+	tab->AddChild( sound );
+
+	Slider *music = OptionSlider( "options/sound/musicvolume", "Music Volume", 20, (yoff+=30));
+	music->RegisterAction( Widget::Action_MouseLUp, new ObjectAction(SetMusicVolume, music) );
+	tab->AddChild( music );
+	}
 
 	// Developer Options
-	yoff = 0;
-	optionTabs->AddChild( (new Tab("Developer") )
-		->AddChild( new Label( 20, 5, "Developer Options:", 0 ) )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/log/xml"), "Save Log Messages") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/log/out"), "Print Log Messages") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/log/alert"), "Alert Log Messages") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/log/ui"), "Save UI as XML") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/log/sprites"), "Save Sprites as XML") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/development/debug-ai"), "Display AI State Machine") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/development/debug-ui"), "Display UI Debug Information") )
-		->AddChild( new Checkbox( 20, 30 + 20*(yoff++), OPTION(int, "options/development/ships-worldmap"), "Display Ships on the Universe Map") )
-	);
+	{
+	yoff = 10;
+	Tab* tab =  new Tab("Developer");
+	optionTabs->AddChild( tab );
+	tab->AddChild( new Label( 20, 5, "Developer Options:", 0 ) );
+	tab->AddChild( OptionBox( "options/log/xml", "Save Log Messages", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/log/out", "Print Log Messages", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/log/alert", "Alert Log Messages", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/log/ui", "Save UI as XML", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/log/sprites", "Save Sprites as XML", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/development/debug-ai", "Display AI State Machine", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/development/debug-ui", "Display UI Debug Information", 20, (yoff+=20) ) );
+	tab->AddChild( OptionBox( "options/development/ships-worldmap", "Display Ships on the Universe Map", 20, (yoff+=20) ) );
+	}
 
 	// Keyboard Options
+	/*
+	{
 	yoff = 0;
-	optionTabs->AddChild( (new Tab("Keyboard") )
-		->AddChild( new Label( 20, 5, "Keyboard Options:", 0 ) )
-	);
+	Tab* tab =  new Tab("Sound");
+	optionTabs->AddChild( tab );
+	tab->AddChild( new Label( 20, 5, "Keyboard Options:", 0 ) );
+	// TODO: Figure out how to populate this table.
+	//       By design we may not have loaded Lua at this point.
+	}
+	*/
 
 	UI::Add(window);
 }

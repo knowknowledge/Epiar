@@ -173,7 +173,7 @@ void Menu::Main_Menu( void ) {
 
 			case Menu_Options:
 			{
-				Dialogs::Options();
+				Dialogs::OptionsWindow();
 				break;
 			}
 
