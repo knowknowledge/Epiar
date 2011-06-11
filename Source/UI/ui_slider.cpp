@@ -79,6 +79,8 @@ void Slider::Draw( int relx, int rely ){
 	snprintf(value,20,"%.2f",this->val);
 	UI::font->Render( x + markerx_pix, y, value,Font::CENTER,Font::BOTTOM );
 
+	UI::font->RenderTight( x + GetW() + 5, y, name );
+
 	Widget::Draw(relx, rely);
 }
 
