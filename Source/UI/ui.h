@@ -61,6 +61,8 @@ class UI {
 		static void SwapScreens(string newname, Image* oldBackground, Image* newBackground );
 
 		static Font* font;
+		static Sound* beep;
+		static Sound* hover;
 
 		static void Defer( Widget*, int x, int y );
 		static void DrawDeferred( void );

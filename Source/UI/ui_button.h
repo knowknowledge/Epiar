@@ -38,7 +38,6 @@ class Button : public Widget {
 	private:
 		void Initialize( int x, int y, int w, int h, string label);
 		Image *bitmap_current, *bitmap_normal, *bitmap_mouseover, *bitmap_pressed;
-		Sound *sound_click, *sound_hover;
 };
 
 #endif // __H_BUTTON__

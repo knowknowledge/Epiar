@@ -36,6 +36,8 @@ bool UI::modalEnabled = false;
 /**\brief This is the default UI Font.
  */
 Font *UI::font = NULL;
+Sound *UI::beep = NULL;
+Sound *UI::hover = NULL;
 
 /**\brief Destroys the UI interface and all UI elements.
  */
@@ -43,6 +45,8 @@ UI::~UI() {
 	UI::CloseAll();
 
 	delete font;
+	delete beep;
+	delete hover;
 }
 
 /**\brief Initializes the User Interface.
@@ -56,6 +60,10 @@ bool UI::Initialize( string screenName ) {
 	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
 	font->SetColor( Color( SKIN( "Skin/UI/Default/Color" ) ) );
 	font->SetSize( convertTo<int>( SKIN("Skin/UI/Default/Size") ) );
+
+ 
+	beep = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
+	hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 
 	return true;
 }
