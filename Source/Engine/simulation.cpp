@@ -577,13 +577,20 @@ void Simulation::HandleInput() {
 		UI::ModalDialog( win );
 	}
 
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'o') ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, '?') ) )
 	{
 		Dialogs::OptionsWindow();
 	}
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, '/') ) )
+	{
+		Lua::Call("keyboardCommands");
+	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )
+	{
 		quit = true;
+	}
 }
 
 void Simulation::CreateNavMap( void )
