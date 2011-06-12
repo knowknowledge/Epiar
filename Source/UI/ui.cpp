@@ -407,6 +407,10 @@ void UI::ModalDialog( Container *widget ) {
 	delete currentScreen;
 	currentScreen = backgroundScreen;
 	backgroundScreen = NULL;
+
+	// Update the Timer so that the time spent inside the Modal widget does not
+	// count as 'Lag Time'.
+	Timer::Update();
 }
 
 void UI::ReleaseModality() {
