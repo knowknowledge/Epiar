@@ -44,8 +44,11 @@ class UI {
 		
 		static Widget *Add( Widget *widget );
 		static void Draw( void );
+
 		static void CloseAll( void );
 		static void Close( Widget *widget );
+		static void Close( void *widget );
+
 		static void HandleInput( list<InputEvent> & events );
 		static bool Active(void);
 		

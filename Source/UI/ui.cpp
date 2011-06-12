@@ -101,10 +101,15 @@ void UI::CloseAll( void ) {
  *          breadth-first search to find the specified widget.
  */
 void UI::Close( Widget *widget ) {
-	if( widget) {
+	if( IsAttached( widget ) )
+	{
 		LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
 		UI::currentScreen->DelChild( widget );
 	}
+}
+
+void UI::Close( void *unsafe) {
+	Close( (Widget*)unsafe );
 }
 
 /**\brief Called when a Widget should be drawn later
@@ -535,13 +540,9 @@ void UI_Test() {
 	);
 }
 
-void tempCallback( ) {
-	UI::ReleaseModality();
-}
-
 void ModalityTest() {
 	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
-	window->AddChild( (new Button(100, 135, 100, 30, "Release", tempCallback )) );
+	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
 	UI::ModalDialog( window );
 }
 
