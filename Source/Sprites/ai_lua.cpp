@@ -564,7 +564,7 @@ int AI_Lua::ShipSetModel(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string modelName = luaL_checkstring (L, 2);
-		Model* model = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetModels()->GetModel( modelName );
+		Model* model = Simulation_Lua::GetSimulation(L)->GetModels()->GetModel( modelName );
 		luaL_argcheck(L, model != NULL, 2, string("There is no Model named `" + modelName + "'").c_str());
 		(ai)->SetModel( model );
 	} else {
@@ -583,7 +583,7 @@ int AI_Lua::ShipSetEngine(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string engineName = luaL_checkstring (L, 2);
-		Engine* engine = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetEngines()->GetEngine( engineName );
+		Engine* engine = Simulation_Lua::GetSimulation(L)->GetEngines()->GetEngine( engineName );
 		luaL_argcheck(L, engine != NULL, 2, string("There is no Engine named `" + engineName + "'").c_str());
 		(ai)->SetEngine( engine );
 	} else {
@@ -601,7 +601,7 @@ int AI_Lua::ShipAddOutfit(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
-		Outfit* outfit = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
+		Outfit* outfit = Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
 		luaL_argcheck(L, outfit != NULL, 2, string("There is no Outfit named `" + outfitName + "'").c_str());
 		(ai)->AddOutfit( outfit );
 	} else {
@@ -619,7 +619,7 @@ int AI_Lua::ShipRemoveOutfit(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		string outfitName = luaL_checkstring (L, 2);
-		Outfit* outfit = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
+		Outfit* outfit = Simulation_Lua::GetSimulation(L)->GetOutfits()->GetOutfit( outfitName );
 		luaL_argcheck(L, outfit != NULL, 2, string("There is no Outfit named `" + outfitName + "'").c_str());
 		// TODO: luaL_argcheck that ai has this outfit already.
 		(ai)->RemoveOutfit( outfit );
@@ -664,7 +664,7 @@ int AI_Lua::ShipStoreCommodities(lua_State* L){
 
 	// Check Inputs
 	if(ai==NULL) { return 0; }
-	Commodity *commodity = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
+	Commodity *commodity = Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
 	luaL_argcheck(L, commodity != NULL, 2, string("There is no Commodity named `" + commodityName + "'").c_str());
 
 	// Store the Commodity
@@ -691,7 +691,7 @@ int AI_Lua::ShipDiscardCommodities(lua_State* L){
 
 	// Check Inputs
 	if(ai==NULL) { return 0; }
-	Commodity *commodity = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
+	Commodity *commodity = Simulation_Lua::GetSimulation(L)->GetCommodities()->GetCommodity( commodityName );
 	luaL_argcheck(L, commodity != NULL, 2, string("There is no Commodity named `" + commodityName + "'").c_str());
 
 	// Discard the Commodity
@@ -1680,7 +1680,7 @@ int AI_Lua::ShipUpdateFavor(lua_State* L){
 
 	// Check Inputs
 	if(player==NULL) { return 0; }
-	Alliance *alliance = Simulation_Lua::Simulation_Lua::GetSimulation(L)->GetAlliances()->GetAlliance( allianceName );
+	Alliance *alliance = Simulation_Lua::GetSimulation(L)->GetAlliances()->GetAlliance( allianceName );
 	luaL_argcheck(L, alliance != NULL, 2, string("There is no alliance named `" + allianceName + "'").c_str());
 
 	// Update the favor

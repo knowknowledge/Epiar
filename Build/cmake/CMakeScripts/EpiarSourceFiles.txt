@@ -71,6 +71,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Sprites/effects.h
 	${Epiar_SRC_DIR}/Sprites/gate.h
 	${Epiar_SRC_DIR}/Sprites/planets.h
+	${Epiar_SRC_DIR}/Sprites/planets_lua.h
 	${Epiar_SRC_DIR}/Sprites/player.h
 	${Epiar_SRC_DIR}/Sprites/projectile.h
 	${Epiar_SRC_DIR}/Sprites/ship.h
@@ -79,6 +80,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Sprites/effects.cpp
 	${Epiar_SRC_DIR}/Sprites/gate.cpp
 	${Epiar_SRC_DIR}/Sprites/planets.cpp
+	${Epiar_SRC_DIR}/Sprites/planets_lua.cpp
 	${Epiar_SRC_DIR}/Sprites/player.cpp
 	${Epiar_SRC_DIR}/Sprites/projectile.cpp
 	${Epiar_SRC_DIR}/Sprites/ship.cpp

@@ -6,6 +6,7 @@
  * \details
  */
 
+#include "includes.h"
 #include "Utilities/options.h"
 
 XMLFile *Options::optionsfile = NULL; ///< Static instance of the optionsfile.
