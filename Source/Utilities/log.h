@@ -43,6 +43,7 @@ class Log {
 			ALERT,			/**< Something that might cause a problem. */
 			NOTICE,			/**< Notify the of an event occurring. */
 			INFO,			/**< (System level) Information that the user might want. */
+			INPUT,			/**< User Interface motions. */
 			VERBOSE1,		/**< (Subsystem level) Information for the user. */
 			VERBOSE2,		/**< (Method level) Information for the user. */
 			VERBOSE3,		/**< (Function level) Information for the user. */

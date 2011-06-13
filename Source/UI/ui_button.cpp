@@ -119,7 +119,7 @@ bool Button::MouseEnter( int xi, int yi ){
 	Widget::MouseEnter( xi, yi );
 	bitmap_current = bitmap_mouseover;
 	hovering = true;
-	LogMsg(INFO,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(INPUT,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
 
@@ -129,7 +129,7 @@ bool Button::MouseLeave( void ){
 	Widget::MouseLeave();
 	bitmap_current = bitmap_normal;
 	hovering = false;
-	LogMsg(INFO,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(INPUT,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return true;
 }
 

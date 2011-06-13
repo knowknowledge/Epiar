@@ -171,6 +171,7 @@ Log::Log()
 	lvlStrings[WARN]="Warn";
 	lvlStrings[ALERT]="Alert";
 	lvlStrings[NOTICE]="Notice";
+	lvlStrings[INFO]="Input";
 	lvlStrings[INFO]="Info";
 	lvlStrings[VERBOSE1]="Verbose1";
 	lvlStrings[VERBOSE2]="Verbose2";
@@ -181,26 +182,39 @@ Log::Log()
 	lvlStrings[DEBUG4]="Debug4";
 
 #ifndef _WIN32
+	int Black   = 30;
+	int Blue    = 34;
+	int Green   = 32;
+	int Cyan    = 36;
+	int Red     = 31;
+	int Purple  = 35;
+	int Brown   = 33;
+
 	// BLACK
-	colors[NONE]    = 30;
+	colors[NONE]    = Black;
 	// Red
-	colors[FATAL]   = 31;
-	colors[CRITICAL]= 31;
-	colors[ERR]     = 31;
+	colors[FATAL]   = Red;
+	colors[CRITICAL]= Red;
+	colors[ERR]     = Red;
 	// Brown
-	colors[WARN]    = 33;
-	colors[ALERT]   = 33;
+	colors[WARN]    = Brown;
+	colors[ALERT]   = Brown;
 	// Blue
-	colors[NOTICE]  = 34;
-	colors[INFO]    = 34;
+	colors[NOTICE]  = Blue;
+	// Cyan
+	colors[INFO]    = Cyan;
+	// Purple
+	colors[INPUT] = Purple;
+	colors[VERBOSE1]= Purple;
+	colors[VERBOSE2]= Purple;
+	colors[VERBOSE3]= Purple;
 	// Green
-	colors[VERBOSE1]= 32;
-	colors[VERBOSE2]= 32;
-	colors[VERBOSE3]= 32;
-	colors[DEBUG1]  = 32;
-	colors[DEBUG2]  = 32;
-	colors[DEBUG3]  = 32;
-	colors[DEBUG4]  = 32;
+	colors[DEBUG1]  = Green;
+	colors[DEBUG2]  = Green;
+	colors[DEBUG3]  = Green;
+	colors[DEBUG4]  = Green;
+
+	
 	istty = isatty(fileno(stdin));
 	if( istty ) {
 		printf( "stdin is a terminal\n" );
@@ -208,6 +222,7 @@ Log::Log()
 		printf( "stdin is a file or a pipe\n");
 	}
 #endif
+
 
 	// generate the log's filename based on the time
 	logFilename = string("Epiar-Log-") + GetTimestamp() + string(".xml");
