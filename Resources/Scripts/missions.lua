@@ -408,10 +408,11 @@ DestroyGaryTheGold = {
 		HUD.newAlert("Thank you for destroying Gary the Gold!")
 		addcredits(missionTable.reward)
 		local p = Planet.Get( missionTable.planet )
-		PLAYER:UpdateFavor( p.GetAlliance(), 30 )
+		PLAYER:UpdateFavor( p:GetAlliance(), 30 )
 	end,
 	Failure = function( missionTable )
-		PLAYER:UpdateFavor( p.GetAlliance(), -20 )
+		local p = Planet.Get( missionTable.planet )
+		PLAYER:UpdateFavor( p:GetAlliance(), -20 )
 	end,
 
 }
@@ -522,11 +523,12 @@ ProtectFreighter = {
 		setAccompany(missionTable.freighter, -1)
 		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
 		local p = Planet.Get( missionTable.planet )
-		PLAYER:UpdateFavor( p.GetAlliance(), 10 )
+		PLAYER:UpdateFavor( p:GetAlliance(), 10 )
 	end,
 	Failure = function( missionTable )
 		HUD.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )
-		PLAYER:UpdateFavor( p.GetAlliance(), -10 )
+		local p = Planet.Get( missionTable.planet )
+		PLAYER:UpdateFavor( p:GetAlliance(), -10 )
 	end,
 
 }
