@@ -201,6 +201,12 @@ Log::Log()
 	colors[DEBUG2]  = 32;
 	colors[DEBUG3]  = 32;
 	colors[DEBUG4]  = 32;
+	istty = isatty(fileno(stdin));
+	if( istty ) {
+		printf( "stdin is a terminal\n" );
+	} else {
+		printf( "stdin is a file or a pipe\n");
+	}
 #endif
 
 	// generate the log's filename based on the time

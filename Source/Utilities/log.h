@@ -77,9 +77,10 @@ class Log {
 		Level loglvldefault;
 
 #ifndef _WIN32
+		bool istty;
 		map<Level,int> colors;
-		void StartTermColor( Level lvl ) { printf("\e[1;%dm", colors[lvl] ); }
-		void EndTermColor( Level lvl ) { printf("\e[m"); }
+		void StartTermColor( Level lvl ) { if(istty) printf("\e[1;%dm", colors[lvl] ); }
+		void EndTermColor( Level lvl ) { if(istty) printf("\e[m"); }
 #else
 		#define StartTermColor(lvl)
 		#define EndTermColor(lvl)
