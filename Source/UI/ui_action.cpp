@@ -23,6 +23,16 @@ void LuaAction::Activate( int x, int y )
 	Lua::Run( lua_callback );
 }
 
+LuaPositionalAction::LuaPositionalAction( string callback )
+{
+	lua_callback = callback;
+}
+
+void LuaPositionalAction::Activate( int x, int y )
+{
+	Lua::Call( lua_callback.c_str(), "ii", x, y );
+}
+
 VoidAction::VoidAction( void (*callback)() )
 {
 	clickCallBack = callback;

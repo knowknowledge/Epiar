@@ -25,6 +25,14 @@ class LuaAction : public Action {
 		string lua_callback;
 };
 
+class LuaPositionalAction : public Action {
+	public:
+		LuaPositionalAction( string callback );
+		void Activate( int x, int y );
+	private:
+		string lua_callback;
+};
+
 class VoidAction : public Action {
 	public:
 		VoidAction( void (*callback)() );

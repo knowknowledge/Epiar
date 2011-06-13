@@ -26,6 +26,26 @@
  */
 
 void UI_Lua::RegisterUI(lua_State *L){
+	// Register Actions
+	Lua::RegisterGlobal("Action_MouseDrag", Action_MouseDrag);
+	Lua::RegisterGlobal("Action_MouseMotion", Action_MouseMotion);
+	Lua::RegisterGlobal("Action_MouseEnter", Action_MouseEnter);
+	Lua::RegisterGlobal("Action_MouseLeave", Action_MouseLeave);
+	Lua::RegisterGlobal("Action_MouseLUp", Action_MouseLUp);
+	Lua::RegisterGlobal("Action_MouseLDown", Action_MouseLDown);
+	Lua::RegisterGlobal("Action_MouseLRelease", Action_MouseLRelease);
+	Lua::RegisterGlobal("Action_MouseMUp", Action_MouseMUp);
+	Lua::RegisterGlobal("Action_MouseMDown", Action_MouseMDown);
+	Lua::RegisterGlobal("Action_MouseMRelease", Action_MouseMRelease);
+	Lua::RegisterGlobal("Action_MouseRUp", Action_MouseRUp);
+	Lua::RegisterGlobal("Action_MouseRDown", Action_MouseRDown);
+	Lua::RegisterGlobal("Action_MouseRRelease", Action_MouseRRelease);
+	Lua::RegisterGlobal("Action_MouseWUp", Action_MouseWUp);
+	Lua::RegisterGlobal("Action_MouseWDown", Action_MouseWDown);
+	Lua::RegisterGlobal("Action_KeyboardEnter", Action_KeyboardEnter);
+	Lua::RegisterGlobal("Action_KeyboardLeave", Action_KeyboardLeave);
+	Lua::RegisterGlobal("Action_Close", Action_Close);
+
 	// These Functions create new UI Elements
 	// Call them like:
 	// win = UI.newWindow( ... )
@@ -60,6 +80,8 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Generic Widget Modification
 		{"move", &UI_Lua::move},
 		{"close", &UI_Lua::close},
+		{"addCallback", &UI_Lua::AddCallback},
+		{"addPosCallback", &UI_Lua::AddPosCallback},
 
 		// Container Modification
 		{"add", &UI_Lua::add},
@@ -72,7 +94,6 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
 		{"setBackground", &UI_Lua::setBackground},
-		{"setLuaClickCallback", &UI_Lua::setLuaClickCallback},
 
 		// Label Modification
 		{"setText", &UI_Lua::setText},
@@ -178,7 +199,7 @@ int UI_Lua::newFrame(lua_State *L){
 	for(arg=5; arg <= n;arg++){
 		Widget** widget= (Widget**)lua_touserdata(L,arg);
 		if( widget == NULL ) {
-			return luaL_error(L, "argument %d to setLuaClickCallback is NULL", arg);
+			return luaL_error(L, "argument %d to newFrame is NULL", arg);
 		}
 		(*frame)->AddChild(*widget);
 	}
@@ -202,6 +223,38 @@ int UI_Lua::close(lua_State *L){
 		luaL_argcheck(L, UI::IsAttached( widget ), 1, "This Widget is not attached to the User Interface. It may have already been closed. Use UI.search to confirm check if a Widget still exists.");
 
 		UI::Close( widget );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 0 or 1 ([widget])", n);
+	}
+	return 0;
+}
+
+int UI_Lua::AddCallback(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 3) {
+		Widget* widget = checkWidget(L,1);
+		int action = luaL_checkinteger(L,2);
+		luaL_argcheck(L, ((0 <= action) && (action < Action_Last)) , 2, "Invalid action number.");
+		string callback = luaL_checkstring(L,3);
+		
+		widget->RegisterAction( (action_type)action, new LuaAction(callback) );
+	}
+	else {
+		luaL_error(L, "Got %d arguments expected 3 (widget, actiontype, callback )", n);
+	}
+	return 0;
+}
+
+int UI_Lua::AddPosCallback(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if(n == 2) {
+		Widget* widget = checkWidget(L,1);
+		int action = luaL_checkinteger(L,2);
+		luaL_argcheck(L, ((0 <= action) && (action < Action_Last)) , 2, "Invalid action number.");
+		string callback = luaL_checkstring(L,3);
+		
+		widget->RegisterAction( (action_type)action, new LuaPositionalAction(callback) );
 	}
 	else {
 		luaL_error(L, "Got %d arguments expected 0 or 1 ([widget])", n);
@@ -586,25 +639,6 @@ int UI_Lua::setBackground(lua_State *L){
 	}
 	return 0;
 }
-
-/** \brief Set the Lua callback for clicks within pictures
- *  \todo, this functionality should be extended to non-Pictures.
- */
-int UI_Lua::setLuaClickCallback(lua_State *L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n == 2){
-		Picture* pic = (Picture*)checkWidget(L,1);
-		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
-
-		string callback = luaL_checkstring (L, 2);
-		pic->SetLuaClickCallback( callback );
-	
-	} else {
-		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
-	}
-	return 0;
-}
-
 
 /** \brief add Widgets to a Container
  *  \details This accepts multiple Widgets.

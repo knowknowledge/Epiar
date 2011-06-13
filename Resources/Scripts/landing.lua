@@ -19,7 +19,7 @@ function landingDialog(id)
 		for i,name in ipairs(list) do
 			local callback = string.format( cmd, container, name )
 			local pic = UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
-			pic:setLuaClickCallback( callback )
+			pic:addCallback( Action_MouseLUp, callback )
 			storeList:add( pic )
 			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, callback ))
 			yoff = yoff + 30 + boxsize

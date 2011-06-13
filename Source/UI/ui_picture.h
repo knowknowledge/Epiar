@@ -28,7 +28,6 @@ class Picture: public Widget {
 		void Set( Image *img );
 		void Set( string filename );
 		void SetColor( float r, float g, float b, float a );
-		void SetLuaClickCallback( string foo ) { printf("SetLuaClickCallback is deprecated\n"); }
 
 		Color GetColor( void ) { return color; }
 		float GetAlpha( void ) { return alpha; }

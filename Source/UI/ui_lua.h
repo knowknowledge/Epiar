@@ -56,6 +56,8 @@ class UI_Lua {
 		// Functions to manipulate Widgets
 		static int move(lua_State *L);
 		static int close(lua_State *L);
+		static int AddCallback(lua_State *L);
+		static int AddPosCallback(lua_State *L);
 		static int add(lua_State *L);
 		static int setFormButton(lua_State *L);
 		static int AddCloseButton(lua_State *L);
@@ -63,7 +65,6 @@ class UI_Lua {
 		static int setText(lua_State *L);
 		static int setPicture(lua_State *L);
 		static int setBackground(lua_State *L);
-		static int setLuaClickCallback(lua_State *L);
 		static int setChecked(lua_State *L);
 		static int setSliderValue(lua_State *L);
 		static int AddOption(lua_State *L);

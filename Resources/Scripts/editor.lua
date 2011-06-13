@@ -623,7 +623,7 @@ function EditWeaponSlots(name, title)
 	SlotEditor["imageHW"] = imageW / 2
 	SlotEditor["calcXLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"], "X: ")
 	SlotEditor["calcYLabel"] = UI.newLabel(SlotEditor["calcPosX"] - 40, SlotEditor["calcPosY"]+15, "Y: ")
-	image:setLuaClickCallback('calculateSlotOffset')
+	image:addPosCallback( Action_MouseLUp, 'calculateSlotOffset' )
 	editWeaponSlotsWin:add(image, SlotEditor["calcXLabel"], SlotEditor["calcYLabel"])
 
 	-- Do this last so that dropdowns are not obscured by other widgets in the same window
