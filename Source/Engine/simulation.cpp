@@ -271,6 +271,10 @@ bool Simulation::Run() {
 		int logicLoops = Timer::Update();
 		bool anyUpdate = (logicLoops>0);
 		if( !paused ) {
+			if(logicLoops > 10) {
+				LogMsg(WARN, "Running %d logic loops. Capping to 10", logicLoops);
+				logicLoops = 10;
+			}
 			while(logicLoops--) {
 				if (lowFps)
 					lowFpsFrameCount --;
