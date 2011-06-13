@@ -51,13 +51,6 @@ Player* Player::Load( string filename ) {
 	assert( newPlayer->GetModelName() != "" );
 	assert( newPlayer->GetEngineName() != "" );
 
-	// Restart the missions that were ongoing.
-	list<Mission*>::iterator iter_m;
-	list<Mission*>* missions = newPlayer->GetMissions();
-	for( iter_m = missions->begin(); iter_m != missions->end(); ++iter_m) {
-		(*iter_m)->Accept(); ///< TODO: This should be a distinct function.  Mission::Load perhaps?
-	}
-
 	// Tell Lua to initialize these escorts.
 	for(list<Player::HiredEscort*>::iterator iter_escort = newPlayer->hiredEscorts.begin(); iter_escort != newPlayer->hiredEscorts.end(); iter_escort++){
 		(*iter_escort)->Lua_Initialize( newPlayer->GetID(), newPlayer->GetWorldPosition() );

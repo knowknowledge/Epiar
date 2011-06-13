@@ -33,21 +33,28 @@ end
 
 function okayTarget(cur_ship, ship)
 	-- if friendly (merciful) mode is on and the nearest target is the player, forbid this target
-	if cur_ship:GetMerciful() == 1 and PLAYER ~= nil and PLAYER:GetID() == ship:GetID() then
-		return false
+	if PLAYER ~= nil and PLAYER:GetID() == ship:GetID() then
+		if cur_ship:GetMerciful() == 1 then
+			-- The PLAYER has been spared... For now...
+			return false
+		end
+		if PLAYER:GetFavor( cur_ship:GetAlliance() ) > 500 then
+			-- The PLAYER is a god to their people!
+			return false
+		end
 	end
 
 	if Fleets:fleetmates( cur_ship:GetID(), ship:GetID() ) then
 		return false
 	end
 
-	if AIData[ship:GetID()] == nil then return true end
-
-	-- If the ship in question is accompanying either this ship or whichever one we are
-	-- accompanying, don't attack it.
-	if AIData[ship:GetID()].accompany == cur_ship:GetID() or
-	   AIData[ship:GetID()].accompany == AIData[cur_ship:GetID()].accompany then
-		return false
+	if AIData[ship:GetID()] ~= nil then
+		-- If the ship in question is accompanying either this ship or whichever one we are
+		-- accompanying, don't attack it.
+		if AIData[ship:GetID()].accompany == cur_ship:GetID() or
+		   AIData[ship:GetID()].accompany == AIData[cur_ship:GetID()].accompany then
+			return false
+		end
 	end
 
 	return true

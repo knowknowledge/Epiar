@@ -48,6 +48,14 @@ function playerStart()
 		-- don't worry about updating the HUD; createHUD() will handle it
 	end
 
+	-- Restart Missions
+	local missions = PLAYER:GetMissions()
+	if #missions > 0 then
+		for key,mission in pairs(missions) do
+			_G[mission.Type].Create( mission )
+		end
+	end
+
 	createHUD()
 	registerCommands(playerCommands)
 end
@@ -818,6 +826,8 @@ function playerInformation()
 	local y = y+110
 
 	local infoTabs = UI.newTabContainer( 15, y, width-30, height-y-30, "Info Tabs" )
+	infoWin:add( infoTabs )
+	infoWin:addCloseButton()
 
 	-- The Outfit Tab
 	local outfitTab = UI.newTab( "Outfit" )
@@ -850,13 +860,13 @@ function playerInformation()
 			outfitTab:add( UI.newLabel(230, y, cargoAmount) )
 		end
 	end
+	infoTabs:add( outfitTab )
 
 	-- The Missions Tab
 	local missionTab = UI.newTab( "Missions" )
 	y = 10
 
 	local missions = PLAYER:GetMissions()
-	print( missions, #missions)
 	if #missions > 0 then
 		for key,mission in pairs(missions) do
 			missionTab:add( UI.newButton( 6, y, width-40, 30, mission.Name, string.format("ShowMissionDescription(%q,%q)", mission.Name, mission.Description ) ) )
@@ -865,10 +875,19 @@ function playerInformation()
 	else
 		missionTab:add( UI.newLabel( 10, y, "You have no current jobs." ) )
 	end
+	infoTabs:add( missionTab )
 
-	infoWin:add( infoTabs )
-	infoWin:addCloseButton()
-	infoTabs:add( outfitTab, missionTab )
+	-- The Favor Tab
+	y = 10
+
+	local favorTab = UI.newTab( "Favor" )
+	local alliances = Epiar.alliances()
+	for i,alliance in ipairs(alliances) do
+		local favor = PLAYER:GetFavor( alliance )
+		favorTab:add( UI.newLabel( 6, y, string.format("%s: %d", alliance, favor) ) )
+		y = y + 30
+	end
+	infoTabs:add( favorTab )
 
 end
 

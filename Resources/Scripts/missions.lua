@@ -42,7 +42,7 @@ end
 
 ReturnAmbassador = {
 	UID = 1,
-	Version = 2,
+	Version = 3,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -59,6 +59,7 @@ ReturnAmbassador = {
 		missionTable.planet = p:GetName()
 		missionTable.reward = Reward
 		missionTable.alliance = alliance
+		missionTable.profession = profession
 		return missionTable
 	end,
 	Accept = function( missionTable )
@@ -67,7 +68,7 @@ ReturnAmbassador = {
 		HUD.newAlert( string.format("Please take me to %s in the Quadrant (%d,%d)", missionTable.planet, qx, qy ) )
 	end,
 	Reject = function( missionTable )
-		HUD.newAlert( string.format("Thanks for the help, just drop me off at your next landing" ) )
+		HUD.newAlert( string.format("You will rue the day you abandoned such a powerful %s %s.", missionTable.alliance, missionTable.profession ) )
 	end,
 	Update = function( missionTable )
 	end,
@@ -76,20 +77,22 @@ ReturnAmbassador = {
 		local p = Planet.Get( missionTable.planet )
 		local px,py = p:GetPosition()
 		if distfrom(px,py,x,y) < p:GetSize() then
+			HUD.newAlert(string.format("Thank you for returning me to my home.") )
 			return true
 		end
 	end,
 	Success = function( missionTable )
-		HUD.newAlert(string.format("Thank you for returning me to my home.") )
-		addcredits(  missionTable.reward )
+		addcredits( missionTable.reward )
+		PLAYER:UpdateFavor( missionTable.alliance, 10 )
 	end,
 	Failure = function( missionTable )
+		PLAYER:UpdateFavor( missionTable.alliance, -10 )
 	end,
 }
 
 DestroyPirate = {
 	UID = 2,
-	Version = 1,
+	Version = 3,
 	Author = "Matt Zweig",
 	Difficulty = "MEDIUM",
 	Create = function()
@@ -108,6 +111,7 @@ DestroyPirate = {
 				name,
 				missionTable.reward)
 		missionTable.ship = nil
+		missionTable.alliance = choose( Epiar.alliances() )
 		return missionTable
 	end,
 	Accept = function( missionTable )
@@ -145,16 +149,20 @@ DestroyPirate = {
 	Success = function( missionTable )
 		HUD.newAlert(string.format("Thank you for destroying %s!", missionTable.piratename) )
 		addcredits(  missionTable.reward )
+		PLAYER:UpdateFavor( "Independent", -10 )
+		PLAYER:UpdateFavor( missionTable.alliance, 10 )
 	end,
 	Failure = function( missionTable )
 		HUD.newAlert("This should never happen")
+		PLAYER:UpdateFavor( "Independent", -2 )
+		PLAYER:UpdateFavor( missionTable.alliance, -2 )
 	end,
 }
 
 
 CollectArtifacts = {
 	UID = 3,
-	Version = 2,
+	Version = 3,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -212,6 +220,8 @@ CollectArtifacts = {
 		end
 		acceptMessage = acceptMessage:format( missionTable.EventName, places )
 		HUD.newAlert( acceptMessage  )
+		PLAYER:UpdateFavor( missionTable.FriendAlliance, 1 )
+		PLAYER:UpdateFavor( missionTable.EnemyAlliance, -1 )
 	end,
 	Reject = function( missionTable )
 		local rejectMessage = "The %s %s will get away with the artifacts."
@@ -239,16 +249,15 @@ CollectArtifacts = {
 					HUD.newAlert( message )
 					-- Mark this Object as Collected
 					missionTable.Collected[i] = true
+					totalFound = totalFound + 1
 				end
-			else
-				totalFound = totalFound + 1
 			end
 		end
 		if totalFound == missionTable.NumArtifacts then
 			local p = Planet.Get( missionTable.FinalPlanet )
 			local px,py = p:GetPosition()
 			if distfrom(px,py,x,y) < 50 then
-				local message = "All of the Artifacts from %s have been delivered to the %s on ."
+				local message = "All of the Artifacts from %s have been delivered to the %s on %s."
 				message = message:format( missionTable.EventName, missionTable.FriendAlliance, missionTable.FinalPlanet )
 				HUD.newAlert( message )
 				return true
@@ -257,14 +266,21 @@ CollectArtifacts = {
 	end,
 	Success = function( missionTable )
 		addcredits(  missionTable.Reward )
+		PLAYER:UpdateFavor( missionTable.FriendAlliance, 10 )
+		PLAYER:UpdateFavor( missionTable.EnemyAlliance, -10 )
 	end,
-	Failure = function( missionTable ) end,
+	Failure = function( missionTable )
+		local unfoundArifacts = missionTable.NumArtifacts - totalFound
+		PLAYER:UpdateFavor( missionTable.FriendAlliance, unfoundArifacts )
+		PLAYER:UpdateFavor( missionTable.FriendAlliance, 1 )
+		PLAYER:UpdateFavor( missionTable.EnemyAlliance, -1 )
+	end,
 }
 
 
 ShippingRoutes = {
 	UID = 5,
-	Version = 2,
+	Version = 3,
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
@@ -276,6 +292,7 @@ ShippingRoutes = {
 		missionTable.Tonnage = math.random(50) + 10
 		missionTable.Commodity = choose( Epiar.commodities() )
 		missionTable.Planet = planet:GetName()
+		missionTable.Alliance = planet:GetAlliance()
 		missionTable.Reward = 1000 + (100 * missionTable.Tonnage)
 
 		missionTable.Name = missionTable.Name:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
@@ -302,6 +319,9 @@ ShippingRoutes = {
 	Update = function( missionTable )
 		-- Check if the Player still has all the cargo
 		local currentCargo, stored, storable = PLAYER:GetCargo()
+		if currentCargo[ missionTable.Commodity ] == nil then
+			return false
+		end
 		if currentCargo[ missionTable.Commodity ] < missionTable.Tonnage then
 			return false
 		end
@@ -321,18 +341,20 @@ ShippingRoutes = {
 		local message = "You've safely delivered %d tons of %s to %s."
 		message = message:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
 		HUD.newAlert( message )
+		PLAYER:UpdateFavor( missionTable.Alliance, 10 )
 	end,
 	Failure = function( missionTable )
 		-- Discard remaining cargo.
 		local message = "You've lost the job to deliver %s to %s."
 		message = message:format( missionTable.Commodity, missionTable.Planet )
 		HUD.newAlert( message )
+		PLAYER:UpdateFavor( missionTable.Alliance, -10 )
 	end,
 }
 
 DestroyGaryTheGold = {
 	UID = 4,
-	Version = 1,
+	Version = 2,
 	Author = "Rikus Goodell",
 	Difficulty = "HARD",
 	Create = function()
@@ -356,19 +378,20 @@ DestroyGaryTheGold = {
 		gary:SetRadarColor(255,0,0)
 		--attachStandardWeapons(gary, Epiar.weapons())
 
-                local escort = Ship.new("Larry the Gold",garyX-150,garyY-150, "Vespan Carrier", "Ion Engines","Escort","Independent")
+		local escort = Ship.new("Larry the Gold",garyX-150,garyY-150, "Vespan Carrier", "Ion Engines","Escort","Independent")
 		escort:RemoveWeapon("Strong Laser")
 		escort:RemoveWeapon("Strong Laser")
 		escort:AddWeapon("Gold Beam")
 		escort:AddWeapon("Gold Beam")
 		escort:SetRadarColor(255,0,0)
-                setAccompany(escort:GetID(), gary:GetID())
+		setAccompany(escort:GetID(), gary:GetID())
 
 		missionTable.garyID = gary:GetID()
 		missionTable.escortID = escort:GetID()
 	end,
 	Reject = function( missionTable )
 		HUD.newAlert( "Gary may never be stopped" )
+		local p = Planet.Get( missionTable.planet )
 	end,
 	Update = function( missionTable )
 		local gary = Epiar.getSprite( missionTable.garyID )
@@ -384,15 +407,18 @@ DestroyGaryTheGold = {
 	Success = function( missionTable )
 		HUD.newAlert("Thank you for destroying Gary the Gold!")
 		addcredits(missionTable.reward)
+		local p = Planet.Get( missionTable.planet )
+		PLAYER:UpdateFavor( p.GetAlliance(), 30 )
 	end,
 	Failure = function( missionTable )
+		PLAYER:UpdateFavor( p.GetAlliance(), -20 )
 	end,
 
 }
 
 ProtectFreighter = {
 	UID = 5,
-	Version = 2,
+	Version = 3,
 	Author = "Rikus Goodell",
 	Difficulty = "MEDIUM",
 	Create = function()
@@ -459,6 +485,7 @@ ProtectFreighter = {
 		HUD.newAlert( (string.format("%s: \"%s! I find your betrayal most disappointing.\"", missionTable.freighterName, PLAYER:GetName() ) ) )
 		setAccompany(missionTable.freighter, -1)
 		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
+		local p = Planet.Get( missionTable.planet )
 	end,
 	Update = function( missionTable )
 		local freighter = Epiar.getSprite( missionTable.freighter )
@@ -494,9 +521,13 @@ ProtectFreighter = {
 		addcredits(missionTable.reward)
 		setAccompany(missionTable.freighter, -1)
 		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
+		local p = Planet.Get( missionTable.planet )
+		PLAYER:UpdateFavor( p.GetAlliance(), 10 )
 	end,
 	Failure = function( missionTable )
 		HUD.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )
+		PLAYER:UpdateFavor( p.GetAlliance(), -10 )
 	end,
 
 }
+

@@ -218,7 +218,7 @@ bool Mission::RunFunction(string functionName, bool checkCompletion)
 		return false;
 	}
 
-	// Get the Update 
+	// Get the function
 	lua_pushstring(L, functionName.c_str() );
 	lua_gettable(L,initialStackTop + 1);
 	if( ! lua_isfunction(L,lua_gettop(L)) )
@@ -230,7 +230,7 @@ bool Mission::RunFunction(string functionName, bool checkCompletion)
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
 	
-	// Call the Update function
+	// Call the function
 	if( lua_pcall(L, 1, LUA_MULTRET, 0) != 0)
 	{
 		LogMsg(ERR,"Failed to run %s.%s: %s\n", type.c_str(), functionName.c_str(), lua_tostring(L, -1));

@@ -122,6 +122,7 @@ function landingDialog(id)
 			missionType = choose(availableMissionsTypes)
 		end
 		availableMissions[i] = _G[missionType].Create()
+		availableMissions[i].Type = missionType
 		missions:add(
 			UI.newFrame( 10, yoff, width -70, 150,
 				UI.newLabel( 10, 10, availableMissions[i].Name ),
