@@ -320,7 +320,7 @@ function hailPlanet()
 	hailReplyLabel = UI.newLabel(50, 50, "")
 
 	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
-	hailDialog:add( hailReplyLabel ) 
+	hailDialog:add( hailReplyLabel )
 
 	hailDialog:add( UI.newButton(50, 100, 100, 30, "Greetings", "doHailGreet()") )
 	hailDialog:add( UI.newButton(150, 100, 100, 30, "Rude comment", "doHailInsult()" ) )
@@ -405,7 +405,7 @@ function hailShip()
 		hailOption2Label = UI.newLabel(250, 95, hailOption2)
 		--hailDialog:add( UI.newButton(250, 100, 100, 30, "Close channel", "doHailEnd()" ) )
 
-		hailDialog:add( hailReplyLabel, hailOption1Label, hailOption2Label ) 
+		hailDialog:add( hailReplyLabel, hailOption1Label, hailOption2Label )
 
 	else
 		HUD.newAlert("No reply.")
@@ -446,7 +446,7 @@ function doHailSay(said)
 
 	for k,v in pairs(hailResponses) do
 		if v ~= nil then
-			if hailOption1 == nil then hailOption1 = k 
+			if hailOption1 == nil then hailOption1 = k
 			elseif hailOption2 == nil then hailOption2 = k end
 		end
 	end
@@ -495,7 +495,7 @@ function doHailInsult()
 	elseif r == 2 then
 		hailReplyLabel.setText(hailReplyLabel,string.format("Here's 100 credits - now please leave us alone.",targettedPlanet:GetName()) )
 		addcredits( 100 )
-	else 
+	else
 		hailReplyLabel.setText(hailReplyLabel,"We are saddened by your insults.")
 	end
 end
@@ -584,9 +584,9 @@ function doCapture(succ_max, destruct_max)
 		end
 
 		asOwn = function()
-			local oldPlayerModel = PLAYER:GetModelName() 
-			local oldPlayerHD = PLAYER:GetHullDamage() 
-			local oldPlayerSD = PLAYER:GetShieldDamage() 
+			local oldPlayerModel = PLAYER:GetModelName()
+			local oldPlayerHD = PLAYER:GetHullDamage()
+			local oldPlayerSD = PLAYER:GetShieldDamage()
 
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:RemoveFromWeaponList(weap)
@@ -598,9 +598,9 @@ function doCapture(succ_max, destruct_max)
 			PLAYER:SetShieldDamage( targettedShip:GetHullDamage() )
 			partiallyRepair(PLAYER)
 
-			targettedShip:SetModel( oldPlayerModel ) 
-			targettedShip:SetHullDamage( oldPlayerHD ) 
-			targettedShip:SetShieldDamage( oldPlayerSD ) 
+			targettedShip:SetModel( oldPlayerModel )
+			targettedShip:SetHullDamage( oldPlayerHD )
+			targettedShip:SetShieldDamage( oldPlayerSD )
 
 			-- SetModel() has already determined the slot contents for us, so use them
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do

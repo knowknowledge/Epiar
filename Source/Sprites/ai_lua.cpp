@@ -504,7 +504,7 @@ int AI_Lua::ShipSetDamageBooster(lua_State* L){
 	if (n==2){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		float damage=(float) luaL_checknumber( L, 2 ); 
+		float damage=(float) luaL_checknumber( L, 2 );
 		(ai)->SetDamageBoost(damage);
 	}
 	else {
@@ -522,7 +522,7 @@ int AI_Lua::ShipSetEngineBooster(lua_State* L){
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
 		
-		float engine=(float) luaL_checknumber( L, 2 ); 
+		float engine=(float) luaL_checknumber( L, 2 );
 		(ai)->SetEngineBoost(engine);
 
 	}
@@ -885,7 +885,7 @@ int AI_Lua::ShipGetAngle(lua_State* L){
 }
 
 /**\brief Lua callable function to get the world position
- * \sa Coordinate::GetWorldPosition() 
+ * \sa Coordinate::GetWorldPosition()
  */
 int AI_Lua::ShipGetPosition(lua_State* L){
 	int n = lua_gettop(L); // Number of arguments

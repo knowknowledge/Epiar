@@ -353,7 +353,7 @@ xmlNodePtr Lua::ConvertToXML( lua_State *L, int value_index, int key_index) {
 
 	lua_pop(L,1); // Pop the copied key now that we're done with it.
 
-	// Save the type 
+	// Save the type
 	t = lua_type(L, value_index);
 	xmlSetProp( section, BAD_CAST "type", BAD_CAST lua_typename(L, t));
 
