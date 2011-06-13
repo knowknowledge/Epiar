@@ -11,17 +11,17 @@ function landingDialog(id)
 	local width = 600
 	local boxsize = 120
 
-	landingWin = UI.newWindow( 200,100,width,height, string.format("%s",planet:GetName()))
+	local landingWin = UI.newWindow( 200,100,width,height, string.format("%s",planet:GetName()))
 	landingTabs = UI.newTabContainer( 10, 30, width - 20, height - 80,"Store")
 	landingWin:add(landingTabs)
 
 	function addToStoreList( storeList, list, yoff, cmd, container )
 		for i,name in ipairs(list) do
 			local callback = string.format( cmd, container, name )
-			local pic = UI.newPicture( 15, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
+			local pic = UI.newPicture( 0, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
 			pic:addCallback( Action_MouseLUp, callback )
 			storeList:add( pic )
-			storeList:add( UI.newButton( 15, yoff+boxsize, boxsize, 20, name, callback ))
+			storeList:add( UI.newButton( 0, yoff+boxsize, boxsize, 20, name, callback ))
 			yoff = yoff + 30 + boxsize
 		end
 		return yoff
@@ -134,9 +134,21 @@ function landingDialog(id)
 	end
 	landingTabs:add(missions)
 
+	function Leave()
+		Epiar.savePlayer()
+		Epiar.unpause()
+		local landingWin = UI.search(string.format("/Window'%s'/", planet:GetName()))
+		if landingWin then
+			landingWin:close()
+		end
+	end
+
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 110,height-40,100,30,"Weapon Config","weaponConfigDialog()" ))
-	landingWin:add(UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Epiar.savePlayer();Epiar.unpause();landingWin:close();landingWin=nil" ))
+	local closeButton = UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Leave()" )
+	landingWin:add( closeButton )
+	landingWin:setFormButton( closeButton )
+	landingWin:addCallback( Action_Close, 'Leave()' )
 end
 
 --- Buys a ship
@@ -398,7 +410,8 @@ function storeView(containerPath, itemType, itemName )
 		or statname == "Image"
 		or statname == "Sound"
 		or statname == "Animation"
-		or type(value) == "table" then
+		or type(value) == "table"
+		or value == 0 then
 			-- Do Nothing
 		else
 			if type(value)=="number" and math.floor(value) ~= value then
