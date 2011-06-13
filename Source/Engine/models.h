@@ -36,7 +36,6 @@ class Model : public Outfit {
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
-		void _dbg_PrintInfo( void );
 		
 		Image *GetImage( void ) { return image; }
 

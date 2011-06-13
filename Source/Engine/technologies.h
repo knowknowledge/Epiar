@@ -20,7 +20,6 @@ class Technology : public Component {
 		Technology();
   		Technology& operator= (const Technology&);
 		Technology( string _name, list<Model*> _models, list<Engine*>_engines, list<Weapon*>_weapons, list<Outfit*>_outfits);
-		void _dbg_PrintInfo( void );
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 

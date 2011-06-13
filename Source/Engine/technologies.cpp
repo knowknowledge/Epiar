@@ -100,11 +100,6 @@ bool Technology::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	return true;
 }
 
-/**\brief Prints debugging information
- */
-void Technology::_dbg_PrintInfo( void ) {
-}
-
 /**\brief Converts the Technology object to an XML node
  */
 xmlNodePtr Technology::ToXMLNode(string componentName) {

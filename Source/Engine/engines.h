@@ -27,8 +27,6 @@ class Engine : public Outfit {
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
-		void _dbg_PrintInfo( void );
-		
 		string GetFlareAnimation( void ) { return flareAnimation; }
 		short int GetFoldDrive( void ) { return foldDrive; }
 		Sound* GetSound() { return thrustsound; }

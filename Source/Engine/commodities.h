@@ -21,7 +21,6 @@ class Commodity : public Component {
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
-		void _dbg_PrintInfo( void );
 
 		int GetMSRP(void) {return msrp;}
 	private:
