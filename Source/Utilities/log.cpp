@@ -171,7 +171,7 @@ Log::Log()
 	lvlStrings[WARN]="Warn";
 	lvlStrings[ALERT]="Alert";
 	lvlStrings[NOTICE]="Notice";
-	lvlStrings[INFO]="Input";
+	lvlStrings[INPUT]="Input";
 	lvlStrings[INFO]="Info";
 	lvlStrings[VERBOSE1]="Verbose1";
 	lvlStrings[VERBOSE2]="Verbose2";

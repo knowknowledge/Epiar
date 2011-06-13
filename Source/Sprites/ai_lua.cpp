@@ -55,7 +55,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		//Power Distribution
 		{"GetShieldBooster", &AI_Lua::ShipGetShieldBooster},
 		{"GetEngineBooster", &AI_Lua::ShipGetEngineBooster},
-		{"GetDamageBooster", &AI_Lua::ShipGetDamageBooster},		
+		{"GetDamageBooster", &AI_Lua::ShipGetDamageBooster},
 		{"SetShieldBooster", &AI_Lua::ShipSetShieldBooster},
 		{"SetEngineBooster", &AI_Lua::ShipSetEngineBooster},
 		{"SetDamageBooster", &AI_Lua::ShipSetDamageBooster},
@@ -1606,7 +1606,7 @@ int AI_Lua::ShipSetLuaControlFunc(lua_State* L){
 		Player *p = (Player *)checkShip(L,1);
 		if( p == NULL ) return 0;
 		if( p->GetDrawOrder() != DRAW_ORDER_PLAYER ) {
-			return luaL_error(L, "Only Players may accept Missions");
+			return luaL_error(L, "Only Players may be controlled ");
 		}
 		string controlFunc = luaL_checkstring (L, 2);
 		(p)->SetLuaControlFunc( controlFunc );

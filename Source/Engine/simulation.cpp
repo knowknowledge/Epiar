@@ -685,7 +685,9 @@ void Simulation::LoadPlayer(string name) {
  * \return true if the player wants to quit
  */
 Player *Simulation::GetPlayer() {
-	LogMsg(WARN, "No Player has been loaded!");
+	if ( player == NULL ) {
+	    LogMsg(WARN, "No Player has been loaded!");
+	}
 	assert( player != NULL );
 	return player;
 }

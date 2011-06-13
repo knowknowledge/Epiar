@@ -121,9 +121,9 @@ DestroyPirate = {
 		local engine = "Ion Engines"
 		local plan = "Pirate"
 		local cur_ship = Ship.new(missionTable.Name,X,Y,model,engine,plan,"Independent")
-		local weapon = choose( {"Missile", "Neon Flares", "Plasma Cannon", "Strong Laser"})
-		cur_ship:AddWeapon( weapon )
-		cur_ship:AddAmmo( weapon, 100 )
+		-- local weapon = choose( {"Missile", "Neon Flares", "Plasma Cannon", "Strong Laser"})
+		-- cur_ship:AddWeapon( weapon )
+		-- cur_ship:AddAmmo( weapon, 100 )
 		for o = 1,math.random(3) do
 			cur_ship:AddOutfit( choose({"Steel Plating", "Booster", "Shield Generator", "Directional Thrusters", "Titanium Plating"}) )
 		end

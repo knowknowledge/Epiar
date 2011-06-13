@@ -546,6 +546,7 @@ void Simulation_Lua::PushSprite(lua_State *L,Sprite* s){
 		//assert(s->GetDrawOrder() & (DRAW_ORDER_SHIP | DRAW_ORDER_PLAYER | DRAW_ORDER_PLANET) );
 		luaL_getmetatable(L, EPIAR_SHIP);
 		lua_setmetatable(L, -2);
+		assert( 0 );
 	}
 }
 
