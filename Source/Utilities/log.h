@@ -75,6 +75,15 @@ class Log {
 		map<Level,string> lvlStrings;
 		Level loglvl;
 		Level loglvldefault;
+
+#ifndef _WIN32
+		map<Level,int> colors;
+		void StartTermColor( Level lvl ) { printf("\e[1;%dm", colors[lvl] ); }
+		void EndTermColor( Level lvl ) { printf("\e[m"); }
+#else
+		#define StartTermColor(lvl)
+		#define EndTermColor(lvl)
+#endif
 		
 		string filter;				/**< Message filter.*/
 		string funfilter;			/**< Function filter.*/

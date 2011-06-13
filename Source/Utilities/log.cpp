@@ -125,7 +125,14 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	// Print the message:
 	if( Options::IsLoaded() ) {
 		if( OPTION(int, "options/log/out") == 1 ) {
-			printf("%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+#ifndef _WIN32
+			StartTermColor( lvl );
+#endif
+			printf("%s (%s) - %s", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+#ifndef _WIN32
+			EndTermColor( lvl );
+#endif
+			printf( "\n" );
 		}
 
 		if( OPTION(int, "options/log/alert") == 1 ) {
@@ -172,6 +179,29 @@ Log::Log()
 	lvlStrings[DEBUG2]="Debug2";
 	lvlStrings[DEBUG3]="Debug3";
 	lvlStrings[DEBUG4]="Debug4";
+
+#ifndef _WIN32
+	// BLACK
+	colors[NONE]    = 30;
+	// Red
+	colors[FATAL]   = 31;
+	colors[CRITICAL]= 31;
+	colors[ERR]     = 31;
+	// Brown
+	colors[WARN]    = 33;
+	colors[ALERT]   = 33;
+	// Blue
+	colors[NOTICE]  = 34;
+	colors[INFO]    = 34;
+	// Green
+	colors[VERBOSE1]= 32;
+	colors[VERBOSE2]= 32;
+	colors[VERBOSE3]= 32;
+	colors[DEBUG1]  = 32;
+	colors[DEBUG2]  = 32;
+	colors[DEBUG3]  = 32;
+	colors[DEBUG4]  = 32;
+#endif
 
 	// generate the log's filename based on the time
 	logFilename = string("Epiar-Log-") + GetTimestamp() + string(".xml");
