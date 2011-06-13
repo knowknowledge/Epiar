@@ -369,7 +369,7 @@ bool Simulation::Run() {
 					// Player Name
 					win->AddChild( (new Label(80, 30, "You have died.")) )
 						->AddChild( (new Button(70, 85, 100, 30, "Drat!", ConfirmDeath, this)) )
-						->RegisterAction(Widget::Action_Close, new ObjectAction(ConfirmDeath, this) );
+						->RegisterAction(Action_Close, new ObjectAction(ConfirmDeath, this) );
 				}
 			}
 		}
@@ -580,7 +580,7 @@ void Simulation::HandleInput() {
 				100,
 				30,
 				"Unpause", UI::Close, win) );
-			win->RegisterAction(Widget::Action_Close, new ObjectAction(Unpause, this) );
+			win->RegisterAction(Action_Close, new ObjectAction(Unpause, this) );
 			pause();
 			UI::Add( win );
 		}
@@ -630,7 +630,7 @@ void Simulation::CreateNavMap( void )
 
 	// Pause now, but unpause when this window is closed.
 	pause();
-	win->RegisterAction(Widget::Action_Close, new ObjectAction(Unpause, this) );
+	win->RegisterAction(Action_Close, new ObjectAction(Unpause, this) );
 	UI::Add( win );
 
 	// Alternatively: make the Map a Modal Widget.  But this is not as nice.

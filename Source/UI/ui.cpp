@@ -479,7 +479,7 @@ void UI_Test() {
 	);
 
 	Tab* clickTestTab = new Tab("Click Test");
-	clickTestTab->RegisterAction( Widget::Action_MouseLUp, new PositionalAction( AddImage, clickTestTab, Image::Get("Resources/Graphics/shuttle.png") ) );
+	clickTestTab->RegisterAction( Action_MouseLUp, new PositionalAction( AddImage, clickTestTab, Image::Get("Resources/Graphics/shuttle.png") ) );
 	((Container*)UI::Search("/'A Window'/'TEST TABS'/"))->AddChild( clickTestTab );
 
 	// Check that the UI Searching is working

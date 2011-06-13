@@ -71,7 +71,7 @@ void CheckOption( void* checkbox, void*option )
 Checkbox* OptionBox( const char* option, string name, int x, int y )
 {
 	Checkbox *box = new Checkbox( x, y, OPTION(int, option), name);
-	box->RegisterAction( Widget::Action_MouseLUp, new MessageAction( CheckOption, box, (void*)option ) );
+	box->RegisterAction( Action_MouseLUp, new MessageAction( CheckOption, box, (void*)option ) );
 	return box;
 }
 
@@ -84,7 +84,7 @@ void SlideOption( void* slider, void*option )
 Slider* OptionSlider( const char* option, string name, int x, int y )
 {
 	Slider *slider = new Slider( x, y, 80, 16, name, OPTION(float, option) );
-	slider->RegisterAction( Widget::Action_MouseDrag, new MessageAction( SlideOption, slider, (void*)option ) );
+	slider->RegisterAction( Action_MouseDrag, new MessageAction( SlideOption, slider, (void*)option ) );
 	return slider;
 }
 
@@ -154,11 +154,11 @@ void Dialogs::OptionsWindow()
 	tab->AddChild( OptionBox( "options/sound/buttons", "Buttons sounds", 20, (yoff+=20) ) );
 
 	Slider *sound = OptionSlider( "options/sound/soundvolume", "Sound Volume", 20, (yoff+=30));
-	sound->RegisterAction( Widget::Action_MouseLUp, new ObjectAction(SetSoundVolume, sound) );
+	sound->RegisterAction( Action_MouseLUp, new ObjectAction(SetSoundVolume, sound) );
 	tab->AddChild( sound );
 
 	Slider *music = OptionSlider( "options/sound/musicvolume", "Music Volume", 20, (yoff+=30));
-	music->RegisterAction( Widget::Action_MouseLUp, new ObjectAction(SetMusicVolume, music) );
+	music->RegisterAction( Action_MouseLUp, new ObjectAction(SetMusicVolume, music) );
 	tab->AddChild( music );
 	}
 

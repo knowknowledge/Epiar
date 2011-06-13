@@ -38,6 +38,30 @@
 
 /** @} */
 
+enum action_type{
+	Action_MouseDrag,
+	Action_MouseMotion,
+	Action_MouseEnter,
+	Action_MouseLeave,
+	Action_MouseLUp,
+	Action_MouseLDown,
+	Action_MouseLRelease,
+	Action_MouseMUp,
+	Action_MouseMDown,
+	Action_MouseMRelease,
+	Action_MouseRUp,
+	Action_MouseRDown,
+	Action_MouseRRelease,
+	Action_MouseWUp,
+	Action_MouseWDown,
+	Action_KeyboardEnter,
+	Action_KeyboardLeave,
+	//Action_KeyPress
+	Action_Close,
+	
+	Action_Last // Always the last action type
+}; ///< Actions that can be registered.
+
 class Widget {
 	public:
 		Widget( void );
@@ -67,30 +91,6 @@ class Widget {
 		bool Contains( int relx, int rely );
 
 		virtual xmlNodePtr ToNode();
-
-		enum action_type{
-			Action_MouseDrag,
-			Action_MouseMotion,
-			Action_MouseEnter,
-			Action_MouseLeave,
-			Action_MouseLUp,
-			Action_MouseLDown,
-			Action_MouseLRelease,
-			Action_MouseMUp,
-			Action_MouseMDown,
-			Action_MouseMRelease,
-			Action_MouseRUp,
-			Action_MouseRDown,
-			Action_MouseRRelease,
-			Action_MouseWUp,
-			Action_MouseWDown,
-			Action_KeyboardEnter,
-			Action_KeyboardLeave,
-			//Action_KeyPress
-			Action_Close,
-			
-			Action_Last // Always the last action type
-		}; ///< Actions that can be registered.
 
 		virtual Widget* RegisterAction( action_type type, Action* action );
 		virtual bool Activate( action_type type, int x, int y );

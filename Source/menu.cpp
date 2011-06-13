@@ -103,8 +103,8 @@ void Menu::ChangePicture( void* picture, void* image) {
 }
 void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
 	Picture* pic = ((Picture*)picture);
-	pic->RegisterAction( Widget::Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
-	pic->RegisterAction( Widget::Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
+	pic->RegisterAction( Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
+	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
 }
 
 /** Epiar's Main Menu
@@ -237,7 +237,7 @@ void Menu::SetupGUI()
 
 	// New Button
 	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
-	play->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_New ) );
+	play->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_New ) );
 	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
 	UI::Add( play );
@@ -246,7 +246,7 @@ void Menu::SetupGUI()
 	if( (Players::Instance()->Size() > 0) )
 	{
 		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
-		load->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Load ) );
+		load->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Load ) );
 		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
 		                       Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
 		UI::Add( load );
@@ -254,21 +254,21 @@ void Menu::SetupGUI()
 
 	// Editor Button
 	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
-	edit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Editor ) );
+	edit->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Editor ) );
 	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
 	UI::Add( edit );
 
 	// Options Button
 	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
+	options->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
 	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
 	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
 	UI::Add( options );
 
 	// Exit Button
 	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
-	exit->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Exit ) );
+	exit->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Exit ) );
 	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
 	UI::Add( exit );
@@ -385,7 +385,7 @@ void Menu::StartGame()
 	// Continue Button
 	Picture *continueButton = NULL;
 	continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
-	continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
+	continueButton->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
 	SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
 						  Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
 	UI::Add( continueButton );
