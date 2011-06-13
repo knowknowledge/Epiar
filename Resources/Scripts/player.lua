@@ -303,7 +303,7 @@ function hailSprite()
 end
 
 function hailPlanet()
-	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+	if UI.search("/Window'Communication channel'/") ~= nil then return end -- Abort if the hail dialog is already open
 
 	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
 
@@ -316,7 +316,7 @@ function hailPlanet()
 	Epiar.pause()
 
 	-- show the dialog
-	hailDialog = UI.newWindow(100, 50, 400, 150, "Communication channel")
+	local hailDialog = UI.newWindow(100, 50, 400, 150, "Communication channel")
 	hailReplyLabel = UI.newLabel(50, 50, "")
 
 	hailDialog:add( UI.newLabel(50, 30, string.format("Opened a channel to %s:", targettedPlanet:GetName() ) ) )
@@ -330,7 +330,7 @@ end
 
 ---Hail target ship
 function hailShip()
-	if hailDialog ~= nil then return end -- Abort if the hail dialog is already open
+	if UI.search("/Window'Communication channel'/") ~= nil then return end -- Abort if the hail dialog is already open
 
 	if PLAYER:GetName() == nil then
 		HUD.newAlert("You can't hail a ship when you're dead!")
@@ -413,11 +413,10 @@ function hailShip()
 end
 
 function doHailSay(said)
-	if hailDialog == nil then return end
+	if UI.search("/Window'Communication channel'/") == nil then return end
 	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
 	local spritetype = targettedSprite:GetType()
-
-	print ("said "..said)
+	local reply = hailResponses[said]
 
 	if said == "Your ship looks like junk." then
 		-- when an AI is in "hostile" mode, it will not abandon its target
@@ -425,12 +424,16 @@ function doHailSay(said)
 		AIData[ HUD.getTarget() ].hostile = 1
 		HUD.newAlert( (string.format("%s: We'll see about that!", targettedSprite:GetModelName() ) ) )
 		doHailEnd()
+		return
 	elseif said == "Goodbye" then
-		HUD.newAlert (string.format("%s: Goodbye, %s.", targettedSprite:GetModelName(), PLAYER:GetName() ) ) 
+		HUD.newAlert (string.format("%s: Goodbye, %s.", targettedSprite:GetModelName(), PLAYER:GetName() ) )
 		doHailEnd()
+		return
+	elseif reply == nil then
+		HUD.newAlert (string.format("%s: I think we're done here.", targettedSprite:GetModelName() ) )
+		doHailEnd()
+		return
 	end
-
-	local reply = hailResponses[said]
 
 	hailReplyLabel.setText(hailReplyLabel, (string.format("%s: %s",targettedSprite:GetModelName(), reply) ) )
 	
@@ -457,7 +460,7 @@ end
 	
 
 function doHailGreet()
-	if hailDialog == nil then return end
+	if UI.search("/Window'Communication channel'/") == nil then return end
 	local targettedSprite = Epiar.getSprite( HUD.getTarget() )
 	local spritetype = targettedSprite:GetType()
 
@@ -475,7 +478,7 @@ function doHailGreet()
 end
 
 function doHailInsult()
-	if hailDialog == nil then return end
+	if UI.search("/Window'Communication channel'/") == nil then return end
 	local targettedPlanet = Epiar.getSprite( HUD.getTarget() )
 
 	if targettedPlanet:GetForbidden() == 1 then
@@ -500,12 +503,13 @@ end
 -- Beg For Mercy
 -- WHERE SHOULD THIS BE USED?
 function doHailBFM()
-	if hailDialog == nil then return end
+	if UI.search("/Window'Communication channel'/") == nil then return end
 	local targettedShip = Epiar.getSprite( HUD.getTarget() )
 
 	if didBFM then
 		HUD.newAlert(string.format("The %s closed the channel.", targettedShip:GetModelName() ) )
 		doHailEnd()
+		return
 	end
 
 	local r = math.random( 8 )
@@ -522,6 +526,7 @@ function doHailBFM()
 end
 	
 function doHailEnd()
+	local hailDialog = UI.search("/Window'Communication channel'/")
 	if hailDialog == nil then return end
 
 	Epiar.unpause()
