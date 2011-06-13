@@ -328,7 +328,6 @@ void Menu::CreateLoadWindow()
 
 void Menu::StartGame()
 {
-	int button_x = Video::GetWidth() - 300;
 	string playerName;
 	string simName = "default";
 
@@ -360,10 +359,14 @@ void Menu::StartGame()
 	// Load the Simulation
 	if( !simulation.Load( simName ) )
 	{
-		LogMsg(ERR,"Failed to load '%s' successfully",simName.c_str());
+		LogMsg(ERR,"Failed to load the Simulation '%s' successfully",simName.c_str());
 		return;
 	}
-	simulation.SetupToRun();
+	if( !simulation.SetupToRun() )
+	{
+		LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.",simName.c_str());
+		return;
+	}
 
 	UI::SwapScreens( "In Game", menuSplash, gameSplash );
 	
@@ -429,7 +432,6 @@ void Menu::CreateEditWindow()
 
 void Menu::StartEditor()
 {
-	int button_x = Video::GetWidth() - 300;
 	string simName = "default";
 	assert( UI::Search("/Window'Editor'/Tabs/Tab/") != NULL );
 	assert( false == simulation.isLoaded() );
@@ -438,7 +440,6 @@ void Menu::StartEditor()
 	UI::Close( load ); // Load
 	play = NULL;
 	load = NULL;
-
 
 	// Since the Random Universe Editor is currently broken, disable this feature here.
 	SETOPTION( "options/simulation/random-universe", 0 );
@@ -464,7 +465,11 @@ void Menu::StartEditor()
 		simulation.New( simName );
 	}
 
-	simulation.SetupToEdit();
+	if( !simulation.SetupToEdit() )
+	{
+		LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.",simName.c_str());
+		return;
+	}
 
 	// Only attempt to Edit if the Simulation has loaded
 	assert( simulation.isLoaded() );
