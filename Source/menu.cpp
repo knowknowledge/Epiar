@@ -174,10 +174,7 @@ void Menu::Main_Menu( void ) {
 
 			case Menu_Options:
 			{
-				if( Lua::CurrentState() != NULL )
-				{
-					Lua::Call("options");
-				}
+				Dialogs::OptionsWindow();
 				break;
 			}
 
@@ -263,6 +260,12 @@ void Menu::SetupGUI()
 	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
 	UI::Add( edit );
 
+	// Options Button
+	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
+	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
+	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
+	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
+	UI::Add( options );
 
 	// Exit Button
 	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
@@ -334,13 +337,6 @@ void Menu::StartGame()
 	UI::Close( load ); // Load
 	play = NULL;
 	load = NULL;
-
-	// Options Button
-	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
-	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
-	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
-	UI::Add( options );
 
 	// Gather Player Information
 	if( Menu_Confirm_New == clicked )
@@ -444,12 +440,6 @@ void Menu::StartEditor()
 	play = NULL;
 	load = NULL;
 
-	// Options Button
-	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
-	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
-	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
-	UI::Add( options );
 
 	// Since the Random Universe Editor is currently broken, disable this feature here.
 	SETOPTION( "options/simulation/random-universe", 0 );

@@ -36,6 +36,8 @@ bool UI::modalEnabled = false;
 /**\brief This is the default UI Font.
  */
 Font *UI::font = NULL;
+Sound *UI::beep = NULL;
+Sound *UI::hover = NULL;
 
 /**\brief Destroys the UI interface and all UI elements.
  */
@@ -43,6 +45,8 @@ UI::~UI() {
 	UI::CloseAll();
 
 	delete font;
+	delete beep;
+	delete hover;
 }
 
 /**\brief Initializes the User Interface.
@@ -56,6 +60,10 @@ bool UI::Initialize( string screenName ) {
 	font = new Font( SKIN( "Skin/UI/Default/Font" ) );
 	font->SetColor( Color( SKIN( "Skin/UI/Default/Color" ) ) );
 	font->SetSize( convertTo<int>( SKIN("Skin/UI/Default/Size") ) );
+
+ 
+	beep = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
+	hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 
 	return true;
 }
@@ -93,10 +101,15 @@ void UI::CloseAll( void ) {
  *          breadth-first search to find the specified widget.
  */
 void UI::Close( Widget *widget ) {
-	if( widget) {
+	if( IsAttached( widget ) )
+	{
 		LogMsg(INFO, "Closing %s named %s.", widget->GetType().c_str(), widget->GetName().c_str() );
 		UI::currentScreen->DelChild( widget );
 	}
+}
+
+void UI::Close( void *unsafe) {
+	Close( (Widget*)unsafe );
 }
 
 /**\brief Called when a Widget should be drawn later
@@ -399,6 +412,10 @@ void UI::ModalDialog( Container *widget ) {
 	delete currentScreen;
 	currentScreen = backgroundScreen;
 	backgroundScreen = NULL;
+
+	// Update the Timer so that the time spent inside the Modal widget does not
+	// count as 'Lag Time'.
+	Timer::Update();
 }
 
 void UI::ReleaseModality() {
@@ -443,7 +460,7 @@ void UI_Test() {
 			->AddChild( (new Tab("Some Inputs"))
 				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
 				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
-				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f, "" )) )
+				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f )) )
 				->AddChild( (new Button(10, 300, 100, 30, "Dummy", NULL )) )
 				->AddChild( (new Dropdown(200, 200, 100, 30))
 					->AddOption("Lorem")
@@ -523,13 +540,9 @@ void UI_Test() {
 	);
 }
 
-void tempCallback( ) {
-	UI::ReleaseModality();
-}
-
 void ModalityTest() {
 	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
-	window->AddChild( (new Button(100, 135, 100, 30, "Release", tempCallback )) );
+	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
 	UI::ModalDialog( window );
 }
 

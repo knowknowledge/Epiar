@@ -44,8 +44,11 @@ class UI {
 		
 		static Widget *Add( Widget *widget );
 		static void Draw( void );
+
 		static void CloseAll( void );
 		static void Close( Widget *widget );
+		static void Close( void *widget );
+
 		static void HandleInput( list<InputEvent> & events );
 		static bool Active(void);
 		
@@ -61,6 +64,8 @@ class UI {
 		static void SwapScreens(string newname, Image* oldBackground, Image* newBackground );
 
 		static Font* font;
+		static Sound* beep;
+		static Sound* hover;
 
 		static void Defer( Widget*, int x, int y );
 		static void DrawDeferred( void );

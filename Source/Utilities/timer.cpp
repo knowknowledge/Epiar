@@ -46,6 +46,16 @@ Uint32 Timer::GetTicks( void )
 	return( lastLoopTick );
 }
 
+/** \brief Get the true real-time tick.
+ *  \details Use GetTicks() for gametime ticks, use this for animations that
+ *  need to occur while the game is paused.
+ *
+ */
+Uint32 Timer::GetRealTicks( void )
+{
+	return SDL_GetTicks();
+}
+
 void Timer::Delay( int waitMS ) {
 //#ifdef EPIAR_CAP_FRAME
 //	Uint32 ticksElapsed = SDL_GetTicks() - lastLoopTick;

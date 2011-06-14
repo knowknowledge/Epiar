@@ -19,6 +19,7 @@ class Timer {
 		static int Update( void );
 		static void Delay( int waitMS );
 		static Uint32 GetTicks( void );
+		static Uint32 GetRealTicks( void );
 		
 		static float GetDelta( void );
 

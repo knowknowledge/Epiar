@@ -21,21 +21,16 @@
  * \todo Some calculations are unnecessary here.
  */
 
-/**\brief Constructs a slider with given parameters and a Lua callback
+/**\brief Constructs a slider with given parameters
  */
-Slider::Slider( int x, int y, int w, int h, const string& label,
-		float value,
-		const string& callback):
-		minval( 0.000f ), maxval( 1.000f ), val( value ),
-		lua_callback( string(callback) )
+Slider::Slider( int x, int y, int w, int h, const string& label, float value):
+		minval( 0.000f ), maxval( 1.000f ), val( value )
 {
 	left = Image::Get( "Resources/Skin/ui_slider_left.png" );
 	right = Image::Get( "Resources/Skin/ui_slider_right.png" );
 	background = Image::Get( "Resources/Skin/ui_slider_background.png" );
 	bar = Image::Get( "Resources/Skin/ui_slider_bar.png" );
 	handle = Image::Get( "Resources/Skin/ui_slider_handle.png" );
-
-	LogMsg(INFO, "New Slider '%s' with callback = %s\n", label.c_str(), callback.c_str() );
 
 	this->x = x;
 	this->y = y;
@@ -84,38 +79,33 @@ void Slider::Draw( int relx, int rely ){
 	snprintf(value,20,"%.2f",this->val);
 	UI::font->Render( x + markerx_pix, y, value,Font::CENTER,Font::BOTTOM );
 
+	UI::font->RenderTight( x + GetW() + 5, y, name );
+
 	Widget::Draw(relx, rely);
 }
 
 /**\brief Slider mouse drag call back.
  */
 bool Slider::MouseDrag( int xi, int yi ){
-	Widget::MouseDrag( xi, yi );
 	this->SetVal(this->PixelToVal(xi - GetX()));
-	if( "" != this->lua_callback){
-		/// \todo This will be replaced with Lua::Call
-		std::ostringstream fullcmd;
-		fullcmd << lua_callback << "(" << this->GetVal() << ")";
-		if ( !fullcmd )
-			LogMsg(ERR,"Bad conversion of float to string");
-		Lua::Run(fullcmd.str());
-	}
+	Widget::MouseDrag( xi, yi );
 	return true;
 }
 
 /**\brief Slider mouse down call back.
  */
 bool Slider::MouseLDown( int xi, int yi ){
-	Widget::MouseLDown( xi, yi );
 	this->SetVal(this->PixelToVal(xi - GetX()));
-	if( "" != this->lua_callback){
-		/// \todo This will be replaced with Lua::Call
-		std::ostringstream fullcmd;
-		fullcmd << lua_callback << "(" << this->GetVal() << ")";
-		if ( !fullcmd )
-			LogMsg(ERR,"Bad conversion of float to string");
-		Lua::Run(fullcmd.str());
-	}
+	Widget::MouseLDown( xi, yi );
+	return true;
+}
+
+/**\brief Slider mouse down call back.
+ */
+bool Slider::MouseLUp( int xi, int yi ){
+	this->SetVal(this->PixelToVal(xi - GetX()));
+	Widget::MouseLDown( xi, yi );;
+	if(OPTION(int, "options/sound/buttons")) UI::beep->Play();
 	return true;
 }
 

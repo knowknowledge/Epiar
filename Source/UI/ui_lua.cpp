@@ -269,7 +269,9 @@ int UI_Lua::newSlider(lua_State *L){
     lua_setmetatable(L, -2);
 	
 	if (n == 7) {
-		*slider = new Slider(x,y,w,h,label,position,callback);
+		*slider = new Slider(x,y,w,h,label,position);
+		// TODO Calbacks are not implemented correctly right now.
+		LogMsg(WARN, "Slider Callbacks are not currently implemented.");
 	} else if (n == 6) {
 		*slider = new Slider(x,y,w,h,label,position);
 	} else {

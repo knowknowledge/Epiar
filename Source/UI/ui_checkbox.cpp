@@ -56,9 +56,9 @@ void Checkbox::Draw( int relx, int rely ) {
 }
 
 bool Checkbox::MouseLUp( int xi, int yi ) {
-	if(checked) checked = false;
-	else checked = true;
+	checked = !checked;
 	Widget::MouseLUp( xi, yi );
+	if(OPTION(int, "options/sound/buttons")) UI::beep->Play();
 	return true;
 }
 

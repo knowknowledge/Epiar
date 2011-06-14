@@ -11,6 +11,7 @@
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
 #include "Sprites/effects.h"
+#include "Utilities/timer.h"
 
 /** \addtogroup UI
  * @{
@@ -135,6 +136,10 @@ void Map::Draw( int relx, int rely )
 
 		switch( (*iter)->GetDrawOrder() ) {
 			case DRAW_ORDER_PLAYER:
+				Video::DrawFilledCircle( pos, (Timer::GetRealTicks()%5000)/200 + 3, col, alpha - (Timer::GetRealTicks()%5000)/5000.0f );
+				Video::DrawFilledCircle( pos, 2, col, alpha );
+				break;
+
 			case DRAW_ORDER_SHIP:
 			case DRAW_ORDER_WEAPON:
 			case DRAW_ORDER_EFFECT:

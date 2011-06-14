@@ -12,9 +12,7 @@
 
 class Slider : public Widget {
 	public:
-		Slider( int x, int y, int w, int h, const string& label,
-			float value = 0.5f,
-			const string& callback= "");
+		Slider( int x, int y, int w, int h, const string& label, float value = 0.5f);
 
 		float GetVal( void ){ return this->val;};
 		float GetMin( void ){ return this->minval;};
@@ -30,6 +28,7 @@ class Slider : public Widget {
 	protected:
 		bool MouseDrag( int xi, int yi );
 		bool MouseLDown( int xi, int yi );
+		bool MouseLUp( int xi, int yi );
 
 	private:
 		// Utility functions to convert between pixel and values
@@ -37,9 +36,6 @@ class Slider : public Widget {
 		float PixelToVal( int pixels);
 
 		float minval,maxval,val;
-		
-		// Callback
-		string lua_callback;
 
 		Image *left;
 		Image *right;

@@ -42,10 +42,6 @@ void Button::Initialize( int x, int y, int w, int h, string label ) {
 
 	assert(bitmap_normal);
 	assert(bitmap_mouseover);
-	
-	// Load sounds
-	this->sound_click = Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" );
-	this->sound_hover = Sound::Get( "Resources/Audio/Interface/28820__junggle__btn010.ogg" );
 }
 
 /**\brief Constructs a button with a C++ callback.*/
@@ -70,11 +66,8 @@ Button::~Button() {
 //	DO NOT DO THIS - it's just a pointer, never allocated - delete bitmap_current;
 	//delete bitmap_normal;
 	//delete bitmap_pressed;
-	//delete sound_click;
-	//delete sound_hover;
 
 	bitmap_normal = bitmap_pressed = NULL;
-	sound_click = sound_hover = NULL;
 }
 
 /**\brief Draws the button.*/
@@ -102,7 +95,7 @@ void Button::Draw( int relx, int rely ) {
 /**\brief When Left mouse is down on the button.*/
 bool Button::MouseLDown( int xi, int yi ) {
 	Widget::MouseLDown( xi, yi );
-	if(OPTION(int, "options/sound/buttons")) this->sound_click->Play();
+	if(OPTION(int, "options/sound/buttons")) UI::beep->Play();
 	bitmap_current = bitmap_pressed;
 	return true;
 }
