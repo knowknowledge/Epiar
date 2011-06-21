@@ -35,6 +35,7 @@ Picture *Menu::load = NULL;
 Picture *Menu::edit = NULL;
 Picture *Menu::options = NULL;
 Picture *Menu::exit = NULL;
+Picture *Menu::continueButton = NULL;
 
 // Currently Static functions are the only way I could think of to have C only 
 void Menu::SetMenuOption( void* value ) {
@@ -164,8 +165,12 @@ void Menu::Main_Menu( void ) {
 				// Only attempt to Run if the Simulation has loaded
 				assert( simulation.isLoaded() );
 				UI::SwapScreens( "In Game", menuSplash, gameSplash );
-				simulation.Run();
+				bool alive = simulation.Run();
 				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
+				if( !alive )
+				{
+					UI::Close( continueButton );
+				}
 				break;
 			}
 
@@ -328,8 +333,10 @@ void Menu::StartGame()
 
 	UI::Close( play ); // Play
 	UI::Close( load ); // Load
+	UI::Close( edit ); // Edit
 	play = NULL;
 	load = NULL;
+	edit = NULL;
 
 	// Options Button
 	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
@@ -377,16 +384,19 @@ void Menu::StartGame()
 	}
 	
 	// Run the Simulation
-	simulation.Run();
+	bool alive = simulation.Run();
 	UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
 
 	// Continue Button
-	Picture *continueButton = NULL;
-	continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
-	continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
-	SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
-						  Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
-	UI::Add( continueButton );
+	if( alive )
+	{
+		continueButton = NULL;
+		continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
+		continueButton->RegisterAction( Widget::Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
+		SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
+							  Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
+		UI::Add( continueButton );
+	}
 }
 
 void Menu::CreateEditWindow()
