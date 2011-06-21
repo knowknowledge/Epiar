@@ -79,6 +79,7 @@ int Lua::Run( string line, bool allowReturns ) {
 	if( luaL_dostring(L,line.c_str()) ) {
 		LogMsg(ERR,"Error running '%s': %s", line.c_str(), lua_tostring(L, -1));
 		lua_settop(L, stack_before);  /* pop error message from the stack */
+		Lua::stackDump( L );
 		return 0;
 	}
 
@@ -137,8 +138,11 @@ bool Lua::Call(const char *func, const char *sig, ...) {
 	/* do the call */
 	resultcount = strlen(sig);  /* number of expected results */
 	if (lua_pcall(L, narg, resultcount, 0) != 0)  /* do the call */
+	{
 		luaL_error(L, "error running function `%s': %s",
 				func, lua_tostring(L, -1));
+		Lua::stackDump( L );
+	}
 
 	/* retrieve results */
 	nres = -resultcount;  /* stack index of first result */
@@ -213,6 +217,7 @@ void Lua::RegisterFunctions() {
 
 int Lua::ErrorCatch(lua_State *L) {
 	LogMsg(ERR,"Fatal Error in Lua '%s'", lua_tostring(L, lua_gettop(L)));
+	Lua::stackDump( L );
 	assert(0);
 	exit( -500 );
 }
