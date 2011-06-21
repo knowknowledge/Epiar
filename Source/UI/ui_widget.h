@@ -97,6 +97,7 @@ class Widget {
 
 		// Only allow Container to send events
 		friend class Container;
+		friend class UI;
 
 	protected:
 

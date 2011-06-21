@@ -30,6 +30,7 @@ Container *UI::currentScreen = NULL;
 map<string,Container*> UI::screens;
 int UI::zlayer = 0;
 list<UI::draw_location> UI::deferred;
+list<UI::draw_location> UI::hovering;
 Container *UI::backgroundScreen = NULL;
 bool UI::modalEnabled = false;
 
@@ -94,6 +95,7 @@ void UI::CloseAll( void ) {
 	LogMsg(INFO, "Closing all Widgets." );
 	UI::currentScreen->Empty();
 	UI::deferred.clear();
+	UI::hovering.clear();
 }
 
 /**\brief This removes a single widget.
@@ -130,12 +132,14 @@ void UI::DrawDeferred( void ) {
 	// Ensure that the zlayer has been correctly reset
 	assert(zlayer == 0);
 	zlayer = 0;
+	hovering.clear();
 
 	// Draw the Deferred Widgets
 	list<draw_location>::iterator iter = deferred.begin();
 	while( deferred.empty() == false ) {
 		++zlayer;
 		draw_location now_draw = deferred.front();
+		hovering.push_back( now_draw );
 		deferred.pop_front();
 
 		if( IsAttached(now_draw.widget) ) {
@@ -333,17 +337,39 @@ Container* UI::NewScreen( string name ) {
 
 /**\brief Handles UI keyboard events.*/
 bool UI::HandleKeyboard( InputEvent i ) {
-	switch(i.kstate) {
-		case KEYTYPED:
-			return UI::currentScreen->KeyPress( i.key );
-		default:
-			return false;
+	if(i.kstate == KEYTYPED) {
+		// Attempt to send Messages to Floating Widgets
+		list<draw_location>::iterator iter;
+		for( iter = hovering.begin(); iter != hovering.end(); ++iter)
+		{
+			if( IsAttached( iter->widget ) )
+			{
+				if( (iter->widget)->KeyPress( i.key ) )
+					return true;
+			}
+		}
+		return UI::currentScreen->KeyPress( i.key );
 	}
+	return false;
 }
 
 /**\brief Handles UI mouse events.
  */
 bool UI::HandleMouse( InputEvent i ) {
+	// Attempt to send Messages to Floating Widgets
+	list<draw_location>::iterator iter;
+	for( iter = hovering.begin(); iter != hovering.end(); ++iter)
+	{
+		if( IsAttached( iter->widget ) && (iter->widget)->Contains(i.mx,i.my) )
+		{
+			if( DispatchMouse( iter->widget, i ) )
+				return true;
+		}
+	}
+	return DispatchMouse( UI::currentScreen, i );
+}
+
+bool UI::DispatchMouse( Widget* widget, InputEvent i ) {
 	int x, y;
 	
 	// mouse coordinates associated with the mouse event
@@ -352,23 +378,23 @@ bool UI::HandleMouse( InputEvent i ) {
 	
 	switch(i.mstate) {
 		case MOUSEMOTION:		// Movement of the mouse
-			return UI::currentScreen->MouseMotion( x, y );
+			return widget->MouseMotion( x, y );
 		case MOUSELUP:			// Left button up
-			return UI::currentScreen->MouseLUp( x, y );
+			return widget->MouseLUp( x, y );
 		case MOUSELDOWN:		// Left button down
-			return UI::currentScreen->MouseLDown( x, y );
+			return widget->MouseLDown( x, y );
 		case MOUSEMUP:			// Middle button up
-			return UI::currentScreen->MouseMUp( x, y );
+			return widget->MouseMUp( x, y );
 		case MOUSEMDOWN:		// Middle button down
-			return UI::currentScreen->MouseMDown( x, y );
+			return widget->MouseMDown( x, y );
 		case MOUSERUP:			// Right button up
-			return UI::currentScreen->MouseRUp( x, y );
+			return widget->MouseRUp( x, y );
 		case MOUSERDOWN:		// Right button down
-			return UI::currentScreen->MouseRDown( x, y );
+			return widget->MouseRDown( x, y );
 		case MOUSEWUP:			// Scroll wheel up
-			return UI::currentScreen->MouseWUp( x, y );
+			return widget->MouseWUp( x, y );
 		case MOUSEWDOWN:		// Scroll wheel down
-			return UI::currentScreen->MouseWDown( x, y );
+			return widget->MouseWDown( x, y );
 		default:
 			LogMsg(WARN, "Unhandled UI mouse input detected.");
 		}

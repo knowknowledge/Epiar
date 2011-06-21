@@ -78,6 +78,7 @@ class UI {
 		static Container* NewScreen( string name );
 		static bool HandleKeyboard( InputEvent i );
 		static bool HandleMouse( InputEvent i );
+		static bool DispatchMouse( Widget* widget, InputEvent i );
 
 		// Use a currentScreen widget to handle events,
 		// so we don't need to duplicate code.
@@ -92,6 +93,7 @@ class UI {
 		} draw_location;
 
 		static list<draw_location> deferred;
+		static list<draw_location> hovering;
 
 		static Container *backgroundScreen;
 		static bool modalEnabled;
