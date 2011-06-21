@@ -58,14 +58,14 @@ void Menu::ErasePlayer( void* value ) {
 		else
 			Dialogs::Alert("A problem occurred while deleting the player.");
 
-		CloseLoadGameUI( NULL );
+		CloseLoadGameUI( );
 	}
 }
-void Menu::CloseNewGameUI( void* value ) {
+void Menu::CloseNewGameUI( ) {
 	Widget *newGameWnd = UI::Search("/Window'New Game'/");
 	UI::Close( newGameWnd );
 }
-void Menu::CreateNewGameCB( void* value ) {
+void Menu::CreateNewGameCB( ) {
 	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
 	Players *players = Players::Instance();
 
@@ -81,15 +81,15 @@ void Menu::CreateNewGameCB( void* value ) {
 	clicked = Menu_Confirm_New;
 	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 }
-void Menu::CloseLoadGameUI( void* value ) {
+void Menu::CloseLoadGameUI( ) {
 	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
 	UI::Close( newGameWnd );
 }
-void Menu::CloseEditorUI( void* value ) {
+void Menu::CloseEditorUI( ) {
 	Widget *editorWnd = UI::Search("/Window'Editor'/");
 	UI::Close( editorWnd );
 }
-void Menu::RandomizeSeed( void* value ) {
+void Menu::RandomizeSeed( ) {
 	char seed[20];
 	snprintf(seed, sizeof(seed), "%d", rand() );
 	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
@@ -298,10 +298,10 @@ void Menu::CreateNewWindow()
 		->AddChild( (new Checkbox(15, 60, 0, "Random Universe")) )
 		->AddChild( (new Label(15, 80, "Seed:")) )
 		->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
-		->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed, NULL )) )
+		->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed )) )
 	);
-	win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI, NULL )) );
-	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewGameCB, NULL)) );
+	win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI )) );
+	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewGameCB)) );
 }
 
 void Menu::CreateLoadWindow()
@@ -327,7 +327,7 @@ void Menu::CreateLoadWindow()
 		);
 	}
 	win->AddCloseButton();
-	//win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI, NULL ) ) );
+	//win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI ) ) );
 	return;
 }
 
@@ -437,7 +437,7 @@ void Menu::CreateEditWindow()
 		)
 	);
 	editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", SetMenuOption, &menu_Confirm_Editor ) );
-	editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &CloseEditorUI, NULL ) );
+	editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &CloseEditorUI ) );
 }
 
 void Menu::StartEditor()
@@ -455,7 +455,6 @@ void Menu::StartEditor()
 	SETOPTION( "options/simulation/random-universe", 0 );
 
 	Tab* activeTab = ((Tabs*)UI::Search("/Window'Editor'/Tabs/"))->GetActiveTab();
-	printf( "Active Tab: %s\n", activeTab->GetName().c_str() );
 	if( activeTab->GetName() == "Edit" ) {
 		simName = ((Dropdown*)activeTab->Search("/Dropdown/"))->GetText();
 		if( !simulation.Load( simName ) )

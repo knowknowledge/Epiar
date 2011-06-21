@@ -74,13 +74,13 @@ class Menu {
 
 	// GUI Callbacks
 	static void ChangePicture( void* picture, void* image);
-	static void CloseEditorUI( void* value );
-	static void CloseLoadGameUI( void* value );
-	static void CloseNewGameUI( void* value );
-	static void CreateNewGameCB( void* value );
+	static void CloseEditorUI( );
+	static void CloseLoadGameUI( );
+	static void CloseNewGameUI( );
+	static void CreateNewGameCB( );
 	static void ErasePlayer( void *value );
 	static void LoadPlayer( void* value );
-	static void RandomizeSeed( void* value );
+	static void RandomizeSeed( );
 
 };
 
