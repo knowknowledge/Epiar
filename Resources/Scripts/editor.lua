@@ -117,7 +117,7 @@ EditorGetters = {
 function componentViewer(kind, listFunc)
 	if UI.search( string.format("/Window%q/", kind) ) ~= nil then return end
 	
-	-- Delete any unmoved component windows
+	-- Delete any unmoved component viewer windows
 	while true do
 		win = UI.search( string.format("/Window(%d,%d)/", 10, 40) )
 		if win == nil then break end
@@ -141,6 +141,14 @@ function showComponent(kind, name)
 	local height=700
 	local width=250
 	local theInfo = EditorGetters[ kind ]( name )
+
+	-- Delete any unmoved component windows
+	while true do
+		win = UI.search( string.format("/Window(%d,%d)/", 150, 40) )
+		if win == nil then break end
+		win:close()
+	end
+
 	local theWin = UI.newWindow(150, 40, width, height, windowName )
 
 	if kind=="Planet" and name~="" then
@@ -357,6 +365,14 @@ end
 --- View technology
 function technologyViewer()
 	if UI.search( "/Window'Technologies'/" ) ~= nil then return end
+
+	-- Delete any unmoved component windows
+	while true do
+		win = UI.search( string.format("/Window(%d,%d)/", 10, 40) )
+		if win == nil then break end
+		win:close()
+	end
+
 	local technologies = Epiar.technologies()
 	technologiesWindow = UI.newWindow(10,40,140,(#technologies)*30+90,"Technologies")
 	for i = 1,#technologies do
@@ -400,6 +416,14 @@ function showTechInfo(name)
 	local windowName = "Technology: "..name
 	if name == "" then windowName = "New Technology" end
 	if UI.search( string.format("/Window%q/", windowName) ) ~= nil then return end
+
+	-- Delete any unmoved component windows
+	while true do
+		win = UI.search( string.format("/Window(%d,%d)/", 150, 40) )
+		if win == nil then break end
+		win:close()
+	end
+
 	-- Create widgets
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()

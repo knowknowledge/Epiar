@@ -353,7 +353,6 @@ void Menu::StartGame()
 		SETOPTION( "options/simulation/random-seed", seed );
 		playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
 		simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
-		UI::Close( UI::Search("/Window'New Game'/") );
 	}
 	else if( Menu_Confirm_Load == clicked )
 	{
@@ -361,7 +360,6 @@ void Menu::StartGame()
 		SETOPTION( "options/simulation/random-universe", israndom );
 		SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
 		playerName = playerToLoad->GetName();
-		UI::Close( UI::Search("/Window'Load Game'/") );
 	}
 	
 	// Load the Simulation
@@ -375,6 +373,10 @@ void Menu::StartGame()
 		LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.",simName.c_str());
 		return;
 	}
+
+	// Close all Windows
+	while( UI::Search("/Window/") )
+		UI::Close( UI::Search("/Window/") );
 
 	UI::SwapScreens( "In Game", menuSplash, gameSplash );
 	
@@ -483,8 +485,13 @@ void Menu::StartEditor()
 
 	// Only attempt to Edit if the Simulation has loaded
 	assert( simulation.isLoaded() );
+
+	// Close all Windows
+	while( UI::Search("/Window/") )
+		UI::Close( UI::Search("/Window/") );
 	
 	UI::SwapScreens( "Editor", menuSplash, editSplash );
 	simulation.Edit();
 	UI::SwapScreens( "Main Screen", editSplash, menuSplash );
 }
+
