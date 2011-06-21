@@ -27,15 +27,11 @@ class Textbox : public Widget {
 		void SetText(string s) { text = s; }
 
 	protected:
-		bool MouseLUp( int wx, int wy );
 		bool KeyPress( SDLKey key );
 
 	private:
 		string text;
 		int rowPad; ///< The padding around each row of text
-
-		string lua_callback;
-		void (*clickCallBack)();
 
 		static Font* font;
 		static Color foreground;

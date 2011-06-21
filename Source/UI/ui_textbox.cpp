@@ -47,9 +47,6 @@ Textbox::Textbox( int x, int y, int w, int rows, string text, string label ) {
 	this->name = label;
 	
 	this->text = text;
-	
-	clickCallBack = NULL;
-	lua_callback = "";
 }
 
 /**\brief Draws the textbox.*/
@@ -74,19 +71,6 @@ void Textbox::Draw( int relx, int rely ) {
 	Video::UnsetCropRect();
 
 	Widget::Draw(relx,rely);
-}
-
-bool Textbox::MouseLUp( int wx, int wy ) {
-	if( clickCallBack ){
-		LogMsg(INFO, "Clicked on: '%s'.", (char *)text.c_str() );
-		clickCallBack();
-	} else if("" != lua_callback){
-		LogMsg(INFO,"Clicked on '%s'. Running '%s'", (char *)text.c_str(), (char *)lua_callback.c_str() );
-		Lua::Run(lua_callback);
-	} else {
-		LogMsg(WARN, "Clicked on: '%s' but there was no function to call.", (char *)text.c_str() );
-	}
-	return true;
 }
 
 bool Textbox::KeyPress( SDLKey key ) {
