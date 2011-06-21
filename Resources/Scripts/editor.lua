@@ -193,7 +193,8 @@ function showComponent(kind, name)
 			field = UI.newDropdown( 90, yoff, 100, 20, Epiar.listAnimations() )
 			if value ~= "" then 
 				-- Chop off the path part
-				value = value:sub(string.len("Resources/Animations/") +1)
+				subpath = "Resources/Animations/"
+				value = value:sub( value:find(subpath) + string.len(subpath) )
 				field:setText( value )
 			end
 			-- TODO: Draw the Animation?
@@ -205,7 +206,8 @@ function showComponent(kind, name)
 			field = UI.newDropdown( 90, yoff, 100, 20, Epiar.listSounds(subgroup) )
 			if value ~= "" then 
 				-- Chop off the path part
-				value = value:sub(string.len("Resources/Audio/"..subgroup.."/") +1)
+				local subpath = "Resources/Audio/"..subgroup.."/"
+				value = value:sub( value:find(subpath) + string.len(subpath) )
 				field:setText( value )
 			end
 			local thisDropdown = string.format("/Window%q/Dropdown(100,%d)/", windowName, yoff+5)
@@ -481,6 +483,7 @@ end
 function ImagePicker(name,title)
 	if UI.search( "/Window'Image Picker'/" ) ~= nil then return end
 	local imagePickerWin = UI.newWindow(700,40,250,700, "Image Picker")
+	imagePickerWin:addCloseButton()
 	--TODO: Preserve the textbox assosciated with this window.
 	--	  When imagePick is called, set the textbox value to the image path
 
@@ -568,7 +571,10 @@ function infoTable(info, win, variables, fieldDesc, desiredSize)
 				for n,opt in pairs( fieldOptions(title) ) do
 					rowElements[title]:addOption(opt)
 				end
-				rowElements[title]:setText(value)
+				
+				if value ~= '' then
+					rowElements[title]:setText(value)
+				end
 			else
 				-- no other types known at the moment
 			end
@@ -639,10 +645,10 @@ function EditWeaponSlots(name, title)
 end
 
 function calculateSlotOffset(x, y)
-	local newY = x - SlotEditor["calcPosX"] - SlotEditor["imageHW"] -- flipping x and y here is intentional
-	local newX = y - SlotEditor["calcPosY"] - SlotEditor["imageHH"] -- (the image is sideways)
-	SlotEditor["calcXLabel"].setText(SlotEditor["calcXLabel"], (string.format("X: %d", newX)))
-	SlotEditor["calcYLabel"].setText(SlotEditor["calcYLabel"], (string.format("Y: %d", newY)))
+	local newY = x - SlotEditor["imageHW"] -- flipping x and y here is intentional
+	local newX = y - SlotEditor["imageHH"] -- (the image is sideways)
+	SlotEditor["calcXLabel"]:setText( string.format("X: %d", newX) )
+	SlotEditor["calcYLabel"]:setText( string.format("Y: %d", newY) )
 end
 
 function finishEditingWeaponSlots(name, title, desiredLength, fields)

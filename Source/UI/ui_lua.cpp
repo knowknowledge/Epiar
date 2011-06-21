@@ -248,7 +248,7 @@ int UI_Lua::AddCallback(lua_State *L){
 
 int UI_Lua::AddPosCallback(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if(n == 2) {
+	if(n == 3) {
 		Widget* widget = checkWidget(L,1);
 		int action = luaL_checkinteger(L,2);
 		luaL_argcheck(L, ((0 <= action) && (action < Action_Last)) , 2, "Invalid action number.");
@@ -257,7 +257,7 @@ int UI_Lua::AddPosCallback(lua_State *L){
 		widget->RegisterAction( (action_type)action, new LuaPositionalAction(callback) );
 	}
 	else {
-		luaL_error(L, "Got %d arguments expected 0 or 1 ([widget])", n);
+		luaL_error(L, "Got %d arguments expected 3 (widget, action, callback)", n);
 	}
 	return 0;
 }
