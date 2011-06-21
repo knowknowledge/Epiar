@@ -90,6 +90,8 @@ bool Textbox::KeyPress( SDLKey key ) {
 	case SDLK_LCTRL:
 	case SDLK_RSUPER:
 	case SDLK_LSUPER:
+	// Special Non-Printable Keys
+	case SDLK_ESCAPE:
 	// TODO: add cursor movement support
 	case SDLK_LEFT:
 	case SDLK_RIGHT:
