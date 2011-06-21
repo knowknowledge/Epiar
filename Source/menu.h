@@ -63,6 +63,7 @@ class Menu {
 	static Picture *edit;
 	static Picture *options;
 	static Picture *exit;
+	static Picture *continueButton;
 
 	// Menu Actions
 	static void CreateNewWindow();

@@ -222,7 +222,7 @@ void Unpause(void *simulationInstance) {
 }
 
 /**\brief Main game loop
- * \return true
+ * \return true if the player is still alive
  */
 bool Simulation::Run() {
 	int fpsCount = 0; // for FPS calculations
@@ -384,7 +384,7 @@ bool Simulation::Run() {
 
 	LogMsg(INFO,"Simulation Stopped: Average Framerate: %f Frames/Second", 1000.0 *((float)fpsTotal / Timer::GetTicks() ) );
 
-	return true;
+	return (player->GetHullIntegrityPct() > 0);
 }
 
 bool Simulation::SetupToEdit() {
