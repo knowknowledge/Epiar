@@ -1283,8 +1283,6 @@ int AI_Lua::ShipGetMissions(lua_State* L) {
 		return luaL_error(L, "%d arguments provided, but expected 2 (self)");
 	}
 
-	Lua::stackDump(L);
-
 	// Check that only players accept missions
 	Ship* ship = checkShip(L,1);
 	if(ship==NULL) return 0;

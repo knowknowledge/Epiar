@@ -43,7 +43,6 @@ function playerStart()
 
 	-- give the player the standard weapons for this ship model
 	for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
-		print ("giving the player a "..weap)
 		PLAYER:AddToWeaponList(weap)
 		-- don't worry about updating the HUD; createHUD() will handle it
 	end
