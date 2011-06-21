@@ -234,7 +234,7 @@ function showComponent(kind, name)
 		elseif fieldType == "Technologies" then
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
-			technologies = Epiar.technologies()
+			local technologies = Epiar.technologies()
 			local knownTechs = {}
 			for i = 1,#technologies do
 				local tech = technologies[i]
@@ -357,11 +357,11 @@ end
 --- View technology
 function technologyViewer()
 	if UI.search( "/Window'Technologies'/" ) ~= nil then return end
-	technologies = Epiar.technologies()
-	technologiesWindow = UI.newWindow(10,100,140,(#technologies)*30+90,"Technologies")
+	local technologies = Epiar.technologies()
+	technologiesWindow = UI.newWindow(10,40,140,(#technologies)*30+90,"Technologies")
 	for i = 1,#technologies do
 		name = technologies[i]
-		technologiesWindow:add( UI.newButton(10,i*30,120,30,name,string.format("showTechInfo(%q)",name)))
+		technologiesWindow:add( UI.newButton(10, i*30, 120, 30, name, string.format("showTechInfo(%q)", name)))
 	end
 	technologiesWindow:add( UI.newButton(10,#technologies*30+40,120,30,"NEW","showTechInfo('')"))
 	technologiesWindow:addCloseButton()
@@ -400,6 +400,7 @@ function showTechInfo(name)
 	local windowName = "Technology: "..name
 	if name == "" then windowName = "New Technology" end
 	if UI.search( string.format("/Window%q/", windowName) ) ~= nil then return end
+	-- Create widgets
 	local allmodels = Epiar.models()
 	local allweapons = Epiar.weapons()
 	local allengines = Epiar.engines()
@@ -408,21 +409,25 @@ function showTechInfo(name)
 	local models,weapons,engines,outfits = techs[1],techs[2],techs[3],techs[4]
 	local height = math.max(400, 50 + math.max(#allweapons,#allmodels,#allengines,#alloutfits)*20)
 	local width = 400
-	local theWin = UI.newWindow(150, 100, width, height, windowName)
+	local theWin = UI.newWindow(150, 40, width, height, windowName)
 	theWin:add(UI.newLabel( 15, 30, "Name:"))
-	local nameField= UI.newTextbox( 90, 30, 200, 1, name)
+	local nameField= UI.newTextbox( 60, 30, 300, 1, name)
 	theWin:add(nameField)
-	local optionTabs = UI.newTabContainer( 10, 65, width-30, height-120,"Options Tabs")
+	local optionTabs = UI.newTabContainer( 15, 65, width-30, height-120,"Options Tabs")
 	theWin:add(optionTabs)
 	local knownTechs = {}
 	checkedTechs = {}
+
+	-- Identify the known techs
 	for i,t in ipairs({allmodels,allweapons,allengines,alloutfits}) do
 		for j,s in ipairs(t) do knownTechs[s]=0 end
 	end
 	for i,t in ipairs({models,weapons,engines,outfits}) do
 		for j,s in ipairs(t) do knownTechs[s]=1 end
 	end
-	function showTable(techGroup,techList)
+
+	-- Function to populate a tech list
+	local function showTable(techGroup,techList)
 		local thisTab = UI.newTab(techGroup)
 		optionTabs:add(thisTab)
 		checkedTechs[techGroup]={}
@@ -433,6 +438,8 @@ function showTechInfo(name)
 			--TODO: Add tiny button to view/edit this technology
 		end
 	end
+
+	-- Add the different Techs
 	showTable("Models",allmodels)
 	showTable("Weapons",allweapons)
 	showTable("Engines",allengines)
