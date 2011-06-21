@@ -116,6 +116,14 @@ EditorGetters = {
 -- TODO: This window should have an "Add Component" button
 function componentViewer(kind, listFunc)
 	if UI.search( string.format("/Window%q/", kind) ) ~= nil then return end
+	
+	-- Delete any unmoved component windows
+	while true do
+		win = UI.search( string.format("/Window(%d,%d)/", 10, 40) )
+		if win == nil then break end
+		win:close()
+	end
+	
 	list = listFunc()
 	componentWins[kind] = UI.newWindow(10,40,140,(#list)*30+90,kind)
 	for i = 1,#list do
