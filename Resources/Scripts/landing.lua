@@ -1,3 +1,6 @@
+-- height and width of the landing window
+width = WIDTH*.6
+height = HEIGHT*.6
 
 --- Land on a planet
 function landingDialog(id)
@@ -6,16 +9,13 @@ function landingDialog(id)
 	if UI.search( string.format("/Window'%s'/Tabs'Store'/", planet:GetName())) ~= nil then return end
 
 	Epiar.pause()
-	
-	local height = 500
-	local width = 600
-	local boxsize = 120
 
-	local landingWin = UI.newWindow( 200,100,width,height, string.format("%s",planet:GetName()))
+	local landingWin = UI.newWindow( WIDTH/2-width/2,HEIGHT/2-height/2,width,height, string.format("%s",planet:GetName()))
 	landingTabs = UI.newTabContainer( 10, 30, width - 20, height - 80,"Store")
 	landingWin:add(landingTabs)
 
 	function addToStoreList( storeList, list, yoff, cmd, container )
+		local boxsize = width/4 - 40
 		for i,name in ipairs(list) do
 			local callback = string.format( cmd, container, name )
 			local pic = UI.newPicture( 0, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
@@ -43,22 +43,22 @@ function landingDialog(id)
 
 	-- Shipyard
 	local shipyard = UI.newTab("Shipyard")
-	local shipList = UI.newFrame( 10, 10, 160, 360 )
+	local shipList = UI.newFrame( 10, 10, width/4 , height - 150)
 	shipyard:add( shipList )
 	local yoff = 10
 	local models = planet:GetModels()
 	local shipyardPath = string.format("/Window'%s'/Tabs'Store'/'Shipyard'/", planet:GetName() )
 	yoff = addToStoreList( shipList, models, yoff, "storeView(%q, 'ship', %q)", shipyardPath )
-	shipyard:add( UI.newButton( width-150,340,100,30,"Buy","buyShip()" ))
+	shipyard:add( UI.newButton( width-150, height-135, 100, 30, "Buy", "buyShip()" ))
 	landingTabs:add(shipyard)
 
 	if #models > 0 then
-		storeView( shipyardPath, 'ship',models[1])
+		storeView( shipyardPath, 'ship', models[1])
 	end
 
 	-- Outfitting
 	outfitting = UI.newTab("Outfitting")
-	local outfitList = UI.newFrame( 10, 10, 160, 360 )
+	local outfitList = UI.newFrame( 10, 10, width/4 , height - 150)
 	outfitting:add( outfitList )
 	yoff = 10
 	local weapons = planet:GetWeapons()
@@ -69,8 +69,8 @@ function landingDialog(id)
 	yoff = addToStoreList( outfitList, engines, yoff, "storeView(%q, 'engine', %q)", outfitPath)
 	yoff = addToStoreList( outfitList, outfits, yoff, "storeView(%q, 'outfit', %q)", outfitPath)
 	landingTabs:add(outfitting)
-	outfitting:add( UI.newButton( width-250,340,100,30,"Sell","sellOutfit()" ))
-	outfitting:add( UI.newButton( width-150,340,100,30,"Buy","buyOutfit()" ))
+	outfitting:add( UI.newButton( width-250, height-135, 100, 30, "Sell", "sellOutfit()" ))
+	outfitting:add( UI.newButton( width-150, height-135, 100, 30, "Buy", "buyOutfit()" ))
 
 	if #weapons > 0 then     storeView( outfitPath, 'weapon', weapons[1])
 	elseif #engines > 0 then storeView( outfitPath, 'engine', engines[1])
@@ -123,11 +123,13 @@ function landingDialog(id)
 		end
 		availableMissions[i] = _G[missionType].Create()
 		availableMissions[i].Type = missionType
+		local fheight = 150
+		local fwidth = width-70
 		missions:add(
-			UI.newFrame( 10, yoff, width -70, 150,
-				UI.newLabel( 10, 10, availableMissions[i].Name ),
+			UI.newFrame( 10, yoff, fwidth, fheight,
+				UI.newLabel( fwidth/2, 10, availableMissions[i].Name, 1 ),
 				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
-				UI.newButton( width-190, 20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
+				UI.newButton( fwidth -100 -20, fheight -20 -20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
 			)
 		)
 		yoff = yoff + 170
@@ -392,7 +394,7 @@ function storeView(containerPath, itemType, itemName )
 	-- Reset the Item Viewer
 	local viewer = UI.search( containerPath .. "Frame[1]/")
 	if viewer ~= nil then viewer:close() end
-	viewer = UI.newFrame( 180, 10, 390, 325)
+	viewer = UI.newFrame( width*.25+20, 10, width*.75-50, height-150)
 	UI.search( containerPath ):add( viewer )
 
 	viewer:add( UI.newLabel(195, 15, iteminfo["Name"], 1) )
@@ -402,7 +404,7 @@ function storeView(containerPath, itemType, itemName )
 	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
 
 	for statname,value in pairs(iteminfo) do
-		-- print(statname, value )
+		--print(statname, value )
 		-- Skip these kinds
 		if statname == "Name"
 		or statname == "MSRP"
@@ -411,7 +413,8 @@ function storeView(containerPath, itemType, itemName )
 		or statname == "Sound"
 		or statname == "Animation"
 		or type(value) == "table"
-		or value == 0 then
+		or value == 0
+		then
 			-- Do Nothing
 		else
 			if type(value)=="number" and math.floor(value) ~= value then
