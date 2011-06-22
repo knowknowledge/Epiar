@@ -120,30 +120,6 @@ function QuadrantToCoordinate(x,y)
 	return x*qwidth, y*qwidth
 end
 
-function serialize (o)
-	ret = ""
-	if type(o) == "number" then
-		
-		ret = ret .. o
-	elseif type(o) == "string" then
-		ret = ret .. string.format("%q", o)
-	elseif type(o) == "table" then
-		ret = ret .. "{\n"
-		for k,v in pairs(o) do
-			ret = ret
-			   .. "  ["
-			   .. serialize(k)
-			   .. "] = "
-			   .. serialize(v)
-			   .. ",\n"
-		end
-		ret = ret .. "}\n"
-	else
-		error("cannot serialize a " .. type(o))
-	end
-	return ret
-end
-
 function choose( array )
 	return array[math.random(#array)]
 end
@@ -160,3 +136,48 @@ function table.shuffle(t)
  
   return t
 end
+
+
+-- Generic variable printing
+-- Very useful for discovering the structure of Lua tables
+-- http://lua-users.org/wiki/TableSerialization
+
+function table_print (tt, indent, done)
+  done = done or {}
+  indent = indent or 4
+  if type(tt) == "table" then
+    local sb = {}
+    for key, value in pairs (tt) do
+      table.insert(sb, string.rep (" ", indent)) -- indent it
+      if type (value) == "table" and not done [value] then
+        done [value] = true
+        table.insert(sb, string.format("[%s] => ", tostring (key)));
+        table.insert(sb, "{\n");
+        table.insert(sb, table_print (value, indent + 2, done))
+        table.insert(sb, string.rep (" ", indent)) -- indent it
+        table.insert(sb, "}\n");
+      elseif "number" == type(key) then
+        table.insert(sb, string.format("\"%s\"\n", tostring(value)))
+      else
+        table.insert(sb, string.format(
+            "%s = \"%s\"\n", tostring (key), tostring(value)))
+       end
+    end
+    return table.concat(sb)
+  else
+    return tt .. "\n"
+  end
+end
+
+function to_string( tbl )
+    if  "nil"       == type( tbl ) then
+        return tostring(nil)
+    elseif  "table" == type( tbl ) then
+        return table_print(tbl)
+    elseif  "string" == type( tbl ) then
+        return tbl
+    else
+        return tostring(tbl)
+    end
+end
+
