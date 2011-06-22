@@ -412,6 +412,7 @@ function storeView(containerPath, itemType, itemName )
 		or statname == "Image"
 		or statname == "Sound"
 		or statname == "Animation"
+		or statname == "Engine"
 		or type(value) == "table"
 		or value == 0
 		then
@@ -422,6 +423,20 @@ function storeView(containerPath, itemType, itemName )
 			end
 			viewer:add( UI.newLabel(220, yoff, statname) )
 			viewer:add( UI.newLabel(330, yoff, value) )
+			yoff = yoff + 21
+		end
+	end
+	yoff = 250
+	if iteminfo.Engine ~= nil then
+		viewer:add( UI.newLabel(10, yoff, "Engine") )
+		viewer:add( UI.newLabel(130, yoff, iteminfo.Engine) )
+		yoff = yoff + 21
+	end
+	-- The Weaponslots code needs a rewrite
+	if iteminfo.weaponSlots ~= nil then
+		for weaponnum = 0 , (-1+iteminfo.weaponSlots.length) do
+			viewer:add( UI.newLabel(10, yoff, iteminfo.weaponSlots[""..weaponnum].name ) )
+			viewer:add( UI.newLabel(130, yoff, iteminfo.weaponSlots[""..weaponnum].content or "(Empty)") )
 			yoff = yoff + 21
 		end
 	end
