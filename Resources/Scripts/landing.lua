@@ -147,7 +147,7 @@ function landingDialog(id)
 
 	landingWin:add(UI.newButton( 10,height-40,100,30,"Repair","PLAYER:Repair(10000)" ))
 	landingWin:add(UI.newButton( 110,height-40,100,30,"Weapon Config","weaponConfigDialog()" ))
-	local closeButton = UI.newButton( width-110,height-40,100,30,string.format("Leave "), "Leave()" )
+	local closeButton = UI.newButton( width-110,height-40,100,30,string.format("Depart"), "Leave()" )
 	landingWin:add( closeButton )
 	landingWin:setFormButton( closeButton )
 	landingWin:addCallback( Action_Close, 'Leave()' )
