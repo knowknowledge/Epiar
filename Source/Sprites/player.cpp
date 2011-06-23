@@ -871,9 +871,9 @@ bool Players::PlayerExists(string playerName) {
 	return false;
 }
 
-/**\brief Create a new Player
+/**\brief Get the PlayerInfo for the most recent player
  */
-Player* Players::LoadLast() {
+PlayerInfo* Players::LastPlayer() {
 	list<string>* names = GetNames();
 	list<string>::iterator i;
 	PlayerInfo* latest = NULL;
@@ -888,10 +888,7 @@ Player* Players::LoadLast() {
 		}
 	}
 
-	if( latest == NULL ) {
-		return NULL;
-	}
-	return LoadPlayer( latest->GetName() );
+	return latest;
 }
 
 /**\brief Load a given Player

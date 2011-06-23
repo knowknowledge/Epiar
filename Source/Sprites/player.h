@@ -108,15 +108,16 @@ class PlayerInfo : public Component {
 class Players : public Components {
 	public:
 		static Players *Instance();
-		PlayerInfo* GetPlayerInfo(string name) { return (PlayerInfo*)Components::Get( name ); }
 		Component* newComponent() { return new PlayerInfo(); }
+
+		PlayerInfo* GetPlayerInfo(string name) { return (PlayerInfo*)Components::Get( name ); }
+		PlayerInfo* LastPlayer();
 
 		Player* CreateNew(string playerName,
 			Model *model,
 			Engine *engine,
 			int credits,
 			Coordinate location);
-		Player* LoadLast();
 		Player* LoadPlayer(string playerName);
 		bool    DeletePlayer(string playerName);
 		bool	PlayerExists(string playerName);

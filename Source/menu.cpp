@@ -124,6 +124,12 @@ void Menu::Main_Menu( void ) {
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
 
+	if( OPTION(int,"options/simulation/automatic-load") )
+	{
+		AutoLoad();
+		return;
+	}
+
 	SetupGUI();
 
 	// Input Loop
@@ -215,6 +221,31 @@ void Menu::Main_Menu( void ) {
 		// Wait until the next click
 		Timer::Delay(75);
 	} while(!quitSignal);
+}
+
+/**
+ */
+
+void Menu::AutoLoad()
+{
+	LogMsg(INFO,"Attempting to automatically load a player.");
+	PlayerInfo* info = Players::Instance()->LastPlayer();
+	if( info != NULL )
+	{
+		LogMsg(INFO, "Automatically loading player.", info->GetName().c_str() );
+		if( !simulation.Load( info->simulation ) )
+		{
+			LogMsg(ERR,"Failed to load the Simulation '%s' successfully", info->simulation.c_str() );
+			return;
+		}
+		if( !simulation.SetupToRun() )
+		{
+			LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.", info->simulation.c_str() );
+			return;
+		}
+		simulation.LoadPlayer( info->GetName() );
+		simulation.Run();
+	}
 }
 
 void Menu::SetupGUI()

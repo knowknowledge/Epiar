@@ -16,6 +16,7 @@
 class Menu {
 	public:
 	static void Main_Menu( void ); // Run the Main Menu
+	static void AutoLoad( void ); // Straight to the Game
 
 	private:
 	// The Simulation
