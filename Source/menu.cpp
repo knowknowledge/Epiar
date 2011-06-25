@@ -31,68 +31,6 @@ Picture *Menu::continueButton = NULL;
 
 //if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 
-void Menu::ErasePlayer( void* playerInfo ) {
-	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
-
-	if(choice) {
-		string playerName = ((PlayerInfo*)playerInfo)->GetName();
-		Players *players = Players::Instance();
-
-		if(players->DeletePlayer(playerName))
-			Dialogs::Alert("Player deleted successfully.");
-		else
-			Dialogs::Alert("A problem occurred while deleting the player.");
-
-	    UI::Close( UI::Search("/Window'Load Game'/") );
-	}
-}
-
-void Menu::CreateNewPlayer( ) {
-	Players *players = Players::Instance();
-
-	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
-    string simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
-    int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
-    int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
-
-	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
-
-	if(players->PlayerExists(playerName)) {
-		Dialogs::Alert("A player with that name exists.");
-		return;
-	}
-
-	if(Filesystem::FilenameIsSafe(playerName) == false) {
-		Dialogs::Alert("The following cannot be used: <>:\"/\\|?*");
-		return;
-	}
-
-    SETOPTION( "options/simulation/random-universe", israndom);
-    SETOPTION( "options/simulation/random-seed", seed );
-
-    playerToLoad = new PlayerInfo( playerName, simName, seed );
-
-    StartGame( playerToLoad );
-}
-
-void Menu::RandomizeSeed( ) {
-	char seed[20];
-	snprintf(seed, sizeof(seed), "%d", rand() );
-	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
-	if( widget->GetMask() == WIDGET_TEXTBOX )
-	{
-		Textbox* seedBox = (Textbox*)widget;
-		seedBox->SetText( seed );
-	}
-}
-void Menu::ChangePicture( void* picture, void* image) {
-	((Picture*)picture)->Set( (Image*)image );
-}
-void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage) {
-	Picture* pic = ((Picture*)picture);
-	pic->RegisterAction( Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
-	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
-}
 
 /** Epiar's Main Menu
  *
@@ -447,6 +385,76 @@ void Menu::StartEditor()
 	UI::SwapScreens( "Editor", menuSplash, editSplash );
 	simulation.Edit();
 	UI::SwapScreens( "Main Screen", editSplash, menuSplash );
+}
+
+void Menu::ErasePlayer( void* playerInfo )
+{
+	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
+
+	if(choice) {
+		string playerName = ((PlayerInfo*)playerInfo)->GetName();
+		Players *players = Players::Instance();
+
+		if(players->DeletePlayer(playerName))
+			Dialogs::Alert("Player deleted successfully.");
+		else
+			Dialogs::Alert("A problem occurred while deleting the player.");
+
+	    UI::Close( UI::Search("/Window'Load Game'/") );
+	}
+}
+
+void Menu::CreateNewPlayer( )
+{
+	Players *players = Players::Instance();
+
+	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
+    string simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
+    int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
+    int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+
+	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
+
+	if(players->PlayerExists(playerName)) {
+		Dialogs::Alert("A player with that name exists.");
+		return;
+	}
+
+	if(Filesystem::FilenameIsSafe(playerName) == false) {
+		Dialogs::Alert("The following cannot be used: <>:\"/\\|?*");
+		return;
+	}
+
+    SETOPTION( "options/simulation/random-universe", israndom);
+    SETOPTION( "options/simulation/random-seed", seed );
+
+    playerToLoad = new PlayerInfo( playerName, simName, seed );
+
+    StartGame( playerToLoad );
+}
+
+void Menu::RandomizeSeed( )
+{
+	char seed[20];
+	snprintf(seed, sizeof(seed), "%d", rand() );
+	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
+	if( widget->GetMask() == WIDGET_TEXTBOX )
+	{
+		Textbox* seedBox = (Textbox*)widget;
+		seedBox->SetText( seed );
+	}
+}
+
+void Menu::ChangePicture( void* picture, void* image)
+{
+	((Picture*)picture)->Set( (Image*)image );
+}
+
+void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage)
+{
+	Picture* pic = ((Picture*)picture);
+	pic->RegisterAction( Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
+	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
 }
 
 void Menu::QuitMenu()
