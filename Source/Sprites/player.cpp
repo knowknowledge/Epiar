@@ -632,6 +632,17 @@ PlayerInfo::PlayerInfo( Player* player )
 	Update( player );
 }
 
+/**\brief Construct the PlayerInfo from attributes
+ */
+PlayerInfo::PlayerInfo(  string _name, string _simulation, int _seed )
+    :avatar(NULL)
+    ,file("")
+    ,simulation(_simulation)
+    ,seed(_seed)
+    ,lastLoadTime(0)
+{
+    SetName(_name);
+}
 
 /**\brief Update the Player Information based on a Player
  * \param[in] player The player instance that this PlayerInfo will represent.

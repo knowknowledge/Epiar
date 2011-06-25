@@ -89,6 +89,7 @@ class PlayerInfo : public Component {
 	public:
 		PlayerInfo();
 		PlayerInfo( Player* player );
+		PlayerInfo( string name, string simulation, int seed );
 		void Update( Player* player );
 
 		// Saving and Loading this Player to XML
