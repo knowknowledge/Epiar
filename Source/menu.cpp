@@ -13,19 +13,10 @@
 #include "Utilities/filesystem.h"
 #include "Utilities/timer.h"
 
+bool Menu::quitSignal = false;
+
 Simulation Menu::simulation;
 PlayerInfo* Menu::playerToLoad = NULL;
-
-Menu::menuOption Menu::clicked = Menu_DoNothing;
-
-Menu::menuOption Menu::menu_New            = Menu_New;
-Menu::menuOption Menu::menu_Load           = Menu_Load;
-Menu::menuOption Menu::menu_Confirm_New    = Menu_Confirm_New;
-Menu::menuOption Menu::menu_Continue       = Menu_Continue;
-Menu::menuOption Menu::menu_Options        = Menu_Options;
-Menu::menuOption Menu::menu_Editor         = Menu_Editor;
-Menu::menuOption Menu::menu_Confirm_Editor = Menu_Confirm_Editor;
-Menu::menuOption Menu::menu_Exit           = Menu_Exit;
 
 Image* Menu::menuSplash = NULL;
 Image* Menu::gameSplash = NULL;
@@ -38,20 +29,13 @@ Picture *Menu::options = NULL;
 Picture *Menu::exit = NULL;
 Picture *Menu::continueButton = NULL;
 
-// Currently Static functions are the only way I could think of to have C only 
-void Menu::SetMenuOption( void* value ) {
-	clicked = *((menuOption*)value);
-	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
-}
-void Menu::LoadPlayer( void* value ) {
-	clicked = Menu_Confirm_Load;
-	playerToLoad = (PlayerInfo*)value;
-}
-void Menu::ErasePlayer( void* value ) {
+//if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
+
+void Menu::ErasePlayer( void* playerInfo ) {
 	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
 
 	if(choice) {
-		string playerName = ((PlayerInfo*)value)->GetName();
+		string playerName = ((PlayerInfo*)playerInfo)->GetName();
 		Players *players = Players::Instance();
 
 		if(players->DeletePlayer(playerName))
@@ -59,37 +43,38 @@ void Menu::ErasePlayer( void* value ) {
 		else
 			Dialogs::Alert("A problem occurred while deleting the player.");
 
-		CloseLoadGameUI( );
+	    UI::Close( UI::Search("/Window'Load Game'/") );
 	}
 }
-void Menu::CloseNewGameUI( ) {
-	Widget *newGameWnd = UI::Search("/Window'New Game'/");
-	UI::Close( newGameWnd );
-}
-void Menu::CreateNewGameCB( ) {
-	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
+
+void Menu::CreateNewPlayer( ) {
 	Players *players = Players::Instance();
+
+	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
+    string simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
+    int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
+    int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+
+	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 
 	if(players->PlayerExists(playerName)) {
 		Dialogs::Alert("A player with that name exists.");
 		return;
 	}
+
 	if(Filesystem::FilenameIsSafe(playerName) == false) {
 		Dialogs::Alert("The following cannot be used: <>:\"/\\|?*");
 		return;
 	}
 
-	clicked = Menu_Confirm_New;
-	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
+    SETOPTION( "options/simulation/random-universe", israndom);
+    SETOPTION( "options/simulation/random-seed", seed );
+
+    playerToLoad = new PlayerInfo( playerName, simName, seed );
+
+    StartGame( playerToLoad );
 }
-void Menu::CloseLoadGameUI( ) {
-	Widget *newGameWnd = UI::Search("/Window'Load Game'/");
-	UI::Close( newGameWnd );
-}
-void Menu::CloseEditorUI( ) {
-	Widget *editorWnd = UI::Search("/Window'Editor'/");
-	UI::Close( editorWnd );
-}
+
 void Menu::RandomizeSeed( ) {
 	char seed[20];
 	snprintf(seed, sizeof(seed), "%d", rand() );
@@ -116,10 +101,12 @@ void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImag
  *  since there is no HUD, Console or Sprites.
  *
  */
-void Menu::Main_Menu( void ) {
-	bool quitSignal = false;
+void Menu::Main_Menu( void )
+{
 	Input inputs;
 	list<InputEvent> events;
+    
+    quitSignal = false;
 
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
@@ -134,10 +121,6 @@ void Menu::Main_Menu( void ) {
 
 	// Input Loop
 	do {
-
-		// Forget about the last click
-		clicked = Menu_DoNothing;
-
 		// Collect user input events
 		events = inputs.Update();
 		UI::HandleInput( events );
@@ -149,71 +132,6 @@ void Menu::Main_Menu( void ) {
 		Video::PostDraw();
 		Video::Update();
 
-		switch(clicked){
-			case Menu_New:
-			{
-				CreateNewWindow();
-				break;
-			}
-
-			case Menu_Load:
-			{
-				CreateLoadWindow();
-				break;
-			}
-
-			case Menu_Confirm_New:
-			case Menu_Confirm_Load:
-			{
-				StartGame();
-				break;
-			}
-
-			case Menu_Continue:
-			{
-				// Only attempt to Run if the Simulation has loaded
-				assert( simulation.isLoaded() );
-				UI::SwapScreens( "In Game", menuSplash, gameSplash );
-				bool alive = simulation.Run();
-				UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
-				if( !alive )
-				{
-					UI::Close( continueButton );
-				}
-				break;
-			}
-
-			case Menu_Options:
-			{
-				Dialogs::OptionsWindow();
-				break;
-			}
-
-			case Menu_Editor:
-			{
-				CreateEditWindow();
-				break;
-			}
-
-			case Menu_Confirm_Editor:
-			{
-				StartEditor();
-				break;
-			}
-
-			case Menu_Exit:
-				quitSignal = true;
-				break;
-
-			default:
-				break;
-		}
-
-		//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_PERIOD ) ) )
-		//{
-			//Video::SaveScreenshot();
-		//}
-
 		if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) ) {
 			quitSignal = true;
 		}
@@ -222,9 +140,6 @@ void Menu::Main_Menu( void ) {
 		Timer::Delay(75);
 	} while(!quitSignal);
 }
-
-/**
- */
 
 void Menu::AutoLoad()
 {
@@ -274,7 +189,7 @@ void Menu::SetupGUI()
 
 	// New Button
 	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
-	play->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_New ) );
+	play->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateNewWindow ) );
 	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
 	UI::Add( play );
@@ -283,7 +198,7 @@ void Menu::SetupGUI()
 	if( (Players::Instance()->Size() > 0) )
 	{
 		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
-		load->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Load ) );
+		load->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateLoadWindow ) );
 		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
 		                       Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
 		UI::Add( load );
@@ -291,21 +206,21 @@ void Menu::SetupGUI()
 
 	// Editor Button
 	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
-	edit->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Editor ) );
+	edit->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateEditWindow ) );
 	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
 	UI::Add( edit );
 
 	// Options Button
 	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Options ) );
+	options->RegisterAction( Action_MouseLUp, new VoidAction( Dialogs::OptionsWindow ) );
 	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
 	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
 	UI::Add( options );
 
 	// Exit Button
 	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
-	exit->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Exit ) );
+	exit->RegisterAction( Action_MouseLUp, new VoidAction( QuitMenu ) );
 	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
 	UI::Add( exit );
@@ -332,8 +247,9 @@ void Menu::CreateNewWindow()
 		->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
 		->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed )) )
 	);
-	win->AddChild( (new Button(10, 330, 100, 30, "Cancel", &CloseNewGameUI )) );
-	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewGameCB)) );
+	win->AddChild( (new Button( 10, 330, 100, 30, "Cancel", &UI::Close, win)) );
+	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewPlayer )) );
+    win->AddCloseButton();
 }
 
 void Menu::CreateLoadWindow()
@@ -342,7 +258,7 @@ void Menu::CreateLoadWindow()
 
 	list<string> *names = Players::Instance()->GetNames();
 
-	Window* win = new Window(250, 50, 500, 50 + (names->size() * 150), "Load Game");
+	Window* win = new Window(250, 50, 500, 70 + (names->size() * 150), "Load Game");
 	UI::Add( win );
 
 	// Create a new Frame for each Player
@@ -354,19 +270,20 @@ void Menu::CreateLoadWindow()
 			->AddChild( (new Picture(20, 20, 80, 80, info->avatar )) )
 			->AddChild( (new Label(120, 20, "Player Name:" )) ) ->AddChild( (new Label(210, 20, info->GetName() )) )
 			->AddChild( (new Label(120, 45, "Simulation:" )) ) ->AddChild( (new Label(210, 45, info->simulation )) )
-			->AddChild( (new Button(280, 80, 100, 30, "Play", LoadPlayer, info )) )
+			->AddChild( (new Button(280, 80, 100, 30, "Play", StartGame, info )) )
 			->AddChild( (new Button(170, 80, 100, 30, "Erase", ErasePlayer, info ) ) )
 		);
 	}
+	win->AddChild( (new Button( 200, 155*names->size() + 20, 100, 30, "Cancel", &UI::Close, win)) );
 	win->AddCloseButton();
-	//win->AddChild( (new Button( 200, 630, 100, 30, "Cancel", &CloseLoadGameUI ) ) );
 	return;
 }
 
-void Menu::StartGame()
+void Menu::StartGame( void *info )
 {
-	string playerName;
-	string simName = "default";
+    Players *players = Players::Instance();
+
+    playerToLoad = (PlayerInfo*)info;
 
 	UI::Close( play ); // Play
 	UI::Close( load ); // Load
@@ -376,22 +293,12 @@ void Menu::StartGame()
 	edit = NULL;
 
 	// Gather Player Information
-	if( Menu_Confirm_New == clicked )
-	{
-		int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
-		int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
-		SETOPTION( "options/simulation/random-universe", israndom);
-		SETOPTION( "options/simulation/random-seed", seed );
-		playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
-		simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
-	}
-	else if( Menu_Confirm_Load == clicked )
-	{
-		int israndom = (playerToLoad->simulation == "random") ? 1 : 0;
-		SETOPTION( "options/simulation/random-universe", israndom );
-		SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
-		playerName = playerToLoad->GetName();
-	}
+    string simName = playerToLoad->simulation;
+    string playerName = playerToLoad->GetName();
+    int israndom = (playerToLoad->seed != 0); // This is probably wrong...
+
+    SETOPTION( "options/simulation/random-universe", israndom );
+    SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
 	
 	// Load the Simulation
 	if( !simulation.Load( simName ) )
@@ -399,6 +306,7 @@ void Menu::StartGame()
 		LogMsg(ERR,"Failed to load the Simulation '%s' successfully",simName.c_str());
 		return;
 	}
+
 	if( !simulation.SetupToRun() )
 	{
 		LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.",simName.c_str());
@@ -412,11 +320,11 @@ void Menu::StartGame()
 	UI::SwapScreens( "In Game", menuSplash, gameSplash );
 	
 	// Create or Load the Player
-	if( Menu_Confirm_New == clicked ) {
+	if( players->PlayerExists(playerName) ) {
+		simulation.LoadPlayer( playerName );
+	} else{
 		simulation.CreateDefaultPlayer( playerName );
 		Lua::Call("intro");
-	} else if( Menu_Confirm_Load == clicked ) {
-		simulation.LoadPlayer( playerName );
 	}
 	
 	// Run the Simulation
@@ -428,11 +336,25 @@ void Menu::StartGame()
 		// Continue Button
 		Picture *continueButton = NULL;
 		continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
-		continueButton->RegisterAction( Action_MouseLUp, new ObjectAction( SetMenuOption, &menu_Continue ) );
+		continueButton->RegisterAction( Action_MouseLUp, new VoidAction( Menu::ContinueGame ) );
 		SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
 							  Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
 		UI::Add( continueButton );
 	}
+}
+
+void Menu::ContinueGame()
+{
+    // Only attempt to Run if the Simulation has loaded
+    assert( simulation.isLoaded() );
+    UI::SwapScreens( "In Game", menuSplash, gameSplash );
+    bool alive = simulation.Run();
+    UI::SwapScreens( "Main Screen", gameSplash, menuSplash );
+    if( !alive )
+    {
+        UI::Close( continueButton );
+        continueButton = NULL;
+    }
 }
 
 void Menu::CreateEditWindow()
@@ -470,8 +392,9 @@ void Menu::CreateEditWindow()
 			)
 		)
 	);
-	editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", SetMenuOption, &menu_Confirm_Editor ) );
-	editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &CloseEditorUI ) );
+	editorWnd->AddChild( new Button(10, 260, 100, 30, "Cancel", &UI::Close, editorWnd ) );
+	editorWnd->AddChild( new Button(140, 260, 100, 30, "Edit", Menu::StartEditor ) );
+	editorWnd->AddCloseButton();
 }
 
 void Menu::StartEditor()
@@ -524,5 +447,10 @@ void Menu::StartEditor()
 	UI::SwapScreens( "Editor", menuSplash, editSplash );
 	simulation.Edit();
 	UI::SwapScreens( "Main Screen", editSplash, menuSplash );
+}
+
+void Menu::QuitMenu()
+{
+    quitSignal = true;
 }
 

@@ -19,39 +19,10 @@ class Menu {
 	static void AutoLoad( void ); // Straight to the Game
 
 	private:
+	static bool quitSignal;
 	// The Simulation
 	static Simulation simulation;
 	static PlayerInfo* playerToLoad;
-
-	// GUI Functions
-	static void SetupGUI();
-	static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
-	static void SetMenuOption( void* value );
-
-	// Menu Action Flags
-	typedef enum {
-		Menu_DoNothing      = 1<<0,
-		Menu_New            = 1<<1,
-		Menu_Load           = 1<<2,
-		Menu_Continue       = 1<<3,
-		Menu_Options        = 1<<4,
-		Menu_Editor         = 1<<5,
-		Menu_Exit           = 1<<6,
-		Menu_Confirm_New    = 1<<7,
-		Menu_Confirm_Load   = 1<<8,
-		Menu_Confirm_Editor = 1<<9,
-		Menu_ALL            = 0xFFFF,
-	} menuOption;
-	static menuOption menu_New;
-	static menuOption menu_Load;
-	static menuOption menu_Confirm_New;
-	static menuOption menu_Continue;
-	static menuOption menu_Options;
-	static menuOption menu_Editor;
-	static menuOption menu_Confirm_Editor;
-	static menuOption menu_Exit;
-
-	static menuOption clicked; ///< The Current menuOption
 
 	// Images
 	static Image* menuSplash;
@@ -59,6 +30,7 @@ class Menu {
 	static Image* editSplash;
 
 	// Menu Buttons
+	// These pointers are only necessary because UI::Search does not support Picture paths.
 	static Picture *play;
 	static Picture *load;
 	static Picture *edit;
@@ -66,22 +38,24 @@ class Menu {
 	static Picture *exit;
 	static Picture *continueButton;
 
-	// Menu Actions
+	// GUI Setup and Actions
+	static void SetupGUI();
 	static void CreateNewWindow();
 	static void CreateLoadWindow();
-	static void StartGame();
+	static void StartGame( void* playerInfo );
+	static void ContinueGame();
 	static void CreateEditWindow();
 	static void StartEditor();
+	static void QuitMenu();
 
-	// GUI Callbacks
+	// Player Management
+	static void CreateNewPlayer();
+	static void ErasePlayer( void *playerInfo );
+
+    // GUI Helpers
+	static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
 	static void ChangePicture( void* picture, void* image);
-	static void CloseEditorUI( );
-	static void CloseLoadGameUI( );
-	static void CloseNewGameUI( );
-	static void CreateNewGameCB( );
-	static void ErasePlayer( void *value );
-	static void LoadPlayer( void* value );
-	static void RandomizeSeed( );
+	static void RandomizeSeed();
 
 };
 
