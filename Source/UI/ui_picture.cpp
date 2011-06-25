@@ -65,9 +65,12 @@ Picture::Picture( int x, int y, Image* pic ){
 Picture::Picture( int x, int y, int w, int h, string filename ){
 	Default(x,y,w,h);
 	bitmap = Image::Get(filename);
-	w = bitmap->GetWidth();
-	h = bitmap->GetHeight();
-	name = filename;
+	if( bitmap )
+	{
+		w = bitmap->GetWidth();
+		h = bitmap->GetHeight();
+		name = bitmap->GetPath();
+	}
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
