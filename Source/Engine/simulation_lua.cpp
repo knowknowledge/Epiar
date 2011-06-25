@@ -214,10 +214,10 @@ int Simulation_Lua::Ispaused(lua_State *L){
 }
 
 /** \brief Save the Player Data
- *  \note The Player's data will only be saved once at the end of a Run loop.  This is not immediate.
  */
 int Simulation_Lua::SavePlayer(lua_State *L){
-	GetSimulation(L)->GetPlayer()->Save();
+    Simulation* sim = GetSimulation(L);
+	sim->GetPlayer()->Save( sim->GetName() );
 	return 0;
 }
 

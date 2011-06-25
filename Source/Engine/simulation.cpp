@@ -651,9 +651,9 @@ void Simulation::CreateNavMap( void )
 /**\brief Create and Remember a new Player
  * \note This does not run the player related Lua code.
  * \warn Don't calling this more than once.
- * \param[in] name The player's name.
+ * \param[in] playerName The player's name.
  */
-void Simulation::CreateDefaultPlayer(string name) {
+void Simulation::CreateDefaultPlayer(string playerName) {
 	Coordinate startPos(0,0);
 	string startPlanet = Get("defaultPlayer/start");
 	if( planets->GetPlanet( startPlanet ) ) {
@@ -662,7 +662,8 @@ void Simulation::CreateDefaultPlayer(string name) {
 
 	assert( player == NULL );
 	player = players->CreateNew(
-		name,
+        GetName(),
+		playerName,
 		models->GetModel( Get("defaultPlayer/model") ),
 		engines->GetEngine( Get("defaultPlayer/engine") ),
 		convertTo<int>( Get("defaultPlayer/credits")),
@@ -676,11 +677,11 @@ void Simulation::CreateDefaultPlayer(string name) {
 /**\brief Load Create and Remember a new Player
  * \note This does not run any of the Lua code.
  * \warn Don't calling this more than once.
- * \param[in] name The player's name.
+ * \param[in] playerName The player's name.
  */
-void Simulation::LoadPlayer(string name) {
+void Simulation::LoadPlayer(string playerName) {
 	assert( player == NULL );
-	player = players->LoadPlayer( name );
+	player = players->LoadPlayer( playerName );
 	sprites->Add( player );
 	camera->Focus( player );
 }

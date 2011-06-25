@@ -14,6 +14,7 @@
 #include "Utilities/components.h"
 #include "Utilities/file.h"
 #include "Utilities/filesystem.h"
+#include "Engine/simulation_lua.h"
 
 /**\class Player
  * \brief Main player-specific functions and handle.
@@ -168,7 +169,7 @@ void Player::Land( lua_State *L, Planet* planet ){
 	}
 
 	lastPlanet = planet->GetName();
-	Save();
+	Save( Simulation_Lua::GetSimulation(L)->GetName() );
 }
 
 /**\brief Constructor
@@ -207,7 +208,7 @@ void Player::Update( lua_State *L ) {
 /**\brief Save an XML file for this player
  * \details The filename is by default the player's name.
  */
-void Player::Save() {
+void Player::Save( string simulation ) {
 	xmlDocPtr xmlPtr;
 	LogMsg( INFO, "Creation of %s", GetFileName().c_str() );
 
@@ -219,7 +220,7 @@ void Player::Save() {
 	xmlSaveFormatFileEnc( GetFileName().c_str(), xmlPtr, "ISO-8859-1", 1);
 
 	// Update and Save this player's info in the master players list.
-	Players::Instance()->GetPlayerInfo( GetName() )->Update( this );
+	Players::Instance()->GetPlayerInfo( GetName() )->Update( this, simulation );
 	Players::Instance()->Save();
 }
 
@@ -627,9 +628,9 @@ PlayerInfo::PlayerInfo()
 /**\brief Construct the PlayerInfo from a Player
  * \param[in] player The player instance that this PlayerInfo will represent.
  */
-PlayerInfo::PlayerInfo( Player* player )
+PlayerInfo::PlayerInfo( Player* player, string simulation )
 {
-	Update( player );
+	Update( player, simulation );
 }
 
 /**\brief Construct the PlayerInfo from attributes
@@ -647,11 +648,11 @@ PlayerInfo::PlayerInfo(  string _name, string _simulation, int _seed )
 /**\brief Update the Player Information based on a Player
  * \param[in] player The player instance that this PlayerInfo will represent.
  */
-void PlayerInfo::Update( Player* player ) {
+void PlayerInfo::Update( Player* player, string simName ) {
 	name = player->GetName();
 	avatar = (player->GetModel() != NULL) ? player->GetModel()->GetImage() : NULL;
 	file = player->GetFileName();
-	simulation = OPTION(int, "options/simulation/random-universe") ? "random" : "default" ;
+	simulation = simName;
 	seed = OPTION(int, "options/simulation/random-seed");
 	lastLoadTime = player->GetLoadTime();
 }
@@ -808,7 +809,9 @@ Players *Players::Instance( void ) {
 /**\brief Create a new Player
  * This is used instead of a normal class constructor
  */
-Player* Players::CreateNew(string playerName,
+Player* Players::CreateNew(
+            string simulation,
+            string playerName,
 			Model *model,
 			Engine *engine,
 			int credits,
@@ -834,7 +837,7 @@ Player* Players::CreateNew(string playerName,
 
 	newPlayer->lastLoadTime = time(NULL);
 
-	Add( (Component*)(new PlayerInfo( newPlayer )) );
+	Add( (Component*)(new PlayerInfo( newPlayer, simulation )) );
 
 	return newPlayer;
 }

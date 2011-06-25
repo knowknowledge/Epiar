@@ -20,7 +20,7 @@ class Player : public Ship {
 		static Player *Load( string filename );
 
 		// Saving and Loading this Player to XML
-		void Save();
+		void Save( string simulation );
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
 
@@ -88,9 +88,9 @@ class Player : public Ship {
 class PlayerInfo : public Component {
 	public:
 		PlayerInfo();
-		PlayerInfo( Player* player );
+		PlayerInfo( Player* player, string simulation );
 		PlayerInfo( string name, string simulation, int seed );
-		void Update( Player* player );
+		void Update( Player* player, string simulation );
 
 		// Saving and Loading this Player to XML
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
@@ -114,7 +114,9 @@ class Players : public Components {
 		PlayerInfo* GetPlayerInfo(string name) { return (PlayerInfo*)Components::Get( name ); }
 		PlayerInfo* LastPlayer();
 
-		Player* CreateNew(string playerName,
+		Player* CreateNew(
+            string simulation,
+            string playerName,
 			Model *model,
 			Engine *engine,
 			int credits,
