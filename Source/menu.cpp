@@ -10,6 +10,7 @@
 #include "Engine/simulation.h"
 #include "menu.h"
 #include "UI/ui.h"
+#include "UI/widgets.h"
 #include "Utilities/filesystem.h"
 #include "Utilities/timer.h"
 

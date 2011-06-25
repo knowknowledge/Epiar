@@ -6,8 +6,10 @@
  */
 
 #include "includes.h"
-#include "UI/ui.h"
+#include "common.h"
 #include "Utilities/xml.h"
+#include "Utilities/log.h"
+#include "UI/ui.h"
 #include "UI/ui_container.h"
 
 /** \addtogroup UI

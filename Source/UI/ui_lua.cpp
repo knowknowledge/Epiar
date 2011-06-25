@@ -8,14 +8,8 @@
 
 #include "includes.h"
 #include "UI/ui.h"
-#include "ui_lua.h"
-#include "ui_label.h"
-#include "ui_window.h"
-#include "ui_button.h"
-#include "ui_picture.h"
-#include "ui_slider.h"
-#include "ui_tabs.h"
-#include "Engine/models.h"
+#include "UI/ui_lua.h"
+#include "UI/widgets.h"
 
 /** \class UI_Lua
  *  \brief Lua bridge for working with the UI.

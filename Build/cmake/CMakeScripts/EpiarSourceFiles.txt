@@ -88,6 +88,7 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/Sprites/spritemanager.cpp
 	)
 set (Epiar_src ${Epiar_src}
+	${Epiar_SRC_DIR}/UI/widgets.h
 	${Epiar_SRC_DIR}/UI/ui_action.cpp
 	${Epiar_SRC_DIR}/UI/ui_action.h
 	${Epiar_SRC_DIR}/UI/ui_button.cpp

@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
+#include "UI/ui_frame.h"
 #include "Utilities/log.h"
 
 /** \addtogroup UI

@@ -12,6 +12,7 @@
 #include "Engine/simulation.h"
 #include "Graphics/image.h"
 #include "UI/ui.h"
+#include "UI/ui_picture.h"
 
 class Menu {
 	public:

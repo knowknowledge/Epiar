@@ -27,6 +27,7 @@
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
 #include "UI/ui.h"
+#include "UI/widgets.h"
 #include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"

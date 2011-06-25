@@ -11,6 +11,7 @@
 #include "Graphics/video.h"
 #include "Graphics/font.h"
 #include "UI/ui.h"
+#include "UI/ui_label.h"
 #include "Utilities/log.h"
 
 /** \addtogroup UI

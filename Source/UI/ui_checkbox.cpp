@@ -10,6 +10,7 @@
 #include "Graphics/font.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
+#include "UI/ui_checkbox.h"
 #include "Utilities/log.h"
 #include "Utilities/lua.h"
 

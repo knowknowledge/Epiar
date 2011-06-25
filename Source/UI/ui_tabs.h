@@ -8,6 +8,7 @@
 #ifndef __H_TABS__
 #define __H_TABS__
 
+#include "UI/ui.h"
 #include "Utilities/log.h"
 
 class Tab : public Container {

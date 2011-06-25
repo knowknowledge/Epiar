@@ -11,6 +11,7 @@
 
 #include "Graphics/image.h"
 #include "UI/ui.h"
+#include "UI/ui_button.h"
 
 class Window : public Container {
 	public:

@@ -13,24 +13,8 @@
 #include "Input/input.h"
 #include "ui_widget.h"
 #include "ui_container.h"
-
-// Included UI widgets
-#include "ui_lua.h"
-#include "ui_label.h"
-#include "ui_scrollbar.h"
-#include "ui_window.h"
-#include "ui_frame.h"
-#include "ui_button.h"
-#include "ui_textbox.h"
-#include "ui_picture.h"
-#include "ui_checkbox.h"
-#include "ui_tabs.h"
-#include "ui_slider.h"
-#include "ui_dropdown.h"
-#include "ui_map.h"
-
-// Include UI helpers
-#include "ui_dialogs.h"
+#include "Audio/sound.h"
+#include "Graphics/font.h"
 
 // Macro to check if xi, yi point is inside a rectangle x,y,w,h
 #define WITHIN_BOUNDS(xi,yi,x,y,w,h) ( (xi >= x) && (yi >= y) && (xi < (x+w) ) && (yi < (y+h)) )

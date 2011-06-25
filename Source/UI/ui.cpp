@@ -11,6 +11,7 @@
 #include "Graphics/video.h"
 #include "Utilities/log.h"
 #include "UI/ui.h"
+#include "UI/ui_picture.h"
 #include "Input/input.h"
 #include "Utilities/timer.h"
 
@@ -454,6 +455,7 @@ void AddImage( void*widget, void*image, int x, int y )
 	container->AddChild( new Picture( x, y, (Image*)image ) );
 }
 
+/*
 void UI_Test() {
 	// Example of Nestable UI Creation
 	UI::Add(
@@ -571,5 +573,6 @@ void ModalityTest() {
 	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
 	UI::ModalDialog( window );
 }
+*/
 
 /** @} */

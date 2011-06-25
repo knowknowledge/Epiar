@@ -10,6 +10,7 @@
 #include "common.h"
 #include "Graphics/video.h"
 #include "UI/ui.h"
+#include "UI/widgets.h"
 #include "Utilities/log.h"
 #include "Audio/audio.h"
 #include "Audio/sound.h"
