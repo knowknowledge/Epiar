@@ -16,9 +16,6 @@
 #include "Utilities/xml.h"
 #include "Utilities/options.h"
 
-// FORPRODUCTION: switch this to 0
-#define DEBUG 1
-
 // defined in main.cpp. used through the codebase
 extern XMLFile *skinfile;
 

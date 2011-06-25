@@ -148,7 +148,6 @@ list<string> Filesystem::Enumerate( const string& path, const string &suffix )
 	return files;
 }
 
-#if defined(_DEBUG) || defined(DEBUG)
 /**Prints the current version of PhysFS.*/
 void Filesystem::Version( void ){
 	PHYSFS_Version compiled, linked;
@@ -176,7 +175,6 @@ void Filesystem::OutputArchivers( void ){
 		}
 	}
 }
-#endif // defined _DEBUG or DEBUG
 
 /**Unloads the physfs library
   * \return Nonzero on success */
