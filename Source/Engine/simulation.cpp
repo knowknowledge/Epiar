@@ -553,7 +553,10 @@ void Simulation::HandleInput() {
 	console->HandleInput( events );
 	Hud::HandleInput( events, camera, sprites );
 
-	inputs.HandleLuaCallBacks( events );
+	if( !paused )
+	{
+		inputs.HandleLuaCallBacks( events );
+	}
 
 	//if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_PERIOD ) ) )
 	//{

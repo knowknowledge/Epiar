@@ -321,6 +321,9 @@ bool Input::HandleSpecificEvent( list<InputEvent> & events, InputEvent trigger )
 	return found;
 }
 
+/**\brief Print out a list of events.
+ * \warn This is ugly.  Not usable for production code.
+ */
 void Input::PrintEvents( string title, list<InputEvent> & events ) {
 	list<InputEvent>::iterator i = events.begin();
 	if( events.size() == 0 ) return;
