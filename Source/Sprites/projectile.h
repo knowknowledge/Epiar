@@ -23,7 +23,7 @@ public:
 	void SetOwnerID(int id) { ownerID = id; }
 	void SetTargetID(int id) { targetID = id; }
 	int GetDrawOrder( void ) {
-			return( DRAW_ORDER_WEAPON );
+			return( DRAW_ORDER_PROJECTILE );
 	}
 private:
 	Uint32 secondsOfLife; //time to live before projectile blows up

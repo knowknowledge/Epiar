@@ -48,7 +48,7 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 	// Sprite Types
 	Lua::RegisterGlobal("SPRITE_PLANET",      DRAW_ORDER_PLANET     );
 	Lua::RegisterGlobal("SPRITE_GATE_BOTTOM", DRAW_ORDER_GATE_BOTTOM);
-	Lua::RegisterGlobal("SPRITE_WEAPON",      DRAW_ORDER_WEAPON     );
+	Lua::RegisterGlobal("SPRITE_PROJECTILE",  DRAW_ORDER_PROJECTILE );
 	Lua::RegisterGlobal("SPRITE_SHIP",        DRAW_ORDER_SHIP       );
 	Lua::RegisterGlobal("SPRITE_PLAYER",      DRAW_ORDER_PLAYER     );
 	Lua::RegisterGlobal("SPRITE_GATE_TOP",    DRAW_ORDER_GATE_TOP   );

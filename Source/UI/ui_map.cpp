@@ -141,7 +141,7 @@ void Map::Draw( int relx, int rely )
 				break;
 
 			case DRAW_ORDER_SHIP:
-			case DRAW_ORDER_WEAPON:
+			case DRAW_ORDER_PROJECTILE:
 			case DRAW_ORDER_EFFECT:
 				Video::DrawFilledCircle( pos, 2, col, alpha );
 				break;

@@ -18,7 +18,7 @@
 // By using non-overlapping bits we can bit mask during searches
 #define DRAW_ORDER_PLANET              0x0001 ///< Draw order for Planet Sprites
 #define DRAW_ORDER_GATE_BOTTOM         0x0002 ///< Draw order for Gate Sprites (Below all Ship Sprites)
-#define DRAW_ORDER_WEAPON              0x0004 ///< Draw order for Projectile Sprites
+#define DRAW_ORDER_PROJECTILE          0x0004 ///< Draw order for Projectile Sprites
 #define DRAW_ORDER_SHIP                0x0008 ///< Draw order for Ship Sprites
 #define DRAW_ORDER_PLAYER              0x0010 ///< Draw order for Player Sprites
 #define DRAW_ORDER_GATE_TOP            0x0020 ///< Draw order for Gate Sprites (Above all Ship Sprites)

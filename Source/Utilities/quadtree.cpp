@@ -536,7 +536,7 @@ xmlNodePtr QuadTree::ToNode() {
 				case DRAW_ORDER_PLANET:
 					snprintf(buff, sizeof(buff), "%s", "Planet" );
 					break;
-				case DRAW_ORDER_WEAPON:
+				case DRAW_ORDER_PROJECTILE:
 					snprintf(buff, sizeof(buff), "%s", "Weapon" );
 					break;
 				case DRAW_ORDER_SHIP:
