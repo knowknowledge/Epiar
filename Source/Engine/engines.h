@@ -15,8 +15,6 @@
 #include "Engine/outfit.h"
 #include "includes.h"
 
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
-
 // Abstraction of a single engine
 class Engine : public Outfit {
 	public:

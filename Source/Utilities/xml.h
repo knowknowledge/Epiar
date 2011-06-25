@@ -47,7 +47,6 @@ class XMLFile {
 
 vector<string> TokenizedString(const string& path, const string& tokens);
 
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
 #define NodeNameIs( node, text ) ( !xmlStrcmp( ((node)->name), (const xmlChar *)(text) ) )
 
 xmlNodePtr FirstChildNamed( xmlNodePtr node, const char* text );

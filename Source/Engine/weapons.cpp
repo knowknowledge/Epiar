@@ -12,8 +12,6 @@
 #include "Engine/models.h"
 #include "Engine/outfit.h"
 
-#define PPA_MATCHES( text ) if( !strcmp( subName.c_str(), text ) )
-
 /** \class Weapon
  *  \brief A Ship Outfit used for attacking other Ships.
  *  \see Weapons
