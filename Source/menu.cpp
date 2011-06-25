@@ -31,13 +31,23 @@ Picture *Menu::continueButton = NULL;
 
 //if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 
-
-/** Epiar's Main Menu
+/**\class Menu
+ *  \brief Epiar's Main Menu
  *
+ * 	\details
  *  This runs a while(1) loop collecting user input and drawing the screen.
  *  While similar to the Run Loop in the Simulation, this should be simpler
  *  since there is no HUD, Console or Sprites.
  *
+ *  The Main Menu will launch the Simulation with a new or loaded Player.
+ *  It can also edit simulations and option.
+ *
+ *  The Main Menu can be skipped by enabling the "automatic-load" option.
+ *
+ */
+
+/** The Main Loop for the Menu screen.
+ * \note Press ESC or hit the 'Quit' button to quit.
  */
 void Menu::Main_Menu( void )
 {
@@ -79,6 +89,9 @@ void Menu::Main_Menu( void )
 	} while(!quitSignal);
 }
 
+/** Load the most recent Player
+ * \note When the user leaves the Simulation, the game will quit.
+ */
 void Menu::AutoLoad()
 {
 	LogMsg(INFO,"Attempting to automatically load a player.");
@@ -101,6 +114,9 @@ void Menu::AutoLoad()
 	}
 }
 
+/** Create the Basic Main Menu
+ *  \details The Splash Screen is random.
+ */
 void Menu::SetupGUI()
 {
 	int button_x = Video::GetWidth() - 300;
@@ -164,6 +180,8 @@ void Menu::SetupGUI()
 	UI::Add( exit );
 }
 
+/** This Window is used to create new Players.
+ */
 void Menu::CreateNewWindow()
 {
 	if( UI::Search("/Window'New Game'/") != NULL ) return;
@@ -190,6 +208,8 @@ void Menu::CreateNewWindow()
     win->AddCloseButton();
 }
 
+/** This Window shows a list of potential Players.
+ */
 void Menu::CreateLoadWindow()
 {
 	if( UI::Search("/Window'Load Game'/") != NULL ) return;
@@ -217,6 +237,11 @@ void Menu::CreateLoadWindow()
 	return;
 }
 
+/** Start a Game Simulation
+ *  \details
+ *  The PlayerInfo describes which Simulation to load and which Player to load.
+ *  If the Player doesn't already exist, a default player is created by Simulation.
+ */
 void Menu::StartGame( void *info )
 {
     Players *players = Players::Instance();
@@ -281,6 +306,8 @@ void Menu::StartGame( void *info )
 	}
 }
 
+/** Continue a background Simulation
+ */
 void Menu::ContinueGame()
 {
     // Only attempt to Run if the Simulation has loaded
@@ -295,6 +322,9 @@ void Menu::ContinueGame()
     }
 }
 
+/** This Window will launch the editor.
+ *  \details The User can either create a new Simulation from scratch, or edit an existing simulation.
+ */
 void Menu::CreateEditWindow()
 {
 	// Return to Editor if it has alread been loaded
@@ -335,6 +365,8 @@ void Menu::CreateEditWindow()
 	editorWnd->AddCloseButton();
 }
 
+/** Start an Editor Simulation
+ */
 void Menu::StartEditor()
 {
 	string simName = "default";
@@ -387,6 +419,9 @@ void Menu::StartEditor()
 	UI::SwapScreens( "Main Screen", editSplash, menuSplash );
 }
 
+/** Erase a Player
+ * \note The user must confirm their choice first.
+ */
 void Menu::ErasePlayer( void* playerInfo )
 {
 	bool choice = Dialogs::Confirm("Are you sure you want erase this player?");
@@ -404,6 +439,14 @@ void Menu::ErasePlayer( void* playerInfo )
 	}
 }
 
+/** Create a new Player
+ *  \details
+ *  This Validates that the player names is valid.
+ *  - Player names cannot be duplicates of another Player.
+ *  - Player names cannot include characters reserved by filesystems.
+ *  \note This doesn't actually create the Payer, this creates a PlayerInfo and
+ *  selects the Simulation.  StartGame is where the Player object is first created.
+ */
 void Menu::CreateNewPlayer( )
 {
 	Players *players = Players::Instance();
@@ -433,6 +476,8 @@ void Menu::CreateNewPlayer( )
     StartGame( playerToLoad );
 }
 
+/** Inserts a random integer into the Universe Seed Textbox
+ */
 void Menu::RandomizeSeed( )
 {
 	char seed[20];
@@ -445,11 +490,15 @@ void Menu::RandomizeSeed( )
 	}
 }
 
+/** Change a Picture to a different Image
+ */
 void Menu::ChangePicture( void* picture, void* image)
 {
 	((Picture*)picture)->Set( (Image*)image );
 }
 
+/** Make a Picture change images when the mouse hovers over it.
+ */
 void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage)
 {
 	Picture* pic = ((Picture*)picture);
@@ -457,6 +506,8 @@ void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImag
 	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
 }
 
+/** Quit the Main Menu
+ */
 void Menu::QuitMenu()
 {
     quitSignal = true;

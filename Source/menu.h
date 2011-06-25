@@ -16,7 +16,6 @@
 class Menu {
 	public:
 	static void Main_Menu( void ); // Run the Main Menu
-	static void AutoLoad( void ); // Straight to the Game
 
 	private:
 	static bool quitSignal;
@@ -37,6 +36,9 @@ class Menu {
 	static Picture *options;
 	static Picture *exit;
 	static Picture *continueButton;
+
+	// Skip straight to the Game
+	static void AutoLoad( void );
 
 	// GUI Setup and Actions
 	static void SetupGUI();
