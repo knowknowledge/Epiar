@@ -223,7 +223,7 @@ xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
 	iter = tokenized.begin();
 
 	// The root is optional since it isn't a Child.
-	if( !xmlStrcmp(cur->name, (const xmlChar *)(tokenized.front().c_str()) ) ) {
+	if( NodeNameIs(cur, tokenized.front().c_str()) ) {
 		++iter;
 	}
 
@@ -291,7 +291,7 @@ xmlNodePtr NextSiblingNamed( xmlNodePtr child, const char* text )
 	child = child->next;
 	while( child != NULL )
 	{
-		if( !xmlStrcmp( child->name, (const xmlChar *)text ) )
+		if( NodeNameIs(child,text) )
 		{
 			return child;
 		}
