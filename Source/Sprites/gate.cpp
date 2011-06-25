@@ -16,6 +16,10 @@
 #include "Utilities/log.h"
 #include "Engine/simulation_lua.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class Gate
  * \brief A Gate is a dual-sprite; it has a Top and a Bottom.
  *        This allows ships to fly through the gate.
@@ -248,3 +252,6 @@ Gates *Gates::Instance( void ) {
 	}
 	return( pInstance );
 }
+
+/** @} */
+

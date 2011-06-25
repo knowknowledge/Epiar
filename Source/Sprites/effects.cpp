@@ -14,6 +14,10 @@
 #include "Sprites/effects.h"
 #include "Engine/simulation_lua.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class Effect
  * \brief Various Animation effects.
  */
@@ -52,3 +56,6 @@ void Effect::Draw( void ) {
 /**\fn Effect::GetDrawOrder( )
  *  \brief Returns the Draw order of the Effect
  */
+
+/** @} */
+

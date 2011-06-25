@@ -14,6 +14,10 @@
 #include "Utilities/lua.h"
 #include "Engine/simulation_lua.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class AI
  * \brief AI controls the non-player shipts.
  *
@@ -390,5 +394,7 @@ bool AI::CompareAI(Sprite* a, Sprite* b){
  * \brief Retrieves the current alliance.
  * \warning Alliance may be NULL.
  */
+
+/** @} */
 
 

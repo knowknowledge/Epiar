@@ -19,6 +19,10 @@
 #include "Engine/simulation_lua.h"
 #include "Sprites/spritemanager.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class Planet
  * \brief A Planet.
  *
@@ -311,4 +315,6 @@ Planets *Planets::Instance( void ) {
 	}
 	return( pInstance );
 }
+
+/** @} */
 

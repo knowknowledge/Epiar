@@ -17,6 +17,10 @@
 #include "Engine/weapons.h"
 #include "Engine/simulation_lua.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class Projectile
  * \brief Projectiles are the missiles, bullets and lasers as they are flying through space.
  *
@@ -112,4 +116,6 @@ void Projectile::Update( lua_State *L ) {
 		SetAngle( GetMomentum().GetAngle() );
 	}
 }
+
+/** @} */
 

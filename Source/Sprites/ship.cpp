@@ -19,6 +19,10 @@
 #include "Audio/sound.h"
 #include "Engine/hud.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 #define NON_PLAYER_SOUND_RATIO 0.4f ///< Ratio used to quiet NON-PLAYER Ship Sounds.
 
 /**\class Ship
@@ -912,4 +916,6 @@ map<string,string> Ship::GetWeaponSlotContents(){
 
 	return weaps;
 }
+
+/** @} */
 

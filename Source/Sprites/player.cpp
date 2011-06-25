@@ -16,6 +16,10 @@
 #include "Utilities/filesystem.h"
 #include "Engine/simulation_lua.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
+
 /**\class Player
  * \brief Main player-specific functions and handle.
  */
@@ -912,4 +916,6 @@ Player* Players::LoadPlayer(string playerName) {
 	Player* newPlayer = Player::Load( info->file );
 	return newPlayer;
 }
+
+/** @} */
 

@@ -13,6 +13,10 @@
 #include "Engine/camera.h"
 #include "Engine/simulation_lua.h"
 
+/** \defgroup Sprites
+ * @{
+ */
+
 /**\class SpriteManager
  * \brief Mangers sprites. */
 
@@ -553,4 +557,5 @@ void SpriteManager::GetAllQuadrants (list<QuadTree*> *newList)
 	}
 }
 
+/** @} */
 

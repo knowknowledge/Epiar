@@ -12,6 +12,9 @@
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 
+/** \addtogroup Sprites
+ * @{
+ */
 
 // Sprite ID 0 is only used as a NULL
 int Sprite::sprite_ids = 1;
@@ -129,4 +132,6 @@ bool compareSpritePtrs(Sprite* a, Sprite* b){
 		return a->GetID() < b->GetID();
 	}
 }
+
+/** @} */
 
