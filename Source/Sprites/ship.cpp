@@ -115,14 +115,14 @@ bool Ship::SetModel( Model *model) {
 }
 
 /**\brief Sets the ship engine.
- * \param Engine Engine to use
+ * \param newEngine Engine to use
  * \return true if successful
  * \sa Engine
  */
-bool Ship::SetEngine( Engine *engine ) {
-	assert( engine );
-	if( engine ){
-		this->engine = engine;
+bool Ship::SetEngine( Engine *newEngine ) {
+	assert( newEngine );
+	if( newEngine ){
+		engine = newEngine;
 		
 		// Creates a new Flare Animation specific for this Ship
 		if( flareAnimation )
