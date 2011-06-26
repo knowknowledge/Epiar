@@ -76,7 +76,7 @@ Projectile::~Projectile(void)
  * they deal damage to that ship. Note that since each projectile knows which ship fired it and will never collide with them.
  *
  * Projectiles have a life time limit (in milli-seconds).  Each tick they need
- * to check if they've lived to long and need to disappear.
+ * to check if they've lived too long and need to disappear.
  *
  * Projectiles have the ability to track down a specific target.  This only
  * means that they will turn slightly to head towards their target.

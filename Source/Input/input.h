@@ -84,11 +84,11 @@ class InputEvent {
 			this->my = my;
 		}
 
-		eventType type; // keyboard or mouse event?
-		SDLKey key; // which key?
-		keyState kstate; // just went up (fires once), just went down (fires once), or is pressed down currently (fires many times)
-		mouseState mstate;
-		int mx, my; // mouse coords
+		eventType type; ///< keyboard or mouse event?
+		SDLKey key; ///< which key?
+		keyState kstate; ///< just went up (fires once), just went down (fires once), or is pressed down currently (fires many times)
+		mouseState mstate; ///< Mouse Movement or button clicks
+		int mx, my; //< mouse coordinates
 };
 
 ostream& operator<<(ostream &out, const InputEvent&e);

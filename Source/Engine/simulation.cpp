@@ -393,8 +393,6 @@ bool Simulation::SetupToEdit() {
 
 	LogMsg(INFO, "Simulation Edit Setup Starting");
 
-
-
 	// Load main Lua registers
 	LuaRegisters(L);
 	// Load ::Edit()-specific Lua registers

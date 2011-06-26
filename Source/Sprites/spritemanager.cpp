@@ -18,7 +18,39 @@
  */
 
 /**\class SpriteManager
- * \brief Mangers sprites. */
+ * \brief Mangers sprites.
+ * \details
+ * The SpriteManager is responsible for keeping track of all sprites.
+ *
+ * The Sprites themselves are stored on the Heap, but are recorded by the
+ * SpriteManager in three different structures.
+ * - The SpriteManager has a list of all sprites.
+ *   - This list is ordered by sprite creations, but the order is not enforced.
+ *   - This list can be requested as a whole, or filtered by requesting only a
+ *     certain Sprite Type.
+ *   \see GetSprites
+ * - The SpriteManager has a set of QuadTrees.
+ *   - The QuadTree is a recursive datastructure that stores the Sprites by their
+ *     Universal location.  The Quadtree segments the Sprites based on how
+ *     relativly close the Sprites are.
+ *   - Each QuadTree is only a finite size, but can theoretically hold an infinte
+ *     number of sprites.
+ *   - The entire universe is broken up into a grid of QuadTrees.
+ *     Only grid positions with Sprites in them are actually populated by QuadTrees.
+ *   - The QuadTrees cannot be accessed directly, but are used implicitely when
+ *     requesting sprites by a location.
+ *   \see QuadTree
+ *   \see GetSpritesNear
+ *   \see GetNearestSprite
+ * - The SpriteManager has a map of all Sprites by their unique ID.
+ *   - Sprites can be queried by passing an ID.
+ *   \see GetSpriteByID
+ *
+ * Sprites are never deleted immediately.  This is to prevent a Sprite from
+ * being deleted during the middle of the Update Loop.  Instead, 'deleted'
+ * Sprites are recorded in a list and deleted in a batch once per Update.
+ *
+ */
 
 /**\brief Constructs a new sprite manager.
  */
@@ -130,36 +162,40 @@ bool SpriteManager::Delete( Sprite *sprite ) {
 }
 
 /**\brief SpriteManager update function.
+ * \details Update the sprites inside each quadrant
  * \param lowFps If true, forces the wave-update method to be used rather than the full-update
  */
 void SpriteManager::Update( lua_State *L, bool lowFps) {
-	// Update the sprites inside each quadrant
-	list<QuadTree*> quadList;		//this will contain every quadrant that we will potentially want to update
+	//this will contain every quadrant that we will potentially want to update
+	list<QuadTree*> quadList;
 	
-			//if update-all is given then we update every quadrant
-			//we do the same if tickCount == 0 even if update-all is not given
-			// (in wave update mode, tickCount == 0 is when we want to update all quadrants)
+	//if update-all is given then we update every quadrant
+	//we do the same if tickCount == 0 even if update-all is not given
+	// (in wave update mode, tickCount == 0 is when we want to update all quadrants)
 	if( ! lowFps || tickCount == 0) {
-		GetAllQuadrants(&quadList);			//need to get all of the quadrants in our map
+		//need to get all of the quadrants in our map
+		GetAllQuadrants(&quadList);
 	}
-	else {				//wave update mode with tickCount != 0 -- update some quadrants
+	else
+	{
+		//wave update mode with tickCount != 0 -- update some quadrants
 		Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
-		Coordinate currentPoint (camera->GetFocusCoordinate());				//always update centered on where we're at
+		Coordinate currentPoint (camera->GetFocusCoordinate());	//always update centered on where we're at
 
-		quadList.push_back (GetQuadrant (currentPoint));		//we ALWAYS update the current quadrant
+		quadList.push_back (GetQuadrant (currentPoint)); //we ALWAYS update the current quadrant
 
-					//we also ALWAYS update the 'regular' bands
-					//	the first band is at index 1 - index 0 would be the single quadrant in the middle
-					//	when we get the list of quadrants back we splice them onto the end of our overall list
+		//we also ALWAYS update the 'regular' bands
+		//	the first band is at index 1 - index 0 would be the single quadrant in the middle
+		//	when we get the list of quadrants back we splice them onto the end of our overall list
 		for (int i = 1; i <= numRegularBands; i ++) {
 			list<QuadTree*> tempBandList = GetQuadrantsInBand (currentPoint, i);
 			quadList.splice (quadList.end(), tempBandList);
 		}
 
-					//now - we SOMETIMES update the semi-regular bands
-					//   the ticks that each band is updated in is stored in the map
-					//   so we get our semiRegular update modulus of the ticks and then check the map
-					//    - the map has the tick index as the key and the band to update as the value
+		//now - we SOMETIMES update the semi-regular bands
+		//   the ticks that each band is updated in is stored in the map
+		//   so we get our semiRegular update modulus of the ticks and then check the map
+		//    - the map has the tick index as the key and the band to update as the value
 		int semiRegularTick = tickCount % semiRegularPeriod;
 		map<int,int>::iterator findBand = ticksToBandNum.find (semiRegularTick);
 		if (findBand != ticksToBandNum.end()) {		//found the key
@@ -168,13 +204,12 @@ void SpriteManager::Update( lua_State *L, bool lowFps) {
 			quadList.splice (quadList.end(), tempBandList);
 		}
 		else {
-				//no semi-regular bands to update at this tick, do nothing
+			//no semi-regular bands to update at this tick, do nothing
 		}
 	}
 
-
+	// Find and Fix any Sprites that have moved out of bounds.
 	list<Sprite *> all_oob;
-
 	list<QuadTree*>::iterator iter;
 	for ( iter = quadList.begin(); iter != quadList.end(); ++iter ) {
 		(*iter)->Update(L);
@@ -189,7 +224,7 @@ void SpriteManager::Update( lua_State *L, bool lowFps) {
 		GetQuadrant( (*i)->GetWorldPosition() )->Insert( *i );
 	}
 
-	//Delete all sprites queued to be deleted
+	// Delete all sprites queued to be deleted
 	if (!spritesToDelete.empty()) {
 		spritesToDelete.sort(); // The list has to be sorted or unique doesn't work correctly.
 		spritesToDelete.unique();
@@ -205,7 +240,7 @@ void SpriteManager::Update( lua_State *L, bool lowFps) {
 
 	DeleteEmptyQuadrants();
 
-			//update the tick count after all updates for this tick are done
+	// Update the tick count after all updates for this tick are done
 	UpdateTickCount ();
 }
 
@@ -301,15 +336,15 @@ list<QuadTree*> SpriteManager::GetQuadrantsInBand ( Coordinate c, int bandIndex)
 	list<QuadTree*> nearbyQuadrants;
 	set<Coordinate> possibleQuadrants;
 
-			//note that the QUADRANTSIZE define is the
-			//	distance from the middle to the edge of a quadrant
-			//to get the square band of co-ordinates we have to
-			//		- start at bottom left 
-			//			loop over increasing Y (to get 'west' line)
-			//			loop over increasing X (to get 'south' line)
-			//		- start at top right
-			//			loop over decreasing Y (to get 'east' line)
-			//			loop over decreasing X (to get 'north' line)
+	//note that the QUADRANTSIZE define is the
+	//	distance from the middle to the edge of a quadrant
+	//to get the square band of co-ordinates we have to
+	//		- start at bottom left 
+	//			loop over increasing Y (to get 'west' line)
+	//			loop over increasing X (to get 'south' line)
+	//		- start at top right
+	//			loop over decreasing Y (to get 'east' line)
+	//			loop over decreasing X (to get 'north' line)
 			
 	int edgeDistance = bandIndex * QUADRANTSIZE * 2;		//number of pixels from middle to the band
 	Coordinate bottomLeft (c - Coordinate (edgeDistance, edgeDistance));
@@ -317,13 +352,13 @@ list<QuadTree*> SpriteManager::GetQuadrantsInBand ( Coordinate c, int bandIndex)
 	Coordinate topRight (c + Coordinate (edgeDistance, edgeDistance));
 	Coordinate bottomRight (c + Coordinate (edgeDistance, -edgeDistance));
 
-			//the 'full' length of one of the lines is (bandindex * 2) + 1
-			//we don't need the +1 as we deal with the corners individually, separately
+	//the 'full' length of one of the lines is (bandindex * 2) + 1
+	//we don't need the +1 as we deal with the corners individually, separately
 	int bandLength = (bandIndex * 2);
 
-			//deal with the un-included corners first
-			//we're using bottomLeft and topRight as the anchors, 
-			// so topLeft and bottomRight are added here
+	//deal with the un-included corners first
+	//we're using bottomLeft and topRight as the anchors, 
+	// so topLeft and bottomRight are added here
 	possibleQuadrants.insert (GetQuadrantCenter (topLeft));
 	possibleQuadrants.insert (GetQuadrantCenter (bottomRight));
 	for (int i = 0; i < bandLength; i ++) {
@@ -341,9 +376,9 @@ list<QuadTree*> SpriteManager::GetQuadrantsInBand ( Coordinate c, int bandIndex)
 		possibleQuadrants.insert (east);		//east
 	}
 
-				//here we're checking to see if this possible quadrant is one of the existing quadrants
-				// and if it is then we add its QuadTree to the vector we're returning
-				// if it's not then there's nothing in it anyway so we don't care about it
+	//here we're checking to see if this possible quadrant is one of the existing quadrants
+	// and if it is then we add its QuadTree to the vector we're returning
+	// if it's not then there's nothing in it anyway so we don't care about it
 	set<Coordinate>::iterator it;
 	map<Coordinate,QuadTree*>::iterator iter;
 	for(it = possibleQuadrants.begin(); it != possibleQuadrants.end(); ++it) {
@@ -386,9 +421,9 @@ list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	} while(R>QUADRANTSIZE);
 	set<Coordinate>::iterator it;
 	for(it = possibleQuadrants.begin(); it != possibleQuadrants.end(); ++it) {
-				//here we're checking to see if this possible quadrant is one of the existing quadrants
-				// and if it is then we add its QuadTree to the vector we're returning
-				//how about we try creating the quadrant if it does not already exist
+		//here we're checking to see if this possible quadrant is one of the existing quadrants
+		// and if it is then we add its QuadTree to the vector we're returning
+		//how about we try creating the quadrant if it does not already exist
 		iter = trees.find(*it);
 		if(iter != trees.end() && iter->second->PossiblyNear(c,r)){
 			nearbyQuadrants.push_back(iter->second);
@@ -493,7 +528,9 @@ QuadTree* SpriteManager::GetQuadrant( Coordinate point ) {
 	return newTree;
 }
 
-
+/**\brief Get the universe boundaries
+ * \note Returns the values through the pointer arguments.
+ */
 void SpriteManager::GetBoundaries(float *_northEdge, float *_southEdge, float *_eastEdge, float *_westEdge)
 {
 	*_northEdge = northEdge;
@@ -502,6 +539,8 @@ void SpriteManager::GetBoundaries(float *_northEdge, float *_southEdge, float *_
 	*_westEdge  = westEdge;
 }
 
+/** Adjust the Edges based on the locations of the populated QuadTrees
+ */
 void SpriteManager::AdjustBoundaries()
 {
 	Coordinate c;
@@ -517,6 +556,14 @@ void SpriteManager::AdjustBoundaries()
 	}
 }
 
+/**\brief Save an XML file of all of the Sprites.
+ * \details
+ * Traverse each Quadtree looking for sprites.
+ * Each Sprite will be an XML node.
+ * Each Quadtee Leaf or Node will be an XML Node.
+ *
+ * The point of this is to create a file that could be useful for debugging quadtree problems.
+ */
 void SpriteManager::Save() {
 	map<Coordinate,QuadTree*>::iterator iter;
 	xmlDocPtr doc = NULL;       /* document pointer */
@@ -532,9 +579,10 @@ void SpriteManager::Save() {
 
 	xmlSaveFormatFileEnc( "Sprites.xml" , doc, "ISO-8859-1", 1);
 	xmlFreeDoc( doc );
-	
 }
 
+/**\brief Count up to fullUpdatePeriod
+ */
 void SpriteManager::UpdateTickCount ()
 {
 	tickCount ++;
@@ -543,10 +591,14 @@ void SpriteManager::UpdateTickCount ()
 		tickCount -= fullUpdatePeriod;
 }
 
-		//this is shit and not very efficient, but std::transform doesn't work...
-		// (if for some reason we got transform working, the idea would be to have
-		//   a helper method to get map->second to pass as the 4th argument of transform
-		//   with the third argument being a back_inserter into the list we want)
+/**\brief Populate a list of all Quadtrees.
+ * \details Used for looping between all Quadrants.
+ * \warn
+ * This is not very efficient, but std::transform doesn't work...
+ * (if for some reason we got transform working, the idea would be to have
+ *   a helper method to get map->second to pass as the 4th argument of transform
+ *   with the third argument being a back_inserter into the list we want)
+ */
 void SpriteManager::GetAllQuadrants (list<QuadTree*> *newList)
 {
 	map<Coordinate,QuadTree*>::iterator mapIter = trees.begin();

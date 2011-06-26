@@ -39,30 +39,26 @@ class SpriteManager {
 	protected:
 		SpriteManager();
 	private:
-		// Use the tree when referring to the sprites at a location.
-		map<Coordinate,QuadTree*> trees;
-		// Use the list when referring to all sprites.
-		list<Sprite*> *spritelist;
-		// Use the map when referring to sprites by their unique ID.
-		map<int,Sprite*> *spritelookup;
+		// These structures each contain a complete list of all Sprites.
+		// Each one is useful for a different purpose, depending on the way that the sprites need to be accessed.
+		map<Coordinate,QuadTree*> trees;    ///< Collection of all Sprites.  Use the tree when referring to the sprites at a location.
+		list<Sprite*> *spritelist;          ///< Collection of all Sprites.  Use the list when referring to all sprites.
+		map<int,Sprite*> *spritelookup;     ///< Collection of all Sprites.  Use the map when referring to sprites by their unique ID.
 
-		Sprite *player;
+		Sprite *player;                     ///< The Player Sprite.
 		
-		list<Sprite *> spritesToDelete;
-		static SpriteManager *pInstance;
+		list<Sprite *> spritesToDelete;     ///< The list of Sprites that should be deleted at the end of this Update.
+		static SpriteManager *pInstance;    ///< The Static SpriteManager Instance.
 
-				//counts number of ticks to track updates to quadrants
-				//max value is the number of ticks to update all quadrants
-		int tickCount;
-		const int semiRegularPeriod;		//the period at which every semi-regular quadrant is updated
-		const int fullUpdatePeriod;			//the period at which every quadrant is updated regardless of distance
+		int tickCount;                      ///< Counts number of ticks to track updates to quadrants.  Max value is the number of ticks to update all quadrants
+		const int semiRegularPeriod;		///< The period at which every semi-regular quadrant is updated
+		const int fullUpdatePeriod;			///< The period at which every quadrant is updated regardless of distance
 
-		const int numRegularBands;			//the number of bands surrounding the centre point that are updated every tick
-		const int numSemiRegularBands;		//the number of bands surrounding the centre point that are updated semi-regularly
-		map<int, int> ticksToBandNum;		//the key is the tick# that the value band# will be updated at
+		const int numRegularBands;			///< The number of bands surrounding the centre point that are updated every tick
+		const int numSemiRegularBands;		///< The number of bands surrounding the centre point that are updated semi-regularly
+		map<int, int> ticksToBandNum;		///< The key is the tick# that the value band# will be updated at
 
-
-		float northEdge, southEdge, eastEdge, westEdge;
+		float northEdge, southEdge, eastEdge, westEdge; ///< The Edges of the universe
 
 		bool DeleteSprite( Sprite *sprite );
 		void DeleteEmptyQuadrants( void );

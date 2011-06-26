@@ -19,7 +19,7 @@
  */
 
 /**\class AI
- * \brief AI controls the non-player shipts.
+ * \brief AI controls the non-player Ships.
  *
  * */
 

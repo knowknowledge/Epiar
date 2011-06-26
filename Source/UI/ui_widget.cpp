@@ -18,12 +18,13 @@
 
 /**\class Widget
  * \brief A user interface widget, widgets do not have children.
+ * \todo actions could be an array of lists of Actions.
+ *       This would allow multiple Actions to be registered to the same Event.
  * \fn Widget::Draw()
  *  \brief Empty function that should be overloaded for drawing the widget.
  * \fn Widget::Update()
  *  \brief Empty function that should be overloaded for drawing the widget.
  */
-
 
 /**\brief Constructor.
  */
@@ -43,6 +44,8 @@ Widget::Widget( void ):
 	}
 }
 
+/**\brief Destructor.
+ */
 Widget::~Widget( void )
 {
 	Activate(Action_Close, 0, 0);
@@ -55,6 +58,10 @@ Widget::~Widget( void )
 	}
 }
 
+/**\brief Draw
+ * \details This does nothing in most cases, but will draw some extra debug
+ * information when the "debug-ui" option is enabled.
+ */
 void Widget::Draw( int relx, int rely ) {
 	if( hovering && OPTION(int,"options/development/debug-ui") ) {
 		int absx, absy;
@@ -285,7 +292,10 @@ bool Widget::KeyPress( SDLKey key ) {
 	return false;
 }
 
-
+/**\brief XML Node of a Widget.
+ * \details Expandable by the Widget subclasses by simply modifying the Node.
+ * \sa UI::Save
+ */
 xmlNodePtr Widget::ToNode() {
 	xmlNodePtr thisNode;
 	char buff[256];
