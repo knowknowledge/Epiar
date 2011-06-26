@@ -334,6 +334,7 @@ function weaponConfigDialog()
 	wcDialog:add(shipLabel)
 	wcDialog:add(leftFrame, rightFrame);
 	wcDialog:add(UI.newButton( 200, height+30+30, 100, 30, "Finish", "weaponConfigFinish()"))
+	wcDialog:addCloseButton()
 
 	leftFrame:add(slotsLabel, fgLabel);
 	rightFrame:add(instructionsLabel);
