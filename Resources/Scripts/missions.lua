@@ -65,10 +65,10 @@ ReturnAmbassador = {
 	Accept = function( missionTable )
 		local p = Planet.Get( missionTable.planet )
 		local qx, qy = coordinateToQuadrant( p:GetPosition() )
-		HUD.newAlert( string.format("Please take me to %s in the Quadrant (%d,%d)", missionTable.planet, qx, qy ) )
+		UI.newAlert( string.format("Please take me to %s in the Quadrant (%d,%d)", missionTable.planet, qx, qy ) )
 	end,
 	Reject = function( missionTable )
-		HUD.newAlert( string.format("You will rue the day you abandoned such a powerful %s %s.", missionTable.alliance, missionTable.profession ) )
+		UI.newAlert( string.format("You will rue the day you abandoned such a powerful %s %s.", missionTable.alliance, missionTable.profession ) )
 	end,
 	Update = function( missionTable )
 	end,
@@ -77,7 +77,7 @@ ReturnAmbassador = {
 		local p = Planet.Get( missionTable.planet )
 		local px,py = p:GetPosition()
 		if distfrom(px,py,x,y) < p:GetSize() then
-			HUD.newAlert(string.format("Thank you for returning me to my home.") )
+			UI.newAlert(string.format("Thank you for returning me to my home.") )
 			return true
 		end
 	end,
@@ -98,7 +98,7 @@ DestroyPirate = {
 	Create = function()
 		local missionTable = {}
 		local name = choose( {"Robert", "Bob", "Joe", "Steve", "Mary", "Bart", "Paine", "John", "Jack", "Cervantes", "Sally"} )
-		local title = choose( {"Red", "Black", "Yellow", "Savage", "Blood Thirtsy", "Wanderer", "Villianous", "Scruffy Looking", "Shady", "Hungry", "Illicit"} )
+		local title = choose( {"Red", "Black", "Yellow", "Savage", "Blood Thirsty", "Wanderer", "Villianous", "Scruffy Looking", "Shady", "Hungry", "Illicit"} )
 		missionTable.piratename = name .." The ".. title
 		missionTable.Name = string.format("Destroy %s", missionTable.piratename)
 		missionTable.reward = 1000 * ( math.random(10) + 20)
@@ -147,13 +147,13 @@ DestroyPirate = {
 	Land = function(missionTable)
 	end,
 	Success = function( missionTable )
-		HUD.newAlert(string.format("Thank you for destroying %s!", missionTable.piratename) )
+		UI.newAlert(string.format("Thank you for destroying %s!", missionTable.piratename) )
 		addcredits(  missionTable.reward )
 		PLAYER:UpdateFavor( "Independent", -10 )
 		PLAYER:UpdateFavor( missionTable.alliance, 10 )
 	end,
 	Failure = function( missionTable )
-		HUD.newAlert("This should never happen")
+		UI.newAlert("This should never happen!")
 		PLAYER:UpdateFavor( "Independent", -2 )
 		PLAYER:UpdateFavor( missionTable.alliance, -2 )
 	end,
@@ -219,14 +219,14 @@ CollectArtifacts = {
 			places = missionTable.PlanetsWithArtifacts[1] .. ", " .. places
 		end
 		acceptMessage = acceptMessage:format( missionTable.EventName, places )
-		HUD.newAlert( acceptMessage  )
+		UI.newAlert( acceptMessage  )
 		PLAYER:UpdateFavor( missionTable.FriendAlliance, 1 )
 		PLAYER:UpdateFavor( missionTable.EnemyAlliance, -1 )
 	end,
 	Reject = function( missionTable )
 		local rejectMessage = "The %s %s will get away with the artifacts."
 		rejectMessage = rejectMessage:format( missionTable.EnemyAlliance, missionTable.Actors )
-		HUD.newAlert( acceptMessage  )
+		UI.newAlert( acceptMessage  )
 	end,
 	Update = function( missionTable )
 	end,
@@ -246,7 +246,7 @@ CollectArtifacts = {
 					-- Alert the Player
 					local message = "You have recovered the %s of %s from %s."
 					message = message:format( missionTable.Objects[i], missionTable.EventName, missionTable.PlanetsWithArtifacts[i] )
-					HUD.newAlert( message )
+					UI.newAlert( message )
 					-- Mark this Object as Collected
 					missionTable.Collected[i] = true
 					totalFound = totalFound + 1
@@ -259,7 +259,7 @@ CollectArtifacts = {
 			if distfrom(px,py,x,y) < 50 then
 				local message = "All of the Artifacts from %s have been delivered to the %s on %s."
 				message = message:format( missionTable.EventName, missionTable.FriendAlliance, missionTable.FinalPlanet )
-				HUD.newAlert( message )
+				UI.newAlert( message )
 				return true
 			end
 		end
@@ -308,13 +308,13 @@ ShippingRoutes = {
 			message = "You don't have enough space to store %d tons of %s."
 		end
 		message = message:format( missionTable.Tonnage, missionTable.Commodity )
-		HUD.newAlert( message )
+		UI.newAlert( message )
 	end,
 	Reject = function( missionTable )
 		PLAYER:DiscardCommodities( missionTable.Commodity, missionTable.Tonnage )
 		local message = "You've jettisoned the %d tons of %s destined for %s."
 		message = message:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
-		HUD.newAlert( message )
+		UI.newAlert( message )
 	end,
 	Update = function( missionTable )
 		-- Check if the Player still has all the cargo
@@ -340,14 +340,14 @@ ShippingRoutes = {
 		PLAYER:DiscardCommodities( missionTable.Commodity, missionTable.Tonnage )
 		local message = "You've safely delivered %d tons of %s to %s."
 		message = message:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
-		HUD.newAlert( message )
+		UI.newAlert( message )
 		PLAYER:UpdateFavor( missionTable.Alliance, 10 )
 	end,
 	Failure = function( missionTable )
 		-- Discard remaining cargo.
 		local message = "You've lost the job to deliver %s to %s."
 		message = message:format( missionTable.Commodity, missionTable.Planet )
-		HUD.newAlert( message )
+		UI.newAlert( message )
 		PLAYER:UpdateFavor( missionTable.Alliance, -10 )
 	end,
 }
@@ -390,7 +390,7 @@ DestroyGaryTheGold = {
 		missionTable.escortID = escort:GetID()
 	end,
 	Reject = function( missionTable )
-		HUD.newAlert( "Gary may never be stopped" )
+		UI.newAlert( "Gary may never be stopped" )
 		local p = Planet.Get( missionTable.planet )
 	end,
 	Update = function( missionTable )
@@ -405,7 +405,7 @@ DestroyGaryTheGold = {
 	Land = function( missionTable )
 	end,
 	Success = function( missionTable )
-		HUD.newAlert("Thank you for destroying Gary the Gold!")
+		UI.newAlert("Thank you for destroying Gary the Gold!")
 		addcredits(missionTable.reward)
 		local p = Planet.Get( missionTable.planet )
 		PLAYER:UpdateFavor( p:GetAlliance(), 30 )
@@ -466,7 +466,7 @@ ProtectFreighter = {
 			   "Ion Engines", type, "Independent" )
 			missionTable.freighter = freighter:GetID()
 			freighter:SetRadarColor(0,255,0)
-			HUD.newAlert( (string.format("%s: \"Thank you for agreeing to help, %s\"",
+			UI.newAlert( (string.format("%s: \"Thank you for agreeing to help, %s\"",
 			   missionTable.freighterName, missionTable.playerName ) ) )
 			missionTable.joined = false
 
@@ -483,7 +483,7 @@ ProtectFreighter = {
 		createFreighter("Escort")
 	end,
 	Reject = function( missionTable )
-		HUD.newAlert( (string.format("%s: \"%s! I find your betrayal most disappointing.\"", missionTable.freighterName, PLAYER:GetName() ) ) )
+		UI.newAlert( (string.format("%s: \"%s! I find your betrayal most disappointing.\"", missionTable.freighterName, PLAYER:GetName() ) ) )
 		setAccompany(missionTable.freighter, -1)
 		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
 		local p = Planet.Get( missionTable.planet )
@@ -509,16 +509,17 @@ ProtectFreighter = {
 			local fX, fY = freighter:GetPosition()
 			local pX, pY = p:GetPosition()
 			if distfrom( fX, fY, pX, pY ) < p:GetSize() then
+				UI.newAlert("Mission succeeded.")
 				return true
 			end
 			missionTable.fX = fX
 			missionTable.fY = fY
 		else
+			UI.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )
 			return false
 		end
 	end,
 	Success = function( missionTable )
-		HUD.newAlert("Mission succeeded.")
 		addcredits(missionTable.reward)
 		setAccompany(missionTable.freighter, -1)
 		Fleets:unjoin( PLAYER:GetID(), missionTable.freighter )
@@ -526,7 +527,6 @@ ProtectFreighter = {
 		PLAYER:UpdateFavor( p:GetAlliance(), 10 )
 	end,
 	Failure = function( missionTable )
-		HUD.newAlert( (string.format("%s was destroyed! Mission failed.", missionTable.freighterName) ) )
 		local p = Planet.Get( missionTable.planet )
 		PLAYER:UpdateFavor( p:GetAlliance(), -10 )
 	end,
