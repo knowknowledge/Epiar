@@ -39,12 +39,14 @@ void OKAlertDialog() {
  */
 bool Dialogs::Confirm( const char *message )
 {
-	Window* win = new Window(325, 265, 325, 130, "Confirm");
 	static int value = 0;
+	Window* win = new Window(325, 265, 325, 130, "Confirm");
+	Button* ok = new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value );
 
 	win->AddChild( ( new Label( 45, 35, message ) ) );
 	win->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) );
-	win->AddChild( (new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value ) ) );
+	win->AddChild( ok );
+	win->SetFormButton( ok );
 	win->RegisterAction(Action_Close, new ObjectAction(CancelConfirmDialog, &value) );
 	win->AddCloseButton();
 
@@ -58,9 +60,11 @@ bool Dialogs::Confirm( const char *message )
 void Dialogs::Alert( const char *message )
 {
 	Window* win = new Window(325, 265, 325, 130, "Alert");
+	Button* ok = new Button( 130, 90, 80, 30, "OK", OKAlertDialog );
 
 	win->AddChild( ( new Label( 45, 35, message ) ) );
-	win->AddChild( (new Button( 130, 90, 80, 30, "OK", OKAlertDialog ) ) );
+	win->AddChild( ok );
+	win->SetFormButton( ok );
 	win->RegisterAction(Action_Close, new VoidAction(OKAlertDialog) );
 	win->AddCloseButton();
 

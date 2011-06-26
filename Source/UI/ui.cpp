@@ -426,6 +426,7 @@ void UI::ModalDialog( Window *window ) {
 	currentScreen = NewScreen("Foreground");
 	currentScreen->AddChild( window );
 	window->SetDragability(false);
+	UI::RegisterKeyboardFocus( window );
 
 	// Draw Things Once
 	Video::PreDraw();
