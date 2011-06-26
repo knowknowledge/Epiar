@@ -369,12 +369,15 @@ bool Simulation::Run() {
 			if( player->GetHullIntegrityPct() <= 0 ) {
 				if( UI::Search("/Window'Death'/") == NULL ) {
 					Window* win = new Window(300, 250, 250, 140, "Death");
+					Button* ok = new Button(70, 85, 100, 30, "Drat!", ConfirmDeath, this);
 					UI::Add( win );
 
 					// Player Name
-					win->AddChild( (new Label(80, 30, "You have died.")) )
-						->AddChild( (new Button(70, 85, 100, 30, "Drat!", ConfirmDeath, this)) )
-						->RegisterAction(Action_Close, new ObjectAction(ConfirmDeath, this) );
+					win->AddChild( (new Label(80, 30, "You have died.")) );
+					win->AddChild( ok );
+					win->RegisterAction(Action_Close, new ObjectAction(ConfirmDeath, this) );
+					win->SetFormButton( ok );
+					UI::RegisterKeyboardFocus( win );
 				}
 			}
 		}
@@ -580,15 +583,19 @@ void Simulation::HandleInput() {
 				TO_INT(Video::GetWidth() * 0.2),
 				TO_INT(Video::GetHeight() * 0.2),
 				"Epiar is Paused" );
-			win->AddChild( new Button(
+			Button* ok = new Button(
 				TO_INT(win->GetW()/2) -50,
 				TO_INT(win->GetW()/2) -15,
 				100,
 				30,
-				"Unpause", UI::Close, win) );
+				"Unpause", UI::Close, win);
+			win->AddChild( ok );
 			win->RegisterAction(Action_Close, new ObjectAction(Unpause, this) );
+			win->SetFormButton( ok );
+
 			pause();
 			UI::Add( win );
+			UI::RegisterKeyboardFocus( win );
 		}
 	}
 
