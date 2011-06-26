@@ -225,7 +225,6 @@ function buyOutfit(outfit)
 
 	--print("Debiting your account...")
 
-	PLAYER:SetCredits( player_credits - price )
 
 	--print("Installing Outfit...")
 	
@@ -255,14 +254,21 @@ function buyOutfit(outfit)
 
 		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
+		PLAYER:SetCredits( player_credits - price )
 		HUD.newStatus(outfit..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
 		--print("Engine...")
-		PLAYER:SetEngine(outfit)
-		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+		if PLAYER:GetEngine() ~= outfit then
+			PLAYER:SetEngine(outfit)
+			PLAYER:SetCredits( player_credits - price )
+			UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits.")
+		else
+			UI.newAlert("You already have a "..outfit.." system.")
+		end
 	elseif ( Set(Epiar.outfits())[outfit] ) then
 		--print("Outfit...")
 		PLAYER:AddOutfit(outfit)
+		PLAYER:SetCredits( player_credits - price )
 		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 	else
 		print("Unknown Outfit: "..outfit)
