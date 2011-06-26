@@ -30,7 +30,7 @@ void OKConfirmDialog( void* value ) {
 	*(int *)value = 1;
 	UI::ReleaseModality();
 }
-void OKAlertDialog( void* value ) {
+void OKAlertDialog() {
 	UI::ReleaseModality();
 }
 
@@ -42,9 +42,11 @@ bool Dialogs::Confirm( const char *message )
 	Window* win = new Window(325, 265, 325, 130, "Confirm");
 	static int value = 0;
 
-	win->AddChild( ( new Label( 45, 35, message ) ) )
-	->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) )
-	->AddChild( (new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value ) ) );
+	win->AddChild( ( new Label( 45, 35, message ) ) );
+	win->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) );
+	win->AddChild( (new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value ) ) );
+	win->RegisterAction(Action_Close, new ObjectAction(CancelConfirmDialog, &value) );
+	win->AddCloseButton();
 
 	UI::ModalDialog( win );
 
@@ -57,8 +59,10 @@ void Dialogs::Alert( const char *message )
 {
 	Window* win = new Window(325, 265, 325, 130, "Alert");
 
-	win->AddChild( ( new Label( 45, 35, message ) ) )
-	->AddChild( (new Button( 130, 90, 80, 30, "OK", OKAlertDialog, NULL ) ) );
+	win->AddChild( ( new Label( 45, 35, message ) ) );
+	win->AddChild( (new Button( 130, 90, 80, 30, "OK", OKAlertDialog ) ) );
+	win->RegisterAction(Action_Close, new VoidAction(OKAlertDialog) );
+	win->AddCloseButton();
 
 	UI::ModalDialog( win );
 }
