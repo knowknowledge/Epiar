@@ -403,7 +403,7 @@ bool UI::DispatchMouse( Widget* widget, InputEvent i ) {
 	return false;
 }
 
-void UI::ModalDialog( Container *widget ) {
+void UI::ModalDialog( Window *window ) {
 	Input inputs;
 	list<InputEvent> events;
 
@@ -414,18 +414,18 @@ void UI::ModalDialog( Container *widget ) {
 	// Setup
 	backgroundScreen = currentScreen;
 	currentScreen = NewScreen("Foreground");
-	currentScreen->AddChild( widget );
+	currentScreen->AddChild( window );
+	window->SetDragability(false);
+
+	// Draw Things Once
+	Video::PreDraw();
+	UI::Draw();
+	Video::PostDraw();
+	Video::Update();
 
 	// UI Input
 	while( modalEnabled )
 	{
-		// Draw Things
-		Video::Erase();
-		Video::PreDraw();
-		UI::Draw();
-		Video::PostDraw();
-		Video::Update();
-
 		// Wait for some input
 		Timer::Delay(75);
 
@@ -440,7 +440,7 @@ void UI::ModalDialog( Container *widget ) {
 	currentScreen = backgroundScreen;
 	backgroundScreen = NULL;
 
-	// Update the Timer so that the time spent inside the Modal widget does not
+	// Update the Timer so that the time spent inside the Modal window does not
 	// count as 'Lag Time'.
 	Timer::Update();
 }

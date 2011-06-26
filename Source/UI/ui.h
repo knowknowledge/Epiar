@@ -13,6 +13,7 @@
 #include "Input/input.h"
 #include "ui_widget.h"
 #include "ui_container.h"
+#include "ui_window.h"
 #include "Audio/sound.h"
 #include "Graphics/font.h"
 
@@ -55,7 +56,7 @@ class UI {
 		static void DrawDeferred( void );
 		static int GetZLayer() { return zlayer; }
 
-		static void ModalDialog( Container *widget );
+		static void ModalDialog( Window *widget );
 		static void ReleaseModality();
 		
 	private:
