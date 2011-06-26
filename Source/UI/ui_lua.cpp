@@ -57,6 +57,10 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTab", &UI_Lua::newTab},
 		{"newDropdown", &UI_Lua::newDropdown},
 
+		// Create Modal Dialogs
+		{"newConfirm", &UI_Lua::newConfirm},
+		{"newAlert", &UI_Lua::newAlert},
+
 		{"add", &UI_Lua::addWidget},
 		{"search", &UI_Lua::search},
 		{NULL, NULL}
@@ -546,6 +550,33 @@ int UI_Lua::newDropdown(lua_State *L) {
 	}
 
 	return 1;
+}
+
+int UI_Lua::newConfirm(lua_State *L)
+{
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1){
+		return luaL_error(L, "Got %d arguments expected 1 (message)", n);
+	}
+
+	string message = luaL_checkstring (L, 1);
+	bool choice = Dialogs::Confirm( message.c_str() );
+	lua_pushboolean(L, (int) choice );
+
+	return 1;
+}
+
+int UI_Lua::newAlert(lua_State *L)
+{
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1){
+		return luaL_error(L, "Got %d arguments expected 1 (message)", n);
+	}
+
+	string message = luaL_checkstring (L, 1);
+	Dialogs::Alert( message.c_str() );
+
+	return 0;
 }
 
 /** \brief Add widgets to the UI.
