@@ -47,10 +47,12 @@ bool Dialogs::Confirm( const char *message )
 	win->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) );
 	win->AddChild( ok );
 	win->SetFormButton( ok );
-	win->RegisterAction(Action_Close, new ObjectAction(CancelConfirmDialog, &value) );
+	win->RegisterAction(Action_Close, new VoidAction(UI::ReleaseModality) );
 	win->AddCloseButton();
 
 	UI::ModalDialog( win );
+
+	LogMsg(DEBUG2,"Player has chosen: %s", (value?"OK":"Cancel"));
 
 	return value;
 }
