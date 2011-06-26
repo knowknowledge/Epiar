@@ -77,6 +77,16 @@ bool UI::Active( void ) {
 	return true;
 }
 
+void UI::RegisterKeyboardFocus( Widget *widget ) {
+	if( IsAttached(widget) ) {
+		currentScreen->RegisterKeyboardFocus( widget );
+	}
+}
+
+Widget *UI::DetermineMouseFocus( int x, int y ) {
+	return currentScreen->DetermineMouseFocus( x,y );
+}
+
 /**\brief Adds a Widget to the base UI.
  * \param[in] widget Widget pointer that should be added.
  * \returns The same pointer to the widget that was passed as input.

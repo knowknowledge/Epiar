@@ -32,6 +32,7 @@ class Container : public Widget {
 
 		virtual Container *SetFormButton( Button* button );
 
+		void RegisterKeyboardFocus( Widget *widget );
 		virtual Widget *DetermineMouseFocus( int relx, int rely );
 
 		virtual bool IsAttached( Widget* possible );

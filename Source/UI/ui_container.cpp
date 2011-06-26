@@ -172,6 +172,33 @@ void Container::ResetInput( void ){
 	//this->formbutton = NULL;
 }
 
+void Container::RegisterKeyboardFocus( Widget *widget ) {
+	list<Widget *>::iterator i;
+
+	// Check the Immediate Children
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i) == widget ) {
+			if( keyboardFocus != NULL )
+				keyboardFocus->KeyboardLeave();
+			keyboardFocus = widget;
+			keyboardFocus->KeyboardEnter();
+		}
+	}
+
+	// Check the Sub-Children
+	for( i = children.begin(); i != children.end(); ++i ) {
+		if( (*i)->GetMask() & WIDGET_CONTAINER ) {
+			if( ((Container*)(*i))->IsAttached(widget) ) {
+				((Container*)(*i))->RegisterKeyboardFocus( widget );
+				if( keyboardFocus != NULL )
+					keyboardFocus->KeyboardLeave();
+				keyboardFocus = (*i);
+				keyboardFocus->KeyboardEnter();
+			}
+		}
+	}
+}
+
 /**\brief Checks to see if point is inside a child
  *
  * \note This checks the children in the opposite order that they are drawn so that Children 'on top' get focus first.
