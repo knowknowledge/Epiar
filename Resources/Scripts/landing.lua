@@ -106,12 +106,14 @@ function landingDialog(id)
 	yoff = 5
 	local numMissions = math.random(2,7)
 	function accept( missionType, i )
-		PLAYER:AcceptMission(missionType, availableMissions[i])
-
-		local path = string.format("/Window'%s'/Tabs/Tab'Employment'/Frame[%d]/Button/", planet:GetName(), i-1)
-		local acceptButton = UI.search( path )
-		if acceptButton ~= nil then
-			acceptButton:close()
+		local confirmed = UI.newConfirm("Accept Mission:\n"..availableMissions[i].Name)
+		if confirmed then
+			PLAYER:AcceptMission(missionType, availableMissions[i])
+			local path = string.format("/Window'%s'/Tabs/Tab'Employment'/Frame[%d]/Button/", planet:GetName(), i-1)
+			local acceptButton = UI.search( path )
+			if acceptButton ~= nil then
+				acceptButton:close()
+			end
 		end
 	end
 	for i = 1,numMissions do
@@ -159,20 +161,20 @@ function buyShip(model)
 		local viewerLabel = UI.search("/Window/Tabs'Store'/'Shipyard'/Frame[1]/Label[0]/")
 		if viewerLabel ~= nil then
 			model = viewerLabel:GetText()
-			print('Buying ',model)
+			--print('Buying ',model)
 		else
-			print('Could not interpret nil model for buyShip()')
+			print('Error: Could not interpret nil model for buyShip()')
 			return
 		end
 	end
-	print('Buying ',model)
+	--print('Buying ',model)
 	local price = Epiar.getMSRP(model)
 	local player_credits = PLAYER:GetCredits()
 	if player_credits >= price then
 		currentModel = PLAYER:GetModelName()
 		if currentModel ~= model then
 			PLAYER:SetCredits( player_credits - price + (2/3.0)*(Epiar.getMSRP(currentModel)) )
-			HUD.newAlert("Enjoy your new "..model.." for "..price.." credits.")
+			UI.newAlert("Enjoy your new "..model.." for "..price.." credits.")
 
 			-- clear these based on the old slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
@@ -193,11 +195,11 @@ function buyShip(model)
 
 			PLAYER:Repair(10000)
 		else
-			HUD.newAlert("You already have a "..model)
+			UI.newAlert("You already have a "..model)
 		end
 	else
-		HUD.newAlert("You can't afford to buy a "..model)
-		HUD.newAlert(string.format("You only have %d credits, but you need %d.",player_credits,price))
+		UI.newAlert("You can't afford to buy a "..model.."\n"..
+			string.format("You only have %d credits, but you need %d.",player_credits,price))
 	end
 	return 1
 end
@@ -207,28 +209,28 @@ function buyOutfit(outfit)
 		local viewerLabel = UI.search("/Window/Tabs'Store'/'Outfitting'/Frame[1]/Label[0]/")
 		if viewerLabel ~= nil then
 			outfit = viewerLabel:GetText()
-			print('Buying ',outfit)
+			--print('Buying ',outfit)
 		else
-			print('Could not interpret nil model for buyShip()')
+			print('Error: Could not interpret nil model for buyShip()')
 			return
 		end
 	end
 	local price = Epiar.getMSRP(outfit)
 	local player_credits = PLAYER:GetCredits()
 	if player_credits < price then
-		print("Account overdrawn...")
-		HUD.newAlert("You can't afford to buy a "..outfit)
+		--print("Account overdrawn...")
+		UI.newAlert("You can't afford to buy a "..outfit)
 		return
 	end
 
-	print("Debiting your account...")
+	--print("Debiting your account...")
 
 	PLAYER:SetCredits( player_credits - price )
 
-	print("Installing Outfit...")
+	--print("Installing Outfit...")
 	
 	if ( Set(Epiar.weapons())[outfit] ) then
-		print("Weapon...")
+		--print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 
 		local weapCount = 0;
@@ -242,30 +244,31 @@ function buyOutfit(outfit)
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
 		if weaponInfo["Ammo Consumption"] ~= 0 then
 			PLAYER:AddAmmo(outfit,100)
-			HUD.newAlert( (string.format("Added 100 ammo for %s",outfit ) ) )
+			UI.newAlert( (string.format("Added 100 ammo for %s",outfit ) ) )
 		end
 
 		local wsCount = PLAYER:GetWeaponSlotCount();
 		if weapCount >= wsCount then
-			HUD.newAlert( "You can't hold any more weapons" )
+			UI.newAlert( "You can't hold any more weapons" )
 			return
 		end
 
-		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 		PLAYER:AddWeapon(outfit)
 		HUD.newStatus(outfit..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",outfit))
 	elseif ( Set(Epiar.engines())[outfit] ) then
-		print("Engine...")
+		--print("Engine...")
 		PLAYER:SetEngine(outfit)
-		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 	elseif ( Set(Epiar.outfits())[outfit] ) then
-		print("Outfit...")
+		--print("Outfit...")
 		PLAYER:AddOutfit(outfit)
-		HUD.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
+		UI.newAlert("Enjoy your new "..outfit.." system for "..price.." credits")
 	else
 		print("Unknown Outfit: "..outfit)
+		return
 	end
-	print("Outfit Purchase complete")
+	--print("Outfit Purchase complete")
 end
 
 function sellOutfit(outfit)
@@ -273,23 +276,23 @@ function sellOutfit(outfit)
 		local viewerLabel = UI.search("/Window/Tabs'Store'/'Outfitting'/Frame[1]/Label[0]/")
 		if viewerLabel ~= nil then
 			outfit = viewerLabel:GetText()
-			print('Selling ',outfit)
+			--print('Selling ',outfit)
 		else
 			print('Could not interpret nil model for buyShip()')
 			return
 		end
 	end
 
-	print("Removing Outfit...")
+	--print("Removing Outfit...")
 
 	if ( Set(Epiar.weapons())[outfit] ) then
-		print("Weapon...")
+		--print("Weapon...")
 		local weaponsAndAmmo = PLAYER:GetWeapons()
 		if weaponsAndAmmo[outfit]~=nil then
 			PLAYER:RemoveWeapon(outfit)
 			HUD.closeStatus(outfit..":");
 		else
-			HUD.newAlert("You don't have a "..outfit.."!")
+			UI.newAlert("You don't have a "..outfit.."!")
 			return
 		end
 		local weaponInfo = Epiar.getWeaponInfo(outfit)
@@ -301,12 +304,12 @@ function sellOutfit(outfit)
 			-- Or, better yet, ammunition should be bought and sold separately.
 		end
 	elseif ( Set(Epiar.engines())[outfit] ) then
-		print("Engine...")
-		HUD.newAlert("You can't sell your engines!")
+		--print("Engine...")
+		UI.newAlert("You can't sell your engines!")
 		return
 
 	elseif ( Set(Epiar.outfits())[outfit] ) then
-		print("Outfit...")
+		--print("Outfit...")
 		local playerOutfits = PLAYER:GetOutfits()
 
 		local found = false
@@ -319,7 +322,7 @@ function sellOutfit(outfit)
 		end
 
 		if found == false then
-			HUD.newAlert("You don't have a "..outfit.."!")
+			UI.newAlert("You don't have a "..outfit.."!")
 			return
 		end
 		
@@ -336,7 +339,7 @@ function sellOutfit(outfit)
 	print("Crediting your account...")
 
 	PLAYER:SetCredits( player_credits + adjustedPrice )
-	HUD.newAlert("You sold your "..outfit.." system for "..adjustedPrice.." credits")
+	UI.newAlert("You sold your "..outfit.." system for "..adjustedPrice.." credits")
 	print("Outfit Selling complete")
 end
 
@@ -344,27 +347,27 @@ end
 function tradeCommodity(transaction, commodity, count, price)
 	local player_credits = PLAYER:GetCredits()
 	local cargo,stored,storable = PLAYER:GetCargo()
-	print "Trading..."
+	--print("Trading...")
 	if transaction=="buy" then
-		print("Tonnage available:",storable-stored)
-		print("Tonnage requested:",count)
-		print("Tonnage affordable:",player_credits/price)
+		--print("Tonnage available:",storable-stored)
+		--print("Tonnage requested:",count)
+		--print("Tonnage affordable:",player_credits/price)
 		trueCount = math.min(storable-stored,count,math.floor(player_credits/price)) -- Can't buy more than this
 		stored = PLAYER:StoreCommodities( commodity,trueCount )
 		if(stored ~= trueCount) then
-			print("ARG! That wasn't supposed to happen!")
+			UI.newAlert("ARG! That wasn't supposed to happen!")
 		end
 		PLAYER:SetCredits( player_credits - trueCount*price )
 		HUD.newAlert(string.format("You bought %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
 	elseif transaction=="sell" then
-		print("Tonnage stored:",cargo[commodity] or 0)
-		print("Tonnage requested:",count)
+		-- print("Tonnage stored:",cargo[commodity] or 0)
+		-- print("Tonnage requested:",count)
 		trueCount = math.min(count,cargo[commodity] or 0) -- Can't sell more than this
-		print("Discarding "..trueCount.." Tonnes")
+		--print("Discarding "..trueCount.." Tonnes")
 		discarded = PLAYER:DiscardCommodities( commodity,trueCount )
-		print("Discarded "..discarded.." Tonnes")
+		--print("Discarded "..discarded.." Tonnes")
 		if(discarded ~= trueCount) then
-			print("ARG! That wasn't supposed to happen!")
+			UI.newAlert("ARG! That wasn't supposed to happen!")
 		end
 		PLAYER:SetCredits( player_credits + trueCount*price )
 		HUD.newAlert(string.format("You sold %d tons of %s for %d credits",trueCount,commodity,price*trueCount))
@@ -378,7 +381,7 @@ function tradeCommodity(transaction, commodity, count, price)
 		commodityBox:setText( cargo[commodity] or 0)
 	end
 
-	print "Done Trading..."
+	--print "Done Trading..."
 	return 1
 end
 
