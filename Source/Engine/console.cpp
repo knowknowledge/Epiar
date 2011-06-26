@@ -45,6 +45,9 @@ void Console::HandleInput( list<InputEvent> & events ) {
 			} else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
 					switch(i->key) {
+					case SDLK_ESCAPE:
+						enabled = false;
+					break;
 					// Ignore Modifiers
 					case SDLK_LSHIFT:
 					case SDLK_RSHIFT:
