@@ -69,7 +69,7 @@ class Sprite {
 		virtual int GetDrawOrder( void ) = 0;
 		
 	private:
-		static int sprite_ids; ///< The ID for the next Sprite.
+		static long int sprite_ids; ///< The ID for the next Sprite.
 
 		int id; ///< The unique ID of this Sprite.
 		Coordinate worldPosition; ///< The Current position of this Sprite.

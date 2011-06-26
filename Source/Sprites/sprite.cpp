@@ -17,7 +17,7 @@
  */
 
 // Sprite ID 0 is only used as a NULL
-int Sprite::sprite_ids = 1;
+long int Sprite::sprite_ids = 1;
 
 /**\class Sprite
  * \brief Supertype for all objects in the world.
