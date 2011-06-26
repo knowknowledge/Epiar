@@ -16,7 +16,8 @@
 
 
 /** \class File
- * Low level file access abstraction through PhysicsFS. */
+ *  \brief Low level file access abstraction through PhysicsFS.
+ */
 
 /**Creates empty file instance.*/
 File::File( void ):

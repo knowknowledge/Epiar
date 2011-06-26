@@ -15,7 +15,7 @@
 #include "Input/input.h"
 #include "Utilities/timer.h"
 
-/** \defgroup UI
+/** \defgroup UI User Interface and Widget Management
  * @{
  */
 

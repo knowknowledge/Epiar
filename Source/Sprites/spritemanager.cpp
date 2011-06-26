@@ -13,7 +13,7 @@
 #include "Engine/camera.h"
 #include "Engine/simulation_lua.h"
 
-/** \defgroup Sprites
+/** \defgroup Sprites Sprite Objects and their Management
  * @{
  */
 
@@ -455,6 +455,26 @@ list<Sprite*> *SpriteManager::GetSpritesNear(Coordinate c, float r, int type) {
 	return( sprites );
 }
 
+/**\brief Get a Sprite nearest to another Sprite.
+ * \details Rather than just accept a Coordinate, this requires another Sprite
+ *          because the common usage is to look for a nearby enemy or
+ *          collision.  Since a Sprite is by definition the closest thing to
+ *          its own position, this function needs to know what sprite to ignore.
+ * 
+ *          The Usual use for this is to find the nearest sprite of a certain type.
+\verbatim
+ 	Sprite* found = GetNearestSprite(mySprite, 1000, DRAW_ORDER_SHIP);
+\endverbatim
+ *
+ *          Rather than re-implement this code for when the caller truely
+ *          doesn't care about a Sprite, the caller can supply a dummy Sprite like:
+\verbatim
+ 	Sprite* found = GetNearestSprite(Effect( Coordinate(0,0),"",0), 1000);
+\endverbatim
+ *
+ * \todo Build the Dummy example above into the SpriteManager.
+ *
+ */
 Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r, int type) {
 	float tmpdist;
 	Sprite* closest=NULL;

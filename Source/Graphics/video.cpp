@@ -13,13 +13,12 @@
 #include "Utilities/trig.h"
 
 /**\class Color
+ * \brief RGB coloring
  * \var Color::r
  *  \brief Red component
- */
-/**\var Color::g
+ * \var Color::g
  *  \brief Green component
- */
-/** \var Color::b
+ * \var Color::b
  *  \brief Blue component
  */
 

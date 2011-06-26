@@ -25,6 +25,20 @@
  *  \see Outfit
  */
 
+/** \class WeaponSlot
+ *  \brief A Description of a port on a Model where a Weapon can be attached.
+ *  \details The WeaponSlot is a named location on a ship like "front turret"
+ *           or "rear swivel slot".  Each WeaponSlot is located on the model
+ *           based on what the model looks like.  So for example, if the
+ *           Model's image looks like it has a weapon in it's nose, then there
+ *           should be a WeaponSlot in the nose.
+ *
+ *           Each WeaponSlot is assigned to a firing group (0 or 1).  When a
+ *           Ship fires, all the Weapons on that WeaponSlot will fire at once.
+ *
+ *           Some WeaponSlots come preconfigured with a Weapon, but this weapon
+ *           can be swapped out at any shipyard.
+ */
 
 /**\brief Creates an empty Model object.
  */

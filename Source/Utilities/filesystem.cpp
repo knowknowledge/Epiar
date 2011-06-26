@@ -14,10 +14,12 @@
 list<string> Filesystem::paths;
 
 #ifdef USE_PHYSICSFS
+
 /**\class Filesystem
- * An interface to deal with file system operations.
- * see the File class for dealing with specific files.
- * \sa File */
+ * \brief An interface to deal with file system operations.!!
+ * 
+ * \sa File for dealing with specific files.
+ */
 
 /**Initialize the PhysFS system
  * \return Nonzero on success. */

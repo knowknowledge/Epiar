@@ -37,8 +37,8 @@ Technology& Technology::operator= (const Technology& other)
  * \param _name Name of the Technology
  * \param _models std::list of Model objects
  * \param _engines std::list of Engine objects
- * \param _weapon std::list of Weapon objects
- * \param _outfit std::list of outfit objects
+ * \param _weapons std::list of Weapon objects
+ * \param _outfits std::list of outfit objects
  */
 Technology::Technology( string _name,
 		list<Model*> _models,

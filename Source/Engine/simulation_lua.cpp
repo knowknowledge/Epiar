@@ -696,7 +696,11 @@ int Simulation_Lua::GetGates(lua_State *L){
 }
 
 /** Get the nearest Sprite to another sprite
- * \param[in] A Sprite to use as the base location for the search.  This sprite will be ignored while searching.
+ * \details 
+ * This takes 2 lua arguments:
+*  - A Sprite: used as the base location for the search.
+*             This sprite will be ignored while searching.
+*  - A Range: the max distance from the sprite.
  * \returns The nearest Sprite
  */
 int Simulation_Lua::GetNearestSprite(lua_State *L,int kind) {

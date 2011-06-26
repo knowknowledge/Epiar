@@ -15,8 +15,19 @@
 #include "Graphics/video.h"
 #include "Utilities/timer.h"
 
+/**\class Input
+ * \brief Processor for the Users mouse and keyboard actions
+ * \details The Input polls SDL for any new events on every Update.
+ *          It then converts the Mouse Up/Down events into Mouse Held events.
+ *
+ *          Input also handles Registered mappings between Keys and Lua Functions.
+ *
+ * \see InputEvent 
+ */
+
 /**\class InputEvent
  * \brief Handles Input events. For specific key handling, see the Lua scripts.
+ *
  * \fn InputEvent::InputEvent( eventType type, keyState kstate, SDLKey key )
  *  \brief Handles input events based on SDLKey.
  * \fn InputEvent::InputEvent( eventType type, keyState kstate, int key )
@@ -27,24 +38,24 @@
  *  \brief Compares to see if two input events are the same.
  * \fn InputEvent::operator <(const InputEvent& e1, const InputEvent& e2 )
  *  \brief Compares if keys or mouse coords are less than each other.
+ * \var InputEvent::type
+ *  \brief Type of event
+ *
+ * \var InputEvent::key
+ *  \brief The key pressed
+ * 
+ * \var InputEvent::kstate
+ *  \brief Key state (up, down, or hold)
+ * 
+ * \var InputEvent::mstate
+ *  \brief Mouse state
+ * 
+ * \var InputEvent::mx
+ *  \brief Mouse x coordinate.
+ * 
+ * \var InputEvent::my
+ *  \brief Mouse y coordinate.
  */
- /// \var InputEvent::type
- ///  \brief Type of event
-
- /// \var InputEvent::key
- ///  \brief The key pressed
-
- /// \var InputEvent::kstate
- ///  \brief Key state (up, down, or hold)
-
- /// \var InputEvent::mstate
- ///  \brief Mouse state
-
- /// \var InputEvent::mx
- ///  \brief Mouse x coordinate.
-
- /// \var InputEvent::my
- ///  \brief Mouse y coordinate.
 
 /**\brief Stream to handle InputEvent.
  */
