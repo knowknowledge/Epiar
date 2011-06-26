@@ -7,7 +7,6 @@
 
 #include "UI/ui_action.h"
 #include "UI/ui_button.h"
-#include "UI/ui_canvas.h"
 #include "UI/ui_checkbox.h"
 #include "UI/ui_container.h"
 #include "UI/ui_dialogs.h"
