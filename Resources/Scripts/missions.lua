@@ -201,11 +201,12 @@ CollectArtifacts = {
 		-- Get a random subset of the Objects and Planets
 		table.shuffle( planetNames )
 		table.shuffle( objects )
+		missionTable.Description = missionTable.Description .. "\n"
 		for i=1, missionTable.NumArtifacts do
 			table.insert( missionTable.PlanetsWithArtifacts, planetNames[i] )
 			table.insert( missionTable.Objects, objects[i] )
 			table.insert( missionTable.Collected, false )
-			local sentence = "  The %s can be found on %s."
+			local sentence = "\n- The %s can be found on %s."
 			sentence = sentence:format( objects[i], planetNames[i % #planetNames] )
 			missionTable.Description = missionTable.Description .. sentence
 		end
@@ -240,7 +241,7 @@ CollectArtifacts = {
 				if distfrom(px,py,x,y) < p:GetSize() then
 					-- This artifact has been recovered
 					-- Record this in the Description
-					local desc = "** You have recovered the %s **"
+					local desc = "\n  ** You have recovered the %s **"
 					desc = desc:format( missionTable.Objects[i] )
 					missionTable.Description = missionTable.Description .. desc
 					-- Alert the Player

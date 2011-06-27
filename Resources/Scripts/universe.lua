@@ -324,8 +324,9 @@ function weaponConfigDialog()
 				Although you may have your own preferences, it is recommended that, if you have a weapon which requires ammo (e.g. missile launcher), you keep it in a firing group separate from your main group.
 
 				Grouping missiles into a salvo is a possibility if you have more than one launcher.]]
+	wcInstructions = string.gsub(wcInstructions, "\t*", "")
 
-	local instructions = UI.newParagraph(25, 5, 190, height, string.gsub(wcInstructions, "\t*", "") )
+	local instructions = UI.newParagraph(25, 5, 190, height, wcInstructions )
 
 	local wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
 
