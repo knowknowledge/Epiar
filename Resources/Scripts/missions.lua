@@ -49,10 +49,10 @@ ReturnAmbassador = {
 		local p = choose( Epiar.planets() )
 		local professions = {"Ambassador", "Smuggler", "Executive", "Trader"}
 		local profession = choose( professions )
-		local Name = string.format("Transport %s to %s", profession, p:GetName() )
+		local alliance = choose( Epiar.alliances() )
+		local Name = string.format("%s %s", alliance, profession )
 		local Reward = 1000 * ( math.random(10) + 10)
 		local Description = "A %s %s needs to be returned to %s. You will be paid %d credits if you can get there safely."
-		local alliance = choose( Epiar.alliances() )
 		Description = Description:format( alliance, profession, p:GetName(), Reward )
 		-- Save the mission information into a table
 		local missionTable = defaultMissionTable( Name, Description )
@@ -167,7 +167,7 @@ CollectArtifacts = {
 	Difficulty = "EASY",
 	Create = function()
 		local missionTable = defaultMissionTable(
-				"Collect %d Artifacts from %s for The %s",
+				"%s Artifacts",
 				"Several important items of %s have been found by %s %s.  The %s will pay you %d credits to return them safely to %s."
 			)
 
@@ -195,7 +195,7 @@ CollectArtifacts = {
 
 		-- Fill in the blanks madlib style
 		missionTable.EventName = missionTable.EventName:format( missionTable.Adjective, missionTable.Event )
-		missionTable.Name = missionTable.Name:format( missionTable.NumArtifacts, missionTable.EventName, missionTable.FriendAlliance)
+		missionTable.Name = missionTable.Name:format( missionTable.EventName )
 		missionTable.Description = missionTable.Description:format( missionTable.EventName, missionTable.EnemyAlliance, missionTable.Actors, missionTable.FriendAlliance, missionTable.Reward, missionTable.FinalPlanet)
 
 		-- Get a random subset of the Objects and Planets
@@ -288,7 +288,7 @@ ShippingRoutes = {
 		local missionTable = {}
 		local planet = choose( Epiar.planets() )
 
-		missionTable.Name = "Transport %d tons of %s to %s"
+		missionTable.Name = "%s Transport"
 		missionTable.Description = "The planet of %s needs high quality %s.  A Trader will pay you %d to deliver %d tons of his %s."
 		missionTable.Tonnage = math.random(50) + 10
 		missionTable.Commodity = choose( Epiar.commodities() )
@@ -296,7 +296,7 @@ ShippingRoutes = {
 		missionTable.Alliance = planet:GetAlliance()
 		missionTable.Reward = 1000 + (100 * missionTable.Tonnage)
 
-		missionTable.Name = missionTable.Name:format( missionTable.Tonnage, missionTable.Commodity, missionTable.Planet )
+		missionTable.Name = missionTable.Name:format( missionTable.Commodity )
 		missionTable.Description = missionTable.Description:format( missionTable.Planet, missionTable.Commodity, missionTable.Reward, missionTable.Tonnage, missionTable.Commodity )
 
 		return missionTable
@@ -441,7 +441,7 @@ ProtectFreighter = {
 			freighterName = (string.format("Captain %s", femaleNames[math.random(#femaleNames)]))
 		end
 
-		local missionTable = defaultMissionTable( (string.format ("Protect freighter en route to %s", planetName)),
+		local missionTable = defaultMissionTable( (string.format ("Freighter to %s", planetName)),
 		   (string.format(
 		      "%s, under threat from pirates, requests that you ensure %s safe arrival at %s. Reward is %d.",
 		      freighterName, pronoun, planetName, reward) )
