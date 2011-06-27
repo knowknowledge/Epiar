@@ -56,7 +56,7 @@ class Menu {
 	static void ErasePlayer( void *playerInfo );
 
     // GUI Helpers
-	static void SetPictureHover( void* picture, void* activeImage, void* inactiveImage);
+	static Picture* PictureButton( int x, int y, void (*callback)(), Image* activeImage, Image* inactiveImage);
 	static void ChangePicture( void* picture, void* image);
 	static void RandomizeSeed();
 

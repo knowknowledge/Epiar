@@ -143,42 +143,34 @@ void Menu::SetupGUI()
 	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
 
 	// New Button
-	play = new Picture( button_x, 200, "Resources/Graphics/txt_new_game_inactive.png");
-	play->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateNewWindow ) );
-	SetPictureHover( play, Image::Get( "Resources/Graphics/txt_new_game_active.png"),
-	                       Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
-	UI::Add( play );
+	play = PictureButton( button_x, 200, Menu::CreateNewWindow,
+	                      Image::Get( "Resources/Graphics/txt_new_game_active.png"),
+	                      Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
 
 	// Load Button
 	if( (Players::Instance()->Size() > 0) )
 	{
-		load = new Picture(button_x, 250, "Resources/Graphics/txt_load_game_inactive.png");
-		load->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateLoadWindow ) );
-		SetPictureHover( load, Image::Get( "Resources/Graphics/txt_load_game_active.png"),
+		load = PictureButton( button_x, 250, Menu::CreateLoadWindow,
+		                       Image::Get( "Resources/Graphics/txt_load_game_active.png"),
 		                       Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
-		UI::Add( load );
 	}
 
 	// Editor Button
-	edit = new Picture(button_x, 300, "Resources/Graphics/txt_editor_inactive.png");
-	edit->RegisterAction( Action_MouseLUp, new VoidAction( Menu::CreateEditWindow ) );
-	SetPictureHover( edit, Image::Get( "Resources/Graphics/txt_editor_active.png"),
+	edit = PictureButton( button_x, 300, Menu::CreateEditWindow,
+	                       Image::Get( "Resources/Graphics/txt_editor_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
-	UI::Add( edit );
 
 	// Options Button
-	options = new Picture(button_x, 400, "Resources/Graphics/txt_options_inactive.png");
-	options->RegisterAction( Action_MouseLUp, new VoidAction( Dialogs::OptionsWindow ) );
-	SetPictureHover( options, Image::Get( "Resources/Graphics/txt_options_active.png"),
+	options = PictureButton( button_x, 400, Dialogs::OptionsWindow,
+	                          Image::Get( "Resources/Graphics/txt_options_active.png"),
 	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
-	UI::Add( options );
 
 	// Exit Button
-	exit = new Picture(button_x, 500, "Resources/Graphics/txt_exit_inactive.png");
-	exit->RegisterAction( Action_MouseLUp, new VoidAction( QuitMenu ) );
-	SetPictureHover( exit, Image::Get( "Resources/Graphics/txt_exit_active.png"),
-	                       Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
-	UI::Add( exit );
+	exit = PictureButton( button_x, 500, QuitMenu,
+	                      Image::Get( "Resources/Graphics/txt_exit_active.png"),
+	                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
+
+	UI::Add( new Paragraph( 100, 100, 400, 400, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.\n\nSuspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend."));
 }
 
 /** This Window is used to create new Players.
@@ -298,12 +290,9 @@ void Menu::StartGame( void *info )
 	if( alive )
 	{
 		// Continue Button
-		Picture *continueButton = NULL;
-		continueButton = new Picture(Video::GetWidth() - 300, 200, "Resources/Graphics/txt_continue_inactive.png");
-		continueButton->RegisterAction( Action_MouseLUp, new VoidAction( Menu::ContinueGame ) );
-		SetPictureHover( continueButton, Image::Get( "Resources/Graphics/txt_continue_active.png"),
-							  Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
-		UI::Add( continueButton );
+		continueButton = PictureButton( Video::GetWidth() - 300, 200, Menu::ContinueGame,
+		                                Image::Get( "Resources/Graphics/txt_continue_active.png"),
+		                                Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
 	}
 }
 
@@ -500,11 +489,14 @@ void Menu::ChangePicture( void* picture, void* image)
 
 /** Make a Picture change images when the mouse hovers over it.
  */
-void Menu::SetPictureHover( void* picture, void* activeImage, void* inactiveImage)
+Picture* Menu::PictureButton( int x, int y, void (*callback)(), Image* activeImage, Image* inactiveImage)
 {
-	Picture* pic = ((Picture*)picture);
+	Picture* pic = new Picture( x, y, activeImage );
+	pic->RegisterAction( Action_MouseLUp, new VoidAction( callback ) );
 	pic->RegisterAction( Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
 	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
+	UI::Add( pic );
+	return pic;
 }
 
 /** Quit the Main Menu
