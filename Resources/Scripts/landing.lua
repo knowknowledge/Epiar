@@ -34,8 +34,7 @@ function landingDialog(id)
 	local surface = UI.newPicture( (width / 2) - 215, 15, 375, 281, surface_str, 0, 0, 0, 1)
 	summary_frame:add( surface )
 
-	local summary_txt = linewrap( planet:GetSummary() )
-	summary_frame:add( UI.newLabel(50,315,summary_txt,0) )
+	summary_frame:add( UI.newParagraph(50, 315, 375, 281, planet:GetSummary() ) )
 
 	summary:add( summary_frame )
 
@@ -130,7 +129,7 @@ function landingDialog(id)
 		missions:add(
 			UI.newFrame( 10, yoff, fwidth, fheight,
 				UI.newLabel( fwidth/2, 10, availableMissions[i].Name, 1 ),
-				UI.newLabel( 10, 40, linewrap(availableMissions[i].Description) ),
+				UI.newParagraph( 10, 40, fwidth-130, fheight, availableMissions[i].Description ),
 				UI.newButton( fwidth -100 -20, fheight -20 -20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
 			)
 		)

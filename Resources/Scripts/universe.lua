@@ -325,9 +325,7 @@ function weaponConfigDialog()
 
 				Grouping missiles into a salvo is a possibility if you have more than one launcher.]]
 
-	wcInstructions = linewrap( string.gsub(wcInstructions, "\t*", ""), 32, true )
-
-	local instructionsLabel = UI.newLabel(25, 5, wcInstructions, 0)
+	local instructions = UI.newParagraph(25, 5, 190, height, string.gsub(wcInstructions, "\t*", "") )
 
 	local wcDialog = UI.newWindow( 300,50,width,height+30+30+40, "Weapon Configuration")
 
@@ -337,7 +335,7 @@ function weaponConfigDialog()
 	wcDialog:addCloseButton()
 
 	leftFrame:add(slotsLabel, fgLabel);
-	rightFrame:add(instructionsLabel);
+	rightFrame:add(instructions);
 
 	-- when assignWeaponToSlot() is called, if this is nil, set it;
 	-- if it's set, swap the slot contents, update the buttons,

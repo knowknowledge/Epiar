@@ -905,7 +905,7 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	end
 
 	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
-	descriptionLabel = UI.newLabel( 10, 20, " " .. linewrap( _missionDescription, 45, true ) .. " " )
+	descriptionLabel = UI.newLabel( 10, 20, 280, 180, _missionDescription )
 	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
 	descriptionWindow:add( descriptionLabel, rejectButton )
 	descriptionWindow:addCloseButton()

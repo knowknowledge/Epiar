@@ -169,8 +169,6 @@ void Menu::SetupGUI()
 	exit = PictureButton( button_x, 500, QuitMenu,
 	                      Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
-
-	UI::Add( new Paragraph( 100, 100, 400, 400, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.\n\nSuspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend."));
 }
 
 /** This Window is used to create new Players.
