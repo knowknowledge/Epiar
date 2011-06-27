@@ -24,8 +24,6 @@
 /**\brief Constructor
  */
 Label::Label( int x, int y, string label, bool centered) {
-	Rect size;
-	
 	this->x=x;
 	this->y=y;
 

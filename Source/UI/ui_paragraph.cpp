@@ -26,14 +26,12 @@
  */
 Paragraph::Paragraph( int x, int y, int w, int h, string text ) 
 {
-	Rect size;
-	
 	this->x=x;
 	this->y=y;
+	this->w=w;
+	this->h=h;
+	this->centered = false;
 
-	// w/h is dependent upon the text given
-	
-	this->centered = centered;
 	SetText( text );
 }
 
@@ -68,21 +66,53 @@ void Paragraph::SetText(string text) {
 /**\brief Append some text to the current text
  */
 void Paragraph::AppendText(string text) {
-	int maxwidth = 0;
 	vector<string> temp;
 	vector<string>::iterator iter;
+	string curline = "";
+	int curwidth = 0;
+	int widthspace = UI::font->TextWidth( " " );
 
-	temp = TokenizedString( text, "\n" );
+	temp = TokenizedString( text, " \n" );
 	for(iter = temp.begin(); iter != temp.end() ; ++iter ) {
-		// Skip tokens (newlines)
-		if( (*iter) ==  "\n" ) { continue; }
-		lines.push_back( (*iter) );
-		int linelength = UI::font->TextWidth( *iter );
-		if( linelength > maxwidth ) maxwidth = linelength;
+		if( (*iter) ==  "\n" ) {
+			lines.push_back( curline );
+			curline = "";
+			curwidth = 0;
+		}
+		else if( (*iter) ==  " " )
+		{
+			curline += " ";
+			if( curwidth + widthspace >= w )
+			{
+				lines.push_back( curline );
+				curline = "";
+				curwidth = 0;
+			}
+			else
+			{
+				curwidth += widthspace;
+				curline += " ";
+			}
+		}
+		else // Words
+		{
+			int wordwidth = UI::font->TextWidth( *iter );
+			if( curwidth + wordwidth >= w )
+			{
+				lines.push_back( curline );
+				curline = *iter;
+				curwidth = 0;
+				curline = *iter;
+			}
+			else
+			{
+				curwidth += wordwidth;
+				curline += *iter;
+			}
+		}
 	}
 
 	this->name = text;
-	this->w = maxwidth;
 	this->h = lines.size() * UI::font->TightHeight( );
 }
 
