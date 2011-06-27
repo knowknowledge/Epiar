@@ -3,9 +3,9 @@
 --- Convert a list of strings/numbers into an table with those values as keys
 -- Code from: http://www.lua.org/pil/11.5.html
 function Set (list)
-  local set = {}
-  for _, l in ipairs(list) do set[l] = true end
-  return set
+	local set = {}
+	for _, l in ipairs(list) do set[l] = true end
+	return set
 end
 
 --- Trim a string
@@ -67,20 +67,23 @@ function linewrap(text, chars_per_line, do_justify)
 	local line = ""
 	text = string.gsub(text, "\n\n", "\n__HARDWRAP__ ")
 	string.gsub(text, "([^ \n]*)[ \n]*",
-	   function(w)
-	      local joined = string.format("%s %s", line, w)
-              if line == "" then joined = w end
-	      --if string.len( joined ) <= chars_per_line and w ~= "__HARDWRAP__" then
-	      if width_sum(joined) / glyphWidths['default'] <= chars_per_line and w ~= "__HARDWRAP__" then
-		 line = joined
-	      else
-		 if(do_justify) then line = justify(line) end
-	         if wrapped == "" then wrapped = line
-	         else wrapped = string.format("%s\n%s%s", wrapped, line, (w == "__HARDWRAP__" and "\n" or "")) end
-	         line = (w == "__HARDWRAP__" and "" or w)
-	      end
-	      return ""
-	   end)
+		function(w)
+		local joined = string.format("%s %s", line, w)
+		if line == "" then joined = w end
+		--if string.len( joined ) <= chars_per_line and w ~= "__HARDWRAP__" then
+		if width_sum(joined) / glyphWidths['default'] <= chars_per_line and w ~= "__HARDWRAP__" then
+			line = joined
+		else
+			if(do_justify) then line = justify(line) end
+			if wrapped == "" then
+				wrapped = line
+			else
+				wrapped = string.format("%s\n%s%s", wrapped, line, (w == "__HARDWRAP__" and "\n" or ""))
+			end
+			line = (w == "__HARDWRAP__" and "" or w)
+		end
+		return ""
+		end)
 	wrapped = string.format("%s\n%s", wrapped, line)
 	return wrapped
 end
@@ -127,14 +130,14 @@ end
 -- Shuffle a table
 -- http://rosettacode.org/wiki/Knuth_shuffle#Lua
 function table.shuffle(t)
-  local n = #t
-  while n > 1 do
-    local k = math.random(n)
-    t[n], t[k] = t[k], t[n]
-    n = n - 1
-  end
- 
-  return t
+	local n = #t
+	while n > 1 do
+		local k = math.random(n)
+		t[n], t[k] = t[k], t[n]
+		n = n - 1
+	end
+
+	return t
 end
 
 
@@ -143,41 +146,41 @@ end
 -- http://lua-users.org/wiki/TableSerialization
 
 function table_print (tt, indent, done)
-  done = done or {}
-  indent = indent or 4
-  if type(tt) == "table" then
-    local sb = {}
-    for key, value in pairs (tt) do
-      table.insert(sb, string.rep (" ", indent)) -- indent it
-      if type (value) == "table" and not done [value] then
-        done [value] = true
-        table.insert(sb, string.format("[%s] => ", tostring (key)));
-        table.insert(sb, "{\n");
-        table.insert(sb, table_print (value, indent + 2, done))
-        table.insert(sb, string.rep (" ", indent)) -- indent it
-        table.insert(sb, "}\n");
-      elseif "number" == type(key) then
-        table.insert(sb, string.format("\"%s\"\n", tostring(value)))
-      else
-        table.insert(sb, string.format(
-            "%s = \"%s\"\n", tostring (key), tostring(value)))
-       end
-    end
-    return table.concat(sb)
-  else
-    return tt .. "\n"
-  end
+	done = done or {}
+	indent = indent or 4
+	if type(tt) == "table" then
+		local sb = {}
+		for key, value in pairs (tt) do
+			table.insert(sb, string.rep (" ", indent)) -- indent it
+			if type (value) == "table" and not done [value] then
+				done [value] = true
+				table.insert(sb, string.format("[%s] => ", tostring (key)));
+				table.insert(sb, "{\n");
+				table.insert(sb, table_print (value, indent + 2, done))
+				table.insert(sb, string.rep (" ", indent)) -- indent it
+				table.insert(sb, "}\n");
+			elseif "number" == type(key) then
+				table.insert(sb, string.format("\"%s\"\n", tostring(value)))
+			else
+				table.insert(sb, string.format(
+					"%s = \"%s\"\n", tostring (key), tostring(value)))
+			end
+		end
+		return table.concat(sb)
+	else
+		return tt .. "\n"
+	end
 end
 
 function to_string( tbl )
-    if  "nil"       == type( tbl ) then
-        return tostring(nil)
-    elseif  "table" == type( tbl ) then
-        return table_print(tbl)
-    elseif  "string" == type( tbl ) then
-        return tbl
-    else
-        return tostring(tbl)
-    end
+	if "nil" == type( tbl ) then
+		return tostring(nil)
+	elseif "table" == type( tbl ) then
+		return table_print(tbl)
+	elseif "string" == type( tbl ) then
+		return tbl
+	else
+		return tostring(tbl)
+	end
 end
 
