@@ -77,7 +77,6 @@ void Paragraph::AppendText(string text) {
 		if( (*iter) ==  "\n" ) {
 			lines.push_back( curline );
 			curline = "";
-			curwidth = 0;
 		}
 		else if( (*iter) ==  " " )
 		{
@@ -86,30 +85,28 @@ void Paragraph::AppendText(string text) {
 			{
 				lines.push_back( curline );
 				curline = "";
-				curwidth = 0;
 			}
 			else
 			{
-				curwidth += widthspace;
 				curline += " ";
 			}
 		}
 		else // Words
 		{
-			int wordwidth = UI::font->TextWidth( *iter );
-			if( curwidth + wordwidth >= w )
+			string word = *iter;
+			if( UI::font->TextWidth( curline + word ) >= w )
 			{
 				lines.push_back( curline );
-				curline = *iter;
-				curwidth = 0;
-				curline = *iter;
+				curline = "";
 			}
-			else
-			{
-				curwidth += wordwidth;
-				curline += *iter;
-			}
+			curline += word;
 		}
+		curwidth = UI::font->TextWidth( curline );
+	}
+
+	if( curline != "" )
+	{
+		lines.push_back( curline );
 	}
 
 	this->name = text;
