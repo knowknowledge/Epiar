@@ -23,68 +23,51 @@
 
 /**\brief Constructor
  */
-Label::Label( int x, int y, string label, bool centered) {
-	this->x=x;
-	this->y=y;
+Label::Label( int _x, int _y, string input, bool centered) {
+	x = _x;
+	y = _y;
 
 	// w/h is dependent upon the text given
 	
 	this->centered = centered;
-	SetText( label );
+	SetText( input );
 
-	if( lines.size() >1 )
-	{
-		LogMsg(WARN, "Multiline Label: %s", label.c_str() );
-	}
 }
 
 /**\brief Draw the Label
  */
 void Label::Draw(  int relx, int rely ) {
-	int x, y;
-	vector<string>::iterator iter;
+	int sx, sy;
 	
-	x = this->x + relx;
-	y = this->y + rely;
+	sx = GetX() + relx;
+	sy = GetY() + rely;
 	
 	// draw the label
 	Font::XPos xpositioning = (centered) ? (Font::CENTER) : (Font::LEFT);
 	Font::YPos ypositioning = (centered) ? (Font::MIDDLE) : (Font::TOP);
 
-	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += UI::font->TightHeight() )
-	{
-		UI::font->Render( x, y, *iter, xpositioning, ypositioning );
-	}
+	UI::font->Render( sx, sy, text, xpositioning, ypositioning );
 
-	Widget::Draw(relx,rely + UI::font->TightHeight() / 2 );
+	Widget::Draw( relx, rely + UI::font->TightHeight() / 2 );
 }
 
 /**\brief Set the text string of this Widget
  */
-void Label::SetText(string text) {
-	lines.clear();
-	AppendText( text );
+void Label::SetText(string newText) {
+	text = newText;
+	name = text;
+	if( text.find("\n") != string::npos )
+	{
+		LogMsg(WARN, "Multiline Label: %s at %ld", text.c_str(), text.find("\n") );
+	}
+	w = UI::font->TextWidth( text );
+	h = UI::font->TightHeight( );
 }
 
 /**\brief Append some text to the current text
  */
-void Label::AppendText(string text) {
-	int maxwidth = 0;
-	vector<string> temp;
-	vector<string>::iterator iter;
-
-	temp = TokenizedString( text, "\n" );
-	for(iter = temp.begin(); iter != temp.end() ; ++iter ) {
-		// Skip tokens (newlines)
-		if( (*iter) ==  "\n" ) { continue; }
-		lines.push_back( (*iter) );
-		int linelength = UI::font->TextWidth( *iter );
-		if( linelength > maxwidth ) maxwidth = linelength;
-	}
-
-	this->name = text;
-	this->w = maxwidth;
-	this->h = lines.size() * UI::font->TightHeight( );
+void Label::AppendText(string moreText) {
+	SetText( text + moreText );
 }
 
 /** @} */

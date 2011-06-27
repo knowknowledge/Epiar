@@ -26,9 +26,8 @@ class Label : public Widget {
 		virtual int GetMask( void ) { return WIDGET_LABEL; }
 	
 	private:
-		vector<string> splitBy( const string& s, const char* tokens );
 		bool centered;
-		vector<string> lines;
+		string text;
 };
 
 #endif // __H_LABEL__
