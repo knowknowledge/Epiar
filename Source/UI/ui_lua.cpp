@@ -56,6 +56,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTabContainer", &UI_Lua::newTabContainer},
 		{"newTab", &UI_Lua::newTab},
 		{"newDropdown", &UI_Lua::newDropdown},
+		{"newParagraph", &UI_Lua::newParagraph},
 
 		// Create Modal Dialogs
 		{"newConfirm", &UI_Lua::newConfirm},
@@ -552,6 +553,32 @@ int UI_Lua::newDropdown(lua_State *L) {
 	return 1;
 }
 
+/** \brief Create a new Paragraph
+ *
+ *  \returns Lua userdata containing pointer to Paragraph.
+ */
+int UI_Lua::newParagraph(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 5)
+		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, text )", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+	string text = luaL_checkstring (L, 5);
+
+	// Allocate memory for a pointer to object
+	Paragraph **p = (Paragraph**)lua_newuserdata(L, sizeof(Paragraph**));
+    luaL_getmetatable(L, EPIAR_UI);
+    lua_setmetatable(L, -2);
+	*p = new Paragraph(x, y, w, h, text);
+
+	UI::Add(*p);
+
+	return 1;
+}
+
 int UI_Lua::newConfirm(lua_State *L)
 {
 	int n = lua_gettop(L);  // Number of arguments
@@ -776,6 +803,9 @@ int UI_Lua::setText(lua_State *L){
 				return luaL_error(L, "This Dropdown does not have an option '%s'.", text.c_str() );
 			}
 			break;
+		case WIDGET_PARAGRAPH:
+			((Paragraph*)(widget))->SetText( text );
+			break;
 		// TODO These Widget Types do not currently accept setText, but they should.
 		case WIDGET_TAB:
 		case WIDGET_WINDOW:
@@ -876,6 +906,10 @@ int UI_Lua::GetText(lua_State *L){
 			break;
 		case WIDGET_BUTTON:
 			lua_pushstring(L, ((Button*)(widget))->GetText().c_str() );
+			return 1;
+			break;
+		case WIDGET_PARAGRAPH:
+			lua_pushstring(L, ((Paragraph*)(widget))->GetText().c_str() );
 			return 1;
 			break;
 		// TODO These Widget Types do not currently accept getText, but they should.

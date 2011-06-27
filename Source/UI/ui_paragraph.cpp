@@ -1,7 +1,7 @@
-/**\file			ui_label.cpp
- * \author			Chris Thielen (chris@epiar.net)
- * \date			Created: Friday, April 25, 2008
- * \date			Modified: Friday, April 25, 2008
+/**\file			ui_paragraph.cpp
+ * \author			Matt Zweig (thezweig@gmail.com)
+ * \date			Created: Sunday, June 26, 2011
+ * \date			Modified: Sunday, June 26, 2011
  * \brief
  * \details
  */
@@ -11,19 +11,21 @@
 #include "Graphics/video.h"
 #include "Graphics/font.h"
 #include "UI/ui.h"
-#include "UI/ui_label.h"
+#include "UI/ui_paragraph.h"
 #include "Utilities/log.h"
 
 /** \addtogroup UI
  * @{
  */
 
-/**\class Label
- * \brief UI label. */
+/**\class Paragraph
+ * \brief UI Paragraph
+ */
 
 /**\brief Constructor
  */
-Label::Label( int x, int y, string label, bool centered) {
+Paragraph::Paragraph( int x, int y, int w, int h, string text ) 
+{
 	Rect size;
 	
 	this->x=x;
@@ -32,24 +34,19 @@ Label::Label( int x, int y, string label, bool centered) {
 	// w/h is dependent upon the text given
 	
 	this->centered = centered;
-	SetText( label );
-
-	if( lines.size() >1 )
-	{
-		LogMsg(WARN, "Multiline Label: %s", label.c_str() );
-	}
+	SetText( text );
 }
 
-/**\brief Draw the Label
+/**\brief Draw the Paragraph
  */
-void Label::Draw(  int relx, int rely ) {
+void Paragraph::Draw(  int relx, int rely ) {
 	int x, y;
 	vector<string>::iterator iter;
 	
 	x = this->x + relx;
 	y = this->y + rely;
 	
-	// draw the label
+	// draw the text 
 	Font::XPos xpositioning = (centered) ? (Font::CENTER) : (Font::LEFT);
 	Font::YPos ypositioning = (centered) ? (Font::MIDDLE) : (Font::TOP);
 
@@ -63,14 +60,14 @@ void Label::Draw(  int relx, int rely ) {
 
 /**\brief Set the text string of this Widget
  */
-void Label::SetText(string text) {
+void Paragraph::SetText(string text) {
 	lines.clear();
 	AppendText( text );
 }
 
 /**\brief Append some text to the current text
  */
-void Label::AppendText(string text) {
+void Paragraph::AppendText(string text) {
 	int maxwidth = 0;
 	vector<string> temp;
 	vector<string>::iterator iter;

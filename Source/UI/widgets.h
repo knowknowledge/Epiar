@@ -15,6 +15,7 @@
 #include "UI/ui_label.h"
 #include "UI/ui_lua.h"
 #include "UI/ui_map.h"
+#include "UI/ui_paragraph.h"
 #include "UI/ui_picture.h"
 #include "UI/ui_scrollbar.h"
 #include "UI/ui_slider.h"

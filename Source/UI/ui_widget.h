@@ -26,6 +26,7 @@
 #define WIDGET_CHECKBOX            (0x00000040) ///< Mask for Checkbox
 #define WIDGET_SCROLLBAR           (0x00000080) ///< Mask for Scrollbar
 #define WIDGET_MAP                 (0x00000100) ///< Mask for Map
+#define WIDGET_PARAGRAPH           (0x00000200) ///< Mask for Paragraph
 
 #define WIDGET_CONTAINER           (0x00010000) ///< Mask for Container
 #define WIDGET_FRAME               (0x00020000) ///< Mask for Frame

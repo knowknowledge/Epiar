@@ -113,6 +113,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_map.h
 	${Epiar_SRC_DIR}/UI/ui_picture.cpp
 	${Epiar_SRC_DIR}/UI/ui_picture.h
+	${Epiar_SRC_DIR}/UI/ui_paragraph.cpp
+	${Epiar_SRC_DIR}/UI/ui_paragraph.h
 	${Epiar_SRC_DIR}/UI/ui_scrollbar.cpp
 	${Epiar_SRC_DIR}/UI/ui_scrollbar.h
 	${Epiar_SRC_DIR}/UI/ui_slider.cpp
