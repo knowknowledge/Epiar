@@ -162,13 +162,16 @@ void Player::Land( lua_State *L, Planet* planet ){
 
 	//Run Land function for each Mission
 	bool missionOver;
-	list<Mission*>::iterator i;
-	for( i = missions.begin(); i != missions.end(); ++i ) {
+	list<Mission*>::iterator i = missions.begin();
+	while( i != missions.end() )
+	{
 		missionOver = (*i)->Land();
 		if( missionOver ) {
-			LogMsg(INFO, "Completed the Mission %s", (*i)->GetName().c_str() );
+			LogMsg(INFO, "Completed the Mission '%s'", (*i)->GetName().c_str() );
 			// Remove this completed mission from the list
 			i = missions.erase( i );
+		} else {
+			++i;
 		}
 	}
 
