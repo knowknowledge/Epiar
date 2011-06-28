@@ -26,6 +26,7 @@ class Paragraph : public Widget {
 		virtual int GetMask( void ) { return WIDGET_PARAGRAPH; }
 	
 	private:
+		int maxwidth;
 		vector<string> splitBy( const string& s, const char* tokens );
 		bool centered;
 		vector<string> lines;
