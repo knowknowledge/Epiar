@@ -73,7 +73,8 @@ void Log::Open() {
 	} else {
 		// Write the xml header
 		fprintf(fp, "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n"	);
-		fprintf(fp, "<debugSession time=\"%s\" />\n", timestamp );
+		fprintf(fp, "<?xml-stylesheet type=\"text/xsl\" href=\"epiar.xsl\"?>\n" );
+		fprintf(fp, "<debugSession time=\"%s\">\n", timestamp );
 	}	
 }
 
