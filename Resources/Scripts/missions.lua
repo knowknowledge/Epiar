@@ -31,6 +31,24 @@ MissionType = {
 
 --]]
 
+-- Missions are generated Mad-Libs style, so here are a bunch of words to fill in the gaps.
+
+maleNames = { "Bart", "Paine", "John", "Jack", "Cervantes", "Robert", "Bob", "Joe", "Steve", "Manfred", "Johnny", "Otis", "Gus", "Gilbert" }
+femaleNames = { "Mary", "Suzie", "Wanda", "Francine", "Bertha", "Mildred", "Sally" }
+names = array_concat(femaleNames, maleNames)
+
+colors = {"Red", "Orange", "Yellow", "Green", "Blue", "Pink", "Black", "Grey", "White"}
+materials = {"Steel", "Iron", "Stone", "Plasma", "Glass", "Fiber", "Alloy" }
+insultingAdjectives = {"Scruffy Looking", "Ugly", "Shady", "Tattered", "Grimy", "Sketchy Looking", }
+scarytitles = { "Savage", "Blood Thirsty", "Wanderer", "Villianous", "Hungry", "Illicit"}
+professions = {"Ambassador", "Smuggler", "Executive", "Trader", "Diplomat", "War Hero", "Officer", "Politician", "Musician", "Historian", "Engineer", "Robopsychologist", "Psychohistorian"}
+objects = {"Sword", "Blaster", "Helm", "Amulet", "Tome", "Flag", "Statue", "History", "MacGuffin", "Crystal", "Book", "Document", "Holo-Vid", "Clock"}
+eventAdjectives = {"Bloodless", "Circular", "Mistaken", "Forgotten", "Wild", "Nuclear"}
+timeAdjectives = {"One Hour", "24 Hour", "14 Day", "One Year", "500 Day", "100 Year", "Seven Generation"}
+events = {"Revolution", "Revolt", "Insurgency", "Tournament", "Race", "Decade", "Legend", "Treaty", "Project", "Council", "Coup"}
+enemies = {"revolutionaries", "spies", "rebels", "agitators", "freedom fighters", "terrorists", "hooligans", "mobsters", "pirates", "officials", "assassins"}
+pirateTitles = array_concat(scarytitles, colors, insultingAdjectives)
+
 --- These are the bare minimum values that need to be in the each Mission Table
 function defaultMissionTable( Name, Description)
 	local missionTable = {
@@ -47,15 +65,23 @@ ReturnAmbassador = {
 	Difficulty = "EASY",
 	Create = function()
 		local p = choose( Epiar.planets() )
-		local professions = {"Ambassador", "Smuggler", "Executive", "Trader"}
 		local profession = choose( professions )
 		local alliance = choose( Epiar.alliances() )
-		local Name = string.format("%s %s", alliance, profession )
+		local alliance = choose( Epiar.alliances() )
+		local Name = string.format("The %s %s", alliance, profession )
 		local Reward = 1000 * ( math.random(10) + 10)
-		local Description = "A %s %s needs to be returned to %s. You will be paid %d credits if you can get there safely."
-		Description = Description:format( alliance, profession, p:GetName(), Reward )
+		local f = string.format
+		local descriptions = {
+			f("A %s %s needs transport to %s. You will be paid %d credits if you can get there safely.", alliance, profession, p:GetName(), Reward),
+			f("A %s official tells you about a popular %s from %s. The %s want to make sure that they arrive safely. They'll pay %d credits.", alliance, profession, p:GetName(), alliance, Reward),
+			f("A %s spy is under cover as a %s and needs to get to %s without being found. Don't ask too many questions and the %d credits is yours.", alliance, profession, p:GetName(), Reward),
+			f("A %s man approaches you. \"I used to be known as '%s The %s', but now I'm a %s for The %s. Let me fly with you until %s and I'll give you %d credits.\"", choose(insultingAdjectives), choose(maleNames), choose(pirateTitles), profession, alliance, p:GetName(), Reward ),
+			f("\"I guess you could call me a galactic tourist even though I'm really a %s working for The %s.  Take me as far as %s and I'll pay you %d credits.\"", profession, alliance, p:GetName(), Reward ),
+			f("A woman approaches you with a small package under her arms.  \"I'm a %s for %s and I've just found the '%s %s' from the %s %s period.  I need to return to %s immediately so that my collegue can study it.  If I agree to pay you %d credits, will you take me?\"", profession, alliance, choose(materials), choose(objects), choose(array_concat(eventAdjectives,timeAdjectives)), choose(events), p:GetName(), Reward ),
+		}
+		--for i=1,#descriptions do print(descriptions[i]) end
 		-- Save the mission information into a table
-		local missionTable = defaultMissionTable( Name, Description )
+		local missionTable = defaultMissionTable( Name, choose(descriptions) )
 		missionTable.planet = p:GetName()
 		missionTable.reward = Reward
 		missionTable.alliance = alliance
@@ -65,10 +91,22 @@ ReturnAmbassador = {
 	Accept = function( missionTable )
 		local p = Planet.Get( missionTable.planet )
 		local qx, qy = coordinateToQuadrant( p:GetPosition() )
-		UI.newAlert( string.format("Please take me to %s in the Quadrant (%d,%d)", missionTable.planet, qx, qy ) )
+		UI.newAlert( string.format("Thank you %s, Please take me to %s in the Quadrant (%d,%d)", PLAYER:GetName(), missionTable.planet, qx, qy ) )
 	end,
 	Reject = function( missionTable )
-		UI.newAlert( string.format("You will rue the day you abandoned such a powerful %s %s.", missionTable.alliance, missionTable.profession ) )
+		local f = string.format
+		local rejections = {
+			f("You will rue the day you abandoned such a powerful %s %s.", missionTable.alliance, missionTable.profession),
+			f("Don't just leave me here!"),
+			f("Can you take me as far as the next %s friendly port?", missionTable.alliance),
+			f("Do you have something against %s?", missionTable.alliance),
+			f("Well then you can forget about the %d credits!", missionTable.reward),
+			f("I guess you don't have the time to help out an old %s.", missionTable.profession),
+			f("Why %s? I thought we had become friends.", PLAYER:GetName()),
+			f("I may just be a %s, but I'll make sure that my %s friends hear abou this.", missionTable.profession, missionTable.alliance),
+		}
+		--for i=1,#rejections do print(rejections[i]) end
+		UI.newAlert( "The "..missionTable.profession..", "..f('"%s"',choose(rejections)) )
 	end,
 	Update = function( missionTable )
 	end,
@@ -77,7 +115,20 @@ ReturnAmbassador = {
 		local p = Planet.Get( missionTable.planet )
 		local px,py = p:GetPosition()
 		if distfrom(px,py,x,y) < p:GetSize() then
-			UI.newAlert(string.format("Thank you for returning me to my home.") )
+			local f = string.format
+			local thanks = {
+				f("Thank you %s.", PLAYER:GetName()),
+				f("*Grumble* Well it took you long enough. Take your %d and get lost.", missionTable.reward),
+				f("That was a fun ride!"),
+				f("Such fun adventures!  I will always remember how you fought off those %s!", choose(enemies)),
+				f("Not the most direct route, but we got here safely."),
+				f("If you ever visit %s again, come say hello.", missionTable.planet),
+				f("I'll meet you again at %s.", choose(Epiar.planets())),
+				f("I can't wait to tell my friend %s about this trip.", choose(names)),
+				f("You've made a powerful %s friend today. Thank you.", missionTable.alliance),
+			}
+			--for i=1,#thanks do print(thanks[i]) end
+			UI.newAlert( "The "..missionTable.profession..", "..f('"%s"',choose(thanks)) )
 			return true
 		end
 	end,
@@ -97,9 +148,7 @@ DestroyPirate = {
 	Difficulty = "MEDIUM",
 	Create = function()
 		local missionTable = {}
-		local name = choose( {"Robert", "Bob", "Joe", "Steve", "Mary", "Bart", "Paine", "John", "Jack", "Cervantes", "Sally"} )
-		local title = choose( {"Red", "Black", "Yellow", "Savage", "Blood Thirsty", "Wanderer", "Villianous", "Scruffy Looking", "Shady", "Hungry", "Illicit"} )
-		missionTable.piratename = name .." The ".. title
+		missionTable.piratename = choose(names).." The ".. choose(pirateTitles)
 		missionTable.Name = string.format("Destroy %s", missionTable.piratename)
 		missionTable.reward = 1000 * ( math.random(10) + 20)
 		local x,y = PLAYER:GetPosition()
@@ -166,37 +215,40 @@ CollectArtifacts = {
 	Author = "Matt Zweig",
 	Difficulty = "EASY",
 	Create = function()
-		local missionTable = defaultMissionTable(
-				"%s Artifacts",
-				"Several important items of %s have been found by %s %s.  The %s will pay you %d credits to return them safely to %s."
-			)
+		local missionTable = {}
 
-		-- The vocabulary of our mission madlibs
 		local allianceNames = Epiar.alliances()
 		local planetNames = Epiar.planetNames()
-		local objects = {"Sword", "Blaster", "Helm", "Amulet", "Tome", "Flag", "Statue", "History", "MacGuffin", "Crystal", "Book", "Document"}
-		local adjectives = {"Red", "Black", "Bloodless", "Steel", "Iron", "Circular", "Mistaken", "Forgotten", "Wild", "Nuclear"}
-		local events = {"Revolution", "Revolt", "Insurgency", "Tournament", "Race", "Decade", "Legend", "Treaty", "Project", "Council"}
-		local actors = {"revolutionaries", "spies", "rebels", "agitators", "freedom fighters", "terrorists", "hooligans", "mobsters", "pirates", "officials", "assassins"}
 
 		-- The rest of the Mission Table entries.
-		missionTable.EventName = "The %s %s"
-		missionTable.Actors = choose( actors )
+		missionTable.Actors = choose( enemies )
 		missionTable.FriendAlliance = choose( allianceNames )
 		missionTable.EnemyAlliance = choose( allianceNames )
 		missionTable.NumArtifacts = math.random( 2, 6 )
 		missionTable.FinalPlanet = choose( planetNames )
-		missionTable.Adjective = choose( adjectives )
+		missionTable.Adjective = choose( array_concat(colors, materials, eventAdjectives, timeAdjectives) )
 		missionTable.Event = choose( events )
+		missionTable.EventName = "The "..missionTable.Adjective .." ".. missionTable.Event
 		missionTable.Reward = 5000 + (missionTable.NumArtifacts * 2000)
 		missionTable.Objects = {}
 		missionTable.Collected = {}
 		missionTable.PlanetsWithArtifacts = {}
 
 		-- Fill in the blanks madlib style
-		missionTable.EventName = missionTable.EventName:format( missionTable.Adjective, missionTable.Event )
-		missionTable.Name = missionTable.Name:format( missionTable.EventName )
-		missionTable.Description = missionTable.Description:format( missionTable.EventName, missionTable.EnemyAlliance, missionTable.Actors, missionTable.FriendAlliance, missionTable.Reward, missionTable.FinalPlanet)
+		local f = string.format
+		local descriptions = {
+			f("Several important items of '%s' have been found by %s %s.  The %s will pay you %d credits to return them safely to %s.", 
+				missionTable.EventName, missionTable.EnemyAlliance, missionTable.Actors, missionTable.FriendAlliance, missionTable.Reward, missionTable.FinalPlanet),
+			f("A %s Treasure Hunter tells you that they know where to find the lost artifacts from the time known as '%s'. \"We might need to fight off some %s %s who are looking for the artifacts as well.  If we can beat them to %s I'll pay you %s.\"",
+				missionTable.FriendAlliance, missionTable.EventName, missionTable.EnemyAlliance, missionTable.Actors, missionTable.FinalPlanet, missionTable.Reward ),
+			f("One of the most prestigious universities of the %s planets needs to find out more about a time in %s history called '%s'. Collect the artifacts and return them to %s for %d credits.",
+				missionTable.FriendAlliance, missionTable.EnemyAlliance, missionTable.EventName, missionTable.FinalPlanet, missionTable.Reward ),
+			f("%s %s are planning on destroying some of most precious relics from the %s.  Find them first and bring them to %s contacts on %s.  Reward: %d Credits",
+				missionTable.EnemyAlliance, missionTable.Actors, missionTable.EventName, missionTable.FriendAlliance, missionTable.FinalPlanet, missionTable.Reward ),
+		}
+
+		missionTable.Name = missionTable.EventName .. " Artifacts"
+		missionTable.Description = choose( descriptions )
 
 		-- Get a random subset of the Objects and Planets
 		table.shuffle( planetNames )
@@ -207,7 +259,7 @@ CollectArtifacts = {
 			table.insert( missionTable.Objects, objects[i] )
 			table.insert( missionTable.Collected, false )
 			local sentence = "\n- The %s can be found on %s."
-			sentence = sentence:format( objects[i], planetNames[i % #planetNames] )
+			sentence = sentence:format( objects[i], planetNames[i] )
 			missionTable.Description = missionTable.Description .. sentence
 		end
 
@@ -217,7 +269,7 @@ CollectArtifacts = {
 		local acceptMessage = "The artifacts from %s can be found at %s"
 		local places = missionTable.PlanetsWithArtifacts[1] .. " and " .. missionTable.PlanetsWithArtifacts[2]
 		for i=3, missionTable.NumArtifacts do
-			places = missionTable.PlanetsWithArtifacts[1] .. ", " .. places
+			places = missionTable.PlanetsWithArtifacts[i] .. ", " .. places
 		end
 		acceptMessage = acceptMessage:format( missionTable.EventName, places )
 		UI.newAlert( acceptMessage  )
@@ -252,6 +304,8 @@ CollectArtifacts = {
 					missionTable.Collected[i] = true
 					totalFound = totalFound + 1
 				end
+			else
+				totalFound = totalFound + 1
 			end
 		end
 		if totalFound == missionTable.NumArtifacts then
@@ -430,20 +484,18 @@ ProtectFreighter = {
 		local planetName = p:GetName()
 
 		local pronoun
-		local maleNames = { "Manfred", "Johnny", "Otis", "Gus", "Gilbert" }
-		local femaleNames = { "Suzie", "Wanda", "Francine", "Bertha", "Mildred" }
 		local freighterName
 		if math.random(2) == 1 then
 			pronoun = "his"
-			freighterName = (string.format("Captain %s", maleNames[math.random(#maleNames)]))
+			freighterName = (string.format("Captain %s", choose(maleNames)) )
 		else
 			pronoun = "her"
-			freighterName = (string.format("Captain %s", femaleNames[math.random(#femaleNames)]))
+			freighterName = (string.format("Captain %s", choose(femaleNames)) )
 		end
 
 		local missionTable = defaultMissionTable( (string.format ("Freighter to %s", planetName)),
 		   (string.format(
-		      "%s, under threat from pirates, requests that you ensure %s safe arrival at %s. Reward is %d.",
+		     "%s, under threat from pirates, requests that you ensure %s safe arrival at %s. Reward is %d.",
 		      freighterName, pronoun, planetName, reward) )
 		)
 		missionTable.freighterName = freighterName
