@@ -368,7 +368,7 @@ bool Simulation::Run() {
 			// Check to see if the player is dead
 			if( player->GetHullIntegrityPct() <= 0 ) {
 				if( UI::Search("/Window'Death'/") == NULL ) {
-					Window* win = new Window(300, 250, 250, 140, "Death");
+					Window* win = new Window( Video::GetWidth()/2-125, Video::GetHeight()/2-70, 250, 140, "Death");
 					Button* ok = new Button(70, 85, 100, 30, "Drat!", ConfirmDeath, this);
 					UI::Add( win );
 
@@ -585,7 +585,7 @@ void Simulation::HandleInput() {
 				"Epiar is Paused" );
 			Button* ok = new Button(
 				TO_INT(win->GetW()/2) -50,
-				TO_INT(win->GetW()/2) -15,
+				TO_INT(win->GetH()/2) -15,
 				100,
 				30,
 				"Unpause", UI::Close, win);

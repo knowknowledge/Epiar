@@ -40,11 +40,19 @@ void OKAlertDialog() {
 bool Dialogs::Confirm( const char *message )
 {
 	static int value = 0;
-	Window* win = new Window(325, 265, 325, 130, "Confirm");
-	Button* ok = new Button( 190, 90, 80, 30, "OK", OKConfirmDialog, &value );
+	int width = 360;
+	int height = 90;
 
-	win->AddChild( ( new Label( 45, 35, message ) ) );
-	win->AddChild( (new Button( 65, 90, 80, 30, "Cancel", CancelConfirmDialog, &value ) ) );
+	// First See how large the Paragraph is going to be.
+	Paragraph* p = new Paragraph( 30, 30, 300, 130, message );
+	height += p->GetH();
+
+	Window* win = new Window( Video::GetWidth()/2-width/2, Video::GetHeight()/2-height/2, width, height, "Confirm");
+	Button* no = new Button( (  width/3) -40, height-40, 80, 30, "Cancel", CancelConfirmDialog, &value );
+	Button* ok = new Button( (2*width/3) -40, height-40, 80, 30, "OK", OKConfirmDialog, &value );
+
+	win->AddChild( p );
+	win->AddChild( no );
 	win->AddChild( ok );
 	win->SetFormButton( ok );
 	win->RegisterAction(Action_Close, new VoidAction(UI::ReleaseModality) );
@@ -61,10 +69,16 @@ bool Dialogs::Confirm( const char *message )
  */
 void Dialogs::Alert( const char *message )
 {
-	Window* win = new Window(325, 265, 325, 130, "Alert");
-	Button* ok = new Button( 130, 90, 80, 30, "OK", OKAlertDialog );
+	int width = 360;
+	int height = 90;
 
-	win->AddChild( ( new Label( 45, 35, message ) ) );
+	Paragraph* p = new Paragraph( 30, 30,300, 130, message );
+	height += p->GetH();
+
+	Window* win = new Window( Video::GetWidth()/2-width/2, Video::GetHeight()/2-height/2, width, height, "Alert");
+	Button* ok = new Button( width/2-80/2, height-40, 80, 30, "OK", OKAlertDialog );
+
+	win->AddChild( p );
 	win->AddChild( ok );
 	win->SetFormButton( ok );
 	win->RegisterAction(Action_Close, new VoidAction(OKAlertDialog) );
