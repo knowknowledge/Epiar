@@ -901,13 +901,13 @@ function ShowMissionDescription( _missionName, _missionDescription )
 	if descriptionWindow ~= nil then
 		descriptionWindow:close()
 		descriptionWindow = nil
-		return
+		--- Don't return, just open the other Mission Window
 	end
-
-	local descriptionWindow = UI.newWindow( 100, 100, 300, 200, "Mission Description" )
-	descriptionLabel = UI.newLabel( 10, 20, 280, 180, _missionDescription )
-	rejectButton = UI.newButton( 300-110, 200-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
-	descriptionWindow:add( descriptionLabel, rejectButton )
+	local description = UI.newParagraph( 10, 20, 280, 180, _missionDescription )
+	local height = description:GetH() + 70
+	local rejectButton = UI.newButton( 300-110, height-40, 100, 30, "Abort", string.format("PLAYER:RejectMission(%q); UI.search(\"/Window'Mission Description'/\"):close()", _missionName) )
+	local descriptionWindow = UI.newWindow( 100, 100, 300, height, "Mission Description" )
+	descriptionWindow:add( description, rejectButton )
 	descriptionWindow:addCloseButton()
 end
 
