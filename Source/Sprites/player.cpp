@@ -158,7 +158,13 @@ void Player::Land( lua_State *L, Planet* planet ){
 		return;
 	}
 
+	LogMsg(INFO, "Landed on %s", planet->GetName().c_str() );
+
 	Lua::Call( "landingDialog", "i", planet->GetID() );
+
+	// Stay on the Planet
+	SetMomentum( Coordinate(0,0) );
+	SetWorldPosition( planet->GetWorldPosition() );
 
 	//Run Land function for each Mission
 	bool missionOver;
