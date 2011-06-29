@@ -271,7 +271,7 @@ bool Mission::RunFunction(string functionName, bool checkCompletion)
 	if( Mission::GetMissionType(L, type) != 1 ) {
 		LogMsg(ERR, "Something bad happened?"); // TODO
 		lua_settop(L, initialStackTop );
-		return false;
+		return true;
 	}
 
 	// Get the function
@@ -281,7 +281,7 @@ bool Mission::RunFunction(string functionName, bool checkCompletion)
 	{
 		LogMsg(ERR, "The Mission Type named '%s' cannot %s!", type.c_str(), functionName.c_str() );
 		lua_settop(L,initialStackTop);
-		return false; // Invalid Mission, Delete it
+		return true; // Invalid Mission, Delete it
 	}
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, tableReference);
@@ -291,7 +291,7 @@ bool Mission::RunFunction(string functionName, bool checkCompletion)
 	{
 		LogMsg(ERR,"Failed to run %s.%s: %s\n", type.c_str(), functionName.c_str(), lua_tostring(L, -1));
 		lua_settop(L,initialStackTop);
-		return false; // Invalid Mission, Delete it
+		return true; // Invalid Mission, Delete it
 	}
 
 	// When this flag is set, check if the function returned a true or false value.
