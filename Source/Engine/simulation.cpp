@@ -273,8 +273,8 @@ bool Simulation::Run() {
 		bool anyUpdate = (logicLoops>0);
 		if( !paused ) {
 			if(logicLoops > 10) {
-				LogMsg(WARN, "Running %d logic loops. Capping to 10", logicLoops);
-				logicLoops = 10;
+				LogMsg(WARN, "Running %d logic loops. Capping to 1", logicLoops);
+				logicLoops = 1;
 			}
 			while(logicLoops--) {
 				if (lowFps)
