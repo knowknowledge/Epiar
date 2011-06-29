@@ -8,6 +8,26 @@ function Set (list)
 	return set
 end
 
+-- return a new array containing the concatenation of all of its 
+-- parameters. Scaler parameters are included in place, and array 
+-- parameters have their values shallow-copied to the final array.
+-- Note that userdata and function values are treated as scalar.
+-- http://stackoverflow.com/questions/1410862/concatenation-of-tables-in-lua
+function array_concat(...) 
+	local t = {}
+	for n = 1,select("#",...) do
+		local arg = select(n,...)
+		if type(arg)=="table" then
+			for _,v in ipairs(arg) do
+				t[#t+1] = v
+			end
+		else
+			t[#t+1] = arg
+		end
+	end
+	return t
+end
+
 --- Trim a string
 function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
@@ -97,16 +117,6 @@ function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	return math.sqrt(x_diff*x_diff + y_diff*y_diff)
 end
 
---- Create a FailureWindow
-function NewFailureWindow(Title,Message)
-	if FailureWindow ~= nil then return end
-	local height = 100
-	local width = 300
-	FailureWindow= UI.newWindow(350, 350, width, height, Title,
-		UI.newLabel(20,20,Message),
-		UI.newButton(width/2-50, height-50, 100, 30, "OK", "FailureWindow:close(); FailureWindow = nil"))
-end
-
 function about(r) return math.random(r)-r/2 end
 
 --- Convert coordinate to quadrant
@@ -139,7 +149,6 @@ function table.shuffle(t)
 
 	return t
 end
-
 
 -- Generic variable printing
 -- Very useful for discovering the structure of Lua tables
