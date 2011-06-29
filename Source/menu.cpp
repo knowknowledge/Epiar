@@ -62,8 +62,11 @@ void Menu::Main_Menu( void )
 
 	if( OPTION(int,"options/simulation/automatic-load") )
 	{
-		AutoLoad();
-		return;
+		if( AutoLoad() )
+		{
+			LogMsg(INFO,"AutoLoaded Game Complete. Quitting Epiar.");
+			return;
+		}
 	}
 
 	SetupGUI();
@@ -92,8 +95,9 @@ void Menu::Main_Menu( void )
 
 /** Load the most recent Player
  * \note When the user leaves the Simulation, the game will quit.
+ * \returns true if the player was loaded successfully.
  */
-void Menu::AutoLoad()
+bool Menu::AutoLoad()
 {
 	LogMsg(INFO,"Attempting to automatically load a player.");
 	PlayerInfo* info = Players::Instance()->LastPlayer();
@@ -103,16 +107,19 @@ void Menu::AutoLoad()
 		if( !simulation.Load( info->simulation ) )
 		{
 			LogMsg(ERR,"Failed to load the Simulation '%s' successfully", info->simulation.c_str() );
-			return;
+			return false;
 		}
 		if( !simulation.SetupToRun() )
 		{
 			LogMsg(ERR,"Failed to setup the Simulation '%s' successfully.", info->simulation.c_str() );
-			return;
+			return false;
 		}
 		simulation.LoadPlayer( info->GetName() );
 		simulation.Run();
+		return true;
 	}
+	LogMsg(WARN,"No available players to load.");
+	return false;
 }
 
 /** Create the Basic Main Menu

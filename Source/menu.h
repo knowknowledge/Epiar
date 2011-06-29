@@ -39,7 +39,7 @@ class Menu {
 	static Picture *continueButton;
 
 	// Skip straight to the Game
-	static void AutoLoad( void );
+	static bool AutoLoad( void );
 
 	// GUI Setup and Actions
 	static void SetupGUI();
