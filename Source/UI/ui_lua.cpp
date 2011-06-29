@@ -75,6 +75,10 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"IsChecked", &UI_Lua::IsChecked},
 		{"GetText", &UI_Lua::GetText},
 		{"GetEdges", &UI_Lua::GetEdges},
+		{"GetX", &UI_Lua::GetX},
+		{"GetY", &UI_Lua::GetY},
+		{"GetW", &UI_Lua::GetW},
+		{"GetH", &UI_Lua::GetH},
 
 		// Generic Widget Modification
 		{"move", &UI_Lua::move},
@@ -945,6 +949,53 @@ int UI_Lua::GetEdges(lua_State *L){
 	lua_pushinteger(L, widget->GetH() );
 
 	return 4;
+}
+
+/**\brief Get X of a Widget
+ */
+int UI_Lua::GetX(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	lua_pushinteger(L, widget->GetX() );
+	return 1;
+}
+
+/**\brief Get Y of a Widget
+ */
+int UI_Lua::GetY(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	lua_pushinteger(L, widget->GetY() );
+	return 1;
+}
+
+
+
+/**\brief Get the Width of a Widget
+ */
+int UI_Lua::GetW(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	lua_pushinteger(L, widget->GetW() );
+	return 1;
+}
+
+/**\brief Get the Height of a Widget
+ */
+int UI_Lua::GetH(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	printf("H=%d", widget->GetH());
+	lua_pushinteger(L, widget->GetH() );
+	return 1;
 }
 
 /**\brief Append an option to this Dropdown
