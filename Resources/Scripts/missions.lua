@@ -154,10 +154,10 @@ DestroyPirate = {
 		local x,y = PLAYER:GetPosition()
 		--x,y = x + about(4096), y + about(4096)
 		missionTable.quadrant = { coordinateToQuadrant(x,y) }
-		missionTable.Description = string.format( "The pirate %s has been terrorizing the (%d,%d)Quadrant.  If you can find and destroy %s we will pay you %d credits.",
+		missionTable.Description = string.format( "The pirate %s has been terrorizing the Quadrant (%d,%d).  If you can find and destroy %s we will pay you %d credits.",
 				missionTable.piratename,
 				missionTable.quadrant[1], missionTable.quadrant[2],
-				name,
+				missionTable.Name,
 				missionTable.reward)
 		missionTable.ship = nil
 		missionTable.alliance = choose( Epiar.alliances() )
