@@ -993,7 +993,6 @@ int UI_Lua::GetH(lua_State *L){
 	if (n != 1)
 		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	Widget *widget = checkWidget(L,1);
-	printf("H=%d", widget->GetH());
 	lua_pushinteger(L, widget->GetH() );
 	return 1;
 }
