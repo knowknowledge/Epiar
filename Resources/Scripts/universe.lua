@@ -195,7 +195,9 @@ function createSystems(seed)
 				planetGraphics[ math.random(#planetGraphics) ],
 				s.alliance,
 				1,math.random(3)-1,math.random(3)-1,math.random(10)*1000,
-				technologies[ math.random(#technologies) ]
+				"Resources/Graphics/planet1s.png",
+				"Mostly Harmless",
+				choose(technologies)
 				)
 		end
 
@@ -211,7 +213,9 @@ function createSystems(seed)
 					stationGraphic,
 					s.alliance,
 					1,0,0,(30+math.random(100))*100,
-					technologies[ math.random(#technologies) ]
+					"Resources/Graphics/planet1s.png",
+					"Mostly Harmless",
+					choose(technologies)
 					)
 			end
 		end
