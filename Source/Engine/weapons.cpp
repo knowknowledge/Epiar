@@ -205,13 +205,8 @@ bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	}
 
 	if( (attr = FirstChildNamed(node,"sound")) ){
-		string pathPrefix = "Resources/Audio/Weapons/";
 		value = NodeToString(doc,attr);
-		if( value.find(pathPrefix)==0 ) {
-			this->sound = Sound::Get( value );
-		} else {
-			this->sound = Sound::Get( value.insert(0,pathPrefix) );
-		}
+		this->sound = Sound::Get( value );
 		if( this->sound==NULL) {
 			// Do not return false here - they may be disabling audio on purpose or audio may not be supported on their system
 			LogMsg(NOTICE,"Could not load sound file while searching component");
