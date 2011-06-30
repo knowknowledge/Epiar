@@ -24,7 +24,19 @@ class Planet : public Sprite, public Component {
 	public:
 		Planet();
 		Planet& operator=(const Planet& other);
-		Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies);
+		Planet( string _name,
+				float _x,
+				float _y,
+				Image* _image,
+				Alliance* _alliance,
+				bool _landable,
+				int _traffic,
+				int _militiaSize,
+				int _sphereOfInfluence,
+				Image* _surface,
+				string _summary,
+				list<Technology*> _technologies
+		);
 		
 		void Update( lua_State *L );
 		void GenerateTraffic( lua_State *L );
@@ -59,9 +71,9 @@ class Planet : public Sprite, public Component {
 		short unsigned int traffic;
 		short unsigned int militiaSize;
 		int sphereOfInfluence;
-		list<Technology*> technologies;
 		Image* surface;
 		string summary;
+		list<Technology*> technologies;
 
 		Uint32 lastTrafficTime;
 };

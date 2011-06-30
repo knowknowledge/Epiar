@@ -913,6 +913,10 @@ int Simulation_Lua::GetPlanetInfo(lua_State *L) {
 	Lua::setField("Militia", p->GetMilitiaSize());
 	Lua::setField("Landable", p->GetLandable());
 	Lua::setField("Influence", p->GetInfluence());
+	Lua::setField("Surface", (p->GetSurfaceImage()!=NULL)
+	                ? (p->GetSurfaceImage()->GetPath().c_str())
+	                : "" );
+	Lua::setField("Summary", p->GetSummary().c_str());
 	lua_pushstring(L, "Technologies");
 	list<Technology*> techs =  p->GetTechnologies();
 	PushComponents(L,  (list<Component*>*)&techs );
@@ -1233,6 +1237,8 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		int militia = Lua::getIntField(2,"Militia");
 		int landable = Lua::getIntField(2,"Landable");
 		int influence = Lua::getIntField(2,"Influence");
+		string surfaceName = Lua::getStringField(2,"Surface");
+		string summary = Lua::getStringField(2,"Summary");
 		list<string> techNames = Lua::getStringListField(2,"Technologies");
 
 		// Process the Tech List
@@ -1247,6 +1253,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			}
 		}
 
+		// Check that the String values actually match real hash keys.
 		if(Image::Get(imageName)==NULL){
 			 LogMsg(NOTICE, "Could not create planet: there is no Image at '%s'.",imageName.c_str());
 			 return 0;
@@ -1257,7 +1264,23 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			 return 0;
 		}
 
-		Planet thisPlanet(name,TO_FLOAT(x),TO_FLOAT(y),Image::Get(imageName),GetSimulation(L)->GetAlliances()->GetAlliance(allianceName),TO_BOOL(landable),traffic,militia,influence,techs);
+		if(Image::Get(surfaceName)==NULL){
+			 LogMsg(NOTICE, "Could not create planet: there is no surface at '%s'.",surfaceName.c_str());
+			 return 0;
+		}
+
+		Planet thisPlanet(name,
+				TO_FLOAT(x),
+				TO_FLOAT(y),
+				Image::Get(imageName),
+				GetSimulation(L)->GetAlliances()->GetAlliance(allianceName),
+				TO_BOOL(landable),
+				traffic,
+				militia,
+				influence,
+				Image::Get(surfaceName),
+				summary,
+				techs);
 
 		Planet* oldPlanet = GetSimulation(L)->GetPlanets()->GetPlanet(name);
 		if(oldPlanet!=NULL) {

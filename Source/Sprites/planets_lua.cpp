@@ -120,6 +120,9 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	int _militiaSize;
 	int _sphereOfInfluence;
 	list<Technology*> _technologies;
+	string surfaceName;
+	Image* _surface;
+	string _summary;
 
 	if(n<9) {
 		return luaL_error(L, "Got %d arguments expected at least 9 (name, x, y, image_name, alliance, landable, traffic, militia, influence, [techs...])", n);
@@ -137,10 +140,13 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	_traffic = luaL_checkint(L, 7 );
 	_militiaSize = luaL_checkint(L, 8 );
 	_sphereOfInfluence = luaL_checkint(L, 9 );
+	surfaceName = (string)luaL_checkstring(L, 10);
+	_surface = Image::Get( surfaceName );
+	_summary = (string)luaL_checkstring(L, 11);
 
 	// Capture all other arguments as technologies
 	for(i=10;i<=n;i++) {
-		techName = (string)luaL_checkstring(L, 10 );
+		techName = (string)luaL_checkstring(L, 12 );
 		tech = Technologies::Instance()->GetTechnology( techName );
 		if(tech==NULL) {
 			return luaL_error(L, "No Technology '%s'", techName.c_str());
@@ -148,12 +154,16 @@ int Planets_Lua::NewPlanet(lua_State* L){
 		_technologies.push_back( tech );
 	}
 
+
 	// Check that all pointers are non-NULL.
 	if(_image==NULL) {
 		return luaL_error(L, "No image '%s'", imageName.c_str());
 	}
 	if(_alliance==NULL) {
 		return luaL_error(L, "No alliance '%s'", _allianceName.c_str());
+	}
+	if(_surface==NULL) {
+		return luaL_error(L, "No surface '%s'", surfaceName.c_str());
 	}
 
 	// Create the Planet
@@ -167,6 +177,8 @@ int Planets_Lua::NewPlanet(lua_State* L){
 		_traffic,
 		_militiaSize,
 		_sphereOfInfluence,
+		_surface,
+		_summary,
 		_technologies
 		);
 
@@ -249,7 +261,12 @@ int Planets_Lua::GetSurfaceImage(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	if (n == 1) {
 		Planet* planet= checkPlanet(L,1);
-		lua_pushstring(L, planet->GetSurfaceImage()->GetPath().c_str());
+		Image* surface = planet->GetSurfaceImage();
+		assert(surface);
+		if( surface )
+			lua_pushstring(L, surface->GetPath().c_str() );
+		else
+			lua_pushstring(L, "" );
 	} else {
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 	}

@@ -55,9 +55,11 @@ EditorLayouts = {
 	},
 	Planet = {
 		{"Name", "String"},
-		{"X", "Integer"},
-		{"Y", "Integer"},
+		{"X", "Integer"}, -- Should be Map based Coordinate Picker
+		{"Y", "Integer"}, -- Should be Map based Coordinate Picker
 		{"Image", "Picture"}, -- Picture Picker
+		{"Surface", "Picture"}, -- Picture Picker
+		{"Summary", "String"}, -- Should be multi-line editor
 		{"Alliance", "Component", Epiar.alliances},
 		{"Landable", "Integer"}, -- TODO Should be Checkbox
 		{"Traffic", "Integer"},
@@ -67,8 +69,8 @@ EditorLayouts = {
 	},
 	Gate = {
 		{"Name", "String"},
-		{"X", "Integer"},
-		{"Y", "Integer"},
+		{"X", "Integer"}, -- Should be Map based Coordinate Picker
+		{"Y", "Integer"}, -- Should be Map based Coordinate Picker
 		{"Exit", "String"},
 	},
 	Weapon = {

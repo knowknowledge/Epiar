@@ -77,14 +77,28 @@ Planet& Planet::operator=(const Planet& other) {
 
 /**\brief Constructor using a full Full Description
  */
-Planet::Planet( string _name, float _x, float _y, Image* _image, Alliance* _alliance, bool _landable, int _traffic, int _militiaSize, int _sphereOfInfluence, list<Technology*> _technologies):
+Planet::Planet(
+		string _name,
+		float _x,
+		float _y,
+		Image* _image,
+		Alliance* _alliance,
+		bool _landable,
+		int _traffic,
+		int _militiaSize,
+		int _sphereOfInfluence,
+		Image* _surface,
+		string _summary,
+		list<Technology*> _technologies
+	):
 	alliance(_alliance),
 	landable(_landable),
 	traffic(_traffic),
 	militiaSize(_militiaSize),
 	sphereOfInfluence(_sphereOfInfluence),
-	technologies(_technologies),
-	surface(NULL)
+	surface(_surface),
+	summary(_summary),
+	technologies(_technologies)
 {
 	// Check the inputs
 	assert(_image);
