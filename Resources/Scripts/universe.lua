@@ -3,7 +3,7 @@
 -- This is the Introduction Message that greets new players.
 -- Notice that we use spaces here since Label can't parse tabs.
 welcomeMessage = [[
-                                                  Welcome to Epiar
+                  Welcome to Epiar
 
 We hope you like it. We're still working on it.
 
@@ -26,11 +26,11 @@ The Epiar controls in a nutshell:
 
 For more information about Epiar, please visit:
 
-                                                  epiar.net
+                  epiar.net
 
 If you have any questions, comments, or bug reports please send us email at:
 
-                                                  epiar-devel@epiar.net
+                  epiar-devel@epiar.net
 
 Thanks for playing!
 ]]
@@ -250,7 +250,7 @@ function intro()
 	introWin = UI.newWindow( 200, 100, width, height, "Welcome to Epiar")
 	
 	introWin:add(
-		UI.newLabel( 50, 50, welcomeMessage),
+		UI.newParagraph( 50, 50, 500, 500, welcomeMessage),
 		UI.newButton( width/2-50, height-70, 100, 30, "I'm Ready!", "introComplete()")
 	)
 
