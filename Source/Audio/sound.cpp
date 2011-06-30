@@ -48,13 +48,18 @@ Sound::Sound( const string& filename ):
 	panfactor( 0.1f ),
 	volume( 128 )
 {
-	if( pathName.OpenRead( filename ) == false )
+	if( pathName.OpenRead( filename ) == false ) {
 		LogMsg(ERR, "Could not load sound file: '%s'", filename.c_str() );
+		sound = NULL;
+		return;
+	}
 
 	this->sound = Mix_LoadWAV( pathName.GetAbsolutePath().c_str() );
-	if( this->sound == NULL )
+	if( this->sound == NULL ) {
 		LogMsg(ERR, "Could not load sound file: '%s', Mixer error: %s",
 				filename.c_str(), Mix_GetError() );
+		sound = NULL;
+	}
 }
 
 /**\brief Destructor to free the sound file.
@@ -71,6 +76,7 @@ Sound::~Sound(){
 /**\brief Plays the sound.
  */
 bool Sound::Play( void ){
+	assert(this);
 	if ( this->sound == NULL )
 		return false;
 
@@ -89,6 +95,10 @@ bool Sound::Play( void ){
 /**\brief Plays the sound at a specified coordinate from origin.
  */
 bool Sound::Play( Coordinate offset ){
+	assert(this);
+	if ( this->sound == NULL )
+		return false;
+
 	// Distance fading
 	double dist = this->fadefactor * offset.GetMagnitude();
 	if ( dist > 255 )
@@ -133,6 +143,10 @@ bool Sound::Play( Coordinate offset ){
  * This is sort of a roundabout way to implement engine sounds.
  */
 bool Sound::PlayNoRestart( Coordinate offset ){
+	assert(this);
+	if ( this->sound == NULL )
+		return false;
+
 	if ( (this->channel != -1) &&
 			Mix_Playing( this->channel ) &&
 			(Mix_GetChunk( this->channel ) == this->sound ) )
@@ -145,6 +159,10 @@ bool Sound::PlayNoRestart( Coordinate offset ){
 /**\brief Sets the volume for this sound only (for next time it is played).
  */
 bool Sound::SetVolume( float volume ){
+	assert(this);
+	if ( this->sound == NULL )
+		return false;
+
 	this->volume = static_cast<int>( volume * 128.f );
 	return true;
 }
@@ -155,6 +173,7 @@ bool Sound::SetVolume( float volume ){
  * \param pan Pan factor (defaults to 0.1)
  */
 void Sound::SetFactors( double fade, float pan ){
+	assert(this);
 	this->fadefactor = fade;
 	this->panfactor = pan;
 }

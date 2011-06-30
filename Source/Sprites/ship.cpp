@@ -208,12 +208,15 @@ void Ship::Rotate( float direction ) {
 	SetAngle( angle );
 	
 	// Play engine sound
-	float engvol = OPTION(float,"options/sound/engines");
-	Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
-	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-		engvol = engvol * NON_PLAYER_SOUND_RATIO ;
-	this->engine->GetSound()->SetVolume( engvol );
-	this->engine->GetSound()->PlayNoRestart( offset );
+	if( engine->GetSound() != NULL)
+	{
+		float engvol = OPTION(float,"options/sound/engines");
+		Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
+		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+			engvol = engvol * NON_PLAYER_SOUND_RATIO ;
+		this->engine->GetSound()->SetVolume( engvol );
+		this->engine->GetSound()->PlayNoRestart( offset );
+	}
 }
 
 /**\brief Accelerates the ship.
@@ -235,13 +238,17 @@ void Ship::Accelerate( void ) {
 	SetMomentum( momentum );
 	
 	status.isAccelerating = true;
+
 	// Play engine sound
-	float engvol = OPTION(float,"options/sound/engines");
-	Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
-	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
-		engvol = engvol * NON_PLAYER_SOUND_RATIO ;
-	this->engine->GetSound()->SetVolume( engvol );
-	this->engine->GetSound()->PlayNoRestart( offset );
+	if( engine->GetSound() != NULL)
+	{
+		float engvol = OPTION(float,"options/sound/engines");
+		Coordinate offset = GetWorldPosition() - Camera::Instance()->GetFocusCoordinate();
+		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP )
+			engvol = engvol * NON_PLAYER_SOUND_RATIO ;
+		this->engine->GetSound()->SetVolume( engvol );
+		this->engine->GetSound()->PlayNoRestart( offset );
+	}
 }
 
 
