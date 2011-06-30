@@ -178,12 +178,12 @@ void Map::Draw( int relx, int rely )
 		}
 	}
 
-	// Draw Edges
-	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
-
 	// TODO: Draw Radar Visibility
 
 	Video::UnsetCropRect();
+
+	// Draw Edges
+	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
 
 	delete spriteList;
 	spriteList = NULL;
