@@ -15,6 +15,7 @@
 #include "Sprites/player.h"
 #include "Sprites/gate.h"
 #include "Sprites/spritemanager.h"
+#include "UI/ui_map.h"
 #include "Utilities/log.h"
 #include "Utilities/timer.h"
 #include "Engine/camera.h"
@@ -43,7 +44,8 @@ int Hud::timeTargeted = 0;
 Font *Hud::AlertFont = NULL;
 Color Hud::AlertColor = WHITE;
 
-int Radar::visibility = 4096;
+int Radar::visibility = QUADRANTSIZE;
+bool Radar::largeMode = false;
 
 Font *StatusBar::font = NULL;
 
@@ -294,14 +296,22 @@ void Hud::HandleInput( list<InputEvent> & events, Camera* camera, SpriteManager*
 	for(i= events.begin(); i != events.end() ; ++i ) {
 		// Mouse Clicks
 		if( i->type == MOUSE && i->mstate==MOUSELDOWN) {
-			Coordinate screenPos(i->mx, i->my), worldPos;
-			camera->TranslateScreenToWorld( screenPos, worldPos );
-			// Target any clicked Sprite
-			list<Sprite*> *impacts = sprites->GetSpritesNear( worldPos, 5 );
-			if( impacts->size() > 0) {
-				Target( (*(impacts->begin()))->GetID());
+			if( (i->mx > Video::GetWidth() - 129)
+			 && (i->my < Image::Get( "Resources/Skin/hud_radarnav.png" )->GetHeight() + 5) )
+			{
+				Radar::StartLargeMode(camera, sprites);
 			}
-			delete impacts;
+			else
+			{
+				Coordinate screenPos(i->mx, i->my), worldPos;
+				camera->TranslateScreenToWorld( screenPos, worldPos );
+				// Target any clicked Sprite
+				list<Sprite*> *impacts = sprites->GetSpritesNear( worldPos, 5 );
+				if( impacts->size() > 0) {
+					Target( (*(impacts->begin()))->GetID());
+				}
+				delete impacts;
+			}
 		}
 	}
 }
@@ -654,6 +664,24 @@ void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
 }
 
+void Radar::StartLargeMode( Camera* camera, SpriteManager* sprites ) {
+	largeMode = true;
+	Map* map = new Map( Video::GetWidth() - 300, 0, 300, 300, camera->GetFocusCoordinate(), sprites );
+	map->RegisterAction( Action_MouseLeave, new VoidAction( Radar::StopLargeMode ) );
+	map->SetFilter(
+		DRAW_ORDER_PLAYER   |
+		DRAW_ORDER_PLANET   |
+		DRAW_ORDER_GATE_TOP |
+		DRAW_ORDER_SHIP );
+	map->SetScale( 300.0 / (2*visibility) );
+	UI::Add(map);
+}
+
+void Radar::StopLargeMode() {
+	UI::Close( UI::Search( "/Map/" ) );
+	largeMode = false;
+}
+
 /**\brief Draws the radar.
  */
 void Radar::Draw( Camera* camera, SpriteManager* sprites ) {
@@ -661,6 +689,19 @@ void Radar::Draw( Camera* camera, SpriteManager* sprites ) {
 	short int radar_mid_y = RADAR_MIDDLE_Y + 5;
 	int radarSize;
 	Coordinate focus = camera->GetFocusCoordinate();
+
+	if(largeMode) {
+		if( visibility <= QUADRANTSIZE )
+		{
+			Map* map = (Map*)UI::Search( "/Map/" );
+			assert(map); // large mode should only be on when there is a map.
+			if(map) {
+				map->SetCenter( focus );
+				map->SetScale( 300.0 / (2*visibility) );
+			}
+		}
+		return;
+	}
 
 	list<Sprite*> *spriteList = sprites->GetSpritesNear(camera->GetFocusCoordinate(), (float)visibility);
 	for( list<Sprite*>::const_iterator iter = spriteList->begin(); iter != spriteList->end(); iter++)
