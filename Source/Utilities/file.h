@@ -37,6 +37,7 @@ class File {
 		static bool Exists( const string& filename );
 		static bool IsDir( const string& filename );
 
+		string GetRelativePath();
 		string GetAbsolutePath();
 
 	private:

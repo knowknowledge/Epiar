@@ -102,8 +102,14 @@ bool File::OpenWrite( const string& filename ) {
 	return true;
 }
 
-/**Returns the full path to the file
+/**Returns the valid path to the file
  * \return path successful, NULL otherwise.*/
+string File::GetRelativePath(){
+	return validName;
+}
+
+/**Returns the full path to the file
+ * \return path successful.*/
 string File::GetAbsolutePath(){
 	string abs = PHYSFS_getRealDir( validName.c_str() );
 
