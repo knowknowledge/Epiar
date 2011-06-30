@@ -22,7 +22,10 @@ class Map: public Widget {
 
 		void Draw( int relx = 0, int rely = 0 );
 
-		void Filter( int spriteFlags ) { spriteTypes = spriteFlags; }
+		void SetAlpha( float newAlpha ) { alpha = newAlpha; }
+		void SetCenter( Coordinate newCenter ) { center = newCenter; }
+		void SetScale( float newScale ) { scale = newScale; }
+		void SetFilter( int spriteFlags ) { spriteTypes = spriteFlags; }
 
 		Coordinate ClickToWorld( Coordinate click );
 		Coordinate WorldToClick( Coordinate world );

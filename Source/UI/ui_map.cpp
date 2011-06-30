@@ -49,7 +49,7 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 		spriteTypes |= DRAW_ORDER_SHIP;
 	}
 
-	alpha = .7;
+	alpha = 1;
 
 	float size = (h<w) ? h : w; // Max of Height and Width
 
@@ -95,7 +95,6 @@ void Map::Draw( int relx, int rely )
 
 	// The Backdrop
 	Video::DrawRect( relx + GetX(), rely + GetY(), w, h, BLACK, alpha);
-	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
 
 	Video::SetCropRect( relx + GetX(), rely + GetY(), w, h );
 
@@ -178,6 +177,9 @@ void Map::Draw( int relx, int rely )
 			MapFont->Render( pos.GetX()+5, pos.GetY(), ((Planet*)(*iter))->GetName().c_str() );
 		}
 	}
+
+	// Draw Edges
+	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
 
 	// TODO: Draw Radar Visibility
 
