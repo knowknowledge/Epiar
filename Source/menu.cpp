@@ -477,8 +477,8 @@ void Menu::RandomizeSeed( )
 {
 	char seed[20];
 	snprintf(seed, sizeof(seed), "%d", rand() );
-	Widget *widget = UI::Search("/Window/Frame/Textbox'Random Universe Seed'/");
-	if( widget->GetMask() == WIDGET_TEXTBOX )
+	Widget *widget = UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/");
+	if( widget && widget->GetMask() == WIDGET_TEXTBOX )
 	{
 		Textbox* seedBox = (Textbox*)widget;
 		seedBox->SetText( seed );
