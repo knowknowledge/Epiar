@@ -23,7 +23,7 @@ class Sound : public Resource {
 		bool PlayNoRestart( Coordinate offset );
 		bool SetVolume( float volume );
 		void SetFactors( double fade, float pan );
-		string GetPath( void ) { return pathName.GetAbsolutePath(); }
+		string GetPath( void ) { return pathName.GetRelativePath(); }
 
 	private:
 		Mix_Chunk *sound;

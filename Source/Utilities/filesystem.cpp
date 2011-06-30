@@ -35,6 +35,11 @@ int Filesystem::Init( const char* argv0 ) {
 	if ( (retval = PHYSFS_mkdir("Resources/Definitions/") ) == 0 )
 		LogMsg(ERR,"Could not set up the user dir: %s", PHYSFS_getLastError());
 
+	// Don't add Root directory.  While this can solve some problems, it will create more.
+	// Absolute paths are not portable across computers.
+	//if ( (retval = PHYSFS_addToSearchPath("/", 1)) == 0 )
+	//	LogMsg(WARN,"Could not add Root to search path: %s.", PHYSFS_getLastError());
+
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
 	if ( (retval = PHYSFS_addToSearchPath(DATADIR, 1)) == 0 )
