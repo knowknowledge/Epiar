@@ -77,8 +77,8 @@ bool Simulation::New( string newname ) {
 	folderpath = "Resources/Simulation/" + name + "/";
 
 	if( PHYSFS_mkdir( folderpath.c_str() ) == 0) {
-		LogMsg(INFO, "Cannot create folder '%s'.", folderpath.c_str() );
-		// TODO: ensure that the folder exists
+		LogMsg(ERR, "Cannot create folder '%s'.", folderpath.c_str() );
+		return false;
 	}
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
@@ -134,6 +134,10 @@ void Simulation::pause(){
 }
 
 void Simulation::Save(){
+	if( PHYSFS_mkdir( ("Resources/Simulation/" + name + "/").c_str() ) == 0) {
+		LogMsg(ERR, "Cannot create folder '%s'.", folderpath.c_str() );
+		return;
+	}
 	XMLFile::Save();
 	GetAlliances()->Save();
 	GetCommodities()->Save();
