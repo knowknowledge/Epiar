@@ -127,6 +127,8 @@ void CloseOptions() { UI::Close( UI::Search("/Window'Options'/") ); }
 
 void SaveOptions() { Options::Save(); CloseOptions(); }
 
+void ResetOptions() { Options::RestoreDefaults(); CloseOptions(); Dialogs::OptionsWindow(); }
+
 /**\brief Create a Presents a message with a single "Ok" button.
  */
 void Dialogs::OptionsWindow()
@@ -146,12 +148,14 @@ void Dialogs::OptionsWindow()
 
 	Window *window = new Window( 30, 100, width, height, "Options");
 	Tabs *optionTabs = new Tabs( 10, 30, tabwidth, tabheight, "Options Tabs" );
-	Button *accept = new Button( 60, height-50, 60, 30, "Save", SaveOptions );
-	Button *cancel = new Button( 160, height-50, 60, 30, "Cancel", CloseOptions );
+	Button *cancel = new Button(  20, height-50, 80, 30, "Cancel", CloseOptions );
+	Button *reset  = new Button( 110, height-50, 80, 30, "Restore", ResetOptions );
+	Button *accept = new Button( 200, height-50, 80, 30, "Save", SaveOptions );
 
 	window->AddChild(optionTabs);
 	window->AddChild(accept);
 	window->AddChild(cancel);
+	window->AddChild(reset);
 	window->AddCloseButton();
 	window->SetFormButton(accept);
 
