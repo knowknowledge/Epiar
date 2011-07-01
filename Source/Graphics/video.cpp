@@ -149,6 +149,7 @@ SDL_Surface *Video::screen = NULL;
  */
 bool Video::Initialize( void ) {
 	char buf[32] = {0};
+	const SDL_VideoInfo *videoInfo;
 	
 	// initialize SDL
 	if( SDL_Init( SDL_INIT_VIDEO ) != 0 ) {
@@ -162,23 +163,20 @@ bool Video::Initialize( void ) {
 	
 	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
+	videoInfo = SDL_GetVideoInfo();
+
 	int w = OPTION( int, "options/video/w" );
 	int h = OPTION( int, "options/video/h" );
 	bool fullscreen = OPTION( bool, "options/video/fullscreen" );
 
-	// If w/h not set, then 1024x768 is windowed default, native screen resolution is fullscreen default
-	if( !w && !h ) {
-		if( OPTION( int, "options/video/fullscreen" ) ) {
-			// fullscreen set, use native resolution
-			const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-
-			w = videoInfo->current_w;
-			h = videoInfo->current_h;
-		} else {
-			// not fullscreen
-			w = 1024;
-			h = 768;
-		}
+	if( OPTION( int, "options/video/fullscreen" ) ) {
+		// fullscreen set, use native resolution
+		w = videoInfo->current_w;
+		h = videoInfo->current_h;
+	} else {
+		// If not fullscreen, validate the width and height
+		if( !w ) { w = videoInfo->current_w; }
+		if( !h ) { h = videoInfo->current_h; }
 	}
 	
 
