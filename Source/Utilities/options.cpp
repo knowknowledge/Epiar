@@ -10,6 +10,7 @@
 #include "Utilities/options.h"
 
 XMLFile *Options::optionsfile = NULL; ///< Static instance of the optionsfile.
+XMLFile *Options::defaults = NULL; ///< Static instance of the default option values.
 
 /**\class Options
  * \brief Container and accessor of Game options
@@ -24,6 +25,8 @@ void Options::Initialize( const string& path )
 		// Create the default Options file
 		optionsfile->New( path, "options");
 	}
+	defaults = new XMLFile();
+	defaults->New( path + ".bac", "options");
 }
 
 bool Options::IsLoaded()
@@ -46,7 +49,9 @@ bool Options::Save( const string& path )
 
 void Options::AddDefault( const string& path, const string& value )
 {
+	assert( defaults );
 	assert( optionsfile );
+	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
 		Set(path,value);
@@ -55,7 +60,9 @@ void Options::AddDefault( const string& path, const string& value )
 
 void Options::AddDefault( const string& path, const float value )
 {
+	assert( defaults );
 	assert( optionsfile );
+	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
 		Set(path,value);
@@ -64,11 +71,18 @@ void Options::AddDefault( const string& path, const float value )
 
 void Options::AddDefault( const string& path, const int value )
 {
+	assert( defaults );
 	assert( optionsfile );
+	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
 		Set(path,value);
 	}
+}
+
+void Options::RestoreDefaults()
+{
+	optionsfile->Copy( defaults );
 }
 
 string Options::Get( const string& path )

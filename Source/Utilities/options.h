@@ -29,6 +29,8 @@ class Options
 		static void AddDefault( const string& path, const float value );
 		static void AddDefault( const string& path, const int value );
 
+		static void RestoreDefaults();
+
 		static string Get( const string& path );
 
 		static void Set( const string& path, const string& value );
@@ -38,6 +40,7 @@ class Options
 
 	private:
 		static XMLFile *optionsfile;
+		static XMLFile *defaults;
 };
 
 #endif // __H_OPTIONS
