@@ -39,7 +39,7 @@ bool Audio::Initialize( void ){
 				this->audio_format,
 				this->audio_channels,
 				this->audio_buffers)){
-		LogMsg(CRITICAL,"Audio initialization failed!: ", Mix_GetError());
+		LogMsg(CRITICAL,"Audio initialization failed!: %s", Mix_GetError());
 		return false;
 	}
 
