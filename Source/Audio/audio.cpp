@@ -39,7 +39,7 @@ bool Audio::Initialize( void ){
 				this->audio_format,
 				this->audio_channels,
 				this->audio_buffers)){
-		LogMsg(CRITICAL,"Audio initialization failed!");
+		LogMsg(CRITICAL,"Audio initialization failed!: ", Mix_GetError());
 		return false;
 	}
 
@@ -80,12 +80,19 @@ bool Audio::Shutdown( void ){
 	// Query number of times audio device was opened (should be 1)
 	int freq, chan, ntimes;
 	Uint16 format;
-	if ( (ntimes = Mix_QuerySpec( &freq, &format, &chan )) != 1 )
-		LogMsg(WARN,"Audio was initialized multiple times.");
+	ntimes = Mix_QuerySpec( &freq, &format, &chan );
 
-	// Close as many times as opened.
-	for ( int i = 0; i < ntimes; i++ )
+	LogMsg(INFO,"Audio Query: %d Frequencies, Format: %d, Channels: %s.", freq, format, (chan==2?"Stereo":"Mono"));
+
+	if(ntimes != 1 ) {
+		LogMsg(WARN,"Audio was initialized %d times.", ntimes);
+	}
+
+	// Close only if open
+	if( ntimes ) {
 		Mix_CloseAudio();
+	}
+
 	return true;
 }
 
