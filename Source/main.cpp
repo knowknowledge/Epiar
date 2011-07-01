@@ -121,7 +121,7 @@ void Main_Load_Settings() {
 
 	// Logging
 	Options::AddDefault( "options/log/xml", 0 );
-	Options::AddDefault( "options/log/out", 1 );
+	Options::AddDefault( "options/log/out", 0 );
 	Options::AddDefault( "options/log/alert", 0 );
 	Options::AddDefault( "options/log/ui", 0 );
 	Options::AddDefault( "options/log/sprites", 0 );
