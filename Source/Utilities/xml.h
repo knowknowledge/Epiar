@@ -35,6 +35,8 @@ class XMLFile {
 
 		bool Has( const string& path );
 
+		bool Copy( XMLFile *other );
+
 	protected:
 		string filename;
 

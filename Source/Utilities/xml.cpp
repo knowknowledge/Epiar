@@ -170,6 +170,18 @@ void XMLFile::Set( const string& path, const int value ) {
 	assert( stringvalue == Get(path));
 }
 
+bool XMLFile::Copy( XMLFile *other ) {
+	xmlDocPtr copyXmlPtr  = xmlCopyDoc( other->xmlPtr, 1 );
+	if( copyXmlPtr ) {
+		if( xmlPtr ) xmlFreeDoc( xmlPtr );
+		xmlPtr = copyXmlPtr;
+		LogMsg(INFO,"Copy XMLFile from %s to %s complete.", other->filename.c_str(), this->filename.c_str());
+		return true;
+	}
+	LogMsg(ERR,"Copy XMLFile from %s to %s failed.", other->filename.c_str(), this->filename.c_str());
+	return false;
+}
+
 vector<string> TokenizedString( const string& path, const string& tokens ) {
 	string partialString;
 	size_t pos, prevpos, len;
