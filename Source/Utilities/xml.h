@@ -43,7 +43,8 @@ class XMLFile {
 	private:
 		xmlDocPtr xmlPtr;
 		map<string,xmlNodePtr> values;
-
+		
+		void Forget();
 		xmlNodePtr FindNode( const string& path, bool createIfMissing=false );
 };
 

@@ -112,6 +112,8 @@ bool XMLFile::Close() {
 	if( xmlPtr ) xmlFreeDoc( xmlPtr );
 	xmlPtr = NULL;
 
+	Forget();
+
 	return( true );
 }
 
@@ -171,6 +173,10 @@ void XMLFile::Set( const string& path, const int value ) {
 }
 
 bool XMLFile::Copy( XMLFile *other ) {
+	// Clear memoization
+	Forget();
+
+	// Attempt to copy the other values
 	xmlDocPtr copyXmlPtr  = xmlCopyDoc( other->xmlPtr, 1 );
 	if( copyXmlPtr ) {
 		if( xmlPtr ) xmlFreeDoc( xmlPtr );
@@ -178,6 +184,7 @@ bool XMLFile::Copy( XMLFile *other ) {
 		LogMsg(INFO,"Copy XMLFile from %s to %s complete.", other->filename.c_str(), this->filename.c_str());
 		return true;
 	}
+
 	LogMsg(ERR,"Copy XMLFile from %s to %s failed.", other->filename.c_str(), this->filename.c_str());
 	return false;
 }
@@ -201,6 +208,10 @@ vector<string> TokenizedString( const string& path, const string& tokens ) {
 	} while ( pos != string::npos );
 	
 	return tokenized;
+}
+
+void XMLFile::Forget() {
+	values.clear();
 }
 
 xmlNodePtr XMLFile::FindNode( const string& path, bool createIfMissing ) {
