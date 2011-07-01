@@ -169,16 +169,16 @@ bool Video::Initialize( void ) {
 	int h = OPTION( int, "options/video/h" );
 	bool fullscreen = OPTION( bool, "options/video/fullscreen" );
 
+	// Sanitize Width and Height
+	// TODO: Surely 0 is invalid, but what's the lower limit?
+	if( (w <= 0) || (w > videoInfo->current_w) ) { w = videoInfo->current_w; }
+	if( (h <= 0) || (h > videoInfo->current_w) ) { h = videoInfo->current_h; }
+
 	if( OPTION( int, "options/video/fullscreen" ) ) {
 		// fullscreen set, use native resolution
 		w = videoInfo->current_w;
 		h = videoInfo->current_h;
-	} else {
-		// If not fullscreen, validate the width and height
-		if( !w ) { w = videoInfo->current_w; }
-		if( !h ) { h = videoInfo->current_h; }
 	}
-	
 
 	Video::SetWindow( w, h, OPTION( int, "options/video/bpp"), fullscreen );
 	
