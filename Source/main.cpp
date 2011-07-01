@@ -278,6 +278,8 @@ void Main_Parse_Args( int argc, char **argv ) {
 	argparser->SetOpt(VALUEOPT, "log-fun",       "Filter log messages by function name.");
 	argparser->SetOpt(VALUEOPT, "log-msg",       "Filter log messages by string content.");
 
+	argparser->SetOpt(LONGOPT, "restore-defaults", "Restore options to default values.");
+
 #ifdef EPIAR_COMPILE_TESTS
 	argparser->SetOpt(VALUEOPT, "run-test",      "Run specified test");
 #endif // EPIAR_COMPILE_TESTS
@@ -290,6 +292,13 @@ void Main_Parse_Args( int argc, char **argv ) {
 
 	if ( argparser->HaveShort("v") || argparser->HaveLong("version") ){
 		printf("\nEpiar version %s\n", EPIAR_VERSION_FULL );
+		exit( 0 );
+	}
+
+	if ( argparser->HaveLong("restore-defaults") ){
+		printf("\nReseting all Epiar options to their default values.\n" );
+		Options::RestoreDefaults();
+		Options::Save();
 		exit( 0 );
 	}
 
