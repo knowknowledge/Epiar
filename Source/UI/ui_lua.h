@@ -61,6 +61,10 @@ class UI_Lua {
 		static int GetY(lua_State *L);
 		static int GetW(lua_State *L);
 		static int GetH(lua_State *L);
+		static int SetX(lua_State *L);
+		static int SetY(lua_State *L);
+		static int SetW(lua_State *L);
+		static int SetH(lua_State *L);
 
 		// Functions to manipulate Widgets
 		static int move(lua_State *L);

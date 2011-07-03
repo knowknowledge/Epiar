@@ -82,6 +82,10 @@ void UI_Lua::RegisterUI(lua_State *L){
 
 		// Generic Widget Modification
 		{"move", &UI_Lua::move},
+		{"SetX", &UI_Lua::SetX},
+		{"SetY", &UI_Lua::SetY},
+		{"SetW", &UI_Lua::SetW},
+		{"SetH", &UI_Lua::SetH},
 		{"close", &UI_Lua::close},
 		{"addCallback", &UI_Lua::AddCallback},
 		{"addPosCallback", &UI_Lua::AddPosCallback},
@@ -995,6 +999,54 @@ int UI_Lua::GetH(lua_State *L){
 	Widget *widget = checkWidget(L,1);
 	lua_pushinteger(L, widget->GetH() );
 	return 1;
+}
+
+/**\brief Set X of a Widget
+ */
+int UI_Lua::SetX(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 2 (self,x)", n);
+	Widget *widget = checkWidget(L,1);
+	int x = luaL_checkinteger(L,2);
+	widget->SetX( x );
+	return 0;
+}
+
+/**\brief Set Y of a Widget
+ */
+int UI_Lua::SetY(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	int y = luaL_checkinteger(L,2);
+	widget->SetY( y );
+	return 0;
+}
+
+/**\brief Set the Width of a Widget
+ */
+int UI_Lua::SetW(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	int w = luaL_checkinteger(L,2);
+	widget->SetW( w );
+	return 0;
+}
+
+/**\brief Set the Height of a Widget
+ */
+int UI_Lua::SetH(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	Widget *widget = checkWidget(L,1);
+	int h = luaL_checkinteger(L,2);
+	widget->SetH( h );
+	return 0;
 }
 
 /**\brief Append an option to this Dropdown
