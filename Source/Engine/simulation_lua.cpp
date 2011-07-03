@@ -137,6 +137,8 @@ void Simulation_Lua::RegisterSimulation(lua_State *L) {
 void Simulation_Lua::RegisterEditor(lua_State *L) {
 	static const luaL_Reg EditorFunctions[] = {
 		{"setInfo", &Simulation_Lua::SetInfo},
+		{"setDefaultPlayer", &Simulation_Lua::SetDefaultPlayer},
+		{"getDefaultPlayer", &Simulation_Lua::GetDefaultPlayer},
 		{"saveComponents", &Simulation_Lua::SaveComponents},
 		{NULL, NULL}
 	};
@@ -1402,6 +1404,41 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 	}
 	return 0;
 }
+
+/** \brief Get the settings for the default player
+ */
+int Simulation_Lua::GetDefaultPlayer(lua_State *L) {
+	Simulation* sim = GetSimulation(L);
+
+	lua_newtable(L);
+	Lua::setField("start", sim->Get("defaultPlayer/start").c_str() );
+	Lua::setField("model", sim->Get("defaultPlayer/model").c_str() );
+	Lua::setField("engine", sim->Get("defaultPlayer/engine").c_str() );
+	int credits = convertTo<int>( sim->Get("defaultPlayer/credits") );
+	Lua::setField("credits", credits );
+
+	return 1;
+}
+
+/** \brief Set the default player settings
+ */
+int Simulation_Lua::SetDefaultPlayer(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if( n!=1 )
+		return luaL_error(L, "Got %d arguments expected 1 table ({start=,model=,engine=,credits=})", n);
+	luaL_argcheck(L, lua_istable(L,1), 1, "Argument 1 is not a table. Should have the form {start=,model=,engine=,credits=}");
+
+	// Get and check the attributes
+	string startPlanet = Lua::getStringField(1,"start");
+	string modelName = Lua::getStringField(1,"model");
+	string engineName= Lua::getStringField(1,"engine");
+	int credits = Lua::getIntField(1,"credits");
+
+	Simulation* sim = GetSimulation(L);
+	sim->SetDefaultPlayer( startPlanet, modelName, engineName, credits);
+	return 0;
+}
+
 
 /** \brief Save All Game Component files
  */

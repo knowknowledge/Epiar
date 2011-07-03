@@ -4,15 +4,18 @@ componentWins = {}
 
 --- View components
 function componentDebugger()
-	UI.newButton(  0, 0, 100, 30,"Alliance","componentViewer('Alliance', Epiar.alliances)" )
-	UI.newButton(100, 0, 100, 30,"Commodity","componentViewer('Commodity', Epiar.commodities)" )
-	UI.newButton(200, 0, 100, 30,"Engine","componentViewer('Engine', Epiar.engines)" )
-	UI.newButton(300, 0, 100, 30,"Model","componentViewer('Model', Epiar.models)" )
-	UI.newButton(400, 0, 100, 30,"Planet","componentViewer('Planet', Epiar.planetNames)" )
-	UI.newButton(500, 0, 100, 30,"Gate","componentViewer('Gate', Epiar.gateNames,'Epiar.getGateInfo')" )
-	UI.newButton(600, 0, 100, 30,"Technology","technologyViewer()")
-	UI.newButton(700, 0, 100, 30,"Weapon","componentViewer('Weapon', Epiar.weapons)" )
-	UI.newButton(800, 0, 100, 30,"Outfit","componentViewer('Outfit', Epiar.outfits)" )
+	local width = WIDTH/10
+	UI.newButton(0*width, 0, width, 30, "Alliance", "componentViewer('Alliance', Epiar.alliances)" )
+	UI.newButton(1*width, 0, width, 30, "Commodity", "componentViewer('Commodity', Epiar.commodities)" )
+	UI.newButton(2*width, 0, width, 30, "Engine", "componentViewer('Engine', Epiar.engines)" )
+	UI.newButton(3*width, 0, width, 30, "Model", "componentViewer('Model', Epiar.models)" )
+	UI.newButton(4*width, 0, width, 30, "Planet", "componentViewer('Planet', Epiar.planetNames)" )
+	UI.newButton(5*width, 0, width, 30, "Gate", "componentViewer('Gate', Epiar.gateNames,'Epiar.getGateInfo')" )
+	UI.newButton(6*width, 0, width, 30, "Technology", "technologyViewer()")
+	UI.newButton(7*width, 0, width, 30, "Weapon", "componentViewer('Weapon', Epiar.weapons)" )
+	UI.newButton(8*width, 0, width, 30, "Outfit", "componentViewer('Outfit', Epiar.outfits)" )
+	UI.newButton(9*width, 0, width, 30, "Defaults", "simDefaults()" )
+
 	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 end
 
@@ -706,6 +709,55 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	fieldTable = nil
 	uiElements = nil
 	SlotEditor = nil
+end
+
+function simDefaults()
+	local simInfo = Epiar.getSimulationInfo()
+	local playerInfo = Epiar.getDefaultPlayer()
+	local width = 400
+	local height = 400
+	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Simulation Defaults")
+	local yoff = 40
+
+	theWin:add( UI.newLabel( width/2-100, yoff, simInfo.Name) )
+	yoff = yoff + 30
+
+	local par = UI.newParagraph( 20, yoff, width-100, 100, simInfo.Description)
+	theWin:add( par )
+	yoff = yoff + par:GetH() + 10
+
+	local drop
+	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.planetNames())
+	drop:setText( playerInfo.start )
+	theWin:add( UI.newLabel( 20, yoff, "Start:"), drop )
+	yoff = yoff + 30
+
+	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.models())
+	drop:setText( playerInfo.model )
+	theWin:add( UI.newLabel( 20, yoff, "Model:"), drop )
+	yoff = yoff + 30
+
+	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.engines())
+	drop:setText( playerInfo.engine )
+	theWin:add( UI.newLabel( 20, yoff, "Engine:"), drop )
+	yoff = yoff + 30
+
+	theWin:add(
+		UI.newLabel( 20, yoff, "Credits:"),
+		UI.newTextbox( 90, yoff, 100, 1, playerInfo.credits ) )
+	yoff = yoff + 30
+
+	function SaveDefaults()
+		local win = UI.search( "/Window'Simulation Defaults'/" )
+		if win == nil then return end
+		local start = UI.search("/Window'Simulation Defaults'/Dropdown[0]/" ):GetText()
+		local model = UI.search("/Window'Simulation Defaults'/Dropdown[1]/" ):GetText()
+		local engine = UI.search("/Window'Simulation Defaults'/Dropdown[2]/" ):GetText()
+		local credits = UI.search("/Window'Simulation Defaults'/Textbox[0]/" ):GetText()
+		Epiar.setDefaultPlayer( {start=start,model=model,engine=engine,credits=credits} )
+	end
+
+	theWin:add( UI.newButton( 20, yoff, 100, 30, "Save", "SaveDefaults()") )
 end
 
 function goto(x,y)

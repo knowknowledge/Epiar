@@ -1017,8 +1017,8 @@ int UI_Lua::SetX(lua_State *L){
  */
 int UI_Lua::SetY(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 1 (self,y)", n);
 	Widget *widget = checkWidget(L,1);
 	int y = luaL_checkinteger(L,2);
 	widget->SetY( y );
@@ -1029,8 +1029,8 @@ int UI_Lua::SetY(lua_State *L){
  */
 int UI_Lua::SetW(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 1 (self,w)", n);
 	Widget *widget = checkWidget(L,1);
 	int w = luaL_checkinteger(L,2);
 	widget->SetW( w );
@@ -1041,8 +1041,8 @@ int UI_Lua::SetW(lua_State *L){
  */
 int UI_Lua::SetH(lua_State *L){
 	int n = lua_gettop(L);  // Number of arguments
-	if (n != 1)
-		return luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	if (n != 2)
+		return luaL_error(L, "Got %d arguments expected 1 (self,h)", n);
 	Widget *widget = checkWidget(L,1);
 	int h = luaL_checkinteger(L,2);
 	widget->SetH( h );

@@ -69,6 +69,8 @@ class Simulation : public XMLFile {
 
 		void SetName( string _name ) { name = _name; }
 		void SetDescription( string _desc ) { description = _desc; }
+		void SetMusic( string _path ) { Set("music", _path); }
+		void SetDefaultPlayer( string planetName, string modelName, string engineName, int credits );
 
 		void SetQuit( bool val ) { quit = val; }
 

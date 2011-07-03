@@ -85,6 +85,8 @@ class Simulation_Lua{
 
 		// Editor Commands
 		static int SetInfo(lua_State *L);
+		static int SetDefaultPlayer(lua_State *L);
+		static int GetDefaultPlayer(lua_State *L);
 		static int SaveComponents(lua_State *L);
 		static int ListImages(lua_State *L);
 		static int ListAnimations(lua_State *L);

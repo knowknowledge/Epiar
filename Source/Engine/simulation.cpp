@@ -661,6 +661,28 @@ void Simulation::CreateNavMap( void )
  * \brief Checks to see if Simulation is Loaded Successfully
  */
 
+/**\brief Define the new Player Attributes
+ * \warn This will log any issues, but it will let
+ * \param[in] playerName The player's name.
+ */
+void Simulation::SetDefaultPlayer( string startPlanet, string modelName, string engineName, int credits ) {
+	LogMsg(INFO, "Setting the Player Defaults" );
+
+	// Log disrepencies, but don't fix.
+	if( planets->Get( startPlanet ) == NULL )
+		LogMsg(WARN, "Setting the Player's start planet to '%s', but this planet does not exist.", startPlanet.c_str() );
+	if( models->Get( modelName ) == NULL )
+		LogMsg(WARN, "Setting the Player's start model to '%s', but this model does not exist.", modelName.c_str() );
+	if( engines->Get( engineName ) == NULL )
+		LogMsg(WARN, "Setting the Player's start engine to '%s', but this engine does not exist.", engineName.c_str() );
+	
+	// Set player defaults in the simulation xml
+	Set("defaultPlayer/start", startPlanet);
+	Set("defaultPlayer/model", modelName);
+	Set("defaultPlayer/engine", engineName);
+	Set("defaultPlayer/credits", credits);
+}
+
 /**\brief Create and Remember a new Player
  * \note This does not run the player related Lua code.
  * \warn Don't calling this more than once.
@@ -674,6 +696,8 @@ void Simulation::CreateDefaultPlayer(string playerName) {
 	}
 
 	assert( player == NULL );
+	assert( models->GetModel( Get("defaultPlayer/model") ) );
+	assert( engines->GetEngine( Get("defaultPlayer/engine") ) );
 	player = players->CreateNew(
         GetName(),
 		playerName,
