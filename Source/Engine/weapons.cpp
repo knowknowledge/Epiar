@@ -23,13 +23,13 @@ Weapon::Weapon(void) :
 	image(NULL),
 	sound(NULL),
 	weaponType(0),
-	payload(0),
-	velocity(0),
+	payload(1),
+	velocity(5),
 	acceleration(0),
 	ammoType(energy_ammo),
 	ammoConsumption(0),
-	fireDelay(0),
-	lifetime(0),
+	fireDelay(1000),
+	lifetime(500),
 	tracking(0.0f)
 {
 	SetName("");

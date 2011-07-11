@@ -48,6 +48,11 @@ Model::Model()
 	,thrustOffset(0)
 {
 	SetName("");
+	SetMass(1.0f);
+	SetRotationsPerSecond(0.2f);
+	SetHullStrength(100);
+	SetShieldStrength(100);
+	SetCargoSpace(10);
 }
 
 /**\brief Assignment operator (copy fields).

@@ -23,6 +23,8 @@ Engine::Engine() :
 	flareAnimation("")
 {
 	SetName("");
+	SetMSRP(500);
+	SetForceOutput(5.0f);
 }
 
 /**\brief Assignment constructor - copies all fields.

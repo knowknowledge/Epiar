@@ -19,7 +19,7 @@
 /**\brief Initializes Commodity
  */
 Commodity::Commodity()
-	:msrp(0)
+	:msrp(10)
 {
 	SetName("");
 }
