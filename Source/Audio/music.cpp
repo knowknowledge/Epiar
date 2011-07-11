@@ -23,7 +23,11 @@ Song *Song::Get( const string& filename ){
 	value = (Song*) Resource::Get( filename );
 	if( value == NULL ){
 		value = new Song( filename );
-		Resource::Store( filename, (Resource*) value );
+		if( value->song != NULL ){
+			Resource::Store( filename, (Resource*) value );
+		} else {
+			return NULL;
+		}
 	}
 	return value;
 }

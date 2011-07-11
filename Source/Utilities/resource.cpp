@@ -57,6 +57,7 @@ Resource::Resource() {
  *  \TODO Fix potential memory leak.
  */
 void Resource::Store(string key,Resource *res) {
+	assert(key != ""); // No Empty Keys!
 	values.insert(make_pair(key,res));
 }
 
