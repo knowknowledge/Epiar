@@ -32,7 +32,7 @@ Weapon::Weapon(void) :
 	lifetime(0),
 	tracking(0.0f)
 {
-	SetName("dead");
+	SetName("");
 }
 
 /**\brief Assignment operator (Copy fields)

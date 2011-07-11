@@ -21,7 +21,7 @@
 Commodity::Commodity()
 	:msrp(0)
 {
-	SetName("dead");
+	SetName("");
 }
 
 /**\brief Initializes Commodity using another Commodity

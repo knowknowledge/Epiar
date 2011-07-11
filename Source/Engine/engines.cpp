@@ -22,7 +22,7 @@ Engine::Engine() :
 	foldDrive(false),
 	flareAnimation("")
 {
-	SetName("dead");
+	SetName("");
 }
 
 /**\brief Assignment constructor - copies all fields.

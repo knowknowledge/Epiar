@@ -22,7 +22,7 @@
  */
 Alliance::Alliance() : attackSize(0),aggressiveness(0.0),currency("Credits")
 {
-	SetName("dead");
+	SetName("");
 	color = WHITE;
 }
 

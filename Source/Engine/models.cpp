@@ -44,9 +44,10 @@
  */
 Model::Model()
 	:image(NULL)
+	,defaultEngine(NULL)
 	,thrustOffset(0)
 {
-	SetName("dead");
+	SetName("");
 }
 
 /**\brief Assignment operator (copy fields).
