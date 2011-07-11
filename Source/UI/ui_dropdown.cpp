@@ -125,12 +125,12 @@ bool Dropdown::MouseLUp( int xi, int yi ) {
 	if( opened ) {
 		selected = (yi - y) / baseheight;
 		assert( selected >= 0 );
-		assert( selected < options.size() );
+		assert( selected < options.size() || (options.size() == 0));
 		close();
 	} else {
 		hovered = (yi - y) / baseheight;
 		assert( hovered >= 0 );
-		assert( hovered < options.size() );
+		assert( hovered < options.size() || (options.size() == 0));
 		open();
 	}
 	return true;
@@ -175,6 +175,14 @@ void Dropdown::close() {
 	x -= xoffset;
 	y -= yoffset;
 	opened = false;
+}
+
+string Dropdown::GetText(){
+	if(( selected < 0) || (selected >= options.size()) ) {
+		// Invalid selection, likely because this is an empty dropdown list.
+		return "";
+	}
+	return options[selected];
 }
 
 /**\brief Close the Dropdown to display the selected option

@@ -26,7 +26,7 @@ class Dropdown : public Widget {
 		virtual string GetType( void ) { return string("Dropdown"); }
 		virtual int GetMask( void ) { return WIDGET_DROPDOWN; }
 
-		string GetText() { return options[selected]; }
+		string GetText();
 		bool SetText(string text);
 
 	protected:
