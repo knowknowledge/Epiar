@@ -10,19 +10,21 @@ We hope you like it. We're still working on it.
 
 The Epiar controls in a nutshell:
     - Move the ship with the Arrow keys.
-    - Land on a Planet by hitting L when you are near it.
+    - Land on a Planet by hitting l (little L) when you are near it.
 
     - Fire with the Spacebar once you buy a gun.
     - To target ships:
           - Hit TAB to cycle through nearby ships.
           - Hit t to select the closest ship.
-          - Click on the ship.
+          - Click on the ship you want to target.
     - To board a disabled target hit B while you are near it.
 
-    - View the map by hitting m or M.
-    - To change the keyboard layout or volume controls, press ?.
-
-    - Quit by hitting escape.
+    - View the map, press m.
+    - Change the game options, press ?.
+    - Modify the default keyboard controls, press /.
+    
+    - Your game is saved whenever you land on a planet.
+    - Leave to the Main Menu by hitting escape.
 
 For more information about Epiar, please visit:
 
