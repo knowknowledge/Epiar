@@ -727,18 +727,28 @@ function simDefaults()
 	yoff = yoff + par:GetH() + 10
 
 	local drop
-	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.planetNames())
-	drop:setText( playerInfo.start )
+	local planets = Epiar.planetNames()
+	drop = UI.newDropdown( 90, yoff, 100, 20, planets)
+	if planets[playerInfo.start] then
+		drop:setText( playerInfo.start )
+	end
+	
 	theWin:add( UI.newLabel( 20, yoff, "Start:"), drop )
 	yoff = yoff + 30
 
-	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.models())
-	drop:setText( playerInfo.model )
+	local models = Epiar.models()
+	drop = UI.newDropdown( 90, yoff, 100, 20, models)
+	if models[playerInfo.model] ~= nil then
+		drop:setText( playerInfo.model )
+	end
 	theWin:add( UI.newLabel( 20, yoff, "Model:"), drop )
 	yoff = yoff + 30
 
-	drop = UI.newDropdown( 90, yoff, 100, 20, Epiar.engines())
-	drop:setText( playerInfo.engine )
+	local engines = Epiar.engines()
+	drop = UI.newDropdown( 90, yoff, 100, 20, engines)
+	if engines[playerInfo.engine] ~= nil then
+		drop:setText( playerInfo.engine )
+	end
 	theWin:add( UI.newLabel( 20, yoff, "Engine:"), drop )
 	yoff = yoff + 30
 
@@ -755,6 +765,7 @@ function simDefaults()
 		local engine = UI.search("/Window'Simulation Defaults'/Dropdown[2]/" ):GetText()
 		local credits = UI.search("/Window'Simulation Defaults'/Textbox[0]/" ):GetText()
 		Epiar.setDefaultPlayer( {start=start,model=model,engine=engine,credits=credits} )
+		win:close()
 	end
 
 	theWin:add( UI.newButton( 20, yoff, 100, 30, "Save", "SaveDefaults()") )
