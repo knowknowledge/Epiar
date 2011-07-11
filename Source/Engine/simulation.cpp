@@ -76,11 +76,6 @@ bool Simulation::New( string newname ) {
 	name = newname;
 	folderpath = "Resources/Simulation/" + name + "/";
 
-	if( PHYSFS_mkdir( folderpath.c_str() ) == 0) {
-		LogMsg(ERR, "Cannot create folder '%s'.", folderpath.c_str() );
-		return false;
-	}
-
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
 
 	Set("simulation/name", name );
@@ -106,6 +101,11 @@ bool Simulation::New( string newname ) {
 	Set("simulation/alliances", "alliances.xml" );
 	Set("simulation/technologies", "technologies.xml" );
 	Set("simulation/outfits", "outfits.xml" );
+
+	Set("defaultPlayer/start", "");
+	Set("defaultPlayer/model", "");
+	Set("defaultPlayer/engine", "");
+	Set("defaultPlayer/credits", 0);
 
 	Set("simulation/players", "Resources/Definitions/saved-games.xml" );
 
@@ -138,6 +138,16 @@ void Simulation::Save(){
 		LogMsg(ERR, "Cannot create folder '%s'.", folderpath.c_str() );
 		return;
 	}
+
+	// Check Defaults
+	if( planets->Get( Get("defaultPlayer/start")) == NULL)
+		LogMsg(WARN, "Bad Default Player Start Location '%s'.", Get("defaultPlayer/start").c_str() );
+	if( models->Get( Get("defaultPlayer/model")) == NULL)
+		LogMsg(WARN, "Bad Default Player Start Model '%s'.", Get("defaultPlayer/model").c_str() );
+	if( engines->Get( Get("defaultPlayer/engine")) == NULL)
+		LogMsg(WARN, "Bad Default Player Start Engine '%s'.", Get("defaultPlayer/engine").c_str() );
+	// TODO Somehow check that starting credits is actually an integer.
+
 	XMLFile::Save();
 	GetAlliances()->Save();
 	GetCommodities()->Save();
@@ -510,7 +520,7 @@ bool Simulation::Parse( void ) {
 		return false;
 	}
 	if( weapons->Load( (folderpath + Get("weapons")) ) != true ) {
-		LogMsg(ERR, "There was an error loading the technologies from '%s'.", (folderpath + Get("weapons")).c_str() );
+		LogMsg(ERR, "There was an error loading the weapons from '%s'.", (folderpath + Get("weapons")).c_str() );
 		return false;
 	}
 	if( outfits->Load( (folderpath + Get("outfits")) ) != true ) {
@@ -536,9 +546,24 @@ bool Simulation::Parse( void ) {
 	    }
 	}
 
+	// Check the Music
 	bgmusic = Song::Get( Get("music") );
 	if( bgmusic == NULL ) {
 		LogMsg(WARN, "There was an error loading music from '%s'.", Get("music").c_str() );
+	}
+
+	// Check the Player Defaults
+	if( planets->Get( Get("defaultPlayer/start")) == NULL) {
+		LogMsg(ERR, "Bad Default Player Start Location '%s'.", Get("defaultPlayer/start").c_str() );
+		return false;
+	}
+	if( models->Get( Get("defaultPlayer/model")) == NULL) {
+		LogMsg(ERR, "Bad Default Player Start Model '%s'.", Get("defaultPlayer/model").c_str() );
+		return false;
+	}
+	if( engines->Get( Get("defaultPlayer/engine")) == NULL) {
+		LogMsg(WARN, "Bad Default Player Start Engine '%s'.", Get("defaultPlayer/engine").c_str() );
+		return false;
 	}
 
 	return true;
