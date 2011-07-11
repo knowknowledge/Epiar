@@ -44,7 +44,9 @@ Picture::Picture( int x, int y, int w, int h, Image* pic ){
 	if( bitmap ) {
 		name = bitmap->GetPath();
 	}
-	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
+	if(bitmap) assert(name!="");
+	else assert(name=="");
 }
 
 /**\brief Initialize from an Image pointer.
@@ -57,7 +59,9 @@ Picture::Picture( int x, int y, Image* pic ){
 		w = bitmap->GetWidth();
 		h = bitmap->GetHeight();
 	}
-	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
+	if(bitmap) assert(name!="");
+	else assert(name=="");
 }
 
 /**\brief Initialize from an Image name
@@ -71,7 +75,9 @@ Picture::Picture( int x, int y, int w, int h, string filename ){
 		h = bitmap->GetHeight();
 		name = bitmap->GetPath();
 	}
-	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
+	if(bitmap) assert(name!="");
+	else assert(name=="");
 }
 
 /**\brief Initialize from an Image name using the Image size

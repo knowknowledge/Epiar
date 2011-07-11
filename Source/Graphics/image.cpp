@@ -34,6 +34,7 @@ Image::Image( const string& filename ) {
 	// Initialize variables
 	w = h = real_w = real_h = image = 0;
 	scale_w = scale_h = 1.;
+	filepath="";
 
 	Load(filename);
 }
@@ -44,6 +45,7 @@ Image::Image( GLuint texture, int w, int h ) {
 	this->w = real_w = w;
 	this->h = real_h = h;
 	scale_w = scale_h = 1.;
+	filepath="";
 
 	image = texture;
 }
@@ -79,15 +81,20 @@ Image* Image::Get( string filename ) {
  */
 bool Image::Load( const string& filename ) {
 	File file = File();
+
+	if( filename == "" ) {
+		return false; // No File to load.
+	}
+
 	if( !file.OpenRead(filename ) ) {
-		return NULL; // File could not be opened or found.
+		return false; // File could not be opened or found.
 	}
 
 	char* buffer = file.Read();
 	int bytesread = file.GetLength();
 
 	if ( buffer == NULL ) {
-		return NULL; // File could not be Read.
+		return false; // File could not be Read.
 	}
 
 	int retval = Load( buffer, bytesread );
@@ -96,7 +103,7 @@ bool Image::Load( const string& filename ) {
         filepath=filename;
 		return true;
 	}
-	return NULL; // Image could not be loaded. (It might not be an Image)
+	return false; // Image could not be loaded. (It might not be an Image)
 }
 
 /**\brief Load image from buffer
