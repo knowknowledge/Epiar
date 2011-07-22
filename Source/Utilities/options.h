@@ -23,6 +23,8 @@ class Options
 
 		static bool IsLoaded();
 
+		static void Unlock();
+
 		static bool Save( const string& path = "" );
 
 		static void AddDefault( const string& path, const string& value );
@@ -39,6 +41,7 @@ class Options
 
 
 	private:
+		static bool locked;
 		static XMLFile *optionsfile;
 		static XMLFile *defaults;
 };
