@@ -24,6 +24,7 @@
 Outfit::Outfit()
 	:msrp(0)
 	,picture(NULL)
+	,description("")
 	,rotPerSecond(0)
 	,maxSpeed(0)
 	,forceOutput(0)
@@ -40,6 +41,7 @@ Outfit::Outfit()
 Outfit::Outfit(
 	            int _msrp,
 	            Image* _picture,
+				string _description,
 	            float _rotPerSecond,
 	            float _maxSpeed,
 	            float _forceOutput,
@@ -51,6 +53,7 @@ Outfit::Outfit(
 	            )
 	:msrp(_msrp)
 	,picture(_picture)
+	,description(_description)
 	,rotPerSecond(_rotPerSecond)
 	,maxSpeed(_maxSpeed)
 	,forceOutput(_forceOutput)
@@ -68,6 +71,7 @@ Outfit& Outfit::operator= (const Outfit& other)
 {
 	msrp = other.msrp;
 	picture = other.picture;
+	description = other.description;
 	rotPerSecond = other.rotPerSecond;
 	maxSpeed = other.maxSpeed;
 	forceOutput = other.forceOutput;
@@ -132,6 +136,13 @@ bool Outfit::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		SetPicture(pic);
 	} else return false;
 
+	if( (attr = FirstChildNamed(node,"description")) ){
+		value = NodeToString(doc,attr);
+		SetDescription( value );
+	} else {
+		LogMsg( WARN, "%s does not have a description.", GetName().c_str() );
+	}
+
 	if( (attr = FirstChildNamed(node,"rotsPerSecond")) ){
 		value = NodeToString(doc,attr);
 		SetRotationsPerSecond( static_cast<float>(atof( value.c_str() )));
@@ -187,6 +198,8 @@ xmlNodePtr Outfit::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "msrp", BAD_CAST buff );
 
 	xmlNewChild(section, NULL, BAD_CAST "picName", BAD_CAST this->GetPicture()->GetPath().c_str() );
+
+	xmlNewChild(section, NULL, BAD_CAST "description", BAD_CAST this->GetDescription().c_str() );
 
 	snprintf(buff, sizeof(buff), "%f", this->GetRotationsPerSecond() );
 	xmlNewChild(section, NULL, BAD_CAST "rotsPerSecond", BAD_CAST buff );

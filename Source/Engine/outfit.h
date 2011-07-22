@@ -20,6 +20,7 @@ class Outfit : public Component {
 		Outfit(
 				int _msrp,
 				Image* _picture,
+				string _description,
 				float _rotPerSecond,
 				float _maxSpeed,
 				float _forceOutput,
@@ -42,6 +43,9 @@ class Outfit : public Component {
 
 		Image* GetPicture() { return picture; }
 		void SetPicture( Image* _picture ) { picture = _picture; }
+
+		string GetDescription() { return description; }
+		void SetDescription( string _description ) { description = _description; }
 
 		float GetRotationsPerSecond() { return rotPerSecond; }
 		void SetRotationsPerSecond( float _rotPerSecond ) { rotPerSecond = _rotPerSecond; }
@@ -70,6 +74,7 @@ class Outfit : public Component {
 	protected:
 		int msrp; ///< The cost in credits.
 		Image* picture; ///< The image used in the store.
+		string description; ///< The description of the item.
 
 		// Navigation Stats
 		float rotPerSecond; ///< The degrees of rotatation per second.

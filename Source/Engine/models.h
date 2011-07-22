@@ -32,7 +32,19 @@ class Model : public Outfit {
 		Model();
 		Model& operator= (const Model&);
 
-		Model( string _name, Image* _image, Engine* _defaultEngine, float _mass, short int _thrustOffset, float _rotPerSecond, float _maxSpeed, int _hullStrength, int _shieldStrength, int _msrp, int _cargoSpace, vector<WeaponSlot>& _weaponSlots);
+		Model( string _name,
+				Image* _image,
+				string _description,
+				Engine* _defaultEngine,
+				float _mass,
+				short int _thrustOffset,
+				float _rotPerSecond,
+				float _maxSpeed,
+				int _hullStrength,
+				int _shieldStrength,
+				int _msrp,
+				int _cargoSpace,
+				vector<WeaponSlot>& _weaponSlots);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
