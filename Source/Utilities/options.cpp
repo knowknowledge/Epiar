@@ -7,6 +7,7 @@
  */
 
 #include "includes.h"
+#include "Utilities/log.h"
 #include "Utilities/options.h"
 
 XMLFile *Options::optionsfile = NULL; ///< Static instance of the optionsfile.
@@ -24,6 +25,7 @@ void Options::Initialize( const string& path )
 	{
 		// Create the default Options file
 		optionsfile->New( path, "options");
+		LogMsg(INFO, "Options file could not be found. Creating a new one." );
 	}
 	defaults = new XMLFile();
 	defaults->New( path + ".bac", "options");

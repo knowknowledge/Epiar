@@ -193,8 +193,6 @@ void Main_Load_Settings() {
 
 /** \details
  *  This will initialize the singletons for this Epiar instance:
- *   - OPTIONS (optionsfile)
- *   - SKIN (skinfile)
  *   - Audio
  *   - Fonts
  *   - Timer

@@ -27,7 +27,7 @@ XMLFile::XMLFile( const string& filename ) {
 }
 
 bool XMLFile::New( const string& _filename, const string& rootName ) {
-	char buff[256];
+	char buff[96] = {0};
 	assert( xmlPtr == NULL );
 	filename = _filename;
 
@@ -145,7 +145,7 @@ void XMLFile::Set( const string& path, const string& value ) {
 /** \brief Check if a given path exists.
  */
 bool XMLFile::Has( const string& path ) {
-	xmlNodePtr p =  FindNode(path,true);
+	xmlNodePtr p = FindNode(path, false);
 	return ( p != NULL );
 }
 
