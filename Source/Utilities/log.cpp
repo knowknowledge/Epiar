@@ -116,6 +116,8 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	timestamp = ctime( &rawtime );
 	timestamp[ strlen(timestamp) - 1 ] = 0;
 
+	cout << "reallog" << endl;
+
 	va_start( args, message );
 	vsnprintf( logBuffer, sizeof(logBuffer), message, args );
 	va_end( args );

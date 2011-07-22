@@ -38,7 +38,7 @@ template<typename T> inline void convert(const std::string& s, T& x, bool failIf
 
 template<typename T> inline T convertTo(const std::string& s, bool failIfLeftoverChars = true){
 	T x;
-	
+
 	convert( s, x, failIfLeftoverChars );
 	
 	return x;

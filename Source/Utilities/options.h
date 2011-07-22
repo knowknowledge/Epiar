@@ -13,7 +13,7 @@
 #include "Utilities/string_convert.h"
 
 // To simply access options
-#define OPTION(T, path) (convertTo<T>( Options::Get(path) ))
+#define OPTION(T, path) ( convertTo<T>( Options::Get(path) ))
 #define SETOPTION(path, value) (Options::Set((path),(value)) )
 
 class Options

@@ -40,9 +40,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Enhancements to STL
-#include "Utilities/string_convert.h"
-
 // Library includes
 #include "SDL.h"
 #include "SDL_thread.h"
