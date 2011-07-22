@@ -72,9 +72,22 @@ Weapon& Weapon::operator=(const Weapon& other) {
  * \param _tracking Turning rate
  * \param _msrp Price of the weapon
  */
-Weapon::Weapon( string _name, Image* _image, Image* _pic,
-		int _weaponType, int _payload, int _velocity, int _acceleration,
-		AmmoType _ammoType, int _ammoConsumption, int _fireDelay,  int _lifetime, Sound* _sound, float _tracking, int _msrp) :
+Weapon::Weapon(
+		string _name,
+		Image* _image,
+		Image* _pic,
+		string _description,
+		int _weaponType,
+		int _payload,
+		int _velocity,
+		int _acceleration,
+		AmmoType _ammoType,
+		int _ammoConsumption,
+		int _fireDelay,
+		int _lifetime,
+		Sound* _sound,
+		float _tracking,
+		int _msrp):
 	image(_image),
 	sound(_sound),
 	weaponType(_weaponType),
@@ -90,6 +103,7 @@ Weapon::Weapon( string _name, Image* _image, Image* _pic,
 	SetName(_name);
 	SetMSRP( _msrp );
 	SetPicture( _pic );
+	SetDescription( _description );
 	
 	// Generic Outfit stuff
 	//((Component*)this)->SetName(_name);
@@ -130,6 +144,13 @@ bool Weapon::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	} else {
 		LogMsg(ERR,"Could not find child node picName while searching component");
 		return false;
+	}
+
+	if( (attr = FirstChildNamed(node,"description")) ){
+		value = NodeToString(doc,attr);
+		SetDescription( value );
+	} else {
+		LogMsg( WARN, "%s does not have a description.", GetName().c_str() );
 	}
 
 	if( (attr = FirstChildNamed(node,"payload")) ){
@@ -226,6 +247,8 @@ xmlNodePtr Weapon::ToXMLNode(string componentName) {
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str() );
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "description", BAD_CAST this->GetDescription().c_str() );
+
 	snprintf(buff, sizeof(buff), "%d", this->GetType() );
 	xmlNewChild(section, NULL, BAD_CAST "weaponType", BAD_CAST buff );
 

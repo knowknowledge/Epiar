@@ -371,9 +371,13 @@ bool UI::HandleMouse( InputEvent i ) {
 	list<draw_location>::iterator iter;
 	for( iter = hovering.begin(); iter != hovering.end(); ++iter)
 	{
-		if( IsAttached( iter->widget ) && (iter->widget)->Contains(i.mx,i.my) )
+		// r is the position of the mouse event relative to the widget
+		InputEvent r = i;
+		r.mx -= ((iter->widget)->GetAbsX() - (iter->widget)->GetX());
+		r.my -= ((iter->widget)->GetAbsY() - (iter->widget)->GetY());
+		if( IsAttached( iter->widget ) && (iter->widget)->Contains(r.mx, r.my) )
 		{
-			if( DispatchMouse( iter->widget, i ) )
+			if( DispatchMouse( iter->widget, r ) )
 				return true;
 		}
 	}
@@ -381,11 +385,9 @@ bool UI::HandleMouse( InputEvent i ) {
 }
 
 bool UI::DispatchMouse( Widget* widget, InputEvent i ) {
-	int x, y;
-	
 	// mouse coordinates associated with the mouse event
-	x = i.mx;
-	y = i.my;
+	int x = i.mx;
+	int y = i.my;
 	
 	switch(i.mstate) {
 		case MOUSEMOTION:		// Movement of the mouse

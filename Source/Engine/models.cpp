@@ -60,6 +60,7 @@ Model::Model()
 Model& Model::operator=(const Model& other) {
 	name = other.name;
 	image = other.image;
+	description = other.description;
 	defaultEngine = other.defaultEngine;
 	mass = other.mass;
 	thrustOffset = other.thrustOffset;
@@ -86,8 +87,10 @@ Model& Model::operator=(const Model& other) {
  */
 
 
-Model::Model( string _name,
+Model::Model(
+		string _name,
 		Image* _image,
+		string _description,
 		Engine* _defaultEngine,
 		float _mass,
 		short int _thrustOffset,
@@ -103,6 +106,7 @@ Model::Model( string _name,
 	thrustOffset(_thrustOffset)
 {
 	SetName(_name);
+	SetDescription(_description);
 	SetMass(_mass);
 	SetRotationsPerSecond(_rotPerSecond);
 	SetMaxSpeed(_maxSpeed);
@@ -125,6 +129,13 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		Image::Store(name, image);
 		SetPicture(image);
 	} else return false;
+
+	if( (attr = FirstChildNamed(node,"description")) ){
+		value = NodeToString(doc,attr);
+		SetDescription( value );
+	} else {
+		LogMsg( WARN, "%s does not have a description.", GetName().c_str() );
+	}
 
 	if( (attr = FirstChildNamed(node,"engine")) ){
 		defaultEngine = Engines::Instance()->GetEngine( NodeToString(doc,attr) );
@@ -189,6 +200,7 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
     xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "description", BAD_CAST this->GetDescription().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST this->GetImage()->GetPath().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "engine", BAD_CAST this->GetDefaultEngine()->GetName().c_str() );
 	snprintf(buff, sizeof(buff), "%1.2f", this->GetMass() );

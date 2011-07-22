@@ -31,7 +31,21 @@ class Weapon : public Outfit {
 	public:
 		Weapon(void);
 		Weapon& operator=(const Weapon& other);
-		Weapon( string _name, Image* _image, Image* _pic, int _weaponType, int _payload, int _velocity, int _acceleration, AmmoType _ammoType, int _ammoConsumption, int _fireDelay, int _lifetime, Sound* _sound, float _tracking, int _msrp);
+		Weapon( string _name,
+				Image* _image,
+				Image* _pic,
+				string _description,
+				int _weaponType,
+				int _payload,
+				int _velocity,
+				int _acceleration,
+				AmmoType _ammoType,
+				int _ammoConsumption,
+				int _fireDelay,
+				int _lifetime,
+				Sound* _sound,
+				float _tracking,
+				int _msrp);
 		~Weapon(void);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );

@@ -20,7 +20,7 @@ class Engine : public Outfit {
 	public:
 		Engine();
 		Engine& operator= (const Engine&);
-		Engine( string _name, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic);
+		Engine( string _name, Image* _pic, string _description, Sound* _sound, float _forceOutput, short int _msrp, bool _foldDrive, string _flareAnimation);
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);

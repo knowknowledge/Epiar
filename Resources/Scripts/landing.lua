@@ -417,6 +417,7 @@ function storeView(containerPath, itemType, itemName )
 		--print(statname, value )
 		-- Skip these kinds
 		if statname == "Name"
+		or statname == "Description"
 		or statname == "MSRP"
 		or statname == "Picture"
 		or statname == "Image"
@@ -437,6 +438,9 @@ function storeView(containerPath, itemType, itemName )
 		end
 	end
 	yoff = 250
+	local desc = UI.newParagraph( 10, yoff, width*.75 - 70, 300, iteminfo.Description )
+	viewer:add( desc )
+	yoff = yoff + desc:GetH() + 10
 	if iteminfo.Engine ~= nil then
 		viewer:add( UI.newLabel(10, yoff, "Engine") )
 		viewer:add( UI.newLabel(130, yoff, iteminfo.Engine) )

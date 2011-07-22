@@ -9,6 +9,7 @@
 #include "includes.h"
 #include "Engine/engines.h"
 #include "Utilities/components.h"
+#include "Utilities/log.h"
 
 /**\class Engine
  * \brief A ship propeller system.
@@ -48,13 +49,14 @@ Engine& Engine::operator= (const Engine& other) {
  * \param foldDrive Fold capable
  * \param _flareAnimation Thrust animation
  */
-Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
-		short int _msrp, bool _foldDrive, string _flareAnimation, Image* _pic) :
+Engine::Engine( string _name, Image* _pic, string _description, Sound* _thrustsound, float _forceOutput,
+		short int _msrp, bool _foldDrive, string _flareAnimation) :
 	thrustsound(_thrustsound),
 	foldDrive(_foldDrive),
 	flareAnimation(_flareAnimation)
 {
 	SetName(_name);
+	SetDescription(_description);
 	SetMSRP(_msrp);
 	SetPicture(_pic);
 	SetForceOutput(_forceOutput);
@@ -65,6 +67,13 @@ Engine::Engine( string _name, Sound* _thrustsound, float _forceOutput,
 bool Engine::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 	xmlNodePtr  attr;
 	string value;
+
+	if( (attr = FirstChildNamed(node,"description")) ){
+		value = NodeToString(doc,attr);
+		SetDescription( value );
+	} else {
+		LogMsg( WARN, "%s does not have a description.", GetName().c_str() );
+	}
 
 	if( (attr = FirstChildNamed(node,"forceOutput")) ){
 		value = NodeToString(doc,attr);
@@ -106,6 +115,7 @@ xmlNodePtr Engine::ToXMLNode(string componentName) {
 	xmlNodePtr section = xmlNewNode(NULL, BAD_CAST componentName.c_str());
 
 	xmlNewChild(section, NULL, BAD_CAST "name", BAD_CAST this->GetName().c_str() );
+	xmlNewChild(section, NULL, BAD_CAST "description", BAD_CAST this->GetDescription().c_str() );
 
 	snprintf(buff, sizeof(buff), "%1.1f", this->GetForceOutput() );
 	xmlNewChild(section, NULL, BAD_CAST "forceOutput", BAD_CAST buff );

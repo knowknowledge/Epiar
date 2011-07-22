@@ -811,6 +811,7 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 
 	lua_newtable(L);
 	Lua::setField("Name", model->GetName().c_str());
+	Lua::setField("Description", model->GetDescription().c_str());
 	Lua::setField("Image", (model->GetImage()!=NULL)
 	                ? (model->GetImage()->GetPath().c_str())
 	                : "" );
@@ -973,6 +974,7 @@ int Simulation_Lua::GetWeaponInfo(lua_State *L) {
 
 	lua_newtable(L);
 	Lua::setField("Name", weapon->GetName().c_str());
+	Lua::setField("Description", weapon->GetDescription().c_str());
 	Lua::setField("Image", (weapon->GetImage()!=NULL)
 	                ? (weapon->GetImage()->GetPath().c_str())
 	                : "" );
@@ -1008,6 +1010,7 @@ int Simulation_Lua::GetEngineInfo(lua_State *L) {
 
 	lua_newtable(L);
 	Lua::setField("Name", engine->GetName().c_str());
+	Lua::setField("Description", engine->GetDescription().c_str());
 	Lua::setField("Picture", (engine->GetPicture()!=NULL)
 	                  ? (engine->GetPicture()->GetPath().c_str())
 	                  : "" );
@@ -1037,6 +1040,7 @@ int Simulation_Lua::GetOutfitInfo(lua_State *L) {
 	Lua::setField("Picture", (outfit->GetPicture()!=NULL)
 	                  ? (outfit->GetPicture()->GetPath().c_str())
 	                  : "" );
+	Lua::setField("Description", outfit->GetDescription().c_str());
 	Lua::setField("Force", outfit->GetForceOutput());
 	Lua::setField("Mass", outfit->GetMass());
 	Lua::setField("Rotation", outfit->GetRotationsPerSecond());
@@ -1135,6 +1139,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 	} else if(kind == "Engine"){
 		string name = Lua::getStringField(2,"Name");
 		string pictureName = Lua::getStringField(2,"Picture");
+		string description = Lua::getStringField(2,"Description");
 		int force = Lua::getIntField(2,"Force");
 		string flare = Lua::getStringField(2,"Animation");
 		int msrp = Lua::getIntField(2,"MSRP");
@@ -1150,12 +1155,13 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		if((sound==NULL) || (picture==NULL))
 			return 0;
 
-		Engine* thisEngine = new Engine(name,sound,static_cast<float>(force),msrp,TO_BOOL(foldDrive),flare,picture);
+		Engine* thisEngine = new Engine(name, picture, description, sound, static_cast<float>(force), msrp, TO_BOOL(foldDrive), flare);
 		GetSimulation(L)->GetEngines()->AddOrReplace( thisEngine );
 
 	} else if(kind == "Model"){
 		string name = Lua::getStringField(2,"Name");
 		string imageName = Lua::getStringField(2,"Image");
+		string description = Lua::getStringField(2,"Description");
 		string engineName = Lua::getStringField(2,"Engine");
 		float mass = Lua::getNumField(2,"Mass");
 		int thrust = Lua::getIntField(2,"Thrust");
@@ -1225,7 +1231,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 
 		lua_pop(L,1);
 
-		Model* thisModel = new Model(name,image,engine,mass,thrust,rot,speed,hull,shield,msrp,cargo,weaponSlots);
+		Model* thisModel = new Model(name, image, description, engine, mass, thrust, rot, speed, hull, shield, msrp, cargo, weaponSlots);
 
 		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
 
@@ -1350,6 +1356,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		string name = Lua::getStringField(2,"Name");
 		string imageName = Lua::getStringField(2,"Image");
 		string pictureName = Lua::getStringField(2,"Picture");
+		string description = Lua::getStringField(2,"Description");
 		int payload = Lua::getIntField(2,"Payload");
 		int velocity = Lua::getIntField(2,"Velocity");
 		int acceleration = Lua::getIntField(2,"Acceleration");
@@ -1374,12 +1381,13 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		if(sound==NULL)
 			return luaL_error(L, "Could not create weapon: there is no sound file '%s'.",soundName.c_str());
 
-		Weapon* thisWeapon = new Weapon(name,image,picture,type,payload,velocity,acceleration,Weapon::AmmoNameToType(ammoTypeName),ammoConsumption,fireDelay,lifetime,sound,tracking,msrp);
+		Weapon* thisWeapon = new Weapon(name, image, picture, description, type, payload, velocity, acceleration, Weapon::AmmoNameToType(ammoTypeName), ammoConsumption, fireDelay, lifetime, sound, tracking, msrp);
 		GetSimulation(L)->GetWeapons()->AddOrReplace( thisWeapon );
 
 	} else if(kind == "Outfit"){
 		string name = Lua::getStringField(2,"Name");
 		string pictureName = Lua::getStringField(2,"Picture");
+		string description = Lua::getStringField(2,"Description");
 		float force = Lua::getNumField(2,"Force");
 		float mass = Lua::getNumField(2,"Mass");
 		float rot = Lua::getNumField(2,"Rotation");
@@ -1394,7 +1402,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		if(picture==NULL)
 			return luaL_error(L, "Could not create weapon: there is no image file '%s'.",pictureName.c_str());
 
-		Outfit* thisOutfit = new Outfit( msrp, picture, rot, speed, force, mass, cargo, area, hull, shield );
+		Outfit* thisOutfit = new Outfit( msrp, picture, description, rot, speed, force, mass, cargo, area, hull, shield );
 		thisOutfit->SetName( name );
 
 		GetSimulation(L)->GetOutfits()->AddOrReplace( thisOutfit );

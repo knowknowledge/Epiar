@@ -36,6 +36,7 @@ EditorLayouts = {
 	Engine = {
 		{"Name", "String"},
 		{"Picture", "Picture"}, -- Picture Picker
+		{"Description", "String"}, -- Should be paragraph editor
 		{"MSRP", "Integer"},
 		{"Force", "Integer"},
 		{"Fold Drive", "Integer"},
@@ -45,6 +46,7 @@ EditorLayouts = {
 	Model = {
 		{"Name", "String"},
 		{"Image", "Picture"}, -- Picture Picker
+		{"Description", "String"}, -- Should be paragraph editor
 		{"Rotation", "Number"},
 		{"MSRP", "Integer"},
 		{"Thrust", "Integer"},
@@ -80,6 +82,7 @@ EditorLayouts = {
 		{"Name", "String"},
 		{"Picture", "Picture"}, -- Picture Picker
 		{"Image", "Picture"}, -- Picture Picker
+		{"Description", "String"}, -- Should be paragraph editor
 		{"MSRP", "Integer"},
 		{"Payload", "Integer"},
 		{"Velocity", "Integer"},
@@ -94,6 +97,7 @@ EditorLayouts = {
 	Outfit = {
 		{"Name", "String"},
 		{"Picture", "Picture"}, -- Picture Picker
+		{"Description", "String"}, -- Should be paragraph editor
 		{"MSRP", "Integer"},
 		{"MaxSpeed", "Number"},
 		{"Force", "Number"},
