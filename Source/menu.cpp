@@ -496,7 +496,7 @@ void Menu::ChangePicture( void* picture, void* image)
  */
 Picture* Menu::PictureButton( int x, int y, void (*callback)(), Image* activeImage, Image* inactiveImage)
 {
-	Picture* pic = new Picture( x, y, activeImage );
+	Picture* pic = new Picture( x, y, inactiveImage );
 	pic->RegisterAction( Action_MouseLUp, new VoidAction( callback ) );
 	pic->RegisterAction( Action_MouseEnter, new MessageAction( ChangePicture, pic,   activeImage) );
 	pic->RegisterAction( Action_MouseLeave, new MessageAction( ChangePicture, pic, inactiveImage) );
