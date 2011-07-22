@@ -23,6 +23,8 @@ Uint32 Timer::logicalFrameCount = 0;
 void Timer::Initialize( void ) {
 	lastLoopLength = 0;
 	lastLoopTick = SDL_GetTicks();
+	Uint32 fps = OPTION( Uint32, "options/video/fps" );
+	if( fps == 0 ) fps = 30;
 	ticksPerFrame = 1000 / OPTION( Uint32, "options/video/fps" );
 }
 
