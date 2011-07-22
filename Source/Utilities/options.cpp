@@ -10,6 +10,7 @@
 #include "Utilities/log.h"
 #include "Utilities/options.h"
 
+bool Options::locked = true;
 XMLFile *Options::optionsfile = NULL; ///< Static instance of the optionsfile.
 XMLFile *Options::defaults = NULL; ///< Static instance of the default option values.
 
@@ -30,9 +31,14 @@ void Options::Initialize( const string& path )
 	defaults->New( path + ".bac", "options" );
 }
 
+void Options::Unlock()
+{
+	locked = false;
+}
+
 bool Options::IsLoaded()
 {
-	return (optionsfile != NULL);
+	return (!locked) && (optionsfile != NULL);
 }
 
 bool Options::Save( const string& path )

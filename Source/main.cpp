@@ -160,6 +160,8 @@ void Main_Load_Settings() {
 	Options::AddDefault( "options/development/debug-ai", 0 );
 	Options::AddDefault( "options/development/debug-ui", 0 );
 
+	// Allow the Options to be used
+	Options::Unlock();
 
 	skinfile = new XMLFile();
 	if( !skinfile->Open("Resources/Skin/skin.xml") )
