@@ -234,6 +234,8 @@ void Main_Init_Singletons() {
  *  \warn Do not run any non-trivial code after calling this.
  */
 void Main_Close_Singletons( void ) {
+	Options::Save();
+
 	Video::Shutdown();
 	Audio::Instance().Shutdown();
 
