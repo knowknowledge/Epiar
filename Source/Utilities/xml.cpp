@@ -145,7 +145,7 @@ void XMLFile::Set( const string& path, const string& value ) {
 /** \brief Check if a given path exists.
  */
 bool XMLFile::Has( const string& path ) {
-	xmlNodePtr p =  FindNode(path,true);
+	xmlNodePtr p =  FindNode(path,false);
 	return ( p != NULL );
 }
 

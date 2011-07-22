@@ -23,10 +23,10 @@ void Options::Initialize( const string& path )
 	if( !optionsfile->Open( path ) )
 	{
 		// Create the default Options file
-		optionsfile->New( path, "options");
+		optionsfile->New( path, "options" );
 	}
 	defaults = new XMLFile();
-	defaults->New( path + ".bac", "options");
+	defaults->New( path + ".bac", "options" );
 }
 
 bool Options::IsLoaded()
@@ -54,7 +54,8 @@ void Options::AddDefault( const string& path, const string& value )
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
-		Set(path,value);
+		optionsfile->Set(path,value);
+		assert( value == Get(path) );
 	}
 }
 
@@ -65,7 +66,8 @@ void Options::AddDefault( const string& path, const float value )
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
-		Set(path,value);
+		optionsfile->Set(path,value);
+		assert( value == convertTo<float>(Get(path)) );
 	}
 }
 
@@ -76,7 +78,8 @@ void Options::AddDefault( const string& path, const int value )
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
-		Set(path,value);
+		optionsfile->Set(path,value);
+		assert( value == convertTo<int>(Get(path)) );
 	}
 }
 
