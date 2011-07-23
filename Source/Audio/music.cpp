@@ -23,11 +23,11 @@ Song *Song::Get( const string& filename ){
 	value = (Song*) Resource::Get( filename );
 	if( value == NULL ){
 		value = new Song( filename );
-		if( value->song != NULL ){
+		//if( value->song != NULL ){
 			Resource::Store( filename, (Resource*) value );
-		} else {
-			return NULL;
-		}
+		//} else {
+		//	return NULL;
+		//}
 	}
 	return value;
 }
@@ -46,7 +46,7 @@ Song::Song( const string& filename ){
 /**\brief Destructor to free the music file
  */
 Song::~Song(){
-	Mix_FreeMusic( this->song );
+	if(this->song) Mix_FreeMusic( this->song );
 }
 
 /**\brief Plays the current song.

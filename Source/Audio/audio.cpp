@@ -33,7 +33,9 @@ bool Audio::Initialize( void ){
 	if ( this -> initstatus )
 		return false;				// Already initialized
 
-	SDL_Init(SDL_INIT_AUDIO);
+	if(SDL_Init(SDL_INIT_AUDIO) < 0) {
+		LogMsg(CRITICAL,"SDL could not initialize audio: %s", SDL_GetError());
+	}
 
 	if(Mix_OpenAudio(this->audio_rate,
 				this->audio_format,
@@ -42,6 +44,9 @@ bool Audio::Initialize( void ){
 		LogMsg(CRITICAL,"Audio initialization failed!: %s", Mix_GetError());
 		return false;
 	}
+
+	Mix_QuerySpec(&this->audio_rate, &this->audio_format, &this->audio_channels);
+	LogMsg(INFO,"SDL_mixer gave us rate %d, format %d, channels %d", this->audio_rate, this->audio_format, this->audio_channels);
 
 #if defined(SDL_MIXER_MAJOR_VERSION) && (SDL_MIXER_MAJOR_VERSION>1) \
 	&& (SDL_MIXER_MINOR_VERSON>2) && (SDL_MIXER_PATCHLEVEL>=10)
@@ -211,9 +216,9 @@ int Audio::PlayChannel( int chan, Mix_Chunk *chunk, int loop ){
 Audio::Audio():
 	initstatus( false ),
 	audio_rate( 22050 ),
-	audio_format( AUDIO_S16 ),
+	audio_format( MIX_DEFAULT_FORMAT ),
 	audio_channels( 2 ),
-	audio_buffers( 2048 ),
+	audio_buffers( 1024 ),
 	sound_vol( 1 ),
 	max_chan( 16 )
 {

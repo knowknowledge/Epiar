@@ -25,15 +25,16 @@ Sound *Sound::Get( const string& filename ){
 	if( value == NULL ){
 		value = new Sound( filename );
 		// If the sound couldn't be loaded, then abort
-		if(value->sound == NULL )
-		{
-				delete value;
-				return NULL;
-		}
-		else
-		{
+		//if(value->sound == NULL )
+		//{
+		//		delete value;
+		//		return NULL;
+		//}
+		//else
+		//{
+		// COMMENTED OUT: We want to store audio anyway. What if audio simply doesn't work? Many parts of the code simply call "Play". It needs to fail gracefully.
 				Resource::Store( filename, (Resource*) value );
-		}
+		//}
 	}
 	return value;
 }
@@ -70,13 +71,12 @@ Sound::~Sound(){
 		if ( Mix_GetChunk( i ) == this->sound)
 			Mix_HaltChannel( i );
 	}
-	Mix_FreeChunk( this->sound );
+	if(this->sound) Mix_FreeChunk( this->sound );
 }
 
 /**\brief Plays the sound.
  */
 bool Sound::Play( void ){
-	assert(this);
 	if ( this->sound == NULL )
 		return false;
 
@@ -95,7 +95,6 @@ bool Sound::Play( void ){
 /**\brief Plays the sound at a specified coordinate from origin.
  */
 bool Sound::Play( Coordinate offset ){
-	assert(this);
 	if ( this->sound == NULL )
 		return false;
 
@@ -143,7 +142,6 @@ bool Sound::Play( Coordinate offset ){
  * This is sort of a roundabout way to implement engine sounds.
  */
 bool Sound::PlayNoRestart( Coordinate offset ){
-	assert(this);
 	if ( this->sound == NULL )
 		return false;
 
@@ -159,7 +157,6 @@ bool Sound::PlayNoRestart( Coordinate offset ){
 /**\brief Sets the volume for this sound only (for next time it is played).
  */
 bool Sound::SetVolume( float volume ){
-	assert(this);
 	if ( this->sound == NULL )
 		return false;
 
@@ -173,7 +170,7 @@ bool Sound::SetVolume( float volume ){
  * \param pan Pan factor (defaults to 0.1)
  */
 void Sound::SetFactors( double fade, float pan ){
-	assert(this);
 	this->fadefactor = fade;
 	this->panfactor = pan;
 }
+
