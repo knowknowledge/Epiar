@@ -211,10 +211,15 @@ int Font::RenderInternal( int x, int y, const string& text, int h, XPos xpos, YP
 	}
 
 	glColor4f( r, g, b, a );
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPushMatrix(); // to save the current matrix
 	glScalef(1, -1, 1);
 	FTPoint newpoint = this->font->Render( text.c_str(), -1, FTPoint( xn, yn, 1) );
 	glPopMatrix(); // restore the previous matrix
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 
 	return TO_INT(ceil(newpoint.Xf())) - x;
 }
