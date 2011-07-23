@@ -216,13 +216,14 @@ void Main_Init_Singletons() {
 	Audio::Instance().SetMusicVol ( OPTION(float,"options/sound/musicvolume") );
 	Audio::Instance().SetSoundVol ( OPTION(float,"options/sound/soundvolume") );
 
+	Timer::Initialize();
+	Video::Initialize();
+
 	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
 	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
 	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
 
-	Timer::Initialize();
-	Video::Initialize();
 	UI::Initialize("Main Screen");
 
 	srand ( time(NULL) );
@@ -236,14 +237,14 @@ void Main_Init_Singletons() {
 void Main_Close_Singletons( void ) {
 	Options::Save();
 
-	Video::Shutdown();
-	Audio::Instance().Shutdown();
-
 	// free the main font files
 	delete SansSerif;
 	delete BitType;
 	delete Serif;
 	delete Mono;
+
+	Video::Shutdown();
+	Audio::Instance().Shutdown();
 
 	// free the configuration file data
 	delete skinfile;
