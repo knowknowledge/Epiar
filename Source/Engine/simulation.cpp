@@ -21,6 +21,7 @@
 #include "Graphics/video.h"
 #include "Sprites/ai.h"
 #include "Sprites/ai_lua.h"
+#include "Sprites/effects.h"
 #include "Sprites/player.h"
 #include "Sprites/planets.h"
 #include "Sprites/planets_lua.h"
@@ -202,15 +203,33 @@ bool Simulation::SetupToRun(){
 			Lua::Call("createSystems");
 		}
 	} else {
+		// Add Planets
 	    list<string>* planetNames = planets->GetNames();
 	    for( list<string>::iterator pname = planetNames->begin(); pname != planetNames->end(); ++pname){
-		    sprites->Add(  planets->GetPlanet(*pname) );
+			Planet* p = planets->GetPlanet(*pname);
+		    sprites->Add( p );
+
+#ifdef ADD_ASTEROIDS
+			// Ticket #44
+			// TODO: These asteroids just wander to the edges of the universe, and only slow down the game when not visible.  Fix that.
+			// Add Asteroids near planets
+			unsigned int a;
+			for( a = 0; a < 100; a++ ){
+				Effect* asteroid = new Effect( p->GetWorldPosition() + GaussianCoordinate() * p->GetInfluence(), "Resources/Animations/asteroid.ani", 1.0 );
+				asteroid->SetMomentum( GaussianCoordinate() *2 );
+				asteroid->SetAngle( float( rand() %360 ) );
+				sprites->Add( asteroid );
+			}
+#endif
 	    }
 
+		// Add Gates
 	    list<string>* gateNames = gates->GetNames();
 	    for( list<string>::iterator gname = gateNames->begin(); gname != gateNames->end(); ++gname){
 		    sprites->Add(  gates->GetGate(*gname) );
 	    }
+
+		
 	}
 
 	// Randomize the Lua Seed
