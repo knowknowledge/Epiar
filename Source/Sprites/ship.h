@@ -84,6 +84,7 @@ class Ship : public Sprite {
 		//int GetCurrentAmmo();
 		int GetAmmo(AmmoType type);
 		map<Weapon*,int> GetWeaponsAndAmmo();
+		vector<Weapon*>* GetWeapons() { return &shipWeapons; }
 		list<Outfit*>* GetOutfits() { return &outfits; }
 		void SetOutfits(list<Outfit*>* o) { outfits = *o; }
 
@@ -140,7 +141,7 @@ class Ship : public Sprite {
 
 		vector<Weapon *> shipWeapons; ///< The weapons installed on this ship
 
-		list<Outfit *> outfits;
+		list<Outfit *> outfits; ///< The Outfit installed on this ship
 
 		// Economic Stuff
 		unsigned int credits;

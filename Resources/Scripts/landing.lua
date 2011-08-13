@@ -231,10 +231,8 @@ function buyOutfit(outfit)
 	
 	if ( Set(Epiar.weapons())[outfit] ) then
 		--print("Weapon...")
-		local weaponsAndAmmo = PLAYER:GetWeapons()
 
 		local weapCount = 0;
-		--for weap,ammo in pairs(weaponsAndAmmo) do weapCount = weapCount + 1 end
 		for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 			if weap ~= "" then
 				weapCount = weapCount + 1
@@ -294,7 +292,7 @@ function sellOutfit(outfit)
 
 	if ( Set(Epiar.weapons())[outfit] ) then
 		--print("Weapon...")
-		local weaponsAndAmmo = PLAYER:GetWeapons()
+		local weaponsAndAmmo = PLAYER:GetWeaponsAmmo()
 		if weaponsAndAmmo[outfit]~=nil then
 			PLAYER:RemoveWeapon(outfit)
 			HUD.closeStatus(outfit..":");

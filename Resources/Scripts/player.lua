@@ -716,7 +716,6 @@ function createHUD()
 	HUD.newStatus("HULL:", 100, UPPER_LEFT, "PLAYER:GetHull()")
 	HUD.newStatus("Shield:", 100, UPPER_LEFT, "PLAYER:GetShield()")
 	myweapons = {}
-	--local weaponsAndAmmo = PLAYER:GetWeapons()
 	local weapSlotContents = PLAYER:GetWeaponSlotContents()
 	--for weapon,ammo in pairs(weaponsAndAmmo) do
 	for name,weap in pairs(weapSlotContents) do
@@ -736,7 +735,7 @@ function createHUD()
 end
 
 function playerAmmo(weaponName)
-	local weaponsAndAmmo = PLAYER:GetWeapons()
+	local weaponsAndAmmo = PLAYER:GetWeaponsAmmo()
 	local ammo = "---"
 	if weaponsAndAmmo == nil then
 		return ammo
@@ -837,7 +836,7 @@ function playerInformation()
 	local outfitTab = UI.newTab( "Outfit" )
 	y = 10
 	outfitTab:add( UI.newLabel(20, y, "Weapons:") )
-	local weaponsAndAmmo = PLAYER:GetWeapons()
+	local weaponsAndAmmo = PLAYER:GetWeaponsAmmo()
 	for weapon,ammo in pairs(weaponsAndAmmo) do
 		y = y+20
 		outfitTab:add( UI.newLabel(30, y, weapon) )

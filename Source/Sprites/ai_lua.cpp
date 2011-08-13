@@ -115,6 +115,7 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"SetHullDamage", &AI_Lua::ShipSetHullDamage},
 		{"GetShieldDamage", &AI_Lua::ShipGetShieldDamage},
 		{"SetShieldDamage", &AI_Lua::ShipSetShieldDamage},
+		{"GetWeaponsAmmo", &AI_Lua::ShipGetWeaponsAmmo},
 		{"GetWeaponSlotCount", &AI_Lua::ShipGetWeaponSlotCount},
 		{"GetWeaponSlotName", &AI_Lua::ShipGetWeaponSlotName},
 		{"GetWeaponSlotStatus", &AI_Lua::ShipGetWeaponSlotStatus},
@@ -978,10 +979,13 @@ int AI_Lua::ShipGetDirectionTowards(lua_State* L){
 }
 
 /**\brief Lua callable function to get the ship's weapons.
- * \sa Ship::getWeaponsAndAmmo()
+ * \sa Ship::getWeapons()
  */
 int AI_Lua::ShipGetWeapons(lua_State* L){
+	vector<Weapon*>::iterator iter;
+	int newTable;
 	int n = lua_gettop(L);  // Number of arguments
+	unsigned int w;
 	if (n != 1)
 		luaL_error(L, "Got %d arguments expected 1 (self)", n);
 
@@ -990,16 +994,14 @@ int AI_Lua::ShipGetWeapons(lua_State* L){
 		return 0;
 	}
 
-	map<Weapon*,int> weaponPack = (ai)->GetWeaponsAndAmmo();
-	map<Weapon*,int>::iterator it = weaponPack.begin();
-
-	lua_createtable(L, weaponPack.size(), 0);
-	int newTable = lua_gettop(L);
-	while( it!=weaponPack.end() ) {
-		lua_pushfstring(L, ((*it).first)->GetName().c_str() ); // KEY
-		lua_pushinteger(L, (*it).second ); // Value
+	vector<Weapon*>* weapons = (ai)->GetWeapons();
+	lua_createtable(L, weapons->size(), 0);
+	newTable = lua_gettop(L);
+	for( w = 0; w < weapons->size(); ++w )
+	{
+		lua_pushinteger(L, w ); // Key
+		lua_pushfstring(L, ((*weapons)[w])->GetName().c_str() ); // Value
 		lua_settable(L,newTable);
-		++it;
 	}
 	return 1;
 }
@@ -1453,6 +1455,33 @@ int AI_Lua::SetTarget(lua_State* L){
 	}
 	return 1;
 }*/
+
+/**\brief Lua callable function to get the ship's weapons.
+ * \sa Ship::getWeaponsAndAmmo()
+ */
+int AI_Lua::ShipGetWeaponsAmmo(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 1)
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+
+	AI* ai = checkShip(L,1);
+	if(ai==NULL){
+		return 0;
+	}
+
+	map<Weapon*,int> weaponPack = (ai)->GetWeaponsAndAmmo();
+	map<Weapon*,int>::iterator it = weaponPack.begin();
+
+	lua_createtable(L, weaponPack.size(), 0);
+	int newTable = lua_gettop(L);
+	while( it!=weaponPack.end() ) {
+		lua_pushfstring(L, ((*it).first)->GetName().c_str() ); // KEY
+		lua_pushinteger(L, (*it).second ); // Value
+		lua_settable(L,newTable);
+		++it;
+	}
+	return 1;
+}
 
 /**\brief Lua callable function to get the number of weapon slots of any kind on an outfit (probably a ship model)
  */
