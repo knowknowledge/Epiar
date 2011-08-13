@@ -232,6 +232,10 @@ bool Simulation::SetupToRun(){
 		
 	}
 
+	// Preloading this animation prevents an FPS
+	// drop the first time that a ship explodes.
+	Ani::Get("Resources/Animations/explosion1.ani");
+
 	// Randomize the Lua Seed
 	Lua::Call("randomizeseed");
 

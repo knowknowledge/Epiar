@@ -138,11 +138,6 @@ void AI_Lua::RegisterAI(lua_State *L){
 
 	luaL_openlib(L, EPIAR_SHIP, shipFunctions, 0);
 
-	// This may not be the best place for this line,
-	// preloading this animation prevents an FPS
-	// drop the first time that a ship explodes.
-	Ani::Get("Resources/Animations/explosion1.ani");
-
 	lua_pop(L,2);
 }
 
