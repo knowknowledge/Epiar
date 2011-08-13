@@ -124,4 +124,9 @@ class Coordinate {
 		double  m_y;
 };
 
+float randf();
+float gaussian();
+
+Coordinate GaussianCoordinate();
+
 #endif // __h_coordinates__

@@ -155,3 +155,43 @@ Coordinate Coordinate::RotateTo( float newangle ) {
 	return *this;
 }
 
+float randf()
+{
+	return (float)rand()/(float)RAND_MAX;
+}
+
+float gaussian()
+{
+	// from http://www.taygeta.com/random/gaussian.html
+	// Algorithm by Dr. Everett (Skip) Carter, Jr.
+
+	float x1, x2, w, y1;
+	static float y2;
+	static int use_last = 0;
+
+	if (use_last)		        /* use value from previous call */
+	{
+		y1 = y2;
+		use_last = 0;
+	}
+	else
+	{
+		do {
+			x1 = 2.0 * randf() - 1.0;
+			x2 = 2.0 * randf() - 1.0;
+			w = x1 * x1 + x2 * x2;
+		} while ( w >= 1.0 );
+
+		w = sqrt( (-2.0 * log( w ) ) / w );
+		y1 = x1 * w;
+		y2 = x2 * w;
+		use_last = 1;
+	}
+
+	return y1;
+}
+
+Coordinate GaussianCoordinate()
+{
+	return Coordinate( gaussian(), gaussian() );
+}
