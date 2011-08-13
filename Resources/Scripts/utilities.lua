@@ -8,6 +8,15 @@ function Set (list)
 	return set
 end
 
+--- Get the Keys from a table
+-- (Useful for undoing a Set back into a table.)
+function Keys( tbl )
+	local array = {}
+	for k in pairs( tbl ) do array[#array+1] = k end
+	return array
+end
+
+
 -- return a new array containing the concatenation of all of its 
 -- parameters. Scaler parameters are included in place, and array 
 -- parameters have their values shallow-copied to the final array.
@@ -28,11 +37,16 @@ function array_concat(...)
 	return t
 end
 
+--- Get an unordered union of any number of arrays
+--
+function Union( ... )
+	return Keys( Set( array_concat( ... ) ) )
+end
+
 --- Trim a string
 function trim(s)
 	return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
-
 
 -- Wrap lines of text to a specified maximum width or 72 characters by default.
 function linewrap(text, chars_per_line, do_justify)
@@ -108,7 +122,6 @@ function linewrap(text, chars_per_line, do_justify)
 	return wrapped
 end
 
-
 --- Calculate the Distance between two points
 function distfrom( pt1_x,pt1_y, pt2_x,pt2_y)
 	if pt1_x == nil or pt1_y == nil or pt2_x == nil or pt2_y == nil then return nil end
@@ -128,11 +141,13 @@ function coordinateToQuadrant(x,y)
 	return c2q(x),c2q(y)
 end
 
+--- Convert quadrant to coordinate 
 function QuadrantToCoordinate(x,y)
 	qwidth = 4096*2
 	return x*qwidth, y*qwidth
 end
 
+--- Pick a random value from a table
 function choose( array )
 	return array[math.random(#array)]
 end
