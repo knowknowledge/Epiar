@@ -50,6 +50,9 @@ class Planets_Lua {
 		static int GetOutfits(lua_State* L);
 		static int GetForbidden(lua_State* L);
 		static int SetForbidden(lua_State* L);
+
+		// Editor Features
+		static int SetPosition(lua_State* L);
 	private:
 };
 

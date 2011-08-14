@@ -57,6 +57,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetOutfits", &Planets_Lua::GetOutfits},
 		{"GetForbidden", &Planets_Lua::GetForbidden},
 		{"SetForbidden", &Planets_Lua::SetForbidden},
+		{"SetPosition", &Planets_Lua::SetPosition},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -465,33 +466,49 @@ int Planets_Lua::GetOutfits(lua_State* L){
 /**\brief Lua callable function to get forbidden status
  */
 int Planets_Lua::GetForbidden(lua_State* L){
-        int n = lua_gettop(L);  // Number of arguments
+	int n = lua_gettop(L);  // Number of arguments
 
-        if (n == 1) {
-                Planet* p = checkPlanet(L,1);
-                if(p==NULL){
-                        lua_pushnumber(L, 0 );
-                        return 1;
-                }
-                lua_pushinteger(L, (int) ((p)->GetForbidden() ? 1 : 0) );
-        }
-        else {  
-                luaL_error(L, "Got %d arguments expected 1 (self)", n);
-        }
-        return 1;
+	if (n == 1) {
+		Planet* p = checkPlanet(L,1);
+		if(p==NULL){
+			lua_pushnumber(L, 0 );
+			return 1;
+		}
+		lua_pushinteger(L, (int) ((p)->GetForbidden() ? 1 : 0) );
+	}
+	else {  
+		luaL_error(L, "Got %d arguments expected 1 (self)", n);
+	}
+	return 1;
 }
 
 /**\brief Lua callable function to set forbidden status
  */
 int Planets_Lua::SetForbidden(lua_State* L){
-        int n = lua_gettop(L);  // Number of arguments
-        if (n == 2) {
-                Planet* p = checkPlanet(L,1);
-                if(p==NULL) return 0;
-                int f = luaL_checkint (L, 2);
-                (p)->SetForbidden( (f == 1) );
-        } else {
-                luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
-        }
-        return 0;
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		Planet* p = checkPlanet(L,1);
+		if(p==NULL) return 0;
+		int f = luaL_checkint (L, 2);
+		(p)->SetForbidden( (f == 1) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to set forbidden status
+*/
+int Planets_Lua::SetPosition(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 3) {
+		Planet* p = checkPlanet(L,1);
+		if(p==NULL) return 0;
+		int x = luaL_checkint (L, 2);
+		int y = luaL_checkint (L, 3);
+		p->SetWorldPosition( Coordinate(x, y) );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
+	}
+	return 0;
 }
