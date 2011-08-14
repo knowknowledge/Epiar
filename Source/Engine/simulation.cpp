@@ -65,10 +65,13 @@ Simulation::Simulation( void ) {
 	name = "";
 	description = "";
 	folderpath = "";
-	currentFPS = 0.;
+
+	currentFPS = 0.0f;
 	paused = false;
 	loaded = false;
 	quit = false;
+
+	mapScale = -1.0f;
 }
 
 bool Simulation::New( string newname ) {
@@ -257,6 +260,16 @@ void Pause(void *simulationInstance) {
 
 void Unpause(void *simulationInstance) {
 	((Simulation *)simulationInstance)->unpause();
+}
+
+void SaveMapScale( void *simulationInstance ) {
+	Map* map = (Map*)UI::Search("/Window'Navigation'/Map/");
+	if( map != NULL) {
+		printf("Saving Scale: %0.2f\n", map->GetScale() );
+		((Simulation *)simulationInstance)->SetMapScale( map->GetScale() );
+	} else {
+		printf("Not Saving Scale\n" );
+	}
 }
 
 /**\brief Main game loop
@@ -687,6 +700,14 @@ void Simulation::CreateNavMap( void )
 		TO_INT(win->GetH()) - 60,
 		camera->GetFocusCoordinate(),
 		sprites );
+
+	// Restore Saved Scale
+	if( mapScale > 0.0f ) {
+		printf("Restoring Scale: %0.2f\n", map->GetScale() );
+		map->SetScale( mapScale );
+	}
+	map->RegisterAction(Action_MouseWDown, new ObjectAction(SaveMapScale, this) );
+	map->RegisterAction(Action_MouseWUp, new ObjectAction(SaveMapScale, this) );
 
 	win->AddChild( map );
 	win->AddCloseButton();

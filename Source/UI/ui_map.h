@@ -27,6 +27,9 @@ class Map: public Widget {
 		void SetScale( float newScale ) { scale = newScale; }
 		void SetFilter( int spriteFlags ) { spriteTypes = spriteFlags; }
 
+		Coordinate GetCenter() { return center; }
+		float GetScale() { return scale; }
+
 		Coordinate ClickToWorld( Coordinate click );
 		Coordinate WorldToClick( Coordinate world );
 		Coordinate WorldToScreen( Coordinate world );

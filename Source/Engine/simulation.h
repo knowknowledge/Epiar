@@ -72,6 +72,8 @@ class Simulation : public XMLFile {
 		void SetMusic( string _path ) { Set("music", _path); }
 		void SetDefaultPlayer( string planetName, string modelName, string engineName, int credits );
 
+		void SetMapScale( float scale ) { mapScale = scale; }
+
 		void SetQuit( bool val ) { quit = val; }
 
 	private:
@@ -101,13 +103,17 @@ class Simulation : public XMLFile {
 		Input inputs;
 		Console *console;
 
+		// Description of this Simulation
 		string name;
 		string description;
 		string folderpath;
+
+		// State Variables
 		float currentFPS;
 		bool paused;
 		bool loaded;
 		bool quit;
+		float mapScale;
 };
 
 #endif // __H_SIMULATION__
