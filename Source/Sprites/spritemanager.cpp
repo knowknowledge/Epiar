@@ -7,6 +7,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Sprites/effects.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
 #include "Utilities/quadtree.h"
@@ -494,6 +495,12 @@ Sprite* SpriteManager::GetNearestSprite(Sprite* obj, float r, int type) {
 		}
 	}
 	return closest;
+}
+
+Sprite* SpriteManager::GetNearestSprite(Coordinate c, float r, int type) {
+	// This dummy variable is a local variable and will be deleted immediately after.
+	Effect dummy( c, "Resources/Animations/shield.ani", 0);
+	return GetNearestSprite( &dummy, r, type );
 }
 
 /**\brief Returns QuadTree center.

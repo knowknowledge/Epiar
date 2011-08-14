@@ -234,9 +234,7 @@ bool Map::MouseLUp( int xi, int yi )
 bool Map::MouseLDown( int xi, int yi )
 {
 	Coordinate worldPos = ClickToWorld( Coordinate(xi,yi) );
-	// Use a dummy Sprite to use for searching the SpriteManager
-	Effect dummy( worldPos, "Resources/Animations/shield.ani", 0);
-	Sprite *nearest = sprites->GetNearestSprite( &dummy, QUADRANTSIZE );
+	Sprite *nearest = sprites->GetNearestSprite( worldPos, QUADRANTSIZE );
 	if( nearest )
 	{
 		printf("Clicked on Sprite %d\n", nearest->GetID() );

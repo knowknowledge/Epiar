@@ -28,6 +28,7 @@ class SpriteManager {
 		list<Sprite*> *GetSprites(int type = DRAW_ORDER_ALL);
 		list<Sprite*> *GetSpritesNear(Coordinate c, float r, int type = DRAW_ORDER_ALL);
 		Sprite* GetNearestSprite(Sprite *obj, float r, int type = DRAW_ORDER_ALL);
+		Sprite* GetNearestSprite(Coordinate c, float r, int type = DRAW_ORDER_ALL);
 
 		Coordinate GetQuadrantCenter( Coordinate point );
 		int GetNumQuadrants() { return trees.size(); }

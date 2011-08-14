@@ -707,15 +707,31 @@ int Simulation_Lua::GetGates(lua_State *L){
  */
 int Simulation_Lua::GetNearestSprite(lua_State *L,int kind) {
 	int n = lua_gettop(L);  // Number of arguments
-	if( n!=2 ){
-		return luaL_error(L, "Got %d arguments expected 1 (ship, range)", n);
+	if( n<1 || n>3 ){
+		return luaL_error(L, "Got %d arguments expected 1,2 ( ship, [range] ) or 2,3 (x,y,[range])", n);
 	}
-	AI* ai = AI_Lua::checkShip(L,1);
-	if( ai==NULL ) {
-		return 0;
+
+	Sprite *closest;
+	float r = QUADRANTSIZE;
+	SpriteManager* sprites = GetSimulation(L)->GetSpriteManager();
+
+	// Get the target position
+	if( lua_isnumber(L,1) && lua_isnumber(L,2) ){
+		Coordinate position( luaL_checknumber(L, 1), luaL_checknumber(L, 2) );
+		if( lua_isnumber(L,3) )
+			r = luaL_checknumber(L,3);
+		closest = sprites->GetNearestSprite( position, r, kind );
+
+	} else {
+		Sprite* target = (Sprite*)AI_Lua::checkShip(L,1);
+		if( target == NULL ) {
+			return 0;
+		}
+		if( lua_isnumber(L,2) )
+			r = luaL_checknumber(L,2);
+		closest = sprites->GetNearestSprite( target, r, kind );
 	}
-	float r = static_cast<float>(luaL_checknumber (L, 2));
-	Sprite *closest = GetSimulation(L)->GetSpriteManager()->GetNearestSprite((ai),r,kind);
+
 	if(closest!=NULL){
 		assert(closest->GetDrawOrder() & (kind));
 		PushSprite(L,(closest));
