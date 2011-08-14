@@ -10,6 +10,7 @@
 #include "UI/ui.h"
 #include "UI/ui_lua.h"
 #include "UI/widgets.h"
+#include "Engine/simulation_lua.h"
 
 /** \class UI_Lua
  *  \brief Lua bridge for working with the UI.
@@ -57,6 +58,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newTab", &UI_Lua::newTab},
 		{"newDropdown", &UI_Lua::newDropdown},
 		{"newParagraph", &UI_Lua::newParagraph},
+		{"newMap", &UI_Lua::newMap},
 
 		// Create Modal Dialogs
 		{"newConfirm", &UI_Lua::newConfirm},
@@ -111,6 +113,11 @@ void UI_Lua::RegisterUI(lua_State *L){
 
 		// Dropdown Modification
 		{"addOption", &UI_Lua::AddOption},
+
+		// Map Functions
+		{"getWorldPosition", &UI_Lua::getWorldPosition},
+		{"setZoomable", &UI_Lua::SetZoomable},
+		{"setPannable", &UI_Lua::SetPannable},
 
 		{NULL, NULL}
 	};
@@ -586,6 +593,35 @@ int UI_Lua::newParagraph(lua_State *L){
 
 	return 1;
 }
+
+/** \brief Create a new Map
+ *
+ *  \returns Lua userdata containing pointer to Map
+ */
+int UI_Lua::newMap(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n != 4)
+		return luaL_error(L, "Got %d arguments expected 4 (x, y, w, h )", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+
+	// Allocate memory for a pointer to object
+	Map **p = (Map**)lua_newuserdata(L, sizeof(Map**));
+    luaL_getmetatable(L, EPIAR_UI);
+    lua_setmetatable(L, -2);
+
+	Simulation *sim = Simulation_Lua::GetSimulation(L);
+	
+	*p = new Map(x, y, w, h, Coordinate(0,0), sim->GetSpriteManager() );
+
+	UI::Add(*p);
+
+	return 1;
+}
+
 
 int UI_Lua::newConfirm(lua_State *L)
 {
@@ -1093,3 +1129,56 @@ int UI_Lua::AddCloseButton(lua_State *L) {
 	return 0;
 }
 
+int UI_Lua::getWorldPosition(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if ( !(n == 1 || n == 3) )
+		return luaL_error(L, "Got %d arguments expected 1 (self) or 3 (self, x, y)", n);
+
+	// Get the Map Widget
+	Widget *widget = checkWidget(L, 1);
+	luaL_argcheck(L, widget->GetMask() & WIDGET_MAP, 1, "`Map' expected.");
+	Map* map = (Map*)widget;
+
+	// Get the resulting world position
+	Coordinate world;
+	if( n == 3) {
+		int x = int(luaL_checknumber (L, 2));
+		int y = int(luaL_checknumber (L, 3));
+		world = map->ClickToWorld( Coordinate(x,y) );
+	} else {
+		world = map->GetCenter();
+	}
+
+	// Return World X,Y
+	lua_pushinteger(L, world.GetX() );
+	lua_pushinteger(L, world.GetY() );
+	return 2;
+}
+
+int UI_Lua::SetPannable(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if ( n != 2 )
+		return luaL_error(L, "Got %d arguments expected 2 (self, pan)", n);
+
+	// Get the Map Widget
+	Widget *widget = checkWidget(L, 1);
+	luaL_argcheck(L, widget->GetMask() & WIDGET_MAP, 1, "`Map' expected.");
+	Map* map = (Map*)widget;
+
+	map->SetPannable( luaL_checkinteger(L, 2) );
+	return 0;
+}
+
+int UI_Lua::SetZoomable(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if ( n != 2 )
+		return luaL_error(L, "Got %d arguments expected 2 (self, zoom)", n);
+
+	// Get the Map Widget
+	Widget *widget = checkWidget(L, 1);
+	luaL_argcheck(L, widget->GetMask() & WIDGET_MAP, 1, "`Map' expected.");
+	Map* map = (Map*)widget;
+
+	map->SetZoomable( luaL_checkinteger(L, 2) );
+	return 0;
+}

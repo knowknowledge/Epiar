@@ -45,6 +45,7 @@ class UI_Lua {
 		static int newTab(lua_State *L);
 		static int newDropdown(lua_State *L);
 		static int newParagraph(lua_State *L);
+		static int newMap(lua_State *L);
 
 		// Dialogs
 		static int newConfirm(lua_State *L);
@@ -81,6 +82,9 @@ class UI_Lua {
 		static int setChecked(lua_State *L);
 		static int setSliderValue(lua_State *L);
 		static int AddOption(lua_State *L);
+		static int getWorldPosition(lua_State *L);
+		static int SetPannable(lua_State *L);
+		static int SetZoomable(lua_State *L);
 
 	private:
 };

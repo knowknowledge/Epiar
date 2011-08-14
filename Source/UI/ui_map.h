@@ -27,6 +27,9 @@ class Map: public Widget {
 		void SetScale( float newScale ) { scale = newScale; }
 		void SetFilter( int spriteFlags ) { spriteTypes = spriteFlags; }
 
+		void SetZoomable( bool canZoom ) { zoomable = canZoom; }
+		void SetPannable( bool canPan ) { pannable = canPan; }
+
 		Coordinate GetCenter() { return center; }
 		float GetScale() { return scale; }
 
@@ -48,6 +51,9 @@ class Map: public Widget {
 		float alpha;
 		float scale;
 		Coordinate center;
+
+		bool zoomable;
+		bool pannable;
 
 		SpriteManager* sprites;
 

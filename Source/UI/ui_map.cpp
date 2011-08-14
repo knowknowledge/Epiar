@@ -68,6 +68,9 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 		MapFont->SetColor( Color( SKIN("Skin/HUD/Map/Color") ) );
 		MapFont->SetSize( convertTo<int>( SKIN("Skin/HUD/Map/Size") ) );
 	}
+
+	zoomable = true;
+	pannable = true;
 }
 
 /** \brief Map Destructor
@@ -247,10 +250,13 @@ bool Map::MouseLDown( int xi, int yi )
  */
 bool Map::MouseDrag( int xi, int yi )
 {
-	center -= Coordinate( (xi-x) - dragX , ((yi-y) - dragY) ) / scale;
+	if( pannable )
+	{
+		center -= Coordinate( (xi-x) - dragX , ((yi-y) - dragY) ) / scale;
+		dragX = xi-x;
+		dragY = yi-y;
+	}
 	Widget::MouseDrag( xi, yi );
-	dragX = xi-x;
-	dragY = yi-y;
 	return true;
 }
 
@@ -259,7 +265,10 @@ bool Map::MouseDrag( int xi, int yi )
 bool Map::MouseWUp( int xi, int yi )
 {
 	//cout << "MouseWUp" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
-	scale *= MAP_ZOOM_RATIO;
+	if( zoomable )
+	{
+		scale *= MAP_ZOOM_RATIO;
+	}
 	Widget::MouseWUp( xi, yi );
 	return true;
 }
@@ -269,7 +278,10 @@ bool Map::MouseWUp( int xi, int yi )
 bool Map::MouseWDown( int xi, int yi )
 {
 	//cout << "MouseWDown" << ClickToWorld( Coordinate(xi,yi) ) <<endl;
-	scale /= MAP_ZOOM_RATIO;
+	if( zoomable )
+	{
+		scale /= MAP_ZOOM_RATIO;
+	}
 	Widget::MouseWDown( xi, yi );
 	return true;
 }
