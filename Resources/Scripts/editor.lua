@@ -825,10 +825,10 @@ function debugZoomKeys()
 end
 debugZoomKeys()
 
-function MapEditorClick(x,y)
+
+function MapEditorMoveClick(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
-	local f = string.format
 	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
 	mapEditObject = Epiar.nearestPlanet( wx, wy, 100 )
 	if mapEditObject ~= nil then
@@ -836,20 +836,52 @@ function MapEditorClick(x,y)
 	end
 end
 
-function MapEditorDrag(x,y)
+function MapEditorMoveDrag(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
-	local f = string.format
 	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
 	if mapEditObject ~= nil then
 		mapEditObject:SetPosition( wx,wy )
 	end
 end
 
-function MapEditorRelease(x,y)
+function MapEditorMoveRelease(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
 	map:setPannable( 1 )
+end
+
+function MapEditorMoveMode()
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	map:addPosCallback( Action_MouseLDown, 'MapEditorMoveClick' )
+	map:addPosCallback( Action_MouseLUp, 'MapEditorMoveRelease' )
+	map:addPosCallback( Action_MouseDrag, 'MapEditorMoveDrag' )
+end
+
+function DoNothing() end
+
+function MapEditorGateClick(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	gatePosX,gatePosY = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	map:setPannable( 0 )
+end
+
+function MapEditorGateRelease(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	Epiar.NewGatePair( gatePosX,gatePosY, wx,wy )
+	map:setPannable( 1 )
+end
+
+function MapEditorGateMode()
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	map:addPosCallback( Action_MouseLDown, 'MapEditorGateClick' )
+	map:addPosCallback( Action_MouseLUp, 'MapEditorGateRelease' )
+	map:addPosCallback( Action_MouseDrag, 'DoNothing' )
 end
 
 function CreateMapEditor()
@@ -859,11 +891,12 @@ function CreateMapEditor()
 	local height = HEIGHT*.8
 	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Map Editor")
 	local map = UI.newMap( width*.2, 30, width*.8 - 10, height - 40 )
-
-	map:addPosCallback( Action_MouseLDown, 'MapEditorClick' )
-	map:addPosCallback( Action_MouseLUp, 'MapEditorRelease' )
-	map:addPosCallback( Action_MouseDrag, 'MapEditorDrag' )
-
 	theWin:add( map )
+
+	theWin:add( UI.newButton( 10, 50, width*.2 -20, 30, "Move", "MapEditorMoveMode()" ) )
+	theWin:add( UI.newButton( 10, 90, width*.2 -20, 30, "Gates", "MapEditorGateMode()" ) )
+
+	MapEditorMoveMode()
+
 end
 
