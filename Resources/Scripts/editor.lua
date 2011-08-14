@@ -4,7 +4,7 @@ componentWins = {}
 
 --- View components
 function componentDebugger()
-	local width = WIDTH/10
+	local width = WIDTH/11
 	UI.newButton(0*width, 0, width, 30, "Alliance", "componentViewer('Alliance', Epiar.alliances)" )
 	UI.newButton(1*width, 0, width, 30, "Commodity", "componentViewer('Commodity', Epiar.commodities)" )
 	UI.newButton(2*width, 0, width, 30, "Engine", "componentViewer('Engine', Epiar.engines)" )
@@ -15,6 +15,7 @@ function componentDebugger()
 	UI.newButton(7*width, 0, width, 30, "Weapon", "componentViewer('Weapon', Epiar.weapons)" )
 	UI.newButton(8*width, 0, width, 30, "Outfit", "componentViewer('Outfit', Epiar.outfits)" )
 	UI.newButton(9*width, 0, width, 30, "Defaults", "simDefaults()" )
+	UI.newButton(10*width, 0, width, 30, "Map", "CreateMapEditor()" )
 
 	UI.newButton(WIDTH/2-50, HEIGHT-30, 100, 30, "Save Components", "Epiar.saveComponents()" )
 end
@@ -716,6 +717,8 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 end
 
 function simDefaults()
+	if UI.search( "/Window'Simulation Defaults'/" ) ~= nil then return end
+
 	local simInfo = Epiar.getSimulationInfo()
 	local playerInfo = Epiar.getDefaultPlayer()
 	local width = 400
@@ -786,7 +789,7 @@ function gotoButton()
 end
 
 function gotoCommand()
-	if UI.search( "/'Go to Location'/" ) ~= nil then gotoButton(); return end
+	if UI.search( "/Window'Go to Location'/" ) ~= nil then gotoButton(); return end
 	local cx,cy = Epiar.getCamera()
 	local width = 160
 	local height = 100
@@ -821,4 +824,46 @@ function debugZoomKeys()
 	end
 end
 debugZoomKeys()
+
+function MapEditorClick(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	local f = string.format
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	mapEditObject = Epiar.nearestPlanet( wx, wy, 100 )
+	if mapEditObject ~= nil then
+		map:setPannable( 0 )
+	end
+end
+
+function MapEditorDrag(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	local f = string.format
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	if mapEditObject ~= nil then
+		mapEditObject:SetPosition( wx,wy )
+	end
+end
+
+function MapEditorRelease(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	map:setPannable( 1 )
+end
+
+function CreateMapEditor()
+	if UI.search( "/Window'Map Editor'/" ) ~= nil then return end
+
+	local width = WIDTH*.8
+	local height = HEIGHT*.8
+	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Map Editor")
+	local map = UI.newMap( width*.2, 30, width*.8 - 10, height - 40 )
+
+	map:addPosCallback( Action_MouseLDown, 'MapEditorClick' )
+	map:addPosCallback( Action_MouseLUp, 'MapEditorRelease' )
+	map:addPosCallback( Action_MouseDrag, 'MapEditorDrag' )
+
+	theWin:add( map )
+end
 
