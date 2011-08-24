@@ -84,7 +84,4 @@ class UI {
 		static bool modalEnabled;
 };
 
-void UI_Test();
-void ModalityTest();
-
 #endif // __H_UI__

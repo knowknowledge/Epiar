@@ -176,6 +176,12 @@ void Menu::SetupGUI()
 	exit = PictureButton( button_x, 500, QuitMenu,
 	                      Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
+
+#ifdef EPIAR_COMPILE_TESTS
+	// Test that the GUI features work
+	UI_Test();
+#endif // EPIAR_COMPILE_TESTS
+
 }
 
 /** This Window is used to create new Players.
@@ -511,3 +517,139 @@ void Menu::QuitMenu()
     quitSignal = true;
 }
 
+#ifdef EPIAR_COMPILE_TESTS
+
+void AddImage( void*widget, void*image, int x, int y )
+{
+	Container* container = ((Container*)widget);
+	container->AddChild( new Picture( x, y, (Image*)image ) );
+}
+
+string LOREM =
+	"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor"
+	" incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis "
+	"nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+	" Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu"
+	" fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in"
+	" culpa qui officia deserunt mollit anim id est laborum.";
+
+void UI_Test() {
+	// Example of Nestable UI Creation
+	UI::Add(
+		(new Window( 20, 20, 600, 600, "A Window"))
+		->AddChild( (new Tabs( 50, 50, 500, 500, "TEST TABS"))
+			->AddChild( (new Tab( "Nested Frames" ))
+				->AddChild( (new Button(10, 10, 100, 30, "Dummy 1",    NULL    )) )
+				->AddChild( (new Frame( 50,50,400,400 ))
+					->AddChild( (new Button(10, 10, 100, 30, "Dummy 2",    NULL    )) )
+					->AddChild( (new Frame( 50,50,300,300 ))
+						->AddChild( (new Button(10, 10, 100, 30, "Dummy 3",    NULL    )) )
+						->AddChild( (new Frame( 50,50,200,200 ))
+							->AddChild( (new Button(10, 10, 100, 30, "Dummy 4",    NULL    )) )
+						)
+					)
+				)
+			)
+			->AddChild( (new Tab( "Scoll to Buttons" ))
+				->AddChild( (new Label(10,   0, "Scroll Down")) )
+				->AddChild( (new Frame( 150, 50, 200, 300 ))
+					->AddChild( (new Label(10,   0, "Scroll Down")) )
+					->AddChild( (new Button(10, 300, 100, 30, "Dummy",    NULL    )) )
+					->AddChild( (new Label(10, 600, "Scroll Up")) )
+				)
+				->AddChild( (new Label(10, 600, "Scroll Up")) )
+			)
+			->AddChild( (new Tab("A Picture"))
+				->AddChild( (new Picture(10, 0, 400, 400, "Resources/Art/menu2.png")) )
+			)
+			->AddChild( (new Tab("Some Inputs"))
+				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
+				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
+				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f )) )
+				->AddChild( (new Button(10, 300, 100, 30, "Dummy", NULL )) )
+				->AddChild( (new Dropdown(200, 200, 100, 30))
+					->AddOption("Lorem")
+					->AddOption("Ipsum")
+					->AddOption("Dolar")
+					->AddOption("Sit")
+				)
+				->AddChild( (new Dropdown(300, 200, 100, 20))
+					->AddOption("One Fish")
+					->AddOption("Two Fish")
+					->AddOption("Red Fish")
+					->AddOption("Blue Fish")
+				)
+				->AddChild( (new Paragraph(300, 250, 100, 20, LOREM)) )
+				->AddChild( (new Paragraph(0, 250, 200, 20, LOREM)) )
+			)
+		)
+	);
+
+	Tab* clickTestTab = new Tab("Click Test");
+	clickTestTab->RegisterAction( Action_MouseLUp, new PositionalAction( AddImage, clickTestTab, Image::Get("Resources/Graphics/shuttle.png") ) );
+	((Container*)UI::Search("/'A Window'/'TEST TABS'/"))->AddChild( clickTestTab );
+
+	// Check that the UI Searching is working
+	assert( NULL != UI::Search("/[0]/") );
+	assert( NULL != UI::Search("/Window/") );
+	assert( NULL != UI::Search("/Window/Tabs/") );
+	assert( NULL != UI::Search("/(100,100)/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab[1]/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/Frame/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/[0]/(60,60)/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Button/") );
+	assert( NULL != UI::Search("/'A Window'/'TEST TABS'/Tab/Frame/Frame/Frame/Button/") );
+
+	// Check Odd but acceptable Queries
+	// Slashes at the beginning and end are optional but expected
+	assert( NULL != UI::Search("Window") );
+	assert( NULL != UI::Search("/Window") );
+	assert( NULL != UI::Search("Window/") );
+	// Extra Slashes just grab the first child
+	assert( NULL != UI::Search("/Window//") );
+	assert( NULL != UI::Search("/Window//Tab/") );
+
+	// Check that Bad Inputs find nothing
+	assert( NULL == UI::Search("/[-1]/") );
+	//assert( NULL == UI::Search("/[fdsa]/") ); // TODO: Should fail, but Asserts in string convert
+	//assert( NULL == UI::Search("/(foo,bar)/") ); // TODO: Should fail, but Asserts in string convert
+	assert( NULL == UI::Search("/WindowWindow/") );
+	assert( NULL == UI::Search("/'foobar'/") );
+	//assert( NULL == UI::Search("/[]/") ); // TODO: This should fail but doesn't. The empty string is converted to an Int
+	//assert( NULL == UI::Search("/(,)/") ); // TODO: This should fail but doesn't. The empty string is converted to an Int
+
+	// Check that Malformed Queries Fail and return nothing.
+	// Malformed Indexes
+	//assert( NULL == UI::Search("/[/") ); // TODO: Should fail, but Asserts in string convert
+	//assert( NULL == UI::Search("/]/") ); // TODO: Should fail, but Asserts in string convert
+	assert( NULL == UI::Search("/[1)/") );
+	assert( NULL == UI::Search("/[100,100]/") );
+	// Malformed Coordinates
+	//assert( NULL == UI::Search("/(/") ); // TODO: Should fail, but Asserts in string convert
+	//assert( NULL == UI::Search("/)/") ); // TODO: Should fail, but Asserts in string convert
+	assert( NULL == UI::Search("/,/") ); 
+	//assert( NULL == UI::Search("/(100 100)/") ); // TODO: Should fail, but Asserts in string convert
+	assert( NULL == UI::Search("/(100,100]/") );
+	// Malformed Strings
+	assert( NULL == UI::Search("/Window'/") );
+	assert( NULL == UI::Search("/Window\"/") );
+	assert( NULL == UI::Search("/'Window/") );
+	assert( NULL == UI::Search("/\"Window/") );
+
+	// Set a test Form button
+	((Tab*)( UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/"))) ->SetFormButton(
+		(Button*) UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/Button'Dummy'/")
+	);
+}
+
+void ModalityTest() {
+	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
+	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
+	UI::ModalDialog( window );
+}
+#endif // EPIAR_COMPILE_TESTS
