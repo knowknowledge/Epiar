@@ -94,7 +94,7 @@ class Video {
 		static void DrawFilledCircle( int x, int y, int radius, Color c, float a = 1.0f);
 		static void DrawFilledCircle( int x, int y, int radius, float r, float g, float b, float a = 1.0f);
 		static void DrawFilledCircle( Coordinate, int radius, Color c, float a = 1.0f);
-		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b );
+		static void DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b, float a = 1.0f );
 
 		static void SetCropRect( int x, int y, int w, int h );
 		static void UnsetCropRect( void );

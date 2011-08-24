@@ -513,9 +513,9 @@ void Video::DrawFilledCircle( int x, int y, int radius, float r, float g, float 
 
 /**\brief Draws a targeting overlay.
  */
-void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b ) {
+void Video::DrawTarget( int x, int y, int w, int h, int d, float r, float g, float b, float a ) {
 	// d is for 'depth' and is the number of crosshair pixels
-	glColor3f(r,g,b);
+	glColor4f(r,g,b,a);
 	glBegin(GL_LINES);
 		// Upper Left Corner
 		glVertex2d(x-w/2,y-h/2); glVertex2d(x-w/2,y-h/2+d);
