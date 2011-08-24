@@ -10,6 +10,7 @@
 #define __H_PARAGRAPH__
 
 #include "UI/ui.h"
+#include "UI/ui_text.h"
 
 class Paragraph : public Widget {
 	public:
@@ -26,10 +27,8 @@ class Paragraph : public Widget {
 		virtual int GetMask( void ) { return WIDGET_PARAGRAPH; }
 	
 	private:
-		int maxwidth;
-		vector<string> splitBy( const string& s, const char* tokens );
 		bool centered;
-		vector<string> lines;
+		Text lines;
 };
 
 #endif // __H_PARAGRAPH__
