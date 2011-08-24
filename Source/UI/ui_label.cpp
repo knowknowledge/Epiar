@@ -23,15 +23,14 @@
 
 /**\brief Constructor
  */
-Label::Label( int _x, int _y, string input, bool centered) {
+Label::Label( int _x, int _y, string input, bool _centered) {
 	x = _x;
 	y = _y;
 
 	// w/h is dependent upon the text given
 	
-	this->centered = centered;
+	centered = _centered;
 	SetText( input );
-
 }
 
 /**\brief Draw the Label
