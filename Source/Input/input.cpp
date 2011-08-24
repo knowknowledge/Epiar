@@ -86,9 +86,8 @@ list<InputEvent> Input::Update( ) {
 
 	while( SDL_PollEvent( &event ) ) {
 		switch( event.type ) {
-			//case SDL_QUIT:
-			//	quitSignal = true;
-			//	break;
+			case SDL_QUIT:
+				exit(1);
 			case SDL_KEYDOWN:
 			{
 				_UpdateHandleKeyDown( &event );
