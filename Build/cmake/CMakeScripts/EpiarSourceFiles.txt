@@ -97,8 +97,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_checkbox.h
 	${Epiar_SRC_DIR}/UI/ui_container.cpp
 	${Epiar_SRC_DIR}/UI/ui_container.h
-    ${Epiar_SRC_DIR}/UI/ui_dialogs.cpp
-    ${Epiar_SRC_DIR}/UI/ui_dialogs.h
+	${Epiar_SRC_DIR}/UI/ui_dialogs.cpp
+	${Epiar_SRC_DIR}/UI/ui_dialogs.h
 	${Epiar_SRC_DIR}/UI/ui.cpp
 	${Epiar_SRC_DIR}/UI/ui.h
 	${Epiar_SRC_DIR}/UI/ui_dropdown.h
@@ -121,6 +121,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_slider.h
 	${Epiar_SRC_DIR}/UI/ui_tabs.cpp
 	${Epiar_SRC_DIR}/UI/ui_tabs.h
+	${Epiar_SRC_DIR}/UI/ui_text.cpp
+	${Epiar_SRC_DIR}/UI/ui_text.h
 	${Epiar_SRC_DIR}/UI/ui_textbox.cpp
 	${Epiar_SRC_DIR}/UI/ui_textbox.h
 	${Epiar_SRC_DIR}/UI/ui_widget.cpp
