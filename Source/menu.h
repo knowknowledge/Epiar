@@ -62,6 +62,7 @@ class Menu {
 
 };
 
+//#define EPIAR_UI_TESTS
 #ifdef EPIAR_UI_TESTS
 void UI_Test();
 void ModalityTest();

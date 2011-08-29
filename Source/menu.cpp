@@ -177,10 +177,10 @@ void Menu::SetupGUI()
 	                      Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
 
-#ifdef EPIAR_COMPILE_TESTS
+#ifdef EPIAR_UI_TESTS
 	// Test that the GUI features work
 	UI_Test();
-#endif // EPIAR_COMPILE_TESTS
+#endif // EPIAR_UI_TESTS
 
 }
 
@@ -517,7 +517,7 @@ void Menu::QuitMenu()
     quitSignal = true;
 }
 
-#ifdef EPIAR_COMPILE_TESTS
+#ifdef EPIAR_UI_TESTS
 
 void AddImage( void*widget, void*image, int x, int y )
 {
@@ -563,7 +563,7 @@ void UI_Test() {
 				->AddChild( (new Picture(10, 0, 400, 400, "Resources/Art/menu2.png")) )
 			)
 			->AddChild( (new Tab("Some Inputs"))
-				->AddChild( (new Textbox(30, 30, 100, 2, "Some Text\nGoes Here", "A Textbox")) )
+				->AddChild( (new Textbox(30, 30, 100, 1, "Some Text Goes Here", "A Textbox")) )
 				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
 				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f )) )
 				->AddChild( (new Button(10, 300, 100, 30, "Dummy", NULL )) )
@@ -580,7 +580,7 @@ void UI_Test() {
 					->AddOption("Blue Fish")
 				)
 				->AddChild( (new Paragraph(300, 250, 100, 20, LOREM)) )
-				->AddChild( (new Paragraph(0, 250, 200, 20, LOREM)) )
+				->AddChild( (new Textarea(10, 300, 250, 500, LOREM, "A Textarea")) )
 			)
 		)
 	);
@@ -652,4 +652,4 @@ void ModalityTest() {
 	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
 	UI::ModalDialog( window );
 }
-#endif // EPIAR_COMPILE_TESTS
+#endif // EPIAR_UI_TESTS
