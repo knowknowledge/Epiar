@@ -42,7 +42,9 @@ Textarea::Textarea( int _x, int _y, int _w, int _h, string text, string label )
 	name = label;
 }
 
-/**\brief Draws the Textarea.*/
+/**\brief Draws the Textarea.
+ * \todo Add blinking Cursor
+ */
 void Textarea::Draw( int relx, int rely ) {
 	int x, y;
 	
@@ -86,20 +88,22 @@ bool Textarea::KeyPress( SDLKey key ) {
 	case SDLK_UP:
 	case SDLK_DOWN:
 		return false;
-	default:
-		break;
-	}
-	
-	key_ss << (char)key;
-	key_ss >> key_s;
-	
-	
-	if(keyname == "backspace") {
+	case SDLK_BACKSPACE:
 		lines.Erase( 1 );
-	} else if(keyname == "space") {
+		break;
+	case SDLK_SPACE:
 		lines.AppendText( " " );
-	} else {
+		break;
+	case SDLK_KP_ENTER:
+	case SDLK_RETURN:
+	case '\n':
+		lines.AppendText( "\n" );
+		break;
+	default:
+		key_ss << (char)key;
+		key_ss >> key_s;
 		lines.AppendText( key_s );
+		break;
 	}
 	
 	return true;

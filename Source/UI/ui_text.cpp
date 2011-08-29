@@ -73,6 +73,7 @@ void Text::AppendText( string text ) {
 	for(iter = temp.begin(); iter != temp.end() ; ++iter ) {
 		// Line endings always end the line.
 		if( (*iter) ==  "\n" ) {
+			curline += "\n";
 			lines.push_back( curline );
 			curline = "";
 		}
@@ -146,7 +147,12 @@ void Text::Render( int x, int y, Font::XPos xpositioning, Font::YPos ypositionin
 	vector<string>::iterator iter;
 	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += UI::font->TightHeight() )
 	{
-		font->Render( x, y, *iter, xpositioning, ypositioning );
+		int len = iter->size();
+		if ( (*iter)[len-1] == '\n' ) {
+			font->Render( x, y, iter->substr(0,len-1), xpositioning, ypositioning );
+		} else {
+			font->Render( x, y, *iter, xpositioning, ypositioning );
+		}
 	}
 }
 
