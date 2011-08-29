@@ -52,6 +52,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		{"newLabel", &UI_Lua::newLabel},
 		{"newPicture", &UI_Lua::newPicture},
 		{"newTextbox", &UI_Lua::newTextbox},
+		{"newTextarea", &UI_Lua::newTextarea},
 		{"newCheckbox", &UI_Lua::newCheckbox},
 		{"newSlider", &UI_Lua::newSlider},
 		{"newTabContainer", &UI_Lua::newTabContainer},
@@ -422,6 +423,35 @@ int UI_Lua::newTextbox(lua_State *L){
 	*textbox = new Textbox(x, y, w, h, text, name);
 
 	UI::Add(*textbox);
+
+	return 1;
+}
+
+/** \brief Create a new Textarea
+ *
+ *  \returns Lua userdata containing pointer to Textarea.
+ */
+int UI_Lua::newTextarea(lua_State *L){
+	int n = lua_gettop(L);  // Number of arguments
+	if ( n < 4  )
+		return luaL_error(L, "Got %d arguments expected 3, 4, or 5 (x, y, w, h, [text], [name])", n);
+
+	int x = int(luaL_checknumber (L, 1));
+	int y = int(luaL_checknumber (L, 2));
+	int w = int(luaL_checknumber (L, 3));
+	int h = int(luaL_checknumber (L, 4));
+	string text = "";
+	string name = "";
+	if(n>=5) text = luaL_checkstring (L, 5);
+	if(n>=6) name = luaL_checkstring (L, 6);
+
+	// Allocate memory for a pointer to object
+	Textarea **textarea = (Textarea**)lua_newuserdata(L, sizeof(Textarea**));
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
+	*textarea = new Textarea(x, y, w, h, text, name);
+
+	UI::Add(*textarea);
 
 	return 1;
 }
@@ -838,6 +868,9 @@ int UI_Lua::setText(lua_State *L){
 		case WIDGET_TEXTBOX:
 			((Textbox*)(widget))->SetText( text );
 			break;
+		case WIDGET_TEXTAREA:
+			((Textarea*)(widget))->SetText( text );
+			break;
 		case WIDGET_BUTTON:
 			((Button*)(widget))->SetText( text );
 			break;
@@ -935,9 +968,13 @@ int UI_Lua::GetText(lua_State *L){
 	int mask = widget->GetMask();
 	mask &= ~WIDGET_CONTAINER; // Turn off the Container flag.
 	switch( mask ) {
-		// These Widget types currently support setText
+		// These Widget types currently support GetText
 		case WIDGET_LABEL:
 			lua_pushstring(L, ((Label*)(widget))->GetText().c_str() );
+			return 1;
+			break;
+		case WIDGET_TEXTAREA:
+			lua_pushstring(L, ((Textarea*)(widget))->GetText().c_str() );
 			return 1;
 			break;
 		case WIDGET_TEXTBOX:
@@ -962,7 +999,7 @@ int UI_Lua::GetText(lua_State *L){
 			return luaL_error(L, "Epiar does not currently calling getText on Widgets of type '%s'.", (widget)->GetType().c_str() );
 			break;
 
-		// These Widget Types can't accept setText.
+		// These Widget Types can't accept GetText.
 		case WIDGET_TABS:
 		case WIDGET_FRAME:
 		case WIDGET_SLIDER:

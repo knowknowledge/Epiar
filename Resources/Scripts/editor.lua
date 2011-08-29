@@ -36,18 +36,17 @@ EditorLayouts = {
 	},
 	Engine = {
 		{"Name", "String"},
-		{"Picture", "Picture"}, -- Picture Picker
-		{"Description", "String"}, -- Should be paragraph editor
+		{"Picture", "Picture"},
 		{"MSRP", "Integer"},
 		{"Force", "Integer"},
 		{"Fold Drive", "Integer"},
 		{"Sound", "Sound", "Engines"}, -- Sound Dropdown - Engines subgroup
-		{"Animation", "Animation"}, -- Animation Dropdown
+		{"Animation", "Animation"},
+		{"Description", "Paragraph"},
 	},
 	Model = {
 		{"Name", "String"},
-		{"Image", "Picture"}, -- Picture Picker
-		{"Description", "String"}, -- Should be paragraph editor
+		{"Image", "Picture"},
 		{"Rotation", "Number"},
 		{"MSRP", "Integer"},
 		{"Thrust", "Integer"},
@@ -58,20 +57,21 @@ EditorLayouts = {
 		{"Cargo", "Integer"},
 		{"Engine", "Component", Epiar.engines},
 		{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
+		{"Description", "Paragraph"},
 	},
 	Planet = {
 		{"Name", "String"},
 		{"X", "Integer"}, -- Should be Map based Coordinate Picker
 		{"Y", "Integer"}, -- Should be Map based Coordinate Picker
-		{"Image", "Picture"}, -- Picture Picker
-		{"Surface", "Picture"}, -- Picture Picker
-		{"Summary", "String"}, -- Should be multi-line editor
+		{"Image", "Picture"},
+		{"Surface", "Picture"},
 		{"Alliance", "Component", Epiar.alliances},
 		{"Landable", "Integer"}, -- TODO Should be Checkbox
 		{"Traffic", "Integer"},
 		{"Militia", "Integer"},
 		{"Influence", "Integer"},
 		{"Technologies", "Technologies"},
+		{"Summary", "Paragraph"},
 	},
 	Gate = {
 		{"Name", "String"},
@@ -81,9 +81,8 @@ EditorLayouts = {
 	},
 	Weapon = {
 		{"Name", "String"},
-		{"Picture", "Picture"}, -- Picture Picker
-		{"Image", "Picture"}, -- Picture Picker
-		{"Description", "String"}, -- Should be paragraph editor
+		{"Picture", "Picture"},
+		{"Image", "Picture"},
 		{"MSRP", "Integer"},
 		{"Payload", "Integer"},
 		{"Velocity", "Integer"},
@@ -94,11 +93,11 @@ EditorLayouts = {
 		{"Ammo Type", "Integer"}, -- TODO Should be a dropdown of Ammo Types
 		{"Ammo Consumption", "Integer"},
 		{"Sound", "Sound", "Weapons"}, -- Sound Dropdown - Weapons subgroup
+		{"Description", "Paragraph"},
 	},
 	Outfit = {
 		{"Name", "String"},
 		{"Picture", "Picture"}, -- Picture Picker
-		{"Description", "String"}, -- Should be paragraph editor
 		{"MSRP", "Integer"},
 		{"MaxSpeed", "Number"},
 		{"Force", "Number"},
@@ -108,6 +107,7 @@ EditorLayouts = {
 		{"Cargo", "Integer"},
 		{"SurfaceArea", "Integer"},
 		{"Mass", "Number"},
+		{"Description", "Paragraph"},
 	},
 }
 
@@ -181,6 +181,12 @@ function showComponent(kind, name)
 			field = UI.newTextbox( 90, yoff, 100, 1, value)
 			theWin:add(field)
 			yoff = yoff+20
+		elseif fieldType == "Paragraph" then
+			theWin:add(UI.newLabel( 10, yoff, title..":"))
+			yoff = yoff+20
+			field = UI.newTextarea( 15, yoff, width-50, 300, value)
+			theWin:add(field)
+			yoff = yoff+300
 		elseif fieldType == "Integer" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
 			field = UI.newTextbox( 90, yoff, 100, 1, value)

@@ -37,6 +37,7 @@ class UI_Lua {
 		static int newFrame(lua_State *L);
 		static int newButton(lua_State *L);
 		static int newTextbox(lua_State *L);
+		static int newTextarea(lua_State *L);
 		static int newLabel(lua_State *L);
 		static int newPicture(lua_State *L);
 		static int newCheckbox(lua_State *L);
