@@ -733,16 +733,17 @@ function simDefaults()
 	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Simulation Defaults")
 	local yoff = 40
 
-	theWin:add( UI.newLabel( width/2-100, yoff, simInfo.Name) )
+	theWin:addCloseButton()
+
+	theWin:add(
+		UI.newLabel( 20, yoff, "Name:"),
+		UI.newLabel( 90, yoff, simInfo.Name) )
 	yoff = yoff + 30
 
-	local par = UI.newParagraph( 20, yoff, width-100, 100, simInfo.Description)
-	theWin:add( par )
-	yoff = yoff + par:GetH() + 10
 
 	local drop
 	local planets = Epiar.planetNames()
-	drop = UI.newDropdown( 90, yoff, 100, 20, planets)
+	drop = UI.newDropdown( 90, yoff, 200, 20, planets)
 	if planets[playerInfo.start] then
 		drop:setText( playerInfo.start )
 	end
@@ -751,7 +752,7 @@ function simDefaults()
 	yoff = yoff + 30
 
 	local models = Epiar.models()
-	drop = UI.newDropdown( 90, yoff, 100, 20, models)
+	drop = UI.newDropdown( 90, yoff, 200, 20, models)
 	if models[playerInfo.model] ~= nil then
 		drop:setText( playerInfo.model )
 	end
@@ -759,7 +760,7 @@ function simDefaults()
 	yoff = yoff + 30
 
 	local engines = Epiar.engines()
-	drop = UI.newDropdown( 90, yoff, 100, 20, engines)
+	drop = UI.newDropdown( 90, yoff, 200, 20, engines)
 	if engines[playerInfo.engine] ~= nil then
 		drop:setText( playerInfo.engine )
 	end
@@ -768,8 +769,14 @@ function simDefaults()
 
 	theWin:add(
 		UI.newLabel( 20, yoff, "Credits:"),
-		UI.newTextbox( 90, yoff, 100, 1, playerInfo.credits ) )
+		UI.newTextbox( 90, yoff, 200, 1, playerInfo.credits ) )
 	yoff = yoff + 30
+
+	
+	theWin:add(
+		UI.newLabel( 20, yoff, "Description:"),
+		UI.newTextarea( 20, yoff+20, width-100, 100, simInfo.Description) )
+	yoff = yoff + 130
 
 	function SaveDefaults()
 		local win = UI.search( "/Window'Simulation Defaults'/" )
@@ -779,6 +786,10 @@ function simDefaults()
 		local engine = UI.search("/Window'Simulation Defaults'/Dropdown[2]/" ):GetText()
 		local credits = UI.search("/Window'Simulation Defaults'/Textbox[0]/" ):GetText()
 		Epiar.setDefaultPlayer( {start=start,model=model,engine=engine,credits=credits} )
+
+		local description = UI.search("/Window'Simulation Defaults'/Textarea[0]/" ):GetText()
+		Epiar.setDescription( description  )
+
 		win:close()
 	end
 
@@ -841,6 +852,7 @@ function CreateMapEditor()
 	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Map Editor")
 	local map = UI.newMap( width*.2, 30, width*.8 - 10, height - 40 )
 	theWin:add( map )
+	theWin:addCloseButton()
 
 	theWin:add( UI.newButton( 10, 40, width*.2 -20, 30, "Zoom/Pan", "MapReset()" ) )
 	theWin:add( UI.newButton( 10, 80, width*.2 -20, 30, "Planets", "MapEditorPlanetMode()" ) )

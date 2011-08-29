@@ -64,11 +64,10 @@ class Simulation : public XMLFile {
 		Input *GetInput() { return &inputs; }
 		Player *GetPlayer();
 
-		string GetName() { return name; }
-		string GetDescription() { return description; }
+		string GetName() { return Get("simulation/name"); }
+		string GetDescription() { return Get("simulation/description"); }
 
-		void SetName( string _name ) { name = _name; }
-		void SetDescription( string _desc ) { description = _desc; }
+		void SetDescription( string _desc ) { Set("simulation/description", _desc ); }
 		void SetMusic( string _path ) { Set("music", _path); }
 		void SetDefaultPlayer( string planetName, string modelName, string engineName, int credits );
 
@@ -104,8 +103,6 @@ class Simulation : public XMLFile {
 		Console *console;
 
 		// Description of this Simulation
-		string name;
-		string description;
 		string folderpath;
 
 		// State Variables

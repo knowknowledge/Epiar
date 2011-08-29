@@ -62,8 +62,6 @@ Simulation::Simulation( void ) {
 	camera = Camera::Instance();
 	console = new Console( L );
 
-	name = "";
-	description = "";
 	folderpath = "";
 
 	currentFPS = 0.0f;
@@ -77,13 +75,12 @@ Simulation::Simulation( void ) {
 bool Simulation::New( string newname ) {
 	LogMsg(INFO, "New Simulation: '%s'.", newname.c_str() );
 
-	name = newname;
-	folderpath = "Resources/Simulation/" + name + "/";
+	folderpath = "Resources/Simulation/" + newname + "/";
 
 	XMLFile::New( folderpath + string("simulation.xml"), "simulation" );
 
-	Set("simulation/name", name );
-	Set("simulation/description", description );
+	Set("simulation/name", newname );
+	Set("simulation/description", "" );
 
 	// Set the File Names
 	commodities->SetFileName( folderpath + "commodities.xml" );
@@ -138,7 +135,7 @@ void Simulation::pause(){
 }
 
 void Simulation::Save(){
-	if( PHYSFS_mkdir( ("Resources/Simulation/" + name + "/").c_str() ) == 0) {
+	if( PHYSFS_mkdir( ("Resources/Simulation/" + GetName() + "/").c_str() ) == 0) {
 		LogMsg(ERR, "Cannot create folder '%s'.", folderpath.c_str() );
 		return;
 	}
@@ -538,10 +535,6 @@ void Simulation::LuaRegisters(lua_State *L) {
  */
 bool Simulation::Parse( void ) {
 	LogMsg(INFO, "Simulation version %s.%s.%s.", Get("version-major").c_str(), Get("version-minor").c_str(),  Get("version-macro").c_str());
-
-	// Get the Name and Description
-	name = Get("name");
-	description = Get("description");
 
 	// Now load the various subsystems
 	if( commodities->Load( (folderpath + Get("commodities")) ) != true ) {

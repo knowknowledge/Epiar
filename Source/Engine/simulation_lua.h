@@ -91,6 +91,7 @@ class Simulation_Lua{
 		static int ListImages(lua_State *L);
 		static int ListAnimations(lua_State *L);
 		static int ListSounds(lua_State *L);
+		static int SetDescription(lua_State *L);
 
 		static void PushSprite(lua_State *L,Sprite* sprite);
 		static void PushComponents(lua_State *L, list<Component*> *components);

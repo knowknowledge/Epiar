@@ -140,6 +140,7 @@ void Simulation_Lua::RegisterEditor(lua_State *L) {
 		{"setDefaultPlayer", &Simulation_Lua::SetDefaultPlayer},
 		{"getDefaultPlayer", &Simulation_Lua::GetDefaultPlayer},
 		{"saveComponents", &Simulation_Lua::SaveComponents},
+		{"setDescription", &Simulation_Lua::SetDescription},
 		{NULL, NULL}
 	};
 	luaL_register(L,"Epiar",EditorFunctions);
@@ -1495,5 +1496,12 @@ int Simulation_Lua::ListSounds(lua_State *L) {
 	list<string> oggs = Filesystem::Enumerate("Resources/Audio/"+subfolder ,".ogg");
 	Lua::pushStringList(L, &oggs);
 	return 1;
+}
+
+int Simulation_Lua::SetDescription(lua_State *L) {
+	string description= (string)lua_tostring(L, 1);
+	Simulation* sim = GetSimulation(L);
+	sim->SetDescription( description );
+	return 0;
 }
 
