@@ -296,7 +296,6 @@ xmlNodePtr Planet::ToXMLNode(string componentName) {
 	xmlNewChild(section, NULL, BAD_CAST "traffic", BAD_CAST buff );
 	xmlNewChild(section, NULL, BAD_CAST "image", BAD_CAST GetImage()->GetPath().c_str() );
 	xmlNewChild(section, NULL, BAD_CAST "surface-image", BAD_CAST surface->GetPath().c_str() );
-	xmlNewChild(section, NULL, BAD_CAST "summary", BAD_CAST summary.c_str() );
 	snprintf(buff, sizeof(buff), "%d", GetMilitiaSize() );
 	xmlNewChild(section, NULL, BAD_CAST "militia", BAD_CAST buff );
 	snprintf(buff, sizeof(buff), "%d", GetInfluence() );
@@ -305,6 +304,7 @@ xmlNodePtr Planet::ToXMLNode(string componentName) {
 	for( list<Technology*>::iterator it = techs.begin(); it!=techs.end(); ++it ){
 		xmlNewChild(section, NULL, BAD_CAST "technology", BAD_CAST (*it)->GetName().c_str() );
 	}
+	xmlNewChild(section, NULL, BAD_CAST "summary", BAD_CAST summary.c_str() );
 
 	return section;
 }
