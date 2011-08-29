@@ -295,8 +295,8 @@ int UI_Lua::newButton(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Button **button= (Button**)lua_newuserdata(L, sizeof(Button**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	*button = new Button(x,y,w,h,caption,code);
 
 	UI::Add(*button);
@@ -332,8 +332,8 @@ int UI_Lua::newSlider(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Slider **slider= (Slider**)lua_newuserdata(L, sizeof(Slider**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	
 	if (n == 7) {
 		*slider = new Slider(x,y,w,h,label,position);
@@ -417,8 +417,8 @@ int UI_Lua::newTextbox(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Textbox **textbox = (Textbox**)lua_newuserdata(L, sizeof(Textbox**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	*textbox = new Textbox(x, y, w, h, text, name);
 
 	UI::Add(*textbox);
@@ -441,8 +441,8 @@ int UI_Lua::newLabel(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Label **label= (Label**)lua_newuserdata(L, sizeof(Label**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	if(n==3){
 		*label = new Label(x,y,caption);
 	} else if(n==4) {
@@ -585,8 +585,8 @@ int UI_Lua::newParagraph(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Paragraph **p = (Paragraph**)lua_newuserdata(L, sizeof(Paragraph**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 	*p = new Paragraph(x, y, w, h, text);
 
 	UI::Add(*p);
@@ -610,8 +610,8 @@ int UI_Lua::newMap(lua_State *L){
 
 	// Allocate memory for a pointer to object
 	Map **p = (Map**)lua_newuserdata(L, sizeof(Map**));
-    luaL_getmetatable(L, EPIAR_UI);
-    lua_setmetatable(L, -2);
+	luaL_getmetatable(L, EPIAR_UI);
+	lua_setmetatable(L, -2);
 
 	Simulation *sim = Simulation_Lua::GetSimulation(L);
 	
