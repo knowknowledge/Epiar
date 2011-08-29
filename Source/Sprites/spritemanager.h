@@ -36,7 +36,7 @@ class SpriteManager {
 		void GetBoundaries(float *northEdge, float *southEdge, float *eastEdge, float *westEdge);
 
 		void Save();
-				
+		
 	protected:
 		SpriteManager();
 	private:
@@ -52,12 +52,12 @@ class SpriteManager {
 		static SpriteManager *pInstance;    ///< The Static SpriteManager Instance.
 
 		int tickCount;                      ///< Counts number of ticks to track updates to quadrants.  Max value is the number of ticks to update all quadrants
-		const int semiRegularPeriod;		///< The period at which every semi-regular quadrant is updated
-		const int fullUpdatePeriod;			///< The period at which every quadrant is updated regardless of distance
+		const int semiRegularPeriod;        ///< The period at which every semi-regular quadrant is updated
+		const int fullUpdatePeriod;         ///< The period at which every quadrant is updated regardless of distance
 
-		const int numRegularBands;			///< The number of bands surrounding the centre point that are updated every tick
-		const int numSemiRegularBands;		///< The number of bands surrounding the centre point that are updated semi-regularly
-		map<int, int> ticksToBandNum;		///< The key is the tick# that the value band# will be updated at
+		const int numRegularBands;          ///< The number of bands surrounding the centre point that are updated every tick
+		const int numSemiRegularBands;      ///< The number of bands surrounding the centre point that are updated semi-regularly
+		map<int, int> ticksToBandNum;       ///< The key is the tick# that the value band# will be updated at
 
 		float northEdge, southEdge, eastEdge, westEdge; ///< The Edges of the universe
 
@@ -69,7 +69,7 @@ class SpriteManager {
 		void AdjustBoundaries();
 		void UpdateTickCount();
 
-		void GetAllQuadrants (list<QuadTree*> *newTree);
+		void GetAllQuadrants( list<QuadTree*> *newTree);
 };
 
 #endif // __H_SPRITEMANAGER__
