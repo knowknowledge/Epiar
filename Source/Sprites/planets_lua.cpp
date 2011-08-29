@@ -57,8 +57,11 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetOutfits", &Planets_Lua::GetOutfits},
 		{"GetForbidden", &Planets_Lua::GetForbidden},
 		{"SetForbidden", &Planets_Lua::SetForbidden},
+
+		// Editor Only
 		{"SetPosition", &Planets_Lua::SetPosition},
 		{"SetInfluence", &Planets_Lua::SetInfluence},
+		{"SetRadarColor", &Planets_Lua::SetRadarColor},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -525,6 +528,24 @@ int Planets_Lua::SetInfluence(lua_State* L){
 		p->SetInfluence( influence );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (planet, influence)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to set planet's radar color.
+ * \sa Sprite::SetRadarColor
+ */
+int Planets_Lua::SetRadarColor(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 4) {
+		Planet* p = checkPlanet(L,1);
+		if(p==NULL) return 0;
+		int red = (int) luaL_checknumber (L, 2);
+		int green = (int) luaL_checknumber (L, 3);
+		int blue = (int) luaL_checknumber (L, 4);
+		p->SetRadarColor(Color(red,green,blue));
+	} else {
+		luaL_error(L, "Got %d arguments expected 4 (self, red, green, blue)", n);
 	}
 	return 0;
 }
