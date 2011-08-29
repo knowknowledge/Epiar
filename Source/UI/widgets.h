@@ -21,5 +21,6 @@
 #include "UI/ui_slider.h"
 #include "UI/ui_tabs.h"
 #include "UI/ui_textbox.h"
+#include "UI/ui_textarea.h"
 #include "UI/ui_widget.h"
 #include "UI/ui_window.h"

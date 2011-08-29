@@ -17,7 +17,14 @@
  */
 
 /**\class Text
- * \brief UI
+ * \brief UI Multi Line Text Rendering.
+ *
+ * \note The reflowing code is probably the only interesting part of this
+ *       class, and it could fit into more than one function.  In order to keep
+ *       things simple and reduce bugs, there shouldn't be more than one
+ *       implementation of the reflow algorithms.  However, which operation it
+ *       should be optimized for remains to be seen.  Currently it's located in
+ *       AppendText, but that may not be a good idea long term.
  */
 Text::Text( Font* _font, string _text, int _maxwidth )
 	:font(_font)
@@ -56,7 +63,9 @@ void Text::AppendText( string text ) {
 	// Start from the last line
 	if( lines.size() > 0 )
 	{
-		curline = lines[ lines.size()-1 ];
+		// combine the last line and the input text
+		text = lines[ lines.size()-1 ] + text;
+		lines.pop_back();
 	}
 
 	// Break the message into words
@@ -76,12 +85,7 @@ void Text::AppendText( string text ) {
 				lines.push_back( curline );
 				curline = "";
 			}
-			else
-			{
-				curline += " ";
-			}
-		}
-		// Words
+		} // Words
 		else 
 		{
 			string word = *iter;
@@ -112,6 +116,21 @@ void Text::AppendText( string text ) {
 	}
 }
 
+/**\brief Remove characters from the end of the text.
+ */
+void Text::Erase( int delchars ) {
+	string temp = GetText();
+	int pos = temp.size() - delchars;
+	if( pos <= 0 ) {
+		lines.clear();
+	} else {
+		temp.erase( pos );
+		SetText( temp );
+	}
+}
+
+/**\brief Return the text from the Text
+ */
 string Text::GetText() {
 	string result = "";
 	vector<string>::iterator iter;
@@ -121,6 +140,8 @@ string Text::GetText() {
 	return result;
 }
 
+/**\brief Render the lines of text
+ */
 void Text::Render( int x, int y, Font::XPos xpositioning, Font::YPos ypositioning ) {
 	vector<string>::iterator iter;
 	for(iter = lines.begin(); iter != lines.end() ; ++iter, y += UI::font->TightHeight() )

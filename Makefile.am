@@ -53,6 +53,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/UI/ui_slider.cpp \
                 Source/UI/ui_tabs.cpp \
                 Source/UI/ui_text.cpp \
+                Source/UI/ui_textarea.cpp \
                 Source/UI/ui_textbox.cpp \
                 Source/UI/ui_widget.cpp \
                 Source/UI/ui_window.cpp \

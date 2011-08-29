@@ -16,19 +16,20 @@ class Text {
 		Text( Font* font, string text, int maxwidth );
 		~Text(){};
 
+		// Manipulation
 		void SetText(string text);
 		void InsertText(int pos, string text);
 		void AppendText(string text);
-		string GetText();
+		void Erase(int delchars);
 
+		// Drawing
 		void Render( int x, int y, Font::XPos xpositioning, Font::YPos ypositioning );
 
-		int GetHeight() { return lines.size() * font->TightHeight(); }
-
-		void SetWidth( int w ) { width = w; }
+		// Getters
+		string GetText();
 		int GetWidth() { return width; }
-		
 		int GetMaxWidth() { return maxwidth; }
+		int GetHeight() { return lines.size() * font->TightHeight(); }
 
 	protected:
 		Font *font; ///< The Font used to render

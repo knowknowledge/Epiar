@@ -123,6 +123,8 @@ set (Epiar_src ${Epiar_src}
 	${Epiar_SRC_DIR}/UI/ui_tabs.h
 	${Epiar_SRC_DIR}/UI/ui_text.cpp
 	${Epiar_SRC_DIR}/UI/ui_text.h
+	${Epiar_SRC_DIR}/UI/ui_textarea.cpp
+	${Epiar_SRC_DIR}/UI/ui_textarea.h
 	${Epiar_SRC_DIR}/UI/ui_textbox.cpp
 	${Epiar_SRC_DIR}/UI/ui_textbox.h
 	${Epiar_SRC_DIR}/UI/ui_widget.cpp
