@@ -497,6 +497,7 @@ bool Simulation::Edit() {
 
 		Timer::Update();
 		starfield.Update( camera );
+		sprites->Update( L, true );
 		camera->Update( sprites );
 		Hud::Update( L );
 
