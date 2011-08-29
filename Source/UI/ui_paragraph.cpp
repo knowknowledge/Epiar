@@ -57,7 +57,7 @@ void Paragraph::Draw(  int relx, int rely ) {
 /**\brief Set the text string of this Widget
  */
 void Paragraph::SetText(string text) {
-	lines.AppendText( text );
+	lines.SetText( text );
 	SetW( lines.GetWidth() );
 	SetH( lines.GetHeight() );
 	printf( "Size = (%d,%d)\n", w,h );
