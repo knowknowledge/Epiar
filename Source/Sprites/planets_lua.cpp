@@ -58,6 +58,7 @@ void Planets_Lua::RegisterPlanets(lua_State *L){
 		{"GetForbidden", &Planets_Lua::GetForbidden},
 		{"SetForbidden", &Planets_Lua::SetForbidden},
 		{"SetPosition", &Planets_Lua::SetPosition},
+		{"SetInfluence", &Planets_Lua::SetInfluence},
 		{NULL, NULL}
 	};
 	luaL_newmetatable(L, EPIAR_PLANET);
@@ -492,7 +493,7 @@ int Planets_Lua::SetForbidden(lua_State* L){
 		int f = luaL_checkint (L, 2);
 		(p)->SetForbidden( (f == 1) );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
+		luaL_error(L, "Got %d arguments expected 2 (planet, forbidden)", n);
 	}
 	return 0;
 }
@@ -508,7 +509,22 @@ int Planets_Lua::SetPosition(lua_State* L){
 		int y = luaL_checkint (L, 3);
 		p->SetWorldPosition( Coordinate(x, y) );
 	} else {
-		luaL_error(L, "Got %d arguments expected 2 (ship, forbidden)", n);
+		luaL_error(L, "Got %d arguments expected 2 (planet, forbidden)", n);
+	}
+	return 0;
+}
+
+/**\brief Lua callable function to set the Influence of a planet
+*/
+int Planets_Lua::SetInfluence(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 2) {
+		Planet* p = checkPlanet(L,1);
+		if(p==NULL) return 0;
+		int influence = luaL_checkint (L, 2);
+		p->SetInfluence( influence );
+	} else {
+		luaL_error(L, "Got %d arguments expected 2 (planet, influence)", n);
 	}
 	return 0;
 }

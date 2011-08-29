@@ -53,6 +53,7 @@ class Planets_Lua {
 
 		// Editor Features
 		static int SetPosition(lua_State* L);
+		static int SetInfluence(lua_State* L);
 	private:
 };
 

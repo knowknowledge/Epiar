@@ -63,6 +63,7 @@ class Planet : public Sprite, public Component {
 
 		bool GetForbidden() {return forbidden;}
 		void SetForbidden(bool f) {forbidden = f;}
+		void SetInfluence(int influence) {sphereOfInfluence = influence;}
 
 	private:
 		Alliance* alliance;
