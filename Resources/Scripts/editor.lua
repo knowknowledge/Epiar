@@ -178,18 +178,18 @@ function showComponent(kind, name)
 		local value = theInfo[title]
 		if fieldType == "String" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Paragraph" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
 			yoff = yoff+20
-			field = UI.newTextarea( 15, yoff, width-50, 300, value)
+			field = UI.newTextarea( 15, yoff, width-50, 300, value, title)
 			theWin:add(field)
 			yoff = yoff+300
 		elseif fieldType == "Integer" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Number" then
@@ -197,7 +197,7 @@ function showComponent(kind, name)
 				value = string.format("%.2f",value)
 			end
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value)
+			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Picture" then
@@ -349,6 +349,7 @@ function saveInfo(name)
 			or fieldType == "Integer"
 			or fieldType == "Number"
 			or fieldType == "Component"
+			or fieldType == "Paragraph"
 			or fieldType == "Picture" then
 				info[title] = texts[title]:GetText()
 			elseif fieldType == "Sound" then
@@ -843,16 +844,29 @@ function CreateMapEditor()
 
 	theWin:add( UI.newButton( 10, 50, width*.2 -20, 30, "Move", "MapEditorMoveMode()" ) )
 	theWin:add( UI.newButton( 10, 90, width*.2 -20, 30, "Gates", "MapEditorGateMode()" ) )
+	theWin:add( UI.newButton( 10,130, width*.2 -20, 30, "Planets", "MapEditorPlanetMode()" ) )
 
 	MapEditorMoveMode()
 
+end
+
+function MapReset()
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	map:addPosCallback( Action_MouseLDown, 'DoNothing' )
+	map:addPosCallback( Action_MouseLUp, 'DoNothing' )
+	map:addPosCallback( Action_MouseRDown, 'DoNothing' )
+	map:addPosCallback( Action_MouseRUp, 'DoNothing' )
+	map:addPosCallback( Action_MouseDrag, 'DoNothing' )
+	map:addPosCallback( Action_MouseWUp, 'DoNothing' )
+	map:addPosCallback( Action_MouseWDown, 'DoNothing' )
 end
 
 -- dummy function to do nothing.
 function DoNothing() end
 
 --
--- Move Object Mode
+-- Modify Object Mode
 --
 -- Drag planets around the universe
 --
@@ -861,7 +875,7 @@ function MapEditorMoveClick(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
 	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
-	mapEditObject = Epiar.nearestPlanet( wx, wy, 100 )
+	mapEditObject = Epiar.nearestPlanet( wx, wy, 500 )
 	if mapEditObject ~= nil then
 		map:setPannable( 0 )
 	end
@@ -882,14 +896,38 @@ function MapEditorMoveRelease(x,y)
 	map:setPannable( 1 )
 end
 
+function MapEditorMoreInfluence(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	local planet = Epiar.nearestPlanet( wx, wy, 1000 )
+	map:setZoomable( 1 )
+	if planet == nil then return end
+	planet:SetInfluence( planet:Influence() * 1.1 )
+	map:setZoomable( 0 )
+end
+
+function MapEditorLessInfluence(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	local planet = Epiar.nearestPlanet( wx, wy, 1000 )
+	map:setZoomable( 1 )
+	if planet == nil then return end
+	planet:SetInfluence( planet:Influence() / 1.1 )
+	map:setZoomable( 0 )
+end
+
 function MapEditorMoveMode()
+	MapReset()
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
 	map:addPosCallback( Action_MouseLDown, 'MapEditorMoveClick' )
 	map:addPosCallback( Action_MouseLUp, 'MapEditorMoveRelease' )
 	map:addPosCallback( Action_MouseDrag, 'MapEditorMoveDrag' )
+	map:addPosCallback( Action_MouseWUp, 'MapEditorMoreInfluence' )
+	map:addPosCallback( Action_MouseWDown, 'MapEditorLessInfluence' )
 end
-
 
 --
 -- Gate Mode
@@ -913,6 +951,7 @@ function MapEditorGateRelease(x,y)
 end
 
 function MapEditorGateMode()
+	MapReset()
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
 	map:addPosCallback( Action_MouseLDown, 'MapEditorGateClick' )
@@ -920,4 +959,28 @@ function MapEditorGateMode()
 	map:addPosCallback( Action_MouseDrag, 'DoNothing' )
 end
 
+--
+-- Planet Mode
+--
+-- Click to create a new planet
+--
+
+function MapEditorPlanetCreate(x,y)
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	showComponent('Planet','')
+	local wx,wy = map:getWorldPosition( x + map:GetX(),y + map:GetY() )
+	local planetX = UI.search( "/Window'New Planet'/Textbox'X'/" )
+	local planetY = UI.search( "/Window'New Planet'/Textbox'Y'/" )
+	planetX:setText( wx )
+	planetY:setText( wy )
+end
+
+
+function MapEditorPlanetMode()
+	MapReset()
+	local map = UI.search( "/Window'Map Editor'/Map/" )
+	if map == nil then return end
+	map:addPosCallback( Action_MouseLUp, 'MapEditorPlanetMode' )
+end
 
