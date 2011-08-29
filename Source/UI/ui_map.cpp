@@ -236,12 +236,6 @@ bool Map::MouseLUp( int xi, int yi )
 
 bool Map::MouseLDown( int xi, int yi )
 {
-	Coordinate worldPos = ClickToWorld( Coordinate(xi,yi) );
-	Sprite *nearest = sprites->GetNearestSprite( worldPos, QUADRANTSIZE );
-	if( nearest )
-	{
-		printf("Clicked on Sprite %d\n", nearest->GetID() );
-	}
 	Widget::MouseLDown( xi, yi );
 	return false;
 }
