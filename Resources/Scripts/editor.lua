@@ -832,6 +832,31 @@ end
 debugZoomKeys()
 
 
+function CreateMapEditor()
+	if UI.search( "/Window'Map Editor'/" ) ~= nil then return end
+
+	local width = WIDTH*.8
+	local height = HEIGHT*.8
+	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Map Editor")
+	local map = UI.newMap( width*.2, 30, width*.8 - 10, height - 40 )
+	theWin:add( map )
+
+	theWin:add( UI.newButton( 10, 50, width*.2 -20, 30, "Move", "MapEditorMoveMode()" ) )
+	theWin:add( UI.newButton( 10, 90, width*.2 -20, 30, "Gates", "MapEditorGateMode()" ) )
+
+	MapEditorMoveMode()
+
+end
+
+-- dummy function to do nothing.
+function DoNothing() end
+
+--
+-- Move Object Mode
+--
+-- Drag planets around the universe
+--
+
 function MapEditorMoveClick(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
 	if map == nil then return end
@@ -865,7 +890,12 @@ function MapEditorMoveMode()
 	map:addPosCallback( Action_MouseDrag, 'MapEditorMoveDrag' )
 end
 
-function DoNothing() end
+
+--
+-- Gate Mode
+--
+-- Drag to connect two points in space
+--
 
 function MapEditorGateClick(x,y)
 	local map = UI.search( "/Window'Map Editor'/Map/" )
@@ -890,19 +920,4 @@ function MapEditorGateMode()
 	map:addPosCallback( Action_MouseDrag, 'DoNothing' )
 end
 
-function CreateMapEditor()
-	if UI.search( "/Window'Map Editor'/" ) ~= nil then return end
-
-	local width = WIDTH*.8
-	local height = HEIGHT*.8
-	local theWin = UI.newWindow( WIDTH/2-width/2, HEIGHT/2-height/2, width, height, "Map Editor")
-	local map = UI.newMap( width*.2, 30, width*.8 - 10, height - 40 )
-	theWin:add( map )
-
-	theWin:add( UI.newButton( 10, 50, width*.2 -20, 30, "Move", "MapEditorMoveMode()" ) )
-	theWin:add( UI.newButton( 10, 90, width*.2 -20, 30, "Gates", "MapEditorGateMode()" ) )
-
-	MapEditorMoveMode()
-
-end
 

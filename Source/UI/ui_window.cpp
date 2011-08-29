@@ -113,16 +113,23 @@ bool Window::MouseDrag( int xi, int yi ){
 	return true;
 }
 
+/**\brief Toggle on or off the ability to drag this window by the top bar.
+ */
 bool Window::SetDragability( bool _draggable ){
 	draggable = _draggable;
 	return true;
 }
 
+/**\brief Close the Window
+ */
 void Window::CloseWindow( void* win)
 {
 	UI::Close((Window*)win);
 }
 
+/**\brief Add a Close Button to this Window
+ * \todo On windows that scroll, having the Close Button scroll with the Window is wrong. How to Fix?
+ */
 void Window::AddCloseButton() {
 	closeButton = new Button( this->GetW() - 40, 5, 20, 20, "X", Window::CloseWindow, this );
 	AddChild( closeButton );

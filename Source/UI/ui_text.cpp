@@ -86,7 +86,8 @@ void Text::AppendText( string text ) {
 				lines.push_back( curline );
 				curline = "";
 			}
-		} // Words
+		}
+		// Words
 		else 
 		{
 			string word = *iter;

@@ -63,11 +63,13 @@ void Textarea::Draw( int relx, int rely ) {
 	Widget::Draw(relx,rely);
 }
 
+/**\brief Accept Key Presses
+ */
 bool Textarea::KeyPress( SDLKey key ) {
 	string keyname = SDL_GetKeyName( key );
 	stringstream key_ss;
 	string key_s;
-
+	
 	switch(key){
 	// Ignore Modifiers
 	case SDLK_LSHIFT:
