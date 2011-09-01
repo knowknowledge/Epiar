@@ -7,6 +7,7 @@
     <name>Booster</name>
     <msrp>1000</msrp>
     <picName>Resources/Graphics/booster.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>1.500000</maxSpeed>
     <force>0.000000</force>
@@ -20,6 +21,7 @@
     <name>Carbon Plating</name>
     <msrp>25000</msrp>
     <picName>Resources/Graphics/hp_carbon.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -33,6 +35,7 @@
     <name>Copper Plating</name>
     <msrp>10000</msrp>
     <picName>Resources/Graphics/hp_copper.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -46,6 +49,7 @@
     <name>Directional Thrusters</name>
     <msrp>3000</msrp>
     <picName>Resources/Graphics/status_sensor.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>1.000000</maxSpeed>
     <force>1.000000</force>
@@ -59,6 +63,7 @@
     <name>Mass Shipping License</name>
     <msrp>50000</msrp>
     <picName>Resources/Graphics/sector_map.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>1.000000</maxSpeed>
     <force>0.000000</force>
@@ -72,6 +77,7 @@
     <name>Nav Aid</name>
     <msrp>50000</msrp>
     <picName>Resources/Graphics/nav_device.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -85,6 +91,7 @@
     <name>Organic Plating</name>
     <msrp>35000</msrp>
     <picName>Resources/Graphics/hp_organic.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -98,6 +105,7 @@
     <name>Shield Generator</name>
     <msrp>40000</msrp>
     <picName>Resources/Graphics/cloaking_device.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -111,6 +119,7 @@
     <name>Shipping License</name>
     <msrp>1000</msrp>
     <picName>Resources/Graphics/sector_map.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.000000</maxSpeed>
     <force>0.000000</force>
@@ -124,6 +133,7 @@
     <name>Steel Plating</name>
     <msrp>25000</msrp>
     <picName>Resources/Graphics/hp_electron.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>0.200000</maxSpeed>
     <force>0.000000</force>
@@ -137,6 +147,7 @@
     <name>Titanium Plating</name>
     <msrp>100000</msrp>
     <picName>Resources/Graphics/hp_titanium.png</picName>
+    <description></description>
     <rotsPerSecond>0.000000</rotsPerSecond>
     <maxSpeed>-0.200000</maxSpeed>
     <force>0.000000</force>

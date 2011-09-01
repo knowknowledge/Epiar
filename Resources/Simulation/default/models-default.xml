@@ -20,6 +20,7 @@
   </model>
   <model>
     <name>Fleet Guard</name>
+    <description>A tough and fast fighter, the Terran Fleet Guard is a match for any light raider class ships.</description>
     <image>Resources/Graphics/patrol.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.20</mass>
@@ -59,6 +60,9 @@
   </model>
   <model>
     <name>Gate Enforcer</name>
+    <description>The unique design of the Gate Enforcer allow it to quickly change directions.
+
+The Gate Enforcer model was originally created by the ARC Organization to serve as bodyguards during the creation of the ARC Gateway Network.</description>
     <image>Resources/Graphics/gate_patrol.png</image>
     <engine>Ion Engines</engine>
     <mass>2.00</mass>
@@ -98,6 +102,7 @@
   </model>
   <model>
     <name>Golden Uber</name>
+    <description></description>
     <image>Resources/Graphics/golden_uber.png</image>
     <engine>Ion Engines</engine>
     <mass>10.00</mass>
@@ -137,14 +142,15 @@
   </model>
   <model>
     <name>Hammer Freighter</name>
+    <description>Large but lightly armed, the Hammer Freighter won't win any beauty contests, but it does serve its purpose: transporting massive amounts of trade goods around the known universe.</description>
     <image>Resources/Graphics/hammerhead.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>2.00</mass>
     <rotationsPerSecond>0.15</rotationsPerSecond>
     <thrustOffset>44</thrustOffset>
     <maxSpeed>5.0</maxSpeed>
-    <hullStrength>800</hullStrength>
-    <shieldStrength>800</shieldStrength>
+    <hullStrength>1000</hullStrength>
+    <shieldStrength>1000</shieldStrength>
     <msrp>6000</msrp>
     <cargoSpace>300</cargoSpace>
     <weaponSlots>
@@ -160,20 +166,47 @@
         <content>Laser</content>
         <firingGroup>0</firingGroup>
       </slot>
+      <slot>
+        <name>left gun</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-20.0</x>
+          <y>-16.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right gun</name>
+        <coord>
+          <mode>auto</mode>
+          <x>20.0</x>
+          <y>-16.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Kartanal</name>
+    <description>A stealthy attack ship.
+
+The Kartanal was designed for lightning fast hit-and-run maneuvers.</description>
     <image>Resources/Graphics/kartanal.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.50</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>31</thrustOffset>
-    <maxSpeed>6.0</maxSpeed>
+    <maxSpeed>7.0</maxSpeed>
     <hullStrength>500</hullStrength>
-    <shieldStrength>500</shieldStrength>
-    <msrp>4000</msrp>
-    <cargoSpace>20</cargoSpace>
+    <shieldStrength>800</shieldStrength>
+    <msrp>30000</msrp>
+    <cargoSpace>5</cargoSpace>
     <weaponSlots>
       <slot>
         <name>forward slot 1</name>
@@ -203,15 +236,16 @@
   </model>
   <model>
     <name>Large Vesper</name>
+    <description>The Large Vesper is an improved version of the Mid Vesper.</description>
     <image>Resources/Graphics/trans2.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.80</mass>
     <rotationsPerSecond>0.45</rotationsPerSecond>
     <thrustOffset>25</thrustOffset>
     <maxSpeed>7.5</maxSpeed>
-    <hullStrength>400</hullStrength>
-    <shieldStrength>400</shieldStrength>
-    <msrp>5000</msrp>
+    <hullStrength>800</hullStrength>
+    <shieldStrength>800</shieldStrength>
+    <msrp>20000</msrp>
     <cargoSpace>30</cargoSpace>
     <weaponSlots>
       <slot>
@@ -254,6 +288,7 @@
   </model>
   <model>
     <name>Mid Vesper</name>
+    <description>The standard Vesper is a light and fast fighter mostly employed by members of the Venusian Union.</description>
     <image>Resources/Graphics/trans.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.70</mass>
@@ -262,7 +297,7 @@
     <maxSpeed>7.0</maxSpeed>
     <hullStrength>200</hullStrength>
     <shieldStrength>200</shieldStrength>
-    <msrp>3500</msrp>
+    <msrp>10000</msrp>
     <cargoSpace>10</cargoSpace>
     <weaponSlots>
       <slot>
@@ -293,6 +328,7 @@
   </model>
   <model>
     <name>Patitu</name>
+    <description></description>
     <image>Resources/Graphics/palitu01.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.60</mass>
@@ -332,15 +368,16 @@
   </model>
   <model>
     <name>Raven</name>
+    <description>A tiny fighter used primarily for scouting out enemies to relay their positions.</description>
     <image>Resources/Graphics/raven.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
-    <mass>0.60</mass>
+    <mass>0.55</mass>
     <rotationsPerSecond>0.35</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>7.0</maxSpeed>
     <hullStrength>300</hullStrength>
     <shieldStrength>300</shieldStrength>
-    <msrp>3000</msrp>
+    <msrp>6000</msrp>
     <cargoSpace>15</cargoSpace>
     <weaponSlots>
       <slot>
@@ -371,6 +408,7 @@
   </model>
   <model>
     <name>Shuttle</name>
+    <description>The Shuttle is the standard vehicle for new pilots.</description>
     <image>Resources/Graphics/shuttle.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
@@ -391,13 +429,14 @@
         </coord>
         <angle>0.0</angle>
         <motionAngle>0.0</motionAngle>
-        <content>Laser</content>
+        <content></content>
         <firingGroup>0</firingGroup>
       </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Solaran Battle Cruiser</name>
+    <description></description>
     <image>Resources/Graphics/btlcruiser.png</image>
     <engine>Ion Engines</engine>
     <mass>2.00</mass>
@@ -473,6 +512,7 @@
   </model>
   <model>
     <name>Terran Assist</name>
+    <description></description>
     <image>Resources/Graphics/tugship.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>2.20</mass>
@@ -481,11 +521,11 @@
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>800</hullStrength>
     <shieldStrength>800</shieldStrength>
-    <msrp>4000</msrp>
+    <msrp>30000</msrp>
     <cargoSpace>120</cargoSpace>
     <weaponSlots>
       <slot>
-        <name>slot 1</name>
+        <name>left wing slot</name>
         <coord>
           <mode>manual</mode>
           <x>-25.0</x>
@@ -497,7 +537,7 @@
         <firingGroup>0</firingGroup>
       </slot>
       <slot>
-        <name>slot 2</name>
+        <name>right wing slot</name>
         <coord>
           <mode>manual</mode>
           <x>25.0</x>
@@ -505,13 +545,38 @@
         </coord>
         <angle>0.0</angle>
         <motionAngle>0.0</motionAngle>
+        <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>left forward slot</name>
+        <coord>
+          <mode>auto</mode>
+          <x>6.0</x>
+          <y>20.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
         <content></content>
-        <firingGroup>1</firingGroup>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right forward slot</name>
+        <coord>
+          <mode>auto</mode>
+          <x>-6.0</x>
+          <y>20.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
       </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Terran Corvert Mark I</name>
+    <description></description>
     <image>Resources/Graphics/corvet.png</image>
     <engine>Ion Engines</engine>
     <mass>1.70</mass>
@@ -551,6 +616,7 @@
   </model>
   <model>
     <name>Terran Corvert Mark II</name>
+    <description></description>
     <image>Resources/Graphics/corvet2.png</image>
     <engine>Ion Engines</engine>
     <mass>1.80</mass>
@@ -626,6 +692,7 @@
   </model>
   <model>
     <name>Terran Explorer</name>
+    <description>This science vessel was commissioned for the exploration and analysis of new solar systems.</description>
     <image>Resources/Graphics/scivessel.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
@@ -634,37 +701,38 @@
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>500</hullStrength>
     <shieldStrength>500</shieldStrength>
-    <msrp>1500</msrp>
+    <msrp>7000</msrp>
     <cargoSpace>80</cargoSpace>
     <weaponSlots>
       <slot>
-        <name>forward slot 1</name>
+        <name>left turret</name>
         <coord>
           <mode>manual</mode>
-          <x>0.0</x>
-          <y>40.0</y>
-        </coord>
-        <angle>0.0</angle>
-        <motionAngle>0.0</motionAngle>
-        <content>Laser</content>
-        <firingGroup>0</firingGroup>
-      </slot>
-      <slot>
-        <name>rear swivel slot 2</name>
-        <coord>
-          <mode>manual</mode>
-          <x>0.0</x>
-          <y>-40.0</y>
+          <x>40.0</x>
+          <y>0.0</y>
         </coord>
         <angle>180.0</angle>
         <motionAngle>100.0</motionAngle>
-        <content>Strong Laser</content>
+        <content>Minigun</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>right turret</name>
+        <coord>
+          <mode>manual</mode>
+          <x>-40.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>180.0</angle>
+        <motionAngle>100.0</motionAngle>
+        <content>Minigun</content>
         <firingGroup>0</firingGroup>
       </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Terran FV-5 Frigate</name>
+    <description></description>
     <image>Resources/Graphics/terran-frigate.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
@@ -673,15 +741,15 @@
     <maxSpeed>5.0</maxSpeed>
     <hullStrength>500</hullStrength>
     <shieldStrength>500</shieldStrength>
-    <msrp>2000</msrp>
+    <msrp>10000</msrp>
     <cargoSpace>60</cargoSpace>
     <weaponSlots>
       <slot>
-        <name>forward slot 1</name>
+        <name>left slot</name>
         <coord>
           <mode>manual</mode>
           <x>7.0</x>
-          <y>-6.0</y>
+          <y>-9.0</y>
         </coord>
         <angle>0.0</angle>
         <motionAngle>0.0</motionAngle>
@@ -689,30 +757,55 @@
         <firingGroup>0</firingGroup>
       </slot>
       <slot>
-        <name>forward slot 2</name>
+        <name>right slot</name>
         <coord>
           <mode>manual</mode>
           <x>-7.0</x>
-          <y>-6.0</y>
+          <y>-9.0</y>
         </coord>
         <angle>0.0</angle>
         <motionAngle>0.0</motionAngle>
         <content>Laser</content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>forward slot</name>
+        <coord>
+          <mode>auto</mode>
+          <x>15.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
+        <firingGroup>0</firingGroup>
+      </slot>
+      <slot>
+        <name>main gun</name>
+        <coord>
+          <mode>auto</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>0.0</motionAngle>
+        <content></content>
         <firingGroup>0</firingGroup>
       </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Terran Miner</name>
+    <description></description>
     <image>Resources/Graphics/cargoclaw.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.30</mass>
     <rotationsPerSecond>0.30</rotationsPerSecond>
     <thrustOffset>30</thrustOffset>
     <maxSpeed>4.0</maxSpeed>
-    <hullStrength>600</hullStrength>
-    <shieldStrength>600</shieldStrength>
-    <msrp>1000</msrp>
+    <hullStrength>500</hullStrength>
+    <shieldStrength>300</shieldStrength>
+    <msrp>3000</msrp>
     <cargoSpace>75</cargoSpace>
     <weaponSlots>
       <slot>
@@ -739,10 +832,23 @@
         <content></content>
         <firingGroup>0</firingGroup>
       </slot>
+      <slot>
+        <name>rear mine release</name>
+        <coord>
+          <mode>manual</mode>
+          <x>0.0</x>
+          <y>0.0</y>
+        </coord>
+        <angle>0.0</angle>
+        <motionAngle>180.0</motionAngle>
+        <content>Mine</content>
+        <firingGroup>1</firingGroup>
+      </slot>
     </weaponSlots>
   </model>
   <model>
     <name>Terran XV</name>
+    <description></description>
     <image>Resources/Graphics/xv-1.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>1.00</mass>
@@ -782,6 +888,7 @@
   </model>
   <model>
     <name>Uber</name>
+    <description>The Uber is the prize of the Terran fleet.</description>
     <image>Resources/Graphics/uber.png</image>
     <engine>Ion Engines</engine>
     <mass>10.00</mass>
@@ -790,7 +897,7 @@
     <maxSpeed>4.0</maxSpeed>
     <hullStrength>5000</hullStrength>
     <shieldStrength>5000</shieldStrength>
-    <msrp>15000</msrp>
+    <msrp>18928</msrp>
     <cargoSpace>1000</cargoSpace>
     <weaponSlots>
       <slot>
@@ -893,6 +1000,7 @@
   </model>
   <model>
     <name>Vespan Carrier</name>
+    <description></description>
     <image>Resources/Graphics/Fighter.png</image>
     <engine>Ion Engines</engine>
     <mass>3.00</mass>

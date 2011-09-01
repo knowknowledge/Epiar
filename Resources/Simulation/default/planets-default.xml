@@ -6,18 +6,16 @@
   <planet>
     <name>Alexandria</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>-380</x>
-    <y>-900</y>
+    <x>-2541</x>
+    <y>-2816</y>
     <landable>1</landable>
     <traffic>6</traffic>
     <image>Resources/Graphics/planet2.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>5</militia>
-    <sphereOfInfluence>3000</sphereOfInfluence>
+    <sphereOfInfluence>3299</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Antikythera</name>
@@ -31,26 +29,36 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>20</militia>
     <sphereOfInfluence>3000</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Bersia</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>6640</x>
-    <y>-735</y>
+    <x>8669</x>
+    <y>-1531</y>
     <landable>1</landable>
     <traffic>6</traffic>
     <image>Resources/Graphics/planet6.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>7</militia>
-    <sphereOfInfluence>3000</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
+    <sphereOfInfluence>5843</sphereOfInfluence>
     <technology>Terran Medium-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Small-Scale Commerce</technology>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Burrow</name>
+    <alliance>Inter-Terran Conjunctive</alliance>
+    <x>-23899</x>
+    <y>9611</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/planet11.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>3215</sphereOfInfluence>
+    <technology>Terran Defence</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Castal</name>
@@ -62,11 +70,9 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <image>Resources/Graphics/planet3.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
-    <sphereOfInfluence>2000</sphereOfInfluence>
+    <sphereOfInfluence>3541</sphereOfInfluence>
     <technology>Terran Medium-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Destinaria</name>
@@ -79,29 +85,40 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Vespian</technology>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Vespian</technology>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Draust</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>41797</x>
+    <y>47764</y>
+    <landable>1</landable>
+    <traffic>3</traffic>
+    <image>Resources/Graphics/planet21.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>4392</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <technology>Solaran Outpost</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Exudusous</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>-11400</x>
-    <y>-6200</y>
+    <x>-12026</x>
+    <y>-7056</y>
     <landable>1</landable>
     <traffic>5</traffic>
     <image>Resources/Graphics/planet5.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>4</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Terran War Fleet</technology>
-    <technology>Terran Small-Scale Commerce</technology>
     <technology>Terran Medium-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Small-Scale Commerce</technology>
+    <technology>Terran War Fleet</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Facility 10</name>
@@ -115,26 +132,22 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>0</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Facility 17</name>
     <alliance>Venusian Union</alliance>
-    <x>46000</x>
-    <y>-25000</y>
+    <x>58049</x>
+    <y>-13957</y>
     <landable>1</landable>
     <traffic>1</traffic>
     <image>Resources/Graphics/station1.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
-    <technology>Vespian</technology>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Vespian</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Facility 33</name>
@@ -148,9 +161,7 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>1</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Fon`te Ral</name>
@@ -163,11 +174,9 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>6000</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
     <technology>Terran Defence</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Small-Scale Commerce</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Fonral</name>
@@ -179,11 +188,9 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <image>Resources/Graphics/planet10.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
-    <sphereOfInfluence>3000</sphereOfInfluence>
+    <sphereOfInfluence>3300</sphereOfInfluence>
     <technology>Solaran Outpost</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Galaphrain</name>
@@ -198,25 +205,49 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <sphereOfInfluence>8000</sphereOfInfluence>
     <technology>Solaran Outpost</technology>
     <technology>Solaran Defence</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Gloria</name>
+    <alliance>Solar Colonies</alliance>
+    <x>-66126</x>
+    <y>25347</y>
+    <landable>1</landable>
+    <traffic>2</traffic>
+    <image>Resources/Graphics/planet13.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>5702</sphereOfInfluence>
+    <technology>Solaran Outpost</technology>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Magellan</name>
+    <alliance>Solar Colonies</alliance>
+    <x>-56899</x>
+    <y>32509</y>
+    <landable>1</landable>
+    <traffic>0</traffic>
+    <image>Resources/Graphics/planet20.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>4829</sphereOfInfluence>
+    <technology>Solaran Outpost</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Malche</name>
     <alliance>Solar Colonies</alliance>
-    <x>-54300</x>
-    <y>13300</y>
+    <x>-55495</x>
+    <y>14139</y>
     <landable>1</landable>
     <traffic>2</traffic>
     <image>Resources/Graphics/planet16.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
-    <sphereOfInfluence>3500</sphereOfInfluence>
+    <sphereOfInfluence>3850</sphereOfInfluence>
     <technology>Solaran Outpost</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Maule</name>
@@ -230,25 +261,21 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>1</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Vespian</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Outpost 1</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>1350</x>
-    <y>1900</y>
+    <x>1814</x>
+    <y>2110</y>
     <landable>1</landable>
     <traffic>0</traffic>
     <image>Resources/Graphics/station1.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>0</militia>
-    <sphereOfInfluence>3000</sphereOfInfluence>
+    <sphereOfInfluence>2253</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Outpost 11</name>
@@ -256,22 +283,20 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <x>14400</x>
     <y>57500</y>
     <landable>1</landable>
-    <traffic>1</traffic>
+    <traffic>2</traffic>
     <image>Resources/Graphics/station1.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>5000</sphereOfInfluence>
-    <technology>Terran Medium-Scale Commerce</technology>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Medium-Scale Commerce</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Outpost 17</name>
     <alliance>Tunis Protectorate</alliance>
-    <x>18400</x>
-    <y>51500</y>
+    <x>18340</x>
+    <y>51346</y>
     <landable>1</landable>
     <traffic>2</traffic>
     <image>Resources/Graphics/station1.png</image>
@@ -279,9 +304,7 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
   </planet>
   <planet>
     <name>Outpost 23</name>
@@ -295,43 +318,95 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Outpost 31</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>40757</x>
+    <y>72607</y>
+    <landable>1</landable>
+    <traffic>3</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>3630</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Outpost 4</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>22962</x>
+    <y>65443</y>
+    <landable>1</landable>
+    <traffic>1</traffic>
+    <image>Resources/Graphics/station1.png</image>
+    <surface-image>Resources/Graphics/station1.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>5011</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Sirth</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>12850</x>
-    <y>19885</y>
+    <x>13168</x>
+    <y>19247</y>
     <landable>1</landable>
     <traffic>3</traffic>
     <image>Resources/Graphics/planet17.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>0</militia>
-    <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Terran Small-Scale Commerce</technology>
+    <sphereOfInfluence>4840</sphereOfInfluence>
     <technology>Terran Medium-Scale Commerce</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Small-Scale Commerce</technology>
+    <summary></summary>
+  </planet>
+  <planet>
+    <name>Tek</name>
+    <alliance>Venusian Union</alliance>
+    <x>57789</x>
+    <y>-8946</y>
+    <landable>1</landable>
+    <traffic>4</traffic>
+    <image>Resources/Graphics/planet16.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>6701</sphereOfInfluence>
+    <technology>Vespian</technology>
+    <technology>Vespian Exploration</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>The Guild Hall</name>
     <alliance>Autonomous Territory</alliance>
-    <x>-16040</x>
-    <y>-48500</y>
+    <x>-9159</x>
+    <y>-39245</y>
     <landable>1</landable>
-    <traffic>2</traffic>
+    <traffic>8</traffic>
     <image>Resources/Graphics/station1.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>0</militia>
-    <sphereOfInfluence>4000</sphereOfInfluence>
-    <technology>Terran Medium-Scale Commerce</technology>
+    <sphereOfInfluence>10370</sphereOfInfluence>
     <technology>Questionable Legality</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Terran Medium-Scale Commerce</technology>
+    <summary>The Guild Hall is the gathering place for some of the worst scum in known space.</summary>
+  </planet>
+  <planet>
+    <name>Tunis</name>
+    <alliance>Tunis Protectorate</alliance>
+    <x>32784</x>
+    <y>57354</y>
+    <landable>1</landable>
+    <traffic>4</traffic>
+    <image>Resources/Graphics/planet12.png</image>
+    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <militia>0</militia>
+    <sphereOfInfluence>5854</sphereOfInfluence>
+    <technology>Questionable Legality</technology>
+    <technology>Solaran Outpost</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Usian</name>
@@ -344,11 +419,9 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>6000</sphereOfInfluence>
-    <technology>Vespian Exploration</technology>
     <technology>Vespian</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Vespian Exploration</technology>
+    <summary></summary>
   </planet>
   <planet>
     <name>Ves</name>
@@ -361,11 +434,9 @@ Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit 
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>5</militia>
     <sphereOfInfluence>8000</sphereOfInfluence>
-    <technology>Vespian Guard</technology>
-    <technology>Vespian Exploration</technology>
     <technology>Vespian</technology>
-    <summary>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer diam purus, mollis vitae posuere vitae, facilisis non enim. Aenean egestas facilisis mauris, ut pulvinar leo laoreet sed. Nulla suscipit feugiat ligula sed bibendum. Nulla sed imperdiet purus. Praesent cursus nunc a ligula placerat tincidunt. Donec nec imperdiet erat. Curabitur quis lacus eget nisi ullamcorper consectetur.
-
-Suspendisse vitae purus nunc. Suspendisse consectetur ornare ultricies. Nam sit amet turpis nisi. Sed nec consequat turpis. Morbi ullamcorper enim vitae nibh scelerisque tempor. Donec quam lacus, feugiat nec suscipit sit amet, luctus eget dolor. Proin vitae quam sit amet quam varius dictum tempor et magna. Mauris ac diam nibh. Vestibulum vitae odio id leo mollis accumsan at id metus. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis augue dolor, non pharetra tortor. Curabitur egestas dignissim eleifend.</summary>
+    <technology>Vespian Exploration</technology>
+    <technology>Vespian Guard</technology>
+    <summary></summary>
   </planet>
 </planets>

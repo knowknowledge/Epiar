@@ -5,6 +5,9 @@
   <version-macro>0</version-macro>
   <engine>
     <name>Altaire Corp. NM66 Sublight Thrusters</name>
+    <description>The NM66 has been established as the standard engine for all small and medium ships.
+
+It doesn't have enough force to propel large or carrier class starships.</description>
     <forceOutput>5.0</forceOutput>
     <msrp>500</msrp>
     <foldDrive>0</foldDrive>
@@ -14,6 +17,11 @@
   </engine>
   <engine>
     <name>Ion Engines</name>
+    <description>The Ion Engine works by accelerating a stream of charged particles to near relativistic speeds before ejecting them.
+
+The Solaran Colonies have adopted Ion Engines into all of their standard ships due to their incredible acceletations.
+
+Some Carrier class starships in the Terran Navy also use Ion Engines as nothing else would be enough to move them.</description>
     <forceOutput>20.0</forceOutput>
     <msrp>2000</msrp>
     <foldDrive>1</foldDrive>

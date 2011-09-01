@@ -4,7 +4,7 @@
 	<version-minor>5</version-minor>
 	<version-macro>0</version-macro>
 	<name>default</name>
-	<description>The default simulation.</description>
+	<description>The default simulation is improving, but still needs a lot of work.</description>
 	<commodities>commodities-default.xml</commodities>
 	<planets>planets-default.xml</planets>
 	<gates>gates-default.xml</gates>
@@ -17,9 +17,9 @@
 	<players>Resources/Definitions/saved-games.xml</players>
 	<music>Resources/Audio/Music/beyond_the_network.it</music>
 	<defaultPlayer>
-		<start>Alexandria</start>
+		<start>Antikythera</start>
 		<model>Shuttle</model>
 		<engine>Altaire Corp. NM66 Sublight Thrusters</engine>
-		<credits>2000</credits>
+		<credits>3000</credits>
 	</defaultPlayer>
 </simulation>

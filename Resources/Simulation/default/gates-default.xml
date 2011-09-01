@@ -4,111 +4,231 @@
   <version-minor>5</version-minor>
   <version-macro>0</version-macro>
   <gate>
-    <name>Gate 0</name>
+    <name>101</name>
+    <x>-58796</x>
+    <y>24972</y>
+    <exit>99</exit>
+  </gate>
+  <gate>
+    <name>103</name>
+    <x>-22756</x>
+    <y>8553</y>
+    <exit>105</exit>
+  </gate>
+  <gate>
+    <name>105</name>
+    <x>-11902</x>
+    <y>2569</y>
+    <exit>103</exit>
+  </gate>
+  <gate>
+    <name>67</name>
+    <x>25489</x>
+    <y>67790</y>
+    <exit>69</exit>
+  </gate>
+  <gate>
+    <name>69</name>
+    <x>37420</x>
+    <y>72671</y>
+    <exit>67</exit>
+  </gate>
+  <gate>
+    <name>71</name>
+    <x>41023</x>
+    <y>70362</y>
+    <exit>73</exit>
+  </gate>
+  <gate>
+    <name>73</name>
+    <x>41483</x>
+    <y>50467</y>
+    <exit>71</exit>
+  </gate>
+  <gate>
+    <name>75</name>
+    <x>39873</x>
+    <y>40462</y>
+    <exit>77</exit>
+  </gate>
+  <gate>
+    <name>77</name>
+    <x>41483</x>
+    <y>45637</y>
+    <exit>75</exit>
+  </gate>
+  <gate>
+    <name>79</name>
+    <x>14228</x>
+    <y>59782</y>
+    <exit>81</exit>
+  </gate>
+  <gate>
+    <name>81</name>
+    <x>22163</x>
+    <y>63232</y>
+    <exit>79</exit>
+  </gate>
+  <gate>
+    <name>83</name>
+    <x>17793</x>
+    <y>55757</y>
+    <exit>85</exit>
+  </gate>
+  <gate>
+    <name>85</name>
+    <x>29523</x>
+    <y>57137</y>
+    <exit>83</exit>
+  </gate>
+  <gate>
+    <name>87</name>
+    <x>34583</x>
+    <y>54837</y>
+    <exit>89</exit>
+  </gate>
+  <gate>
+    <name>89</name>
+    <x>39298</x>
+    <y>47592</y>
+    <exit>87</exit>
+  </gate>
+  <gate>
+    <name>91</name>
+    <x>42978</x>
+    <y>46327</y>
+    <exit>93</exit>
+  </gate>
+  <gate>
+    <name>93</name>
+    <x>57008</x>
+    <y>-6457</y>
+    <exit>91</exit>
+  </gate>
+  <gate>
+    <name>95</name>
+    <x>54889</x>
+    <y>-9953</y>
+    <exit>97</exit>
+  </gate>
+  <gate>
+    <name>97</name>
+    <x>35408</x>
+    <y>-18024</y>
+    <exit>95</exit>
+  </gate>
+  <gate>
+    <name>99</name>
+    <x>-43489</x>
+    <y>31095</y>
+    <exit>101</exit>
+  </gate>
+  <gate>
+    <name>0</name>
     <x>-8000</x>
     <y>3200</y>
-    <exit>Gate 1</exit>
+    <exit>1</exit>
   </gate>
   <gate>
-    <name>Gate 1</name>
+    <name>1</name>
     <x>11340</x>
     <y>17820</y>
-    <exit>Gate 0</exit>
+    <exit>0</exit>
   </gate>
   <gate>
-    <name>Gate 10</name>
+    <name>10</name>
     <x>-10200</x>
     <y>-8500</y>
-    <exit>Gate 11</exit>
+    <exit>11</exit>
   </gate>
   <gate>
-    <name>Gate 11</name>
+    <name>11</name>
     <x>23970</x>
     <y>-19000</y>
-    <exit>Gate 10</exit>
+    <exit>10</exit>
   </gate>
   <gate>
-    <name>Gate 12</name>
+    <name>12</name>
     <x>-2000</x>
     <y>-5500</y>
-    <exit>Gate 13</exit>
+    <exit>13</exit>
   </gate>
   <gate>
-    <name>Gate 13</name>
+    <name>13</name>
     <x>16970</x>
     <y>-12000</y>
-    <exit>Gate 12</exit>
+    <exit>12</exit>
   </gate>
   <gate>
-    <name>Gate 14</name>
+    <name>14</name>
     <x>17000</x>
     <y>18500</y>
-    <exit>Gate 15</exit>
+    <exit>15</exit>
   </gate>
   <gate>
-    <name>Gate 15</name>
+    <name>15</name>
     <x>23070</x>
     <y>-5400</y>
-    <exit>Gate 14</exit>
+    <exit>14</exit>
   </gate>
   <gate>
-    <name>Gate 16</name>
+    <name>16</name>
     <x>21300</x>
     <y>52300</y>
-    <exit>Gate 17</exit>
+    <exit>17</exit>
   </gate>
   <gate>
-    <name>Gate 17</name>
+    <name>17</name>
     <x>35000</x>
     <y>38000</y>
-    <exit>Gate 16</exit>
+    <exit>16</exit>
   </gate>
   <gate>
-    <name>Gate 2</name>
+    <name>2</name>
     <x>40000</x>
     <y>-8000</y>
-    <exit>Gate 3</exit>
+    <exit>3</exit>
   </gate>
   <gate>
-    <name>Gate 3</name>
+    <name>3</name>
     <x>26000</x>
     <y>-6000</y>
-    <exit>Gate 2</exit>
+    <exit>2</exit>
   </gate>
   <gate>
-    <name>Gate 4</name>
+    <name>4</name>
     <x>9800</x>
     <y>21000</y>
-    <exit>Gate 5</exit>
+    <exit>5</exit>
   </gate>
   <gate>
-    <name>Gate 5</name>
+    <name>5</name>
     <x>-40000</x>
     <y>18000</y>
-    <exit>Gate 4</exit>
+    <exit>4</exit>
   </gate>
   <gate>
-    <name>Gate 6</name>
+    <name>6</name>
     <x>5300</x>
     <y>59300</y>
-    <exit>Gate 7</exit>
+    <exit>7</exit>
   </gate>
   <gate>
-    <name>Gate 7</name>
+    <name>7</name>
     <x>-52000</x>
     <y>34000</y>
-    <exit>Gate 6</exit>
+    <exit>6</exit>
   </gate>
   <gate>
-    <name>Gate 8</name>
+    <name>8</name>
     <x>-14200</x>
     <y>-7500</y>
-    <exit>Gate 9</exit>
+    <exit>9</exit>
   </gate>
   <gate>
-    <name>Gate 9</name>
+    <name>9</name>
     <x>-49970</x>
     <y>11000</y>
-    <exit>Gate 8</exit>
+    <exit>8</exit>
   </gate>
 </gates>
