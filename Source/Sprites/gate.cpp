@@ -8,6 +8,8 @@
  */
 
 #include "includes.h"
+#include "common.h"
+
 #include "Graphics/image.h"
 #include "Sprites/spritemanager.h"
 #include "Sprites/sprite.h"
@@ -28,12 +30,12 @@
 /**\brief Creates a Top Gate as well as a Bottom Gate automatically
  * \todo Remove the SpriteManager Instance access.
  */
-Gate::Gate(Coordinate pos) {
+Gate::Gate(Coordinate pos, string _name) {
 	top = true;
 	SetImage( Image::Get("Resources/Graphics/gate1_top.png") );
 	
 	// Create the PartnerID Gate
-	Gate* partner = new Gate(this->GetID());
+	Gate* partner = new Gate(GetID());
 	partnerID = partner->GetID();
 	exitID = 0;
 	SpriteManager::Instance()->Add((Sprite*)partner);
@@ -41,6 +43,13 @@ Gate::Gate(Coordinate pos) {
 	// Set both Position and Angle at the same time
 	SetWorldPosition(pos);
 	SetAngle( float( rand() %360 ) );
+
+	if( _name == "" ) {
+		stringstream val_ss;
+		val_ss << GetID();
+		val_ss >> _name;
+	}
+	SetName( _name );
 }
 
 /**\brief Creates a Bottom Gate
@@ -134,7 +143,6 @@ void Gate::SetPair(Gate* one, Gate* two) {
 	angle = (two->GetWorldPosition() - one->GetWorldPosition()).GetAngle();
 	two->SetAngle(angle+180);
 	one->SetAngle(angle);
-
 }
 
 /**\brief Get the Top Gate

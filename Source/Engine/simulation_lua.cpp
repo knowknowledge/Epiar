@@ -367,8 +367,12 @@ int Simulation_Lua::NewGatePair(lua_State *L){
 	Gate* gate_2 = new Gate( Coordinate( luaL_checkinteger(L,3), luaL_checkinteger(L,4)));
 	GetSimulation(L)->GetSpriteManager()->Add((Sprite*)gate_1);
 	GetSimulation(L)->GetSpriteManager()->Add((Sprite*)gate_2);
+
 	// Note that we need to set the exit _after_ adding to the SpriteManager since SetExit checks that the Sprite exists.
 	Gate::SetPair( gate_1, gate_2 );
+
+	GetSimulation(L)->GetGates()->AddOrReplace( gate_1 );
+	GetSimulation(L)->GetGates()->AddOrReplace( gate_2 );
 
 	return 0;
 }

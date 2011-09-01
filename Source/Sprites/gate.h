@@ -20,7 +20,7 @@
 
 class Gate : public Sprite, public Component {
 	public:
-		Gate(Coordinate pos = Coordinate(0,0));
+		Gate(Coordinate pos = Coordinate(0,0), string name="" );
 
 		bool FromXMLNode( xmlDocPtr doc, xmlNodePtr node );
 		xmlNodePtr ToXMLNode(string componentName);
