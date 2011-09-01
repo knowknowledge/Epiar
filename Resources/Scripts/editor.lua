@@ -1,6 +1,5 @@
 -- Use this script for a solar system
 infoWindows = {}
-componentWins = {}
 
 --- View components
 function componentDebugger()
@@ -135,13 +134,13 @@ function componentViewer(kind, listFunc)
 	end
 	
 	list = listFunc()
-	componentWins[kind] = UI.newWindow(10,40,140,(#list)*30+90,kind)
+	local theWin = UI.newWindow(10,40,140,(#list)*30+90,kind)
 	for i = 1,#list do
 		s = list[i]
-		componentWins[kind]:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
+		theWin:add( UI.newButton(10,i*30,120,30,s,string.format("showComponent(%q,%q)",kind,s)))
 	end
-	componentWins[kind]:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
-	componentWins[kind]:addCloseButton()
+	theWin:add( UI.newButton(10,#list*30+40,120,30,"NEW",string.format("showComponent(%q,%q)",kind,'')))
+	theWin:addCloseButton()
 end
 
 function showComponent(kind, name)
