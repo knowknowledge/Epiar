@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0"?>
 <models>
   <version-major>0</version-major>
   <version-minor>5</version-minor>
   <version-macro>0</version-macro>
   <model>
     <name>Escape Pod</name>
+    <description></description>
     <image>Resources/Graphics/podv.png</image>
     <engine>Altaire Corp. NM66 Sublight Thrusters</engine>
     <mass>0.10</mass>
