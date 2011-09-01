@@ -743,26 +743,20 @@ function simDefaults()
 	local drop
 	local planets = Epiar.planetNames()
 	drop = UI.newDropdown( 90, yoff, 200, 20, planets)
-	if planets[playerInfo.start] then
-		drop:setText( playerInfo.start )
-	end
+	drop:setText( playerInfo.start )
 	
 	theWin:add( UI.newLabel( 20, yoff, "Start:"), drop )
 	yoff = yoff + 30
 
 	local models = Epiar.models()
 	drop = UI.newDropdown( 90, yoff, 200, 20, models)
-	if models[playerInfo.model] ~= nil then
-		drop:setText( playerInfo.model )
-	end
+	drop:setText( playerInfo.model )
 	theWin:add( UI.newLabel( 20, yoff, "Model:"), drop )
 	yoff = yoff + 30
 
 	local engines = Epiar.engines()
 	drop = UI.newDropdown( 90, yoff, 200, 20, engines)
-	if engines[playerInfo.engine] ~= nil then
-		drop:setText( playerInfo.engine )
-	end
+	drop:setText( playerInfo.engine )
 	theWin:add( UI.newLabel( 20, yoff, "Engine:"), drop )
 	yoff = yoff + 30
 
