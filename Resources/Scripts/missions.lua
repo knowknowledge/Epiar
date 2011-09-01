@@ -123,7 +123,7 @@ ReturnAmbassador = {
 				f("Such fun adventures!  I will always remember how you fought off those %s!", choose(enemies)),
 				f("Not the most direct route, but we got here safely."),
 				f("If you ever visit %s again, come say hello.", missionTable.planet),
-				f("I'll meet you again at %s.", choose(Epiar.planets())),
+				f("I'll meet you again at %s.", choose(Epiar.planets()):GetName() ),
 				f("I can't wait to tell my friend %s about this trip.", choose(names)),
 				f("You've made a powerful %s friend today. Thank you.", missionTable.alliance),
 			}
@@ -279,7 +279,7 @@ CollectArtifacts = {
 	Reject = function( missionTable )
 		local rejectMessage = "The %s %s will get away with the artifacts."
 		rejectMessage = rejectMessage:format( missionTable.EnemyAlliance, missionTable.Actors )
-		UI.newAlert( acceptMessage  )
+		UI.newAlert( rejectMessage  )
 	end,
 	Update = function( missionTable )
 	end,
