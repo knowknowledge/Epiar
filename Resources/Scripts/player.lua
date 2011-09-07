@@ -745,6 +745,10 @@ function createHUD()
 	HUD.newStatus("Target (H):", 130, UPPER_RIGHT, "HudTargetHull()")
 	HUD.newStatus("Target (S):", 130, UPPER_RIGHT, "HudTargetShield()")
 
+	-- Intercom Snoopers
+	HUD.newStatus("Personality:", 130, UPPER_RIGHT, "HudTargetStateMachine()")
+	HUD.newStatus("Activity:", 130, UPPER_RIGHT, "HudTargetState()")
+
 end
 
 function playerAmmo(weaponName)
@@ -807,6 +811,30 @@ function HudTargetShield()
 		end
 	end
 	return 0
+end
+
+function HudTargetStateMachine()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- Acquire target
+	if targettedSprite ~= nil then
+		local spritetype = targettedSprite:GetType()
+		if (spritetype == SPRITE_SHIP) or (spritetype == SPRITE_PLAYER) then -- Ship or Player
+			local machine,state = targettedSprite:GetState()
+			return machine
+		end
+	end
+	return ""
+end
+
+function HudTargetState()
+	local targettedSprite = Epiar.getSprite( HUD.getTarget() ) -- Acquire target
+	if targettedSprite ~= nil then
+		local spritetype = targettedSprite:GetType()
+		if (spritetype == SPRITE_SHIP) or (spritetype == SPRITE_PLAYER) then -- Ship or Player
+			local machine,state = targettedSprite:GetState()
+			return state
+		end
+	end
+	return ""
 end
 
 function playerInformation()
