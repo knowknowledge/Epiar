@@ -330,7 +330,7 @@ string Mission::GetStringAttribute( string attribute )
 	if( lua_isstring(L, lua_gettop(L)) )
 	{
 		value = (string)luaL_checkstring(L, lua_gettop(L));
-		printf("%s of this Mission: %s.\n", type.c_str(), value.c_str());
+		//printf("%s of this Mission: %s.\n", attribute.c_str(), value.c_str());
 	} else {
 		// TODO: Error!
 	}

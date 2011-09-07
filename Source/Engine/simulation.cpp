@@ -262,10 +262,9 @@ void Unpause(void *simulationInstance) {
 void SaveMapScale( void *simulationInstance ) {
 	Map* map = (Map*)UI::Search("/Window'Navigation'/Map/");
 	if( map != NULL) {
-		printf("Saving Scale: %0.2f\n", map->GetScale() );
 		((Simulation *)simulationInstance)->SetMapScale( map->GetScale() );
 	} else {
-		printf("Not Saving Scale\n" );
+		LogMsg(WARN, "Could not saving scale because the Map could not be found.\n" );
 	}
 }
 
@@ -697,7 +696,6 @@ void Simulation::CreateNavMap( void )
 
 	// Restore Saved Scale
 	if( mapScale > 0.0f ) {
-		printf("Restoring Scale: %0.2f\n", map->GetScale() );
 		map->SetScale( mapScale );
 	}
 	map->RegisterAction(Action_MouseWDown, new ObjectAction(SaveMapScale, this) );

@@ -34,7 +34,6 @@ Paragraph::Paragraph( int x, int y, int maxw, int h, string text )
 
 	SetW( lines.GetWidth() );
 	SetH( lines.GetHeight() );
-	printf( "Size = (%d,%d)\n", GetW(), GetH() );
 }
 
 /**\brief Draw the Paragraph
@@ -60,7 +59,6 @@ void Paragraph::SetText(string text) {
 	lines.SetText( text );
 	SetW( lines.GetWidth() );
 	SetH( lines.GetHeight() );
-	printf( "Size = (%d,%d)\n", w,h );
 }
 
 /**\brief Append some text to the current text
@@ -69,7 +67,6 @@ void Paragraph::AppendText(string text) {
 	lines.AppendText( text );
 	SetW( lines.GetWidth() );
 	SetH( lines.GetHeight() );
-	printf( "Size = (%d,%d)\n", w,h );
 }
 
 /** @} */
