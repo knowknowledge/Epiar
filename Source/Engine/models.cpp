@@ -228,7 +228,6 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
 		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
 		xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
-		xmlNewChild(coordPtr, NULL, BAD_CAST "mode", BAD_CAST slot->mode.c_str() );
 		snprintf(ntos, 256, "%.1f", slot->x);
 		xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST ntos);
 		snprintf(ntos, 256, "%.1f", slot->y);
@@ -272,10 +271,6 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			// go deeper...
 
 			xmlNodePtr coordAttr;
-			if( (coordAttr = FirstChildNamed(attr,"mode")) ){
-				value = NodeToString(doc,coordAttr);
-				newSlot.mode = value;
-			} else return false;
 			if( (coordAttr = FirstChildNamed(attr,"x")) ){
 				value = NodeToString(doc,coordAttr);
 				newSlot.x = atof(value.c_str());

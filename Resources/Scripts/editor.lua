@@ -281,8 +281,8 @@ function showComponent(kind, name)
 			theWin:add(UI.newButton( 10, yoff,width-30,20,"Edit weapon slots...", string.format("EditWeaponSlots(%q, %q)",name,title)))
 			yoff = yoff+20+5
 
-			theInfo[title]["desiredLength"] = 16
-			theInfo[title]["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
+			theInfo[title].desiredLength = 16
+			theInfo[title].filler = {enabled="no", name="", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 			theWeaponTables[title] = theInfo[title]
 		else
 			print("Hmmm, it looks like '",fieldType,"' hasn't been implemented yet.")
@@ -573,9 +573,8 @@ function infoTable(info, win, variables, fieldDesc, desiredSize)
 	local length = info["length"]
 	local desiredLength = info["desiredLength"]
 
-	for colNum =0,(info["fields"]-1) do
-		local colKey = (string.format("%d", colNum))
-		local title = variables[colKey]
+	for colNum,title in ipairs(variables) do
+		print(colNum,title)
 		local w = fieldWidth(title)
 		win:add(UI.newLabel( 10 + xoff, y2 - 20, title))
 		xoff = xoff + w
@@ -606,11 +605,9 @@ function infoTable(info, win, variables, fieldDesc, desiredSize)
 
 		xoff = 0
 
-		for colNum =0,(info["fields"]-1) do
-			local colKey = (string.format("%d", colNum))
-			local title = variables[colKey]
+		for colNum,title in ipairs(variables) do
 			local w = fieldWidth(title)
-			local value = thisrow[title]
+			local value = thisrow[title] or ""
 			if fieldType(title) == 'textbox' then
 				rowElements[title] = UI.newTextbox( 10 + xoff, y2, w, 1, value)
 			elseif fieldType(title) == 'dropdown' then
@@ -647,14 +644,22 @@ function EditWeaponSlots(name, title)
 	local tab = infoWindows[name].weapontables[title]
 
 	-- Tell the table interface function to make extra rows until there are 16
-	tab["desiredLength"] = 16
-	tab["filler"] = {enabled="no", name="", mode="auto", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
+	tab.desiredLength = 16
+	tab.filler = {enabled="no", name="", x=0, y=0, angle=0, motionAngle=0, content="", firingGroup=0}
 
 	-- This ugly indexing trick is a workaround for Lua's apparent lack of sensible element ordering.
 	-- Clean it up if a better built-in solution can be found.
 
-	variables = { ["0"]="enabled", ["1"]="name", ["2"]="mode", ["3"]="x", ["4"]="y",
-			  ["5"]="angle", ["6"]="motionAngle", ["7"]="content", ["8"]="firingGroup" }
+	variables = {
+		"enabled",
+		"name",
+		"x",
+		"y",
+		"angle",
+		"motionAngle",
+		"content",
+		"firingGroup",
+	}
 
 	local contentOptions = Epiar.weapons()
 	table.insert(contentOptions, 1, "(empty)")
@@ -662,7 +667,6 @@ function EditWeaponSlots(name, title)
 	local fieldDesc = {
 		["enabled"]	= { 90, 'dropdown', {'yes','no'} },
 		["name"]	= { 170,'textbox', nil },
-		["mode"]	= { 70, 'dropdown', {'auto', 'manual'} },
 		["x"]		= { 40, 'textbox', nil },
 		["y"]		= { 40, 'textbox', nil },
 		["angle"]	= { 50, 'textbox', nil },
@@ -671,7 +675,7 @@ function EditWeaponSlots(name, title)
 		["firingGroup"]	= { 75, 'dropdown', {0, 1} }
 	}
 
-	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(\"%s\", \"%s\", %d, %d)", name, title, tab["desiredLength"], tab["fields"]) ) ) )
+	editWeaponSlotsWin:add(UI.newButton( 150,400,100,30, "Finish", (string.format("finishEditingWeaponSlots(%q, %q, %d, %d)", name, title, tab.desiredLength, tab.fields) ) ) )
 
 	local imageName = infoWindows[name].texts["Image"]:GetText()
 
@@ -702,9 +706,8 @@ function finishEditingWeaponSlots(name, title, desiredLength, fields)
 	for rowNum =0,(desiredLength-1) do
 		local r = {}
 		local rowKey = string.format("%d", rowNum)
-		for colNum =0,(fields-1) do
-			local fieldName = variables[(string.format("%d", colNum))]
-			local value = fieldTable[(string.format("%d",rowNum))][fieldName]:GetText()
+		for colNum,fieldName in ipairs(variables) do
+			local value = fieldTable[rowKey][fieldName]:GetText()
 			if value == '(empty)' then value = '' end
 			r[fieldName] = value
 			if infoWindows[name].weapontables[title][rowKey] == nil then

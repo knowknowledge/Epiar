@@ -875,7 +875,6 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 
 		Lua::setField("enabled", "yes");
 		Lua::setField("name", s.name.c_str() );
-		Lua::setField("mode", s.mode.c_str() );
 		Lua::setField("x", (float)s.x);
 		Lua::setField("y", (float)s.y);
 		Lua::setField("angle", (float)s.angle);
@@ -1234,7 +1233,6 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			if( lua_istable(L, row) ){
 				WeaponSlot s;
 				s.name = Lua::getStringField(row, "name");
-				s.mode = Lua::getStringField(row, "mode");
 				s.x = Lua::getNumField(row, "x");
 				s.y = Lua::getNumField(row, "y");
 				s.angle = Lua::getNumField(row, "angle");

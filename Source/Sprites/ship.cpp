@@ -428,28 +428,17 @@ FireStatus Ship::Fire( int target ) {
 					int y_offset = (int)(weaponSlots[slot].y);
 					int x_offset = (int)(weaponSlots[slot].x);
 
-					// if mode is manual, then the x,y offsets from the XML file are to be used
-					if(weaponSlots[slot].mode == "manual"){
-						// adjust for y offset
-						worldPosition += Coordinate(
-							trig->GetCos( angle ) * y_offset,
-							-trig->GetSin( angle ) * y_offset
-						);
+					// adjust for y offset
+					worldPosition += Coordinate(
+						trig->GetCos( angle ) * y_offset,
+						-trig->GetSin( angle ) * y_offset
+					);
 
-						// adjust for x offset
-						worldPosition += Coordinate(
-							trig->GetSin(angle) * x_offset,
-							trig->GetCos(angle) * x_offset
-						);
-					}
-					// if mode is auto, use the old-style firing offset behavior
-					else if(weaponSlots[slot].mode == "auto"){
-						int offset = model->GetImage()->GetHalfHeight();
-						worldPosition += Coordinate(
-							trig->GetCos( angle ) * offset,
-							-trig->GetSin( angle ) * offset
-						);
-					}
+					// adjust for x offset
+					worldPosition += Coordinate(
+						trig->GetSin(angle) * x_offset,
+						trig->GetCos(angle) * x_offset
+					);
 
 					SpriteManager *sprites = SpriteManager::Instance();
 					Sprite *targetSprite = sprites->GetSpriteByID(target);

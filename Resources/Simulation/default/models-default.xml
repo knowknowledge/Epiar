@@ -35,7 +35,6 @@
       <slot>
         <name>slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-15.0</x>
           <y>7.0</y>
         </coord>
@@ -47,7 +46,6 @@
       <slot>
         <name>slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>15.0</x>
           <y>7.0</y>
         </coord>
@@ -77,7 +75,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>side slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-31.0</x>
           <y>7.0</y>
         </coord>
@@ -89,7 +86,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>side slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>31.0</x>
           <y>7.0</y>
         </coord>
@@ -117,7 +113,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>rear forward-facing 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-38.0</x>
           <y>-54.0</y>
         </coord>
@@ -129,7 +124,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>rear forward-facing 4</name>
         <coord>
-          <mode>manual</mode>
           <x>36.0</x>
           <y>-54.0</y>
         </coord>
@@ -157,7 +151,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>center turret 1</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -169,7 +162,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>left gun</name>
         <coord>
-          <mode>auto</mode>
           <x>-20.0</x>
           <y>-16.0</y>
         </coord>
@@ -181,7 +173,6 @@ The Gate Enforcer model was originally created by the ARC Organization to serve 
       <slot>
         <name>right gun</name>
         <coord>
-          <mode>auto</mode>
           <x>20.0</x>
           <y>-16.0</y>
         </coord>
@@ -211,7 +202,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-13.0</x>
           <y>-12.0</y>
         </coord>
@@ -223,7 +213,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>13.0</x>
           <y>-12.0</y>
         </coord>
@@ -251,7 +240,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-5.0</x>
           <y>24.0</y>
         </coord>
@@ -263,7 +251,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>5.0</x>
           <y>24.0</y>
         </coord>
@@ -275,7 +262,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 3</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -303,7 +289,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -315,7 +300,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>turret slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -343,7 +327,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>-1.2</y>
         </coord>
@@ -355,7 +338,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>-1.2</y>
         </coord>
@@ -383,7 +365,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>swivel slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-7.0</x>
           <y>14.0</y>
         </coord>
@@ -395,7 +376,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>swivel slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>7.0</x>
           <y>14.0</y>
         </coord>
@@ -423,7 +403,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>-0.3</y>
         </coord>
@@ -451,7 +430,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>-0.3</x>
           <y>-3.5</y>
         </coord>
@@ -463,7 +441,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>auto</mode>
           <x>-0.2</x>
           <y>-3.5</y>
         </coord>
@@ -475,7 +452,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 3</name>
         <coord>
-          <mode>auto</mode>
           <x>0.2</x>
           <y>-3.5</y>
         </coord>
@@ -487,7 +463,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear swivel slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-50.0</x>
           <y>-10.0</y>
         </coord>
@@ -499,7 +474,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>turret slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>1.2</y>
         </coord>
@@ -527,7 +501,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left wing slot</name>
         <coord>
-          <mode>manual</mode>
           <x>-25.0</x>
           <y>-8.0</y>
         </coord>
@@ -539,7 +512,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right wing slot</name>
         <coord>
-          <mode>manual</mode>
           <x>25.0</x>
           <y>-8.0</y>
         </coord>
@@ -551,7 +523,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left forward slot</name>
         <coord>
-          <mode>auto</mode>
           <x>6.0</x>
           <y>20.0</y>
         </coord>
@@ -563,7 +534,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right forward slot</name>
         <coord>
-          <mode>auto</mode>
           <x>-6.0</x>
           <y>20.0</y>
         </coord>
@@ -591,7 +561,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left forward-facing</name>
         <coord>
-          <mode>manual</mode>
           <x>-12.0</x>
           <y>9.0</y>
         </coord>
@@ -603,7 +572,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right forward-facing</name>
         <coord>
-          <mode>manual</mode>
           <x>12.0</x>
           <y>9.0</y>
         </coord>
@@ -631,7 +599,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left forward-facing 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-20.0</x>
           <y>5.0</y>
         </coord>
@@ -643,7 +610,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left forward-facing 2</name>
         <coord>
-          <mode>manual</mode>
           <x>-18.0</x>
           <y>5.0</y>
         </coord>
@@ -655,7 +621,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right forward-facing 1</name>
         <coord>
-          <mode>manual</mode>
           <x>18.0</x>
           <y>5.0</y>
         </coord>
@@ -667,7 +632,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right forward-facing 2</name>
         <coord>
-          <mode>manual</mode>
           <x>20.0</x>
           <y>5.0</y>
         </coord>
@@ -679,7 +643,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>top turret</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -707,7 +670,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left turret</name>
         <coord>
-          <mode>manual</mode>
           <x>40.0</x>
           <y>0.0</y>
         </coord>
@@ -719,7 +681,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right turret</name>
         <coord>
-          <mode>manual</mode>
           <x>-40.0</x>
           <y>0.0</y>
         </coord>
@@ -747,7 +708,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>left slot</name>
         <coord>
-          <mode>manual</mode>
           <x>7.0</x>
           <y>-9.0</y>
         </coord>
@@ -759,7 +719,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>right slot</name>
         <coord>
-          <mode>manual</mode>
           <x>-7.0</x>
           <y>-9.0</y>
         </coord>
@@ -771,7 +730,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot</name>
         <coord>
-          <mode>auto</mode>
           <x>15.0</x>
           <y>0.0</y>
         </coord>
@@ -783,7 +741,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>main gun</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -811,7 +768,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-6.0</x>
           <y>13.0</y>
         </coord>
@@ -823,7 +779,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>auto</mode>
           <x>6.0</x>
           <y>13.0</y>
         </coord>
@@ -835,7 +790,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear mine release</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -863,7 +817,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>-0.2</x>
           <y>-1.0</y>
         </coord>
@@ -875,7 +828,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>auto</mode>
           <x>0.2</x>
           <y>-1.0</y>
         </coord>
@@ -903,7 +855,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear forward-facing 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-38.0</x>
           <y>-54.0</y>
         </coord>
@@ -915,7 +866,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear forward-facing 2</name>
         <coord>
-          <mode>manual</mode>
           <x>-28.0</x>
           <y>-54.0</y>
         </coord>
@@ -927,7 +877,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear forward-facing 3</name>
         <coord>
-          <mode>manual</mode>
           <x>28.0</x>
           <y>-54.0</y>
         </coord>
@@ -939,7 +888,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>rear forward-facing 4</name>
         <coord>
-          <mode>manual</mode>
           <x>36.0</x>
           <y>-54.0</y>
         </coord>
@@ -951,7 +899,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-8.0</x>
           <y>65.0</y>
         </coord>
@@ -963,7 +910,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>manual</mode>
           <x>-4.0</x>
           <y>65.0</y>
         </coord>
@@ -975,7 +921,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 3</name>
         <coord>
-          <mode>manual</mode>
           <x>4.0</x>
           <y>65.0</y>
         </coord>
@@ -987,7 +932,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 4</name>
         <coord>
-          <mode>manual</mode>
           <x>8.0</x>
           <y>65.0</y>
         </coord>
@@ -1015,7 +959,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>side forward-facing 1</name>
         <coord>
-          <mode>manual</mode>
           <x>-18.0</x>
           <y>15.0</y>
         </coord>
@@ -1027,7 +970,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>side forward-facing 2</name>
         <coord>
-          <mode>manual</mode>
           <x>18.0</x>
           <y>15.0</y>
         </coord>
@@ -1039,7 +981,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 1</name>
         <coord>
-          <mode>auto</mode>
           <x>-3.0</x>
           <y>0.0</y>
         </coord>
@@ -1051,7 +992,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>forward slot 2</name>
         <coord>
-          <mode>auto</mode>
           <x>0.0</x>
           <y>0.0</y>
         </coord>
@@ -1063,7 +1003,6 @@ The Kartanal was designed for lightning fast hit-and-run maneuvers.</description
       <slot>
         <name>turret slot</name>
         <coord>
-          <mode>manual</mode>
           <x>0.0</x>
           <y>12.0</y>
         </coord>
