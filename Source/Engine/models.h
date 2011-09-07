@@ -57,7 +57,6 @@ class Model : public Outfit {
 		int GetWeaponSlotCount();
 		bool ConfigureWeaponSlots( xmlDocPtr, xmlNodePtr );
 		bool ConfigureWeaponSlots( vector<WeaponSlot>& slots );
-		bool ConfigureWeaponSlots();
 
 	private:
 		Image *image; ///< The Image used when drawing these ships in space.

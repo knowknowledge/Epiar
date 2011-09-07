@@ -185,9 +185,7 @@ bool Model::FromXMLNode( xmlDocPtr doc, xmlNodePtr node ) {
 		// pass the weaponSlots XML node into a handler function
 		ConfigureWeaponSlots( doc, attr );
 	} else {
-		LogMsg( ERR, "Did not find weapon slot configuration - assuming defaults.");
-		// with no parameters, it sets default values
-		ConfigureWeaponSlots();
+		//LogMsg( WARN, "Did not find weapon slot configuration - ship cannot have weapons.");
 	}
 
 	return true;
@@ -316,35 +314,6 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
  */
 bool Model::ConfigureWeaponSlots( vector<WeaponSlot>& slots ) {
         this->weaponSlots = slots;
-        return true;
-}
-
-/**\brief Configure the ship's weapon slots using default values.
- */
-bool Model::ConfigureWeaponSlots() {
-        WeaponSlot wsFront1;
-        WeaponSlot wsFront2;
-
-        wsFront1.name = "front 1";
-        wsFront1.x = -0.3;
-	wsFront1.y = 2.0;
-        wsFront1.angle = 0.0;
-        wsFront1.motionAngle = 0.0;
-	wsFront1.content = "";
-	wsFront1.firingGroup = 0;
-
-        wsFront2.name = "front 2";
-        wsFront1.x = 0.3;
-	wsFront1.y = 2.0;
-        wsFront2.angle = 0.0;
-        wsFront2.motionAngle = 0.0;
-	wsFront2.firingGroup = 1;
-
-	vector<WeaponSlot> newSlots;
-        newSlots.push_back(wsFront1);
-        newSlots.push_back(wsFront2);
-	this->weaponSlots = newSlots;
-
         return true;
 }
 
