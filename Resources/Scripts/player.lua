@@ -12,17 +12,25 @@ playerCommands = {
 	{'left', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
 	{'right', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
 	{'down', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
-	{'rshift', "Fire Secondary Weapon 1", "playerFire(2)",KEYTYPED},
-	{'lshift', "Fire Secondary Weapon 2", "playerFire(2)",KEYTYPED},
-	{'tab', "Target Ship", "targetShip()", KEYTYPED},
-	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
+
+	-- Basic Actions
 	{'i', "Player Info", "playerInformation()", KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()", KEYTYPED},
+
+	-- Shooting
+	{'space', "Fire Primary Weapon", "playerFire(1)", KEYPRESSED},
+	{'rshift', "Fire Secondary Weapon 1", "playerFire(2)",KEYTYPED},
+	{'lshift', "Fire Secondary Weapon 2", "playerFire(2)",KEYTYPED},
+
+	-- Combat
+	{'tab', "Target Ship", "targetShip()", KEYTYPED},
+	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
 	{'w', "Watch Target", "Epiar.focusCamera(HUD.getTarget())", KEYDOWN},
 	{'w', "Release Watch", "Epiar.focusCamera(PLAYER:GetID())", KEYUP},
-	{'space', "Fire Primary Weapon", "playerFire(1)", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
 	{'y', "Hail", "hailSprite()", KEYTYPED},
+
+	-- Power Configuration
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
 	{'d', "Increase Power", "changePower(-0.5,1,-0.5)", KEYTYPED},
 	{'a', "Increase Engine Power", "changePower(-0.5,-0.5,1)", KEYTYPED},
@@ -31,8 +39,12 @@ playerCommands = {
 	{'z', "Decrease Engine Power", "changePower(0.5,0.5,-1)", KEYTYPED},
 	{'P', "Open Power Management Window", "powerManagement()", KEYTYPED},
 	{'=', "Equalize Power Management", "equlizePowerManagement()", KEYTYPED},
+
+	-- Auto Pilot
 	{'lalt', "Toggle autopilot", "playerAutopilotToggle()", KEYTYPED},
 	{'T', "Configure autopilot", "showAPConfigDialog()", KEYTYPED},
+
+	-- Fleet Commands
 	{'f', "Tell fleet to hunt target", "playerFleetHunt()", KEYTYPED},
 	{'g', "Return to formation", "playerFleetFormation()", KEYTYPED},
 	{'v', "Hold position", "playerFleetHold()", KEYTYPED}
