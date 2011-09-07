@@ -585,8 +585,10 @@ bool Ship::ChangeWeapon() {
  * \param pos Index of the weapon
  */
 void Ship::RemoveFromShipWeaponList(int pos){
+	if( (unsigned int)pos >= shipWeapons.size() ) pos = 0;
 	shipWeapons.erase(shipWeapons.begin()+pos);
 }
+
 /**\brief Removes a weapon from the ship
  * \param i Pointer to Weapon instance
  */

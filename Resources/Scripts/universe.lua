@@ -99,17 +99,16 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	-- give every AI the standard weapons of their ship class
 	attachStandardWeapons(s,weapons)
 
-        local creditsMax = math.random(40,90) * math.sqrt( s:GetTotalCost() )
-        local randCredits = math.random( creditsMax )
+	local creditsMax = math.random(40,90) * math.sqrt( s:GetTotalCost() )
+	local randCredits = math.random( creditsMax )
 	s:SetCredits(randCredits)
 
 	return s
 end
 
 function attachStandardWeapons(cur_ship,weapons)
-
 	-- first clear the weapon list
-	for weap,ammo in pairs( cur_ship:GetWeapons() ) do
+	for weap=1,#cur_ship:GetWeapons() do
 		cur_ship:RemoveFromWeaponList(weap)
 	end
 

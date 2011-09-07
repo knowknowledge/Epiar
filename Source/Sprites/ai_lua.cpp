@@ -387,8 +387,13 @@ int AI_Lua::ShipRemoveFromWeaponList(lua_State* L){
 	if (n == 2) {
 		AI* ai = checkShip(L,1);
 		if(ai==NULL) return 0;
-		string weaponName = luaL_checkstring (L, 2);
-		(ai)->RemoveFromShipWeaponList(weaponName);
+		if( lua_isnumber(L,2)){
+			int weaponNum = luaL_checkinteger(L, 2);
+			(ai)->RemoveFromShipWeaponList(weaponNum);
+		} else {
+			string weaponName = luaL_checkstring (L, 2);
+			(ai)->RemoveFromShipWeaponList(weaponName);
+		}
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, weaponName)", n);
 	}
