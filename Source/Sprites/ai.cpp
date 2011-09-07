@@ -330,15 +330,7 @@ void AI::RemoveEnemy(int spriteID){
 *
 */
 void AI::RegisterTarget( lua_State *L, int t ){
-	//printf("Registering target %d\n",t);
-	lua_getglobal(L, "setHuntHostile" );
-	lua_pushnumber(L, this->GetID());
-	lua_pushnumber(L, t);
-	if(lua_pcall(L,2,0,0)!=0) {
-		LogMsg(ERR,"Failed to run setHuntHostile\n");
-	} else {
-		//printf("Successfully Registered target %d\n",t);
-	}
+	Lua::Call( "setHuntHostile", "ii", this->GetID(), t );
 }
 
 /**\brief checks if a potential target is within targeting range
