@@ -722,7 +722,6 @@ radarZoomKeys()
 --- Create a HUD
 function createHUD()
 	-- Location Status Bars
-	HUD.newStatus("Coordinate:", 130, UPPER_RIGHT, "string.format('(%d,%d)',PLAYER:GetPosition())")
 	HUD.newStatus("Quadrant:", 130, UPPER_RIGHT, "string.format('(%d,%d)',coordinateToQuadrant(PLAYER:GetPosition()))")
 	HUD.newStatus("Credits:", 130, UPPER_RIGHT, "string.format('$%d',PLAYER:GetCredits())")
 
