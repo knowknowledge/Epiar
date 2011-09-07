@@ -575,16 +575,6 @@ int Ship::AddShipWeapon(string weaponName){
 	return 0;
 }
 
-/**\brief Changes the ship's weapon.
- * \return true if successful.
- */
-bool Ship::ChangeWeapon() {
-	// alternate between primary and secondary firing groups
-	status.selectedWeapon = (status.selectedWeapon+1) % 2;
-	status.selectedWeaponName = (status.selectedWeapon == 0 ? "Primary firing group" : "Secondary firing group");
-	return true;
-}
-
 /**\brief Removes a weapon from the ship.
  * \param pos Index of the weapon
  */

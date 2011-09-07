@@ -184,14 +184,11 @@ function buyShip(model)
 			end
 
 			PLAYER:SetModel(model) -- slot list gets updated by SetModel()
-			PLAYER:ChangeWeapon()
 
 			-- update weapon list and HUD to match the new slot list
 			for slot,weap in pairs( PLAYER:GetWeaponSlotContents() ) do
 				PLAYER:AddToWeaponList(weap)
 				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
-
-				PLAYER:ChangeWeapon()
 			end
 
 			PLAYER:Repair(10000)

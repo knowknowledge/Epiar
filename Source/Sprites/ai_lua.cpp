@@ -437,21 +437,6 @@ int AI_Lua::ShipRemoveWeapon(lua_State* L){
 	return 0;
 }	
 
-/**\brief Lua callable function to change a ship's weapon.
- * \sa Ship::ChangeWeapon()
- */
-int AI_Lua::ShipChangeWeapon(lua_State* L){
-	int n = lua_gettop(L);  // Number of arguments
-	if (n == 1) {
-		AI* ai = checkShip(L,1);
-		if(ai==NULL) return 0;
-		(ai)->ChangeWeapon();
-	} else {
-		luaL_error(L, "Got %d arguments expected 1 (ship)", n);
-	}
-	return 0;
-}
-
 /**\brief Lua callable function to retrieve shield boost data
  *\sa Ship::GetShieldBoost
  */

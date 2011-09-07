@@ -38,7 +38,6 @@ class Ship : public Sprite {
 		void Repair( short int damage );
 
 		void Draw( void );
-		bool ChangeWeapon( void );
 		FireStatus FirePrimary( int target = -1 );
 		FireStatus FireSecondary( int target = -1 );
 

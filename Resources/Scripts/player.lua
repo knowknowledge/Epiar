@@ -610,7 +610,6 @@ function doCapture(succ_max, destruct_max)
 				HUD.newStatus(weap..":", 130, UPPER_LEFT, string.format("playerAmmo(%q)",weap))
 			end
 
-			PLAYER:ChangeWeapon()
 			endBoarding()
 		end
 
