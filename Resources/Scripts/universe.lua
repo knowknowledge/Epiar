@@ -125,7 +125,7 @@ function createSystems(seed)
 	local alliances = Epiar.alliances()
 	local technologies = Epiar.technologies()
 	local r = 200000
-	local stationGraphic = "Resources/Graphics/station1.png"
+	local stationGraphic = "Resources/Graphics/Station01.png"
 	local planetGraphics = {}
 	for p=1,21 do
 		table.insert(planetGraphics, "Resources/Graphics/planet"..p..".png" )

@@ -127,7 +127,7 @@
     <y>-19750</y>
     <landable>1</landable>
     <traffic>1</traffic>
-    <image>Resources/Graphics/station1.png</image>
+    <image>Resources/Graphics/Station04.png</image>
     <surface-image>Resources/Graphics/planet1s.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
@@ -141,12 +141,12 @@
     <y>-13957</y>
     <landable>1</landable>
     <traffic>1</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station04.png</image>
+    <surface-image>Resources/Graphics/Station04.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
-    <technology>Questionable Legality</technology>
     <technology>Vespian</technology>
+    <technology>Questionable Legality</technology>
     <summary></summary>
   </planet>
   <planet>
@@ -156,8 +156,8 @@
     <y>-7600</y>
     <landable>1</landable>
     <traffic>1</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station04.png</image>
+    <surface-image>Resources/Graphics/Station04.png</surface-image>
     <militia>1</militia>
     <sphereOfInfluence>2000</sphereOfInfluence>
     <technology>Vespian</technology>
@@ -266,12 +266,12 @@
   <planet>
     <name>Outpost 1</name>
     <alliance>Inter-Terran Conjunctive</alliance>
-    <x>1814</x>
-    <y>2110</y>
+    <x>1785</x>
+    <y>2142</y>
     <landable>1</landable>
     <traffic>0</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station05.png</image>
+    <surface-image>Resources/Graphics/Station05.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>2253</sphereOfInfluence>
     <technology>Terran Small-Scale Commerce</technology>
@@ -284,8 +284,8 @@
     <y>57500</y>
     <landable>1</landable>
     <traffic>2</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station02.png</image>
+    <surface-image>Resources/Graphics/Station02.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>5000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
@@ -299,8 +299,8 @@
     <y>51346</y>
     <landable>1</landable>
     <traffic>2</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station06.png</image>
+    <surface-image>Resources/Graphics/Station06.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
@@ -313,8 +313,8 @@
     <y>38500</y>
     <landable>1</landable>
     <traffic>2</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station06.png</image>
+    <surface-image>Resources/Graphics/Station06.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>4000</sphereOfInfluence>
     <technology>Questionable Legality</technology>
@@ -327,8 +327,8 @@
     <y>72607</y>
     <landable>1</landable>
     <traffic>3</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station05.png</image>
+    <surface-image>Resources/Graphics/Station05.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>3630</sphereOfInfluence>
     <technology>Questionable Legality</technology>
@@ -337,12 +337,12 @@
   <planet>
     <name>Outpost 4</name>
     <alliance>Tunis Protectorate</alliance>
-    <x>22962</x>
-    <y>65443</y>
+    <x>23135</x>
+    <y>65336</y>
     <landable>1</landable>
     <traffic>1</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/station1.png</surface-image>
+    <image>Resources/Graphics/Station01.png</image>
+    <surface-image>Resources/Graphics/Station01.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>5011</sphereOfInfluence>
     <technology>Questionable Legality</technology>
@@ -385,8 +385,8 @@
     <y>-39245</y>
     <landable>1</landable>
     <traffic>8</traffic>
-    <image>Resources/Graphics/station1.png</image>
-    <surface-image>Resources/Graphics/planet1s.png</surface-image>
+    <image>Resources/Graphics/Station03.png</image>
+    <surface-image>Resources/Graphics/Station03.png</surface-image>
     <militia>0</militia>
     <sphereOfInfluence>10370</sphereOfInfluence>
     <technology>Questionable Legality</technology>
