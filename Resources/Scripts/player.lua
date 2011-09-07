@@ -12,15 +12,15 @@ playerCommands = {
 	{'left', "Turn Left", "PLAYER:Rotate(30)",KEYPRESSED},
 	{'right', "Turn Right", "PLAYER:Rotate(-30)",KEYPRESSED},
 	{'down', "Reverse", "PLAYER:Rotate(PLAYER:directionTowards(PLAYER:GetMomentumAngle() + 180 ))",KEYPRESSED},
-	{'rshift', "Change Weapon 1", "PLAYER:ChangeWeapon()",KEYTYPED},
-	{'lshift', "Change Weapon 2", "PLAYER:ChangeWeapon()",KEYTYPED},
+	{'rshift', "Fire Secondary Weapon 1", "playerFire(2)",KEYTYPED},
+	{'lshift', "Fire Secondary Weapon 2", "playerFire(2)",KEYTYPED},
 	{'tab', "Target Ship", "targetShip()", KEYTYPED},
 	{'t', "Target Closest Ship", "targetClosestShip()",KEYTYPED},
 	{'i', "Player Info", "playerInformation()", KEYTYPED},
 	{'l', "Land on Planet", "attemptLanding()", KEYTYPED},
 	{'w', "Watch Target", "Epiar.focusCamera(HUD.getTarget())", KEYDOWN},
 	{'w', "Release Watch", "Epiar.focusCamera(PLAYER:GetID())", KEYUP},
-	{'space', "Fire", "playerFire()", KEYPRESSED},
+	{'space', "Fire Primary Weapon", "playerFire(1)", KEYPRESSED},
 	{'b', "Board", "boardShip()", KEYTYPED},
 	{'y', "Hail", "hailSprite()", KEYTYPED},
 	{'s', "Increase Shields", "changePower(1,-0.5,-0.5)", KEYTYPED},
@@ -222,10 +222,14 @@ function lowerBoundCheck(a, b, c, newa, newb, newc) --lower bound check for powe
 	return newa, newb, newc
 end
 
-function playerFire()
+function playerFire( primary )
 	if Epiar.ispaused() == 1 then return end
 
-	local result = PLAYER:Fire( HUD.getTarget() )
+	if primary == 1 then
+		local result = PLAYER:FirePrimary( HUD.getTarget() )
+	else
+		local result = PLAYER:FireSecondary( HUD.getTarget() )
+	end
 
 	if result == 0 then -- FireSuccess
 	elseif result == 1 then -- FireNoWeapons
@@ -233,11 +237,10 @@ function playerFire()
 	elseif result == 2 then -- FireNotReady
 	elseif result == 3 then -- FireNoAmmo
 		HUD.newAlert("Out of Ammo!")
-		PLAYER:ChangeWeapon()
 	elseif result == 4 then -- FireEmptyGroup
-		HUD.newAlert("No weapons assigned to this firing group - switching...")
-		PLAYER:ChangeWeapon()
+		HUD.newAlert("No weapons assigned to this firing group")
 	else
+		-- Some other error
 	end
 end
 

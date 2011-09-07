@@ -43,7 +43,8 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Accelerate", &AI_Lua::ShipAccelerate},
 		{"Rotate", &AI_Lua::ShipRotate},
 		{"SetRadarColor", &AI_Lua::ShipRadarColor},
-		{"Fire", &AI_Lua::ShipFire},
+		{"FirePrimary", &AI_Lua::ShipFirePrimary},
+		{"FireSecondary", &AI_Lua::ShipFireSecondary},
 		{"Damage", &AI_Lua::ShipDamage},
 		{"Repair", &AI_Lua::ShipRepair},
 		{"Explode", &AI_Lua::ShipExplode},
@@ -258,10 +259,10 @@ int AI_Lua::ShipRadarColor(lua_State* L){
 }
 
 /**\brief Lua callable function to fire ship's weapons.
- * \sa Ship::Fire()
+ * \sa Ship::FirePrimary()
  * \returns FireStatus result of the firing attempt
  */
-int AI_Lua::ShipFire(lua_State* L){
+int AI_Lua::ShipFirePrimary(lua_State* L){
 	int n = lua_gettop(L);  // Number of arguments
 	int target = -1;
 	if( (n == 1) || (n == 2) ) {
@@ -271,7 +272,28 @@ int AI_Lua::ShipFire(lua_State* L){
 		{
 			target = luaL_checkinteger(L,2);
 		}
-		FireStatus result = (ai)->Fire(target);
+		FireStatus result = (ai)->FirePrimary(target);
+		lua_pushinteger(L, (int)(result) );
+		return 1;
+	}
+	return luaL_error(L, "Got %d arguments expected 1 or 2 (ship, [target])", n);
+}
+
+/**\brief Lua callable function to fire ship's weapons.
+ * \sa Ship::FireSecondary()
+ * \returns FireStatus result of the firing attempt
+ */
+int AI_Lua::ShipFireSecondary(lua_State* L){
+	int n = lua_gettop(L);  // Number of arguments
+	int target = -1;
+	if( (n == 1) || (n == 2) ) {
+		AI* ai = checkShip(L,1);
+		if(ai==NULL) return 0;
+		if(n == 2)
+		{
+			target = luaL_checkinteger(L,2);
+		}
+		FireStatus result = (ai)->FireSecondary(target);
 		lua_pushinteger(L, (int)(result) );
 		return 1;
 	}

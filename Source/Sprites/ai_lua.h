@@ -29,7 +29,8 @@ class AI_Lua{
 		static int ShipAccelerate(lua_State* L);
 		static int ShipRotate(lua_State* L);
 		static int ShipRadarColor(lua_State* L);
-		static int ShipFire(lua_State* L);
+		static int ShipFirePrimary(lua_State* L);
+		static int ShipFireSecondary(lua_State* L);
 		static int ShipDamage(lua_State* L);
 		static int ShipRepair(lua_State* L);
 		static int ShipExplode(lua_State* L);

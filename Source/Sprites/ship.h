@@ -38,8 +38,9 @@ class Ship : public Sprite {
 		void Repair( short int damage );
 
 		void Draw( void );
-		FireStatus Fire( int target = -1 );
 		bool ChangeWeapon( void );
+		FireStatus FirePrimary( int target = -1 );
+		FireStatus FireSecondary( int target = -1 );
 
 		// Outfitting Functions
 		void AddToShipWeaponList(Weapon *i);
@@ -116,7 +117,8 @@ class Ship : public Sprite {
 		Outfit shipStats;
 		//power distribution variables
 		float damageBooster, engineBooster, shieldBooster;
-	
+
+		FireStatus Fire( unsigned int group, int target = -1 );
 		void ComputeShipStats();
 
 		struct {
@@ -125,8 +127,6 @@ class Ship : public Sprite {
 			short int shieldDamage; ///< Your hull doesn`t take damage untill the shield is down
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
 			unsigned int lastFiredAt[32]; ///< Number of ticks where last fire event occured for a given weapon slot
-			unsigned int selectedWeapon; ///< Which weapon is currently selected
-			string selectedWeaponName; ///< Which weapon is currently selected
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
 			
 			/* Flags */

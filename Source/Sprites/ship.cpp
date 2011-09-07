@@ -60,7 +60,6 @@ Ship::Ship()
 
 	memset(status.lastFiredAt, 0, sizeof(status.lastFiredAt));
 
-	status.selectedWeapon = 0;
 	status.cargoSpaceUsed = 0;
 	status.isAccelerating = false;
 	status.isRotatingLeft = false;
@@ -377,17 +376,22 @@ void Ship::Draw( void ) {
 #endif
 }
 
+FireStatus Ship::FirePrimary( int target ) {
+	return Fire(0,target);
+}
+
+FireStatus Ship::FireSecondary( int target ) {
+	return Fire(1,target);
+}
+
 /**\brief Fire's ship current weapon.
  * \return FireStatus
  */
-FireStatus Ship::Fire( int target ) {
+FireStatus Ship::Fire( unsigned int group, int target ) {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
 		return FireNoWeapons;
 	}
-
-	// Check that we are always selecting either the primary or the secondary firing group
-	assert( status.selectedWeapon == 0 || status.selectedWeapon == 1 );
 
 	bool fnr = false;
 	bool fna = false;
@@ -406,7 +410,7 @@ FireStatus Ship::Fire( int target ) {
 			// do nothing for this slot (this may be because the weapon slot is empty)
 		}
 		else {
-			if( (unsigned int)slotFiringGroup == status.selectedWeapon ){ // status.selectedWeapon now refers to the firing group
+			if( (unsigned int)slotFiringGroup == group ){
 				emptyFiringGroup = false;
 
 				// Check that the weapon has cooled down;
