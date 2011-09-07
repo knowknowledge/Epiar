@@ -49,7 +49,6 @@ void AI_Lua::RegisterAI(lua_State *L){
 		{"Repair", &AI_Lua::ShipRepair},
 		{"Explode", &AI_Lua::ShipExplode},
 		{"Remove", &AI_Lua::ShipRemove},
-		{"ChangeWeapon", &AI_Lua::ShipChangeWeapon},
 		{"Land", &AI_Lua::ShipLand},
 		{"SetLuaControlFunc", &AI_Lua::ShipSetLuaControlFunc},
 		
