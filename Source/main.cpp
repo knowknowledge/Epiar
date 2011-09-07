@@ -271,6 +271,7 @@ void Main_Parse_Args( int argc, char **argv ) {
 	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
 	argparser->SetOpt(LONGOPT, "version",        "Display program version");
 	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser->SetOpt(LONGOPT, "fullscreen",     "Play in fullscreen");
 	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
 	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
 	argparser->SetOpt(LONGOPT, "log-out",        "(Default) Log messages to console.");
@@ -303,6 +304,10 @@ void Main_Parse_Args( int argc, char **argv ) {
 		Options::RestoreDefaults();
 		Options::Save();
 		exit( 0 );
+	}
+
+	if ( argparser->HaveLong("fullscreen") ){
+		SETOPTION("options/video/fullscreen",1);
 	}
 
 #ifdef EPIAR_COMPILE_TESTS
