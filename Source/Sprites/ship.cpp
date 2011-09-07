@@ -208,6 +208,7 @@ void Ship::Rotate( float direction ) {
 	SetAngle( angle );
 	
 	// Play engine sound
+	/*
 	if( engine->GetSound() != NULL)
 	{
 		float engvol = OPTION(float,"options/sound/engines");
@@ -217,6 +218,7 @@ void Ship::Rotate( float direction ) {
 		this->engine->GetSound()->SetVolume( engvol );
 		this->engine->GetSound()->PlayNoRestart( offset );
 	}
+	*/
 }
 
 /**\brief Accelerates the ship.
