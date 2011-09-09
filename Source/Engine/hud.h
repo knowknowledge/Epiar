@@ -138,6 +138,7 @@ class Radar {
 		static void SetVisibility( int visibility );
 		static int GetVisibility() { return visibility;}
 		static void StartLargeMode( Camera* camera, SpriteManager* sprites );
+		static int GetHeight();
 	
 	private:
 		static void WorldToBlip( Coordinate focus, Coordinate &w, Coordinate &b );

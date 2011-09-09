@@ -360,10 +360,10 @@ void Hud::DrawStatusBars() {
 	// Initialize the starting Coordinates
 	int barHeight = Image::Get( "Resources/Skin/hud_bar_left.png" )->GetHeight()+5;
 	Coordinate startCoords[4];
-	startCoords[UPPER_LEFT]  = Coordinate(5,Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->GetHeight()+5);
-	startCoords[UPPER_RIGHT] = Coordinate(5,Image::Get( "Resources/Skin/hud_radarnav.png" )->GetHeight()+5);
-	startCoords[LOWER_LEFT]  = Coordinate(5,Video::GetHeight()-barHeight);
-	startCoords[LOWER_RIGHT] = Coordinate(5,Video::GetHeight()-barHeight);
+	startCoords[UPPER_LEFT]  = Coordinate(5, Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->GetHeight()+5);
+	startCoords[UPPER_RIGHT] = Coordinate(5, Radar::GetHeight()+5);
+	startCoords[LOWER_LEFT]  = Coordinate(5, Video::GetHeight()-barHeight);
+	startCoords[LOWER_RIGHT] = Coordinate(5, Video::GetHeight()-barHeight);
 	Coordinate offsetCoords[4]= {
 		Coordinate(0,barHeight), Coordinate(0,barHeight),
 		Coordinate(0,-barHeight), Coordinate(0,-barHeight)};
@@ -669,6 +669,13 @@ Radar::Radar( void ) {
  */
 void Radar::SetVisibility( int visibility ) {
 	Radar::visibility = visibility;
+	if( largeMode ) {
+		Map* map = (Map*)UI::Search("/Map/");
+		assert( map );
+		if( map ) {
+			map->SetScale( 300.0 / (2*visibility) );
+		}
+	}
 }
 
 void Radar::StartLargeMode( Camera* camera, SpriteManager* sprites ) {
@@ -754,3 +761,12 @@ void Radar::WorldToBlip( Coordinate focus, Coordinate &w, Coordinate &b ) {
 	b.SetX( ( ( w.GetX() - focus.GetX() ) / float(visibility) ) * ( RADAR_WIDTH / 2.0 ) );
 	b.SetY( ( ( w.GetY() - focus.GetY() ) / float(visibility) ) * ( RADAR_HEIGHT / 2.0 ) );
 }
+
+int Radar::GetHeight() {
+	if( largeMode ) {
+		return 300;
+	} else {
+		return Image::Get( "Resources/Skin/hud_radarnav.png" )->GetHeight();
+	}
+}
+
