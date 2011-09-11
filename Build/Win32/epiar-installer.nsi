@@ -1,9 +1,17 @@
 # Created by: DuMuT6p
-# Last modified: September/10/2011
+# Last modified: September/12/2011
 
-# This script has to be in the same directory as the Resources folder 
-# and some files in the main folder
-# When compiling, copy this script and the NSIS_Resources folder to the Epiar folder
+# Instructions:
+# 1. Open epiar`s main directory(e.g. C:\epiar).
+# 2. Make sure the following files are in the directory:
+# Epiar.exe, AUTHORS, ChangeLog, COPYING, CREDITS.GNU-FreeType, INSTALL, LICENSE, LICENSE.bitstream_fonts,
+# LICENSE.visitor_fonts, NEWS, README, the Resources directory.
+# 3. Copy there this script(epiar-installer.nsi) and the NSIS_Resources directory. 
+# 4. Copy there the following libraries: 
+# libfreetype-6.dll, libftgl-2.dll, libgcc_s_sjlj-1.dll, libiconv-2.dll, libjpeg-7.dll, libogg-0.dll, 
+# libphysfs-1-0-1.dll, libpng14-14.dll, libstdc++-6.dll, libtiff-3.dll, libvorbis-0.dll, libvorbisfile-3.dll, 
+# libxml2-2.dll, SDL.dll, SDL.original.dll, SDL_image.dll, SDL_mixer.dll, zlib1.dll.
+# 5. Compile the script 
 
 # multiuser settings
 !define MULTIUSER_EXECUTIONLEVEL Highest
@@ -106,6 +114,26 @@ file LICENSE.bitstream_fonts
 file LICENSE.visitor_fonts
 file NEWS
 file README
+
+setOutPath $INSTDIR
+file libfreetype-6.dll
+file libftgl-2.dll
+file libgcc_s_sjlj-1.dll
+file libiconv-2.dll
+file libjpeg-7.dll
+file libogg-0.dll
+file libphysfs-1-0-1.dll
+file libpng14-14.dll
+file libstdc++-6.dll
+file libtiff-3.dll
+file libvorbis-0.dll
+file libvorbisfile-3.dll
+file libxml2-2.dll
+file SDL.dll
+file SDL.original.dll
+file SDL_image.dll
+file SDL_mixer.dll
+file zlib1.dll
 
 setOutPath $INSTDIR\Resources\Animations
 file Resources\Animations\*
