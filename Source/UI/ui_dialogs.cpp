@@ -37,7 +37,7 @@ void OKAlertDialog() {
 /**\brief Presents a question with "Ok/Cancel" buttons.
  * \return Returns true on "Ok", false otherwise
  */
-bool Dialogs::Confirm( const char *message )
+bool Dialogs::Confirm( const string message )
 {
 	static int value = 0;
 	int width = 360;
@@ -67,7 +67,7 @@ bool Dialogs::Confirm( const char *message )
 
 /**\brief Presents a message with a single "Ok" button.
  */
-void Dialogs::Alert( const char *message )
+void Dialogs::Alert( const string message )
 {
 	int width = 360;
 	int height = 90;

@@ -14,8 +14,8 @@
 
 class Dialogs {
 	public:
-		static bool Confirm( const char *message );
-		static void Alert( const char *message );
+		static bool Confirm( const string message );
+		static void Alert( const string message );
 		static void OptionsWindow();
 };
 
