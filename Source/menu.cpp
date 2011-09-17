@@ -533,6 +533,22 @@ string LOREM =
 	" fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in"
 	" culpa qui officia deserunt mollit anim id est laborum.";
 
+
+void ModalityTest() {
+	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
+	window->AddChild( (new Paragraph(30, 30, 250, 30, "This is a Modal Dialog.  You should be unable to click elsewhere until you click the 'Release' button below." )) );
+	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
+	UI::ModalDialog( window );
+}
+void TestConfirm()
+{
+	Dialogs::Confirm( LOREM );
+}
+void TestAlert()
+{
+	Dialogs::Alert( LOREM );
+}
+
 void UI_Test() {
 	// Example of Nestable UI Creation
 	UI::Add(
@@ -562,7 +578,7 @@ void UI_Test() {
 			->AddChild( (new Tab("A Picture"))
 				->AddChild( (new Picture(10, 0, 400, 400, "Resources/Art/menu2.png")) )
 			)
-			->AddChild( (new Tab("Some Inputs"))
+			->AddChild( (new Tab("Inputs"))
 				->AddChild( (new Textbox(30, 30, 100, 1, "Some Text Goes Here", "A Textbox")) )
 				->AddChild( (new Checkbox(30, 100, 0, "A Checkbox")) )
 				->AddChild( (new Slider(30, 200, 200, 100, "A Slider", 0.4f )) )
@@ -581,6 +597,11 @@ void UI_Test() {
 				)
 				->AddChild( (new Paragraph(300, 250, 100, 20, LOREM)) )
 				->AddChild( (new Textarea(10, 300, 250, 500, LOREM, "A Textarea")) )
+			)
+			->AddChild( (new Tab("Dialogs"))
+				->AddChild( (new Button(10, 10, 100, 30, "Modality Test", ModalityTest )) )
+				->AddChild( (new Button(10, 50, 100, 30, "Confirm Test", TestConfirm )) )
+				->AddChild( (new Button(10, 90, 100, 30, "Alert Test", TestAlert )) )
 			)
 		)
 	);
@@ -642,14 +663,12 @@ void UI_Test() {
 	assert( NULL == UI::Search("/\"Window/") );
 
 	// Set a test Form button
-	((Tab*)( UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/"))) ->SetFormButton(
+	Tab* inputTab = (Tab*)UI::Search("/'A Window'/'TEST TABS'/Tab'Inputs'/");
+	assert( NULL != inputTab );
+	assert( inputTab->GetMask() & WIDGET_TAB );
+	inputTab->SetFormButton(
 		(Button*) UI::Search("/'A Window'/'TEST TABS'/Tab'Some Inputs'/Button'Dummy'/")
 	);
 }
 
-void ModalityTest() {
-	Window* window = new Window( Video::GetWidth()/2-150, Video::GetHeight()/2-150, 300, 300, "Dialog" );
-	window->AddChild( (new Button(100, 135, 100, 30, "Release", UI::ReleaseModality )) );
-	UI::ModalDialog( window );
-}
 #endif // EPIAR_UI_TESTS
