@@ -230,7 +230,7 @@ bool Container::IsAttached( Widget* possible ) {
 	// Check the direct children.
 	for( i = children.begin(); i != children.end(); ++i ) {
 		if( (*i) == possible ) {
-			LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
+			//LogMsg(INFO, "Found %s %s (%p) in %s", possible->GetType().c_str(), possible->GetName().c_str(), possible, GetName().c_str() );
 			return true;
 		}
 	}
