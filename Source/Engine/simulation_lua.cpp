@@ -879,7 +879,9 @@ int Simulation_Lua::GetModelInfo(lua_State *L) {
 		Lua::setField("y", (float)s.y);
 		Lua::setField("angle", (float)s.angle);
 		Lua::setField("motionAngle", (float)s.motionAngle);
-		Lua::setField("content", s.content.c_str() );
+		Lua::setField("content", (s.content == NULL)
+			                   ? ""
+			                   : s.content->GetName().c_str() );
 		Lua::setField("firingGroup", s.firingGroup);
 
 		// keep in mind that the above field data has been popped off of the Lua state at this point
@@ -1238,7 +1240,8 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 				s.y = Lua::getNumField(row, "y");
 				s.angle = Lua::getNumField(row, "angle");
 				s.motionAngle = Lua::getNumField(row, "motionAngle");
-				s.content = Lua::getStringField(row, "content");
+				string contentName = Lua::getStringField(row, "content");
+				s.content = GetSimulation(L)->GetWeapons()->GetWeapon( contentName );
 				s.firingGroup = Lua::getIntField(row, "firingGroup");
 
 				if(Lua::getStringField(row, "enabled") == "yes")

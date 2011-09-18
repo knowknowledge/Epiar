@@ -10,6 +10,7 @@
 #define __h_models__
 
 #include "Engine/engines.h"
+#include "Engine/weapons.h"
 #include "Graphics/image.h"
 #include "includes.h"
 #include "Utilities/log.h"
@@ -21,7 +22,7 @@ typedef struct WeaponSlot {
 	double x,y;             ///< The relative X and Y offsets of this weapon.
 	double angle;           ///< angle the weapon will be mounted
 	double motionAngle;     ///< should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
-	string content;         ///< name of the weapon it contains (or "" for empty)
+	Weapon* content;         ///< name of the weapon it contains (or "" for empty)
 	short int firingGroup;  ///< which firing group this slot belongs to
 };
 

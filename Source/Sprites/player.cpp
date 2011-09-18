@@ -380,6 +380,7 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 	// This makes a copy, not a pointer or reference, so we don't have to worry
 	// that it might alter the slots in the model.
 	this->weaponSlots = this->GetModel()->GetWeaponSlots();
+			
 
 	for( slotPtr = FirstChildNamed(node,"weapSlot"); slotPtr != NULL; slotPtr = NextSiblingNamed(slotPtr,"weapSlot") ){
 		WeaponSlot *existingSlot = NULL;
@@ -407,7 +408,8 @@ bool Player::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			else
 				value = ""; // slot is empty
 
-			existingSlot->content = value;
+			Weapon* weapon = Weapons::Instance()->GetWeapon( value );
+			existingSlot->content = weapon;
 		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
@@ -457,9 +459,7 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 
 	// this part is becoming less important and may be removed at some point
 	for(unsigned int i = 0; i < weaponSlots.size(); i++){
-		char *w = (char*)weaponSlots[i].content.c_str();
-		if(strlen(w) > 0)
-			xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST w);
+		xmlNewChild(section, NULL, BAD_CAST "weapon", BAD_CAST GetWeaponSlotContent(i).c_str() );
 	}
 
 	// Ammo
@@ -480,8 +480,8 @@ xmlNodePtr Player::ToXMLNode(string componentName) {
 		WeaponSlot *slot = &weaponSlots[w];
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "weapSlot");
 
-		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
-		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST GetWeaponSlotName(w).c_str() );
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST GetWeaponSlotContent(w).c_str() );
 
 		snprintf(buff, sizeof(buff), "%d", slot->firingGroup);
 		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST buff);

@@ -544,12 +544,12 @@ bool Simulation::Parse( void ) {
 		LogMsg(ERR, "There was an error loading the engines from '%s'.", (folderpath + Get("engines")).c_str() );
 		return false;
 	}
-	if( models->Load( (folderpath + Get("models")) ) != true ) {
-		LogMsg(ERR, "There was an error loading the models from '%s'.", (folderpath + Get("models")).c_str() );
-		return false;
-	}
 	if( weapons->Load( (folderpath + Get("weapons")) ) != true ) {
 		LogMsg(ERR, "There was an error loading the weapons from '%s'.", (folderpath + Get("weapons")).c_str() );
+		return false;
+	}
+	if( models->Load( (folderpath + Get("models")) ) != true ) {
+		LogMsg(ERR, "There was an error loading the models from '%s'.", (folderpath + Get("models")).c_str() );
 		return false;
 	}
 	if( outfits->Load( (folderpath + Get("outfits")) ) != true ) {

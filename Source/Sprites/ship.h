@@ -58,8 +58,8 @@ class Ship : public Sprite {
 		void RemoveOutfit(string outfitName);
 		int GetWeaponSlotCount();
 		string GetWeaponSlotName(int i);
-		string GetWeaponSlotStatus(int i);
-		void SetWeaponSlotStatus(int i, string);
+		string GetWeaponSlotContent(int i);
+		void SetWeaponSlotContent(int i, Weapon* w);
 		short int GetWeaponSlotFG(int i);
 		void SetWeaponSlotFG(int i, short int);
 		map<string,string> GetWeaponSlotContents();

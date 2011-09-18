@@ -400,11 +400,8 @@ FireStatus Ship::Fire( unsigned int group, int target ) {
 	bool emptyFiringGroup = true;
 
 	for(unsigned int slot = 0; slot < weaponSlots.size(); slot++){
-
-		string weapName = weaponSlots[slot].content;
 		short int slotFiringGroup = weaponSlots[slot].firingGroup;
-
-		Weapon* currentWeapon = Weapons::Instance()->GetWeapon(weapName);
+		Weapon* currentWeapon = weaponSlots[slot].content;
 
 		if(currentWeapon == NULL){
 			// do nothing for this slot (this may be because the weapon slot is empty)
@@ -521,9 +518,10 @@ FireStatus Ship::Fire( unsigned int group, int target ) {
  * \sa Weapon
  */
 void Ship::AddToShipWeaponList(Weapon *w){
-	shipWeapons.push_back(w);
-
-	ComputeShipStats();
+	if( w ) {
+		shipWeapons.push_back(w);
+		ComputeShipStats();
+	}
 }
 
 
@@ -550,8 +548,8 @@ void Ship::AddToShipWeaponList(string weaponName){
 int Ship::AddShipWeapon(Weapon *w){
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
 		WeaponSlot *slot = &weaponSlots[s];
-		if(slot->content == ""){
-			slot->content = w->GetName(); // this will edit-in-place, so no need to shove a struct back into weaponSlots
+		if(slot->content == NULL){
+			slot->content = w; // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			AddToShipWeaponList(w);
 			return 1;
 		}
@@ -620,8 +618,8 @@ void Ship::RemoveShipWeapon(Weapon *w){
 	}
 	for(unsigned int s = 0; s < weaponSlots.size(); s++){
 		WeaponSlot *slot = &weaponSlots[s];
-		if(slot->content == w->GetName()){
-			slot->content = ""; // this will edit-in-place, so no need to shove a struct back into weaponSlots
+		if(slot->content == w){
+			slot->content = NULL; // this will edit-in-place, so no need to shove a struct back into weaponSlots
 			return;
 		}
 	}
@@ -825,11 +823,10 @@ int Ship::GetAmmo(AmmoType type) {
  */
 map<Weapon*,int> Ship::GetWeaponsAndAmmo() {
 	map<Weapon*,int> weaponPack;
-	Weapons* weaps = Weapons::Instance();
 	Weapon* thisWeapon;
 	for(unsigned int i = 0; i < weaponSlots.size(); i++){
-		if(this->weaponSlots[i].content != ""){
-			thisWeapon = weaps->GetWeapon(this->weaponSlots[i].content);
+		thisWeapon = weaponSlots[i].content;
+		if(thisWeapon != NULL){
 			weaponPack.insert( make_pair(thisWeapon,ammo[thisWeapon->GetAmmoType()]) );
 		}
 	}
@@ -873,28 +870,33 @@ string Ship::GetWeaponSlotName(int i) {
 	return ((WeaponSlot)(this->weaponSlots[i])).name;
 }
 
-/**\brief The status of weapon slot i. By the way, the "status" naming of this function has nothing to do with statusbars.
+/**\brief The status of weapon slot i.
+ * \note The "status" naming of this function has nothing to do with statusbars.
  */
-string Ship::GetWeaponSlotStatus(int i) {
-	return ((WeaponSlot)(this->weaponSlots[i])).content;
+string Ship::GetWeaponSlotContent(int i) {
+	if( weaponSlots[i].content == NULL) {
+		return "";
+	} else {
+		return weaponSlots[i].content->GetName().c_str();
+	}
 }
 
 /**\brief Set the status of weapon slot i
  */
-void Ship::SetWeaponSlotStatus(int i, string s) {
-	this->weaponSlots[i].content = s;
+void Ship::SetWeaponSlotContent(int i, Weapon *w) {
+	weaponSlots[i].content = w;
 }
 
 /**\brief The firing group of weapon slot i
  */
 short int Ship::GetWeaponSlotFG(int i) {
-	return ((WeaponSlot)(this->weaponSlots[i])).firingGroup;
+	return weaponSlots[i].firingGroup;
 }
 
 /**\brief Set the firing group of weapon slot i
  */
 void Ship::SetWeaponSlotFG(int i, short int fg) {
-	this->weaponSlots[i].firingGroup = fg;
+	weaponSlots[i].firingGroup = fg;
 }
 
 /**\brief returns a map<string,string> of with slotname/content pairs for use in Lua
@@ -904,8 +906,8 @@ map<string,string> Ship::GetWeaponSlotContents(){
 	map<string,string> weaps;
 
 	for(unsigned int i = 0; i < weaponSlots.size(); i++){
-		if(weaponSlots[i].content != "")
-			weaps.insert( make_pair(weaponSlots[i].name, weaponSlots[i].content) );
+		if( weaponSlots[i].content != NULL )
+			weaps[ GetWeaponSlotName(i) ] = GetWeaponSlotContent(i);
 	}
 
 	return weaps;

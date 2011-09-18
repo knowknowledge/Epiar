@@ -1540,7 +1540,7 @@ int AI_Lua::ShipGetWeaponSlotStatus(lua_State* L){
 			lua_pushstring(L, "");
 			return 1;
 		}
-		lua_pushstring(L, (s)->GetWeaponSlotStatus(slotNum).c_str() );
+		lua_pushstring(L, (s)->GetWeaponSlotContent(slotNum).c_str() );
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (ship, slot)", n);
 	}
@@ -1554,12 +1554,13 @@ int AI_Lua::ShipSetWeaponSlotStatus(lua_State* L){
 	if (n == 3) {
 		Ship* s = checkShip(L,1);
 		int slotNum = luaL_checkinteger (L, 2);
-		string status = luaL_checkstring (L, 3);
+		string weaponName = luaL_checkstring (L, 3);
 		if(s==NULL){
 			lua_pushstring(L, "");
 			return 1;
 		}
-		s->SetWeaponSlotStatus(slotNum, status);
+		Weapon* weapon = Simulation_Lua::GetSimulation(L)->GetWeapons()->GetWeapon(weaponName);
+		s->SetWeaponSlotContent(slotNum, weapon);
 	} else {
 		luaL_error(L, "Got %d arguments expected 3 (ship, slot, status)", n);
 	}

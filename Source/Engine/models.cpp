@@ -235,7 +235,9 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 		xmlNewChild(slotPtr, NULL, BAD_CAST "angle", BAD_CAST ntos);
 		snprintf(ntos, 256, "%.1f", slot->motionAngle);
 		xmlNewChild(slotPtr, NULL, BAD_CAST "motionAngle", BAD_CAST ntos);
-		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST slot->content.c_str() );
+		xmlNewChild(slotPtr, NULL, BAD_CAST "content", BAD_CAST ((slot->content == NULL)
+		                                             ? ""
+		                                             : slot->content->GetName().c_str()) );
 		snprintf(ntos, 256, "%d", slot->firingGroup);
 		xmlNewChild(slotPtr, NULL, BAD_CAST "firingGroup", BAD_CAST ntos);
 		xmlAddChild(wsPtr, slotPtr);
@@ -296,7 +298,7 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 			else
 				value = ""; // slot is empty
 
-			newSlot.content = value;
+			newSlot.content = Weapons::Instance()->GetWeapon( value );
 		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
@@ -324,7 +326,17 @@ int Model::GetWeaponSlotCount(){
 }
 
 void Model::WSDebug(WeaponSlot slot){
-	LogMsg(DEBUG1, "WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d", slot.name.c_str(), slot.x, slot.y, slot.angle, slot.motionAngle, slot.content.c_str(), slot.firingGroup);
+	LogMsg(DEBUG1,
+		"WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d",
+		slot.name.c_str(),
+		slot.x,
+		slot.y,
+		slot.angle,
+		slot.motionAngle,
+		(slot.content == NULL)
+			? "empty"
+			: slot.content->GetName().c_str(),
+		slot.firingGroup);
 }
 
 void Model::WSDebug(vector<WeaponSlot>& slots){
