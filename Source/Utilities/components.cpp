@@ -82,6 +82,12 @@ void Components::Add(Component* component) {
 
 /**\brief Remove a Component from this collection
  */
+bool Components::Remove(string name) {
+	Remove( Get( name ) );
+}
+
+/**\brief Remove a Component from this collection
+ */
 bool Components::Remove(Component* component) {
 	map<string,Component*>::iterator c;
 	list<string>::iterator n;
