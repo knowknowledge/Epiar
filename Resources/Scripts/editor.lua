@@ -371,7 +371,7 @@ function saveInfo(name)
 			info[title] = weapontables[title]
 		end
 	end
-	Epiar.setInfo(kind,info)
+	Epiar.setInfo(name,kind,info)
 	win:close()
 	win=nil
 	infoWindows[name]=nil

@@ -83,7 +83,7 @@ void Components::Add(Component* component) {
 /**\brief Remove a Component from this collection
  */
 bool Components::Remove(string name) {
-	Remove( Get( name ) );
+	return Remove( Get( name ) );
 }
 
 /**\brief Remove a Component from this collection
@@ -108,16 +108,32 @@ bool Components::Remove(Component* component) {
 
 /**\brief Add a Component to this collection
  */
-void Components::AddOrReplace(Component* component) {
+void Components::AddOrReplace(string oldname, Component* component) {
+	list<string>::iterator n;
 	string name = component->GetName();
-	map<string,Component*>::iterator val = components.find( name );
+	map<string,Component*>::iterator val = components.find( oldname );
 	if( val == components.end() ) { // new
 		LogMsg(INFO,"Creating new Component '%s'",component->GetName().c_str());
 		names.push_back( name );
 		components[name] = component;
+	} else if( oldname != name ) { // rename
+		LogMsg(INFO,"Replacing Component '%s' with '%s'", oldname.c_str(), name.c_str());
+		*(val->second) = *component; // Use the copy constructor to change the component
+
+		// Move the old object to a new name
+		components[name] = val->second;
+		components.erase(val);
+		
+		// Replace the name
+		n = find(names.begin( ), names.end( ), oldname);
+		n = names.erase(n);
+		names.push_back( name );
+
+		delete component;
 	} else { // old
-		LogMsg(INFO,"Saving changes to Component '%s'",component->GetName().c_str());
-		val->second = component;
+		LogMsg(INFO,"Saving changes to Component '%s'",name.c_str());
+		*(val->second) = *component; // Use the copy constructor
+		delete component;
 	}
 }
 

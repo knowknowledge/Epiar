@@ -371,8 +371,8 @@ int Simulation_Lua::NewGatePair(lua_State *L){
 	// Note that we need to set the exit _after_ adding to the SpriteManager since SetExit checks that the Sprite exists.
 	Gate::SetPair( gate_1, gate_2 );
 
-	GetSimulation(L)->GetGates()->AddOrReplace( gate_1 );
-	GetSimulation(L)->GetGates()->AddOrReplace( gate_2 );
+	GetSimulation(L)->GetGates()->Add( gate_1 );
+	GetSimulation(L)->GetGates()->Add( gate_2 );
 
 	return 0;
 }
@@ -1135,36 +1135,37 @@ int Simulation_Lua::GetTechnologyInfo(lua_State *L) {
  */
 int Simulation_Lua::SetInfo(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if( !(n==2||n==6)  )
-		return luaL_error(L, "Got %d arguments expected 1 (infoType,infoTable)", n);
-	string kind = luaL_checkstring(L,1);
+	if( !(n==3||n==7)  )
+		return luaL_error(L, "Got %d arguments expected 1 (oldname, infoType,infoTable)", n);
+	string oldname = luaL_checkstring(L,1);
+	string kind = luaL_checkstring(L,2);
 
 	if(kind == "Alliance"){
-		string name = Lua::getStringField(2,"Name");
-		int attack = Lua::getIntField(2,"AttackSize");
-		float aggressiveness = Lua::getNumField(2,"Aggressiveness");
-		string currency = Lua::getStringField(2,"Currency");
-		Color color = Color( Lua::getStringField(2,"Color") );
+		string name = Lua::getStringField(3,"Name");
+		int attack = Lua::getIntField(3,"AttackSize");
+		float aggressiveness = Lua::getNumField(3,"Aggressiveness");
+		string currency = Lua::getStringField(3,"Currency");
+		Color color = Color( Lua::getStringField(3,"Color") );
 
 		Alliance* thisAlliance = new Alliance(name,attack,aggressiveness,currency,color);
-		GetSimulation(L)->GetAlliances()->AddOrReplace( thisAlliance );
+		GetSimulation(L)->GetAlliances()->AddOrReplace( oldname, thisAlliance );
 
 	} else if(kind == "Commodity"){
-		string name = Lua::getStringField(2,"Name");
-		int msrp = Lua::getIntField(2,"MSRP");
+		string name = Lua::getStringField(3,"Name");
+		int msrp = Lua::getIntField(3,"MSRP");
 
 		Commodity* thisCommodity= new Commodity(name,msrp);
-		GetSimulation(L)->GetCommodities()->AddOrReplace( thisCommodity );
+		GetSimulation(L)->GetCommodities()->AddOrReplace( oldname, thisCommodity );
 
 	} else if(kind == "Engine"){
-		string name = Lua::getStringField(2,"Name");
-		string pictureName = Lua::getStringField(2,"Picture");
-		string description = Lua::getStringField(2,"Description");
-		int force = Lua::getIntField(2,"Force");
-		string flare = Lua::getStringField(2,"Animation");
-		int msrp = Lua::getIntField(2,"MSRP");
-		int foldDrive = Lua::getIntField(2,"Fold Drive");
-		string soundName = Lua::getStringField(2,"Sound");
+		string name = Lua::getStringField(3,"Name");
+		string pictureName = Lua::getStringField(3,"Picture");
+		string description = Lua::getStringField(3,"Description");
+		int force = Lua::getIntField(3,"Force");
+		string flare = Lua::getStringField(3,"Animation");
+		int msrp = Lua::getIntField(3,"MSRP");
+		int foldDrive = Lua::getIntField(3,"Fold Drive");
+		string soundName = Lua::getStringField(3,"Sound");
 
 		Sound *sound = Sound::Get(soundName);
 		Image *picture = Image::Get(pictureName);
@@ -1176,21 +1177,21 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			return 0;
 
 		Engine* thisEngine = new Engine(name, picture, description, sound, static_cast<float>(force), msrp, TO_BOOL(foldDrive), flare);
-		GetSimulation(L)->GetEngines()->AddOrReplace( thisEngine );
+		GetSimulation(L)->GetEngines()->AddOrReplace( oldname, thisEngine );
 
 	} else if(kind == "Model"){
-		string name = Lua::getStringField(2,"Name");
-		string imageName = Lua::getStringField(2,"Image");
-		string description = Lua::getStringField(2,"Description");
-		string engineName = Lua::getStringField(2,"Engine");
-		float mass = Lua::getNumField(2,"Mass");
-		int thrust = Lua::getIntField(2,"Thrust");
-		float rot = Lua::getNumField(2,"Rotation");
-		float speed = Lua::getNumField(2,"MaxSpeed");
-		int hull = Lua::getIntField(2,"MaxHull");
-		int shield = Lua::getIntField(2,"MaxShield");
-		int msrp = Lua::getIntField(2,"MSRP");
-		int cargo = Lua::getIntField(2,"Cargo");
+		string name = Lua::getStringField(3,"Name");
+		string imageName = Lua::getStringField(3,"Image");
+		string description = Lua::getStringField(3,"Description");
+		string engineName = Lua::getStringField(3,"Engine");
+		float mass = Lua::getNumField(3,"Mass");
+		int thrust = Lua::getIntField(3,"Thrust");
+		float rot = Lua::getNumField(3,"Rotation");
+		float speed = Lua::getNumField(3,"MaxSpeed");
+		int hull = Lua::getIntField(3,"MaxHull");
+		int shield = Lua::getIntField(3,"MaxShield");
+		int msrp = Lua::getIntField(3,"MSRP");
+		int cargo = Lua::getIntField(3,"Cargo");
 
 		Image *image = Image::Get(imageName);
 		if(image == NULL)
@@ -1210,8 +1211,8 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 
 		int wsTable;
 		lua_pushstring(L, "weaponSlots");
-		assert( lua_istable(L, 2) );
-		lua_gettable(L,2);
+		assert( lua_istable(L, 3) );
+		lua_gettable(L,3);
 		wsTable = lua_gettop(L);
 		assert( lua_istable(L, wsTable) );
 		// don't pop this table yet!
@@ -1252,21 +1253,21 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 
 		Model* thisModel = new Model(name, image, description, engine, mass, thrust, rot, speed, hull, shield, msrp, cargo, weaponSlots);
 
-		GetSimulation(L)->GetModels()->AddOrReplace(thisModel);
+		GetSimulation(L)->GetModels()->AddOrReplace( oldname, thisModel );
 
 	} else if(kind == "Planet"){
-		string name = Lua::getStringField(2,"Name");
-		int x = Lua::getIntField(2,"X");
-		int y = Lua::getIntField(2,"Y");
-		string imageName = Lua::getStringField(2,"Image");
-		string allianceName = Lua::getStringField(2,"Alliance");
-		int traffic = Lua::getIntField(2,"Traffic");
-		int militia = Lua::getIntField(2,"Militia");
-		int landable = Lua::getIntField(2,"Landable");
-		int influence = Lua::getIntField(2,"Influence");
-		string surfaceName = Lua::getStringField(2,"Surface");
-		string summary = Lua::getStringField(2,"Summary");
-		list<string> techNames = Lua::getStringListField(2,"Technologies");
+		string name = Lua::getStringField(3,"Name");
+		int x = Lua::getIntField(3,"X");
+		int y = Lua::getIntField(3,"Y");
+		string imageName = Lua::getStringField(3,"Image");
+		string allianceName = Lua::getStringField(3,"Alliance");
+		int traffic = Lua::getIntField(3,"Traffic");
+		int militia = Lua::getIntField(3,"Militia");
+		int landable = Lua::getIntField(3,"Landable");
+		int influence = Lua::getIntField(3,"Influence");
+		string surfaceName = Lua::getStringField(3,"Surface");
+		string summary = Lua::getStringField(3,"Summary");
+		list<string> techNames = Lua::getStringListField(3,"Technologies");
 
 		// Process the Tech List
 		list<Technology*> techs;
@@ -1309,7 +1310,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 				summary,
 				techs);
 
-		Planet* oldPlanet = GetSimulation(L)->GetPlanets()->GetPlanet(name);
+		Planet* oldPlanet = GetSimulation(L)->GetPlanets()->GetPlanet( oldname );
 		if(oldPlanet!=NULL) {
 			LogMsg(INFO,"Saving changes to '%s'",thisPlanet.GetName().c_str());
 			*oldPlanet = thisPlanet;
@@ -1321,13 +1322,15 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		}
 
 	} else if(kind == "Gate"){
-		string gateName = Lua::getStringField(2,"Name");
-		int x = Lua::getIntField(2,"X");
-		int y = Lua::getIntField(2,"Y");
-		string exitName = Lua::getStringField(2,"Exit");
+		string gateName = Lua::getStringField(3,"Name");
+		int x = Lua::getIntField(3,"X");
+		int y = Lua::getIntField(3,"Y");
+		string exitName = Lua::getStringField(3,"Exit");
 
-		Gate *gate = GetSimulation(L)->GetGates()->GetGate( gateName );
-		Gate *exit = GetSimulation(L)->GetGates()->GetGate( exitName );
+		Gates* gates = GetSimulation(L)->GetGates();
+
+		Gate *gate = gates->GetGate( gateName );
+		Gate *exit = gates->GetGate( exitName );
 		if( gate != NULL ) {
 			gate->SetWorldPosition( Coordinate(x,y) );
 			if( exit != NULL ) {
@@ -1342,51 +1345,51 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		list<Engine*> engines;
 		list<Outfit*> outfits;
 
-		string name = luaL_checkstring(L,2);
+		string name = luaL_checkstring(L,3);
 
-		list<string> modelNames = Lua::getStringListField(3);
+		list<string> modelNames = Lua::getStringListField(4);
 		for(iter=modelNames.begin();iter!=modelNames.end();++iter){
 			if(GetSimulation(L)->GetModels()->GetModel(*iter))
 				models.push_back( GetSimulation(L)->GetModels()->GetModel(*iter) );
 		}
 
-		list<string> weaponNames = Lua::getStringListField(4);
+		list<string> weaponNames = Lua::getStringListField(5);
 		for(iter=weaponNames.begin();iter!=weaponNames.end();++iter){
 			if(GetSimulation(L)->GetWeapons()->GetWeapon(*iter))
 				weapons.push_back( GetSimulation(L)->GetWeapons()->GetWeapon(*iter) );
 		}
 
-		list<string> engineNames = Lua::getStringListField(5);
+		list<string> engineNames = Lua::getStringListField(6);
 		for(iter=engineNames.begin();iter!=engineNames.end();++iter){
 			if(GetSimulation(L)->GetEngines()->GetEngine(*iter))
 				engines.push_back( GetSimulation(L)->GetEngines()->GetEngine(*iter) );
 		}
 
-		list<string> outfitNames = Lua::getStringListField(6);
+		list<string> outfitNames = Lua::getStringListField(7);
 		for(iter=outfitNames.begin();iter!=outfitNames.end();++iter){
 			if(GetSimulation(L)->GetOutfits()->GetOutfit(*iter))
 				outfits.push_back( GetSimulation(L)->GetOutfits()->GetOutfit(*iter) );
 		}
 
 		Technology* thisTechnology = new Technology(name,models,engines,weapons,outfits);
-		GetSimulation(L)->GetTechnologies()->AddOrReplace( thisTechnology );
+		GetSimulation(L)->GetTechnologies()->AddOrReplace( oldname, thisTechnology );
 
 	} else if(kind == "Weapon"){
-		string name = Lua::getStringField(2,"Name");
-		string imageName = Lua::getStringField(2,"Image");
-		string pictureName = Lua::getStringField(2,"Picture");
-		string description = Lua::getStringField(2,"Description");
-		int payload = Lua::getIntField(2,"Payload");
-		int velocity = Lua::getIntField(2,"Velocity");
-		int acceleration = Lua::getIntField(2,"Acceleration");
-		int fireDelay = Lua::getIntField(2,"FireDelay");
-		int lifetime = Lua::getIntField(2,"Lifetime");
-		float tracking = Lua::getNumField(2,"Tracking");
-		int msrp = Lua::getIntField(2,"MSRP");
-		int type = Lua::getIntField(2,"Type");
-		string ammoTypeName = Lua::getStringField(2,"Ammo Type");
-		int ammoConsumption = Lua::getIntField(2,"Ammo Consumption");
-		string soundName = Lua::getStringField(2,"Sound");
+		string name = Lua::getStringField(3,"Name");
+		string imageName = Lua::getStringField(3,"Image");
+		string pictureName = Lua::getStringField(3,"Picture");
+		string description = Lua::getStringField(3,"Description");
+		int payload = Lua::getIntField(3,"Payload");
+		int velocity = Lua::getIntField(3,"Velocity");
+		int acceleration = Lua::getIntField(3,"Acceleration");
+		int fireDelay = Lua::getIntField(3,"FireDelay");
+		int lifetime = Lua::getIntField(3,"Lifetime");
+		float tracking = Lua::getNumField(3,"Tracking");
+		int msrp = Lua::getIntField(3,"MSRP");
+		int type = Lua::getIntField(3,"Type");
+		string ammoTypeName = Lua::getStringField(3,"Ammo Type");
+		int ammoConsumption = Lua::getIntField(3,"Ammo Consumption");
+		string soundName = Lua::getStringField(3,"Sound");
 
 		Image *picture = Image::Get(pictureName);
 		if(picture==NULL)
@@ -1401,21 +1404,21 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 			return luaL_error(L, "Could not create weapon: there is no sound file '%s'.",soundName.c_str());
 
 		Weapon* thisWeapon = new Weapon(name, image, picture, description, type, payload, velocity, acceleration, Weapon::AmmoNameToType(ammoTypeName), ammoConsumption, fireDelay, lifetime, sound, tracking, msrp);
-		GetSimulation(L)->GetWeapons()->AddOrReplace( thisWeapon );
+		GetSimulation(L)->GetWeapons()->AddOrReplace( oldname, thisWeapon );
 
 	} else if(kind == "Outfit"){
-		string name = Lua::getStringField(2,"Name");
-		string pictureName = Lua::getStringField(2,"Picture");
-		string description = Lua::getStringField(2,"Description");
-		float force = Lua::getNumField(2,"Force");
-		float mass = Lua::getNumField(2,"Mass");
-		float rot = Lua::getNumField(2,"Rotation");
-		float speed = Lua::getNumField(2,"MaxSpeed");
-		int hull = Lua::getIntField(2,"MaxHull");
-		int shield = Lua::getIntField(2,"MaxShield");
-		int msrp = Lua::getIntField(2,"MSRP");
-		int cargo = Lua::getIntField(2,"Cargo");
-		int area = Lua::getIntField(2,"SurfaceArea");
+		string name = Lua::getStringField(3,"Name");
+		string pictureName = Lua::getStringField(3,"Picture");
+		string description = Lua::getStringField(3,"Description");
+		float force = Lua::getNumField(3,"Force");
+		float mass = Lua::getNumField(3,"Mass");
+		float rot = Lua::getNumField(3,"Rotation");
+		float speed = Lua::getNumField(3,"MaxSpeed");
+		int hull = Lua::getIntField(3,"MaxHull");
+		int shield = Lua::getIntField(3,"MaxShield");
+		int msrp = Lua::getIntField(3,"MSRP");
+		int cargo = Lua::getIntField(3,"Cargo");
+		int area = Lua::getIntField(3,"SurfaceArea");
 
 		Image *picture = Image::Get(pictureName);
 		if(picture==NULL)
@@ -1424,7 +1427,7 @@ int Simulation_Lua::SetInfo(lua_State *L) {
 		Outfit* thisOutfit = new Outfit( msrp, picture, description, rot, speed, force, mass, cargo, area, hull, shield );
 		thisOutfit->SetName( name );
 
-		GetSimulation(L)->GetOutfits()->AddOrReplace( thisOutfit );
+		GetSimulation(L)->GetOutfits()->AddOrReplace( oldname, thisOutfit );
 
 	} else {
 		return luaL_error(L, "Cannot set Info for kind '%s' must be one of {Alliance, Engine, Model, Planet, Technology, Weapon} ",kind.c_str());

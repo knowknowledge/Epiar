@@ -29,7 +29,7 @@ class Components {
 		void Add(Component* component);
 		bool Remove(string name);
 		bool Remove(Component* component);
-		void AddOrReplace(Component* component);
+		void AddOrReplace(string oldname, Component* component);
 		Component* Get(string name);
 		list<string>* GetNames();
 		int Size() { return (int)names.size(); }

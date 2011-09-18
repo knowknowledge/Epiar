@@ -190,7 +190,7 @@ int Planets_Lua::NewPlanet(lua_State* L){
 	// Save the Planet!
 	Image::Store(_name,_image);
 	SpriteManager::Instance()->Add((Sprite*)p);
-	Planets::Instance()->AddOrReplace((Component*)p);
+	Planets::Instance()->Add((Component*)p);
     Simulation_Lua::PushSprite(L,p);
 	return 1;
 }
