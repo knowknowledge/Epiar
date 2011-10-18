@@ -177,7 +177,7 @@ function showComponent(kind, name)
 		local value = theInfo[title]
 		if fieldType == "String" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
+			field = UI.newTextbox( 90, yoff, 130, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Paragraph" then
@@ -188,7 +188,7 @@ function showComponent(kind, name)
 			yoff = yoff+300
 		elseif fieldType == "Integer" then
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
+			field = UI.newTextbox( 90, yoff, 130, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Number" then
@@ -196,13 +196,13 @@ function showComponent(kind, name)
 				value = string.format("%.2f",value)
 			end
 			theWin:add(UI.newLabel( 10, yoff, title..":"))
-			field = UI.newTextbox( 90, yoff, 100, 1, value, title)
+			field = UI.newTextbox( 90, yoff, 130, 1, value, title)
 			theWin:add(field)
 			yoff = yoff+20
 		elseif fieldType == "Picture" then
 			theWin:add(UI.newLabel( 10, yoff+10, title..":"))
 			yoff = yoff+35
-			local pic = UI.newPicture( 10, yoff, width-20, 100, value)
+			local pic = UI.newPicture( 10, yoff, width-20, 130, value)
 			theWin:add(pic)
 			thePics[title] = pic
 			yoff = yoff+100
