@@ -36,9 +36,9 @@ EditorLayouts = {
 	Engine = {
 		{"Name", "String"},
 		{"Picture", "Picture"},
-		{"MSRP", "Integer"},
-		{"Force", "Integer"},
-		{"Fold Drive", "Integer"},
+		{"MSRP", "Integer"}, -- Slider. Log Scale? Step=1000
+		{"Force", "Integer"}, -- Slider
+		{"Fold Drive", "Integer"}, -- Check Box
 		{"Sound", "Sound", "Engines"}, -- Sound Dropdown - Engines subgroup
 		{"Animation", "Animation"},
 		{"Description", "Paragraph"},
@@ -46,14 +46,14 @@ EditorLayouts = {
 	Model = {
 		{"Name", "String"},
 		{"Image", "Picture"},
-		{"Rotation", "Number"},
-		{"MSRP", "Integer"},
-		{"Thrust", "Integer"},
-		{"Mass", "Number"},
-		{"MaxHull", "Integer"},
-		{"MaxShield", "Integer"},
-		{"MaxSpeed", "Integer"},
-		{"Cargo", "Integer"},
+		{"Rotation", "Number"}, -- Slider
+		{"MSRP", "Integer"}, -- Slider. Log Scale? Step=1000
+		{"Thrust", "Integer"}, -- Sprite pixel picker. like Weapon Slots
+		{"Mass", "Number"}, -- Slider, Step=1
+		{"MaxHull", "Integer"}, -- Slider
+		{"MaxShield", "Integer"}, -- Slider
+		{"MaxSpeed", "Integer"}, -- Slider
+		{"Cargo", "Integer"}, -- Slider
 		{"Engine", "Component", Epiar.engines},
 		{"weaponSlots", "Weapon slots"}, -- Slot configuration builder
 		{"Description", "Paragraph"},
@@ -66,8 +66,8 @@ EditorLayouts = {
 		{"Surface", "Picture"},
 		{"Alliance", "Component", Epiar.alliances},
 		{"Landable", "Integer"}, -- TODO Should be Checkbox
-		{"Traffic", "Integer"},
-		{"Militia", "Integer"},
+		{"Traffic", "Integer"}, -- Slider, Step=1
+		{"Militia", "Integer"}, -- Slider, Step=1
 		{"Influence", "Integer"},
 		{"Technologies", "Technologies"},
 		{"Summary", "Paragraph"},
@@ -82,30 +82,30 @@ EditorLayouts = {
 		{"Name", "String"},
 		{"Picture", "Picture"},
 		{"Image", "Picture"},
-		{"MSRP", "Integer"},
-		{"Payload", "Integer"},
-		{"Velocity", "Integer"},
-		{"Lifetime", "Integer"},
-		{"FireDelay", "Integer"},
+		{"MSRP", "Integer"}, -- Slider. Log Scale? Step=1000
+		{"Payload", "Integer"}, -- Slider
+		{"Velocity", "Integer"}, -- Slider, Step=1
+		{"Lifetime (ms)", "Integer"}, -- Slider, Step=100
+		{"FireDelay (ms)", "Integer"}, -- Slider, Step=10
 		{"Type", "Integer"}, -- TODO Is this the same as Ammo Type?  It should be removed.
-		{"Tracking", "Number"},
+		{"Tracking", "Number"}, -- Slider, Step= 0.01, What are these units?
 		{"Ammo Type", "Integer"}, -- TODO Should be a dropdown of Ammo Types
-		{"Ammo Consumption", "Integer"},
+		{"Ammo Consumption", "Integer"}, -- Checkbox
 		{"Sound", "Sound", "Weapons"}, -- Sound Dropdown - Weapons subgroup
 		{"Description", "Paragraph"},
 	},
 	Outfit = {
 		{"Name", "String"},
 		{"Picture", "Picture"}, -- Picture Picker
-		{"MSRP", "Integer"},
-		{"MaxSpeed", "Number"},
-		{"Force", "Number"},
-		{"Rotation", "Number"},
-		{"MaxHull", "Integer"},
-		{"MaxShield", "Integer"},
-		{"Cargo", "Integer"},
-		{"SurfaceArea", "Integer"},
-		{"Mass", "Number"},
+		{"MSRP", "Integer"}, -- Slider. Log Scale? Step=1000
+		{"MaxSpeed", "Number"}, -- Slider
+		{"Force", "Number"}, -- Slider
+		{"Rotation", "Number"}, -- Slider
+		{"MaxHull", "Integer"}, -- Slider
+		{"MaxShield", "Integer"}, -- Slider
+		{"Cargo", "Integer"}, -- Slider
+		{"SurfaceArea", "Integer"}, -- Slider
+		{"Mass", "Number"}, -- Slider
 		{"Description", "Paragraph"},
 	},
 }
