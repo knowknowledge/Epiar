@@ -37,6 +37,8 @@ class Ship : public Sprite {
 		void Damage( short int damage );
 		void Repair( short int damage );
 
+		void Jump( Coordinate position );
+
 		void Draw( void );
 		FireStatus FirePrimary( int target = -1 );
 		FireStatus FireSecondary( int target = -1 );
@@ -119,6 +121,7 @@ class Ship : public Sprite {
 
 		FireStatus Fire( unsigned int group, int target = -1 );
 		void ComputeShipStats();
+		void Explode( lua_State *L );
 
 		struct {
 			/* Related to ship's condition */
@@ -128,11 +131,16 @@ class Ship : public Sprite {
 			unsigned int lastFiredAt[32]; ///< Number of ticks where last fire event occured for a given weapon slot
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
 			
+			// Jump Information
+			Uint32 jumpStartTime;
+			Coordinate jumpDestination;
+			
 			/* Flags */
 			bool isAccelerating; ///< Cleared by update, set by accelerate (so it's always updated twice a loop)
 			bool isRotatingLeft;  ///< Cleared by update, set by turning left (so it's always updated twice a loop)
 			bool isRotatingRight;  ///< Cleared by update, set by turning right (so it's always updated twice a loop)
 			bool isDisabled; ///< Set when a ship is disabled (cannot move, may self-repair)
+			bool isJumping; ///< Set when a ship is currently jumping
 		} status;
 
 		// Weapon Systems

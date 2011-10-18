@@ -65,6 +65,7 @@ Ship::Ship()
 	status.isRotatingLeft = false;
 	status.isRotatingRight = false;
 	status.isDisabled = false;
+	status.isJumping = false;
 	for(int a=0;a<max_ammo;a++){
 		ammo[a]=0;
 	}
@@ -183,6 +184,10 @@ void Ship::Rotate( float direction ) {
 		return;
 	}
 
+	if(  status.isJumping == true ) {
+		return;
+	}
+
 	// Compute the maximum amount that the ship can turn
 	rotPerSecond = shipStats.GetRotationsPerSecond();
 	timerDelta = Timer::GetDelta();
@@ -224,6 +229,10 @@ void Ship::Rotate( float direction ) {
  * \sa Model::GetAcceleration
  */
 void Ship::Accelerate( void ) {
+	if(  status.isJumping == true ) {
+		return;
+	}
+
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
@@ -288,11 +297,30 @@ void Ship::Repair(short int damage) {
 	}
 }
 
+/**\brief Begin a Jump
+ */
+void Ship::Jump( Coordinate position ) {
+	//if( 0 == engine->GetFoldDrive() ) { // Cannot Jump
+	if( 0 ) {
+		// TODO Play a failure sound.
+	} else if(  status.isJumping == true ) { // Already Jumping
+		// TODO Play a failure sound.
+	} else {
+		status.isJumping = true;
+		status.jumpStartTime = Timer::GetTicks();
+		status.jumpDestination = position;
+		// TODO Start playing a sound
+		SetMomentum( Coordinate(0,0) );
+		SetAngle( (position - GetWorldPosition()).GetAngle() );
+	}
+}
+
 /**\brief Update function on every frame.
  */
 void Ship::Update( lua_State *L ) {
 	Sprite::Update( L ); // update momentum and other generic sprite attributes
 	
+	// Movement Changes
 	if( status.isAccelerating == false 
 		&& status.isRotatingLeft == false
 		&& status.isRotatingRight == false) {
@@ -301,27 +329,23 @@ void Ship::Update( lua_State *L ) {
 	flareAnimation->Update();
 	Coordinate momentum	= GetMomentum();
 	momentum.EnforceMagnitude( shipStats.GetMaxSpeed()*engineBooster );
+
 	// Show the hits taken as part of the radar color
 	if(IsDisabled()) SetRadarColor( GREY );
 	else SetRadarColor( RED * GetHullIntegrityPct() );
+
+	if( status.isJumping ) {
+		// When the Jump is complete
+		if( Timer::GetTicks() - status.jumpStartTime > 1000 ) {
+			status.isJumping = false;
+			SetWorldPosition( status.jumpDestination );
+		}
+	}
 	
 	// Ship has taken as much damage as possible...
-	// It Explodes!
 	if( status.hullDamage >=  (float)shipStats.GetHullStrength() ) {
-		SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
-		Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
-
-		// Play explode sound
-		if(OPTION(int, "options/sound/explosions")) {
-			Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
-			explodesnd->Play( GetWorldPosition() - camera->GetFocusCoordinate());
-		}
-
-		// Create Explosion
-		sprites->Add( new Effect( GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
-
-		// Remove this Sprite from the SpriteManager
-		sprites->Delete( (Sprite*)this );
+		// It Explodes!
+		Explode( L );
 	}
 }
 
@@ -338,6 +362,16 @@ void Ship::Draw( void ) {
 			position.GetScreenX(), position.GetScreenY(),
 			static_cast<float>(GetRadarSize()), 0.0f,0.0f,0.3f,0.3f);
 	*/
+
+	if( status.isJumping ) {
+		// When the ship is jumping, move it to the screen edge
+		glPushMatrix();
+		Coordinate jumpDir = (status.jumpDestination - position);
+		jumpDir.EnforceMagnitude( Video::GetHalfWidth() );
+		jumpDir *= ((float)Timer::GetRealTicks() - (float)status.jumpStartTime) / 1000.0;
+		//cout << "Jump:" << status.jumpDestination << " Pos:" << position << " dir:" << jumpDir <<endl;
+		glTranslatef( jumpDir.GetX(), jumpDir.GetY(), 0.0);
+	}
 
 	Sprite::Draw();
 	
@@ -374,6 +408,10 @@ void Ship::Draw( void ) {
 		status.isRotatingRight = false;
 	}
 #endif
+
+	if( status.isJumping ) {
+		glPopMatrix();
+	}
 }
 
 FireStatus Ship::FirePrimary( int target ) {
@@ -391,6 +429,10 @@ FireStatus Ship::Fire( unsigned int group, int target ) {
 	// Check  that some weapon is attached
 	if ( shipWeapons.empty() ) {
 		return FireNoWeapons;
+	}
+
+	if(  status.isJumping == true ) {
+		return FireNotReady;
 	}
 
 	bool fnr = false;
@@ -511,6 +553,24 @@ FireStatus Ship::Fire( unsigned int group, int target ) {
 	if(fnr) return FireNotReady;
 
 	return FireUnknown;
+}
+
+void Ship::Explode( lua_State *L )
+{
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+	Camera* camera = Simulation_Lua::GetSimulation(L)->GetCamera();
+
+	// Play explode sound
+	if(OPTION(int, "options/sound/explosions")) {
+		Sound *explodesnd = Sound::Get("Resources/Audio/Effects/18384__inferno__largex.wav.ogg");
+		explodesnd->Play( GetWorldPosition() - camera->GetFocusCoordinate());
+	}
+
+	// Create Explosion
+	sprites->Add( new Effect( GetWorldPosition(), "Resources/Animations/explosion1.ani", 0) );
+
+	// Remove this Sprite from the SpriteManager
+	sprites->Delete( (Sprite*)this );
 }
 
 /**\brief Adds a new weapon to the ship WITHOUT updating weaponSlots.

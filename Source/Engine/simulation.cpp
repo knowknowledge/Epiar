@@ -665,6 +665,17 @@ void Simulation::HandleInput() {
 	{
 		Lua::Call("keyboardCommands");
 	}
+
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'j') ) )
+	{
+		list<string>* names = planets->GetNames();
+		int i = 0;
+		int x = rand() % names->size();
+		list<string>::iterator pName = names->begin();
+		while( i++ < x ){ pName++; }
+		Planet* p = planets->GetPlanet(*pName);
+		player->Jump( p->GetWorldPosition() + GaussianCoordinate()*p->GetInfluence() );
+	}
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )
 	{
