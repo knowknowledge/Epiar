@@ -1064,6 +1064,7 @@ Container* Container::SetFormButton( Button* button ) {
 		LogMsg(INFO, "Setting %s to the Form Button for %s %s", button->GetName().c_str(), GetType().c_str(), GetName().c_str() );
 		assert( button->GetMask() & WIDGET_BUTTON );
 		formbutton = button;
+		((Widget*)formbutton)->MouseEnter(0,0);
 	}
 	ResetInput();
 	return this;

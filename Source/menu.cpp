@@ -223,6 +223,8 @@ void Menu::CreateLoadWindow()
 	Window* win = new Window(250, 50, 500, 70 + (names->size() * 150), "Load Game");
 	UI::Add( win );
 
+	PlayerInfo* last = Players::Instance()->LastPlayer();
+
 	// Create a new Frame for each Player
 	int p = 0;
 	list<string>::iterator iter;
@@ -235,9 +237,13 @@ void Menu::CreateLoadWindow()
 			->AddChild( (new Button(280, 80, 100, 30, "Play", StartGame, info )) )
 			->AddChild( (new Button(170, 80, 100, 30, "Erase", ErasePlayer, info ) ) )
 		);
+		if( info == last ) {
+			win->SetFormButton( (Button*) win->Search("/Frame/Button'Play'/") );
+		}
 	}
 	win->AddChild( (new Button( 200, 155*names->size() + 20, 100, 30, "Cancel", &UI::Close, win)) );
 	win->AddCloseButton();
+	UI::RegisterKeyboardFocus(win);
 	return;
 }
 
