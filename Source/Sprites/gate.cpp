@@ -189,7 +189,7 @@ void Gate::Update( lua_State *L ) {
 	if(!top) return;
 
 	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
-	Sprite* ship = sprites->GetNearestSprite( (Sprite*)this, 50,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
+	Ship* ship = (Ship*)sprites->GetNearestSprite( (Sprite*)this, 50,DRAW_ORDER_SHIP|DRAW_ORDER_PLAYER );
 
 	if(ship!=NULL) {
 		if(exitID != 0) {
@@ -216,7 +216,7 @@ void Gate::SendToRandomLocation(Sprite* ship) {
  * The exit point is offset slightly to avoid re-entering the exit
  */
 
-void Gate::SendToExit(Sprite* ship) {
+void Gate::SendToExit(Ship* ship) {
 	Sprite* exit = SpriteManager::Instance()->GetSpriteByID(exitID);
 	if(exit==NULL) {
 		LogMsg(ERR,"Gate %d cannot send to non-existant exit (%d)",this->GetID(),exitID);
@@ -225,9 +225,10 @@ void Gate::SendToExit(Sprite* ship) {
 	float distance = 50.0f;
 	float exitAngle = normalizeAngle( exit->GetAngle()+180 );
 	// The Ship's Angle and Momentum should make it appear like it is exiting the Gate
-	ship->SetWorldPosition( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exitAngle ) );
+	//ship->SetWorldPosition(  );
 	ship->SetMomentum( ship->GetMomentum().RotateTo( exitAngle ) );
 	ship->SetAngle( exitAngle );
+	ship->Jump( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exitAngle ) );
 }
 
 /**\brief Teleport a Ship in the direction of the Gate by a random distance

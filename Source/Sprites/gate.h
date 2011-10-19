@@ -12,6 +12,7 @@
 
 #include "includes.h"
 #include "Sprites/sprite.h"
+#include "Sprites/ship.h"
 #include "Graphics/image.h"
 #include "Graphics/animation.h"
 #include "Utilities/components.h"
@@ -47,7 +48,7 @@ class Gate : public Sprite, public Component {
 		int exitID; ///< Ships entering this gate will be transported to the Exit Gate
 
 		void SendToRandomLocation(Sprite* ship);
-		void SendToExit(Sprite* ship);
+		void SendToExit(Ship* ship);
 		void SendRandomDistance(Sprite* ship);
 
 		Gate(int topID);

@@ -37,7 +37,8 @@ class Ship : public Sprite {
 		void Damage( short int damage );
 		void Repair( short int damage );
 
-		void Jump( Coordinate position );
+		bool Jump( Coordinate position );
+		bool JumpDrive( Coordinate position );
 
 		void Draw( void );
 		FireStatus FirePrimary( int target = -1 );

@@ -299,19 +299,31 @@ void Ship::Repair(short int damage) {
 
 /**\brief Begin a Jump
  */
-void Ship::Jump( Coordinate position ) {
-	//if( 0 == engine->GetFoldDrive() ) { // Cannot Jump
-	if( 0 ) {
+bool Ship::Jump( Coordinate position ) {
+	if(  status.isJumping == true ) { // Already Jumping
 		// TODO Play a failure sound.
-	} else if(  status.isJumping == true ) { // Already Jumping
-		// TODO Play a failure sound.
+		return false;
+	}
+	
+	status.isJumping = true;
+	status.jumpStartTime = Timer::GetTicks();
+	status.jumpDestination = position;
+	// TODO Start playing a sound
+	SetAngle( (position - GetWorldPosition()).GetAngle() );
+	return true;
+}
+
+/**\brief Begin a Jump using the Ships Engines
+ * \note This is how most Ships should Jump under their own power.
+ *       Calling Jump Directly should only be done by Gates.
+ */
+bool Ship::JumpDrive( Coordinate position ) {
+	// Can the ship's Engine Jump?
+	if( engine->GetFoldDrive() ) {
+		return Jump( position );
 	} else {
-		status.isJumping = true;
-		status.jumpStartTime = Timer::GetTicks();
-		status.jumpDestination = position;
-		// TODO Start playing a sound
-		SetMomentum( Coordinate(0,0) );
-		SetAngle( (position - GetWorldPosition()).GetAngle() );
+		// TODO Play a failure sound.
+		return false;
 	}
 }
 
