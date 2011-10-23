@@ -127,7 +127,9 @@ class Ship : public Sprite {
 		Outfit shipStats;
 		//power distribution variables
 
-		FireStatus Fire( unsigned int group, int target = -1 );
+		enum Group{ PRIMARY, SECONDARY, MAX_GROUPS };
+
+		FireStatus Fire( Group group, int target = -1 );
 		void ComputeShipStats();
 		void Explode( lua_State *L );
 
@@ -144,7 +146,7 @@ class Ship : public Sprite {
 			float engineBooster; ///< Ratio of normal Engine Power
 			float shieldBooster; ///< Ratio of normal Shielf Power
 			
-			// Jump Information
+			/* Jump Information */
 			Uint32 jumpStartTime;
 			Coordinate jumpDestination;
 			
