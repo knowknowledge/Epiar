@@ -14,10 +14,7 @@
 #include "Utilities/components.h"
 #include "Engine/outfit.h"
 
-#define WEAPON_PROJECTILE  0
-#define WEAPON_ENERGY  1
-
-enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo, FireEmptyGroup, FireUnknown};
+enum FireStatus {FireSuccess, FireNoWeapons, FireNotReady, FireNoAmmo, FireNoClearShot, FireNoTarget, FireEmptyGroup, FireUnknown};
 
 enum AmmoType {
 	energy_ammo,

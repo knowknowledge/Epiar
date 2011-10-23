@@ -496,108 +496,112 @@ FireStatus Ship::FireSecondary( int target ) {
  * \return FireStatus
  */
 FireStatus Ship::Fire( Group group, int target ) {
-	Trig *trig = Trig::Instance();
-	SpriteManager *sprites = SpriteManager::Instance();
+	FireStatus error = FireUnknown;
+	bool fired = false; ///< Flag if anything was fired
+	bool emptyFiringGroup = true;
 
-	// Check  that some weapon is attached
+	// Check that some weapons are attached
 	if ( shipWeapons.empty() ) {
 		return FireNoWeapons;
 	}
-
+	// Check that the ship is not jumping
 	if(  status.isJumping == true ) {
 		return FireNotReady;
 	}
 
-	float weapvol = OPTION(float,"options/sound/weapons");
-	if ( this->GetDrawOrder() == DRAW_ORDER_SHIP ) {
-		weapvol *= NON_PLAYER_SOUND_RATIO;
-	}
-
-	bool fnr = false; ///< Flag if any Weapons are Not Ready
-	bool fna = false; ///< Flag if any Weapons do not have enough ammo
-	bool fired = false; ///< Flag if anything was fired
-	bool emptyFiringGroup = true;
-
 	for(unsigned int slot = 0; slot < weaponSlots.size(); slot++) {
-		int slotFiringGroup = weaponSlots[slot].firingGroup;
-		Weapon* currentWeapon = weaponSlots[slot].content;
-		float projectileAngle = 0.0f;
-		emptyFiringGroup = false;
-
-		// Do nothing for this slot
-		if( (currentWeapon == NULL) // the slot is empty
-		 || (slotFiringGroup != group) // the slot is assigned to a different group
-		) {
-			continue;
-		}
-
-		// Check that the weapon has cooled down
-		if( !( currentWeapon->GetFireDelay() < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
-			fnr = true;
-			continue;
-		}
-		// Check that there is sufficient ammo
-		if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
-			fna = true;
-			continue;
-		}
-
-
-		Sprite *targetSprite = sprites->GetSpriteByID(target);
-
-		// A regular fixed weapon slot
-		if(weaponSlots[slot].motionAngle == 0) {
-			projectileAngle = GetAngle() + weaponSlots[slot].angle;
-		}
-
-		// A Turret weapon slot
-		else if(targetSprite != NULL) {
-			float angleToTarget = GetDirectionTowards(targetSprite->GetWorldPosition());
-			if( (weaponSlots[slot].motionAngle == 360)
-			 || (fabs(weaponSlots[slot].angle - angleToTarget) < weaponSlots[slot].motionAngle/2)
-			 || (fabs(weaponSlots[slot].angle - angleToTarget) > (360-weaponSlots[slot].motionAngle/2))
-			) {
-				projectileAngle = GetAngle() + angleToTarget;
+		if( (weaponSlots[slot].firingGroup == group)
+		 && (weaponSlots[slot].content != NULL) )
+		{
+			emptyFiringGroup = false;
+			FireStatus result = FireSlot( slot, target );
+			if( result == FireSuccess ) {
+				fired = true;
 			} else {
-				continue; // This Slot cannot aim at the target
+				error = result;
 			}
 		}
-
-		// A Turret but no target
-		else {
-			continue;
-		}
-
-		// Play weapon sound
-		if( currentWeapon->GetSound() != NULL ) {
-			currentWeapon->GetSound()->SetVolume( weapvol );
-			currentWeapon->GetSound()->Play( GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
-		}
-		// Find the world position of this slot
-		float angle = static_cast<float>(trig->DegToRad( GetAngle()));
-		Coordinate slotPosition = Coordinate( weaponSlots[slot].x, weaponSlots[slot].y ).RotateTo( angle ) + GetWorldPosition();
-
-		// Fire the weapon
-		Projectile *projectile = new Projectile(status.damageBooster, projectileAngle, slotPosition, GetMomentum(), currentWeapon);
-		projectile->SetOwnerID( this->GetID() );
-		projectile->SetTargetID( target );
-		sprites->Add( (Sprite*)projectile );
-
-		// Consume ammo
-		ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
-
-		// Track number of ticks the last fired occured for this weapon
-		status.lastFiredAt[slot] = Timer::GetTicks();
-
-		fired = true;
 	} // End For Each Slot
 
-	if(emptyFiringGroup) return FireEmptyGroup;
 	if(fired) return FireSuccess;
-	if(fna) return FireNoAmmo;
-	if(fnr) return FireNotReady;
+	if(emptyFiringGroup) return FireEmptyGroup;
 
-	return FireUnknown;
+	// When nothing fires return the last error that occurred
+	return error; 
+}
+
+/**\brief Fire a single weapon slot.
+ * \return FireStatus
+ */
+FireStatus Ship::FireSlot( int slot, int target )
+{
+	Trig *trig = Trig::Instance();
+	SpriteManager *sprites = SpriteManager::Instance();
+	Weapon* currentWeapon = weaponSlots[slot].content;
+	float projectileAngle = 0.0f;
+
+	// Check that the weapon has cooled down
+	if( !( currentWeapon->GetFireDelay() < (int)(Timer::GetTicks() - status.lastFiredAt[slot])) ) {
+		return FireNotReady;
+	}
+	// Check that there is sufficient ammo
+	if( ammo[currentWeapon->GetAmmoType()] < currentWeapon->GetAmmoConsumption() ) {
+		return FireNoAmmo;
+	}
+
+	Sprite *targetSprite = sprites->GetSpriteByID(target);
+
+	// A regular fixed weapon slot
+	if(weaponSlots[slot].motionAngle == 0) {
+		projectileAngle = GetAngle() + weaponSlots[slot].angle;
+	}
+
+	// A Turret weapon slot
+	else if(targetSprite != NULL) {
+		float angleToTarget = GetDirectionTowards(targetSprite->GetWorldPosition());
+		float angleFromSlot = fabs(weaponSlots[slot].angle - angleToTarget);
+		if( (weaponSlots[slot].motionAngle == 360)
+		 || (angleFromSlot < weaponSlots[slot].motionAngle/2)
+		 || (angleFromSlot > (360-weaponSlots[slot].motionAngle/2))
+		) {
+			projectileAngle = GetAngle() + angleToTarget;
+		} else {
+			return FireNoClearShot; // This Slot cannot aim at the target
+		}
+	}
+
+	// A Turret but no target
+	else {
+		return FireNoTarget;
+	}
+
+	// Play weapon sound
+	if( currentWeapon->GetSound() != NULL ) {
+		float weapvol = OPTION(float,"options/sound/weapons");
+		if ( this->GetDrawOrder() == DRAW_ORDER_SHIP ) {
+			weapvol *= NON_PLAYER_SOUND_RATIO;
+		}
+		currentWeapon->GetSound()->SetVolume( weapvol );
+		currentWeapon->GetSound()->Play( GetWorldPosition() - Camera::Instance()->GetFocusCoordinate() );
+	}
+
+	// Find the world position of this slot
+	float angle = static_cast<float>(trig->DegToRad( GetAngle()));
+	Coordinate slotPosition = Coordinate( weaponSlots[slot].x, weaponSlots[slot].y ).RotateTo( angle ) + GetWorldPosition();
+
+	// Fire the weapon
+	Projectile *projectile = new Projectile(status.damageBooster, projectileAngle, slotPosition, GetMomentum(), currentWeapon);
+	projectile->SetOwnerID( this->GetID() );
+	projectile->SetTargetID( target );
+	sprites->Add( (Sprite*)projectile );
+
+	// Consume ammo
+	ammo[currentWeapon->GetAmmoType()] -=  currentWeapon->GetAmmoConsumption();
+
+	// Track number of ticks the last fired occured for this weapon
+	status.lastFiredAt[slot] = Timer::GetTicks();
+
+	return FireSuccess;
 }
 
 void Ship::Explode( lua_State *L )

@@ -130,6 +130,7 @@ class Ship : public Sprite {
 		enum Group{ PRIMARY, SECONDARY, MAX_GROUPS };
 
 		FireStatus Fire( Group group, int target = -1 );
+		FireStatus FireSlot( int slot, int target = -1 );
 		void ComputeShipStats();
 		void Explode( lua_State *L );
 
