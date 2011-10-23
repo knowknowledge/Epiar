@@ -110,12 +110,12 @@ class Ship : public Sprite {
 			return( DRAW_ORDER_SHIP );
 		}
 		//Power Distirubution functions
-		float GetShieldBoost() {return shieldBooster;}
-		float GetEngineBoost() {return engineBooster;}
-		float GetDamageBoost() {return damageBooster;}
-		void SetShieldBoost(float shield) { shieldBooster = shield;}		
-		void SetEngineBoost(float engine) {engineBooster=engine;}
-		void SetDamageBoost(float damage) {damageBooster=damage;}
+		float GetShieldBoost() {return status.shieldBooster;}
+		float GetEngineBoost() {return status.engineBooster;}
+		float GetDamageBoost() {return status.damageBooster;}
+		void SetShieldBoost(float shield) {status.shieldBooster = shield;}
+		void SetEngineBoost(float engine) {status.engineBooster = engine;}
+		void SetDamageBoost(float damage) {status.damageBooster = damage;}
 
 	protected:
 		vector<WeaponSlot> weaponSlots; ///< The weapon slot arrangement - accessed directly by Player for loading/saving
@@ -126,7 +126,6 @@ class Ship : public Sprite {
 		Animation *flareAnimation;
 		Outfit shipStats;
 		//power distribution variables
-		float damageBooster, engineBooster, shieldBooster;
 
 		FireStatus Fire( unsigned int group, int target = -1 );
 		void ComputeShipStats();
@@ -139,6 +138,11 @@ class Ship : public Sprite {
 			unsigned int lastWeaponChangeAt; ///< Number of where last weapon change occcured
 			unsigned int lastFiredAt[32]; ///< Number of ticks where last fire event occured for a given weapon slot
 			unsigned int cargoSpaceUsed; ///< Tons of cargo space that are currently filled
+
+			/* Power Settings */
+			float damageBooster; ///< Ratio of normal Damage Power
+			float engineBooster; ///< Ratio of normal Engine Power
+			float shieldBooster; ///< Ratio of normal Shielf Power
 			
 			// Jump Information
 			Uint32 jumpStartTime;

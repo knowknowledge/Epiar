@@ -103,9 +103,9 @@ Ship::Ship()
 	flareAnimation = NULL;
 	
 	/* Initalize ship's condition */
-	damageBooster=1.0;
-	engineBooster=1.0;
-	shieldBooster=1.0;
+	status.damageBooster=1.0;
+	status.engineBooster=1.0;
+	status.shieldBooster=1.0;
 	status.hullDamage = 0;
 	status.shieldDamage = 0;
 	status.lastWeaponChangeAt = 0;
@@ -288,9 +288,9 @@ void Ship::Accelerate( void ) {
 	Trig *trig = Trig::Instance();
 	Coordinate momentum = GetMomentum();
 	float angle = static_cast<float>(trig->DegToRad( GetAngle() ));
-	float speed = shipStats.GetMaxSpeed()*engineBooster;
+	float speed = shipStats.GetMaxSpeed() * status.engineBooster;
 
-	float acceleration = (shipStats.GetForceOutput() *engineBooster ) / shipStats.GetMass();
+	float acceleration = (shipStats.GetForceOutput() * status.engineBooster ) / shipStats.GetMass();
 
 	momentum += Coordinate( trig->GetCos( angle ) * acceleration * Timer::GetDelta(),
 	                -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
@@ -314,10 +314,10 @@ void Ship::Accelerate( void ) {
 }
 
 
-/**\brief Adds damage to hull.
+/**\brief Adds damage to hull or shield
  */
 void Ship::Damage(short int damage) {
-	if(status.shieldDamage >=   ((float)shipStats.GetShieldStrength()) * shieldBooster)
+	if(status.shieldDamage >= ((float)shipStats.GetShieldStrength()) * status.shieldBooster)
 		status.hullDamage += damage;
 	else
 		status.shieldDamage += damage;
@@ -392,7 +392,7 @@ void Ship::Update( lua_State *L ) {
 	}
 	flareAnimation->Update();
 	Coordinate momentum	= GetMomentum();
-	momentum.EnforceMagnitude( shipStats.GetMaxSpeed()*engineBooster );
+	momentum.EnforceMagnitude( shipStats.GetMaxSpeed() * status.engineBooster );
 
 	// Show the hits taken as part of the radar color
 	if(IsDisabled()) SetRadarColor( GREY );
@@ -920,7 +920,7 @@ float Ship::GetHullIntegrityPct() {
  * \return Shield remaining
  */
 float Ship::GetShieldIntegrityPct() {
-	float remaining =  ( ((float)shipStats.GetShieldStrength() * shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * shieldBooster);
+	float remaining =  ( ((float)shipStats.GetShieldStrength() * status.shieldBooster) - (float)status.shieldDamage ) / ((float)shipStats.GetShieldStrength() * status.shieldBooster);
 	return( remaining > 0.0f ? remaining : 0.0f );
 }
 
