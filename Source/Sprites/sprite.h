@@ -83,31 +83,4 @@ class Sprite {
 		Uint32 lastUpdateFrame; ///< The # of the logical frame that this sprite was last updated
 };
 
-bool compareSpritePtrs(Sprite* a, Sprite* b);
-
-/**\brief Creates a binary comparison object that can be passed to stl sort.
- * Sprites will be sorted by distance from the point in ascending order.
- * \relates Sprite
- */
-struct compareSpriteDistFromPoint
-	: public std::binary_function<Sprite*, Sprite*, bool>
-{
-	compareSpriteDistFromPoint(const Coordinate& c) : point(c) {} ///< Default Constructor(?)
-
-    /**\brief Compare two sprites by their distance from a Coordinate (c).
-     * \details This uses GetMagnitudeSquared to calculate the distance from a
-     *          Sprite so that we don't have to run a costly sqrt.
-     * \param a A pointer to a Sprite.
-     * \param b A pointer to another Sprite.
-     * \returns True if Sprite a is closer than Sprite b to point c.
-     *
-     */
-	bool operator() (Sprite* a, Sprite* b) {
-		return (point - a->GetWorldPosition()).GetMagnitudeSquared()
-		     < (point - b->GetWorldPosition()).GetMagnitudeSquared() ;
-	}
-
-	Coordinate point;
-};
-
 #endif // __h_sprite__

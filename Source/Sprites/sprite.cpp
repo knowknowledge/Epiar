@@ -114,27 +114,5 @@ void Sprite::Draw( void ) {
 	}
 }
 
-/** \brief Comparator function for ordering Sprites
- *
- * \details The goal here is to order the sprites in a deterministic way.
- *          We also need the Sprites to be ordered by their DRAW_ORDER.
- *          Since the Sprite ID is unique, and monotonically increasing, this
- *          will sort older sprites below newer sprites.
- *
- * \param a A pointer to a Sprite.
- * \param b A pointer to another Sprite.
- * \returns True if Sprite a should be below Sprite b.
- *
- * \relates Sprite
- */
-
-bool compareSpritePtrs(Sprite* a, Sprite* b){
-	if(a->GetDrawOrder() != b->GetDrawOrder()) {
-		return a->GetDrawOrder() < b->GetDrawOrder();
-	} else {
-		return a->GetID() < b->GetID();
-	}
-}
-
 /** @} */
 

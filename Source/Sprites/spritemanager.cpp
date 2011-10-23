@@ -270,6 +270,28 @@ void SpriteManager::DeleteEmptyQuadrants() {
 	}
 }
 
+/** \brief Comparator function for ordering Sprites
+ *
+ * \details The goal here is to order the sprites in a deterministic way.
+ *          We also need the Sprites to be ordered by their DRAW_ORDER.
+ *          Since the Sprite ID is unique, and monotonically increasing, this
+ *          will sort older sprites below newer sprites.
+ *
+ * \param a A pointer to a Sprite.
+ * \param b A pointer to another Sprite.
+ * \returns True if Sprite a should be below Sprite b.
+ *
+ * \relates Sprite
+ */
+
+bool compareSpritePtrs(Sprite* a, Sprite* b){
+	if(a->GetDrawOrder() != b->GetDrawOrder()) {
+		return a->GetDrawOrder() < b->GetDrawOrder();
+	} else {
+		return a->GetID() < b->GetID();
+	}
+}
+
 /**\brief Draws the current sprites
  */
 void SpriteManager::Draw( Coordinate focus ) {
@@ -432,6 +454,32 @@ list<QuadTree*> SpriteManager::GetQuadrantsNear( Coordinate c, float r) {
 	}
 	return nearbyQuadrants;
 }
+
+
+/**\brief Creates a binary comparison object that can be passed to stl sort.
+ * Sprites will be sorted by distance from the point in ascending order.
+ * \relates Sprite
+ */
+struct compareSpriteDistFromPoint
+	: public std::binary_function<Sprite*, Sprite*, bool>
+{
+	compareSpriteDistFromPoint(const Coordinate& c) : point(c) {} ///< Default Constructor(?)
+
+    /**\brief Compare two sprites by their distance from a Coordinate (c).
+     * \details This uses GetMagnitudeSquared to calculate the distance from a
+     *          Sprite so that we don't have to run a costly sqrt.
+     * \param a A pointer to a Sprite.
+     * \param b A pointer to another Sprite.
+     * \returns True if Sprite a is closer than Sprite b to point c.
+     *
+     */
+	bool operator() (Sprite* a, Sprite* b) {
+		return (point - a->GetWorldPosition()).GetMagnitudeSquared()
+		     < (point - b->GetWorldPosition()).GetMagnitudeSquared() ;
+	}
+
+	Coordinate point;
+};
 
 /**\brief Returns a list of sprites that are near coordinate.
  * \param c Coordinate
