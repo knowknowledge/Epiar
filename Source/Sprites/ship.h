@@ -22,29 +22,33 @@ class Ship : public Sprite {
 		Ship();
 		~Ship();
 		
-		bool SetModel( Model *model );
-
-		Model *GetModel(){ return model; };
-
-		bool SetEngine( Engine *engine );
-		Sprite *GetSprite();
-		string GetModelName();
-		string GetEngineName();
-		
+		// Fundamental Sprite Mechanics
 		void Update( lua_State *L );
+		void Draw( void );
+
+		// Movement Mechanics
 		void Rotate( float direction );
 		void Accelerate( void );
-		void Damage( short int damage );
-		void Repair( short int damage );
-
 		bool Jump( Coordinate position );
 		bool JumpDrive( Coordinate position );
 
-		void Draw( void );
+		// Combat Mechanics
 		FireStatus FirePrimary( int target = -1 );
 		FireStatus FireSecondary( int target = -1 );
+		void Damage( short int damage );
+		void Repair( short int damage );
 
-		// Outfitting Functions
+		// Model Configuration Mechanics
+		bool SetModel( Model *model );
+		Model *GetModel(){ return model; };
+		string GetModelName();
+
+		// Engine Configuration Mechanics
+		bool SetEngine( Engine *engine );
+		Sprite *GetSprite();
+		string GetEngineName();
+
+		// Weapon Mechanics
 		void AddToShipWeaponList(Weapon *i);
 		void AddToShipWeaponList(string weaponName);
 		int AddShipWeapon(Weapon *i);
@@ -55,10 +59,14 @@ class Ship : public Sprite {
 		void RemoveShipWeapon(Weapon *i);
 		void RemoveShipWeapon(string weaponName);
 		void AddAmmo(AmmoType ammoType, int qty);
+
+		// Outfitting Mechanics
 		void AddOutfit(Outfit *outfit);
 		void AddOutfit(string outfitName);
 		void RemoveOutfit(Outfit *outfit);
 		void RemoveOutfit(string outfitName);
+
+		// Weapon Slot Mechanics
 		int GetWeaponSlotCount();
 		string GetWeaponSlotName(int i);
 		string GetWeaponSlotContent(int i);
