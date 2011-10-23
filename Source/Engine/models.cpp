@@ -226,9 +226,9 @@ xmlNodePtr Model::ToXMLNode(string componentName) {
 		xmlNodePtr slotPtr = xmlNewNode(NULL, BAD_CAST "slot");
 		xmlNewChild(slotPtr, NULL, BAD_CAST "name", BAD_CAST slot->name.c_str() );
 		xmlNodePtr coordPtr = xmlNewNode(NULL, BAD_CAST "coord");
-		snprintf(ntos, 256, "%.1f", slot->x);
+		snprintf(ntos, 256, "%d", slot->x);
 		xmlNewChild(coordPtr, NULL, BAD_CAST "x", BAD_CAST ntos);
-		snprintf(ntos, 256, "%.1f", slot->y);
+		snprintf(ntos, 256, "%d", slot->y);
 		xmlNewChild(coordPtr, NULL, BAD_CAST "y", BAD_CAST ntos);
 		xmlAddChild(slotPtr, coordPtr);
 		snprintf(ntos, 256, "%.1f", slot->angle);
@@ -272,18 +272,15 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 
 			xmlNodePtr coordAttr;
 			if( (coordAttr = FirstChildNamed(attr,"x")) ){
-				value = NodeToString(doc,coordAttr);
-				newSlot.x = atof(value.c_str());
+				newSlot.x = NodeToInt(doc,coordAttr);
 			} else return false;
 			if( (coordAttr = FirstChildNamed(attr,"y")) ){
-				value = NodeToString(doc,coordAttr);
-				newSlot.y = atof(value.c_str());
+				newSlot.y = NodeToInt(doc,coordAttr);
 			} else return false;
 		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"angle")) ){
-			value = NodeToString(doc,attr);
-			newSlot.angle = atof(value.c_str());
+			newSlot.angle = NodeToFloat(doc,attr);
 		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"motionAngle")) ){
@@ -302,8 +299,7 @@ bool Model::ConfigureWeaponSlots( xmlDocPtr doc, xmlNodePtr node ) {
 		} else return false;
 
 		if( (attr = FirstChildNamed(slotPtr,"firingGroup")) ){
-			value = NodeToString(doc,attr);
-			newSlot.firingGroup = (short)atoi(value.c_str());
+			newSlot.firingGroup = NodeToInt(doc,attr);
 		} else return false;
 
 		weaponSlots.push_back(newSlot);
@@ -327,7 +323,7 @@ int Model::GetWeaponSlotCount(){
 
 void Model::WSDebug(WeaponSlot slot){
 	LogMsg(DEBUG1,
-		"WeaponSlots: name=%s x=%f y=%f angle=%f motionAngle=%f content=%s firingGroup=%d",
+		"WeaponSlots: name=%s x=%d y=%d angle=%f motionAngle=%f content=%s firingGroup=%d",
 		slot.name.c_str(),
 		slot.x,
 		slot.y,
