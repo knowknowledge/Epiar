@@ -20,7 +20,7 @@
 long int Sprite::sprite_ids = 1;
 
 /**\class Sprite
- * \brief Supertype for all objects in the world.
+ * \brief Supertype for all drawable objects existing at a point in the universe with an angle and momentum.
  * \details Sprites are the objects that move around the universe.
  *          They may be created and destroyed.
  *          Each Sprite has a Unique ID.
@@ -38,7 +38,10 @@ long int Sprite::sprite_ids = 1;
  *          Sprites share Image objects to save on memory usage.
  *
  * \TODO Move function implementations to the .cpp file.
- * \warn NEVER STORE SPRITE POINTERS (unless you are the SpriteManager).
+ * \warn NEVER STORE SPRITE POINTERS (unless you are the SpriteManager)!
+ *       Instead store the sprite's unique ID and query the SpriteManager for
+ *       the Sprite object every time it is referenced.  This prevents memory
+ *       corruption by accessing Sprites that have been deleted.
  * \sa SpriteManager
  */
 

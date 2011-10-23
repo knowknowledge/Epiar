@@ -27,7 +27,59 @@
 
 /**\class Ship
  * \brief A Ship Sprite that moves, Fires Weapons, has cargo, and ultimately explodes.
- * \sa Player, AI
+ * \details
+ *
+ * Ships are at the core of the Epiar gameplay.  Each Ship is a Sprite using
+ * the Image from their Model.  Although each Model has a default Engine, each
+ * ship can swap out the engine for a different one.
+ *
+ * Ships themselves are inert objects and are alway controlled by either a
+ * Player or an AI.
+ *
+ * \b Movement:
+ *
+ *   Like all Sprites, Ships move because they have non-zero momentum, but
+ *   unlike most other Sprites Ships control their momentum with their Engines.
+ *   The Engines can only accelerate the ship in the direction that the ship is
+ *   facing.  The ship accelerates according to Newtonian Physics: A=F/M; where
+ *   F is the Engine's Force and M is the Mass of the Ship. In order for a ship
+ *   to turn around, ships must rotate to face the direction oposite their
+ *   momentum before accelerating.  Unlike the real world Epiar ships have a
+ *   maximum velocity.
+ *   \see Ship::Accelerate
+ *   \see Ship::Rotate
+ *
+ * \b Jumping:
+ *
+ *   Some Engines are equipped with "Jump Drives".  These Faster-Than-Light
+ *   (FTL) Drives will move the ship nearly instantly to any point in the
+ *   Universe.  Ships without Jump Drives can still 'Jump' by using the Gate
+ *   network.
+ *   \see Ship::JumpDrive
+ *   \see Ship::Jump
+ *
+ * \b Outfit:
+ *
+ *   The parts of the ship are called Outfit.  Each Outfit affects a ships
+ *   stats and can give the ship extra abilities.  There are four main types of
+ *   Outfit:
+ *   - The Model: This is the design of the ship.  The Model describes what a
+ *     ship looks like, where its weapons are mounted, and sets the baseline
+ *     for most of the ship stats.
+ *   - The Engine: This is how the ship moves around.
+ *   - The Weapons: This is how the ships fight one another.  Weapons are
+ *     attached to specific WeaponSlots on the Model and are seperated into
+ *     either Primary or Secondary firing groups.
+ *   - Other: There are other kinds of Ship Outfits that affect their
+ *     statistics.  These other outfits have no represention on the Sprite.
+ *   \see ComputeShipStats
+ *
+ * \b Combat:
+ *
+ *   Ships fight by releasing Projectiles from their Weapons.
+ *   \see Ship::Fire
+ *   \see Ship::FirePrimary
+ *   \see Ship::FireSecondary
  *
  * \fn Ship::GetOutfits
  * \return A List of all Outfits on this Ship.
