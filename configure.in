@@ -25,12 +25,12 @@ then
 fi
 
 dnl Check for Freetype
-dnl case "$target" in
-dnl	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
-dnl	PKG_CHECK_MODULES([freetype2], [freetype2 >= 9.22])
-dnl	CFLAGS="$CFLAGS $freetype2_CFLAGS"
-dnl	LIBS="$LIBS $freetype2_LIBS"
-dnl esac
+case "$target" in
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
+	PKG_CHECK_MODULES([freetype2], [freetype2 >= 9.22])
+	CFLAGS="$CFLAGS $freetype2_CFLAGS"
+	LIBS="$LIBS $freetype2_LIBS"
+esac
 
 dnl Some additional flags for Freetype
 dnl case "$target" in *-*-linux*)
@@ -67,7 +67,7 @@ esac
 dnl Check for libxml2
 case "$target" in
 	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
-	PKG_CHECK_MODULES([libxml2], [libxml-2.0 >= 2.7.6])
+	PKG_CHECK_MODULES([libxml2], [libxml-2.0 >= 2.7.3])
 	CFLAGS="$CFLAGS $libxml2_CFLAGS"
 	LIBS="$LIBS $libxml2_LIBS"
 esac
