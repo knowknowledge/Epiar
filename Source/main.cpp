@@ -270,7 +270,7 @@ void Main_Parse_Args( int argc, char **argv ) {
 	argparser->SetOpt(LONGOPT, "help",           "Display help screen");
 	argparser->SetOpt(SHORTOPT, "v",             "Display program version");
 	argparser->SetOpt(LONGOPT, "version",        "Display program version");
-	argparser->SetOpt(LONGOPT, "no-audio",       "Disables audio");
+	argparser->SetOpt(LONGOPT, "disable-audio",  "Disables audio");
 	argparser->SetOpt(LONGOPT, "fullscreen",     "Play in fullscreen");
 	argparser->SetOpt(LONGOPT, "nolog-xml",      "(Default) Disable logging messages to xml files.");
 	argparser->SetOpt(LONGOPT, "log-xml",        "Log messages to xml files.");
@@ -321,7 +321,7 @@ void Main_Parse_Args( int argc, char **argv ) {
 	// Override OPTION values.
 
 	// Following are cumulative options (I.E. you can have multiple of them)
-	if ( argparser->HaveOpt("no-audio") ) {
+	if ( argparser->HaveOpt("disable-audio") ) {
 			SETOPTION("options/sound/background",0);
 			SETOPTION("options/sound/weapons",0);
 			SETOPTION("options/sound/engines",0);
