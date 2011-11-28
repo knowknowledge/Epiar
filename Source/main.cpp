@@ -149,7 +149,7 @@ void Main_Load_Settings() {
 	Options::AddDefault( "options/simulation/random-seed", 0 );
 
 	// Timing
-	Options::AddDefault( "options/timing/screen-swap", 250 );
+	Options::AddDefault( "options/timing/screen-swap", 0 ); // FIXME, 0=disabled until the transition is better
 	Options::AddDefault( "options/timing/mouse-fade", 500 );
 	Options::AddDefault( "options/timing/target-zoom", 500 );
 	Options::AddDefault( "options/timing/alert-drop", 3500 );
