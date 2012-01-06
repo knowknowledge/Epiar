@@ -1,10 +1,10 @@
 Epiar
-Version 0.1.0
-Written by Chris Thielen, others (see AUTHORS)
+Version 0.5.0
+Written by Christopher Thielen, Matthew Zweig, others (see AUTHORS)
 
 http://www.epiar.net/
 
-Copyright (C) 2002-2009 Christopher Thielen.
+Copyright (C) 2002-2012 Christopher Thielen.
 Licensed under GNU GPL version 2. Some parts (eg fonts) licensed differently
 and indicated where appropriate.
 
@@ -28,19 +28,23 @@ Contents
 
 1. What is Epiar?
 -----------------
-Epiar is a space exploration/combat/trading game .  The Escape Velocity (EV)
+Epiar is a space exploration/combat/trading game.  The Escape Velocity (EV)
 series for the Mac was the major point of inspiration for this game.  Other
 notable games of this genre include:
 
 - Elite (the original game EV was based on)
 - Star control 1/2 (and it's now open source successor Ur-Quan masters)
 - Star Flight
+- Solar Winds
 
 2. System Requirements
 ----------------------
+Epiar has been tested on Linux, OS X 10.6/10.7 and Windows XP/Vista/7.
 
 3. Playing Epiar
 ----------------
+Epiar is still under development and so the gameplay is in flux. If you
+have any suggestions, please let us know.
 
 i. Controls
 -----------
