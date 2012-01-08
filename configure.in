@@ -26,10 +26,14 @@ fi
 
 dnl Check for Freetype
 case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
 	PKG_CHECK_MODULES([freetype2], [freetype2 >= 9.22])
 	CFLAGS="$CFLAGS $freetype2_CFLAGS"
 	LIBS="$LIBS $freetype2_LIBS"
+esac
+case "$target" in *-apple-darwin*)
+	CFLAGS="$CFLAGS `freetype-config --cflags`"
+	LIBS="$LIBS `freetype-config --libs`"
 esac
 
 dnl Some additional flags for Freetype
@@ -40,7 +44,7 @@ dnl case "$target" in *-*-freebsd*)
 dnl	CFLAGS="$CFLAGS -I/usr/local/include/freetype2"
 dnl esac
 dnl case "$target" in *-apple-darwin*)
-dnl	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype2"
+dnl	CFLAGS="$CFLAGS -I/opt/local/include/ -I/opt/local/include/freetype"
 dnl esac
 
 dnl Check for PhysicsFS (physfs)
