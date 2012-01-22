@@ -68,3 +68,6 @@ Epiar.tmproj
 ### Unix-y 'local' files
 *~
 
+### MinGW development files
+mingw32-config.cache
+
