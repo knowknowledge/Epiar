@@ -5,6 +5,7 @@ height = HEIGHT*.6
 --- Land on a planet
 function landingDialog(id)
 	local planet = Epiar.getSprite(id)
+
 	-- Create the Planet Landing Screen
 	if UI.search( string.format("/Window'%s'/Tabs'Store'/", planet:GetName())) ~= nil then return end
 
@@ -19,6 +20,7 @@ function landingDialog(id)
 		for i,name in ipairs(list) do
 			local callback = string.format( cmd, container, name )
 			local pic = UI.newPicture( 0, yoff, boxsize, boxsize, name, 0, 0, 0, 1)
+			pic:setPictureCenter( 60, yoff + 50 )
 			pic:addCallback( Action_MouseLUp, callback )
 			storeList:add( pic )
 			storeList:add( UI.newButton( 0, yoff+boxsize, boxsize, 20, name, callback ))
@@ -406,7 +408,9 @@ function storeView(containerPath, itemType, itemName )
 	viewer:add( UI.newLabel(195, 35, iteminfo["MSRP"] .. " Credits", 1) )
 
 	local yoff = 50
-	viewer:add( UI.newPicture(10, yoff, 200, 200, iteminfo["Picture"] or iteminfo["Image"]) )
+	local pic = UI.newPicture(10, yoff, 135, 135, iteminfo["Picture"] or iteminfo["Image"])
+	pic:setPictureCenter(100, yoff + 60)
+	viewer:add( pic )
 
 	for statname,value in pairs(iteminfo) do
 		--print(statname, value )

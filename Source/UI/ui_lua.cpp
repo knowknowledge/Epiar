@@ -103,6 +103,7 @@ void UI_Lua::RegisterUI(lua_State *L){
 		// Picture Modification
 		{"rotatePicture", &UI_Lua::rotatePicture},
 		{"setPicture", &UI_Lua::setPicture},
+		{"setPictureCenter", &UI_Lua::setPictureCenter},
 		{"setBackground", &UI_Lua::setBackground},
 
 		// Label Modification
@@ -460,7 +461,7 @@ int UI_Lua::newTextarea(lua_State *L){
  *
  *  \returns Lua userdata containing pointer to Label.
  */
-int UI_Lua::newLabel(lua_State *L){
+int UI_Lua::newLabel(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if ((n != 3) && (n != 4))
 		return luaL_error(L, "Got %d arguments expected 3 or 4 (x, y, caption, [centered] )", n);
@@ -489,7 +490,7 @@ int UI_Lua::newLabel(lua_State *L){
  *
  *  \returns Lua userdata containing pointer to Picture.
  */
-int UI_Lua::newPicture(lua_State *L){
+int UI_Lua::newPicture(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if ( (n != 3) && (n != 5) && (n != 9))
 		return luaL_error(L, "Got %d arguments expected 3, 5, or 9 (x, y, [w, h,] modelname, [red,blue,green,alpha] )", n);
@@ -507,9 +508,9 @@ int UI_Lua::newPicture(lua_State *L){
 	
 
 	// Get Background Color
-	float red,blue,green,alpha;
-	red=blue=green=alpha=0.0f; // default is clear black
-	if(n==9) {
+	float red, blue, green, alpha;
+	red = blue = green = alpha = 0.0f; // default is clear black
+	if(n == 9) {
 		red   = float(luaL_checknumber (L, 6));
 		blue  = float(luaL_checknumber (L, 7));
 		green = float(luaL_checknumber (L, 8));
@@ -537,7 +538,7 @@ int UI_Lua::newPicture(lua_State *L){
  */
 int UI_Lua::newCheckbox(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n == 4){
+	if (n == 4) {
 		int x = int(luaL_checknumber (L, 1));
 		int y = int(luaL_checknumber (L, 2));
 		bool checked = luaL_checknumber(L, 3) != 0;
@@ -563,7 +564,7 @@ int UI_Lua::newCheckbox(lua_State *L) {
  */
 int UI_Lua::newDropdown(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n >= 4){
+	if (n >= 4) {
 		int x = int(luaL_checknumber (L, 1));
 		int y = int(luaL_checknumber (L, 2));
 		int w = int(luaL_checknumber (L, 3));
@@ -602,7 +603,7 @@ int UI_Lua::newDropdown(lua_State *L) {
  *
  *  \returns Lua userdata containing pointer to Paragraph.
  */
-int UI_Lua::newParagraph(lua_State *L){
+int UI_Lua::newParagraph(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 5)
 		return luaL_error(L, "Got %d arguments expected 5 (x, y, w, h, text )", n);
@@ -628,7 +629,7 @@ int UI_Lua::newParagraph(lua_State *L){
  *
  *  \returns Lua userdata containing pointer to Map
  */
-int UI_Lua::newMap(lua_State *L){
+int UI_Lua::newMap(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n != 4)
 		return luaL_error(L, "Got %d arguments expected 4 (x, y, w, h )", n);
@@ -727,35 +728,53 @@ int UI_Lua::search(lua_State *L) {
 /** \brief Change the Image in a Picture Widget
  *
  */
-int UI_Lua::setPicture(lua_State *L){
+int UI_Lua::setPicture(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if (n == 2){
+	if (n == 2) {
 		Picture* pic = (Picture*)checkWidget(L,1);
 		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
-		string picname = luaL_checkstring (L, 2);
+		string picname = luaL_checkstring(L, 2);
 		pic->Set( picname );
-	
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
 	}
-	return 0;
+
+	return(0);
+}
+
+/** \brief Change the coordinates of a Picture Widget to center on (x, y)
+ *
+ */
+int UI_Lua::setPictureCenter(lua_State *L) {
+	int n = lua_gettop(L);  // Number of arguments
+	if (n == 3) {
+		Picture* pic = (Picture*)checkWidget(L,1);
+		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
+		int x = luaL_checkinteger(L, 2);
+		int y = luaL_checkinteger(L, 3);
+		pic->Center( x, y );
+	} else {
+		luaL_error(L, "Got %d arguments expected 3 (self, x, y)", n);
+	}
+
+	return(0);
 }
 
 /** \brief Change the Background of a Picture Widget
  *
  */
-int UI_Lua::setBackground(lua_State *L){
+int UI_Lua::setBackground(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
-	if ((n == 4) || (n == 5)){
-		Picture* pic = (Picture*)checkWidget(L,1);
+	if ((n == 4) || (n == 5)) {
+		Picture* pic = (Picture*)checkWidget(L, 1);
 		luaL_argcheck(L, pic->GetMask() & WIDGET_PICTURE, 1, "`Picture' expected.");
 
-		float r = luaL_checknumber (L, 2);
-		float g = luaL_checknumber (L, 3);
-		float b = luaL_checknumber (L, 4);
+		float r = luaL_checknumber(L, 2);
+		float g = luaL_checknumber(L, 3);
+		float b = luaL_checknumber(L, 4);
 		float a = pic->GetAlpha();
 		if( n == 5 ) {
-			a = luaL_checknumber (L, 5);
+			a = luaL_checknumber(L, 5);
 		}
 
 		pic->SetColor( r, g, b, a );
@@ -763,6 +782,7 @@ int UI_Lua::setBackground(lua_State *L){
 	} else {
 		luaL_error(L, "Got %d arguments expected 2 (self, picname)", n);
 	}
+
 	return 0;
 }
 
@@ -770,13 +790,13 @@ int UI_Lua::setBackground(lua_State *L){
  *  \details This accepts multiple Widgets.
  *
  */
-int UI_Lua::add(lua_State *L){
+int UI_Lua::add(lua_State *L) {
 	int n = lua_gettop(L);  // Number of arguments
 	if (n >= 2){
-		Container* outer = (Container*)checkWidget(L,1);
+		Container* outer = (Container*)checkWidget(L, 1);
 		luaL_argcheck(L, outer->GetMask() & WIDGET_CONTAINER, 1, "`Container' expected.");
 
-		for(int i=2; i<=n; i++){
+		for(int i = 2; i <= n; i++) {
 			Widget* inner = checkWidget(L,i);
 			outer->AddChild( inner );
 		}

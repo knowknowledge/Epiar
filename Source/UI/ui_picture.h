@@ -35,6 +35,8 @@ class Picture: public Widget {
 		string GetType( void ) { return string("Picture"); }
 		virtual int GetMask( void ) { return WIDGET_PICTURE; }
 
+		void Center( int x, int y );
+
 	private:
 		void Default( int x, int y, int w, int h);
 

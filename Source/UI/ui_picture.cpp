@@ -81,8 +81,9 @@ Picture::Picture( int x, int y, int w, int h, string filename ) {
 	bitmap = Image::Get(filename);
 	if( bitmap )
 	{
-		this->w = bitmap->GetWidth();
-		this->h = bitmap->GetHeight();
+		// Only allow down-sampling
+		if(w > bitmap->GetWidth()) this->w = bitmap->GetWidth();
+		if(h > bitmap->GetHeight()) this->h = bitmap->GetHeight();
 
 		name = bitmap->GetPath();
 	}
@@ -112,6 +113,13 @@ Picture::Picture( int x, int y, string filename ) {
  */
 void Picture::Rotate(double angle) {
 	rotation = angle;
+}
+
+/**\brief Center the Image on (x, y).
+ */
+void Picture::Center(int x, int y) {
+	this->x = x - (w / 2);
+	this->y = y - (h / 2);
 }
 
 /**\brief Draw this Picture
