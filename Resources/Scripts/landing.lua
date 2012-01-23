@@ -94,8 +94,8 @@ function landingDialog(id)
 		trade:add( UI.newLabel(10,yoff,string.format("%s at %d %s",commodity,price,priceMeanings[price_offset+4]),0) )
 		tradeCounts[commodity] = UI.newTextbox(300,yoff,30,1, currentCargo[commodity] or 0, commodity)
 		trade:add( tradeCounts[commodity] )
-		trade:add( UI.newButton(330,yoff,30,20,"Buy",string.format("tradeCommodity('buy',%q,%d,%d)",commodity,count,price )))
-		trade:add( UI.newButton(360,yoff,30,20,"Sell",string.format("tradeCommodity('sell',%q,%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(340,yoff,30,20,"Buy",string.format("tradeCommodity('buy',%q,%d,%d)",commodity,count,price )))
+		trade:add( UI.newButton(380,yoff,30,20,"Sell",string.format("tradeCommodity('sell',%q,%d,%d)",commodity,count,price )))
 	end
 	landingTabs:add(trade)
 
@@ -126,17 +126,17 @@ function landingDialog(id)
 		end
 		availableMissions[i] = _G[missionType].Create()
 		availableMissions[i].Type = missionType
-		local fwidth = width-70
+		local fwidth = width-55
 		local description = UI.newParagraph( 10, 40, fwidth-130, 150, availableMissions[i].Description )
 		local fheight = description:GetH() + 70
 		missions:add(
-			UI.newFrame( 10, yoff, fwidth, fheight,
+			UI.newFrame( 5, yoff, fwidth, fheight,
 				UI.newLabel( fwidth/2, 10, availableMissions[i].Name, 1 ),
 				description,
 				UI.newButton( fwidth -100 -20, fheight -20 -20, 100, 20, "Accept",  string.format("accept(%q, %d)", missionType, i) )
 			)
 		)
-		yoff = yoff + fheight + 20
+		yoff = yoff + fheight + 5
 	end
 	landingTabs:add(missions)
 
