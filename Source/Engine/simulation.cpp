@@ -621,7 +621,7 @@ void Simulation::HandleInput() {
 		//Video::SaveScreenshot();
 	//}
 
-	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'm') ) )
+	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, 'n') ) )
 	{
 		CreateNavMap();
 	}
@@ -699,9 +699,9 @@ void Simulation::CreateNavMap( void )
 		TO_INT(Video::GetHeight() * 0.8),
 		"Navigation" );
 
-	Map* map = new Map( 30, 30,
-		TO_INT(win->GetW()) - 60,
-		TO_INT(win->GetH()) - 60,
+	Map* map = new Map( 10, 26,
+		TO_INT(win->GetW()) - 18,
+		TO_INT(win->GetH()) - 33,
 		camera->GetFocusCoordinate(),
 		sprites );
 

@@ -185,9 +185,6 @@ void Map::Draw( int relx, int rely )
 
 	Video::UnsetCropRect();
 
-	// Draw Edges
-	Video::DrawBox( relx + GetX(), rely + GetY(), w, h, WHITE, alpha);
-
 	delete spriteList;
 	spriteList = NULL;
 }
