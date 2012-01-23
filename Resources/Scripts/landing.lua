@@ -433,7 +433,7 @@ function storeView(containerPath, itemType, itemName )
 		end
 	end
 	yoff = 250
-	local desc = UI.newParagraph( 10, yoff, width*.75 - 70, 300, iteminfo.Description )
+	local desc = UI.newParagraph( 10, yoff, width * 0.75 - 70, 300, iteminfo.Description )
 	viewer:add( desc )
 	yoff = yoff + desc:GetH() + 10
 	if iteminfo.Engine ~= nil then
@@ -443,7 +443,7 @@ function storeView(containerPath, itemType, itemName )
 	end
 	-- The Weaponslots code needs a rewrite
 	if iteminfo.weaponSlots ~= nil then
-		for weaponnum = 0 , (-1+iteminfo.weaponSlots.length) do
+		for weaponnum = 0 , (-1 + iteminfo.weaponSlots.length) do
 			viewer:add( UI.newLabel(10, yoff, iteminfo.weaponSlots[""..weaponnum].name ) )
 			viewer:add( UI.newLabel(130, yoff, iteminfo.weaponSlots[""..weaponnum].content or "(Empty)") )
 			yoff = yoff + 21

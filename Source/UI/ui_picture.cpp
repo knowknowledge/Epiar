@@ -22,14 +22,14 @@
 
 /**\brief The default settings for a Picture.
  */
-void Picture::Default( int x, int y, int w, int h ){
-	this->x=x;
-	this->y=y;
+void Picture::Default( int x, int y, int w, int h ) {
+	this->x = x;
+	this->y = y;
 
-	this->w=w;
-	this->h=h;
-	this->name="";
-	rotation=0.;
+	this->w = w;
+	this->h = h;
+	this->name = "";
+	rotation = 0.;
 	bitmap = NULL;
 
 	color = BLACK;
@@ -38,71 +38,85 @@ void Picture::Default( int x, int y, int w, int h ){
 
 /**\brief Initialize from an Image pointer.
  */
-Picture::Picture( int x, int y, int w, int h, Image* pic ){
-	Default(x,y,w,h);
+Picture::Picture( int x, int y, int w, int h, Image* pic, bool allow_stretching ) {
+	Default(x, y, w, h);
+
 	bitmap = pic;
 	if( bitmap ) {
 		name = bitmap->GetPath();
 	}
+
 	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
-	if(bitmap) assert(name!="");
-	else assert(name=="");
+	if(bitmap) assert(name != "");
+	else assert(name == "");
+
+	if( allow_stretching == false) {
+		if( bitmap->GetWidth() < w ) this->w = bitmap->GetWidth();
+		if( bitmap->GetHeight() < h ) this->h = bitmap->GetHeight();
+	}
 }
 
 /**\brief Initialize from an Image pointer.
  */
-Picture::Picture( int x, int y, Image* pic ){
-	Default(x,y,w,h);
+Picture::Picture( int x, int y, Image* pic ) {
+	Default(x, y, w, h);
+
 	bitmap = pic;
 	if( bitmap ) {
 		name = bitmap->GetPath();
-		w = bitmap->GetWidth();
-		h = bitmap->GetHeight();
+		this->w = bitmap->GetWidth();
+		this->h = bitmap->GetHeight();
 	}
+
 	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
-	if(bitmap) assert(name!="");
-	else assert(name=="");
+	if(bitmap) assert(name != "");
+	else assert(name == "");
 }
 
 /**\brief Initialize from an Image name
  */
-Picture::Picture( int x, int y, int w, int h, string filename ){
-	Default(x,y,w,h);
+Picture::Picture( int x, int y, int w, int h, string filename ) {
+	Default(x, y, w, h);
+
 	bitmap = Image::Get(filename);
 	if( bitmap )
 	{
-		w = bitmap->GetWidth();
-		h = bitmap->GetHeight();
+		this->w = bitmap->GetWidth();
+		this->h = bitmap->GetHeight();
+
 		name = bitmap->GetPath();
 	}
+
 	// If the bitmap exists, this must have a name.  Otherwise the name should be blank.
-	if(bitmap) assert(name!="");
-	else assert(name=="");
+	if(bitmap) assert(name != "");
+	else assert(name == "");
 }
 
 /**\brief Initialize from an Image name using the Image size
  *
  */
-Picture::Picture( int x, int y, string filename ){
-	Default(x,y,0,0);
+Picture::Picture( int x, int y, string filename ) {
+	Default(x, y, 0, 0);
+
 	bitmap = Image::Get(filename);
 	if( bitmap ) {
 		w = bitmap->GetWidth();
 		h = bitmap->GetHeight();
 	}
+
 	name = filename;
-	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+	assert( !((bitmap != NULL) ^ (name != "")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
 }
 
 /**\brief Rotate the Image in this picture to a specific angle.
  */
-void Picture::Rotate(double angle){
-	rotation=angle;
+void Picture::Rotate(double angle) {
+	rotation = angle;
 }
 
 /**\brief Draw this Picture
  */
-void Picture::Draw( int relx, int rely ){
+void Picture::Draw( int relx, int rely ) {
 	int x, y;
 	x = this->x + relx;
 	y = this->y + rely;
@@ -127,6 +141,9 @@ void Picture::Set( Image *img ){
 	bitmap = img;
 	name = img->GetPath();
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+
+	w = bitmap->GetWidth();
+	h = bitmap->GetHeight();
 }
 
 /**\brief Change the Image in this Picture.
@@ -138,6 +155,9 @@ void Picture::Set( string filename ){
 	bitmap = Image::Get(filename);
 	name = bitmap->GetPath();
 	assert( !((bitmap!=NULL) ^ (name!="")) ); // (NOT XOR) If the bitmap exists, it must have a name.  Otherwise the name should be blank.
+
+	w = bitmap->GetWidth();
+	h = bitmap->GetHeight();
 }
 
 /**\brief Set the Background color and alpha

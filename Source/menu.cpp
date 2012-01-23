@@ -144,7 +144,7 @@ void Menu::SetupGUI()
 	editSplash = Image::Get( splashScreens[(screenNum+2) % numScreens] );
 
 	// Add the splash screen
-	UI::Add( new Picture( 0,0, Video::GetWidth(), Video::GetHeight(), menuSplash) );
+	UI::Add( new Picture( 0,0, Video::GetWidth(), Video::GetHeight(), menuSplash, true) );
 
 	// Add the logo
 	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
