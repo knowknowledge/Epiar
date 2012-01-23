@@ -402,8 +402,10 @@ void Hud::DrawRadarNav( Camera* camera, SpriteManager* sprites ) {
  */
 void Hud::DrawTarget( SpriteManager* sprites ) {
 	Sprite* target = sprites->GetSpriteByID( targetID );
+
 	if(target != NULL) {
-		int edge = 5;
+		int edge = (target->GetImage())->GetWidth() / 6;
+		if(edge > 25) edge = 25;
 		int x = target->GetWorldPosition().GetScreenX();
 		int y = target->GetWorldPosition().GetScreenY();
 		int r = target->GetRadarSize();
