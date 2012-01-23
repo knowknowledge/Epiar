@@ -69,7 +69,7 @@ void Tab::DrawHandle( int realx, int realy, bool active ) {
 	middle->DrawTiled( realx + left->GetWidth(), realy, capw, middle->GetHeight() );
 	right->Draw( realx + left->GetWidth() + capw , realy );
 
-	UI::font->Render( realx + left->GetWidth(), realy, GetName() );
+	UI::font->Render( realx + left->GetWidth(), realy - 2, GetName() );
 }
 
 int Tab::GetHandleWidth( bool active ) {
