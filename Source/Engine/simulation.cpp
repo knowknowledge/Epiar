@@ -415,7 +415,7 @@ bool Simulation::Run() {
 			if( player->GetHullIntegrityPct() <= 0 ) {
 				if( UI::Search("/Window'Death'/") == NULL ) {
 					Window* win = new Window( Video::GetWidth()/2-125, Video::GetHeight()/2-70, 250, 140, "Death");
-					Button* ok = new Button(70, 85, 100, 30, "Drat!", ConfirmDeath, this);
+					Button* ok = new Button(70, 85, 100, 30, "Dang!", ConfirmDeath, this);
 					UI::Add( win );
 
 					// Player Name

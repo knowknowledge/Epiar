@@ -360,8 +360,8 @@ void Hud::DrawStatusBars() {
 	// Initialize the starting Coordinates
 	int barHeight = Image::Get( "Resources/Skin/hud_bar_left.png" )->GetHeight()+5;
 	Coordinate startCoords[4];
-	startCoords[UPPER_LEFT]  = Coordinate(5, Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->GetHeight()+5);
-	startCoords[UPPER_RIGHT] = Coordinate(5, Radar::GetHeight()+5);
+	startCoords[UPPER_LEFT]  = Coordinate(5, Image::Get( "Resources/Skin/hud_shieldintegrity.png" )->GetHeight() + 9);
+	startCoords[UPPER_RIGHT] = Coordinate(5, Radar::GetHeight() + 9);
 	startCoords[LOWER_LEFT]  = Coordinate(5, Video::GetHeight()-barHeight);
 	startCoords[LOWER_RIGHT] = Coordinate(5, Video::GetHeight()-barHeight);
 	Coordinate offsetCoords[4]= {
