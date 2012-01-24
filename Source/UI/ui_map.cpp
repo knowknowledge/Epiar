@@ -124,9 +124,9 @@ void Map::Draw( int relx, int rely )
 	{
 		Coordinate point = WorldToScreen( i );
 		Video::DrawLine( relx + GetX()     , point.GetY(),
-						 relx + GetX() + w , point.GetY(), DARKGREY , alpha );
-		Video::DrawLine( point.GetX(), rely + GetY()     , 
-						 point.GetX(), rely + GetY() + h , DARKGREY , alpha );
+						 relx + GetX() + w , point.GetY(), 0.07, 0.07, 0.07 , alpha );
+		Video::DrawLine( point.GetX(), rely + GetY(),
+						 point.GetX(), rely + GetY() + h , 0.07, 0.07, 0.07, alpha );
 	}
 
 	// Draw the Sprites
@@ -138,7 +138,7 @@ void Map::Draw( int relx, int rely )
 
 		switch( (*iter)->GetDrawOrder() ) {
 			case DRAW_ORDER_PLAYER:
-				Video::DrawFilledCircle( pos, (Timer::GetRealTicks()%5000)/200 + 3, col, alpha - (Timer::GetRealTicks()%5000)/5000.0f );
+				Video::DrawFilledCircle( pos, (Timer::GetRealTicks() % 2500) / 50, col, 0.6f * (alpha - (float)(Timer::GetRealTicks() % 2500) / 2500.0f) );
 				Video::DrawFilledCircle( pos, 2, col, alpha );
 				break;
 

@@ -188,7 +188,7 @@ void Player::Land( lua_State *L, Planet* planet ){
 /**\brief Constructor
  */
 Player::Player() {
-	this->SetRadarColor( GOLD );
+	this->SetRadarColor( WHITE );
 }
 
 /**\brief Destructor
