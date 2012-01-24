@@ -50,7 +50,7 @@ Picture::Picture( int x, int y, int w, int h, Image* pic, bool allow_stretching 
 	if(bitmap) assert(name != "");
 	else assert(name == "");
 
-	if( allow_stretching == false) {
+	if(( allow_stretching == false) && bitmap) {
 		if( bitmap->GetWidth() < w ) this->w = bitmap->GetWidth();
 		if( bitmap->GetHeight() < h ) this->h = bitmap->GetHeight();
 	}
