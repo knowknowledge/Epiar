@@ -128,13 +128,15 @@ void Picture::Draw( int relx, int rely ) {
 	int x, y;
 	x = this->x + relx;
 	y = this->y + rely;
-	
-	// The Picture size
-	Video::DrawRect( x, y,
-	               w, h,
-	               color.r,color.g,color.b,alpha );
-	if(bitmap!=NULL)
-		bitmap->DrawFit( x, y, w, h, static_cast<float>(rotation));
+
+	if( !hidden) {
+		// The Picture size
+		Video::DrawRect( x, y,
+		               w, h,
+		               color.r,color.g,color.b,alpha );
+		if(bitmap != NULL)
+			bitmap->DrawFit( x, y, w, h, static_cast<float>(rotation));
+	}
 
 	Widget::Draw(relx,rely);
 }

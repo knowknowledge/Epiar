@@ -24,7 +24,7 @@ typedef struct WeaponSlot {
 	double motionAngle;     ///< should be either 0 (meaning no turrets allowed) or a number > 0 and <= 360
 	Weapon* content;         ///< name of the weapon it contains (or "" for empty)
 	short int firingGroup;  ///< which firing group this slot belongs to
-};
+} WeaponSlot;
 
 // Abstraction of a single ship model
 class Model : public Outfit {

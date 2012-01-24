@@ -55,7 +55,7 @@ void Menu::Main_Menu( void )
 	Input inputs;
 	list<InputEvent> events;
     
-    quitSignal = false;
+	quitSignal = false;
 
 	Players *players = Players::Instance();
 	players->Load( "Resources/Definitions/saved-games.xml", true, true);
@@ -254,24 +254,21 @@ void Menu::CreateLoadWindow()
  */
 void Menu::StartGame( void *info )
 {
-    Players *players = Players::Instance();
+	Players *players = Players::Instance();
 
-    playerToLoad = (PlayerInfo*)info;
+	playerToLoad = (PlayerInfo*)info;
 
-	UI::Close( play ); // Play
-	UI::Close( load ); // Load
-	UI::Close( edit ); // Edit
-	play = NULL;
-	load = NULL;
-	edit = NULL;
+	play->Hide();
+	load->Hide();
+	edit->Hide();
 
 	// Gather Player Information
-    string simName = playerToLoad->simulation;
-    string playerName = playerToLoad->GetName();
-    int israndom = (playerToLoad->seed != 0); // This is probably wrong...
+	string simName = playerToLoad->simulation;
+	string playerName = playerToLoad->GetName();
+	int israndom = (playerToLoad->seed != 0); // This is probably wrong...
 
-    SETOPTION( "options/simulation/random-universe", israndom );
-    SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
+	SETOPTION( "options/simulation/random-universe", israndom );
+	SETOPTION( "options/simulation/random-seed", playerToLoad->seed );
 	
 	// Load the Simulation
 	if( !simulation.Load( simName ) )
@@ -310,6 +307,11 @@ void Menu::StartGame( void *info )
 		continueButton = PictureButton( Video::GetWidth() - 300, 200, Menu::ContinueGame,
 		                                Image::Get( "Resources/Graphics/txt_continue_active.png"),
 		                                Image::Get( "Resources/Graphics/txt_continue_inactive.png") );
+	} else {
+		// Restore play/load/edit buttons
+		play->Show();
+		load->Show();
+		edit->Show();
 	}
 }
 

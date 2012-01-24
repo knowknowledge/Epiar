@@ -87,10 +87,13 @@ class Widget {
 		virtual int GetMask( void ) { return WIDGET_NONE; }
 		virtual Widget* GetParent( void ) { return parent; }
 		string GetName( void ) { return this->name; }
-		bool IsActive( void ){return this->keyactivated;}
+		bool IsActive( void ) { return this->keyactivated; }
 
 		virtual void Draw( int relx = 0, int rely = 0 );
 		bool Contains( int relx, int rely );
+
+		void Show( void ) { hidden = false; }
+		void Hide( void ) { hidden = true; }
 
 		virtual xmlNodePtr ToNode();
 
