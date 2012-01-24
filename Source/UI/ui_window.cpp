@@ -131,7 +131,7 @@ void Window::CloseWindow( void* win)
  * \todo On windows that scroll, having the Close Button scroll with the Window is wrong. How to Fix?
  */
 void Window::AddCloseButton() {
-	closeButton = new Button( this->GetW() - 40, 5, 20, 20, "X", Window::CloseWindow, this );
+	closeButton = new Button( this->GetW() - 28, 5, 15, 15, "x", Window::CloseWindow, this );
 	AddChild( closeButton );
 }
 
