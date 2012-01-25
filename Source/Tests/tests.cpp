@@ -103,7 +103,7 @@ void Test::LoadRequirements( void ){
 		SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
 		BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
 		Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
-		Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+		Mono            = new Font( "Resources/Fonts/ConsolaMono.ttf" );
 	}
 }
 

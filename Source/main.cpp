@@ -175,7 +175,7 @@ void Main_Load_Settings() {
 		skinfile->Set( "Skin/UI/Default/Size", 12);
 
 		// UI - Textbox
-		skinfile->Set( "Skin/UI/Textbox/Font", "Resources/Fonts/FreeMono.ttf");
+		skinfile->Set( "Skin/UI/Textbox/Font", "Resources/Fonts/ConsolaMono.ttf");
 		skinfile->Set( "Skin/UI/Textbox/Color/Foreground", "0xCCCCCC");
 		skinfile->Set( "Skin/UI/Textbox/Color/Background", "0x666666");
 		skinfile->Set( "Skin/UI/Textbox/Color/Edge", "0x262626");
@@ -222,7 +222,7 @@ void Main_Init_Singletons() {
 	SansSerif       = new Font( "Resources/Fonts/FreeSans.ttf" );
 	BitType         = new Font( "Resources/Fonts/visitor2.ttf" );
 	Serif           = new Font( "Resources/Fonts/FreeSerif.ttf" );
-	Mono            = new Font( "Resources/Fonts/FreeMono.ttf" );
+	Mono            = new Font( "Resources/Fonts/ConsolaMono.ttf" );
 
 	UI::Initialize("Main Screen");
 
