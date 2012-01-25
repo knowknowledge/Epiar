@@ -34,6 +34,7 @@ void Picture::Default( int x, int y, int w, int h ) {
 
 	color = BLACK;
 	alpha = 0.0f;
+	stretch = false;
 }
 
 /**\brief Initialize from an Image pointer.
@@ -54,6 +55,8 @@ Picture::Picture( int x, int y, int w, int h, Image* pic, bool allow_stretching 
 		if( bitmap->GetWidth() < w ) this->w = bitmap->GetWidth();
 		if( bitmap->GetHeight() < h ) this->h = bitmap->GetHeight();
 	}
+
+	stretch = allow_stretching;
 }
 
 /**\brief Initialize from an Image pointer.
@@ -134,8 +137,13 @@ void Picture::Draw( int relx, int rely ) {
 		Video::DrawRect( x, y,
 		               w, h,
 		               color.r,color.g,color.b,alpha );
-		if(bitmap != NULL)
-			bitmap->DrawFit( x, y, w, h, static_cast<float>(rotation));
+		if(bitmap != NULL) {
+			if(stretch) {
+				bitmap->DrawStretch( x, y, w, h, static_cast<float>(rotation));
+			} else {
+				bitmap->DrawFit( x, y, w, h, static_cast<float>(rotation));
+			}
+		}
 	}
 
 	Widget::Draw(relx,rely);

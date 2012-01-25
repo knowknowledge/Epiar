@@ -44,6 +44,7 @@ class Picture: public Widget {
 		Image *bitmap;
 		Color color;
 		float alpha;
+		bool stretch;
 };
 
 #endif // __H_UI_PICTURE
