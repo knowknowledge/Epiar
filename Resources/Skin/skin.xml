@@ -32,12 +32,12 @@
     <Alert>
       <Font>Resources/Fonts/FreeSans.ttf</Font>
       <Color>0xFFFFFF</Color>
-      <Size>12</Size>
+      <Size>14</Size>
     </Alert>
     <StatusBar>
-      <Font>Resources/Fonts/visitor1.ttf</Font>
+      <Font>Resources/Fonts/Alfphabet-IV.ttf</Font>
       <Color>0xAAAAAA</Color>
-      <Size>12</Size>
+      <Size>8</Size>
     </StatusBar>
     <Map>
       <GatePath>0x004080</GatePath>
