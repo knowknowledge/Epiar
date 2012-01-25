@@ -42,6 +42,12 @@ void Console::HandleInput( list<InputEvent> & events ) {
 		case KEY:
 			if( (i->key == SDLK_BACKQUOTE) && (i->kstate == KEYTYPED)) {
 				enabled = enabled ? false : true;
+			} else if(( i->kstate == KEYDOWN ) || ( i->kstate == KEYUP ) || ( i->kstate == KEYPRESSED )) {
+				if( enabled ) {
+					// Disable all other commands while console is open (e.g. KEYDOWN on space will fire a laser and insert a space into the console otherwise)
+					i = events.erase( i );
+					skipIncrement = true;
+				}
 			} else if( i->kstate == KEYTYPED) {
 				if( enabled ) {
 					switch(i->key) {
