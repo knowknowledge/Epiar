@@ -44,6 +44,7 @@ epiar*.idb
 Epiar
 Epiar_debug
 epiar
+Epiar.app/
 
 ### Doxygen Files
 Doxygen/html
