@@ -43,7 +43,7 @@
       <GatePath>0x004080</GatePath>
       <Font>Resources/Fonts/usuziv2.ttf</Font>
       <Color>0xCCCCCC</Color>
-      <Size>10</Size>
+      <Size>11</Size>
     </Map>
   </HUD>
 </Skin>
