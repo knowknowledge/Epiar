@@ -188,6 +188,7 @@ bool File::Write( char *buffer, const long bufsize ){
 			LastErrorMessage().c_str() );
 		return false;
 	}
+
 	return true;
 }
 
@@ -280,6 +281,9 @@ bool File::Close() {
 		return false;
 	}
 	contentSize = 0;
+
+	LogMsg(INFO, "File '%s' saved successfully.", validName.c_str());
+
 	return true;
 }
 
