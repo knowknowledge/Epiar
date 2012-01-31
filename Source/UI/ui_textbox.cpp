@@ -63,11 +63,11 @@ void Textbox::Draw( int relx, int rely ) {
 
 	// draw the text
 	Video::SetCropRect(x, y, this->w, this->h);
-	int tw = font->Render( x + rowPad, y + rowPad, text );
+	int tw = font->Render( x + rowPad + 3, y + rowPad - 3, text );
 	
 	// draw the cursor (if it has focus and we're on an even second (easy blink every second))
 	if( IsActive() && ((SDL_GetTicks() % 500) < 300) && !this->disabled ) {
-		Video::DrawRect( x + 6 + tw, y + 3, 1, h - 6, foreground );
+		Video::DrawRect( x + 4 + tw, y + 3, 1, h - 6, foreground );
 	}
 	Video::UnsetCropRect();
 

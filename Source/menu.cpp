@@ -194,11 +194,11 @@ void Menu::CreateNewWindow()
 	UI::Add( win );
 
 	// Player Name
-	win->AddChild( (new Label(30, 30, "Player Name:")) )
-		->AddChild( (new Textbox(130, 30, 100, 1, "", "Player Name:")) );
+	win->AddChild( (new Label(30, 40, "Player Name:")) )
+		->AddChild( (new Textbox(130, 43, 100, 1, "", "Player Name:")) );
 
 	// Simulation Picker
-	win->AddChild( (new Frame( 30, 90, 200, 150 ))
+	win->AddChild( (new Frame( 25, 90, 200, 150 ))
 		->AddChild( (new Label(15, 15, "Simulation:")) )
 		->AddChild( (new Dropdown( 80, 15, 100, 30 ))
 			->AddOptions( Filesystem::Enumerate("Resources/Simulation/") ) )
@@ -207,8 +207,8 @@ void Menu::CreateNewWindow()
 		->AddChild( (new Textbox(50, 80, 80, 1, "0", "Random Universe Seed")) )
 		->AddChild( (new Button(50, 100, 80, 30, "Randomize", RandomizeSeed )) )
 	);
-	win->AddChild( (new Button( 10, 330, 100, 30, "Cancel", &UI::Close, win)) );
-	win->AddChild( (new Button(140, 330, 100, 30, "Create", &CreateNewPlayer )) );
+	win->AddChild( (new Button( 20, 320, 100, 30, "Cancel", &UI::Close, win)) );
+	win->AddChild( (new Button(130, 320, 100, 30, "Create", &CreateNewPlayer )) );
     win->AddCloseButton();
 }
 

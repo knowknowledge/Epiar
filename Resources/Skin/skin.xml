@@ -10,7 +10,7 @@
       <Size>12</Size>
     </Default>
     <Textbox>
-      <Font>Resources/Fonts/ConsolaMono.ttf</Font>
+      <Font>Resources/Fonts/FreeSans.ttf</Font>
       <Color>
         <Foreground>0xCCCCCC</Foreground>
         <Background>0x666666</Background>
