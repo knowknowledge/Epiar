@@ -115,8 +115,8 @@ class Players : public Components {
 		PlayerInfo* LastPlayer();
 
 		Player* CreateNew(
-            string simulation,
-            string playerName,
+			string simulation,
+			string playerName,
 			Model *model,
 			Engine *engine,
 			int credits,
