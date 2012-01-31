@@ -24,6 +24,12 @@ then
 	AC_MSG_ERROR([Cannot find a working C++ compiler])
 fi
 
+dnl Set PKG_CONFIG if necessary
+if test "$PKG_CONFIG" == ""
+then
+	PKG_CONFIG=`which pkg-config`
+fi
+
 dnl Check for Freetype
 case "$target" in
 	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
