@@ -258,9 +258,9 @@ void Menu::StartGame( void *info )
 
 	playerToLoad = (PlayerInfo*)info;
 
-	play->Hide();
-	load->Hide();
-	edit->Hide();
+	if(play) play->Hide();
+	if(load) load->Hide();
+	if(edit) edit->Hide();
 
 	// Gather Player Information
 	string simName = playerToLoad->simulation;
