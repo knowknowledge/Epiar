@@ -190,7 +190,7 @@ void Menu::CreateNewWindow()
 {
 	if( UI::Search("/Window'New Game'/") != NULL ) return;
 
-	Window* win = new Window(300, 150, 250, 370, "New Game");
+	Window* win = new Window(375, 150, 250, 370, "New Game");
 	UI::Add( win );
 
 	// Player Name
@@ -220,7 +220,7 @@ void Menu::CreateLoadWindow()
 
 	list<string> *names = Players::Instance()->GetNames();
 
-	Window* win = new Window(250, 50, 500, 70 + (names->size() * 150), "Load Game");
+	Window* win = new Window(275, 50, 450, 70 + (names->size() * 150), "Load Game");
 	UI::Add( win );
 
 	PlayerInfo* last = Players::Instance()->LastPlayer();
@@ -230,7 +230,7 @@ void Menu::CreateLoadWindow()
 	list<string>::iterator iter;
 	for( iter = names->begin(); iter != names->end(); ++iter, ++p ) {
 		PlayerInfo *info = Players::Instance()->GetPlayerInfo( *iter );
-		win->AddChild( (new Frame( 50, 155*p + 30, 400, 130 ))
+		win->AddChild( (new Frame( 25, 155*p + 30, 400, 130 ))
 			->AddChild( (new Picture(20, 20, 80, 80, info->avatar )) )
 			->AddChild( (new Label(120, 20, "Player Name:" )) ) ->AddChild( (new Label(210, 20, info->GetName() )) )
 			->AddChild( (new Label(120, 45, "Simulation:" )) ) ->AddChild( (new Label(210, 45, info->simulation )) )
@@ -461,9 +461,9 @@ void Menu::CreateNewPlayer( )
 	Players *players = Players::Instance();
 
 	string playerName = ((Textbox*)UI::Search("/Window'New Game'/Textbox'Player Name:'/"))->GetText();
-    string simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
-    int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
-    int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
+	string simName = ((Dropdown*)UI::Search("/Window'New Game'/Frame/Dropdown/"))->GetText();
+	int israndom = ((Checkbox*)UI::Search("/Window'New Game'/Frame/Checkbox'Random Universe'/"))->IsChecked();
+	int seed = atoi( ((Textbox*)UI::Search("/Window'New Game'/Frame/Textbox'Random Universe Seed'/"))->GetText().c_str() );
 
 	if(OPTION(int, "options/sound/buttons")) Sound::Get( "Resources/Audio/Interface/28853__junggle__btn043.ogg" )->Play();
 
@@ -477,12 +477,12 @@ void Menu::CreateNewPlayer( )
 		return;
 	}
 
-    SETOPTION( "options/simulation/random-universe", israndom);
-    SETOPTION( "options/simulation/random-seed", seed );
+	SETOPTION( "options/simulation/random-universe", israndom);
+	SETOPTION( "options/simulation/random-seed", seed );
 
-    playerToLoad = new PlayerInfo( playerName, simName, seed );
+	playerToLoad = new PlayerInfo( playerName, simName, seed );
 
-    StartGame( playerToLoad );
+	StartGame( playerToLoad );
 }
 
 /** Inserts a random integer into the Universe Seed Textbox
