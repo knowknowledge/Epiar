@@ -15,7 +15,7 @@
 	<technologies>technologies-default.xml</technologies>
 	<outfits>outfits-default.xml</outfits>
 	<players>Resources/Definitions/saved-games.xml</players>
-	<music>Resources/Audio/Music/maverlyn_dp_explore_9.ogg</music>
+	<music></music>
 	<defaultPlayer>
 		<start>Antikythera</start>
 		<model>Shuttle</model>

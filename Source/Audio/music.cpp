@@ -21,7 +21,7 @@
 Song *Song::Get( const string& filename ){
 	Song* value;
 	value = (Song*) Resource::Get( filename );
-	if( value == NULL ){
+	if( (value == NULL) && filename != "" ){
 		value = new Song( filename );
 		//if( value->song != NULL ){
 			Resource::Store( filename, (Resource*) value );
