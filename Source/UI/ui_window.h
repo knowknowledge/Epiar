@@ -15,6 +15,7 @@
 
 class Window : public Container {
 	public:
+		Window( int w, int h, string caption );
 		Window( int x, int y, int w, int h, string caption );
 		~Window();
 		Window *AddChild( Widget *widget );

@@ -20,6 +20,32 @@
 /**\class Window
  * \brief Window handling. */
 
+/**\brief Creates a new window with specified parameters centered on screen.
+ */
+Window::Window( int w, int h, string caption ):
+		draggable( true )
+{
+
+	this->x = Video::GetHalfWidth() - (w / 2);
+	this->y = Video::GetHalfHeight() - (h / 2);
+	this->w = w;
+	this->h = h;
+	this->name = caption;
+
+	// Load the bitmaps needed for drawing
+	bitmaps[0] = Image::Get( "Resources/Skin/ui_wnd_up_left.png" );
+	bitmaps[1] = Image::Get( "Resources/Skin/ui_wnd_up.png" );
+	bitmaps[2] = Image::Get( "Resources/Skin/ui_wnd_up_right.png" );
+	bitmaps[3] = Image::Get( "Resources/Skin/ui_wnd_left.png" );
+	bitmaps[4] = Image::Get( "Resources/Skin/ui_wnd_right.png" );
+	bitmaps[5] = Image::Get( "Resources/Skin/ui_wnd_low_left.png" );
+	bitmaps[6] = Image::Get( "Resources/Skin/ui_wnd_low.png" );
+	bitmaps[7] = Image::Get( "Resources/Skin/ui_wnd_low_right.png" );
+	bitmaps[8] = Image::Get( "Resources/Skin/ui_wnd_back.png" );
+
+	closeButton = NULL;
+}
+
 /**\brief Creates a new window with specified parameters.
  */
 Window::Window( int x, int y, int w, int h, string caption ):

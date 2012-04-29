@@ -190,7 +190,7 @@ void Menu::CreateNewWindow()
 {
 	if( UI::Search("/Window'New Game'/") != NULL ) return;
 
-	Window* win = new Window(375, 150, 250, 370, "New Game");
+	Window* win = new Window(250, 370, "New Game");
 	UI::Add( win );
 
 	// Player Name
@@ -220,7 +220,7 @@ void Menu::CreateLoadWindow()
 
 	list<string> *names = Players::Instance()->GetNames();
 
-	Window* win = new Window(275, 50, 450, 70 + (names->size() * 150), "Load Game");
+	Window* win = new Window(450, 70 + (names->size() * 150), "Load Game");
 	UI::Add( win );
 
 	PlayerInfo* last = Players::Instance()->LastPlayer();
@@ -353,7 +353,7 @@ void Menu::CreateEditWindow()
 	snprintf(seed, sizeof(seed), "%d", rand() );
 
 	Window *editorWnd = NULL;
-	UI::Add( editorWnd = (new Window(200, 200, 250, 300, "Editor"))
+	UI::Add( editorWnd = (new Window(250, 300, "Editor"))
 		->AddChild( (new Tabs( 10, 40, 230, 210, "EDIT TABS"))
 			->AddChild( (new Tab( "Edit" ))
 				->AddChild( (new Label(15, 15, "Pick the Simulation to Edit:")) )

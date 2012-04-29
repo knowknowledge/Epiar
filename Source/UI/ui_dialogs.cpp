@@ -146,7 +146,7 @@ void Dialogs::OptionsWindow()
 		return;
 	}
 
-	Window *window = new Window( 30, 100, width, height, "Options");
+	Window *window = new Window( width, height, "Options");
 	Tabs *optionTabs = new Tabs( 10, 30, tabwidth, tabheight, "Options Tabs" );
 	Button *cancel = new Button(  20, height-50, 80, 30, "Cancel", CloseOptions );
 	Button *reset  = new Button( 110, height-50, 80, 30, "Restore", ResetOptions );
