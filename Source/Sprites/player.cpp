@@ -164,9 +164,8 @@ void Player::Land( lua_State *L, Planet* planet ){
 
 	// Stay on the Planet
 	SetMomentum( Coordinate(0,0) );
-	SetWorldPosition( planet->GetWorldPosition() );
 
-	//Run Land function for each Mission
+	// Run Land function for each Mission
 	bool missionOver;
 	list<Mission*>::iterator i = missions.begin();
 	while( i != missions.end() )
