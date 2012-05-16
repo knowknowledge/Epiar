@@ -1,12 +1,17 @@
+Sunday, April 29, 2012
+	Christopher Thielen:
+		* Added Window::Window(w, h, ...) for auto-centering new windows
+		* Used new constructor above on all dialogs found in the main menu
+
 Sunday, January 8, 2012
-  Christopher Thielen:
-    * Version 0.5.0 ChangeLog (press release):
-      * UI clean-up
-      * Expanded missions system
-      * Sound and music additions
-      * Main menu
-      * Editor greatly expanded
-      * Misc. bug fixes
+	Christopher Thielen:
+		* Version 0.5.0 ChangeLog (press release):
+		* UI clean-up
+		* Expanded missions system
+		* Sound and music additions
+		* Main menu
+		* Editor greatly expanded
+		* Misc. bug fixes
 
 Thursday, January 5, 2012
 	Christopher Thielen:
