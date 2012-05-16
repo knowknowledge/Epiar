@@ -51,16 +51,16 @@ Map::Map( int x, int y, int w, int h, Coordinate center, SpriteManager* sprites 
 
 	alpha = 1;
 
-	float size = (h<w) ? h : w; // Max of Height and Width
+	float size = (h < w) ? h : w; // Max of Height and Width
 
 	// Initially strech the Map so that it covers all QuadTrees
-	float north,south,east,west,edge;
-	sprites->GetBoundaries(&north,&south,&east,&west);
-	// edge is the maximum distance from zero of north,south,east, and west
-	edge = (north>-south)?north:-south;
-	edge = (edge>-west)?edge:-west;
-	edge = (edge>east)?edge:east;
-	scale = (size) / ( 2*(edge+QUADRANTSIZE) );
+	float north, south, east, west, edge;
+	sprites->GetBoundaries(&north, &south, &east, &west);
+	// edge is the maximum distance from zero of north, south, east, and west
+	edge = (north > -south) ? north : -south;
+	edge = (edge > -west) ? edge : -west;
+	edge = (edge > east) ? edge : east;
+	scale = (size) / (0.5 * (edge + QUADRANTSIZE));
 
 	if( MapFont == NULL )
 	{
