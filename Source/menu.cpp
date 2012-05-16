@@ -128,6 +128,7 @@ bool Menu::AutoLoad()
 void Menu::SetupGUI()
 {
 	int button_x = Video::GetWidth() - 300;
+	int button_y = Video::GetHalfHeight() - 175; // the menu buttons are about 500px tall
 
 	string splashScreens[] = {
 		"Resources/Art/menu1.png",
@@ -147,33 +148,33 @@ void Menu::SetupGUI()
 	UI::Add( new Picture( 0, 0, Video::GetWidth(), Video::GetHeight(), menuSplash, true ) );
 
 	// Add the logo
-	UI::Add( new Picture(Video::GetWidth() - 240, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
+	UI::Add( new Picture(20, Video::GetHeight() - 120, Image::Get("Resources/Art/logo.png") ) );
 
 	// New Button
-	play = PictureButton( button_x, 200, Menu::CreateNewWindow,
+	play = PictureButton( button_x, button_y, Menu::CreateNewWindow,
 	                      Image::Get( "Resources/Graphics/txt_new_game_active.png"),
 	                      Image::Get( "Resources/Graphics/txt_new_game_inactive.png") );
 
 	// Load Button
 	if( (Players::Instance()->Size() > 0) )
 	{
-		load = PictureButton( button_x, 250, Menu::CreateLoadWindow,
+		load = PictureButton( button_x, button_y + 50, Menu::CreateLoadWindow,
 		                       Image::Get( "Resources/Graphics/txt_load_game_active.png"),
 		                       Image::Get( "Resources/Graphics/txt_load_game_inactive.png") );
 	}
 
 	// Editor Button
-	edit = PictureButton( button_x, 300, Menu::CreateEditWindow,
+	edit = PictureButton( button_x, button_y + 100, Menu::CreateEditWindow,
 	                       Image::Get( "Resources/Graphics/txt_editor_active.png"),
 	                       Image::Get( "Resources/Graphics/txt_editor_inactive.png") );
 
 	// Options Button
-	options = PictureButton( button_x, 400, Dialogs::OptionsWindow,
+	options = PictureButton( button_x, button_y + 200, Dialogs::OptionsWindow,
 	                          Image::Get( "Resources/Graphics/txt_options_active.png"),
 	                          Image::Get( "Resources/Graphics/txt_options_inactive.png") );
 
 	// Exit Button
-	exit = PictureButton( button_x, 500, QuitMenu,
+	exit = PictureButton( button_x, button_y + 300, QuitMenu,
 	                      Image::Get( "Resources/Graphics/txt_exit_active.png"),
 	                      Image::Get( "Resources/Graphics/txt_exit_inactive.png") );
 
