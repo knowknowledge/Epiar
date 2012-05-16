@@ -5,7 +5,7 @@
 welcomeMessage = [[
                   Welcome to Epiar
 
-We hope you like it. We're still working on it.
+We hope you like it. We are still working on it.
 
 
 The Epiar controls in a nutshell:
@@ -78,19 +78,23 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	local pirateModels = { "Fleet Guard", "Kartanal", "Terran Assist", "Patitu", "Terran Corvert Mark I", "Large Vesper", "Raven", "Hammer Freighter"  }
 	local escortModels = { "Fleet Guard", "Terran XV", "Kartanal", "Patitu", "Terran Corvert Mark I"  }
 
-	local p = plans[math.random(#plans)]
+	local p = choose(plans)
+
 	-- Turn some Hunters into anti-player Pirates if the player is far enough along
-	if PLAYER:GetCredits() > 10000 and p == "Hunter" and math.random(20) == 1 then p = "Pirate" end
-	if p == "Pirate" then
+	if (PLAYER:GetCredits() > 10000)
+		and (p == "Hunter")
+		and (math.random(20) == 1)
+	then
+		p = "Pirate"
 		model = pirateModels[math.random(#pirateModels)]
 		engine = "Ion Engines"
 	end
 
-	s = Ship.new(name,X,Y,model,engine,p,alliance)
+	local s = Ship.new(name, X, Y, model, engine, p, alliance)
 
 	if p == "Pirate" then
 		setHuntHostile(s:GetID(), PLAYER:GetID() )
-		local escort = Ship.new("an escort",X-150,Y-150, choose(escortModels), "Ion Engines","Escort",alliance)
+		local escort = Ship.new( "An Escort", X-150, Y-150, choose(escortModels), "Ion Engines", "Escort", alliance)
 		setAccompany(escort:GetID(), s:GetID())
 	end
 
