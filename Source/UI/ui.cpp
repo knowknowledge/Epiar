@@ -146,7 +146,6 @@ void UI::DrawDeferred( void ) {
 	hovering.clear();
 
 	// Draw the Deferred Widgets
-	list<draw_location>::iterator iter = deferred.begin();
 	while( deferred.empty() == false ) {
 		++zlayer;
 		draw_location now_draw = deferred.front();

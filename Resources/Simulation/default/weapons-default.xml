@@ -17,7 +17,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>500</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/rlaunch.ogg</sound>
     <msrp>2000</msrp>
   </weapon>
   <weapon>
@@ -34,7 +34,7 @@
     <fireDelay>1000</fireDelay>
     <lifetime>550</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/goldbeam.ogg</sound>
+    <sound>Resources/Audio/Weapons/slimeball.ogg</sound>
     <msrp>-31072</msrp>
   </weapon>
   <weapon>
@@ -51,7 +51,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>1000</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/laser.ogg</sound>
+    <sound>Resources/Audio/Weapons/iceball.ogg</sound>
     <msrp>2000</msrp>
   </weapon>
   <weapon>
@@ -68,7 +68,7 @@
     <fireDelay>1000</fireDelay>
     <lifetime>6000</lifetime>
     <tracking>1.0000</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/flaunch.ogg</sound>
     <msrp>3000</msrp>
   </weapon>
   <weapon>
@@ -85,7 +85,7 @@
     <fireDelay>1000</fireDelay>
     <lifetime>60000</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/rlaunch.ogg</sound>
     <msrp>2000</msrp>
   </weapon>
   <weapon>
@@ -102,7 +102,7 @@
     <fireDelay>70</fireDelay>
     <lifetime>1000</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/18397__inferno__smalllas.ogg</sound>
+    <sound>Resources/Audio/Weapons/iceball.ogg</sound>
     <msrp>1000</msrp>
   </weapon>
   <weapon>
@@ -119,7 +119,7 @@
     <fireDelay>500</fireDelay>
     <lifetime>3000</lifetime>
     <tracking>0.0500</tracking>
-    <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
+    <sound>Resources/Audio/Weapons/slimeball.ogg</sound>
     <msrp>10000</msrp>
   </weapon>
   <weapon>
@@ -136,7 +136,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>1000</lifetime>
     <tracking>0.0100</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/slimeball.ogg</sound>
     <msrp>3000</msrp>
   </weapon>
   <weapon>
@@ -153,7 +153,7 @@
     <fireDelay>300</fireDelay>
     <lifetime>1000</lifetime>
     <tracking>0.0100</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/iceball.ogg</sound>
     <msrp>5000</msrp>
   </weapon>
   <weapon>
@@ -170,7 +170,7 @@
     <fireDelay>1000</fireDelay>
     <lifetime>30000</lifetime>
     <tracking>0.0200</tracking>
-    <sound>Resources/Audio/Weapons/36847__EcoDTR__LaserRocket2.ogg</sound>
+    <sound>Resources/Audio/Weapons/flaunch.ogg</sound>
     <msrp>14000</msrp>
   </weapon>
   <weapon>
@@ -187,7 +187,7 @@
     <fireDelay>200</fireDelay>
     <lifetime>500</lifetime>
     <tracking>0.0000</tracking>
-    <sound>Resources/Audio/Weapons/32954__HardPCM__Chip054.wav.ogg</sound>
+    <sound>Resources/Audio/Weapons/rlaunch.ogg</sound>
     <msrp>3000</msrp>
   </weapon>
 </weapons>
