@@ -214,16 +214,9 @@ Log::Log()
 	colors[DEBUG2]  = Green;
 	colors[DEBUG3]  = Green;
 	colors[DEBUG4]  = Green;
-
 	
 	istty = isatty(fileno(stdin));
-	if( istty ) {
-		printf( "stdin is a terminal\n" );
-	} else {
-		printf( "stdin is a file or a pipe\n");
-	}
 #endif
-
 
 	// generate the log's filename based on the time
 	logFilename = string("Epiar-Log-") + GetTimestamp() + string(".xml");
