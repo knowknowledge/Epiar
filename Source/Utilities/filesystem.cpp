@@ -44,7 +44,7 @@ int Filesystem::Init( const char* argv0 ) {
 #ifdef DATADIR
 	// If using autotools, include this prefix to help binary find data files for cases where 'make install' was used
 	if ( (retval = PHYSFS_addToSearchPath(DATADIR, 1)) == 0 )
-		LogMsg(INFO, "Not using DATADIR directory due to an error. Guessing 'make install' has not been run yet. Reason: %s", PHYSFS_getLastError());
+		LogMsg(INFO, "Not using DATADIR directory due to an error. Guessing 'make install' has not been run yet. This is usually okay in development. Reason: %s", PHYSFS_getLastError());
 #endif /* DATADIR */
 	
 	return retval;

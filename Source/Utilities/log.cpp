@@ -37,7 +37,7 @@ bool Log::SetLevel( const string& _loglvl ){
 }
 
 /**\brief Allows changing of the log level dynamically ( enum version ).*/
-bool Log::SetLevel( Level _loglvl ){
+bool Log::SetLevel( LogLevel _loglvl ){
 	LogMsg(DEBUG1,"Changing Log Level from '%s' to '%s'.", lvlStrings[loglvl].c_str(), lvlStrings[_loglvl].c_str());
 	this->loglvl=_loglvl;
 	return true;
@@ -90,7 +90,7 @@ void Log::Close( void ) {
 /**\brief The real log function.
  * \todo The filtering is broken and should be refactored.
  */
-void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
+void Log::realLog( LogLevel lvl, const string& func, const char *message, ... ) {
 	// Check log level
 	if( lvl < this->loglvl )
 		return;
@@ -110,6 +110,7 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	va_list args;
 	time_t rawtime;
 	static char logBuffer[4096] = {0};
+	static queue<LogEntry> preOptionsBuffer;
 
 	time( &rawtime );
 
@@ -123,41 +124,48 @@ void Log::realLog( Level lvl, const string& func, const char *message, ... ) {
 	// Trim the final '\n' if necessary
 	if( logBuffer[ strlen(logBuffer) - 1 ] == '\n' ) logBuffer[ strlen(logBuffer) - 1 ] = 0;
 
-	// Print the message:
+	// Print the message
 	if( Options::IsLoaded() ) {
-		if( OPTION(int, "options/log/out") == 1 ) {
-#ifndef _WIN32
-			StartTermColor( lvl );
-#endif
-			printf("%s (%s) - %s", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
-#ifndef _WIN32
-			EndTermColor( lvl );
-#endif
-			printf( "\n" );
-		}
+		// We loop over a buffer as messages may be queued up from before Options::IsLoaded() == true
+		preOptionsBuffer.push( LogEntry(func, lvl, logBuffer) );
 
-		if( OPTION(int, "options/log/alert") == 1 ) {
-			Hud::Alert("%s - %s", lvlStrings[lvl].c_str(), logBuffer);
-		}
-		
-		// Save the message to a file
-		if( OPTION(int, "options/log/xml") == 1 ) {
+		while(!preOptionsBuffer.empty()) {
+			LogEntry entry = preOptionsBuffer.front();
+			preOptionsBuffer.pop();
 
-			if( fp==NULL ){
-				Log::Open();
+			if( OPTION(int, "options/log/out") == 1 ) {
+#ifndef _WIN32
+				StartTermColor( entry.lvl );
+#endif
+				cout << entry.func << " (" << lvlStrings[entry.lvl] << ") - " << entry.message << endl;
+#ifndef _WIN32
+				EndTermColor( entry.lvl );
+#endif
 			}
-
-			fprintf(fp, "<log>\n");
-			fprintf(fp, "\t<function>%s</function>\n", func.c_str() );
-			fprintf(fp, "\t<type>%s</type>\n", lvlStrings[lvl].c_str() );
-			fprintf(fp, "\t<time>%s</time>\n", timestamp );
-			fprintf(fp, "\t<message>%s</message>\n", logBuffer );
-			fprintf(fp, "</log>\n" );
-			fflush( fp );
+	
+			if( OPTION(int, "options/log/alert") == 1 ) {
+				Hud::Alert("%s - %s", lvlStrings[entry.lvl].c_str(), entry.message.c_str());
+			}
+			
+			// Save the message to a file
+			if( OPTION(int, "options/log/xml") == 1 ) {
+	
+				if( fp==NULL ){
+					Log::Open();
+				}
+	
+				fprintf(fp, "<log>\n");
+				fprintf(fp, "\t<function>%s</function>\n", entry.func.c_str() );
+				fprintf(fp, "\t<type>%s</type>\n", lvlStrings[entry.lvl].c_str() );
+				fprintf(fp, "\t<time>%s</time>\n", timestamp );
+				fprintf(fp, "\t<message>%s</message>\n", entry.message.c_str() );
+				fprintf(fp, "</log>\n" );
+				fflush( fp );
+			}
 		}
 	} else {
-		// Errors before the options are available
-		fprintf(stderr, "%s (%s) - %s\n", func.c_str(), lvlStrings[lvl].c_str(), logBuffer);
+		// Messages before the options are available
+		preOptionsBuffer.push( LogEntry(func, lvl, logBuffer) );
 	}
 }
 
@@ -220,7 +228,7 @@ Log::Log()
 
 	// generate the log's filename based on the time
 	logFilename = string("Epiar-Log-") + GetTimestamp() + string(".xml");
-	printf("Logging to: '%s'\n",logFilename.c_str());
+	//printf("Logging to: '%s'\n",logFilename.c_str());
 
 	fp = NULL;
 }
@@ -245,9 +253,9 @@ string Log::GetTimestamp( void ) {
 }
 
 /**\brief Does a reverse lookup of the log level based on a string.*/
-Log::Level Log::ReverseLookUp( const string& _lvl ){
+LogLevel Log::ReverseLookUp( const string& _lvl ){
 	// Figure out which log level we're doing.
-	map<Level,string>::iterator it;
+	map<LogLevel,string>::iterator it;
 	for ( it=lvlStrings.begin() ; it != lvlStrings.end(); it++ ){
 		if( (*it).second == _lvl )
 			return (*it).first;

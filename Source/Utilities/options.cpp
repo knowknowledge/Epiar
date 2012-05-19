@@ -58,6 +58,7 @@ void Options::AddDefault( const string& path, const string& value )
 {
 	assert( defaults );
 	assert( optionsfile );
+
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
@@ -70,6 +71,7 @@ void Options::AddDefault( const string& path, const float value )
 {
 	assert( defaults );
 	assert( optionsfile );
+
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
@@ -82,6 +84,7 @@ void Options::AddDefault( const string& path, const int value )
 {
 	assert( defaults );
 	assert( optionsfile );
+
 	defaults->Set( path, value );
 	if( false == optionsfile->Has(path) )
 	{
@@ -118,3 +121,4 @@ void Options::Set( const string& path, const int value )
 	assert( optionsfile );
 	optionsfile->Set( path, value );
 }
+
