@@ -18,6 +18,8 @@ config.h
 config.h.in
 config.sub
 config.h.in~
+po
+m4
 
 ### KDE development files
 Doxyfile
