@@ -74,3 +74,5 @@ Epiar.tmproj
 ### MinGW development files
 mingw32-config.cache
 
+### Include XCode IDE files
+!Build/OS X/XCode/Epiar
