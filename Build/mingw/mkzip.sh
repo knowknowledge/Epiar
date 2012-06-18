@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-DLLS="iconv.dll SDL.dll SDL_image.dll SDL_mixer.dll zlib1.dll libvorbis-0.dll libxml2-2.dll libtiff-3.dll libstdc++-6.dll libpng14-14.dll libphysfs-1-0-1.dll libogg-0.dll libjpeg-62.dll libfreetype-6.dll libftgl-2.dll libgcc_s_sjlj-1.dll"
+DLLS="iconv.dll SDL.dll SDL_image.dll SDL_mixer.dll zlib1.dll libvorbis-0.dll libxml2-2.dll libtiff-3.dll libstdc++-6.dll libpng15-15.dll libphysfs.dll libogg-0.dll libjpeg-62.dll libfreetype-6.dll libftgl-2.dll libgcc_s_sjlj-1.dll"
 
 # To be run from the Epiar source base directory. Generates an
 # epiar-win32 directory.
@@ -15,5 +15,5 @@ rm -f epiar-win32/Resources/Definitions/saved-games.xml
 
 # The following assumes Fedora 16-based MinGW. If this becomes a
 # problem (i.e. other MinGW developers), we can expand this
-for f in $DLLS; do cp /usr/i686-pc-mingw32/sys-root/mingw/bin/$f epiar-win32; done
+for f in $DLLS; do cp /usr/i686-w64-mingw32/sys-root/mingw/bin/$f epiar-win32; done
 
