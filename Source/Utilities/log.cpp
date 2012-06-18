@@ -180,7 +180,7 @@ Log::Log()
 	lvlStrings[WARN]="Warn";
 	lvlStrings[ALERT]="Alert";
 	lvlStrings[NOTICE]="Notice";
-	lvlStrings[INPUT]="Input";
+	lvlStrings[UIINPUT]="Input";
 	lvlStrings[INFO]="Info";
 	lvlStrings[VERBOSE1]="Verbose1";
 	lvlStrings[VERBOSE2]="Verbose2";
@@ -213,7 +213,7 @@ Log::Log()
 	// Cyan
 	colors[INFO]    = Cyan;
 	// Purple
-	colors[INPUT] = Purple;
+	colors[UIINPUT] = Purple;
 	colors[VERBOSE1]= Purple;
 	colors[VERBOSE2]= Purple;
 	colors[VERBOSE3]= Purple;

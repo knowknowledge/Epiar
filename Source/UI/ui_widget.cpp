@@ -161,7 +161,7 @@ bool Widget::MouseMotion( int xi, int yi ){
 /**\brief Event is triggered on mouse enter.
  */
 bool Widget::MouseEnter( int xi, int yi ){
-	LogMsg(INPUT,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	hovering = true;
 	Activate(Action_MouseEnter, xi, yi);
 	return true;
@@ -170,7 +170,7 @@ bool Widget::MouseEnter( int xi, int yi ){
 /**\brief Event is triggered on mouse leave.
  */
 bool Widget::MouseLeave( void ){
-	LogMsg(INPUT,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	hovering = false;
 	Activate(Action_MouseLeave, 0, 0);
 	return true;
@@ -179,7 +179,7 @@ bool Widget::MouseLeave( void ){
 /**\brief Generic mouse up function.
  */
 bool Widget::MouseLUp( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseLUp, xi, yi);
 	return true;
 }
@@ -187,7 +187,7 @@ bool Widget::MouseLUp( int xi, int yi ){
 /**\brief Generic mouse down function.
  */
 bool Widget::MouseLDown( int xi, int yi ) {
-	LogMsg(INPUT,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Left up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	// update drag coordinates in case this is draggable
 	dragX = xi-x;
 	dragY = yi-y;
@@ -198,7 +198,7 @@ bool Widget::MouseLDown( int xi, int yi ) {
 /**\brief Generic mouse release function.
  */
 bool Widget::MouseLRelease( void ){
-	LogMsg(INPUT,"Left Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Left Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseLRelease, 0, 0);
 	return true;
 }
@@ -206,7 +206,7 @@ bool Widget::MouseLRelease( void ){
 /**\brief Generic middle mouse up function.
  */
 bool Widget::MouseMUp( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Middle up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Middle up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseMUp, xi, yi);
 	return true;
 }
@@ -214,7 +214,7 @@ bool Widget::MouseMUp( int xi, int yi ){
 /**\brief Generic middle mouse down function.
  */
 bool Widget::MouseMDown( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Middle down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Middle down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseMDown, xi, yi);
 	return true;
 }
@@ -222,7 +222,7 @@ bool Widget::MouseMDown( int xi, int yi ){
 /**\brief Generic middle mouse release function.
  */
 bool Widget::MouseMRelease( void ){
-	LogMsg(INPUT,"Middle Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Middle Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseMRelease, 0, 0);
 	return true;
 }
@@ -230,7 +230,7 @@ bool Widget::MouseMRelease( void ){
 /**\brief Generic right mouse up function.
  */
 bool Widget::MouseRUp( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Right up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Right up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseRUp, xi, yi);
 	return true;
 }
@@ -238,7 +238,7 @@ bool Widget::MouseRUp( int xi, int yi ){
 /**\brief Generic right mouse down function.
  */
 bool Widget::MouseRDown( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Right down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Right down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseRDown, xi, yi);
 	return true;
 }
@@ -246,7 +246,7 @@ bool Widget::MouseRDown( int xi, int yi ){
 /**\brief Generic right mouse release function.
  */
 bool Widget::MouseRRelease( void ){
-	LogMsg(INPUT,"Right Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Right Mouse released in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseRRelease, 0, 0);
 	return true;
 }
@@ -254,7 +254,7 @@ bool Widget::MouseRRelease( void ){
 /**\brief Generic mouse wheel up function.
  */
 bool Widget::MouseWUp( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Wheel up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Wheel up detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseWUp, xi, yi);
 	return false;
 }
@@ -262,7 +262,7 @@ bool Widget::MouseWUp( int xi, int yi ){
 /**\brief Generic mouse wheel down function.
  */
 bool Widget::MouseWDown( int xi, int yi ){
-	LogMsg(INPUT,"Mouse Wheel down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Mouse Wheel down detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_MouseWDown, xi, yi);
 	return false;
 }
@@ -270,7 +270,7 @@ bool Widget::MouseWDown( int xi, int yi ){
 /**\brief Generic keyboard focus function.
  */
 bool Widget::KeyboardEnter( void ){
-	LogMsg(INPUT,"Keyboard enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Keyboard enter detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_KeyboardEnter, 0, 0);
 	keyactivated = true;
 	return true;
@@ -279,7 +279,7 @@ bool Widget::KeyboardEnter( void ){
 /**\brief Generic keyboard unfocus function.
  */
 bool Widget::KeyboardLeave( void ){
-	LogMsg(INPUT,"Keyboard leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Keyboard leave detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	Activate(Action_KeyboardLeave, 0, 0);
 	keyactivated = false;
 	return true;
@@ -288,7 +288,7 @@ bool Widget::KeyboardLeave( void ){
 /**\brief Generic keyboard key press function.
  */
 bool Widget::KeyPress( SDLKey key ) {
-	LogMsg(INPUT,"Key press detect in %s named %s.", GetType().c_str(), GetName().c_str() );
+	LogMsg(UIINPUT,"Key press detect in %s named %s.", GetType().c_str(), GetName().c_str() );
 	return false;
 }
 
