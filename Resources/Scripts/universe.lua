@@ -74,7 +74,12 @@ function createRandomShip(X,Y,Range,models,engines,weapons,alliance)
 	local Y = Y + about(Range)
 	local model = choose(models)
 	local engine = choose(engines)
-	local plans = {"Hunter", "Trader", "Patrol", "Bully" }
+	local plans = nil
+	if (PLAYER:GetCredits() > 10000) then
+		plans = {"Hunter", "Trader", "Patrol", "Bully" }
+	else
+		plans = {"Trader", "Patrol", "Bully" }
+	end
 	local pirateModels = { "Fleet Guard", "Kartanal", "Terran Assist", "Patitu", "Terran Corvert Mark I", "Large Vesper", "Raven", "Hammer Freighter"  }
 	local escortModels = { "Fleet Guard", "Terran XV", "Kartanal", "Patitu", "Terran Corvert Mark I"  }
 
