@@ -11,6 +11,7 @@ epiar_SOURCES = Source/main.cpp \
                 Source/Engine/alliances.cpp \
                 Source/Engine/commodities.cpp \
                 Source/Engine/console.cpp \
+                Source/Engine/calendar.cpp \
                 Source/Engine/camera.cpp \
                 Source/Engine/engines.cpp \
                 Source/Engine/hud.cpp \

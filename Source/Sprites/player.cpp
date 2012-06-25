@@ -182,6 +182,8 @@ void Player::Land( lua_State *L, Planet* planet ){
 
 	lastPlanet = planet->GetName();
 	Save( Simulation_Lua::GetSimulation(L)->GetName() );
+  
+  //AdvanceFromLand
 }
 
 /**\brief Constructor
