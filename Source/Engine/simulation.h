@@ -13,6 +13,7 @@
 #include "Engine/alliances.h"
 #include "Engine/engines.h"
 #include "Engine/models.h"
+#include "Engine/calendar.h"
 #include "Sprites/planets.h"
 #include "Sprites/gate.h"
 #include "Engine/weapons.h"
@@ -96,6 +97,7 @@ class Simulation : public XMLFile {
 		Players *players;
 		Player *player;
 		Camera *camera;
+    Calendar *calendar;
 
 		// Simulation specific variables
 		Song* bgmusic;
