@@ -130,6 +130,26 @@ void AI::Update( lua_State *L ) {
 	this->Ship::Update( L );
 }
 
+/**\brief The last function call to the ship before it get's deleted
+ *
+ * At this point, the ship still exists. It has not been removed from the Universe
+ *
+ * \note We don't want to make this a destructor call because we want the rest
+ * of the system to still treat the ship normally.
+ */
+void AI::Killed( lua_State *L ) {
+	LogMsg( WARN, "AI %s has been killed\n", GetName().c_str() );
+	SpriteManager *sprites = Simulation_Lua::GetSimulation(L)->GetSpriteManager();
+
+	Sprite* killer = sprites->GetSpriteByID( target );
+	if(killer != NULL) {
+		if( killer->GetDrawOrder() == DRAW_ORDER_PLAYER ) {
+			((Player*)killer)->UpdateFavor( this->GetAlliance()->GetName(), -1 );
+		}
+	}
+}
+
+
 /**\brief Draw the AI Ship, and possibly debugging information.
  *
  * When the "options/development/debug-ai" flag is set, this will display the
@@ -330,7 +350,8 @@ void AI::RemoveEnemy(int spriteID){
 *
 */
 void AI::RegisterTarget( lua_State *L, int t ){
-	Lua::Call( "setHuntHostile", "ii", this->GetID(), t );
+	
+	//Lua::Call( "setHuntHostile", "ii", this->GetID(), t );
 }
 
 /**\brief checks if a potential target is within targeting range
