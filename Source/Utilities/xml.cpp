@@ -135,10 +135,9 @@ string XMLFile::Get( const string& path ) {
 }
 
 void XMLFile::Set( const string& path, const string& value ) {
-	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
+	LogMsg(INFO,"Replacing Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),value.c_str());
 	xmlNodePtr p =  FindNode(path,true);
 	xmlNodeSetContent(p, BAD_CAST value.c_str() );
-	LogMsg(INFO,"Done Overriding Option['%s'] to '%s'",path.c_str(),Get(path).c_str());
 	assert( value == Get(path));
 }
 
@@ -155,7 +154,7 @@ void XMLFile::Set( const string& path, const float value ) {
 	stringstream val_ss;
 	val_ss << value;
 	val_ss >> stringvalue;
-	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	LogMsg(INFO,"Replacing Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
 	xmlNodeSetContent(FindNode(path,true), BAD_CAST stringvalue.c_str() );
 	assert( stringvalue == Get(path));
 }
@@ -166,7 +165,7 @@ void XMLFile::Set( const string& path, const int value ) {
 	stringstream val_ss;
 	val_ss << value;
 	val_ss >> stringvalue;
-	LogMsg(INFO,"Overriding Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
+	LogMsg(INFO,"Replacing Option['%s'] from '%s' to '%s'",path.c_str(),Get(path).c_str(),stringvalue.c_str());
 	xmlNodePtr p =  FindNode(path,true);
 	xmlNodeSetContent(p, BAD_CAST stringvalue.c_str() );
 	assert( stringvalue == Get(path));

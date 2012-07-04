@@ -38,8 +38,8 @@ case "$target" in
 	LIBS="$LIBS $freetype2_LIBS"
 esac
 case "$target" in *-apple-darwin*)
-	CFLAGS="$CFLAGS `freetype-config --cflags`"
-	LIBS="$LIBS `freetype-config --libs`"
+	CFLAGS="$CFLAGS -I/usr/X11/include -I/usr/X11/include/freetype2"
+	LIBS="$LIBS -L/usr/X11/lib"
 esac
 
 dnl Some additional flags for Freetype
@@ -76,10 +76,14 @@ esac
 
 dnl Check for libxml2
 case "$target" in
-	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd* | *-apple-darwin*)
+	*-*-linux* | *-*-cygwin* | *-*-mingw32* | *-*-freebsd*)
 	PKG_CHECK_MODULES([libxml2], [libxml-2.0 >= 2.7.3])
 	CFLAGS="$CFLAGS $libxml2_CFLAGS"
 	LIBS="$LIBS $libxml2_LIBS"
+esac
+case "$target" in *-apple-darwin*)
+	CFLAGS="$CFLAGS `xml2-config --cflags`"
+	LIBS="$LIBS `xml2-config --libs`"
 esac
 
 dnl Check for SDL

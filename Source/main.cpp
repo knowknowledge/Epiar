@@ -296,7 +296,7 @@ void Main_Parse_Args( int argc, char **argv ) {
 	}
 
 	if ( argparser->HaveShort("v") || argparser->HaveLong("version") ){
-		printf("\nEpiar version %s\n", EPIAR_VERSION_FULL );
+		printf("Epiar version %s\n", EPIAR_VERSION_FULL );
 		exit( 0 );
 	}
 

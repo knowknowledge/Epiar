@@ -10,6 +10,11 @@
 #ifndef __H_VIDEO__
 #define __H_VIDEO__
 
+// Fix for certain OpenGL implementations
+#ifndef GL_BGRA
+#define GL_BGRA  GL_RGBA
+#endif
+
 #include "Graphics/image.h"
 #include "includes.h"
 #include "Utilities/coordinate.h"

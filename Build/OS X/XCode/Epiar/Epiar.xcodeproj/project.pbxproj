@@ -1,0 +1,199 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		4728A36315746706003DB6BE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../../../../AUTHORS; sourceTree = "<group>"; };
+		4728A36415746706003DB6BE /* autogen.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = autogen.sh; path = ../../../../autogen.sh; sourceTree = "<group>"; };
+		4728A36515746706003DB6BE /* BUILDING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BUILDING; path = ../../../../BUILDING; sourceTree = "<group>"; };
+		4728A36615746706003DB6BE /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../../../../ChangeLog; sourceTree = "<group>"; };
+		4728A36715746706003DB6BE /* configure.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = configure.in; path = ../../../../configure.in; sourceTree = "<group>"; };
+		4728A36815746706003DB6BE /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../../../../COPYING; sourceTree = "<group>"; };
+		4728A36915746706003DB6BE /* CREDITS.GNU-FreeType */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "CREDITS.GNU-FreeType"; path = "../../../../CREDITS.GNU-FreeType"; sourceTree = "<group>"; };
+		4728A36A15746706003DB6BE /* epiar.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = epiar.xsl; path = ../../../../epiar.xsl; sourceTree = "<group>"; };
+		4728A36B15746706003DB6BE /* INSTALL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = INSTALL; path = ../../../../INSTALL; sourceTree = "<group>"; };
+		4728A36C15746706003DB6BE /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../../../../LICENSE; sourceTree = "<group>"; };
+		4728A36D15746706003DB6BE /* LICENSE.bitstream_fonts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.bitstream_fonts; path = ../../../../LICENSE.bitstream_fonts; sourceTree = "<group>"; };
+		4728A36E15746706003DB6BE /* LICENSE.music */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.music; path = ../../../../LICENSE.music; sourceTree = "<group>"; };
+		4728A36F15746706003DB6BE /* LICENSE.other_fonts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.other_fonts; path = ../../../../LICENSE.other_fonts; sourceTree = "<group>"; };
+		4728A37015746706003DB6BE /* LICENSE.visitor_fonts */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.visitor_fonts; path = ../../../../LICENSE.visitor_fonts; sourceTree = "<group>"; };
+		4728A37115746706003DB6BE /* LISCENSE.usuzi.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LISCENSE.usuzi.txt; path = ../../../../LISCENSE.usuzi.txt; sourceTree = "<group>"; };
+		4728A37215746706003DB6BE /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../../../Makefile.am; sourceTree = "<group>"; };
+		4728A37315746706003DB6BE /* NEWS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NEWS; path = ../../../../NEWS; sourceTree = "<group>"; };
+		4728A37415746706003DB6BE /* PACKAGING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PACKAGING; path = ../../../../PACKAGING; sourceTree = "<group>"; };
+		4728A37515746706003DB6BE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../../../../README; sourceTree = "<group>"; };
+		4728A37615746706003DB6BE /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resources; path = ../../../../Resources; sourceTree = "<group>"; };
+		4728A37715746706003DB6BE /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = ../../../../SDLMain.h; sourceTree = "<group>"; };
+		4728A37815746706003DB6BE /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDLMain.m; path = ../../../../SDLMain.m; sourceTree = "<group>"; };
+		4728A37915746706003DB6BE /* Source */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Source; path = ../../../../Source; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4728A356157466BF003DB6BE = {
+			isa = PBXGroup;
+			children = (
+				4728A36315746706003DB6BE /* AUTHORS */,
+				4728A36415746706003DB6BE /* autogen.sh */,
+				4728A36515746706003DB6BE /* BUILDING */,
+				4728A36615746706003DB6BE /* ChangeLog */,
+				4728A36715746706003DB6BE /* configure.in */,
+				4728A36815746706003DB6BE /* COPYING */,
+				4728A36915746706003DB6BE /* CREDITS.GNU-FreeType */,
+				4728A36A15746706003DB6BE /* epiar.xsl */,
+				4728A36B15746706003DB6BE /* INSTALL */,
+				4728A36C15746706003DB6BE /* LICENSE */,
+				4728A36D15746706003DB6BE /* LICENSE.bitstream_fonts */,
+				4728A36E15746706003DB6BE /* LICENSE.music */,
+				4728A36F15746706003DB6BE /* LICENSE.other_fonts */,
+				4728A37015746706003DB6BE /* LICENSE.visitor_fonts */,
+				4728A37115746706003DB6BE /* LISCENSE.usuzi.txt */,
+				4728A37215746706003DB6BE /* Makefile.am */,
+				4728A37315746706003DB6BE /* NEWS */,
+				4728A37415746706003DB6BE /* PACKAGING */,
+				4728A37515746706003DB6BE /* README */,
+				4728A37615746706003DB6BE /* Resources */,
+				4728A37715746706003DB6BE /* SDLMain.h */,
+				4728A37815746706003DB6BE /* SDLMain.m */,
+				4728A37915746706003DB6BE /* Source */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		4728A35D157466BF003DB6BE /* Epiar */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 4728A360157466BF003DB6BE /* Build configuration list for PBXLegacyTarget "Epiar" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = /Users/cthielen/Projects/Epiar/src/Epiar;
+			dependencies = (
+			);
+			name = Epiar;
+			passBuildSettingsInEnvironment = 1;
+			productName = Epiar;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		4728A358157466BF003DB6BE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = "Christopher Thielen";
+			};
+			buildConfigurationList = 4728A35B157466BF003DB6BE /* Build configuration list for PBXProject "Epiar" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 4728A356157466BF003DB6BE;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4728A35D157466BF003DB6BE /* Epiar */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		4728A35E157466BF003DB6BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		4728A35F157466BF003DB6BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		4728A361157466BF003DB6BE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4728A362157466BF003DB6BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4728A35B157466BF003DB6BE /* Build configuration list for PBXProject "Epiar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4728A35E157466BF003DB6BE /* Debug */,
+				4728A35F157466BF003DB6BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4728A360157466BF003DB6BE /* Build configuration list for PBXLegacyTarget "Epiar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4728A361157466BF003DB6BE /* Debug */,
+				4728A362157466BF003DB6BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4728A358157466BF003DB6BE /* Project object */;
+}

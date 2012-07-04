@@ -290,14 +290,12 @@ void Input::HandleLuaCallBacks( list<InputEvent> & events ) {
 /**\brief Register Lua events.
  */
 void Input::RegisterCallBack( InputEvent event, string command ) {
-	//cout<<"Registering: "<<event<<" as "<<command<<endl;
 	eventMappings.insert(make_pair(event, command));
 }
 
 /**\brief Unregister Lua events.
  */
 void Input::UnRegisterCallBack( InputEvent event ) {
-	//cout<<"Un-Registering: "<<event<<endl;
 	eventMappings.erase(event);
 }
 

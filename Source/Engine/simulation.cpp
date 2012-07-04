@@ -60,6 +60,7 @@ Simulation::Simulation( void ) {
 	player = NULL;
 
 	camera = Camera::Instance();
+  calendar = new Calendar();
 	console = new Console( L );
 
 	folderpath = "";
@@ -326,8 +327,10 @@ bool Simulation::Run() {
 				if (lowFps)
 					lowFpsFrameCount --;
 				Timer::IncrementFrameCount();
-				// Update cycle
+				// Logical update cycle
 				sprites->Update( L, lowFps );
+        
+        calendar->Update();
 			}
 		}
 

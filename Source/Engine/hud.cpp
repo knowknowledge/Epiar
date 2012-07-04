@@ -411,7 +411,7 @@ void Hud::DrawTarget( SpriteManager* sprites ) {
 		int r = target->GetRadarSize();
 		Color c = target->GetRadarColor();
 
-		if( (Timer::GetTicks()-timeTargeted) < OPTION(Uint32,"options/timing/target-zoom")  ) {
+		if( (Timer::GetTicks() - timeTargeted) < OPTION(Uint32, "options/timing/target-zoom")) {
 			r += Video::GetHalfHeight() - Video::GetHalfHeight()*(Timer::GetTicks()-timeTargeted)/OPTION(Uint32,"options/timing/target-zoom");
 			int max = Video::GetHalfHeight() * (1 - (Timer::GetTicks()-timeTargeted)/OPTION(Uint32,"options/timing/target-zoom") );
 			for( ; r < max; r = (r*11)/10) {

@@ -51,6 +51,8 @@ class AI : public Ship {
 		void SetMerciful(int f) { merciful = (f == 1); }
 		int GetMerciful() { return (merciful ? 1 : 0 ); }
 
+		void Killed( lua_State *L );
+
 	private:
 		string name; ///< The AI's name.  This should be the name of the ship's pilot.
 		Alliance* allegiance; ///< Which Alliance this ship hails to.

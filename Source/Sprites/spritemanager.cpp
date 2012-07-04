@@ -7,6 +7,7 @@
 
 #include "includes.h"
 #include "common.h"
+#include "Sprites/ai.h"
 #include "Sprites/effects.h"
 #include "Sprites/spritemanager.h"
 #include "Utilities/log.h"
@@ -229,6 +230,14 @@ void SpriteManager::Update( lua_State *L, bool lowFps) {
 	if (!spritesToDelete.empty()) {
 		spritesToDelete.sort(); // The list has to be sorted or unique doesn't work correctly.
 		spritesToDelete.unique();
+	
+		// Tell the AI that they've been killed
+		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
+			if( (*i)->GetDrawOrder() == DRAW_ORDER_SHIP ) {
+				((AI*)(*i))->Killed(L);
+			}
+		}
+
 		for( i = spritesToDelete.begin(); i != spritesToDelete.end(); ++i ) {
 			DeleteSprite(*i);
 		}

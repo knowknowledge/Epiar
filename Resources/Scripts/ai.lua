@@ -339,9 +339,18 @@ Patrol = {
 		local ship= Epiar.nearestShip(cur_ship,1000)
 		if ship~=nil and okayTarget(cur_ship, ship) then
 			local machine, state = ship:GetState()
-			if machine=="Hunter" then
+			-- Kill all Agressive Hunters and Pirates
+			if machine=="Hunter" or machine=="Pirate" then
 				AIData[id].target = ship:GetID()
 				return "Hunting"
+			elseif machine=="Escort" then
+				-- If the Escort's leader is a Hunter or Pirate, kill the Escort
+				local leader = Epiar.getSprite(AIData[ ship:GetID() ].accompany)
+				local machine, state = leader:GetState()
+				if machine=="Hunter" or machine=="Pirate" then
+					AIData[id].target = ship:GetID()
+					return "Hunting"
+				end
 			end
 		end
 	end,

@@ -715,7 +715,7 @@ bool Container::MouseLUp( int xi, int yi ){
 			this->lmouseDown = NULL;
 		}
 	}
-	//LogMsg(INPUT,"Mouse Left up detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Left up detect in %s.",this->name.c_str());
 
 	return this->mouseHandled;
 }
@@ -734,7 +734,7 @@ bool Container::MouseLDown( int xi, int yi ) {
 
 	// If Nothing was clicked on
 	if( !event_on ){
-		//LogMsg(INPUT,"Mouse Left down detect in %s.",this->name.c_str());
+		//LogMsg(UIINPUT,"Mouse Left down detect in %s.",this->name.c_str());
 		if( this->keyboardFocus )
 			this->keyboardFocus->KeyboardLeave();
 		this->keyboardFocus = NULL;
@@ -773,7 +773,7 @@ bool Container::MouseLRelease( void ){
 	// Pass event onto children if needed
 	if( this->lmouseDown )
 		return this->lmouseDown->MouseLRelease();
-	//LogMsg(INPUT,"Left Mouse released in %s",this->name.c_str());
+	//LogMsg(UIINPUT,"Left Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -799,7 +799,7 @@ bool Container::MouseMUp( int xi, int yi ){
 			this->mmouseDown = NULL;
 		}
 	}
-	//LogMsg(INPUT,"Mouse Middle up detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Middle up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -818,7 +818,7 @@ bool Container::MouseMDown( int xi, int yi ){
 		this->mmouseDown=event_on;
 		return event_on->MouseMDown( xr, yr + yoffset );
 	}
-	//LogMsg(INPUT,"Mouse Middle down detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Middle down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -832,7 +832,7 @@ bool Container::MouseMRelease( void ){
 	// Pass event onto children if needed
 	if( this->mmouseDown )
 		return this->mmouseDown->MouseMRelease();
-	//LogMsg(INPUT,"Middle Mouse released in %s",this->name.c_str());
+	//LogMsg(UIINPUT,"Middle Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -858,7 +858,7 @@ bool Container::MouseRUp( int xi, int yi ){
 			this->rmouseDown = NULL;
 		}
 	}
-	//LogMsg(INPUT,"Mouse Right up detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Right up detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -877,7 +877,7 @@ bool Container::MouseRDown( int xi, int yi ){
 		this->rmouseDown=event_on;
 		return event_on->MouseRDown( xr, yr + yoffset );
 	}
-	//LogMsg(INPUT,"Mouse Right down detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Right down detect in %s.",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -891,7 +891,7 @@ bool Container::MouseRRelease( void ){
 	// Pass event onto children if needed
 	if( this->rmouseDown )
 		return this->rmouseDown->MouseRRelease();
-	//LogMsg(INPUT,"Right Mouse released in %s",this->name.c_str());
+	//LogMsg(UIINPUT,"Right Mouse released in %s",this->name.c_str());
 	return this->mouseHandled;
 }
 
@@ -913,7 +913,7 @@ bool Container::MouseWUp( int xi, int yi ){
 		vscrollbar->ScrollUp();
 		return true;
 	}
-	//LogMsg(INPUT,"Mouse Wheel up detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Wheel up detect in %s.",this->name.c_str());
 	return false;
 }
 
@@ -935,7 +935,7 @@ bool Container::MouseWDown( int xi, int yi ){
 		vscrollbar->ScrollDown();
 		return true;
 	}
-	//LogMsg(INPUT,"Mouse Wheel down detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Mouse Wheel down detect in %s.",this->name.c_str());
 	return false;
 }
 
@@ -946,7 +946,7 @@ bool Container::KeyboardEnter( void ){
 	this->keyactivated=true;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardEnter();
-	//LogMsg(INPUT,"Keyboard enter detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Keyboard enter detect in %s.",this->name.c_str());
 	return true;
 }
 
@@ -957,7 +957,7 @@ bool Container::KeyboardLeave( void ){
 	this->keyactivated=false;
 	if( this->keyboardFocus )
 		return this->keyboardFocus->KeyboardLeave();
-	//LogMsg(INPUT,"Keyboard leave detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Keyboard leave detect in %s.",this->name.c_str());
 	return true;
 }
 
@@ -995,7 +995,7 @@ bool Container::KeyPress( SDLKey key ) {
 		formbutton->Activate(Action_MouseLUp, 0, 0);
 	}
 
-	//LogMsg(INPUT,"Key press detect in %s.",this->name.c_str());
+	//LogMsg(UIINPUT,"Key press detect in %s.",this->name.c_str());
 	return false;
 }
 

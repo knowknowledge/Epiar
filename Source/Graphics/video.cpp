@@ -8,6 +8,7 @@
 #include "includes.h"
 #include "common.h"
 #include "Graphics/video.h"
+#include "Utilities/file.h"
 #include "Utilities/log.h"
 #include "Utilities/xml.h"
 #include "Utilities/trig.h"
@@ -249,14 +250,21 @@ bool Video::SetWindow( int w, int h, int bpp, bool fullscreen ) {
 	SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,  16);
 	SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE, 16);
 
+	// Set the application icon (must be done before SDL_SetVideoMode)
+	SDL_Surface *icon = NULL;
+	File icon_file( "Resources/Graphics/icon.bmp" ); // File is used to calculate path
+	icon = SDL_LoadBMP( icon_file.GetAbsolutePath().c_str() );
+	SDL_WM_SetIcon(icon, NULL);
+	SDL_FreeSurface(icon); // presumably we can do this
+
+	// set window title
+	SDL_WM_SetCaption("Epiar", "Epiar");
+
 	// finally, set the video mode (creating a window)
 	if( ( screen = SDL_SetVideoMode( w, h, bpp, videoFlags ) ) == NULL ) {
 		LogMsg(ERR, "Could not set video mode: %s", SDL_GetError() );
 		return( false );
 	}
-
-	// set window title
-	SDL_WM_SetCaption("Epiar", "Epiar");
 
 	// set up some needed opengl facilities
 	glEnable( GL_TEXTURE_2D );
