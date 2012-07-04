@@ -1,5 +1,5 @@
 # Created by: DuMuT6p
-# Last modified: September/12/2011
+# Last modified: June/23/2012
 
 # Instructions:
 # 1. Open epiar`s main directory(e.g. C:\epiar).
@@ -23,10 +23,10 @@
 !include MUI2.nsh
 
 # window name
-name "Epiar 0.5.0"
+name "Epiar 0.5.1"
 
 # define installer name
-outFile "epiar-0.5.0.exe"
+outFile "epiar-0.5.1.exe"
  
 # set install directory
 InstallDir "C:\Program Files\Epiar"
@@ -106,31 +106,30 @@ createShortCut "$DESKTOP\Epiar.lnk" "$INSTDIR\Epiar.exe"
 file Epiar.exe
 file AUTHORS
 file ChangeLog
-file COPYING
-file CREDITS.GNU-FreeType
-file INSTALL
 file LICENSE
 file LICENSE.bitstream_fonts
+file LICENSE.music
+file LICENSE.other_fonts
 file LICENSE.visitor_fonts
 file NEWS
+file PACKAGING
 file README
 
 setOutPath $INSTDIR
+file iconv.dll
 file libfreetype-6.dll
 file libftgl-2.dll
 file libgcc_s_sjlj-1.dll
-file libiconv-2.dll
-file libjpeg-7.dll
+file libjpeg-62.dll
 file libogg-0.dll
-file libphysfs-1-0-1.dll
-file libpng14-14.dll
+file libphysfs.dll
+file libpng15-15.dll
 file libstdc++-6.dll
 file libtiff-3.dll
 file libvorbis-0.dll
-file libvorbisfile-3.dll
 file libxml2-2.dll
 file SDL.dll
-file SDL.original.dll
+file SDL.dll
 file SDL_image.dll
 file SDL_mixer.dll
 file zlib1.dll
