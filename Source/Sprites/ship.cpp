@@ -101,7 +101,7 @@ Ship::Ship()
 	model = NULL;
 	engine = NULL;
 	flareAnimation = NULL;
-	
+
 	/* Initalize ship's condition */
 	status.damageBooster=1.0;
 	status.engineBooster=1.0;
@@ -135,7 +135,7 @@ Ship::~Ship() {
 		delete flareAnimation;
 		flareAnimation=NULL;
 	}
-		
+
 }
 
 /**\brief Sets the ship model.
@@ -159,10 +159,10 @@ bool Ship::SetModel( Model *model) {
 		SetImage( model->GetImage() );
 
 		ComputeShipStats();
-		
+
 		return( true );
 	}
-	
+
 	return( false );
 }
 
@@ -175,7 +175,7 @@ bool Ship::SetEngine( Engine *newEngine ) {
 	assert( newEngine );
 	if( newEngine ){
 		engine = newEngine;
-		
+
 		// Creates a new Flare Animation specific for this Ship
 		if( flareAnimation )
 			delete flareAnimation;
@@ -184,10 +184,10 @@ bool Ship::SetEngine( Engine *newEngine ) {
 		flareAnimation->SetLoopPercent(0.25f);
 
 		ComputeShipStats();
-		
+
 		return( true );
 	}
-	
+
 	return( false );
 }
 
@@ -230,7 +230,7 @@ string Ship::GetEngineName() {
 void Ship::Rotate( float direction ) {
 	float rotPerSecond, timerDelta, maxturning;
 	float angle = GetAngle();
-	
+
 	if( !model ) {
 		LogMsg(WARN, "Attempt to rotate sprite with no model." );
 		return;
@@ -257,12 +257,12 @@ void Ship::Rotate( float direction ) {
 	} else {
 		angle += direction;
 	}
-	
+
 	// Normalize
 	angle = normalizeAngle(angle);
-	
+
 	SetAngle( angle );
-	
+
 	// Play engine sound
 	/*
 	if( engine->GetSound() != NULL)
@@ -296,9 +296,9 @@ void Ship::Accelerate( void ) {
 	                -1 * trig->GetSin( angle ) * acceleration * Timer::GetDelta() );
 
 	momentum.EnforceMagnitude(speed);
-	
+
 	SetMomentum( momentum );
-	
+
 	status.isAccelerating = true;
 
 	// Play engine sound
@@ -356,11 +356,16 @@ bool Ship::Jump( Coordinate position ) {
 		// TODO Play a failure sound.
 		return false;
 	}
-	
+
 	status.isJumping = true;
 	status.jumpStartTime = Timer::GetTicks();
 	status.jumpDestination = position;
 	// TODO Start playing a sound
+	if (isPlayer()) {
+        Sound *aSound = Sound::Get("Resources/Audio/Effects/55853__sergenious__teleport.wav");
+        aSound -> SetVolume(10);
+        aSound -> Play();
+	}
 	SetAngle( (position - GetWorldPosition()).GetAngle() );
 	return true;
 }
@@ -383,9 +388,9 @@ bool Ship::JumpDrive( Coordinate position ) {
  */
 void Ship::Update( lua_State *L ) {
 	Sprite::Update( L ); // update momentum and other generic sprite attributes
-	
+
 	// Movement Changes
-	if( status.isAccelerating == false 
+	if( status.isAccelerating == false
 		&& status.isRotatingLeft == false
 		&& status.isRotatingRight == false) {
 		flareAnimation->Reset();
@@ -405,7 +410,7 @@ void Ship::Update( lua_State *L ) {
 			SetWorldPosition( status.jumpDestination );
 		}
 	}
-	
+
 	// Ship has taken as much damage as possible...
 	if( status.hullDamage >=  (float)shipStats.GetHullStrength() ) {
 		// It Explodes!
@@ -438,12 +443,12 @@ void Ship::Draw( void ) {
 	}
 
 	Sprite::Draw();
-	
+
 	// Draw the flare animation, if required
 	if( status.isAccelerating ) {
 		float direction = GetAngle();
 		float tx, ty;
-		
+
 		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
 						(flareAnimation->GetHalfWidth() + model->GetThrustOffset()) )),
 				static_cast<float>(position.GetScreenY()),
@@ -451,7 +456,7 @@ void Ship::Draw( void ) {
 				static_cast<float>(position.GetScreenY()), &tx, &ty,
 				static_cast<float>( trig->DegToRad( direction ) ));
 		flareAnimation->Draw( (int)tx, (int)ty, direction );
-		
+
 		status.isAccelerating = false;
 	}
 #if defined(ROTATE_ENGINE)
@@ -459,7 +464,7 @@ void Ship::Draw( void ) {
 	if( status.isRotatingLeft || status.isRotatingRight ) {
 		float direction = GetAngle();
 		float tx, ty;
-		
+
 		trig->RotatePoint( static_cast<float>((position.GetScreenX() -
 						(flareAnimation->GetHalfWidth() + model->GetThrustOffset()) )),
 				static_cast<float>(position.GetScreenY()),
@@ -467,7 +472,7 @@ void Ship::Draw( void ) {
 				static_cast<float>(position.GetScreenY()), &tx, &ty,
 				static_cast<float>( trig->DegToRad( direction ) ));
 		flareAnimation->Draw( (int)tx, (int)ty, direction );
-		
+
 		status.isRotatingLeft = false;
 		status.isRotatingRight = false;
 	}
@@ -527,7 +532,7 @@ FireStatus Ship::Fire( Group group, int target ) {
 	if(emptyFiringGroup) return FireEmptyGroup;
 
 	// When nothing fires return the last error that occurred
-	return error; 
+	return error;
 }
 
 /**\brief Fire a single weapon slot.
@@ -785,7 +790,7 @@ void Ship::RemoveOutfit(Outfit *i){
 	this->SetOutfits(&new_list);
 }
 
-	
+
 /**\brief Removes an outfit from the ship
  * \param outfitName Name of the Outfit
  */
