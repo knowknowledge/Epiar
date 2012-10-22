@@ -351,7 +351,7 @@ void Ship::Repair(short int damage) {
 
 /**\brief Begin a Jump
  */
-bool Ship::Jump( Coordinate position ) {
+bool Ship::Jump( Coordinate position, bool jumpDrive ) {
 	if(  status.isJumping == true ) { // Already Jumping
 		// TODO Play a failure sound.
 		return false;
@@ -362,7 +362,9 @@ bool Ship::Jump( Coordinate position ) {
 	status.jumpDestination = position;
 	// TODO Start playing a sound
 	if (isPlayer()) {
-        Sound *aSound = Sound::Get("Resources/Audio/Effects/55853__sergenious__teleport.wav");
+		Sound *aSound;
+		if (jumpDrive) aSound = Sound::Get("Resources/Audio/Effects/128590__corsica-s__transport-edit.wav");
+		else aSound = Sound::Get("Resources/Audio/Effects/55853__sergenious__teleport.wav");
         aSound -> SetVolume(10);
         aSound -> Play();
 	}
@@ -377,7 +379,7 @@ bool Ship::Jump( Coordinate position ) {
 bool Ship::JumpDrive( Coordinate position ) {
 	// Can the ship's Engine Jump?
 	if( engine->GetFoldDrive() ) {
-		return Jump( position );
+		return Jump( position, true );
 	} else {
 		// TODO Play a failure sound.
 		return false;

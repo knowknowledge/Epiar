@@ -228,7 +228,7 @@ void Gate::SendToExit(Ship* ship) {
 	//ship->SetWorldPosition(  );
 	ship->SetMomentum( ship->GetMomentum().RotateTo( exitAngle ) );
 	ship->SetAngle( exitAngle );
-	ship->Jump( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exitAngle ) );
+	ship->Jump( exit->GetWorldPosition() + Coordinate(distance,0).RotateTo( exitAngle ), false );
 }
 
 /**\brief Teleport a Ship in the direction of the Gate by a random distance

@@ -29,7 +29,7 @@ class Ship : public Sprite {
 		// Movement Mechanics
 		void Rotate( float direction );
 		void Accelerate( void );
-		bool Jump( Coordinate position );
+		bool Jump( Coordinate position, bool jumpDrive );
 		bool JumpDrive( Coordinate position );
 
 		// Combat Mechanics
