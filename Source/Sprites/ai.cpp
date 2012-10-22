@@ -32,6 +32,7 @@ AI::AI(string _name, string machine) :
 	stateMachine(machine),
 	state("default")
 {
+	this -> playerCheck = false;
 	target = 0;
 	merciful = 0;
 }

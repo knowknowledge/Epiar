@@ -3,3 +3,10 @@ Creative Commons license from Freesound.org
 Name: 18384__inferno__largex.wav.ogg
 URL: http://www.freesound.org/samplesViewSingle.php?id=18384
 
+Name: 55853__sergenious__teleport.wav
+URL: http://www.freesound.org/people/Sergenious/sounds/55853/
+
+Name: 128590__corsica-s__transport-edit.wav
+URL: http://www.freesound.org/people/Corsica_S/sounds/128590/
+Slightly modified by Christopher James Bell on 23/10/2012
+Email: thebellinat0r@gmail.com

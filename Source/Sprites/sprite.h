@@ -29,13 +29,13 @@ class Sprite {
 	public:
 		Sprite();
 		virtual ~Sprite() {};
-		
+
 		Coordinate GetWorldPosition( void ) const;
 		void SetWorldPosition( Coordinate coord );
-		
+
 		virtual void Update( lua_State *L );
 		virtual void Draw( void );
-		
+
 		int GetID( void ) { return id; }
 
 		float GetAngle( void ) const {
@@ -67,7 +67,7 @@ class Sprite {
 		int GetRadarSize( void ) { return radarSize; }
 		virtual Color GetRadarColor( void ) { return radarColor; }
 		virtual int GetDrawOrder( void ) = 0;
-		
+
 	private:
 		static long int sprite_ids; ///< The ID for the next Sprite.
 
@@ -81,6 +81,13 @@ class Sprite {
 		int radarSize; ///< A Rough appoximation of this Sprite's size.
 		Color radarColor; ///< The color of this Sprite.
 		Uint32 lastUpdateFrame; ///< The # of the logical frame that this sprite was last updated
+
+    protected:
+        bool playerCheck;              ///< Flag for player Sprite, true if the Sprite is an instance of Player class
+
+        bool isPlayer() {
+            return playerCheck;
+        }
 };
 
 #endif // __h_sprite__
