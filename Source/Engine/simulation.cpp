@@ -601,6 +601,7 @@ bool Simulation::Parse( void ) {
 	return true;
 }
 
+void LeaveOption() {exit(0);}
 /**\brief Handle User Input
  */
 void Simulation::HandleInput() {
@@ -682,7 +683,11 @@ void Simulation::HandleInput() {
 	
 	if( Input::HandleSpecificEvent( events, InputEvent( KEY, KEYTYPED, SDLK_ESCAPE ) ) )
 	{
-		quit = true;
+		Dialogs::OptionsWindow();
+		Button *leave = new Button( 100, 450-50, 100, 30, "Leave the game", LeaveOption);
+		Window* win = (Window*)(UI::Search("/Window'Options'/"));
+		win->SetH(450); 
+		win->AddChild(leave);
 	}
 }
 
